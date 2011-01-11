@@ -1,0 +1,26 @@
+object frmDesk: TfrmDesk
+  Left = 79
+  Top = 14
+  Cursor = crArrow
+  BorderStyle = bsNone
+  Caption = 'frmDesk'
+  ClientHeight = 541
+  ClientWidth = 790
+  Color = clBtnFace
+  DragMode = dmAutomatic
+  Font.Charset = GB2312_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = #23435#20307
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poDefault
+  Visible = True
+  OnDeactivate = FormDeactivate
+  OnDragOver = FormDragOver
+  OnKeyDown = FormKeyDown
+  OnResize = FormResize
+  PixelsPerInch = 96
+  TextHeight = 12
+end

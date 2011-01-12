@@ -444,6 +444,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
+  ConnectToDb;
   Logined := false;
   Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
   result := Logined;

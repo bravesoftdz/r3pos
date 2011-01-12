@@ -19,6 +19,28 @@ CREATE INDEX IX_PUB_PARAMS_TYPE_CODE ON PUB_PARAMS(TYPE_CODE);
 
 CREATE INDEX IX_PUB_PARAMS_TIME_STAMP ON PUB_PARAMS(TIME_STAMP);
 
+--参数设置表
+CREATE TABLE [SYS_DEFINE] (
+        --企业代码，全局参数时代码为 0 
+	[TENANT_ID] int NOT NULL ,
+        --参数名,英文代码
+	[DEFINE] [varchar] (30) NOT NULL ,
+        --参数值
+	[VALUE] [varchar] (100) NULL ,
+        --参数类型，默认为0
+	[VALUE_TYPE] [tinyint] NOT NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SYS_DEFINE_COMM] DEFAULT ('00'),
+        --时间戳 重2011-01-01开始的秒数  
+        [TIME_STAMP] bigint NOT NULL,
+	PRIMARY KEY ([TENANT_ID],[DEFINE])
+);
+
+insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,'ADMIN','admin',0,'00',strftime('%s','now','localtime')-1293840000);
+insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,'PASSWRD','79415A40',0,'00',strftime('%s','now','localtime')-1293840000);
+insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,'DBVERSION','DB1.0.0.1',0,'00',strftime('%s','now','localtime')-1293840000);
+--insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,'DBKEYID',newid(),0,'00',strftime('%s','now','localtime')-1293840000);
+
 --企业类型
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','制造商','TENANT_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
@@ -994,6 +1016,7 @@ CREATE INDEX IX_PUB_SN_INFO_TIME_STAMP ON PUB_SN_INFO(TIME_STAMP);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('132','香港特别行政区','XGTBXZQ','8','546','00',strftime('%s','now','localtime')-1293840000);
 
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('133','澳门特别行政区','AMTBXZQ','8','547','00',strftime('%s','now','localtime')-1293840000);
+
 
 
 

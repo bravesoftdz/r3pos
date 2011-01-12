@@ -156,8 +156,8 @@ begin
         cxcbSave.Visible := not Locked;
         if Locked then
            begin
-             cxcbxCompany.KeyValue := Global.CompanyId;
-             cxcbxCompany.Text := Global.CompanyName;
+             cxcbxCompany.KeyValue := Global.SHOP_ID;
+             cxcbxCompany.Text := Global.SHOP_NAME;
              cxedtAccount.KeyValue := Global.UserID;
              cxedtAccount.Text := Global.UserName;
            end;
@@ -271,16 +271,10 @@ function TfrmLogin.Connect:boolean;
 var
   F:TIniFile;
   r:boolean;
-  frmLogo:TfrmLogo;
 begin
-  result := false;
-  Factor.DisConnect;
-
   result := true;
-  //同步服务器时间
-  // Factor.SyncSvrTime;
+  r := true;
   edtOPER_DATE.Date := Date();
-
   if r then
      begin
         cdsCompany.Close;

@@ -12,15 +12,17 @@ type
     SYS_DEFINE: TZQuery;
     CA_RIGHTS: TZQuery;
     CA_USERS: TZQuery;
+    CA_SHOP_INFO: TZQuery;
+    CA_DUTY_INFO: TZQuery;
+    CA_ROLE_INFO: TZQuery;
+    CA_TENANT: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;
     Foffline: boolean;
-    FTENANT_ID: integer;
     procedure SetLimit(const Value: integer);
     procedure Setokline(const Value: boolean);
     procedure Setoffline(const Value: boolean);
-    procedure SetTENANT_ID(const Value: integer);
     { Private declarations }
   protected
     function GetSysDate: TDate;override;
@@ -43,8 +45,6 @@ type
     property okline:boolean read Fokline write Setokline;
     // 1是离线, 0 是联机
     property offline:boolean read Foffline write Setoffline;
-    //企业编号
-    property TENANT_ID:integer read FTENANT_ID write SetTENANT_ID;
   end;
 
 const
@@ -81,12 +81,12 @@ begin
   try
      Temp.SQL.Text :=
          'select max(PRINT_DATE) from ('+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where COMP_ID='''+CompanyId+''' ) j';
+         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='+inttostr(SHOP_ID)+' ) j';
      Factor.Open(Temp);
      if Temp.Fields[0].AsString = '' then
         begin
            Temp.close;
-           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where COMP_ID='''+CompanyId+''' and DEFINE=''USING_DATE''';
+           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE=''USING_DATE''';
            Factor.Open(Temp);
            if Temp.IsEmpty then
               B := FormatDatetime('YYYY-MM-DD',Date()-1)
@@ -135,6 +135,7 @@ begin
      end
   else
      begin
+       Exit;
        rs := TZQuery.Create(nil);
        try
          us := Global.GeTZQueryFromName('CA_USERS');
@@ -143,12 +144,12 @@ begin
          case Factor.iDbType of
          0:rs.SQL.Text :=
            'select j.MID,IsNull(b.CHK,j.CHK) as CHK from '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and COMP_ID='''+Global.CompanyID+''' group by MID ) j '+
+           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and TENANT_ID='+inttostr(TENANT_ID)+' group by MID ) j '+
            'left outer join '+
            '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+uid+''' and COMP_ID=''----'' and UTYPE=1 and MID='''+id+''' group by MID ) b on j.MID=b.MID';
          3:rs.SQL.Text :=
            'select j.MID,iif(IsNull(b.CHK),0,j.CHK) as CHK from '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and COMP_ID='''+Global.CompanyID+''' group by MID ) j '+
+           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and TENANT_ID='+inttostr(TENANT_ID)+' group by MID ) j '+
            'left outer join '+
            '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+uid+''' and COMP_ID=''----'' and UTYPE=1 and MID='''+id+''' group by MID ) b on j.MID=b.MID';
          end;
@@ -163,7 +164,8 @@ end;
 procedure TShopGlobal.LoadRight;
 var Roles:string;
 begin
-  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
+  Exit;
+{  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
   Roles := CA_USERS.FieldbyName('DUTY_IDS').AsString; 
   CA_RIGHTS.Close;
   case Factor.iDbType of
@@ -178,7 +180,7 @@ begin
     'left outer join '+
     '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+Global.UserID+''' and COMP_ID=''----'' and UTYPE=1 group by MID ) b on j.MID=b.MID';
   end;
-  Factor.Open(CA_RIGHTS);
+  Factor.Open(CA_RIGHTS);  }
 end;
 
 procedure TShopGlobal.Setoffline(const Value: boolean);
@@ -235,11 +237,6 @@ end;
 procedure TShopGlobal.SetParameter(ParamName, Value: string);
 begin
 
-end;
-
-procedure TShopGlobal.SetTENANT_ID(const Value: integer);
-begin
-  FTENANT_ID := Value;
 end;
 
 initialization

@@ -8,7 +8,8 @@ uses
   RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs;
+  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, ZConnection, DB,
+  ZAbstractRODataset;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -167,6 +168,8 @@ type
     RzBmpButton3: TRzBmpButton;
     lblLogin: TLabel;
     ImageList2: TImageList;
+    ZConnection1: TZConnection;
+    ZReadOnlyQuery1: TZReadOnlyQuery;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -200,18 +203,18 @@ type
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
+    function ConnectToDb:boolean;
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
     procedure actfrmLockScreenExecute(Sender: TObject);
   public
     { Publicdeclarations }
-    procedure ConnectToDb;
     procedure LoadMenu;
     procedure LoadFrame;
     procedure InitVersioin;
     function GetDeskFlag:string;
-    procedure CheckRegister;
+    function CheckRegister:boolean;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
     function Login(Locked:boolean=false):boolean;
@@ -444,7 +447,6 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
-  ConnectToDb;
   Logined := false;
   Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
   result := Logined;
@@ -456,18 +458,12 @@ begin
             if CheckVersion then Exit;
           end;
        Loging := false;
-       Global.CompanyID := Params.CompanyID;
-       Global.CompanyName := Params.CompanyName;
+       Global.SHOP_ID := StrtoInt(Params.CompanyID);
+       Global.SHOP_NAME := Params.CompanyName;
        Global.UserID := Params.UserID;
        Global.UserName := Params.UserName;
        Global.CloseAll;
        Global.SysDate := lDate;
-
-//       if not UpdateDbVersion then
-//         begin
-//           Application.Terminate;
-//           Exit;
-//         end;
 //       if Params.RemoteConnnect then //连不上远程服务器时，不同步数据
 //          TfrmSyncMain.Login(self)
 //       else
@@ -504,7 +500,7 @@ begin
        Application.Terminate;
      end;
 //  Label1.Caption := '使用权:'+ShopGlobal.GetCOMP_NAME;
-  lblLogin.Caption := '登录用户:'+Global.UserName+'  登录门店:'+Global.CompanyName;
+  lblLogin.Caption := '登录用户:'+Global.UserName+'  登录门店:'+Global.SHOP_NAME;
 end;
 
 procedure TfrmShopMain.wm_Login(var Message: TMessage);
@@ -512,6 +508,7 @@ var prm:string;
 begin
   if Logined then Exit;
   try
+    if not ConnectToDb then Exit;
     Logined := Login(false);
   finally
     if not Application.Terminated then
@@ -532,7 +529,7 @@ begin
   Timer1.Enabled := Value;
   if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
   if Value then
-     lblUserInfo.Caption := s+' 欢迎您:'+Global.UserName+' 登录门店：'+Global.CompanyName+''
+     lblUserInfo.Caption := s+' 欢迎您:'+Global.UserName+' 登录门店：'+Global.SHOP_NAME+''
   else
      lblUserInfo.Caption := '未登录...请先登录系统后才能使用';
 end;
@@ -628,7 +625,7 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.CheckRegister;
+function TfrmShopMain.CheckRegister:boolean;
 begin
 //procedure DecodeVersion(sn:string);
 //var
@@ -875,10 +872,32 @@ begin
 
 end;
 
-procedure TfrmShopMain.ConnectToDb;
+function TfrmShopMain.ConnectToDb:boolean;
+var rs:TZQuery;
 begin
-  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'\Data\R3.db');
+  result := false;
+  if not FileExists(Global.InstallPath+'Data\R3.db') then
+     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
+  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
   Factor.Connect;
+  if not UpdateDbVersion then Exit;
+  ShopGlobal.offline := true;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
+    Factor.Open(rs);
+    if rs.IsEmpty then
+       begin
+         if not CheckRegister then Exit;
+       end
+    else
+       begin
+         ShopGlobal.TENANT_ID := rs.Fields[0].AsInteger;
+         result := true;
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

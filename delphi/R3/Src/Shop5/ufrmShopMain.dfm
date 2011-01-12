@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 135
-  Top = 93
+  Left = 121
+  Top = 342
   Width = 820
   Height = 558
   Caption = ''
@@ -9558,5 +9558,14 @@ inherited frmShopMain: TfrmShopMain
       F8003F800000FE00FF800000FFFFFF800000FE00FF800000FFFFFF800000FF83
       FF800000FFFFFF800000FFE7FF80000000000000000000000000000000000000
       000000000000}
+  end
+  object ZConnection1: TZConnection
+    Left = 480
+    Top = 344
+  end
+  object ZReadOnlyQuery1: TZReadOnlyQuery
+    Params = <>
+    Left = 600
+    Top = 240
   end
 end

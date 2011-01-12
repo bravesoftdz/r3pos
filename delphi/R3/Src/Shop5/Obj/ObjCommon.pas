@@ -32,7 +32,7 @@ public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
 const
-  ComVersion='7.0.0.50';
+  ComVersion='5.0.0.1';
 var
   FldXdict:TZReadonlyQuery;
 implementation

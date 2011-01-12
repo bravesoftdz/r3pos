@@ -7,12 +7,12 @@ inherited ShopGlobal: TShopGlobal
   object SYS_DEFINE: TZQuery
     SQL.Strings = (
       
-        'select * from SYS_DEFINE where COMP_ID='#39'----'#39' or COMP_ID=:COMP_I' +
-        'D and COMM not in ('#39'02'#39','#39'12'#39')')
+        'select * from SYS_DEFINE where TENANT_ID='#39'----'#39' or TENANT_ID=:TE' +
+        'NANT_ID and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown
-        Name = 'COMP_ID'
+        Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
     Left = 136
@@ -20,7 +20,7 @@ inherited ShopGlobal: TShopGlobal
     ParamData = <
       item
         DataType = ftUnknown
-        Name = 'COMP_ID'
+        Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
   end
@@ -29,30 +29,18 @@ inherited ShopGlobal: TShopGlobal
       'select '#39'0'#39' as MID,'#39'0'#39' as CHK ')
     Params = <>
     Left = 136
-    Top = 152
+    Top = 160
   end
   object CA_USERS: TZQuery
     SQL.Strings = (
       
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
+        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
+        'OP_ID from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
+      'and (TENANT_ID=:TENANT_ID or TENANT_ID=0) order by ACCOUNT')
     Params = <
       item
         DataType = ftUnknown
-        Name = 'COMP_ID'
+        Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
     Left = 136
@@ -60,7 +48,87 @@ inherited ShopGlobal: TShopGlobal
     ParamData = <
       item
         DataType = ftUnknown
-        Name = 'COMP_ID'
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object CA_SHOP_INFO: TZQuery
+    SQL.Strings = (
+      
+        'select SHOP_ID,SHOP_NAME,SHOP_SPELL from CA_SHOP_INFO where TENA' +
+        'NT_ID=:TENANT_ID order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 136
+    Top = 24
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object CA_DUTY_INFO: TZQuery
+    SQL.Strings = (
+      
+        'select DUTY_ID,DUTY_SPELL,DUTY_NAME from CA_DUTY_INFO where COMM' +
+        ' not in ('#39'02'#39','#39'12'#39')'
+      'and TENANT_ID=:TENANT_ID order by LEVEL_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 136
+    Top = 296
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object CA_ROLE_INFO: TZQuery
+    SQL.Strings = (
+      
+        'select ROLE_ID,ROLE_SPELL,ROLE_NAME from CA_ROLE_INFO where COMM' +
+        ' not in ('#39'02'#39','#39'12'#39')'
+      'and TENANT_ID=:TENANT_ID order by LEVEL_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 136
+    Top = 352
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object CA_TENANT: TZQuery
+    SQL.Strings = (
+      'select * from CA_TENANT where TENANT_ID=:TENANT_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 48
+    Top = 24
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
   end

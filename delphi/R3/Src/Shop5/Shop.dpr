@@ -35,7 +35,7 @@ var
 begin
   Application.Initialize;
   SFVersion := '.NET';
-  DBVersion := '5.0.1.7';
+  DBVersion := '5.0.0.1';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmShopMain, frmShopMain);

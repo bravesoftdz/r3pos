@@ -206,6 +206,7 @@ type
     procedure actfrmLockScreenExecute(Sender: TObject);
   public
     { Publicdeclarations }
+    procedure ConnectToDb;
     procedure LoadMenu;
     procedure LoadFrame;
     procedure InitVersioin;
@@ -871,6 +872,12 @@ end;
 function TfrmShopMain.GetDeskFlag: string;
 begin
 
+end;
+
+procedure TfrmShopMain.ConnectToDb;
+begin
+  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'\Data\R3.db');
+  Factor.Connect;
 end;
 
 end.

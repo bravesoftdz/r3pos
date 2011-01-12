@@ -16,9 +16,11 @@ type
     Fokline: boolean;
     FLimit: integer;
     Foffline: boolean;
+    FTENANT_ID: integer;
     procedure SetLimit(const Value: integer);
     procedure Setokline(const Value: boolean);
     procedure Setoffline(const Value: boolean);
+    procedure SetTENANT_ID(const Value: integer);
     { Private declarations }
   protected
     function GetSysDate: TDate;override;
@@ -41,6 +43,8 @@ type
     property okline:boolean read Fokline write Setokline;
     // 1是离线, 0 是联机
     property offline:boolean read Foffline write Setoffline;
+    //企业编号
+    property TENANT_ID:integer read FTENANT_ID write SetTENANT_ID;
   end;
 
 const
@@ -231,6 +235,11 @@ end;
 procedure TShopGlobal.SetParameter(ParamName, Value: string);
 begin
 
+end;
+
+procedure TShopGlobal.SetTENANT_ID(const Value: integer);
+begin
+  FTENANT_ID := Value;
 end;
 
 initialization

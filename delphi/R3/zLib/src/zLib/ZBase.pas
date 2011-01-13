@@ -1185,8 +1185,9 @@ begin
   Result := FindParam(Value);
   if Result = nil then
      begin
-       result := TParam.Create(self);
-       AddParam(result);
+       result := TParam(Add);
+       result.Name := Value;
+       result.ParamType := ptInput;
      end;
 end;
 

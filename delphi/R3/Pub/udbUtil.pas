@@ -251,7 +251,7 @@ begin
               begin
                 try
                   if (SQL.Count>0) then
-                    Factor.ExecSQL(StringReplace(SQL.Text,':COMP_ID',''''+Global.CompanyID+'''',[rfReplaceAll]));
+                     Factor.ExecSQL(StringReplace(SQL.Text,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]));
                   if Assigned(onCreateDbCallBack) then
                     onCreateDbCallBack('执行脚本',SQL.Text,CurSize*100 div TotalSize);
                 except
@@ -273,7 +273,7 @@ begin
          end;
            try
              if (SQL.Count>0) then
-                Factor.ExecSQL(StringReplace(SQL.Text,':COMP_ID',''''+Global.CompanyID+'''',[rfReplaceAll]));
+                Factor.ExecSQL(StringReplace(SQL.Text,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]));
              if Assigned(onCreateDbCallBack) then
                 onCreateDbCallBack('执行脚本',SQL.Text,100);
            except

@@ -177,7 +177,7 @@ begin
      begin
        ZQuery := TZQuery.Create(nil);
        try
-         ZQuery.Connection := ZConn;
+         ZQuery.Connection := ZConn;           
          ZQuery.SQL.Text := SQL;
          if ObjectFactory is TParams then
             ZQuery.Params.AssignValues(TParams(ObjectFactory))

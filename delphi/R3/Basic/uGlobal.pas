@@ -13,8 +13,6 @@ type
   TGlobal = class(TDataModule)
     procedure DataModuleCreate(Sender: TObject);
   private
-    FCompanyID: string;
-    FCompanyName: string;
     FInstallDir: string;
     FDataDir: string;
     FSysDate: TDate;
@@ -24,13 +22,15 @@ type
     FUserName:string;
     FIsAxCall: Boolean;
     Fupgrade: boolean;
+    FTENANT_ID: integer;
+    FTENANT_NAME: string;
+    FSHOP_ID: integer;
+    FSHOP_NAME: string;
     { Private declarations }
     function  GetUserID: string;
     function  GetUserName: string;
     procedure SetUserID(const Value: string);
     procedure SetUserName(const Value: string);
-    procedure SetCompanyID(const Value: string);
-    procedure SetCompanyName(const Value: string);
     procedure SetDataDir(const Value: string);
     procedure SetInstallDir(const Value: string);
     //临公文包数据集存放路径
@@ -40,6 +40,7 @@ type
     procedure SetAccountName(const Value: string);
     procedure SetIsAxCall(const Value: Boolean);
     procedure Setupgrade(const Value: boolean);
+    procedure SetTENANT_ID(const Value: integer);
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -67,10 +68,14 @@ type
     property UserID:string read GetUserID write SetUserID;
     //用户名user_name
     property UserName:string read GetUserName write SetUserName;
-    //公司代码
-    property CompanyID:string read FCompanyID write SetCompanyID;
-    //公司名称
-    property CompanyName:string read FCompanyName write SetCompanyName;
+    //企业编号
+    property TENANT_ID:integer read FTENANT_ID write SetTENANT_ID;
+    //企业名称
+    property TENANT_NAME:string read FTENANT_NAME write FTENANT_NAME;
+    //门店代码
+    property SHOP_ID:integer read FSHOP_ID write FSHOP_ID;
+    //门店名称
+    property SHOP_NAME:string read FSHOP_NAME write FSHOP_NAME;
     //职务代码 多个由","号分隔
     property Roles:string read FRoles write SetRoles;
 
@@ -240,8 +245,10 @@ begin
          begin
            Sleep(0);
            TZQuery(Components[i]).Close;
-           if TZQuery(Components[i]).Params.FindParam('COMP_ID')<>nil then
-              TZQuery(Components[i]).Params.FindParam('COMP_ID').AsString := CompanyId;
+           if TZQuery(Components[i]).Params.FindParam('SHOP_ID')<>nil then
+              TZQuery(Components[i]).Params.FindParam('SHOP_ID').AsInteger := SHOP_ID;
+           if TZQuery(Components[i]).Params.FindParam('TENANT_ID')<>nil then
+              TZQuery(Components[i]).Params.FindParam('TENANT_ID').AsInteger := TENANT_ID;
            if TZQuery(Components[i]).Params.FindParam('USER_ID')<>nil then
               TZQuery(Components[i]).Params.FindParam('USER_ID').AsString := UserId;
            if Components[i].Tag >0 then Continue;
@@ -320,16 +327,6 @@ procedure TGlobal.SetUserName(const Value: string);
 begin
   FUserName := Value;
 
-end;
-
-procedure TGlobal.SetCompanyID(const Value: string);
-begin
-  FCompanyID := Value;
-end;
-
-procedure TGlobal.SetCompanyName(const Value: string);
-begin
-  FCompanyName := Value;
 end;
 
 function TGlobal.DataSetByName(Name: string): TDataSet;
@@ -464,6 +461,11 @@ begin
        Factor.Open(Result);
      end;
   if Result.Filtered then Result.Filtered := false;
+end;
+
+procedure TGlobal.SetTENANT_ID(const Value: integer);
+begin
+  FTENANT_ID := Value;
 end;
 
 initialization

@@ -68,7 +68,7 @@ type
     property UserID:string read GetUserID write SetUserID;
     //用户名user_name
     property UserName:string read GetUserName write SetUserName;
-    //企业编号
+    //企业编号    
     property TENANT_ID:integer read FTENANT_ID write SetTENANT_ID;
     //企业名称
     property TENANT_NAME:string read FTENANT_NAME write FTENANT_NAME;

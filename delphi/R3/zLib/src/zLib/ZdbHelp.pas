@@ -164,7 +164,9 @@ end;
 
 function TdbHelp.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
-var ZQuery:TZQuery;
+var
+  ZQuery:TZQuery;
+  i:integer;
 begin
   result := -1;
   if ObjectFactory=nil then
@@ -173,6 +175,26 @@ begin
      end
   else
      begin
+
+       ZQuery := TZQuery.Create(nil);
+       try
+         ZQuery.SQL.Text := SQL;
+         if ObjectFactory is TParams then
+            ZQuery.Params.AssignValues(TParams(ObjectFactory))
+         else
+         begin
+         for i:=0 to ZQuery.Params.Count -1 do
+            begin
+              if copy(ZQuery.Params[i].Name,1,4)='OLD_' then
+                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue
+              else
+                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).OldValue
+            end;
+         end;
+         ZQuery.ExecSQL;
+       finally
+         ZQuery.Free;
+       end;
      end;
 end;
 

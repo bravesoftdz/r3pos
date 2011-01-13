@@ -10,7 +10,10 @@ uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlS
 
 type
 TftParam=class(TParam);
-TftParamList=class(TParams);
+TftParamList=class(TParams)
+  public
+    function ParamByName(const Value: string): TParam;
+  end;
 
 TField_=Class(TInterfacedObject)
   private
@@ -171,6 +174,7 @@ type
 
 TSQLCache=Class(TZSQLStrings);
 TZFactory=Class;
+//ԭTSingleObj
 TZFactory=Class(TRecord_,IZFactory)
   private
     FDeleteSQL:TSQLCache;
@@ -1172,6 +1176,18 @@ end;
 procedure TRecordList.MoveTo(CurIndex, NewIndex: Integer);
 begin
   FList.Move(CurIndex,NewIndex);
+end;
+
+{ TftParamList }
+
+function TftParamList.ParamByName(const Value: string): TParam;
+begin
+  Result := FindParam(Value);
+  if Result = nil then
+     begin
+       result := TParam.Create(self);
+       AddParam(result);
+     end;
 end;
 
 end.

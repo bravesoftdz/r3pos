@@ -3,7 +3,7 @@
 //        版本:5.0        修改日期:2011-01-10
 //        R3项目组
 //***********************************************************//
-unit ZIntf;
+unit ZIntf;           
 
 interface
 uses Classes,SysUtils,Windows,DB,Variants,ZSqlStrings;

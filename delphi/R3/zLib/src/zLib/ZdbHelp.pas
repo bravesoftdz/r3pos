@@ -311,7 +311,7 @@ var
 begin
   FactoryClass := GetClass(AClassName);
   if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
-  result := TZFactory(FactoryClass.Create);
+  result := TZFactoryClass(FactoryClass).Create;
   result.iDbType := dbHelp.iDbType;
 end;
 
@@ -565,7 +565,7 @@ var
 begin
   FactoryClass := GetClass(AClassName);
   if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
-  result := TZProcFactory(FactoryClass.Create);
+  result := TZProcFactoryClass(FactoryClass).Create(dbHelp,Params);
 end;
 var
   Factory:TZProcFactory;

@@ -333,20 +333,20 @@ begin
   Factory := CreateFactory(AClassName);
   try
     Factory.DataSet := DataSet;
-    Factory.Params.Assign(Params);
+    if Assigned(Params) then Factory.Params.Assign(Params);
     Factory.InitClass;
     Factory.ReadFromDataSet(DataSet);
     Factory.BeforeOpenRecord(dbHelp);
     if DataSet.ClassNameIs('TZQuery') then
        begin
          TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-         if Params<>nil then TZQuery(DataSet).Params.AssignValues(Params);
+         if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
        end
     else
     if DataSet.ClassNameIs('TZReadOnlyQuery') then
        begin
          TZReadOnlyQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-         if Params<>nil then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
+         if Assigned(Params) then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
        end
     else
        Raise Exception.Create('不支持的数据集.');
@@ -364,7 +364,10 @@ end;
 function TdbResolver.ExecSQL(const SQL: WideString;
   ObjectFactory: TZFactory): Integer;
 begin
-  result := dbHelp.ExecSQL(SQL,TObject(TZFactory));
+  if Assigned(ObjectFactory) then
+     result := dbHelp.ExecSQL(SQL,TObject(TZFactory))
+  else
+     result := dbHelp.ExecSQL(SQL);
 end;
 
 function TdbResolver.GetConnectionString: WideString;
@@ -405,7 +408,7 @@ begin
     UpdateSQL.dbHelp := dbHelp;
     UpdateSQL.Factory := Factory;
     Factory.DataSet := DataSet;
-    Factory.Params.Assign(Params);
+    if Assigned(Params) then Factory.Params.Assign(Params);
     Factory.InitClass;
     SaveTrans := dbHelp.InTransaction;
     if not SaveTrans then dbHelp.BeginTrans;
@@ -454,18 +457,18 @@ begin
   Factory := CreateFactory(AClassName);
   FList.Add(Factory); 
   Factory.DataSet := DataSet;
-  Factory.Params.Assign(Params);
+  if Assigned(Params) then  Factory.Params.Assign(Params);
   Factory.InitClass;
   if DataSet.ClassNameIs('TZQuery') then
      begin
        TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-       if Params<>nil then TZQuery(DataSet).Params.AssignValues(Params);
+       if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
      end
   else
   if DataSet.ClassNameIs('TZReadOnlyQuery') then
      begin
        TZReadOnlyQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-       if Params<>nil then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
+       if Assigned(Params) then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
      end
   else
      Raise Exception.Create('不支持的数据集.');
@@ -570,7 +573,7 @@ var
 begin
   Factory := CreateFactory(AClassName);
   try
-    Factory.Params.Assign(Params);
+    if Assigned(Params) then Factory.Params.Assign(Params);
     Factory.Execute(dbHelp,Params,V);
     result := V;
   finally

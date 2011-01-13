@@ -175,7 +175,6 @@ begin
      end
   else
      begin
-
        ZQuery := TZQuery.Create(nil);
        try
          ZQuery.Connection := ZConn;

@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 516
-  Top = 168
+  Left = 416
+  Top = 187
   Width = 744
   Height = 484
   Caption = #29992#25143#26723#26696#31649#29702

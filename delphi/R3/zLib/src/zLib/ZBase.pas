@@ -6,7 +6,7 @@
 unit ZBase;
 
 interface
-uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings;
+uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings,Dialogs;
 
 type
 TftParam=class(TParam);
@@ -387,12 +387,12 @@ begin
   end; //End Case
   case Field.DataSet.UpdateStatus of
      usModified:begin
-        if not VarIsClear(Field.NewValue) then
+        if not VarIsClear(Field.Value) then
            begin
-              if VarIsStr(Field.NewValue) and (Field.NewValue='') then
+              if VarIsStr(Field.Value) and (Field.Value='') then
                  FNewValue  := null
               else
-                 FNewValue  := Field.NewValue;
+                 FNewValue  := Field.Value;
            end
         else
            begin
@@ -403,10 +403,10 @@ begin
            end;
        end;
      usInserted:begin
-          if VarIsStr(Field.NewValue) and (Field.NewValue='') then
+          if VarIsStr(Field.Value) and (Field.Value='') then
              FNewValue  := null
           else
-             FNewValue  := Field.NewValue;
+             FNewValue  := Field.Value;
        end;
      else
        begin
@@ -796,6 +796,7 @@ begin
          end;
       TmpField.AssignValue(ADataSet.Fields[i]);
     end;
+    
 end;
 
 procedure TRecord_.WriteToDataSet(ADataSet: TDataSet;IsExists:Boolean=true);

@@ -114,9 +114,8 @@ var i:integer;
 begin
   inherited;
   if (Not Cds_Users.Active) or (Cds_Users.RecordCount = 0) then Exit;
-  {if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
-  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);}
-  i := 6;
+  {if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');}
+  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
     Params:=TftParamList.Create(nil);
@@ -252,17 +251,17 @@ end;
 procedure TfrmUsers.InitGrid;
 var tmp:TZQuery;
 begin
-  DBGridEh1.FieldColumns['DUTY_IDS'].PickList.Clear;
-  DBGridEh1.FieldColumns['DUTY_IDS'].KeyList.Clear;
+  DBGridEh1.FieldColumns['SHOP_ID'].PickList.Clear;
+  DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Clear;
 
-  {tmp := Global.GetZQueryFromName('CA_DEPTDUTY');
+  tmp := Global.GetZQueryFromName('CA_SHOP_INFO');
   tmp.First;
   while not tmp.Eof do
   begin
-    DBGridEh1.FieldColumns['DUTY_IDS'].KeyList.Add(tmp.Fields[0].asstring);
-    DBGridEh1.FieldColumns['DUTY_IDS'].PickList.Add(tmp.Fields[1].asstring);
+    DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Add(tmp.Fields[0].asstring);
+    DBGridEh1.FieldColumns['SHOP_ID'].PickList.Add(tmp.Fields[1].asstring);
     tmp.Next;
-  end;}
+  end;
 end;
 
 procedure TfrmUsers.FormShow(Sender: TObject);

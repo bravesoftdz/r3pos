@@ -93,14 +93,14 @@ inherited frmUsers: TfrmUsers
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'COMP_NAME'
+                    FieldName = 'SHOP_ID'
                     Footers = <>
-                    Title.Caption = #25152#22312#38376#24215
+                    Title.Caption = #25152#23646#38376#24215
                     Width = 94
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'DUTY_IDS'
+                    FieldName = 'DUTY_NAMES'
                     Footers = <>
                     Title.Caption = #32844#21153
                     Width = 76

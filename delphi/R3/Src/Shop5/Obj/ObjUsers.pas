@@ -47,7 +47,7 @@ var Str:string;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Add('select ACCOUNT from CA_USERS where ACCOUNT='''+FieldbyName('ACCOUNT').AsString+''' and ACCOUNT<>'''+FieldbyName('ACCOUNT').AsOldString+'''');
+    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT='''+FieldbyName('ACCOUNT').AsString+''' and ACCOUNT<>'''+FieldbyName('ACCOUNT').AsOldString+'''';
     AGlobal.Open(rs);
     if not rs.IsEmpty then Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
   finally
@@ -113,7 +113,7 @@ begin
     finally
       tmp.Free;
     end;}
-    Str := 'update CA_USERS set  COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where USER_ID = :USER_ID and TENANT_ID=:OLD_TENANT_ID';
+    Str := 'update CA_USERS set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where USER_ID = :OLD_USER_ID and TENANT_ID=:OLD_TENANT_ID';
     AGlobal.ExecSQL(Str,self);
     AGlobal.CommitTrans;
     Result:=True;

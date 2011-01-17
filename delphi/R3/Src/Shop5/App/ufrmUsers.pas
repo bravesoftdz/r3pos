@@ -88,12 +88,13 @@ begin
   //                 +'A.POSTALCODE,A.WORK_DATE,A.DIMI_DATE,A.DUTY_IDS,A.REMARK as REMARK,A.ID_NUMBER,A.QQ From CA_USERS A '+
   //                 ' left outer join CA_SHOP_INFO C on A.SHOP_ID=C.SHOP_ID '
   //                 +' Where A.COMM NOT IN (''02'',''12'') '+str;    //and (A.COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID='''+ccid+''' and COMP_TYPE=2 and COMM<>''02'' and COMM<>''12'') or A.COMP_ID='''+ccid+''')'
-  Cds_Users.SQL.Text:='Select A.* From CA_USERS A '+
+  Cds_Users.SQL.Text:='Select A.USER_ID,A.ACCOUNT,A.ENCODE,A.USER_NAME,A.USER_SPELL,A.PASS_WRD,A.SHOP_ID,A.DEPT_ID,A.DUTY_IDS,A.DUTY_NAMES,A.ROLE_IDS,A.ROLE_NAMES,A.TENANT_ID,'+
+                    'A.SEX,A.MOBILE,A.OFFI_TELE,A.FAMI_TELE,A.EMAIL,A.QQ,A.MSN,A.ID_NUMBER,A.IDN_TYPE,A.FAMI_ADDR,A.POSTALCODE,A.WORK_DATE,A.DIMI_DATE,A.REMARK From CA_USERS A '+
                    ' left outer join CA_SHOP_INFO C on A.SHOP_ID=C.SHOP_ID  '
                   +' Where A.COMM NOT IN (''02'',''12'') '+str;    //and (A.COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID='''+ccid+''' and COMP_TYPE=2 and COMM<>''02'' and COMM<>''12'') or A.COMP_ID='''+ccid+''')'
 
   Factor.Open(Cds_Users);
-  Cds_Users.RecordCount;
+
 end;
 
 procedure TfrmUsers.actDeleteExecute(Sender: TObject);

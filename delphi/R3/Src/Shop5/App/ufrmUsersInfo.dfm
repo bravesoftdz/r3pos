@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 534
-  Top = 208
+  Left = 824
+  Top = 165
   Caption = #29992#25143#26723#26696
   ClientHeight = 411
   ClientWidth = 530
@@ -464,53 +464,12 @@ inherited frmUsersInfo: TfrmUsersInfo
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 11
           end
-          object edtIDN_TYPE: TzrComboBoxList
+          object edtIDN_TYPE: TcxComboBox
             Left = 106
             Top = 11
             Width = 121
             Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
             TabOrder = 12
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'DUTY_NAME;DUTY_ID;DUTY_SPELL'
-            KeyField = 'DUTY_ID'
-            ListField = 'DUTY_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'DUTY_ID'
-                Footers = <>
-                Title.Caption = #20195#30721
-                Width = 30
-              end
-              item
-                EditButtons = <>
-                FieldName = 'DUTY_NAME'
-                Footers = <>
-                Title.Caption = #32844#21153#21517#31216
-                Width = 90
-              end
-              item
-                EditButtons = <>
-                FieldName = 'DUTY_SPELL'
-                Footers = <>
-                Visible = False
-              end>
-            DropWidth = 130
-            DropHeight = 200
-            ShowTitle = True
-            AutoFitColWidth = False
-            OnAddClick = edtDUTY_IDSAddClick
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew]
-            DropListStyle = lsFixed
           end
         end
       end

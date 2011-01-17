@@ -16,7 +16,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     BorderColor = clWhite
     Color = clWhite
     object RzLabel1: TRzLabel [0]
-      Left = 233
+      Left = 234
       Top = 10
       Width = 6
       Height = 12
@@ -76,7 +76,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel7: TRzLabel [4]
-      Left = 466
+      Left = 467
       Top = 35
       Width = 6
       Height = 12
@@ -121,7 +121,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel4: TRzLabel [7]
-      Left = 233
+      Left = 234
       Top = 90
       Width = 6
       Height = 12
@@ -152,8 +152,23 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel2: TRzLabel [9]
-      Left = 233
+      Left = 234
       Top = 35
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object RzLabel3: TRzLabel [10]
+      Left = 468
+      Top = 89
       Width = 6
       Height = 12
       Alignment = taRightJustify

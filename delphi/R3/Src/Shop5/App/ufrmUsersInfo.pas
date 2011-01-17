@@ -58,6 +58,7 @@ type
     edtMSN: TcxTextEdit;
     lab_SHOP_ID: TRzLabel;
     edtIDN_TYPE: TcxComboBox;
+    RzLabel3: TRzLabel;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -174,7 +175,7 @@ var temp,tmp,tmp1:TZQuery;
     j:integer;
 begin
   if dbState=dsBrowse then exit;
-  {if trim(edtACCOUNT.Text)='' then
+  if trim(edtACCOUNT.Text)='' then
   begin
     if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
     raise Exception.Create('用户账号不能为空！');
@@ -198,7 +199,7 @@ begin
   begin
     if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
     raise Exception.Create('所属门店不能为空！');
-  end; }
+  end;
 
   //此检测，现已经不能只对前台检测，要OBJ中对整个数据库检测
   if dbState = dsInsert then
@@ -269,6 +270,7 @@ begin
     //AObj.FieldbyName('DUTY_NAMES').AsString := '111';
     //AObj.FieldbyName('ROLE_IDS').AsString := '111';
     //AObj.FieldbyName('ROLE_NAMES').AsString := '111';
+    Aobj.FieldByName('SHOP_ID').AsInteger := Global.SHOP_ID; //所属门店控件有数据时，本行代码应删除
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   end;
   if (AObj.FieldbyName('ACCOUNT').AsString='') or (AObj.FieldbyName('ACCOUNT').AsString='自动编号..') then

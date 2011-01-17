@@ -56,8 +56,8 @@ type
     cdsTable: TZQuery;
     Lab_MSN: TRzLabel;
     edtMSN: TcxTextEdit;
-    edtIDN_TYPE: TzrComboBoxList;
     lab_SHOP_ID: TRzLabel;
+    edtIDN_TYPE: TcxComboBox;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -94,9 +94,9 @@ procedure TfrmUsersInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  {edtACCOUNT.Text:='自动编号..';
-  edtWORK_DATE.Date := Global.SysDate;
+  edtACCOUNT.Text:='自动编号..';
   edtSEX.ItemIndex := 0;
+  {edtWORK_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.CompanyID;
   edtSHOP_ID.Text := Global.CompanyName;}
 end;
@@ -121,12 +121,9 @@ begin
   if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
     ccid:=ccid
   else
-    ccid:=Global.CompanyID; }
-  ADODataSet1.Close;
-  ADODataSet1.SQL.Text := 'select SHOP_ID,SHOP_NAME,SHOP_SPELL from CA_SHOP_INFO where SHOP_TYPE<>3 and COMM<>''02'' and COMM<>''12''';
-                      //and (UPCOMP_ID='+QuotedStr(ccid)+' or SHOP_ID='+QuotedStr(ccid)+')'
-  Factor.Open(ADODataSet1);
-  edtSHOP_ID.DataSet:=ADODataSet1;
+    ccid:=Global.CompanyID;}
+
+  edtSHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
   Aobj := TRecord_.Create;
 end;
 
@@ -144,6 +141,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('USER_ID').asString := code;
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsTable.Close;
     Factor.Open(cdsTable,'TUsers',Params);
     cdsTable.Active;
@@ -176,7 +174,7 @@ var temp,tmp,tmp1:TZQuery;
     j:integer;
 begin
   if dbState=dsBrowse then exit;
-  if trim(edtACCOUNT.Text)='' then
+  {if trim(edtACCOUNT.Text)='' then
   begin
     if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
     raise Exception.Create('用户账号不能为空！');
@@ -199,8 +197,8 @@ begin
   if trim(edtSHOP_ID.AsString)='' then
   begin
     if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
-    raise Exception.Create('所在门店不能为空！');
-  end;
+    raise Exception.Create('所属门店不能为空！');
+  end; }
 
   //此检测，现已经不能只对前台检测，要OBJ中对整个数据库检测
   if dbState = dsInsert then
@@ -257,7 +255,7 @@ begin
   end;
   //检测结束
   WriteToObject(Aobj,self);
-  Aobj.FieldByName('SHOP_NAME').AsString:=edtSHOP_ID.Text;
+
   if edtSEX.ItemIndex=-1 then
     AObj.FieldByName('SEX').AsString:=''
   else
@@ -265,7 +263,13 @@ begin
   if not IsEdit(Aobj,cdsTable) then exit;
   if dbState = dsInsert then
   begin
-    AObj.FieldbyName('USER_ID').AsString := TSequence.GetSequence('USER_ID','----','',7);
+    AObj.FieldbyName('USER_ID').AsString := TSequence.NewId;
+    //AObj.FieldbyName('DEPT_ID').AsString := '111';
+    //AObj.FieldbyName('DUTY_IDS').AsString := '111';
+    //AObj.FieldbyName('DUTY_NAMES').AsString := '111';
+    //AObj.FieldbyName('ROLE_IDS').AsString := '111';
+    //AObj.FieldbyName('ROLE_NAMES').AsString := '111';
+    AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   end;
   if (AObj.FieldbyName('ACCOUNT').AsString='') or (AObj.FieldbyName('ACCOUNT').AsString='自动编号..') then
      AObj.FieldbyName('ACCOUNT').AsString := AObj.FieldbyName('USER_ID').AsString;
@@ -302,7 +306,7 @@ end;
 procedure TfrmUsersInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  //edtDUTY_IDS.DataSet:=Global.GetZQueryFromName('CA_DEPTDUTY');
+  edtDUTY_IDS.DataSet:=Global.GetZQueryFromName('CA_DUTY_INFO');
   if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
 end;
 

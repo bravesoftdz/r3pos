@@ -188,7 +188,7 @@ begin
               if copy(ZQuery.Params[i].Name,1,4)='OLD_' then
                  ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue
               else
-                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).OldValue
+                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).Value
             end;
          end;
          ZQuery.ExecSQL;

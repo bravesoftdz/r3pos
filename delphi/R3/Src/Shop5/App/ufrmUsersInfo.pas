@@ -265,10 +265,7 @@ begin
   if dbState = dsInsert then
   begin
     AObj.FieldbyName('USER_ID').AsString := TSequence.NewId;
-    //AObj.FieldbyName('DEPT_ID').AsString := '111';
-    //AObj.FieldbyName('DUTY_IDS').AsString := '111';
-    //AObj.FieldbyName('DUTY_NAMES').AsString := '111';
-
+    AObj.FieldbyName('DEPT_ID').AsString := '111';   // 本行只为隐形附值，以后完善要删除
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   end;
   if (AObj.FieldbyName('ACCOUNT').AsString='') or (AObj.FieldbyName('ACCOUNT').AsString='自动编号..') then

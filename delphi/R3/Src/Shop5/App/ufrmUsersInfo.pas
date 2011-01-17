@@ -71,7 +71,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    ccid:string;
+    //ccid:string;
     Aobj:TRecord_;
     Saved:Boolean;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -268,9 +268,7 @@ begin
     //AObj.FieldbyName('DEPT_ID').AsString := '111';
     //AObj.FieldbyName('DUTY_IDS').AsString := '111';
     //AObj.FieldbyName('DUTY_NAMES').AsString := '111';
-    //AObj.FieldbyName('ROLE_IDS').AsString := '111';
-    //AObj.FieldbyName('ROLE_NAMES').AsString := '111';
-    Aobj.FieldByName('SHOP_ID').AsInteger := Global.SHOP_ID; //所属门店控件有数据时，本行代码应删除
+
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   end;
   if (AObj.FieldbyName('ACCOUNT').AsString='') or (AObj.FieldbyName('ACCOUNT').AsString='自动编号..') then

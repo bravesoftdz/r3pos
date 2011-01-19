@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 824
-  Top = 165
+  Left = 597
+  Top = 183
   Caption = #29992#25143#26723#26696
   ClientHeight = 411
   ClientWidth = 530
@@ -16,7 +16,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     BorderColor = clWhite
     Color = clWhite
     object RzLabel1: TRzLabel [0]
-      Left = 234
+      Left = 235
       Top = 10
       Width = 6
       Height = 12
@@ -76,7 +76,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel7: TRzLabel [4]
-      Left = 467
+      Left = 468
       Top = 35
       Width = 6
       Height = 12
@@ -121,7 +121,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel4: TRzLabel [7]
-      Left = 234
+      Left = 235
       Top = 90
       Width = 6
       Height = 12
@@ -152,7 +152,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel2: TRzLabel [9]
-      Left = 234
+      Left = 235
       Top = 35
       Width = 6
       Height = 12
@@ -167,7 +167,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     object RzLabel3: TRzLabel [10]
-      Left = 468
+      Left = 469
       Top = 89
       Width = 6
       Height = 12

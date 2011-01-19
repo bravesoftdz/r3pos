@@ -137,7 +137,6 @@ end;
 procedure TfrmUsersInfo.Open(code: string);
 var
   Params:TftParamList;
-  rs:TZQuery;
 begin
   Params := TftParamList.Create(nil);
   try
@@ -145,7 +144,6 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsTable.Close;
     Factor.Open(cdsTable,'TUsers',Params);
-    cdsTable.Active;
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
     edtUSER_SPELL.Text:=AObj.FieldByName('USER_SPELL').AsString;

@@ -1503,7 +1503,7 @@ begin
 {$ENDIF}
           {$ENDIF}
 {$IFNDEF FOSNOMETA}
-          if IsReadOnly(I) then Attributes := Attributes + [faReadonly];
+          //if IsReadOnly(I) then Attributes := Attributes + [faReadonly];
           Precision := GetPrecision(I);
 {$ENDIF}
           DisplayName := FName;
@@ -1601,6 +1601,7 @@ procedure TZAbstractRODataset.InternalOpen;
 var
   ColumnList: TObjectList;
 begin
+  if not Assigned(Connection) then Exit;
   CheckSQLQuery;
   CheckConnected;
 
@@ -2076,6 +2077,7 @@ procedure TZAbstractRODataset.InternalPost;
             begin
            // allow autoincrement and defaulted fields to be null;
               columnindex := Resultset.FindColumn(Fields[i].FieldName);
+
               if (Columnindex = 0) or
                  (not Resultset.GetMetadata.HasDefaultValue(columnIndex) and
                   not Resultset.GetMetadata.IsAutoIncrement(columnIndex)) then
@@ -2094,10 +2096,12 @@ begin
    // allowing AutoIncrement fields and defaulted fields only to be null at insert.
    // We override standard Delphi and Fpc code.
 //  inherited;
-  Checkrequired;
+
+  //zhangsenrong delete
+  //Checkrequired;
 {$ELSE}
   {$IFDEF FPC}
-    Checkrequired;
+    //Checkrequired;
   {$ENDIF}
 {$ENDIF}
 end;
@@ -3254,7 +3258,6 @@ begin
      else
         InternalSort;
 end;
-
 {====================end of bangfauzan addition====================}
 
 end.

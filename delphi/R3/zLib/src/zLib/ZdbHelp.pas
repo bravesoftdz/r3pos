@@ -284,7 +284,6 @@ begin
     with TZAbstractDataset(DataSet) do
       begin
         ApplyUpdates;
-        CommitUpdates;
         result := true;
       end;
   finally

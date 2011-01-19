@@ -6,7 +6,7 @@
 unit ZdbFactory;
 
 interface
-uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase;
+uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset;
 type
   TdbFactory = class(TComponent)
   private
@@ -139,7 +139,9 @@ end;
 function TdbFactory.UpdateBatch(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
-  result := dbResolver.UpdateBatch(DataSet,AClassName,Params); 
+  result := dbResolver.UpdateBatch(DataSet,AClassName,Params);
+  if result then TZAbstractDataset(DataSet).CommitUpdates;
+
 end;
 
 procedure TdbFactory.RollbackTrans;
@@ -150,6 +152,7 @@ end;
 function TdbFactory.UpdateBatch(DataSet: TDataSet): Boolean;
 begin
   result := dbResolver.UpdateBatch(DataSet); 
+  if result then TZAbstractDataset(DataSet).CommitUpdates;
 end;
 
 function TdbFactory.AddBatch(DataSet: TDataSet; AClassName: string;

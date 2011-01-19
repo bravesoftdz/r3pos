@@ -84,7 +84,7 @@ type
   PZRowBuffer = ^TZRowBuffer;
 
   {** Implements a column buffer accessor. }
-666666666666y  TZRowAccessor = class(TObject)
+  TZRowAccessor = class(TObject)
   private
     FRowSize: Integer;
     FColumnsSize: Integer;
@@ -102,6 +102,9 @@ type
     function GetBlobObject(Buffer: PZRowBuffer; ColumnIndex: Integer): IZBlob;
     procedure SetBlobObject(Buffer: PZRowBuffer; ColumnIndex: Integer;
       Value: IZBlob);
+    function GetColumnNames(ItemIndex: integer): string;
+    function GetColumnLengths(ItemIndex: integer): Integer;
+    function GetColumnTypes(ItemIndex: integer): TZSQLType;
 
   protected
     procedure CheckColumnIndex(ColumnIndex: Integer);
@@ -198,6 +201,11 @@ type
     property ColumnsSize: Integer read FColumnsSize;
     property RowSize: Integer read FRowSize;                                  
     property RowBuffer: PZRowBuffer read FBuffer write FBuffer;
+    property HasBlobs:Boolean read FHasBlobs;
+    property ColumnCount:Integer read FColumnCount;
+    property ColumnNames[ItemIndex:integer]:string read GetColumnNames;
+    property ColumnTypes[ItemIndex:integer]:TZSQLType read GetColumnTypes;
+    property ColumnLengths[ItemIndex:integer]:Integer read GetColumnLengths;
   end;
 
 const
@@ -2337,6 +2345,21 @@ begin
     vtUnicodeString: SetUnicodeString(ColumnIndex, Value.VUnicodeString);
     vtDateTime: SetTimestamp(ColumnIndex, Value.VDateTime);
   end;
+end;
+
+function TZRowAccessor.GetColumnNames(ItemIndex: integer): string;
+begin
+  result := FColumnNames[ItemIndex];
+end;
+
+function TZRowAccessor.GetColumnLengths(ItemIndex: integer): Integer;
+begin
+  result := FColumnLengths[ItemIndex];
+end;
+
+function TZRowAccessor.GetColumnTypes(ItemIndex: integer): TZSQLType;
+begin
+  result := FColumnTypes[ItemIndex];
 end;
 
 end.

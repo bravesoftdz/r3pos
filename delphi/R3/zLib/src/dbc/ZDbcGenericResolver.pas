@@ -195,12 +195,13 @@ end;
 constructor TZGenericCachedResolver.Create(Statement: IZStatement;
   Metadata: IZResultSetMetadata);
 begin
+  if assigned(Statement) then //zhangsr
+  begin
   FConnection := Statement.GetConnection;
   FMetadata := Metadata;
   FDatabaseMetadata := Statement.GetConnection.GetMetadata;
   FIdentifierConvertor := TZDefaultIdentifierConvertor.Create(
     FDatabaseMetadata);
-
   FInsertColumns := TObjectList.Create;
   FWhereColumns := TObjectList.Create;
   FUpdateColumns := TObjectList.Create;
@@ -211,6 +212,7 @@ begin
     'update', 'changed')) = 'ALL';
   FWhereAll := UpperCase(DefineStatementParameter(Statement,
     'where', 'keyonly')) = 'ALL';
+  end;
 end;
 
 {**

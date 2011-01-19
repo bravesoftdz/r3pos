@@ -837,7 +837,7 @@ begin
           Apply_RefreshResultSet;
          end;
        finally
-        FRefreshSQL.Text:=Refresh_OldSQL;
+         FRefreshSQL.Text:=Refresh_OldSQL;
        end;
       end;
     end;

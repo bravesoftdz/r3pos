@@ -113,7 +113,7 @@ type
       read FResultSetType write FResultSetType;
     property ResultSetConcurrency: TZResultSetConcurrency
       read FResultSetConcurrency write FResultSetConcurrency;
-    property Statement: IZStatement read FStatement;
+    property Statement: IZStatement read FStatement write FStatement;
     property Metadata: TContainedObject read FMetadata write FMetadata;
   public
     constructor Create(Statement: IZStatement; SQL: string;
@@ -352,7 +352,7 @@ begin
   if Statement = nil then
   begin
     FResultSetType := rtForwardOnly;
-    FResultSetConcurrency := rcReadOnly;
+    FResultSetConcurrency := rcUpdatable;// rcReadOnly; zhangsenrong
     FPostUpdates := poColumnsAll;
     FLocateUpdates := loWhereAll;
     FMaxRows := 0;

@@ -88,6 +88,7 @@ type
 
     function GetResolver: IZCachedResolver;
     procedure SetResolver(Resolver: IZCachedResolver);
+    procedure SetStatement(Value: IZStatement);
 
     {BEGIN PATCH [1214009] Calc Defaults in TZUpdateSQL and Added Methods to GET and SET the database Native Resolver
       will help to implemented feature to Calculate default values in TZUpdateSQL
@@ -105,6 +106,7 @@ type
     procedure CancelUpdates;
     procedure RevertRecord;
     procedure MoveToInitialRow;
+    procedure InitRow;
   end;
 
   {** Implements cached ResultSet. }
@@ -226,6 +228,7 @@ type
     procedure CancelRowUpdates; override;
     procedure MoveToInsertRow; override;
     procedure MoveToCurrentRow; override;
+    procedure InitRow;
 
     function CompareRows(Row1, Row2: Integer; const ColumnIndices: TIntegerDynArray;
       const ColumnDirs: TBooleanDynArray): Integer; override;
@@ -236,6 +239,7 @@ type
 
     function GetResolver: IZCachedResolver;
     procedure SetResolver(Resolver: IZCachedResolver);
+    procedure SetStatement(Value: IZStatement);
     {BEGIN PATCH [1214009] CalcDefaults in TZUpdateSQL and Added Methods to GET the DB NativeResolver}
     function GetNativeResolver: IZCachedResolver;
     {END PATCH [1214009] CalcDefaults in TZUpdateSQL and Added Methods to GET the DB NativeResolver}
@@ -512,8 +516,10 @@ begin
     Index := LocateRow(FInitialRowsList, FSelectedRow.Index);
     if Index >= 0 then
     begin
-      FSelectedRow := FInitialRowsList[Index];
-      FRowAccessor.RowBuffer := FSelectedRow;
+      //zhangsr ÐÞ¸Ä
+      //FSelectedRow := FInitialRowsList[Index];
+      //FRowAccessor.RowBuffer := FSelectedRow;
+      FRowAccessor.RowBuffer := FInitialRowsList[Index];
     end;
   end else
     FRowAccessor.RowBuffer := nil;
@@ -1943,6 +1949,26 @@ begin
     while (LastRowNo < Row) and Fetch do;
 
   Result := inherited MoveAbsolute(Row);
+end;
+
+procedure TZAbstractCachedResultSet.InitRow;
+begin
+  CheckClosed;
+
+  { Creates a new row. }
+  FRowAccessor.Alloc;
+  FRowAccessor.MoveFrom(FInsertedRow);
+  FRowAccessor.RowBuffer^.UpdateType := utUnmodified;
+  FRowAccessor.RowBuffer^.Index := GetNextRowIndex;
+
+  FRowsList.Add(FRowAccessor.RowBuffer);
+  LastRowNo := FRowsList.Count;
+  MoveAbsolute(LastRowNo);
+end;
+
+procedure TZAbstractCachedResultSet.SetStatement(Value: IZStatement);
+begin
+  Statement := Value;
 end;
 
 end.

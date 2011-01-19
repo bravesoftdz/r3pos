@@ -44,6 +44,12 @@ function GetBarCode(ID:string;Size,Color:string;Len:Integer=13):string;
 function GetBarCodeID(BarCode:string):string;
 function GetBarCodeColor(BarCode:string):string;
 function GetBarCodeSize(BarCode:string):string;
+
+//判断控件值不是否为空，并聚焦
+procedure CheckEdtValueIsEmpty(CmpCtrl: TWinControl; MsgStr: string);
+
+
+
 implementation
 uses uGlobal,uShopGlobal,uFnUtil,uDsUtil,uXDictFactory;
 function GetBarCodeID(BarCode:string):string;
@@ -114,6 +120,7 @@ begin
     Cbx.Properties.Items.Objects[i].Free;
   Cbx.Properties.Items.Clear;
 end;
+
 procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='');
 var
   rs:TZQuery;
@@ -554,6 +561,7 @@ begin
     end;
   end;
 end;
+
 //写入数据源
 procedure WriteToObject(AObj:TRecord_;form:Tform;_tag:string='');
 var
@@ -659,6 +667,7 @@ begin
     end;
   end;
 end;
+
 //数值条件解悉
 function EncodeNumber(field:string;value:string):string;
 var
@@ -768,15 +777,44 @@ var
   i:integer;
 begin
   for i:=0 to Form.ComponentCount -1 do
+  begin
+    if Form.Components[i] is TDBGridEH then
     begin
-      if Form.Components[i] is TDBGridEH then
-         begin
-           Column := FindColumn('PROPERTY_01',TDBGridEh(Form.Components[i]));
-           if Column<>nil then
-              begin
-                Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码');
-              end;
-         end;
+      Column := FindColumn('PROPERTY_01',TDBGridEh(Form.Components[i]));
+      if Column<>nil then
+      begin
+        Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码');
+      end;
     end;
+  end;
 end;
+
+procedure CheckEdtValueIsEmpty(CmpCtrl: TWinControl; MsgStr: string);
+var
+  Msg: string;
+begin
+  if CmpCtrl=nil then Exit;
+  Msg:='     '+#13+trim(MsgStr)+#13+'     ';
+  if (CmpCtrl is TcxTextEdit) and (trim(TcxTextEdit(CmpCtrl).Text)='') then
+  begin
+    if TcxTextEdit(CmpCtrl).CanFocus then TcxTextEdit(CmpCtrl).SetFocus;
+    raise Exception.Create(Msg);
+  end else
+  if (CmpCtrl is TcxMemo) and (trim(TcxMemo(CmpCtrl).Text)='') then
+  begin
+    if TcxMemo(CmpCtrl).CanFocus then TcxMemo(CmpCtrl).SetFocus;
+    raise Exception.Create(Msg);
+  end else
+  if (CmpCtrl is TcxDateEdit) and (trim(TcxDateEdit(CmpCtrl).Text)='') then
+  begin
+    if TcxDateEdit(CmpCtrl).CanFocus then TcxDateEdit(CmpCtrl).SetFocus;
+    raise Exception.Create(Msg);
+  end else
+  if (CmpCtrl is TzrComboBoxList) and (trim(TzrComboBoxList(CmpCtrl).AsString)='') then
+  begin
+    if TzrComboBoxList(CmpCtrl).CanFocus then TzrComboBoxList(CmpCtrl).SetFocus;
+    raise Exception.Create(Msg);
+  end;
+end;
+
 end.

@@ -107,9 +107,30 @@ CREATE INDEX IX_CA_TENANT_TIME_STAMP ON CA_TENANT(TIME_STAMP);
 --关系类型
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','申请','RELATION_STATUS','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','审核','RELATION_STATUS','00',strftime('%s','now','localtime')-1293840000);
---企业关系
+
+--供应链
+CREATE TABLE [CA_RELATION](
+    --供应链ID号
+	[RELATION_ID] int NOT NULL,
+    --创建企业号
+	[TENANT_ID] int NOT NULL,
+	  --供应链名称
+	[RELATION_NAME] varchar(50) NOT NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_RELATION_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+ PRIMARY KEY ([RELATION_ID])
+);
+
+CREATE INDEX IX_CA_RELATION_TENANT_ID ON CA_RELATION(TENANT_ID);
+CREATE INDEX IX_CA_RELATION_TIME_STAMP ON CA_RELATION(TIME_STAMP);
+
+--供应链关系<企业关系>
 CREATE TABLE [CA_RELATIONS](
-    --ID号
+    --供应链关系ID号
+	[RELATIONS_ID] varchar(36) NOT NULL,
+    --供应链ID号
 	[RELATION_ID] int NOT NULL,
     --当前企业代码
 	[TENANT_ID] int NOT NULL,
@@ -117,7 +138,7 @@ CREATE TABLE [CA_RELATIONS](
 	[RELATI_ID] int NOT NULL,
     --关系类型
 	[RELATION_TYPE] [varchar](1) NOT NULL,
-    --结构树 0000 4位一级，最多支持7级
+    --结构树 0000 4位一级，最多支持7级 <在此不是一棵树，没有指企业供应链无法生成此代号>
 	[LEVEL_ID] [varchar](28) NOT NULL,
     --关系状态  1 申请 2 审核 
 	[RELATION_STATUS] [varchar](1) NOT NULL,
@@ -125,7 +146,7 @@ CREATE TABLE [CA_RELATIONS](
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_RELATIONS_COMM] DEFAULT ('00'),
     --更新时间 重2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
- PRIMARY KEY ([RELATION_ID])
+ PRIMARY KEY ([RELATIONS_ID])
 );
 
 CREATE INDEX IX_CA_RELATIONS_TENANT_ID ON CA_RELATIONS(TENANT_ID);
@@ -157,7 +178,7 @@ CREATE TABLE [CA_DEPT_INFO](
     --备注
 	[REMARK] [varchar](100) NULL,
     --排序号
-    [SEQ_NO] int NULL,
+  [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_DEPT_INFO_COMM] DEFAULT ('00'),
     --更新时间 重2011-01-01开始的秒数  
@@ -167,7 +188,7 @@ PRIMARY KEY ([DEPT_ID] )
 
 CREATE INDEX IX_CA_DEPT_INFO_TENANT_ID ON CA_DEPT_INFO(TENANT_ID);
 
-CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TIME_STAMP);
+CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TENANT_ID,TIME_STAMP);
 
 
 --门店资料
@@ -197,7 +218,7 @@ CREATE TABLE [CA_SHOP_INFO](
     --门店类型(原管理群组 对应PUB_CODE_INFO)
 	[SHOP_TYPE] [varchar](21) NULL,
     --排序号
-        [SEQ_NO] int NULL,
+  [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_SHOP_INFO_COMM] DEFAULT ('00'),
     --更新时间 重2011-01-01开始的秒数  
@@ -207,7 +228,7 @@ PRIMARY KEY([SHOP_ID])
 
 CREATE INDEX IX_CA_SHOP_INFO_TENANT_ID ON CA_SHOP_INFO(TENANT_ID);
 
-CREATE INDEX IX_CA_SHOP_INFO_TIME_STAMP ON CA_SHOP_INFO(TIME_STAMP);
+CREATE INDEX IX_CA_SHOP_INFO_TIME_STAMP ON CA_SHOP_INFO(TENANT_ID,TIME_STAMP);
 
 --职务资料
 CREATE TABLE [CA_DUTY_INFO](
@@ -232,7 +253,7 @@ PRIMARY KEY([DUTY_ID])
 
 CREATE INDEX IX_CA_DUTY_INFO_TENANT_ID ON CA_DUTY_INFO(TENANT_ID);
 
-CREATE INDEX IX_CA_DUTY_INFO_TIME_STAMP ON CA_DUTY_INFO(TIME_STAMP);
+CREATE INDEX IX_CA_DUTY_INFO_TIME_STAMP ON CA_DUTY_INFO(TENANT_ID,TIME_STAMP);
 
 --角色资料
 CREATE TABLE [CA_ROLE_INFO](
@@ -255,7 +276,7 @@ PRIMARY KEY([ROLE_ID])
 
 CREATE INDEX IX_CA_ROLE_INFO_TENANT_ID ON CA_ROLE_INFO(TENANT_ID);
 
-CREATE INDEX IX_CA_ROLE_INFO_TIME_STAMP ON CA_ROLE_INFO(TIME_STAMP);
+CREATE INDEX IX_CA_ROLE_INFO_TIME_STAMP ON CA_ROLE_INFO(TENANT_ID,TIME_STAMP);
 
 --用户资料
 CREATE TABLE [CA_USERS](
@@ -322,17 +343,17 @@ PRIMARY KEY ([USER_ID] )
 
 CREATE INDEX IX_CA_USERS_TENANT_ID ON CA_USERS(TENANT_ID);
 
-CREATE INDEX IX_CA_USERS_ACCOUNT ON CA_USERS(ACCOUNT);
+CREATE INDEX IX_CA_USERS_ACCOUNT ON CA_USERS(TENANT_ID,ACCOUNT);
 
-CREATE INDEX IX_CA_USERS_ENCODE ON CA_USERS(ENCODE);
+CREATE INDEX IX_CA_USERS_ENCODE ON CA_USERS(TENANT_ID,ENCODE);
 
-CREATE INDEX IX_CA_USERS_TIME_STAMP ON CA_USERS(TIME_STAMP);
+CREATE INDEX IX_CA_USERS_TIME_STAMP ON CA_USERS(TENANT_ID,TIME_STAMP);
 
 CREATE view [VIW_USERS]
 as
 select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,PASS_WRD,COMM from CA_USERS
 union all
-select 0 as TENANT_ID,0 as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID=0;
+select TENANT_ID,TENANT_ID*1000+1 as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD';
 
 --其他资料
 CREATE TABLE [PUB_CODE_INFO](
@@ -354,12 +375,12 @@ CREATE TABLE [PUB_CODE_INFO](
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_CODE_INFO_COMM]  DEFAULT ('00'),
     --更新时间 重2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
-PRIMARY KEY ([CODE_ID],[CODE_TYPE])
+PRIMARY KEY ([TENANT_ID],[CODE_ID],[CODE_TYPE])
 );
 
-CREATE INDEX IX_PUB_CODE_INFO_CODE_TYPE ON PUB_CODE_INFO(CODE_TYPE);
+CREATE INDEX IX_PUB_CODE_INFO_CODE_TYPE ON PUB_CODE_INFO(TENANT_ID,CODE_TYPE);
 
-CREATE INDEX IX_PUB_CODE_INFO_TIME_STAMP ON PUB_CODE_INFO(TIME_STAMP);
+CREATE INDEX IX_PUB_CODE_INFO_TIME_STAMP ON PUB_CODE_INFO(TENANT_ID,TIME_STAMP);
 
 CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID);
 
@@ -976,10 +997,6 @@ CREATE TABLE [SYS_XDICT_INFO] (
   PRIMARY KEY ([XDICT_ID],[XDICT_TYPE])
 ) ;
 
-CREATE INDEX IX_SYS_XDICT_INFO_XDICT_TYPE ON SYS_XDICT_INFO(XDICT_TYPE);
-
-CREATE INDEX IX_SYS_XDICT_INFO_XDICT_ID ON SYS_XDICT_INFO(XDICT_ID);
-
 CREATE INDEX IX_SYS_XDICT_INFO_TIME_STAMP ON SYS_XDICT_INFO(TIME_STAMP);
 
 --frf打印格式定义表
@@ -1004,9 +1021,7 @@ CREATE TABLE [SYS_FASTFILE] (
 
 CREATE INDEX IX_SYS_FASTFILE_TENANT_ID ON SYS_FASTFILE(TENANT_ID);
 
-CREATE INDEX IX_SYS_FASTFILE_frfFileName ON SYS_FASTFILE(frfFileName);
-
-CREATE INDEX IX_SYS_FASTFILE_TIME_STAMP ON SYS_FASTFILE(TIME_STAMP);
+CREATE INDEX IX_SYS_FASTFILE_TIME_STAMP ON SYS_FASTFILE(TENANT_ID,TIME_STAMP);
 
 --关健ID序号控制表
 CREATE TABLE [SYS_SEQUENCE] (
@@ -1024,9 +1039,7 @@ CREATE TABLE [SYS_SEQUENCE] (
 
 CREATE INDEX IX_SYS_SEQUENCE_TENANT_ID ON SYS_SEQUENCE(TENANT_ID);
 
-CREATE INDEX IX_SYS_SEQUENCE_SEQU_ID ON SYS_SEQUENCE(SEQU_ID);
-
-CREATE INDEX IX_SYS_SEQUENCE_TIME_STAMP ON SYS_SEQUENCE(TIME_STAMP);
+CREATE INDEX IX_SYS_SEQUENCE_TIME_STAMP ON SYS_SEQUENCE(TENANT_ID,TIME_STAMP);
 
 --模块类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','模块','MODU_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1037,7 +1050,9 @@ CREATE TABLE [CA_MODULE] (
         --软件产品
 	[PROD_ID] [varchar] (10) NOT NULL ,
         --模块编码
-	[MODU_ID] [varchar] (50) NOT NULL ,
+	[MODU_ID] [varchar] (20) NOT NULL ,
+        --模块时都为 0 功能项时对应 byte 串的位置号 0101010(1)<每一位为1代表有权限>
+	[SEQNO] int NOT NULL ,
         --模块名称
 	[MODU_NAME] [varchar] (50) NOT NULL ,
         --树级编码 3位一级
@@ -1057,23 +1072,23 @@ CREATE TABLE [CA_MODULE] (
 
 CREATE INDEX IX_CA_MODULE_PROD_ID ON CA_MODULE(PROD_ID);
 
-CREATE INDEX IX_CA_MODULE_MODU_ID ON CA_MODULE(MODU_ID);
+CREATE INDEX IX_CA_MODULE_MODU_ID ON CA_MODULE(PROD_ID,MODU_ID);
 
 CREATE INDEX IX_CA_MODULE_TIME_STAMP ON CA_MODULE(TIME_STAMP);
 
 --权限控制表
 CREATE TABLE [CA_RIGHTS] (
     --行号 guid值
-	[ROWS_ID] [varchar] (50) NOT NULL ,
+	[ROWS_ID] [varchar] (36) NOT NULL ,
     --企业代码
 	[TENANT_ID] int NOT NULL ,
         --模块代码
-	[MODU_ID] [varchar] (50) NOT NULL ,
+	[MODU_ID] [varchar] (20) NOT NULL ,
         --用户代码或角色代码
-	[ROLE_ID] [varchar] (50) NOT NULL ,
+	[ROLE_ID] [varchar] (36) NOT NULL ,
         --用户类型
 	[ROLE_TYPE] [int] NOT NULL ,
-        --是否有权限,0没有,1有，默认没有
+        --0代表整个模块没有权限 二制串转10整型
 	[CHK] [int] NOT NULL ,
         --通读标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_CA_RIGHTS_COMM] DEFAULT ('00'),
@@ -1081,11 +1096,12 @@ CREATE TABLE [CA_RIGHTS] (
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (ROWS_ID)
 ) ;
+
 CREATE INDEX IX_CA_RIGHTS_TENANT_ID ON CA_RIGHTS(TENANT_ID);
 
-CREATE INDEX IX_CA_RIGHTS_MODU_ID ON CA_RIGHTS(MODU_ID,ROLE_ID,ROLE_TYPE);
+CREATE INDEX IX_CA_RIGHTS_MODU_ID ON CA_RIGHTS(TENANT_ID,ROLE_ID);
 
-CREATE INDEX IX_CA_RIGHTS_TIME_STAMP ON CA_RIGHTS(TIME_STAMP);
+CREATE INDEX IX_CA_RIGHTS_TIME_STAMP ON CA_RIGHTS(TENANT_ID,TIME_STAMP);
 
 --商品常用指标
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','分类','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1107,10 +1123,10 @@ GO
 
 --商品分类
 CREATE TABLE [PUB_GOODSSORT] (
-    --企业代码
-	[TENANT_ID] int NOT NULL ,
         --分类代码
 	[SORT_ID] [varchar] (36) NOT NULL ,
+    --企业代码 0是中心统一分类
+	[TENANT_ID] int NOT NULL ,
         --树ID号 4位一级
 	[LEVEL_ID] [varchar] (20) NULL ,
         --分类名称
@@ -1122,23 +1138,37 @@ CREATE TABLE [PUB_GOODSSORT] (
         --排序号
 	[SEQ_NO] [int] NULL ,
         --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_SORT_INFO_COMM] DEFAULT ('00'),
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSSORT_COMM] DEFAULT ('00'),
         --时间戳 重2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,SORT_ID,SORT_TYPE)
 );
-CREATE INDEX IX_PUB_SORT_INFO_TENANT_ID ON PUB_SORT_INFO(TENANT_ID);
+CREATE INDEX IX_PUB_GOODSSORT_TENANT_ID ON PUB_GOODSSORT(TENANT_ID);
 
-CREATE INDEX IX_PUB_SORT_INFO_SORT_TYPE ON PUB_SORT_INFO(SORT_TYPE);
+CREATE INDEX IX_PUB_GOODSSORT_SORT_TYPE ON PUB_GOODSSORT(TENANT_ID,SORT_TYPE);
 
-CREATE INDEX IX_PUB_SORT_INFO_TIME_STAMP ON PUB_SORT_INFO(TIME_STAMP);
+CREATE INDEX IX_PUB_GOODSSORT_TIME_STAMP ON PUB_GOODSSORT(TENANT_ID,TIME_STAMP);
+
+--经营类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','连锁经营','RELATION_FLAG','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','自主经营','RELATION_FLAG','00',strftime('%s','now','localtime')-1293840000);
+
+--企业经营商品分类,自经营分类+连接分类
+CREATE view [VIW_GOODSSORT]
+as
+select 2 as RELATION_FLAG,0 as RELATION_ID,'自主经营' as RELATION_NAME,[TENANT_ID],[SORT_ID],[LEVEL_ID],[SORT_NAME],[SORT_TYPE],[SORT_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
+from PUB_GOODSSORT
+union all
+select 1 as RELATION_FLAG,B.RELATION_ID,B.RELATION_NAME,C.RELATI_ID as [TENANT_ID],[SORT_ID],A.[LEVEL_ID],[SORT_NAME],[SORT_TYPE],[SORT_SPELL],[SEQ_NO],A.[COMM],A.[TIME_STAMP]
+from PUB_GOODSSORT A,CA_RELATION B,CA_RELATIONS C
+where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID;
 
 --计量单位
 CREATE TABLE [PUB_MEAUNITS] (
-    --企业代码
-	[TENANT_ID] int NOT NULL ,
         --代码
 	[UNIT_ID] [varchar] (36) NOT NULL ,
+    --企业代码 0是中心统一分类
+	[TENANT_ID] int NOT NULL ,
         --名称
 	[UNIT_NAME] [varchar] (10) NOT NULL ,
         --拼音码
@@ -1148,13 +1178,23 @@ CREATE TABLE [PUB_MEAUNITS] (
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_MEAUNITS_COMM] DEFAULT ('00'),
         --更新时间 重2011-01-01开始的秒数
-        [TIME_STAMP] bigint NOT NULL,
+  [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,UNIT_ID)
 );
 
 CREATE INDEX IX_PUB_MEAUNITS_TENANT_ID ON PUB_MEAUNITS(TENANT_ID);
 
-CREATE INDEX IX_PUB_MEAUNITS_TIME_STAMP ON PUB_MEAUNITS(TIME_STAMP);
+CREATE INDEX IX_PUB_MEAUNITS_TIME_STAMP ON PUB_MEAUNITS(TENANT_ID,TIME_STAMP);
+
+--企业经营计量单位,自经营计量单位+连接计量单位
+CREATE view [VIW_MEAUNITS]
+as
+select 2 as RELATION_FLAG,[TENANT_ID],[UNIT_ID],[UNIT_NAME],[UNIT_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
+from PUB_MEAUNITS
+union all
+select 1 as RELATION_FLAG,C.RELATI_ID as [TENANT_ID],[UNIT_ID],[UNIT_NAME],[UNIT_SPELL],[SEQ_NO],A.[COMM],A.[TIME_STAMP]
+from PUB_MEAUNITS A,CA_RELATION B,CA_RELATIONS C
+where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID;
 
 --库存选项
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','要管库存','GODS_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1163,29 +1203,29 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 GO
 
 --积分选项
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('1','可积分','HAS_INTEGRAL')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','可积分','HAS_INTEGRAL','00',strftime('%s','now','localtime')-1293840000);
 GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('2','不积分','HAS_INTEGRAL')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','不积分','HAS_INTEGRAL','00',strftime('%s','now','localtime')-1293840000);
 GO
 
 --是否启用打拆率
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('1','启用','USING_PRICE')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','USING_PRICE','00',strftime('%s','now','localtime')-1293840000);
 GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('2','禁用','USING_PRICE')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','USING_PRICE','00',strftime('%s','now','localtime')-1293840000);
 GO
 
 --是否启用批号
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('1','启用','USING_BATCH_NO')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','USING_BATCH_NO','00',strftime('%s','now','localtime')-1293840000);
 GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('2','禁用','USING_BATCH_NO')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','USING_BATCH_NO','00',strftime('%s','now','localtime')-1293840000);
 GO
 
 --商品资料
 CREATE TABLE [PUB_GOODSINFO] (
-        --企业代码
-	[TENANT_ID] int NOT NULL ,
         --货号编码,系统自编唯一号
 	[GODS_ID] [varchar] (36) NOT NULL ,
+        --企业代码 0 为中心维护
+	[TENANT_ID] int NOT NULL ,
         --货号<店内识别码>
 	[GODS_CODE] [varchar] (20) NOT NULL ,
         --品名+规格
@@ -1226,6 +1266,8 @@ CREATE TABLE [PUB_GOODSINFO] (
 	[NEW_INPRICE] [decimal](18, 3) NULL ,
         --标准售价
 	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+        --最低售价
+	[NEW_LOWPRICE] [decimal](18, 3) NULL ,
         --是否启用折扣率 1启用,2禁用
 	[USING_PRICE] [int] NOT NULL ,
         --是否参考积分
@@ -1243,14 +1285,58 @@ CREATE TABLE [PUB_GOODSINFO] (
 
 CREATE INDEX IX_PUB_GOODSINFO_TENANT_ID ON PUB_GOODSINFO(TENANT_ID);
 
-CREATE INDEX IX_PUB_GOODSINFO_TIME_STAMP ON PUB_GOODSINFO(TIME_STAMP);
+CREATE INDEX IX_PUB_GOODSINFO_TIME_STAMP ON PUB_GOODSINFO(TENANT_ID,TIME_STAMP);
+
+--供应链与商品
+CREATE TABLE [PUB_GOODS_RELATION] (
+        --行号ID
+	[ROWS_ID] [varchar] (36) NOT NULL ,
+        --供应链
+	[RELATION_ID] int NOT NULL ,
+        --货品代码
+	[GODS_ID] [varchar] (36) NOT NULL , 
+        --行业内码<第三方系统内码>
+	[SECOND_ID] [varchar] (36) NOT NULL , 
+        --货号<识别码>
+	[GODS_CODE] [varchar] (36) NOT NULL , 
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODS_RELATION_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (ROWS_ID)
+) ;
+
+CREATE INDEX IX_PUB_GOODS_RELATION_RELATION_ID ON PUB_GOODS_RELATION(RELATION_ID);
+
+CREATE INDEX IX_PUB_GOODS_RELATION_GODS_ID ON PUB_GOODS_RELATION(GODS_ID);
+
+CREATE INDEX IX_PUB_GOODS_RELATION_TIME_STAMP ON PUB_GOODS_RELATION(TENANT_ID,TIME_STAMP);
+
+
+--企业经营商品视图,自经营商品+加盟商品
+CREATE view [VIW_GOODSINFO]
+as
+select 2 as RELATION_FLAG,[TENANT_ID],[GODS_ID],[GODS_CODE],[GODS_ID] as SECOND_ID,[GODS_NAME],[GODS_SPELL],[GODS_TYPE],
+       [SORT_ID1],[SORT_ID2],[SORT_ID3],[SORT_ID4],[SORT_ID5],[SORT_ID6],[SORT_ID7],[SORT_ID8],
+       [BARCODE],[CALC_UNITS],[SMALL_UNITS],[BIG_UNITS],[SMALLTO_CALC],[BIGTO_CALC],
+       [NEW_INPRICE],[NEW_OUTPRICE],[NEW_LOWPRICE],
+       [USING_PRICE],[HAS_INTEGRAL],[USING_BATCH_NO],[REMARK],[COMM],[TIME_STAMP]
+from PUB_GOODSINFO 
+union all
+select 1 as RELATION_FLAG,C.RELATI_ID as TENANT_ID,A.[GODS_ID],isnull(B.GODS_CODE,A.[GODS_CODE]) as GODS_CODE,B.SECOND_ID,[GODS_NAME],[GODS_SPELL],[GODS_TYPE],
+       [SORT_ID1],[SORT_ID2],[SORT_ID3],[SORT_ID4],[SORT_ID5],[SORT_ID6],[SORT_ID7],[SORT_ID8],
+       [BARCODE],[CALC_UNITS],[SMALL_UNITS],[BIG_UNITS],[SMALLTO_CALC],[BIGTO_CALC],
+       [NEW_INPRICE],[NEW_OUTPRICE],[NEW_LOWPRICE],
+       [USING_PRICE],[HAS_INTEGRAL],[USING_BATCH_NO],[REMARK],A.[COMM],A.[TIME_STAMP]
+from PUB_GOODSINFO A,PUB_GOODS_RELATION B,CA_RELATIONS C
+where A.GODS_ID=B.GODS_ID and B.RELATION_ID=C.RELATION_ID;
 
 --条码类型
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('0','计量单位','BARCODE_TYPE')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','计量单位','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('1','包装1','BARCODE_TYPE')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','包装1','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE) values('2','包装2','BARCODE_TYPE')
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','包装2','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 GO
 
 --条码表
@@ -1276,30 +1362,48 @@ CREATE TABLE [PUB_BARCODE] (
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_BARCODE_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
-        [TIME_STAMP] bigint NOT NULL,
+  [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (ROWS_ID)
 ) ;
 
 CREATE INDEX IX_PUB_BARCODE_TENANT_ID ON PUB_BARCODE(TENANT_ID);
 
-CREATE INDEX IX_PUB_BARCODE_TIME_STAMP ON PUB_BARCODE(TIME_STAMP);
+CREATE INDEX IX_PUB_BARCODE_TIME_STAMP ON PUB_BARCODE(TENANT_ID,TIME_STAMP);
 
-CREATE INDEX IX_PUB_BARCODE_GODS_ID ON PUB_BARCODE(GODS_ID);
+CREATE INDEX IX_PUB_BARCODE_GODS_ID ON PUB_BARCODE(TENANT_ID,GODS_ID);
 
-CREATE INDEX IX_PUB_BARCODE_BARCODE ON PUB_BARCODE(BARCODE);
+CREATE INDEX IX_PUB_BARCODE_BARCODE ON PUB_BARCODE(TENANT_ID,BARCODE);
 
 CREATE INDEX IX_PUB_BARCODE_ROWS_ID ON PUB_BARCODE(TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BATCH_NO);
+
+--企业经营条码表,自经营计量单位+连接计量单位
+CREATE view [VIW_BARCODE]
+as
+select 2 as RELATION_FLAG,[TENANT_ID],[ROWS_ID],[GODS_ID],[PROPERTY_01],[PROPERTY_02],[UNIT_ID],[BARCODE_TYPE],[BATCH_NO],[BARCODE],[COMM],[TIME_STAMP]
+from PUB_BARCODE
+union all
+select 1 as RELATION_FLAG,C.RELATI_ID as [TENANT_ID],[ROWS_ID],[GODS_ID],[PROPERTY_01],[PROPERTY_02],[UNIT_ID],[BARCODE_TYPE],[BATCH_NO],[BARCODE],A.[COMM],A.[TIME_STAMP]
+from PUB_BARCODE A,CA_RELATION B,CA_RELATIONS C
+where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID;
+
+--定价方式
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','统一定价','PRICE_METHOD','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','门店定价','PRICE_METHOD','00',strftime('%s','now','localtime')-1293840000);
+GO
 
 --商品价格
 CREATE TABLE [PUB_GOODSPRICE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --客户类型 #号为 所有客户
+        --客户类型 # 号为所有客户
 	[PRICE_ID] [varchar] (36) NOT NULL , 
         --门店代码
 	[SHOP_ID] int NOT NULL ,
         --货号编码
 	[GODS_ID] [varchar] (36) NOT NULL ,
+        --定价方式<变价方式>
+	[PRICE_METHOD] [varchar] (1) NOT NULL ,
         --计量单位售价
 	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
         --包装1单位售价
@@ -1313,7 +1417,329 @@ CREATE TABLE [PUB_GOODSPRICE] (
   PRIMARY KEY (TENANT_ID,GODS_ID,SHOP_ID,PRICE_ID)
 );
 CREATE INDEX IX_PUB_GOODSPRICE_TENANT_ID ON PUB_GOODSPRICE(TENANT_ID);
-CREATE INDEX IX_PUB_GOODSPRICE_SHOP_ID ON PUB_GOODSPRICE(SHOP_ID);
-CREATE INDEX IX_PUB_GOODSPRICE_GODS_ID ON PUB_GOODSPRICE(GODS_ID);
-CREATE INDEX IX_PUB_GOODSPRICE_PRICE_ID ON PUB_GOODSPRICE(PRICE_ID);
-CREATE INDEX IX_PUB_GOODSPRICE_TIME_STAMP ON PUB_GOODSPRICE(TIME_STAMP);
+CREATE INDEX IX_PUB_GOODSPRICE_SHOP_ID ON PUB_GOODSPRICE(TENANT_ID,SHOP_ID);
+CREATE INDEX IX_PUB_GOODSPRICE_GODS_ID ON PUB_GOODSPRICE(TENANT_ID,GODS_ID);
+CREATE INDEX IX_PUB_GOODSPRICE_PRICE_ID ON PUB_GOODSPRICE(TENANT_ID,PRICE_ID);
+CREATE INDEX IX_PUB_GOODSPRICE_TIME_STAMP ON PUB_GOODSPRICE(TENANT_ID,TIME_STAMP);
+
+--变价记录
+CREATE TABLE [LOG_PRICING_INFO] (
+        --行号ID
+	[ROWS_ID] [varchar] (36) NOT NULL ,
+        --变价日期 20080101
+	[PRICING_DATE] int NOT NULL , 
+        --操作员
+	[PRICING_USER] varchar(36) NOT NULL , 
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --客户类型 # 号为所有客户
+	[PRICE_ID] [varchar] (36) NOT NULL , 
+        --门店代码 0 时代码所有门店
+	[SHOP_ID] int NOT NULL ,
+        --货号编码
+	[GODS_ID] [varchar] (36) NOT NULL ,
+        --定价方式
+	[PRICE_METHOD] [varchar] (1) NOT NULL ,
+        --计量单位售价
+	[ORG_OUTPRICE] [decimal](18, 3) NULL ,
+        --包装1单位售价
+	[ORG_OUTPRICE1] [decimal](18, 3) NULL ,
+        --包装2单位售价
+	[ORG_OUTPRICE2] [decimal](18, 3) NULL ,
+        --计量单位售价
+	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+        --包装1单位售价
+	[NEW_OUTPRICE1] [decimal](18, 3) NULL ,
+        --包装2单位售价
+	[NEW_OUTPRICE2] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_LOG_PRICING_INFO_COMM] DEFAULT ('00'),
+        --更新时间 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (TENANT_ID,GODS_ID,SHOP_ID,PRICE_ID)
+);
+CREATE INDEX IX_LOG_PRICING_INFO_TENANT_ID ON LOG_PRICING_INFO(TENANT_ID);
+CREATE INDEX IX_LOG_PRICING_INFO_PRICING_DATE ON LOG_PRICING_INFO(TENANT_ID,PRICING_DATE);
+CREATE INDEX IX_LOG_PRICING_INFO_TIME_STAMP ON LOG_PRICING_INFO(TENANT_ID,TIME_STAMP);
+
+--优惠类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','不优惠','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','统一折扣率','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000); 
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','分类折扣率','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','指定售价','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+
+--积分类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','不积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按金额积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按毛利积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按数量积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+
+--客户分类
+CREATE TABLE [PUB_PRICEGRADE] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --编码
+	[PRICE_ID] [varchar] (36) NOT NULL ,
+        --名称
+	[PRICE_NAME] [varchar] (30) NOT NULL ,
+        --拼音码
+	[PRICE_SPELL] [varchar] (30) NOT NULL ,
+        --积分标准
+	[INTEGRAL] [numeric](18, 3) NULL ,
+        --积分方法
+	[INTE_TYPE] [int] NULL ,
+        --积分系数 1分=多少金额/毛利/数量
+	[INTE_AMOUNT] [decimal](18, 3) NULL ,
+        --最低折扣率
+	[MINIMUM_PERCENT] [numeric](6, 3) NULL ,
+        --优惠类型
+	[AGIO_TYPE] [int] NULL ,
+        --指定折扣率
+	[AGIO_PERCENT] [numeric](6, 3) NULL ,
+        --分类折扣率
+	[AGIO_SORTS] [varchar] (1000) NULL ,
+        --排序号
+	[SEQ_NO] [int] NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_PRICEGRADE_COMM] DEFAULT ('00'),
+        --时间戳 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (TENANT_ID,PRICE_ID)
+);
+CREATE INDEX IX_PUB_PRICEGRADE_TENANT_ID ON PUB_PRICEGRADE(TENANT_ID);
+CREATE INDEX IX_PUB_PRICEGRADE_TIME_STAMP ON PUB_PRICEGRADE(TENANT_ID,TIME_STAMP);
+
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','客户分类','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','结算方式','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('7','银行编码','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000)
+GO
+
+--企业客户
+CREATE TABLE [PUB_CLIENTINFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --编码
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --1 是供应商 2是客户
+	[CLIENT_TYPE] [varchar] (1) NOT NULL ,
+        --代码,<标识码> 
+	[CLIENT_CODE] [varchar] (20) NOT NULL ,
+        --名称
+	[CLIENT_NAME] [varchar] (50) NOT NULL ,
+        --拼音码
+	[CLIENT_SPELL] [varchar] (50) NOT NULL ,
+        --分类编码
+	[SORT_ID] [varchar] (21) NOT NULL ,
+        --地区编码
+	[REGION_ID] [varchar] (21) NOT NULL ,
+        --结帐方式
+	[SETTLE_CODE] [varchar] (1) NOT NULL ,
+        --地址
+	[ADDRESS] [varchar] (50) NULL ,
+        --邮编
+	[POSTALCODE] [varchar] (6) NULL ,
+        --联系人
+	[LINKMAN] [varchar] (10) NULL ,
+        --电话3
+	[TELEPHONE3] [varchar] (30) NULL ,
+        --电话1
+	[TELEPHONE1] [varchar] (30) NULL ,
+        --电话2
+	[TELEPHONE2] [varchar] (30) NULL ,
+        --传真
+	[FAXES] [varchar] (30) NULL ,
+        --主页
+	[HOMEPAGE] [varchar] (50) NULL ,
+        --电子邮件
+	[EMAIL] [varchar] (50) NULL ,
+        --QQ
+  [QQ]    [varchar]  (20) NUll,
+        --开户行
+	[BANK_ID] [varchar] (10) NULL ,
+        --帐户
+	[ACCOUNT] [varchar] (20) NULL ,
+        --储值卡号
+	[IC_CARDNO] [varchar] (36) NULL ,
+        --发票类型
+	[INVOICE_FLAG] [varchar] (50) NULL ,
+        --备注
+  [REMARK]       [varchar] (200) NULL,
+        --进项税率
+	[TAX_RATE] [decimal](18, 3) NULL ,
+        --客户等级
+	[PRICE_ID] [varchar] (36) NULL ,
+        --累计积分
+	[ACCU_INTEGRAL] [decimal](10, 3) NULL ,
+        --使用积分
+	[RULE_INTEGRAL] [decimal](18, 3) NULL ,
+        --可用积分
+	[INTEGRAL] [decimal](18, 3) NULL ,
+        --所属门店
+	[SHOP_ID] int NOT NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
+        --时间戳 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (TENANT_ID,CLIENT_ID)
+);
+
+CREATE INDEX IX_PUB_CLIENTINFO_TENANT_ID ON PUB_CLIENTINFO(TENANT_ID);
+CREATE INDEX IX_PUB_CLIENTINFO_TIME_STAMP ON PUB_CLIENTINFO(TENANT_ID,TIME_STAMP);
+
+--个人消费者<会员>
+CREATE TABLE [PUB_CUSTOMER] (
+        --会员编码
+	[CUST_ID] [varchar] (36) NOT NULL ,
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --入会门店
+	[SHOP_ID] int NOT NULL ,
+        --会员卡号
+	[CUST_CODE] [varchar] (20) NOT NULL ,
+        --会员名称
+	[CUST_NAME] [varchar] (30) NOT NULL ,
+        --拼音码
+	[CUST_SPELL] [varchar] (30) NOT NULL ,
+        --性别
+	[SEX] [varchar] (4) NULL ,
+        --电子邮件
+	[EMAIL] [varchar] (50) NULL ,
+        --办法电话
+	[OFFI_TELE] [varchar] (30) NULL ,
+        --家庭电话
+	[FAMI_TELE] [varchar] (30) NULL ,
+        --移动电话
+	[MOVE_TELE] [varchar] (30) NULL ,
+        --生日
+	[BIRTHDAY] [varchar] (10) NULL ,
+        --家庭地址
+	[FAMI_ADDR] [varchar] (50) NULL ,
+        --邮编
+	[POSTALCODE] [varchar] (6) NULL ,
+        --证件号
+	[CERT_CODE] [varchar] (20) NULL ,
+        --证件类型
+	[CERTIFICATE] [varchar] (10) NULL ,
+        --储值卡号
+	[IC_CARDNO] [varchar] (36) NULL ,
+        --消费密码
+	[PASSWRD] [varchar] (6) NULL ,
+        --入会日期
+	[SND_DATE] [varchar] (10) NULL ,
+        --续会日期
+	[CON_DATE] [varchar] (10) NULL ,
+        --有效日期
+	[END_DATE] [varchar] (10) NULL ,
+        --客户等级
+	[PRICE_ID] [varchar] (36) NULL ,
+        --累计积分
+	[ACCU_INTEGRAL] [decimal](10, 3) NULL ,
+        --使用积分
+	[RULE_INTEGRAL] [decimal](18, 3) NULL ,
+        --可用积分
+	[INTEGRAL] [decimal](18, 3) NULL ,
+        --可用余额
+	[BALANCE] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CUSTOMER_COMM] DEFAULT ('00'),
+        --备注
+	[REMARK] [varchar] (500) NULL ,
+        --时间戳 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (CUST_ID)
+);
+
+CREATE INDEX IX_PUB_CUSTOMER_TENANT_ID ON PUB_CUSTOMER(TENANT_ID);
+CREATE INDEX IX_PUB_CUSTOMER_TIME_STAMP ON PUB_CUSTOMER(TENANT_ID,TIME_STAMP);
+
+--IC状态
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','可用','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','暂用','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','注销','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
+GO
+
+--IC类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','记录卡','IC_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','不记名','IC_TYPE','00',strftime('%s','now','localtime')-1293840000);
+GO
+
+--储值卡信息
+CREATE TABLE [PUB_IC_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --IC卡号
+	[IC_CARDNO] [varchar] (36) NOT NULL ,
+        --制卡日期
+	[CREA_DATE] [varchar] (10) NOT NULL ,
+        --制卡用户
+	[CREA_USER] [varchar] (20) NOT NULL ,
+        --摘要
+	[IC_INFO] [varchar] (100) NOT NULL ,
+        --IC卡状态
+	[IC_STATUS] [varchar] (1) NOT NULL ,
+        --IC卡类型
+	[IC_TYPE] [varchar] (1) NOT NULL ,
+        --余额
+	[BALANCE] [decimal](18, 3) NULL ,
+        --最近使用日期
+	[USING_DATE] [varchar] (10) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_IC_INFO_COMM] DEFAULT ('00'),
+        --时间戳 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (TENANT_ID,IC_CARDNO)
+);
+
+CREATE INDEX IX_PUB_IC_INFO_TENANT_ID ON PUB_IC_INFO(TENANT_ID);
+CREATE INDEX IX_PUB_IC_INFO_TIME_STAMP ON PUB_IC_INFO(TENANT_ID,TIME_STAMP);
+
+--当前库存
+CREATE TABLE [STO_STORAGE] (
+        --行ID
+	[ROWS_ID] varchar(36) NOT NULL ,
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (10) NOT NULL ,
+        --批号，没批号用 #号
+	[BATCH_NO] [varchar] (20) NOT NULL,
+        --货品代码
+	[GODS_ID] [varchar] (38) NOT NULL ,
+        --尺码 不分的用 #号
+	[PROPERTY_01] [varchar] (20) NOT NULL ,
+        --颜色 不分的用 #号
+	[PROPERTY_02] [varchar] (20) NOT NULL ,
+        --最近入库日期
+	[NEAR_INDATE] [varchar] (10) NULL ,
+        --最近出库日期
+	[NEAR_OUTDATE] [varchar] (10) NULL ,
+        --成本金额
+	[AMONEY] [decimal](18, 3) NOT NULL ,
+        --库存数量
+	[AMOUNT] [decimal](18, 3) NULL ,
+        --成本单价
+	[COST_PRICE] [decimal](18, 6) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_STORAGE_COMM] DEFAULT ('00'),
+        --时间戳 重2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  PRIMARY KEY (ROWS_ID)
+);
+CREATE INDEX IX_STO_STORAGE_TENANT_ID ON STO_STORAGE(TENANT_ID);
+CREATE INDEX IX_STO_STORAGE_TIME_STAMP ON STO_STORAGE(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_STO_STORAGE_GODS_ID ON STO_STORAGE(TENANT_ID,GODS_ID);
+CREATE INDEX IX_STO_STORAGE_SHOP_ID ON STO_STORAGE(TENANT_ID,SHOP_ID);
+CREATE INDEX IX_STO_STORAGE_KEYINDEX ON STO_STORAGE(TENANT_ID,SHOP_ID,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO);

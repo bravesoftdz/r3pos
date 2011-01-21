@@ -151,8 +151,9 @@ type
     procedure CancelUpdates;
     procedure RevertRecord;
 
-    procedure SaveToStream(Stream:TStream;OnlyChanged:boolean=false);
+    procedure SaveToStream(Stream:TStream;OnlyChanged:boolean=false;SaveUpdatus:TUpdateStatus=usUnmodified);
     procedure LoadFromStream(Stream:TStream);
+    procedure AddFromStream(Stream:TStream);
     procedure CreateDataSet;
 
 
@@ -1136,7 +1137,7 @@ begin
  end;
 end;
 
-procedure TZAbstractDataset.SaveToStream(Stream: TStream;OnlyChanged:boolean=false);
+procedure TZAbstractDataset.SaveToStream(Stream: TStream;OnlyChanged:boolean=false;SaveUpdatus:TUpdateStatus=usUnmodified);
 procedure WriteHeader;
 var
   i,w:integer;
@@ -1324,7 +1325,12 @@ begin
      UpdateType := usUnmodified;
   if OnlyChanged and (UpdateType=usUnmodified) then Exit;
   Stream.Write(row,SizeOf(row));
+  case SaveUpdatus of
+  usInserted:Stream.Write(usInserted,SizeOf(UpdateType));
+  usDeleted:Stream.Write(usDeleted,SizeOf(UpdateType));
+  else
   Stream.Write(UpdateType,SizeOf(UpdateType));
+  end;
   //打包修改前原值
   if UpdateType=usModified then
   begin
@@ -1409,6 +1415,230 @@ begin
    Connection := SConn;
    EnableControls;
  end;
+end;
+
+procedure TZAbstractDataset.AddFromStream(Stream: TStream);
+procedure ReadHeader;
+var
+  w,i:integer;
+  ColumnCount,ColumnsSize,RowSize,FieldSize,Size:Integer;
+  HasBlobs:boolean;
+  FieldType: TFieldType;
+  vType:TZSQLType;
+  FieldName: string;
+  FName: string;
+begin
+  FieldDefs.Clear;
+  Fields.Clear;
+  Stream.Read(ColumnCount,SizeOf(ColumnCount));
+  Stream.Read(ColumnsSize,SizeOf(ColumnsSize));
+  Stream.Read(HasBlobs,SizeOf(HasBlobs));
+  Stream.Read(RowSize,SizeOf(RowSize));
+  for i := 1 to ColumnCount do
+    begin
+    //读字段名
+       Stream.Read(w,SizeOf(w));
+       SetLength(FieldName,w);
+       Stream.Read(Pchar(FieldName)^,w);
+    //读数据类型
+       Stream.Read(vType,SizeOf(vType));
+    //读字段长度
+       Stream.Read(FieldSize,SizeOf(FieldSize));
+
+       if FieldName <> RowAccessor.GetColumnName(i) then Raise Exception.Create('数据包不配符，不能添加');  
+       if vType <> RowAccessor.GetColumnType(i) then Raise Exception.Create('数据包不配符，不能添加');
+       if FieldSize <> RowAccessor.GetColumnLength(i) then Raise Exception.Create('数据包不配符，不能添加');  
+    end;
+end;
+procedure ReadField;
+var
+  s1:string;
+  s2:widestring;
+  s3:TByteDynArray;
+  s4:IZBlob;
+  s5:boolean;
+  s6:ShortInt;
+  s7:Integer;
+  s8:Single;
+  s9:Double;
+  s10:Extended;
+  s11:TDatetime;
+  zIsNull:boolean;
+  i,w:integer;
+  sm:TMemoryStream;
+begin
+  for i:=1 to RowAccessor.ColumnCount do
+     begin
+      case RowAccessor.GetColumnType(i) of
+      stBoolean:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s5,SizeOf(s5));
+             ResultSet.UpdateBoolean(i,s5);
+          end;
+        end;
+      stByte:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s6,SizeOf(s6));
+             ResultSet.UpdateByte(i,s6);
+          end;
+        end;
+      stInteger:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s7,SizeOf(s7));
+             ResultSet.UpdateInt(i,s7);
+          end;
+        end;
+      stFloat:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s8,SizeOf(s8));
+             ResultSet.UpdateFloat(i,s8);
+          end;
+        end;
+      stDouble:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s9,SizeOf(s9));
+             ResultSet.UpdateDouble(i,s9);
+          end;
+        end;
+      stBigDecimal:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s10,SizeOf(s10));
+             ResultSet.UpdateBigDecimal(i,s10);
+          end;
+        end;
+      stString:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(w,SizeOf(Integer));
+             setlength(s1,w);
+             Stream.Read(pchar(s1)^,w);
+             ResultSet.UpdateString(i,s1);
+          end;
+        end;
+      stUnicodeString:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.read(w,SizeOf(Integer));
+             setlength(s1,w*2);
+             Stream.read(pchar(s2)^,w*2);
+             ResultSet.UpdateUnicodeString(i,s2);
+          end;
+        end;
+      stBytes:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.read(w,SizeOf(Integer));
+             if w<>0 then
+             begin
+               Setlength(s3,w);
+               Stream.read(s3[0],w);
+               ResultSet.UpdateBytes(i,s3);
+             end;
+          end;
+        end;
+      stDate,stTime,stTimestamp:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.read(s11,SizeOf(s11));
+             ResultSet.UpdateDate(i,s11);
+          end;
+        end;
+      stAsciiStream, stUnicodeStream, stBinaryStream:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(w,SizeOf(w));
+             if w>0 then
+             begin
+               sm := TMemoryStream.Create;
+               try
+                 sm.CopyFrom(Stream,w);
+                 Stream.Position := 0;
+                 case RowAccessor.GetColumnType(i) of
+                 stAsciiStream:ResultSet.UpdateAsciiStream(i,sm);
+                 stUnicodeStream:ResultSet.UpdateUnicodeStream(i,sm);
+                 stBinaryStream:ResultSet.UpdateBinaryStream(i,sm);
+                 end;
+               finally
+                 sm.Free;
+               end;
+             end;
+          end;
+        end;
+      else
+        Raise Exception.Create('不支持的数据类型.');
+      end;
+     end;
+end;
+procedure ReadDataLine;
+var
+  UpdateType:TUpdateStatus ;
+  row:integer;
+begin
+  Stream.Read(row,SizeOf(row));
+  Stream.Read(UpdateType,SizeOf(UpdateType));
+  CachedResultSet.MoveToInsertRow;
+  ReadField;
+  case UpdateType of
+    usInserted:CachedResultSet.InsertRow;
+  else
+    CachedResultSet.InitRow;
+  end;
+  case UpdateType of
+  usModified:begin
+     ReadField;
+     CachedResultSet.UpdateRow;
+     end;
+  usDeleted:begin
+     CachedResultSet.DeleteRow;
+     end;
+  end;
+  FetchCount := FetchCount+1;
+  CurrentRows.Add(Pointer(ResultSet.GetRow))
+end;
+begin
+  if Stream.Size = 0 then Raise Exception.Create('无效数据包...');
+  if not Active then
+     begin
+       LoadFromStream(Stream);
+       Exit;
+     end;
+  Stream.Position := 0;
+  ReadHeader;
+  //读数据行
+  while Stream.Position < Stream.Size do
+    ReadDataLine;
+  Active := true;
+  { Performs sorting. }
+  if SortedFields <> '' then
+      InternalSort;
 end;
 
 end.

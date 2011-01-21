@@ -398,7 +398,6 @@ type
 
   public
     property Active;
-    property FieldDefs stored False;
     property DbcStatement: IZPreparedStatement read FStatement;
     property DbcResultSet: IZResultSet read FResultSet;
 
@@ -408,6 +407,7 @@ type
     property SortType : TSortType read FSortType write SetSortType
       default stAscending; {bangfauzan addition}
 
+    property FieldDefs stored true;
     property AutoCalcFields;
     property BeforeOpen;
     property AfterOpen;

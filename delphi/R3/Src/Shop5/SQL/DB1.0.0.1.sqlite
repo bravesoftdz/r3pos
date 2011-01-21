@@ -20,6 +20,187 @@ CREATE INDEX IX_PUB_PARAMS_TYPE_CODE ON PUB_PARAMS(TYPE_CODE);
 
 CREATE INDEX IX_PUB_PARAMS_TIME_STAMP ON PUB_PARAMS(TIME_STAMP);
 
+--认证中心2011-01-21
+--服务器路由表
+CREATE TABLE [PUB_SERVER_INFO](
+    --服务器编号
+	[SRVR_ID] [varchar](10) NOT NULL,
+    --服务名称
+	[SRVR_NAME] [varchar](30) NOT NULL,
+    --拼音码
+	[SRVR_SPELL] [varchar](30) NOT NULL,
+    --安装地点
+	[ADDRESS] [varchar](100) NOT NULL,
+    --安装日期
+	[CREA_DATE] [varchar](10) NOT NULL,
+    --服务器状态
+	[SRVR_STATUS] [varchar](1) NOT NULL,
+    --服务器类型
+	[SRVR_TYPE] [varchar](1) NOT NULL,
+    --所属地区
+	[REGION_ID] [varchar](21) NOT NULL,
+    --主机地址
+	[HOST_NAME] [varchar](20) NOT NULL,
+    --服务端口号
+	[SRVR_PORT] int NOT NULL,
+    --URL路径,相对路径要结合IP取得全路径
+	[SRVR_PATH] [varchar](50) NOT NULL,
+    --排序号
+    [SEQ_NO] int NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_SERVER_INFO_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+PRIMARY KEY([SRVR_ID])
+);
+
+CREATE INDEX IX_PUB_SERVER_INFO_TIME_STAMP ON PUB_SERVER_INFO(TIME_STAMP);
+
+--服务器状态
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','正常','SRVR_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','爆满','SRVR_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','禁用','SRVR_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--服务器类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','自有服务器','SRVR_TYPE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','托管服务器','SRVR_TYPE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','商户服务器','SRVR_TYPE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--系列号
+CREATE TABLE [PUB_SN_INFO](
+    --系列号
+	[SN] [varchar](20) NOT NULL,
+    --种子号
+	[SN_CODE] [varchar](10) NOT NULL,
+    --系列号状态
+	[SN_STATUS] [varchar](1) NOT NULL,
+    --门店代码
+	[SHOP_ID] int NOT NULL,
+    --激活日期
+	[ACTV_DATE] [varchar](10) NOT NULL,
+    --有效截止日期
+	[END_DATE] [varchar](10) NOT NULL,
+    --创建日期
+	[CREA_DATE] [varchar](10) NOT NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_SN_INFO_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+PRIMARY KEY([SN])
+);
+
+CREATE INDEX IX_PUB_SN_INFO_SN ON PUB_SN_INFO(SN);
+
+CREATE INDEX IX_PUB_SN_INFO_TIME_STAMP ON PUB_SN_INFO(TIME_STAMP);
+
+--系列号状态
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','空置','SN_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','使用','SN_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','过期','SN_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','禁用','SN_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--产品信息表
+CREATE TABLE [PUB_PROD_INFO](
+    --产品编号
+	[PROD_ID] varchar(10) NOT NULL,
+    --产品名称
+	[PROD_NAME] [varchar](50) NOT NULL,
+    --产品简称
+	[PROD_SHORT_NAME] [varchar](20) NOT NULL,
+    --产品版本号 大版本5.0
+	[VERSION] [varchar](10) NOT NULL,
+    --行业类型 MKT 超市<食杂店> FIG 服装 DLI 食品 OHR 通用 
+	[INDUSTRY] [varchar](3) NOT NULL,
+    --产品类型 LCL单机版 NET连锁版  
+	[PROD_FLAG] [varchar](3) NOT NULL,
+    --开发日期
+	[DEVE_DATE] [varchar](10) NULL,
+    --最近发布日期
+	[ISSUE_DATE] [varchar](10) NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_PROD_INFO_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+PRIMARY KEY([PROD_ID])
+);
+
+--行业类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('MKT','超市<食杂店>','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('FIG','服装','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('DLI','食品','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('OHR','通用','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--产品类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('LCL','单机版','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('NET','连锁版','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+--初始化软件产品
+ insert into PUB_PROD_INFO(PROD_ID,PROD_NAME,PROD_SHORT_NAME,VERSION,INDUSTRY,PROD_FLAG,DEVE_DATE,ISSUE_DATE,COMM,TIME_STAMP) values('R3-1YC','R3门店管理软件-烟草零售终端','R3-RYC','3.0','MKT','LCL','2011-01-01','2011-04-01','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+ 
+--发布状态
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','新增','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','发布','INDUSTRY','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--版本控制表
+CREATE TABLE [PUB_VERSION_INFO](
+    --控制编号
+	[VERSION_ID] int NOT NULL,
+    --产品编号
+	[PROD_ID] varchar(10) NOT NULL,
+    --当前版本号 5.0.0.93
+	[VERSION] [varchar](11) NOT NULL,
+    --对应服务机组
+	[SRVR_ID] [varchar](10) NOT NULL,
+    --发布状态 1 新增 2 发布
+	[VERSION_STATUS] [varchar](1) NOT NULL,
+    --升级类型 1可选升级 2强制升级
+	[UPGRADE_FLAG] int NOT NULL,
+    --升级范围 1所有企业 2指定企业做试点投放
+	[UPGRADE_RANGE] int NOT NULL,
+    --升级包下载地址 带文件名 
+	[URL] [varchar](255) NOT NULL,
+    --发布日期
+	[ISSUE_DATE] [varchar](10) NOT NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_VERSION_INFO_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+PRIMARY KEY([VERSION_ID])
+);
+
+--升级范围
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','所有企业','UPGRADE_RANGE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','指定企业做试点投放','UPGRADE_RANGE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+--升级类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','可选升级','UPGRADE_FLAG','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','强制升级','UPGRADE_FLAG','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
+
+--升级企业
+CREATE TABLE [PUB_UPGRADE_RANGE](
+    --控制编号
+	[VERSION_ID] int NOT NULL,
+    --企业编号
+	[TENANT_ID] int NOT NULL,
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_VERSION_INFO_COMM] DEFAULT ('00'),
+    --更新时间 重2011-01-01开始的秒数  
+	[TIME_STAMP] [bigint] NOT NULL,
+PRIMARY KEY([VERSION_ID])
+);
+
 --参数设置表
 CREATE TABLE [SYS_DEFINE] (
         --企业代码，全局参数时代码为 0 

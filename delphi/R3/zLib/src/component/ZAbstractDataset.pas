@@ -1326,11 +1326,10 @@ begin
   if OnlyChanged and (UpdateType=usUnmodified) then Exit;
   Stream.Write(row,SizeOf(row));
   case SaveUpdatus of
-  usInserted:Stream.Write(usInserted,SizeOf(UpdateType));
-  usDeleted:Stream.Write(usDeleted,SizeOf(UpdateType));
-  else
-  Stream.Write(UpdateType,SizeOf(UpdateType));
+  usInserted:UpdateType := usInserted;
+  usDeleted:UpdateType := usDeleted;
   end;
+  Stream.Write(UpdateType,SizeOf(UpdateType));
   //打包修改前原值
   if UpdateType=usModified then
   begin

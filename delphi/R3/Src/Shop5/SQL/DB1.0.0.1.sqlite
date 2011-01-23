@@ -9,9 +9,9 @@ CREATE TABLE [PUB_PARAMS](
 	[CODE_SPELL] [nvarchar](50) NULL,
     --选项类型
 	[TYPE_CODE] [varchar](50) NOT NULL,
-	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	  --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_PARAMS_COMM]  DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY ([CODE_ID],[TYPE_CODE])
 );
@@ -21,35 +21,35 @@ CREATE INDEX IX_PUB_PARAMS_TYPE_CODE ON PUB_PARAMS(TYPE_CODE);
 CREATE INDEX IX_PUB_PARAMS_TIME_STAMP ON PUB_PARAMS(TIME_STAMP);
 
 --认证中心2011-01-21
---服务器路由表
+--应用服务器信息表
 CREATE TABLE [PUB_SERVER_INFO](
-    --服务器编号
+    --服务器编号<8位数字串>
 	[SRVR_ID] [varchar](10) NOT NULL,
-    --服务名称
+    --服务器名称
 	[SRVR_NAME] [varchar](30) NOT NULL,
     --拼音码
 	[SRVR_SPELL] [varchar](30) NOT NULL,
-    --安装地点
+    --部署地点
 	[ADDRESS] [varchar](100) NOT NULL,
-    --安装日期
+    --部署日期
 	[CREA_DATE] [varchar](10) NOT NULL,
     --服务器状态
 	[SRVR_STATUS] [varchar](1) NOT NULL,
     --服务器类型
 	[SRVR_TYPE] [varchar](1) NOT NULL,
-    --所属地区
+    --所属地区<取PUB_CODE_INFO 表 CODE_TYPE=8>
 	[REGION_ID] [varchar](21) NOT NULL,
-    --主机地址
+    --主机地址<IP或域名>
 	[HOST_NAME] [varchar](20) NOT NULL,
-    --服务端口号
+    --端口号
 	[SRVR_PORT] int NOT NULL,
     --URL路径,相对路径要结合IP取得全路径
 	[SRVR_PATH] [varchar](50) NOT NULL,
     --排序号
-    [SEQ_NO] int NULL,
+  [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_SERVER_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([SRVR_ID])
 );
@@ -70,11 +70,11 @@ CREATE INDEX IX_PUB_SERVER_INFO_TIME_STAMP ON PUB_SERVER_INFO(TIME_STAMP);
 
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','商户服务器','SRVR_TYPE','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
 
---系列号
+--软件系列号
 CREATE TABLE [PUB_SN_INFO](
-    --系列号
+    --软件系列号<>
 	[SN] [varchar](20) NOT NULL,
-    --种子号
+    --种子号<顺序数字串10位 1000000001>
 	[SN_CODE] [varchar](10) NOT NULL,
     --系列号状态
 	[SN_STATUS] [varchar](1) NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE [PUB_SN_INFO](
 	[CREA_DATE] [varchar](10) NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_SN_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([SN])
 );
@@ -106,7 +106,7 @@ CREATE INDEX IX_PUB_SN_INFO_TIME_STAMP ON PUB_SN_INFO(TIME_STAMP);
 
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','禁用','SN_STATUS','00',convert(bigint,(convert(float,getdate())-40542.0)*86400));
 
---产品信息表
+--软件产品信息表
 CREATE TABLE [PUB_PROD_INFO](
     --产品编号
 	[PROD_ID] varchar(10) NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE [PUB_PROD_INFO](
 	[ISSUE_DATE] [varchar](10) NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_PROD_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([PROD_ID])
 );
@@ -154,19 +154,19 @@ PRIMARY KEY([PROD_ID])
 
 --版本控制表
 CREATE TABLE [PUB_VERSION_INFO](
-    --控制编号
+    --控制编号<只要求唯一编号>
 	[VERSION_ID] int NOT NULL,
     --产品编号
 	[PROD_ID] varchar(10) NOT NULL,
     --当前版本号 5.0.0.93
 	[VERSION] [varchar](11) NOT NULL,
-    --对应服务机组
+    --应用服务器
 	[SRVR_ID] [varchar](10) NOT NULL,
     --发布状态 1 新增 2 发布
 	[VERSION_STATUS] [varchar](1) NOT NULL,
     --升级类型 1可选升级 2强制升级
 	[UPGRADE_FLAG] int NOT NULL,
-    --升级范围 1所有企业 2指定企业做试点投放
+    --升级范围 1<应用服务器>对应的所有企业 2指定企业做试点投放
 	[UPGRADE_RANGE] int NOT NULL,
     --升级包下载地址 带文件名 
 	[URL] [varchar](255) NOT NULL,
@@ -174,7 +174,7 @@ CREATE TABLE [PUB_VERSION_INFO](
 	[ISSUE_DATE] [varchar](10) NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_VERSION_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([VERSION_ID])
 );
@@ -196,7 +196,7 @@ CREATE TABLE [PUB_UPGRADE_RANGE](
 	[TENANT_ID] int NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_VERSION_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([VERSION_ID])
 );
@@ -213,7 +213,7 @@ CREATE TABLE [SYS_DEFINE] (
 	[VALUE_TYPE] [tinyint] NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SYS_DEFINE_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数  
+        --时间戳 从2011-01-01开始的秒数  
         [TIME_STAMP] bigint NOT NULL,
 	PRIMARY KEY ([TENANT_ID],[DEFINE])
 );
@@ -269,7 +269,7 @@ CREATE TABLE [CA_TENANT](
 	[PROD_ID] [varchar](10) NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_TENANT_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY ([TENANT_ID])
 );
@@ -299,7 +299,7 @@ CREATE TABLE [CA_RELATION](
 	[RELATION_NAME] varchar(50) NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_RELATION_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
  PRIMARY KEY ([RELATION_ID])
 );
@@ -307,9 +307,9 @@ CREATE TABLE [CA_RELATION](
 CREATE INDEX IX_CA_RELATION_TENANT_ID ON CA_RELATION(TENANT_ID);
 CREATE INDEX IX_CA_RELATION_TIME_STAMP ON CA_RELATION(TIME_STAMP);
 
---供应链关系<企业关系>
+--企业关系
 CREATE TABLE [CA_RELATIONS](
-    --供应链关系ID号
+    --企业关系ID号
 	[RELATIONS_ID] varchar(36) NOT NULL,
     --供应链ID号
 	[RELATION_ID] int NOT NULL,
@@ -319,13 +319,13 @@ CREATE TABLE [CA_RELATIONS](
 	[RELATI_ID] int NOT NULL,
     --关系类型
 	[RELATION_TYPE] [varchar](1) NOT NULL,
-    --结构树 0000 4位一级，最多支持7级 <在此不是一棵树，没有指企业供应链无法生成此代号>
-	[LEVEL_ID] [varchar](28) NOT NULL,
+    --结构树 000000 6位一级，最多支持5级 <在此不是一棵树，没有指企业供应链无法生成此代号>
+	[LEVEL_ID] [varchar](30) NOT NULL,
     --关系状态  1 申请 2 审核 
 	[RELATION_STATUS] [varchar](1) NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_RELATIONS_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
  PRIMARY KEY ([RELATIONS_ID])
 );
@@ -362,7 +362,7 @@ CREATE TABLE [CA_DEPT_INFO](
   [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_DEPT_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY ([DEPT_ID] )
 );
@@ -376,6 +376,8 @@ CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TENANT_ID,TIME_STAMP);
 CREATE TABLE [CA_SHOP_INFO](
     --门店代码 企业代码+4位序号
 	[SHOP_ID] int NOT NULL,
+    --经营许可证
+	[LICENSE_CODE] [varchar](50) NOT NULL,
     --门店名称
 	[SHOP_NAME] [varchar](50) NOT NULL,
     --拼音码
@@ -402,7 +404,7 @@ CREATE TABLE [CA_SHOP_INFO](
   [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_SHOP_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([SHOP_ID])
 );
@@ -427,7 +429,7 @@ CREATE TABLE [CA_DUTY_INFO](
 	[REMARK] [varchar](100) NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_DUTY_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([DUTY_ID])
 );
@@ -450,7 +452,7 @@ CREATE TABLE [CA_ROLE_INFO](
 	[REMARK] [varchar](100) NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_ROLE_INFO_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY([ROLE_ID])
 );
@@ -516,8 +518,8 @@ CREATE TABLE [CA_USERS](
     --说明
 	[REMARK] [varchar](100) NULL,
 	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
-    [COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_USERS_COMM] DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+  [COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_USERS_COMM] DEFAULT ('00'),
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
 PRIMARY KEY ([USER_ID] )
 );
@@ -536,13 +538,13 @@ select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,
 union all
 select TENANT_ID,TENANT_ID*1000+1 as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD';
 
---其他资料
+--代码信息表
 CREATE TABLE [PUB_CODE_INFO](
     --企业代码<0为公共资料>
 	[TENANT_ID] int NOT NULL CONSTRAINT [DF_PUB_CODE_INFO_TENANT_ID]  DEFAULT (0),
     --资料编码 
 	[CODE_ID] [varchar](36) NOT NULL,
-    --树ID号 4位一级
+    --树ID号4位一级
 	[LEVEL_ID] [varchar] (20) NULL ,
     --资料类型
 	[CODE_TYPE] varchar(2) NOT NULL,
@@ -553,10 +555,10 @@ CREATE TABLE [PUB_CODE_INFO](
     --排序号
 	[SEQ_NO] int NULL,
 	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
-	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_CODE_INFO_COMM]  DEFAULT ('00'),
-    --更新时间 重2011-01-01开始的秒数  
+	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_PUB_CODE_INFO_COMM]  DEFAULT('00'),
+    --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
-PRIMARY KEY ([TENANT_ID],[CODE_ID],[CODE_TYPE])
+  PRIMARY KEY ([TENANT_ID],[CODE_ID],[CODE_TYPE])
 );
 
 CREATE INDEX IX_PUB_CODE_INFO_CODE_TYPE ON PUB_CODE_INFO(TENANT_ID,CODE_TYPE);
@@ -1161,9 +1163,9 @@ CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID);
 --2011-01-19 张森荣设计
 --数据字典
 CREATE TABLE [SYS_XDICT_INFO] (
-        --编码
+        --编码AMOUNT
 	[XDICT_ID] [varchar] (100) NOT NULL ,
-        --类型
+        --类型 1
 	[XDICT_TYPE] [numeric](1, 0) NOT NULL ,
         --名称
 	[XDICT_NAME] [varchar] (255) NOT NULL ,
@@ -1173,7 +1175,7 @@ CREATE TABLE [SYS_XDICT_INFO] (
 	[SEQ_NO] int NOT NULL ,
 	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_SYS_XDICT_INFO_COMM]  DEFAULT ('00'),
-  --更新时间 重2011-01-01开始的秒数  
+  --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
   PRIMARY KEY ([XDICT_ID],[XDICT_TYPE])
 ) ;
@@ -1195,7 +1197,7 @@ CREATE TABLE [SYS_FASTFILE] (
 	[frfDefault] [int] NOT NULL CONSTRAINT [DF_SYS_FASTFILE_frfDefault] DEFAULT (0),
 	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_SYS_FASTFILE_COMM] DEFAULT ('00'),
-  --更新时间 重2011-01-01开始的秒数  
+  --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
   PRIMARY KEY ([TENANT_ID],[frfFileName])
 );
@@ -1213,7 +1215,7 @@ CREATE TABLE [SYS_SEQUENCE] (
 	[SEQU_NO] [int] NULL ,
 	--通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_SYS_SEQUENCE_COMM]  DEFAULT ('00'),
-  --更新时间 重2011-01-01开始的秒数  
+  --更新时间 从2011-01-01开始的秒数  
 	[TIME_STAMP] [bigint] NOT NULL,
   PRIMARY KEY ([TENANT_ID],[SEQU_ID])
 );
@@ -1246,7 +1248,7 @@ CREATE TABLE [CA_MODULE] (
 	[ACTION_URL] [varchar] (50) NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_CA_MODULE_COMM] DEFAULT ('00'),
-  --更新时间 重2011-01-01开始的秒数  
+  --更新时间 从2011-01-01开始的秒数  
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY ([PROD_ID],[MODU_ID])
 );
@@ -1273,7 +1275,7 @@ CREATE TABLE [CA_RIGHTS] (
 	[CHK] [int] NOT NULL ,
         --通读标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_CA_RIGHTS_COMM] DEFAULT ('00'),
-  --更新时间 重2011-01-01开始的秒数  
+  --更新时间 从2011-01-01开始的秒数  
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (ROWS_ID)
 ) ;
@@ -1302,9 +1304,9 @@ GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('8','尺码组','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
 GO
 
---商品分类
+--商品分类属性
 CREATE TABLE [PUB_GOODSSORT] (
-        --分类代码
+        --分类代码<guid>
 	[SORT_ID] [varchar] (36) NOT NULL ,
     --企业代码 0是中心统一分类
 	[TENANT_ID] int NOT NULL ,
@@ -1312,7 +1314,7 @@ CREATE TABLE [PUB_GOODSSORT] (
 	[LEVEL_ID] [varchar] (20) NULL ,
         --分类名称
 	[SORT_NAME] [varchar] (30) NOT NULL ,
-        --分类类型
+        --分类类型 
 	[SORT_TYPE] int NOT NULL ,
         --拼音码
 	[SORT_SPELL] [varchar] (30) NOT NULL ,
@@ -1320,7 +1322,7 @@ CREATE TABLE [PUB_GOODSSORT] (
 	[SEQ_NO] [int] NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSSORT_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,SORT_ID,SORT_TYPE)
 );
@@ -1346,7 +1348,7 @@ where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID;
 
 --计量单位
 CREATE TABLE [PUB_MEAUNITS] (
-        --代码
+        --代码<guid>
 	[UNIT_ID] [varchar] (36) NOT NULL ,
     --企业代码 0是中心统一分类
 	[TENANT_ID] int NOT NULL ,
@@ -1358,7 +1360,7 @@ CREATE TABLE [PUB_MEAUNITS] (
 	[SEQ_NO] [int] NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_MEAUNITS_COMM] DEFAULT ('00'),
-        --更新时间 重2011-01-01开始的秒数
+        --更新时间 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,UNIT_ID)
 );
@@ -1368,6 +1370,7 @@ CREATE INDEX IX_PUB_MEAUNITS_TENANT_ID ON PUB_MEAUNITS(TENANT_ID);
 CREATE INDEX IX_PUB_MEAUNITS_TIME_STAMP ON PUB_MEAUNITS(TENANT_ID,TIME_STAMP);
 
 --企业经营计量单位,自经营计量单位+连接计量单位
+
 CREATE view [VIW_MEAUNITS]
 as
 select 2 as RELATION_FLAG,[TENANT_ID],[UNIT_ID],[UNIT_NAME],[UNIT_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
@@ -1399,6 +1402,12 @@ GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','USING_BATCH_NO','00',strftime('%s','now','localtime')-1293840000);
 GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','USING_BATCH_NO','00',strftime('%s','now','localtime')-1293840000);
+GO
+
+--是否管制积分换购
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','USING_BARTER','00',strftime('%s','now','localtime')-1293840000);
+GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','USING_BARTER','00',strftime('%s','now','localtime')-1293840000);
 GO
 
 --商品资料
@@ -1455,11 +1464,15 @@ CREATE TABLE [PUB_GOODSINFO] (
 	[HAS_INTEGRAL] [int] NOT NULL ,
         --是否使用批号管制
 	[USING_BATCH_NO] [int] NOT NULL ,
+        --是否管制积分换购
+	[USING_BARTER] [int] NOT NULL ,
+        --积分换购积分
+	[BARTER_INTEGRAL] [int] NOT NULL ,
         --备注
 	[REMARK] [varchar] (200) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSINFO_COMM] DEFAULT ('00'),
-        --更新时间 重2011-01-01开始的秒数
+        --更新时间 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,GODS_ID)
 );
@@ -1470,8 +1483,10 @@ CREATE INDEX IX_PUB_GOODSINFO_TIME_STAMP ON PUB_GOODSINFO(TENANT_ID,TIME_STAMP);
 
 --供应链与商品
 CREATE TABLE [PUB_GOODS_RELATION] (
-        --行号ID
+        --行号ID <guid>
 	[ROWS_ID] [varchar] (36) NOT NULL ,
+        --企业代码 
+	[TENANT_ID] int NOT NULL ,
         --供应链
 	[RELATION_ID] int NOT NULL ,
         --货品代码
@@ -1593,7 +1608,7 @@ CREATE TABLE [PUB_GOODSPRICE] (
 	[NEW_OUTPRICE2] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSPRICE_COMM] DEFAULT ('00'),
-        --更新时间 重2011-01-01开始的秒数
+        --更新时间 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,GODS_ID,SHOP_ID,PRICE_ID)
 );
@@ -1635,7 +1650,7 @@ CREATE TABLE [LOG_PRICING_INFO] (
 	[NEW_OUTPRICE2] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_LOG_PRICING_INFO_COMM] DEFAULT ('00'),
-        --更新时间 重2011-01-01开始的秒数
+        --更新时间 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,GODS_ID,SHOP_ID,PRICE_ID)
 );
@@ -1691,7 +1706,7 @@ CREATE TABLE [PUB_PRICEGRADE] (
 	[SEQ_NO] [int] NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_PRICEGRADE_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,PRICE_ID)
 );
@@ -1769,7 +1784,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
 	[SHOP_ID] int NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,CLIENT_ID)
 );
@@ -1835,7 +1850,7 @@ CREATE TABLE [PUB_CUSTOMER] (
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CUSTOMER_COMM] DEFAULT ('00'),
         --备注
 	[REMARK] [varchar] (500) NULL ,
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (CUST_ID)
 );
@@ -1879,7 +1894,7 @@ CREATE TABLE [PUB_IC_INFO] (
 	[USING_DATE] [varchar] (10) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_IC_INFO_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (TENANT_ID,IC_CARDNO)
 );
@@ -1915,7 +1930,7 @@ CREATE TABLE [STO_STORAGE] (
 	[COST_PRICE] [decimal](18, 6) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_STORAGE_COMM] DEFAULT ('00'),
-        --时间戳 重2011-01-01开始的秒数
+        --时间戳 从2011-01-01开始的秒数
   [TIME_STAMP] bigint NOT NULL,
   PRIMARY KEY (ROWS_ID)
 );

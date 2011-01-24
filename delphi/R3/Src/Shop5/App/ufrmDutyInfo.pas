@@ -36,7 +36,7 @@ type
     procedure edtUPDUTY_IDBeforeDropList(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-  private     
+  private
     function  GetLevelID: string;
     function  IsEdit(Aobj:TRecord_; cdsTable: TZQuery):Boolean; virtual; //判断是Aobj对象与与数据集Value是否改变
     procedure CheckDutyNameIsExists;  //判断职务是否存在
@@ -153,8 +153,17 @@ var
   TestObj: TRecord_;
 begin
   TestObj:=TRecord_.Create;
-  uShopUtil.CheckEdtValueIsEmpty(edtDUTY_NAME, '职务名称不能为空！');
-  uShopUtil.CheckEdtValueIsEmpty(edtDUTY_SPELL, '拼音码不能为空！');
+
+  if trim(edtDUTY_NAME.Text)='' then
+  begin
+    if not edtDUTY_NAME.CanFocus then edtDUTY_NAME.SetFocus;
+    Raise Exception.Create('职务名称不能为空！'); 
+  end;
+  if trim(edtDUTY_SPELL.Text)='' then
+  begin
+    if not edtDUTY_SPELL.CanFocus then edtDUTY_SPELL.SetFocus;
+    Raise Exception.Create('拼音码不能为空！');
+  end;
 
   CheckDutyNameIsExists; //判断职务是否存在
 

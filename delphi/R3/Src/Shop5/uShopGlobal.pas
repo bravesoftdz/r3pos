@@ -16,6 +16,7 @@ type
     CA_DUTY_INFO: TZQuery;
     CA_ROLE_INFO: TZQuery;
     CA_TENANT: TZQuery;
+    PUB_REGION_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

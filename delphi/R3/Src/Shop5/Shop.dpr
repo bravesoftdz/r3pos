@@ -25,7 +25,19 @@ uses
   ufrmPswModify in 'ufrmPswModify.pas' {frmPswModify},
   ufrmLogin in 'ufrmLogin.pas' {frmLogin},
   ObjMeaUnits in 'Obj\ObjMeaUnits.pas',
-  ufrmMeaUnits in 'App\ufrmMeaUnits.pas' {frmMeaUnits};
+  ufrmMeaUnits in 'App\ufrmMeaUnits.pas' {frmMeaUnits},
+  ufrmTenant in 'App\ufrmTenant.pas' {frmTenant},
+  ufrmDutyInfo in 'App\ufrmDutyInfo.pas' {frmDutyInfo},
+  ufrmDutyInfoList in 'App\ufrmDutyInfoList.pas' {frmDutyInfoList},
+  ufrmRoleInfo in 'App\ufrmRoleInfo.pas' {frmRoleInfo},
+  ufrmRoleInfoList in 'App\ufrmRoleInfoList.pas' {frmRoleInfoList},
+  ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
+  ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
+  ObjDutyInfo in 'Obj\ObjDutyInfo.pas',
+  ObjRoleInfo in 'Obj\ObjRoleInfo.pas',
+  ObjUsers in 'Obj\ObjUsers.pas',
+  ObjTenant in 'Obj\ObjTenant.pas',
+  uCaFactory in 'App\uCaFactory.pas';
 
 {$R *.res}
 var
@@ -35,7 +47,7 @@ var
 begin
   Application.Initialize;
   SFVersion := '.NET';
-  DBVersion := '5.0.0.1';
+  DBVersion := 'DB1.0.0.1';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmShopMain, frmShopMain);

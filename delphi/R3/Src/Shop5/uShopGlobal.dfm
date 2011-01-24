@@ -1,10 +1,12 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 506
-  Top = 164
-  Height = 604
+  Left = 419
+  Top = 197
+  Height = 446
   Width = 658
   object SYS_DEFINE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select * from SYS_DEFINE where TENANT_ID='#39'----'#39' or TENANT_ID=:TE' +
@@ -25,6 +27,8 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_RIGHTS: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       'select '#39'0'#39' as MID,'#39'0'#39' as CHK ')
     Params = <>
@@ -32,6 +36,8 @@ inherited ShopGlobal: TShopGlobal
     Top = 160
   end
   object CA_USERS: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
@@ -53,10 +59,12 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_SHOP_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select SHOP_ID,SHOP_NAME,SHOP_SPELL from CA_SHOP_INFO where TENA' +
-        'NT_ID=:TENANT_ID order by SEQ_NO')
+        'NT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39'12'#39') order by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown
@@ -73,6 +81,8 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_DUTY_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select DUTY_ID,DUTY_SPELL,DUTY_NAME from CA_DUTY_INFO where COMM' +
@@ -84,8 +94,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 296
+    Left = 240
+    Top = 24
     ParamData = <
       item
         DataType = ftUnknown
@@ -94,6 +104,8 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_ROLE_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select ROLE_ID,ROLE_SPELL,ROLE_NAME from CA_ROLE_INFO where COMM' +
@@ -105,8 +117,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 136
-    Top = 352
+    Left = 240
+    Top = 88
     ParamData = <
       item
         DataType = ftUnknown
@@ -115,8 +127,12 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_TENANT: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
-      'select * from CA_TENANT where TENANT_ID=:TENANT_ID')
+      
+        'select * from CA_TENANT where TENANT_ID=:TENANT_ID and COMM not ' +
+        'in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown
@@ -131,5 +147,16 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
+  end
+  object PUB_REGION_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 an' +
+        'd COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 240
+    Top = 152
   end
 end

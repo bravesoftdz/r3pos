@@ -471,30 +471,23 @@ inherited frmLogin: TfrmLogin
       FD2492B08CEFDBDDAA3FBF52492B0A17EFD4BF7EA492C13FFFD9}
     Stretch = True
   end
-  object lblCompany: TLabel [1]
+  object lblName: TLabel [1]
     Left = 51
-    Top = 114
-    Width = 60
-    Height = 12
-    Caption = #24403#21069#21333#20301#65306
-  end
-  object lblName: TLabel [2]
-    Left = 51
-    Top = 139
+    Top = 115
     Width = 60
     Height = 12
     Caption = #29992#25143#24080#21495#65306
   end
-  object lblPass: TLabel [3]
+  object lblPass: TLabel [2]
     Left = 51
-    Top = 163
+    Top = 141
     Width = 60
     Height = 12
     Caption = #25805#20316#21475#20196#65306
   end
-  object Label3: TLabel [4]
+  object Label3: TLabel [3]
     Left = 299
-    Top = 162
+    Top = 140
     Width = 52
     Height = 12
     Cursor = crHandPoint
@@ -507,9 +500,9 @@ inherited frmLogin: TfrmLogin
     ParentFont = False
     OnClick = Label3Click
   end
-  object Label6: TLabel [5]
+  object Label6: TLabel [4]
     Left = 109
-    Top = 185
+    Top = 169
     Width = 186
     Height = 12
     Caption = #40664#35748#31649#29702#21592#24080#21495'/'#21475#20196#65306'admin/1234'
@@ -520,22 +513,22 @@ inherited frmLogin: TfrmLogin
     Font.Style = []
     ParentFont = False
   end
-  object Label4: TLabel [6]
+  object Label4: TLabel [5]
     Left = 51
     Top = 85
     Width = 60
     Height = 12
     Caption = #19994#21153#26085#26399#65306
   end
-  object cxBtnOk: TRzBitBtn [7]
+  object cxBtnOk: TRzBitBtn [6]
     Left = 174
-    Top = 223
+    Top = 215
     Caption = #30331#24405'(&O)'
     Color = 15791348
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
-    TabOrder = 3
+    TabOrder = 1
     OnClick = cxBtnOkClick
     Glyph.Data = {
       36060000424D3606000000000000360400002800000020000000100000000100
@@ -590,9 +583,9 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxbtnCancel: TRzBitBtn [8]
+  object cxbtnCancel: TRzBitBtn [7]
     Left = 254
-    Top = 223
+    Top = 215
     Cancel = True
     ModalResult = 2
     Caption = #36864#20986'(&C)'
@@ -600,7 +593,7 @@ inherited frmLogin: TfrmLogin
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
-    TabOrder = 5
+    TabOrder = 3
     Glyph.Data = {
       36060000424D3606000000000000360400002800000020000000100000000100
       0800000000000002000000000000000000000001000000000000000000003300
@@ -654,117 +647,40 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxcbSave: TcxCheckBox [9]
+  object cxcbSave: TcxCheckBox [8]
     Left = 47
-    Top = 226
+    Top = 218
     Width = 103
     Height = 21
     Properties.DisplayUnchecked = 'False'
     Properties.Caption = #20445#23384#30331#24405#20449#24687
     State = cbsChecked
-    TabOrder = 4
-    ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
-  end
-  object cxedtPasswrd: TcxTextEdit [10]
-    Left = 111
-    Top = 158
-    Width = 184
-    Height = 20
-    Properties.EchoMode = eemPassword
     TabOrder = 2
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object cxcbxCompany: TzrComboBoxList [11]
+  object cxedtPasswrd: TcxTextEdit [9]
     Left = 111
-    Top = 110
+    Top = 136
     Width = 184
     Height = 20
-    Properties.AutoSelect = False
-    Properties.Buttons = <
-      item
-        Default = True
-      end>
-    Properties.ReadOnly = False
+    Properties.EchoMode = eemPassword
     TabOrder = 0
-    InGrid = False
-    KeyValue = Null
-    FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-    KeyField = 'COMP_ID'
-    ListField = 'COMP_NAME'
-    Columns = <
-      item
-        EditButtons = <>
-        FieldName = 'COMP_ID'
-        Footers = <>
-        Title.Caption = #20195#30721
-      end
-      item
-        EditButtons = <>
-        FieldName = 'COMP_NAME'
-        Footers = <>
-        Title.Caption = #21517#31216
-        Width = 120
-      end>
-    DataSet = cdsCompany
-    DropWidth = 184
-    DropHeight = 180
-    ShowTitle = True
-    AutoFitColWidth = True
-    ShowButton = False
-    LocateStyle = lsDark
-    Buttons = [zbNew, zbClear, zbFind]
-    DropListStyle = lsFixed
-    OnSaveValue = cxcbxCompanySaveValue
+    ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object cxedtAccount: TzrComboBoxList [12]
-    Left = 111
-    Top = 134
-    Width = 184
-    Height = 20
-    Properties.AutoSelect = False
-    Properties.Buttons = <
-      item
-        Default = True
-      end>
-    Properties.ReadOnly = False
-    TabOrder = 1
-    InGrid = False
-    KeyValue = Null
-    FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
-    KeyField = 'USER_ID'
-    ListField = 'USER_NAME'
-    Columns = <
-      item
-        EditButtons = <>
-        FieldName = 'ACCOUNT'
-        Footers = <>
-        Title.Caption = #30331#24405#21517
-      end
-      item
-        EditButtons = <>
-        FieldName = 'USER_NAME'
-        Footers = <>
-        Title.Caption = #29992#25143#21517
-        Width = 80
-      end>
-    DataSet = cdsUsers
-    DropWidth = 184
-    DropHeight = 180
-    ShowTitle = True
-    AutoFitColWidth = True
-    ShowButton = False
-    LocateStyle = lsDark
-    Buttons = [zbNew, zbClear, zbFind]
-    DropListStyle = lsFixed
-    OnBeforeDropList = cxedtAccountBeforeDropList
-  end
-  object edtOPER_DATE: TcxDateEdit [13]
+  object edtOPER_DATE: TcxDateEdit [10]
     Left = 111
     Top = 81
     Width = 184
     Height = 20
     Properties.DateOnError = deToday
-    TabOrder = 6
+    TabOrder = 4
+  end
+  object cxedtUsers: TcxTextEdit [11]
+    Left = 111
+    Top = 111
+    Width = 184
+    Height = 20
+    TabOrder = 5
   end
   inherited mmMenu: TMainMenu
     Left = 16
@@ -773,15 +689,5 @@ inherited frmLogin: TfrmLogin
   inherited actList: TActionList
     Left = 64
     Top = 8
-  end
-  object cdsCompany: TZReadOnlyQuery
-    Params = <>
-    Left = 248
-    Top = 72
-  end
-  object cdsUsers: TZReadOnlyQuery
-    Params = <>
-    Left = 280
-    Top = 72
   end
 end

@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 121
-  Top = 342
+  Left = 199
+  Top = 154
   Width = 820
   Height = 558
   Caption = ''
@@ -5283,6 +5283,23 @@ inherited frmShopMain: TfrmShopMain
       Color = clWhite
       ParentColor = False
       TabOrder = 2
+      object RzGroup1: TRzGroup
+        Items = <
+          item
+            Action = actfrmDutyInfoList
+          end
+          item
+            Action = actfrmMeaUnits
+          end
+          item
+            Action = actfrmRoleInfoList
+          end>
+        Opened = True
+        OpenedHeight = 88
+        UseGradients = True
+        Caption = 'RzGroup1'
+        ParentColor = False
+      end
     end
   end
   object toolButton: TRzBmpButton [4]
@@ -6458,6 +6475,19 @@ inherited frmShopMain: TfrmShopMain
   inherited actList: TActionList
     Left = 456
     Top = 168
+    object actfrmMeaUnits: TAction
+      Tag = 200042
+      Caption = #21830#21697#21333#20301
+      OnExecute = actfrmMeaUnitsExecute
+    end
+    object actfrmDutyInfoList: TAction
+      Caption = #32844#21153#26723#26696
+      OnExecute = actfrmDutyInfoListExecute
+    end
+    object actfrmRoleInfoList: TAction
+      Caption = #35282#33394#26723#26696
+      OnExecute = actfrmRoleInfoListExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464
@@ -9564,6 +9594,7 @@ inherited frmShopMain: TfrmShopMain
     Top = 344
   end
   object ZReadOnlyQuery1: TZReadOnlyQuery
+    FieldDefs = <>
     Params = <>
     Left = 600
     Top = 240

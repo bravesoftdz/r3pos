@@ -11,9 +11,9 @@ uses
 type
   TLoginParam=Record
     UserID:String;
-    CompanyID:String;
+    ShopId:String;
     UserName:String;
-    CompanyName:string;
+    ShopName:string;
     Roles:string;
     AccountName:string;
     RemoteConnnect:boolean;
@@ -24,26 +24,20 @@ type
     cxBtnOk: TRzBitBtn;
     cxbtnCancel: TRzBitBtn;
     cxcbSave: TcxCheckBox;
-    lblCompany: TLabel;
     lblName: TLabel;
     lblPass: TLabel;
     cxedtPasswrd: TcxTextEdit;
     Label3: TLabel;
     Label6: TLabel;
-    cxcbxCompany: TzrComboBoxList;
-    cxedtAccount: TzrComboBoxList;
     Label4: TLabel;
     edtOPER_DATE: TcxDateEdit;
-    cdsCompany: TZReadOnlyQuery;
-    cdsUsers: TZReadOnlyQuery;
+    cxedtUsers: TcxTextEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxcbxLoginParamPropertiesChange(Sender: TObject);
     procedure Label3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure cxedtAccountBeforeDropList(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure cxcbxCompanySaveValue(Sender: TObject);
   private
     FLoginParam:TLoginParam;
     FSysID: TGuid;
@@ -71,8 +65,8 @@ begin
      begin
        F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
        try
-         F.WriteString('Login','CompanyID',cxcbxCompany.AsString);
-         F.WriteString('Login','Account',cxedtAccount.AsString);
+//         F.WriteString('Login','CompanyID',cxcbxCompany.AsString);
+         F.WriteString('Login','Account',cxedtUsers.Text);
          F.WriteBool('Login','SaveLogin',cxcbSave.Checked);
 //         F.WriteBool('Login','Locked',edtLocked.Checked);
        finally
@@ -94,38 +88,33 @@ begin
        Raise Exception.Create('当前计算机时间不正确，请检查服务器时间及本地计算机时间...');
      end;
   if edtOPER_DATE.Date < Date() then Raise Exception.Create('业务日期不能小于今天...');
-{  if cxcbxCompany.AsString='' then
+  if trim(cxedtUsers.Text)='' then
      begin
-       cxcbxCompany.SetFocus;
-       Raise Exception.Create('请选择你所属公司。');
-     end;
-  if cxedtAccount.AsString='' then
-     begin
-       cxedtAccount.SetFocus;
-       Raise Exception.Create('请输入用户名。');
+       cxedtUsers.SetFocus;
+       Raise Exception.Create('请输入用户账号。');
      end;
   temp := TZQuery.Create(nil);
   try
-{     temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,DUTY_IDS from VIW_USERS where USER_ID='''+cxedtAccount.AsString+'''';
+     temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
-     if temp.IsEmpty then Raise Exception.Create(cxedtAccount.Text+'无效用户名。');
+     if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
      if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
         begin
           cxedtPasswrd.SetFocus;
           Raise Exception.Create('输入的密码无效,请重新输入。');
         end;
      FLoginParam.UserID := temp.FieldbyName('USER_ID').asString;
-     FLoginParam.CompanyID := cxcbxCompany.AsString;
+     FLoginParam.ShopId := temp.FieldbyName('SHOP_ID').asString;
      FLoginParam.UserName  := temp.FieldbyName('USER_NAME').asString;
-     FLoginParam.CompanyName := cxcbxCompany.Text;
-     FLoginParam.Roles := temp.FieldbyName('DUTY_IDS').AsString;
+     FLoginParam.ShopName := temp.FieldbyName('SHOP_NAME').asString;
+     FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
 //     if not Factor.GqqLogin(FLoginParam.UserID,FLoginParam.UserName) and (Factor.LoginParam.ConnMode=2) then
 //        MessageBox(Handle,'登陆信息服务失败，系统将无法提供自动化信息服务。',Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-}        
+//}        
      ModalResult := MROK;
-///  finally
-//     temp.Free;
-//  end;
+  finally
+     temp.Free;
+  end;
   
 end;
 
@@ -150,16 +139,16 @@ begin
            if not Connect then Exit;
         end;
         cxbtnCancel.Enabled := not Locked;
-        cxcbxCompany.Enabled := not Locked and cxcbxCompany.Enabled;
-        cxedtAccount.Enabled := not Locked;
+//        cxcbxCompany.Enabled := not Locked and cxcbxCompany.Enabled;
+        cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
         cxcbSave.Visible := not Locked;
         if Locked then
            begin
-             cxcbxCompany.KeyValue := Global.SHOP_ID;
-             cxcbxCompany.Text := Global.SHOP_NAME;
-             cxedtAccount.KeyValue := Global.UserID;
-             cxedtAccount.Text := Global.UserName;
+//             cxcbxCompany.KeyValue := Global.SHOP_ID;
+//             cxcbxCompany.Text := Global.SHOP_NAME;
+             cxedtUsers.Text := Global.UserID;
+             cxedtUsers.Text := Global.UserName;
            end;
         if ShowModal=MROK then
           begin
@@ -192,12 +181,12 @@ end;
 procedure TfrmLogin.Label3Click(Sender: TObject);
 begin
   inherited;
-  if cxcbxCompany.AsString = '' then
-     Raise Exception.Create('请选择你所属公司。');
-  if cxedtAccount.AsString = '' then
+//  if cxcbxCompany.AsString = '' then
+//     Raise Exception.Create('请选择你所属公司。');
+  if cxedtUsers.Text = '' then
      Raise Exception.Create('请输入用户名。');
 
-  TfrmPswModify.ShowExecute(cxedtAccount.AsString,cxedtAccount.AsString);
+  TfrmPswModify.ShowExecute(cxedtUsers.Text,cxedtUsers.Text);
 
 end;
 
@@ -277,8 +266,6 @@ begin
   edtOPER_DATE.Date := Date();
   if r then
      begin
-        cdsCompany.Close;
-        Factor.Open(cdsCompany); 
         F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
         Lock := true;
         try
@@ -286,35 +273,7 @@ begin
           //edtLocked.Checked := F.ReadBool('Login','Locked',false);
           if cxcbSave.Checked then
              begin
-                cxcbxCompany.KeyValue := F.ReadString('Login','CompanyID','');
-                if cdsCompany.Locate('COMP_ID',cxcbxCompany.KeyValue,[]) then
-                   cxcbxCompany.Text := cdsCompany.FieldbyName('COMP_NAME').AsString
-                else
-                   begin
-                      cxcbxCompany.KeyValue := null;
-                      cxcbxCompany.Text := '';
-                   end;
-                if cxcbxCompany.AsString <>'' then
-                   begin
-                      cxedtAccountBeforeDropList(nil);
-                      cxedtAccount.KeyValue := F.ReadString('Login','Account','');
-                      if cdsUsers.Locate('USER_ID',cxedtAccount.KeyValue,[]) then
-                         cxedtAccount.Text := cdsUsers.FieldbyName('USER_NAME').AsString
-                      else
-                         begin
-                            cxedtAccount.KeyValue := null;
-                            cxedtAccount.Text := '';
-                         end;
-                   end;
-             end;
-          if cxcbxCompany.AsString ='' then
-             begin
-               cxcbxCompany.KeyValue := cdsCompany.FieldbyName('COMP_ID').AsString;
-               cxcbxCompany.Text := cdsCompany.FieldbyName('COMP_NAME').AsString;
-             end
-          else
-             begin
-               //cxcbxCompany.Enabled := not edtLocked.Checked;
+               cxedtUsers.Text := F.ReadString('Login','Account','');
              end;
         finally
           Lock := false;
@@ -324,35 +283,11 @@ begin
 
 end;
 
-procedure TfrmLogin.cxedtAccountBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  cdsUsers.Close;
-  cdsUsers.SQL.Text :=
-    'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT from VIW_USERS where COMM not in (''02'',''12'') '+
-    'and USER_ID in (select USER_ID from VIW_COMPRIGHT where COMP_ID='''+cxcbxCompany.AsString+''') ';
-//    'and (COMP_ID='''+cxcbxCompany.AsString+''' or COMP_ID=''----'' or '+
-//    '(COMP_ID in (select UPCOMP_ID from CA_COMPANY where COMP_ID='''+cxcbxCompany.AsString+''' and COMP_TYPE=2)) '+
-//    ' or '+
-//    '(COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (select UPCOMP_ID from CA_COMPANY where COMP_ID='''+cxcbxCompany.AsString+''' and COMP_TYPE=2) and COMP_TYPE=2)) '+
-//    ')';
-  Factor.Open(cdsUsers);
-
-end;
-
 procedure TfrmLogin.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   inherited;
   if ModalResult <> MROK then
      CanClose := cxbtnCancel.Enabled;
-end;
-
-procedure TfrmLogin.cxcbxCompanySaveValue(Sender: TObject);
-begin
-  inherited;
-  cdsUsers.Close;
-  cxedtAccount.KeyValue := null;
-  cxedtAccount.Text := '';
 end;
 
 end.

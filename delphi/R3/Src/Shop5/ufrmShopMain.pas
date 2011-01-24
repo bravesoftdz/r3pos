@@ -170,6 +170,10 @@ type
     ImageList2: TImageList;
     ZConnection1: TZConnection;
     ZReadOnlyQuery1: TZReadOnlyQuery;
+    actfrmMeaUnits: TAction;
+    actfrmDutyInfoList: TAction;
+    RzGroup1: TRzGroup;
+    actfrmRoleInfoList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -187,6 +191,9 @@ type
     procedure Image19Click(Sender: TObject);
     procedure RzBmpButton9Click(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure actfrmMeaUnitsExecute(Sender: TObject);
+    procedure actfrmDutyInfoListExecute(Sender: TObject);
+    procedure actfrmRoleInfoListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -230,8 +237,8 @@ var
 
 implementation
 uses
-  uFnUtil,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
-  ufrmDesk,ufrmPswModify;
+  uFnUtil,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
+  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -450,16 +457,13 @@ begin
   Logined := false;
   Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
   result := Logined;
+  Logined := true;
   if Locked then Exit;
   if Logined then
      begin
-       if Params.RemoteConnnect and not ShopGlobal.offline then
-          begin
-            if CheckVersion then Exit;
-          end;
        Loging := false;
-       Global.SHOP_ID := StrtoInt(Params.CompanyID);
-       Global.SHOP_NAME := Params.CompanyName;
+       Global.SHOP_ID := StrtoInt(Params.ShopId);
+       Global.SHOP_NAME := Params.ShopName;
        Global.UserID := Params.UserID;
        Global.UserName := Params.UserName;
        Global.CloseAll;
@@ -627,58 +631,7 @@ end;
 
 function TfrmShopMain.CheckRegister:boolean;
 begin
-//procedure DecodeVersion(sn:string);
-//var
-//  SID,VER,CpuID:string;
-{  UID,CID:integer;
-  F:TIniFile;
-begin
-  if trim(sn)='' then
-     begin
-       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
-       try
-         CLVersion := F.ReadString('soft','version','OHR');
-       finally
-         F.free;
-       end;
-       Exit;
-     end;
-  if not DecodeSerialNo(sn,SID,VER,UID,CID) then
-     Raise Exception.Create('系列号无效');
-  CLVersion := VER;
-end;
-function IsLimit:boolean;
-var
-  F:TIniFile;
-begin
-   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
-   try
-     ShopGlobal.okline := F.ReadString('soft','limit','')='ok_';
-     result := not ShopGlobal.okline;
-   finally
-     F.free;
-   end;
-end;
-var sn,prm:string;
-begin
-  try
-     if TfrmRegister.CheckRegister(Global.CompanyID,sn,IsLimit) then
-        begin
-          DecodeVersion(sn);
-        end
-     else
-        begin
-          if IsLimit then Application.Terminate
-          else
-             begin
-               ShopGlobal.Limit := 30;
-               Application.Title := Application.Title + '   友情提示：剩余体验天数'+inttostr(ShopGlobal.Limit)+'天';
-               DecodeVersion(sn);
-             end;
-        end;
-  except
-    Application.Terminate;
-  end;     }
+  result := TfrmTenant.coRegister(self);
 end;
 
 procedure TfrmShopMain.Timer1Timer(Sender: TObject);
@@ -825,7 +778,7 @@ procedure TfrmShopMain.RzTabChange(Sender: TObject);
 begin
   inherited;
   if rzLeft.Width = 28 then rzLeft.Width := 147;
-  LoadMenu;
+//  LoadMenu;
 end;
 
 procedure TfrmShopMain.Image19Click(Sender: TObject);
@@ -888,7 +841,10 @@ begin
     Factor.Open(rs);
     if rs.IsEmpty then
        begin
+         //ShopGlobal.TENANT_ID := 1000001;
+         //ShopGlobal.TENANT_NAME := '测试..';
          if not CheckRegister then Exit;
+         result := true;
        end
     else
        begin
@@ -898,6 +854,71 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmShopMain.actfrmMeaUnitsExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  with TfrmMeaUnits.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+
+end;
+
+procedure TfrmShopMain.actfrmDutyInfoListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmDutyInfoList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDutyInfoList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmRoleInfoListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRoleInfoList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmRoleInfoList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

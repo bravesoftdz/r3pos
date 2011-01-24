@@ -145,9 +145,21 @@ var
   j:integer;
   tmp:TZQuery;
 begin
-  uShopUtil.CheckEdtValueIsEmpty(edtROLE_NAME, '职务名称不能为空！'); //判断角色名称
-  uShopUtil.CheckEdtValueIsEmpty(edtROLE_SPELL, '拼音码不能为空！'); //判断拼音码
-  uShopUtil.CheckEdtValueIsEmpty(edtREMARK, '描述不能为空！'); //判断拼音码
+  if trim(edtROLE_NAME.Text)='' then
+  begin
+    if not edtROLE_NAME.CanFocus then edtROLE_NAME.SetFocus;
+    Raise Exception.Create('角色名称不能为空！');
+  end;
+  if trim(edtROLE_SPELL.Text)='' then
+  begin
+    if not edtROLE_SPELL.CanFocus then edtROLE_SPELL.SetFocus;
+    Raise Exception.Create('拼音码不能为空！');
+  end;
+  if trim(edtREMARK.Text)='' then
+  begin
+    if not edtREMARK.CanFocus then edtREMARK.SetFocus;
+    Raise Exception.Create('角色描述不能为空！');
+  end;
 
   //判断角色名称是否存在
   CheckRoleNameExists;

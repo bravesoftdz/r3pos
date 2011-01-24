@@ -3,7 +3,7 @@ inherited frameSelectGoods: TframeSelectGoods
   Top = 144
   ActiveControl = DBGridEh1
   Caption = #21830#21697#36873#25321#26694
-  ClientHeight = 397
+  ClientHeight = 401
   ClientWidth = 605
   OnCreate = FormCreate
   OnShow = FormShow
@@ -11,10 +11,10 @@ inherited frameSelectGoods: TframeSelectGoods
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 605
-    Height = 397
+    Height = 401
     inherited RzPage: TRzPageControl
       Width = 595
-      Height = 354
+      Height = 355
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -22,17 +22,17 @@ inherited frameSelectGoods: TframeSelectGoods
         Caption = #21830#21697#36873#25321#26694
         inherited RzPanel2: TRzPanel
           Width = 591
-          Height = 350
+          Height = 351
           object Splitter1: TSplitter
             Left = 161
             Top = 5
-            Height = 340
+            Height = 341
           end
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
             Width = 156
-            Height = 340
+            Height = 341
             Align = alLeft
             BorderOuter = fsFlatRounded
             TabOrder = 0
@@ -40,7 +40,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 57
               Width = 152
-              Height = 281
+              Height = 282
               SelectionPen.Color = clBtnShadow
               Align = alClient
               Ctl3D = True
@@ -96,7 +96,7 @@ inherited frameSelectGoods: TframeSelectGoods
             Left = 164
             Top = 5
             Width = 422
-            Height = 340
+            Height = 341
             Align = alClient
             BorderOuter = fsFlatRounded
             TabOrder = 1
@@ -104,7 +104,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 57
               Width = 418
-              Height = 281
+              Height = 282
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = dsList
@@ -279,11 +279,11 @@ inherited frameSelectGoods: TframeSelectGoods
       end
     end
     inherited btPanel: TRzPanel
-      Top = 359
+      Top = 360
       Width = 595
-      Height = 33
+      Height = 36
       object btnOk: TRzBitBtn
-        Left = 415
+        Left = 391
         Top = 4
         Width = 67
         Height = 26
@@ -310,7 +310,7 @@ inherited frameSelectGoods: TframeSelectGoods
         Spacing = 5
       end
       object RzBitBtn2: TRzBitBtn
-        Left = 495
+        Left = 471
         Top = 4
         Width = 67
         Height = 26
@@ -341,13 +341,6 @@ inherited frameSelectGoods: TframeSelectGoods
   inherited mmMenu: TMainMenu
     Left = 200
   end
-  object cdsList: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    AfterScroll = cdsListAfterScroll
-    Left = 345
-    Top = 193
-  end
   object dsList: TDataSource
     DataSet = cdsList
     Left = 382
@@ -375,5 +368,12 @@ inherited frameSelectGoods: TframeSelectGoods
       ShortCut = 16452
       OnClick = N4Click
     end
+  end
+  object cdsList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 346
+    Top = 193
   end
 end

@@ -7,7 +7,8 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, ComCtrls, RzTreeVw, Grids, DBGridEh, cxControls, cxContainer,
   cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, DBClient, ADODB, ObjBase,
-  cxMaskEdit, cxDropDownEdit;
+  cxMaskEdit, cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset,
+  ZDataset;
 
 type
   TframeSelectGoods = class(TframeDialogForm)
@@ -25,7 +26,6 @@ type
     RzPanel1: TRzPanel;
     Splitter1: TSplitter;
     btnFilter: TRzBitBtn;
-    cdsList: TClientDataSet;
     dsList: TDataSource;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
@@ -35,6 +35,7 @@ type
     Label2: TLabel;
     fndGODS_FLAG1: TcxComboBox;
     CheckBox1: TCheckBox;
+    cdsList: TZQuery;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure btnFilterClick(Sender: TObject);
     procedure RzTreeChange(Sender: TObject; Node: TTreeNode);

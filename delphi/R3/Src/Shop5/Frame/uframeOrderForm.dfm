@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 358
-  Top = 210
+  Left = 599
+  Top = 322
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
@@ -389,8 +389,8 @@ inherited frameOrderForm: TframeOrderForm
         end>
     end
     object fndGODS_ID: TzrComboBoxList
-      Left = 48
-      Top = 123
+      Left = 40
+      Top = 155
       Width = 121
       Height = 20
       TabStop = False
@@ -445,6 +445,7 @@ inherited frameOrderForm: TframeOrderForm
       Buttons = [zbNew, zbFind]
       DropListStyle = lsFixed
       OnSaveValue = fndGODS_IDSaveValue
+      MultiSelect = False
     end
     object pnlBarCode: TRzPanel
       Left = 5
@@ -532,8 +533,8 @@ inherited frameOrderForm: TframeOrderForm
       Visible = False
     end
     object fndUNIT_ID: TcxComboBox
-      Left = 280
-      Top = 120
+      Left = 240
+      Top = 160
       Width = 49
       Height = 20
       PopupMenu = PopupMenu1
@@ -547,90 +548,14 @@ inherited frameOrderForm: TframeOrderForm
       OnKeyPress = fndUNIT_IDKeyPress
     end
   end
-  object edtTable: TADODataSet
-    AfterOpen = edtTableAfterOpen
-    BeforePost = edtTableBeforePost
-    AfterScroll = edtTableAfterScroll
-    OnNewRecord = edtTableNewRecord
-    FieldDefs = <>
-    Parameters = <>
-    StoreDefs = True
-    Left = 72
-    Top = 264
-    object edtTableSEQNO: TIntegerField
-      FieldName = 'SEQNO'
-    end
-    object edtTableGODS_ID: TStringField
-      FieldName = 'GODS_ID'
-      Size = 50
-    end
-    object edtTableGODS_NAME: TStringField
-      FieldName = 'GODS_NAME'
-      Size = 100
-    end
-    object edtTableGODS_CODE: TStringField
-      FieldName = 'GODS_CODE'
-    end
-    object edtTableUNIT_ID: TStringField
-      FieldName = 'UNIT_ID'
-    end
-    object edtTableBATCH_NO: TStringField
-      DisplayWidth = 50
-      FieldName = 'BATCH_NO'
-      Size = 50
-    end
-    object edtTableIS_PRESENT: TIntegerField
-      FieldName = 'IS_PRESENT'
-    end
-    object edtTableBARCODE: TStringField
-      FieldName = 'BARCODE'
-      Size = 50
-    end
+  inherited actList: TActionList
+    Left = 216
+    Top = 136
   end
   object dsTable: TDataSource
     DataSet = edtTable
     Left = 104
     Top = 264
-  end
-  object edtProperty: TADODataSet
-    FieldDefs = <>
-    Parameters = <>
-    StoreDefs = True
-    Left = 72
-    Top = 312
-    object IntegerField1: TIntegerField
-      FieldName = 'SEQNO'
-    end
-    object StringField1: TStringField
-      FieldName = 'GODS_ID'
-      Size = 50
-    end
-    object StringField2: TStringField
-      FieldName = 'GODS_NAME'
-      Size = 100
-    end
-    object StringField3: TStringField
-      FieldName = 'GODS_CODE'
-    end
-    object StringField4: TStringField
-      FieldName = 'UNIT_ID'
-    end
-    object StringField5: TStringField
-      DisplayWidth = 50
-      FieldName = 'BATCH_NO'
-      Size = 50
-    end
-    object IntegerField2: TIntegerField
-      FieldName = 'IS_PRESENT'
-    end
-    object edtPropertyPROPERTY_01: TStringField
-      FieldName = 'PROPERTY_01'
-      Size = 10
-    end
-    object edtPropertyPROPERTY_02: TStringField
-      FieldName = 'PROPERTY_02'
-      Size = 10
-    end
   end
   object PopupMenu1: TPopupMenu
     Left = 312
@@ -661,5 +586,100 @@ inherited frameOrderForm: TframeOrderForm
       Caption = #21830#21697#23646#24615
       OnClick = mnuGodsPropertyClick
     end
+  end
+  object edtTable: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'BARCODE'
+        DataType = ftString
+        Size = 50
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 72
+    Top = 264
+  end
+  object cdsProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 72
+    Top = 304
   end
 end

@@ -6,8 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzPanel, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxButtonEdit,
-  zrComboBoxList, DB, ADODB, StdCtrls, ZBase, Math, Buttons, RzTabs,
-  cxDropDownEdit;
+  zrComboBoxList, DB, StdCtrls, ZBase, Math, Buttons, RzTabs,
+  cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset, ZDataset, ADODB;
 
 const
   WM_DIALOG_PULL=WM_USER+1;
@@ -35,45 +35,28 @@ type
     RzPanel3: TRzPanel;
     DBGridEh1: TDBGridEh;
     fndGODS_ID: TzrComboBoxList;
-    edtTable: TADODataSet;
-    edtTableGODS_ID: TStringField;
-    edtTableGODS_NAME: TStringField;
-    edtTableGODS_CODE: TStringField;
-    edtTableUNIT_ID: TStringField;
-    edtTableSEQNO: TIntegerField;
     pnlBarCode: TRzPanel;
     lblInput: TLabel;
     lblHint: TLabel;
     edtInput: TcxTextEdit;
     dsTable: TDataSource;
     stbHint: TRzPanel;
-    edtTableBATCH_NO: TStringField;
-    edtTableIS_PRESENT: TIntegerField;
-    edtProperty: TADODataSet;
-    IntegerField1: TIntegerField;
-    StringField1: TStringField;
-    StringField2: TStringField;
-    StringField3: TStringField;
-    StringField4: TStringField;
-    StringField5: TStringField;
-    IntegerField2: TIntegerField;
     RzPanel4: TRzPanel;
     Shape1: TShape;
     lblCaption: TLabel;
     Image1: TImage;
     lblState: TLabel;
-    edtPropertyPROPERTY_01: TStringField;
-    edtPropertyPROPERTY_02: TStringField;
     PopupMenu1: TPopupMenu;
     rzHelp: TRzPanel;
     fndUNIT_ID: TcxComboBox;
-    edtTableBARCODE: TStringField;
     mnuDeleteGods: TMenuItem;
     mnuGodsProperty: TMenuItem;
     actCopyToNew: TMenuItem;
     munInsertRow: TMenuItem;
     munAppendRow: TMenuItem;
     munDivRow: TMenuItem;
+    edtTable: TZQuery;
+    cdsProperty: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -271,7 +254,7 @@ type
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,ufrmGoodsInfo, uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods;
+uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods;
 {$R *.dfm}
 
 { TframeOrderFrom }

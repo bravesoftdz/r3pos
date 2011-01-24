@@ -1,6 +1,6 @@
 inherited frmMeaUnits: TfrmMeaUnits
-  Left = 359
-  Top = 114
+  Left = 645
+  Top = 192
   Caption = #21830#21697#21333#20301#31649#29702
   ClientHeight = 350
   ClientWidth = 349
@@ -227,16 +227,6 @@ inherited frmMeaUnits: TfrmMeaUnits
       OnExecute = CtrlEndExecute
     end
   end
-  object cdsUnit: TClientDataSet
-    Aggregates = <>
-    IndexFieldNames = 'SEQ_NO'
-    Params = <>
-    AfterEdit = cdsUnitAfterEdit
-    BeforePost = cdsUnitBeforePost
-    OnNewRecord = cdsUnitNewRecord
-    Left = 70
-    Top = 173
-  end
   object dsUnit: TDataSource
     DataSet = cdsUnit
     Left = 110
@@ -258,5 +248,15 @@ inherited frmMeaUnits: TfrmMeaUnits
     object N4: TMenuItem
       Action = CtrlEnd
     end
+  end
+  object cdsUnit: TZQuery
+    SortedFields = 'SEQ_NO'
+    AfterEdit = cdsUnitAfterEdit
+    BeforePost = cdsUnitBeforePost
+    OnNewRecord = cdsUnitNewRecord
+    Params = <>
+    IndexFieldNames = 'SEQ_NO Asc'
+    Left = 38
+    Top = 173
   end
 end

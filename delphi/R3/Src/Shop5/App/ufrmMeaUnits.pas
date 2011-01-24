@@ -5,14 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, Grids, DBGridEh, DB, DBClient,objBase,ADODB;
+  RzButton, Grids, DBGridEh, DB, DBClient,objBase,ADODB,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmMeaUnits = class(TframeDialogForm)
     DBGridEh1: TDBGridEh;
     btnSave: TRzBitBtn;
     btnExit: TRzBitBtn;
-    cdsUnit: TClientDataSet;
     dsUnit: TDataSource;
     btnAppend: TRzBitBtn;
     btnDelete: TRzBitBtn;
@@ -25,6 +25,7 @@ type
     CtrlDown: TAction;
     CtrlHome: TAction;
     CtrlEnd: TAction;
+    cdsUnit: TZQuery;
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnAppendClick(Sender: TObject);
@@ -60,7 +61,7 @@ type
   end;
 
 implementation
-uses  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal;
+uses  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal, ufrmBasic, Math;
 {$R *.dfm}
 
 procedure TfrmMeaUnits.DBGridEh1Columns1UpdateData(Sender: TObject;
@@ -96,11 +97,13 @@ begin
     cdsUnit.EnableControls;
   end;
   cdsUnit.Append;
+  cdsUnit.FieldByName('UNIT_ID').AsString := TSequence.NewId;
+  cdsUnit.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsUnit.FieldByName('UNIT_NAME').AsString := '';
   cdsUnit.Post;
   DBGridEh1.SetFocus;
   DBGridEh1.Col:=1;
-  DBGridEh1.EditorMode := true;   
+  DBGridEh1.EditorMode := true;
 end;
 
 procedure TfrmMeaUnits.btnDeleteClick(Sender: TObject);
@@ -154,7 +157,7 @@ begin
     end;
   finally
     cdsUnit.EnableControls;
-  end;  
+  end;
   Save;
   //别的窗体调用此窗体
   if Flag=1 then
@@ -172,7 +175,8 @@ end;
 
 procedure TfrmMeaUnits.Open;
 begin
-  Factor.Open(cdsUnit,'TMeaUnits');
+    Factor.Open(cdsUnit,'TMeaUnits');
+
   if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
 end;
 
@@ -189,8 +193,13 @@ begin
     cdsUnit.First;
     while not cdsUnit.Eof do
       begin
-        cdsUnit.Edit;
         inc(c);
+        if c = cdsUnit.FieldByName('SEQ_NO').AsInteger THEN
+          begin
+            cdsUnit.Next;
+            Continue;
+          end;
+        cdsUnit.Edit;
         cdsUnit.FieldByName('SEQ_NO').AsInteger := c;
         cdsUnit.Post;
         cdsUnit.Next;
@@ -293,7 +302,7 @@ end;
 class function TfrmMeaUnits.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
+   //if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
    with TfrmMeaUnits.Create(Owner) do
     begin
       try
@@ -327,13 +336,13 @@ end;
 
 procedure TfrmMeaUnits.FormCreate(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('200043') then
+  {if not ShopGlobal.GetChkRight('200043') then
   begin
     DBGridEh1.ReadOnly:=True;
     btnAppend.Enabled:=False;
     btnSave.Enabled:=False;
     btnDelete.Enabled:=False;
-  end;
+  end;  }
 end;
 
 procedure TfrmMeaUnits.CtrlUpExecute(Sender: TObject);

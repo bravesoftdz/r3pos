@@ -212,6 +212,7 @@ begin
         cxedtPasswrd.SetFocus;
         raise Exception.Create('无效密码,请重新输入！');
       end;
+    Factor.ExecSQL(''); 
   finally
     Temp.Free;
   end;

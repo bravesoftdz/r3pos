@@ -1,6 +1,6 @@
 inherited frmTenant: TfrmTenant
-  Left = 663
-  Top = 187
+  Left = 263
+  Top = 160
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -17,9 +17,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 494
     Height = 355
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet
@@ -35,7 +35,7 @@ inherited frmTenant: TfrmTenant
           490
           333)
         object lblName: TLabel
-          Left = 310
+          Left = 278
           Top = 92
           Width = 60
           Height = 12
@@ -45,7 +45,7 @@ inherited frmTenant: TfrmTenant
           Transparent = True
         end
         object lblPass: TLabel
-          Left = 310
+          Left = 278
           Top = 121
           Width = 60
           Height = 12
@@ -53,8 +53,8 @@ inherited frmTenant: TfrmTenant
           Transparent = True
         end
         object Label19: TLabel
-          Left = 332
-          Top = 194
+          Left = 300
+          Top = 195
           Width = 70
           Height = 14
           Caption = #36824#27809#26377#21527#65311
@@ -67,7 +67,7 @@ inherited frmTenant: TfrmTenant
           Transparent = True
         end
         object Label20: TLabel
-          Left = 414
+          Left = 382
           Top = 194
           Width = 60
           Height = 14
@@ -84,18 +84,18 @@ inherited frmTenant: TfrmTenant
         object RzLabel2: TRzLabel
           Left = 5
           Top = 57
-          Width = 284
-          Height = 272
+          Width = 144
+          Height = 84
           Caption = #35828#26126#65306#13#13'1'#12289#24102'*'#21495#20026#24517#39035#36755#20837#36873#39033#12290#13#13'2'#12289#35831#27491#30830#36755#20837#30456#20851#20449#24687#12290#13#13'3'#12289
         end
         object Bevel1: TBevel
-          Left = 303
+          Left = 247
           Top = 69
           Width = 2
           Height = 245
         end
         object cxedtPasswrd: TcxTextEdit
-          Left = 370
+          Left = 338
           Top = 116
           Width = 114
           Height = 20
@@ -104,7 +104,7 @@ inherited frmTenant: TfrmTenant
           ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
         end
         object cxedtLOGIN_NAME: TcxTextEdit
-          Left = 370
+          Left = 338
           Top = 88
           Width = 114
           Height = 20
@@ -112,7 +112,7 @@ inherited frmTenant: TfrmTenant
           ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
         end
         object RzBitBtn1: TRzBitBtn
-          Left = 412
+          Left = 380
           Top = 148
           Width = 71
           Height = 29
@@ -661,8 +661,8 @@ inherited frmTenant: TfrmTenant
       object RzLabel1: TRzLabel
         Left = 312
         Top = 14
-        Width = 169
-        Height = 203
+        Width = 144
+        Height = 84
         Caption = #35828#26126#65306#13#13'1'#12289#24102'*'#21495#20026#24517#39035#36755#20837#36873#39033#12290#13#13'2'#12289#35831#27491#30830#36755#20837#30456#20851#20449#24687#12290#13#13'3'#12289
       end
       object Label21: TLabel
@@ -789,7 +789,7 @@ inherited frmTenant: TfrmTenant
         TabOrder = 12
       end
       object btnOk: TRzBitBtn
-        Left = 217
+        Left = 219
         Top = 289
         Width = 71
         Height = 29
@@ -855,6 +855,7 @@ inherited frmTenant: TfrmTenant
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
+        MultiSelect = False
       end
     end
   end
@@ -867,6 +868,8 @@ inherited frmTenant: TfrmTenant
     Top = 256
   end
   object CdsTable: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     Params = <>
     Left = 321
     Top = 256

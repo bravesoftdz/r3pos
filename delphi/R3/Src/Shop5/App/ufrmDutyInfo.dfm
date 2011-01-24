@@ -201,6 +201,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Buttons = [zbClear]
             DropListStyle = lsEditFixed
             OnBeforeDropList = edtUPDUTY_IDBeforeDropList
+            MultiSelect = False
           end
           object edtREMARK: TcxMemo
             Left = 106
@@ -281,6 +282,8 @@ inherited frmDutyInfo: TfrmDutyInfo
     Top = 16
   end
   object drpDeptDuty: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select * from SYS_DEFINE where COMP_ID='#39'----'#39' or COMP_ID=:COMP_I' +
@@ -300,6 +303,8 @@ inherited frmDutyInfo: TfrmDutyInfo
       end>
   end
   object cdsTable: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select * from SYS_DEFINE where COMP_ID='#39'----'#39' or COMP_ID=:COMP_I' +

@@ -80,7 +80,7 @@ type
     Obj: TRecord_;
     function Check:boolean;
     class function coRegister(Owner:TForm):boolean;
-    procedure Login_F(Account, PassWrd: string);
+    function Login_F(Account, PassWrd: string):Boolean;
     procedure Save;
     procedure Open;
   end;
@@ -96,10 +96,20 @@ begin
       try
         rzPage.ActivePageIndex := 0;
         result := Check;
+        if result then
+          begin
+            //检测网络 result :=  ;
+            if result then
+              begin
+                //登录认证
+                result := Login_F('','');
+                if not result then Label19.Caption := '登录认证失败 ';
+              end
+            else
+              Label19.Caption := '网络连接失败 ';;
+          end;
         if not result then
-           result := (ShowModal=MROK)
-        else
-          Login_F('','');
+           result := (ShowModal=MROK);
       finally
         free;
       end;
@@ -149,6 +159,7 @@ begin
   Tenant.PROD_ID := Obj.FieldByName('PROD_ID').AsString;
 
   Tenant := CaFactory.coRegister(Tenant);
+  //
   Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
   //以上语句在与远程服务器连接后，从服务器端获取企业ID值
   CdsTable.edit;
@@ -160,6 +171,9 @@ begin
 end;
 
 procedure TfrmTenant.RzBitBtn1Click(Sender: TObject);
+var
+  Tenant: TCaTenant;
+  Login: TCaLogin;
 begin
   inherited;
   if Trim(cxedtLOGIN_NAME.Text) = '' then
@@ -172,8 +186,39 @@ begin
       cxedtPasswrd.SetFocus;
       raise Exception.Create('请输入登录口令！');
     end;
-  Login_F(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
-  ModalResult := mrNo;
+
+  Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),DecStr(Trim(cxedtPasswrd.Text),ENC_KEY));
+  //
+  Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
+  //Open;
+  IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
+    begin
+      CdsTable.Edit;
+      CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+      CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+      CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+      CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+      CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+      CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+      CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+      CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+      CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+      CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+      CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+      CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+      CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+      CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+      CdsTable.FieldByName('PASSWRD').AsString := Tenant.PASSWRD;
+      CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+      CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+      CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+      CdsTable.Post;
+      Factor.UpdateBatch(CdsTable,'TTenant',nil);
+    end;
+  Global.TENANT_ID := Tenant.TENANT_ID;
+  Global.TENANT_NAME := Tenant.TENANT_NAME;
+
+  ModalResult := mrCancel;
 end;
 
 procedure TfrmTenant.Label20Click(Sender: TObject);
@@ -230,7 +275,7 @@ begin
     end;
   //前后检测——以上检测只判断注册界面不允许为空的字段
   Save;
-  ModalResult := mrNo;
+  ModalResult := mrCancel;
 end;
 
 procedure TfrmTenant.Open;
@@ -262,12 +307,13 @@ begin
   end;
 end;
 
-procedure TfrmTenant.Login_F(Account, PassWrd: string);
+function TfrmTenant.Login_F(Account, PassWrd: string):Boolean;
 var
   Temp: TZQuery;
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
+  Result := False;
   if (Account = '') and (PassWrd = '') then
     begin
       try
@@ -283,28 +329,7 @@ begin
     end;
   Login := CaFactory.coLogin(Account,DecStr(PassWrd,ENC_KEY));
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-  //Open;
-  CdsTable.Edit;
-  CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
-  CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
-  CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
-  CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
-  CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
-  CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
-  CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
-  CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
-  CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
-  CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
-  CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
-  CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
-  CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
-  CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
-  CdsTable.FieldByName('PASSWRD').AsString := Tenant.PASSWRD;
-  CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
-  CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
-  CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
-  CdsTable.Post;
-  //Factor.UpdateBatch(CdsTable,'TTenant',nil);
+  Result := True;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
 end;

@@ -16,9 +16,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 494
     Height = 355
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet

@@ -54,7 +54,7 @@ begin
       tmp:=TZQuery.Create(nil);
       tmp.Close;
       tmp.SQL.Text:='Select Count(*) as ReSum from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+
-           ' and '';''+ROLE_IDS+'';'' like '';''+:ROLE_ID+'';''  ';
+           ' and '';''+ROLE_IDS+'';'' like ''%;''+:ROLE_ID+'';%''  ';
       tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then

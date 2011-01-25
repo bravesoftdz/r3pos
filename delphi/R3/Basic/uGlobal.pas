@@ -458,6 +458,12 @@ begin
      Raise Exception.CreateFmt('%s数据表没找到。',[Name]);
   if not Result.Active then
      begin
+       if TZQuery(Result).Params.FindParam('SHOP_ID')<>nil then
+          TZQuery(Result).Params.FindParam('SHOP_ID').AsInteger := SHOP_ID;
+       if TZQuery(Result).Params.FindParam('TENANT_ID')<>nil then
+          TZQuery(Result).Params.FindParam('TENANT_ID').AsInteger := TENANT_ID;
+       if TZQuery(Result).Params.FindParam('USER_ID')<>nil then
+          TZQuery(Result).Params.FindParam('USER_ID').AsString := UserId;
        Factor.Open(Result);
      end;
   if Result.Filtered then Result.Filtered := false;

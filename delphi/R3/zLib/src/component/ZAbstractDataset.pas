@@ -920,6 +920,7 @@ var
   s9:Double;
   s10:Extended;
   s11:TDatetime;
+  s12:SmallInt;
   zIsNull:boolean;
   i,w:integer;
   sm:TMemoryStream;
@@ -943,6 +944,15 @@ begin
           begin
              Stream.Read(s6,SizeOf(s6));
              ResultSet.UpdateByte(i,s6);
+          end;
+        end;
+      stShort:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s12,SizeOf(s12));
+             ResultSet.UpdateShort(i,s12);
           end;
         end;
       stInteger:
@@ -1176,6 +1186,7 @@ var
   s9:Double;
   s10:Extended;
   s11:TDatetime;
+  s12:SmallInt;
   zIsNull:boolean;
   i,w:integer;
 begin
@@ -1190,6 +1201,16 @@ begin
           begin
              s5 := ResultSet.GetBoolean(i);
              Stream.Write(s5,SizeOf(s5));
+          end;
+        end;
+      stShort:
+        begin
+          zIsNull := ResultSet.WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             s12 := ResultSet.GetShort(i);
+             Stream.Write(s12,SizeOf(s12));
           end;
         end;
       stByte:
@@ -1462,6 +1483,7 @@ var
   s9:Double;
   s10:Extended;
   s11:TDatetime;
+  s12:SmallInt;
   zIsNull:boolean;
   i,w:integer;
   sm:TMemoryStream;
@@ -1485,6 +1507,15 @@ begin
           begin
              Stream.Read(s6,SizeOf(s6));
              ResultSet.UpdateByte(i,s6);
+          end;
+        end;
+      stShort:
+        begin
+          Stream.Read(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Read(s12,SizeOf(s12));
+             ResultSet.UpdateShort(i,s12);
           end;
         end;
       stInteger:

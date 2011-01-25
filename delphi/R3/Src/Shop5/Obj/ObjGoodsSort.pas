@@ -31,7 +31,7 @@ begin
     rs.CommandText := 'select count(*) from BAS_GOODSINFO where (CALC_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (SMALL_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (BIG_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') and COMM not in (''02'',''12'')';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.'); 
+       Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
     rs.Free;
   end; }
@@ -45,7 +45,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select SORT_ID,COMM,SEQ_NO from PUB_GOODSSORT where  SORT_NAME='''+FieldbyName('SORT_NAME').AsString+'''';
+    rs.SQL.Text := 'select SORT_ID,COMM,SEQ_NO from PUB_GOODSSORT where SORT_NAME='''+FieldByName('SORT_NAME').AsString+''' and SORT_TYPE='+FieldbyName('SORT_TYPE').AsString;
     AGlobal.Open(rs);
     rs.First;
     while not rs.Eof do

@@ -71,7 +71,6 @@ var
   Str:string;
 begin
   //初始化更新逻辑
-  IsSQLUpdate := true;
   KeyFields:='DUTY_ID';
   //初始化查询
   case iDbType of
@@ -79,10 +78,12 @@ begin
           ' From CA_DUTY_INFO Where TENANT_ID=:TENANT_ID and DUTY_ID=:DUTY_ID ';
    5:Str:='select DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDUTY_ID '+
           ' From CA_DUTY_INFO Where TENANT_ID=:TENANT_ID and DUTY_ID=:DUTY_ID ';
-  end; 
+  end;
   SelectSQL.Text:=Str;
   Str :='insert into CA_DUTY_INFO (DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,COMM,TIME_STAMP) '+
         ' values (:DUTY_ID,:DUTY_NAME,:LEVEL_ID,:DUTY_SPELL,:TENANT_ID,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
+
+  IsSQLUpdate := true;
   InsertSQL.Add(Str);
 
   Str :='update CA_DUTY_INFO set DUTY_ID=:DUTY_ID,DUTY_NAME=:DUTY_NAME,DUTY_SPELL=:DUTY_SPELL,'+

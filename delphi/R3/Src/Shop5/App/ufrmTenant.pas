@@ -106,7 +106,10 @@ begin
                 if not result then Label19.Caption := '登录认证失败 ';
               end
             else
-              Label19.Caption := '网络连接失败 ';;
+              begin
+                Label19.Caption := '网络连接失败 ';
+                RzBitBtn1.Enabled := False;             
+              end;
           end;
         if not result then
            result := (ShowModal=MROK);

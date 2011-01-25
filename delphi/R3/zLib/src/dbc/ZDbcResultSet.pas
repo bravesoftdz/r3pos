@@ -351,7 +351,7 @@ begin
 
   if Statement = nil then
   begin
-    FResultSetType := rtForwardOnly;
+    FResultSetType := rtScrollInsensitive;
     FResultSetConcurrency := rcUpdatable;// rcReadOnly; zhangsenrong
     FPostUpdates := poColumnsAll;
     FLocateUpdates := loWhereAll;

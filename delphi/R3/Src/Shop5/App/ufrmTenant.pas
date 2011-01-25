@@ -78,15 +78,16 @@ type
   public
     { Public declarations }
     Obj: TRecord_;
+    TENANT_ID: Integer;
     function Check:boolean;
     class function coRegister(Owner:TForm):boolean;
-    function Login_F(Account, PassWrd: string):Boolean;
+    function Login_F:Boolean;
     procedure Save;
     procedure Open;
   end;
 
 implementation
-uses uGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
+uses uGlobal, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
 {$R *.dfm}
 
 class function TfrmTenant.coRegister(Owner: TForm): boolean;
@@ -98,20 +99,21 @@ begin
         result := Check;
         if result then
           begin
-            //检测网络 result :=  ;
+            //检测网络
+            result := ShopGlobal.CheckNetwork;
             if result then
               begin
                 //登录认证
-                result := Login_F('','');
+                result := Login_F;
                 if not result then Label19.Caption := '登录认证失败 ';
               end
             else
               begin
                 Label19.Caption := '网络连接失败 ';
-                RzBitBtn1.Enabled := False;             
+                Label19.Tag := -1;
               end;
           end;
-        if not result then
+        if (not result) then
            result := (ShowModal=MROK);
       finally
         free;
@@ -125,8 +127,6 @@ begin
   inherited;
   for i:=0 to RzPage.PageCount -1 do
     RzPage.Pages[i].TabVisible := false;
-
-  Factor.Open(CdsTable,'TTenant');
   edtREGION_ID.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
   Obj := TRecord_.Create;
 end;
@@ -137,7 +137,7 @@ var
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
-  Obj.ReadFromDataSet(CdsTable);
+  Obj.Clear;
   WriteToObject(Obj,self);
   Obj.FieldByName('PASSWRD').AsString := EncStr(Obj.FieldbyName('PASSWRD').AsString,ENC_KEY);
   Obj.FieldByName('TENANT_SPELL').AsString := FnString.GetWordSpell(edtTENANT_NAME.Text);
@@ -165,7 +165,11 @@ begin
   //
   Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
   //以上语句在与远程服务器连接后，从服务器端获取企业ID值
-  CdsTable.edit;
+
+  if CdsTable.Locate('TENANT_ID',TENANT_ID,[]) then
+    CdsTable.edit
+  else
+    CdsTable.Append;
   Obj.WriteToDataSet(CdsTable);
   CdsTable.Post;
   Factor.UpdateBatch(CdsTable,'TTenant',nil);
@@ -193,7 +197,8 @@ begin
   Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),DecStr(Trim(cxedtPasswrd.Text),ENC_KEY));
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-  //Open;
+  if (IntToStr(TENANT_ID) <> '' ) and (TENANT_ID <> Tenant.TENANT_ID) then Exit;
+  Open;
   IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
     begin
       CdsTable.Edit;
@@ -282,19 +287,13 @@ begin
 end;
 
 procedure TfrmTenant.Open;
-var Temp:TZQuery;
 begin
-  Temp := TZQuery.Create(nil);
-  try
-    Temp.Close;
-    Temp.SQL.Text := 'Select * From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+inttostr(Global.TENANT_ID);
-    Factor.Open(Temp);
-    Obj.Clear;
-    Obj.ReadFromDataSet(Temp);
-    ReadFromObject(Obj,Self);
-  finally
-    Temp.Free;
-  end;
+  CdsTable.Close;
+  CdsTable.SQL.Text := 'Select * From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+inttostr(TENANT_ID);
+  Factor.Open(CdsTable);
+  Obj.Clear;
+  Obj.ReadFromDataSet(CdsTable);
+  ReadFromObject(Obj,Self);
 end;
 
 function TfrmTenant.Check: boolean;
@@ -304,37 +303,30 @@ begin
   try
     Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID''';
     Factor.Open(Temp);
+    TENANT_ID := Temp.Fields[0].AsInteger;
     result := (Temp.Fields[0].asString<>'');
   finally
     Temp.free;
   end;
 end;
 
-function TfrmTenant.Login_F(Account, PassWrd: string):Boolean;
+function TfrmTenant.Login_F:Boolean;
 var
   Temp: TZQuery;
-  Tenant: TCaTenant;
-  Login: TCaLogin;
 begin
   Result := False;
-  if (Account = '') and (PassWrd = '') then
-    begin
-      try
-        Temp := TZQuery.Create(nil);
-        Temp.Close;
-        Temp.SQL.Text := 'Select LOGIN_NAME,PASSWRD From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID=(Select Value from Sys_Define Where Define = ''TENANT_ID'')';
-        Factor.Open(Temp);
-        Account := Temp.FieldByName('LOGIN_NAME').AsString;
-        PASSWRD := Temp.FieldByName('PASSWRD').AsString;
-      finally
-        Temp.Free;
-      end;
-    end;
-  Login := CaFactory.coLogin(Account,DecStr(PassWrd,ENC_KEY));
-  Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-  Result := True;
-  Global.TENANT_ID := Tenant.TENANT_ID;
-  Global.TENANT_NAME := Tenant.TENANT_NAME;
+  try
+    Temp := TZQuery.Create(nil);
+    Temp.Close;
+    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
+    Factor.Open(Temp);
+    CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+    Result := True;
+    Global.TENANT_ID := Temp.FieldByName('TENANT_ID').AsInteger;
+    Global.TENANT_NAME := Temp.FieldByName('TENANT_NAME').AsString;
+  finally
+    Temp.Free;
+  end;
 end;
 
 procedure TfrmTenant.Paint;

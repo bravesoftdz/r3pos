@@ -455,6 +455,7 @@ begin
       Raise;
     end;
   finally
+    TZQuery(DataSet).UpdateObject := nil;
     UpdateSQL.Free;
     Factory.Free;
   end;

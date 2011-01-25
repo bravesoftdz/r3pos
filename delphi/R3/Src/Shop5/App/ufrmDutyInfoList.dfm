@@ -393,6 +393,8 @@ inherited frmDutyInfoList: TfrmDutyInfoList
     end
   end
   object cdsBrowser: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +

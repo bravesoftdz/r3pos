@@ -1505,7 +1505,7 @@ var
   s10:Extended;
   s11:TDatetime;
   s12:SmallInt;
-  s13:Int64
+  s13:Int64;
   zIsNull:boolean;
   i,w:integer;
   sm:TMemoryStream;

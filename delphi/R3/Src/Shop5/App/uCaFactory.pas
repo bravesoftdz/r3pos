@@ -9,6 +9,7 @@ type
     TENANT_TYPE:integer;
     SHORT_TENANT_NAME:string;
     TENANT_SPELL:string;
+    LICENSE_CODE:String;
     LEGAL_REPR:string;
     LINKMAN:string;
     TELEPHONE:string;
@@ -34,10 +35,16 @@ type
   public
     function coLogin(Account:string;PassWrd:string):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
+    function coGetList(TENANT_ID:string):TCaTenant;
   end;
 var CaFactory:TCaFactory;
 implementation
 { TCaFactory }
+
+function TCaFactory.coGetList(TENANT_ID: string): TCaTenant;
+begin
+  Result.TENANT_ID := 1000001;
+end;
 
 function TCaFactory.coLogin(Account, PassWrd: string): TCaLogin;
 begin

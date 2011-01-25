@@ -1,7 +1,7 @@
 unit ObjUsers;
 
 interface
-uses SysUtils,ZBase,Classes, AdoDb,ZIntf,ObjCommon,ZDataset;
+uses SysUtils,ZBase,Classes,AdoDb,ZIntf,ObjCommon,ZDataset;
 
 type
   TUsers=class(TZFactory)
@@ -26,19 +26,20 @@ var Str:string;
 begin  
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT='''+FieldbyName('ACCOUNT').AsString+'''';
+    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID';
     AGlobal.Open(rs);
-    if not rs.IsEmpty then Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
+    if not rs.IsEmpty then
+      Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
   finally
     rs.Free;
   end;
   Result:=True;
-  {if FieldByName('SHOP_ID').AsString<>'' then
+  if FieldByName('SHOP_ID').AsString<>'' then
   begin
-    Str:='insert into CA_COMPRIGHT(COMP_ID,USER_ID,COMM,TIME_STAMP) '
+    Str:='insert into CA_SHOP_INFO(SHOP_ID,USER_ID,COMM,TIME_STAMP) '
     +' VALUES('''+FieldByName('COMP_ID').AsString+''','''+FieldByName('USER_ID').AsString+''',''00'','+GetTimeStamp(iDbType)+')';
     AGlobal.ExecSQL(Str);
-  end;}
+  end;
 end;
 
 function TUsers.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -69,7 +70,7 @@ begin
   inherited;
   KeyFields := 'USER_ID';
   SelectSQL.Text := 'select USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,SHOP_ID,DEPT_ID,DUTY_IDS,DUTY_NAMES,ROLE_IDS,ROLE_NAMES,TENANT_ID,SEX,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,MSN,'+
-                    'ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK from CA_USERS where USER_ID=:USER_ID and TENANT_ID=:TENANT_ID ORDER BY USER_ID';
+                    'ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK from CA_USERS where COMM not in (''02'',''12'') and USER_ID=:USER_ID and TENANT_ID=:TENANT_ID ORDER BY USER_ID';
   IsSQLUpdate := True;
   Str := 'insert into CA_USERS(USER_ID,ACCOUNT,USER_NAME,USER_SPELL,SHOP_ID,DEPT_ID,DUTY_IDS,DUTY_NAMES,ROLE_IDS,ROLE_NAMES,TENANT_ID,SEX,MOBILE,OFFI_TELE,FAMI_TELE,'+
          'EMAIL,QQ,MSN,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM,TIME_STAMP) VALUES(:USER_ID,:ACCOUNT,:USER_NAME,'+

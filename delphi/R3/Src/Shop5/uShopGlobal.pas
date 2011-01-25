@@ -17,6 +17,18 @@ type
     CA_ROLE_INFO: TZQuery;
     CA_TENANT: TZQuery;
     PUB_REGION_INFO: TZQuery;
+    PUB_PAYMENT: TZQuery;
+    PUB_GOODSINFO: TZQuery;
+    PUB_CLIENTINFO: TZQuery;
+    PUB_CUSTOMER: TZQuery;
+    PUB_MEAUNITS: TZQuery;
+    PUB_GOODSSORT1: TZQuery;
+    PUB_GOODSSORT2: TZQuery;
+    PUB_GOODSSORT3: TZQuery;
+    PUB_GOODSSORT4: TZQuery;
+    PUB_GOODSSORT5: TZQuery;
+    PUB_GOODSSORT6: TZQuery;
+    PUB_GOODSSORT7: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

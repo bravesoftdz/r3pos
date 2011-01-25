@@ -1,6 +1,6 @@
 inherited frmTenant: TfrmTenant
-  Left = 263
-  Top = 160
+  Left = 508
+  Top = 215
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -9,7 +9,6 @@ inherited frmTenant: TfrmTenant
   OldCreateOrder = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object RzPage: TRzPageControl [0]
@@ -483,7 +482,7 @@ inherited frmTenant: TfrmTenant
       end
       object Label7: TLabel
         Left = 7
-        Top = 80
+        Top = 227
         Width = 80
         Height = 12
         Alignment = taRightJustify
@@ -557,12 +556,12 @@ inherited frmTenant: TfrmTenant
       end
       object Label12: TLabel
         Left = 7
-        Top = 227
+        Top = 80
         Width = 80
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #32593#31449#22320#22336
+        Caption = #35768#21487#35777#21495
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -725,7 +724,7 @@ inherited frmTenant: TfrmTenant
       end
       object edtLEGAL_REPR: TcxTextEdit
         Left = 98
-        Top = 76
+        Top = 223
         Width = 111
         Height = 20
         TabOrder = 3
@@ -751,10 +750,10 @@ inherited frmTenant: TfrmTenant
         Height = 20
         TabOrder = 7
       end
-      object edtHOMEPAGE: TcxTextEdit
+      object edtLICENSE_CODE: TcxTextEdit
         Left = 98
-        Top = 223
-        Width = 185
+        Top = 76
+        Width = 111
         Height = 20
         TabOrder = 8
       end
@@ -855,7 +854,6 @@ inherited frmTenant: TfrmTenant
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
-        MultiSelect = False
       end
     end
   end
@@ -868,7 +866,6 @@ inherited frmTenant: TfrmTenant
     Top = 256
   end
   object CdsTable: TZQuery
-    FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 321

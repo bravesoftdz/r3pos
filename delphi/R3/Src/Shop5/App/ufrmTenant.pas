@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, RzTabs, cxControls, cxContainer, ZBase,
-  cxEdit, cxTextEdit, StdCtrls, RzButton, RzLabel, cxMaskEdit, uDsUtil,
+  cxEdit, cxTextEdit, StdCtrls, RzButton, RzLabel, cxMaskEdit, uDsUtil,uCaFactory,
   cxButtonEdit, zrComboBoxList, ExtCtrls, DB, ZAbstractRODataset,
   ZAbstractDataset, ZDataset, jpeg;
 
@@ -33,7 +33,7 @@ type
     Label11: TLabel;
     edtFAXES: TcxTextEdit;
     Label12: TLabel;
-    edtHOMEPAGE: TcxTextEdit;
+    edtLICENSE_CODE: TcxTextEdit;
     Label13: TLabel;
     edtADDRESS: TcxTextEdit;
     Label14: TLabel;
@@ -71,19 +71,22 @@ type
     procedure Label20Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
+  protected
+    procedure Paint; override;
     { Private declarations }
   public
     { Public declarations }
     Obj: TRecord_;
+    function Check:boolean;
     class function coRegister(Owner:TForm):boolean;
+    procedure Login_F(Account, PassWrd: string);
     procedure Save;
     procedure Open;
   end;
 
 implementation
-uses uGlobal, Math, uShoputil,ObjCommon,EncDec;
+uses uGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
 {$R *.dfm}
 
 class function TfrmTenant.coRegister(Owner: TForm): boolean;
@@ -91,7 +94,12 @@ begin
   with TfrmTenant.Create(Owner) do
     begin
       try
-        result := (ShowModal=MROK);
+        rzPage.ActivePageIndex := 0;
+        result := Check;
+        if not result then
+           result := (ShowModal=MROK)
+        else
+          Login_F('','');
       finally
         free;
       end;
@@ -105,25 +113,85 @@ begin
   for i:=0 to RzPage.PageCount -1 do
     RzPage.Pages[i].TabVisible := false;
 
+  Factor.Open(CdsTable,'TTenant');
   edtREGION_ID.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
   Obj := TRecord_.Create;
 end;
 
 procedure TfrmTenant.Save;
-  procedure UpdateToGlobal(obj:TRecord_);
-  var Tmp: TZQuery;
-    begin
-      Tmp := Global.GetZQueryFromName('CA_TENANT');
-      Tmp.Filtered := False;
-      if Tmp.Locate('TENANT_ID',obj.FieldbyName('TENANT_ID').AsString,[]) then
-        Tmp.Edit
-      else
-        Tmp.Append;
-      obj.WriteToDataSet(Tmp,false);
-      Tmp.Post;
-    end;
-var Temp: TZQuery;
+var
+  Temp: TZQuery;
+  Tenant: TCaTenant;
+  Login: TCaLogin;
 begin
+  Obj.ReadFromDataSet(CdsTable);
+  WriteToObject(Obj,self);
+  Obj.FieldByName('PASSWRD').AsString := EncStr(Obj.FieldbyName('PASSWRD').AsString,ENC_KEY);
+  Obj.FieldByName('TENANT_SPELL').AsString := FnString.GetWordSpell(edtTENANT_NAME.Text);
+
+  Tenant.TENANT_ID := Obj.FieldByName('TENANT_ID').AsInteger;
+  Tenant.LOGIN_NAME := Obj.FieldByName('LOGIN_NAME').AsString;
+  Tenant.TENANT_NAME := Obj.FieldByName('TENANT_NAME').AsString;
+  Tenant.TENANT_TYPE := Obj.FieldByName('TENANT_TYPE').AsInteger;
+  Tenant.SHORT_TENANT_NAME := Obj.FieldByName('SHORT_TENANT_NAME').AsString;
+  Tenant.TENANT_SPELL := Obj.FieldByName('TENANT_SPELL').AsString;
+  Tenant.LEGAL_REPR := Obj.FieldByName('LEGAL_REPR').AsString;
+  Tenant.LINKMAN := Obj.FieldByName('LINKMAN').AsString;
+  Tenant.TELEPHONE := Obj.FieldByName('TELEPHONE').AsString;
+  Tenant.FAXES := Obj.FieldByName('FAXES').AsString;
+  Tenant.LICENSE_CODE := Obj.FieldByName('LICENSE_CODE').AsString;
+  Tenant.ADDRESS := Obj.FieldByName('ADDRESS').AsString;
+  Tenant.POSTALCODE := Obj.FieldByName('POSTALCODE').AsString;
+  Tenant.REMARK := Obj.FieldByName('REMARK').AsString;
+  Tenant.PASSWRD := Obj.FieldByName('PASSWRD').AsString;
+  Tenant.REGION_ID := Obj.FieldByName('REGION_ID').AsString;
+  Tenant.SRVR_ID := Obj.FieldByName('SRVR_ID').AsString;
+  Tenant.PROD_ID := Obj.FieldByName('PROD_ID').AsString;
+
+  Tenant := CaFactory.coRegister(Tenant);
+  Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+  //以上语句在与远程服务器连接后，从服务器端获取企业ID值
+  CdsTable.edit;
+  Obj.WriteToDataSet(CdsTable);
+  CdsTable.Post;
+  Factor.UpdateBatch(CdsTable,'TTenant',nil);
+  Global.TENANT_ID := Tenant.TENANT_ID;
+  Global.TENANT_NAME := Tenant.TENANT_NAME;
+end;
+
+procedure TfrmTenant.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  if Trim(cxedtLOGIN_NAME.Text) = '' then
+    begin
+      cxedtLOGIN_NAME.SetFocus;
+      raise Exception.Create('请输入企业帐号！');
+    end;
+  if Trim(cxedtPasswrd.Text) = '' then
+    begin
+      cxedtPasswrd.SetFocus;
+      raise Exception.Create('请输入登录口令！');
+    end;
+  Login_F(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
+  ModalResult := mrNo;
+end;
+
+procedure TfrmTenant.Label20Click(Sender: TObject);
+begin
+  inherited;
+  RzPage.ActivePageIndex := 1;
+  Open;
+end;
+
+procedure TfrmTenant.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  Obj.Free;
+end;
+
+procedure TfrmTenant.btnOkClick(Sender: TObject);
+begin
+  inherited;
   if Trim(edtLOGIN_NAME.Text) = '' then
     begin
       if edtLOGIN_NAME.CanFocus then edtLOGIN_NAME.SetFocus;
@@ -161,123 +229,90 @@ begin
       raise Exception.Create('两次密码输入不一致！');
     end;
   //前后检测——以上检测只判断注册界面不允许为空的字段
-
-  {Temp := Global.GetZQueryFromName('CA_TENANT');
-  if Temp.Locate('LOGIN_NAME',Trim(edtLOGIN_NAME.Text),[]) then
-    begin
-      raise Exception.Create('登录帐号“' + Trim(edtLOGIN_NAME.Text) + '”已存在，请重新输入！');
-      edtLOGIN_NAME.Text := '';
-      if edtLOGIN_NAME.CanFocus then edtLOGIN_NAME.SetFocus;
-    end;}
-  //后台检测——以上检测判断登录帐号是否已经存在
-
-  {
-    此处为与远程服务器连接代码
-   }
-  WriteToObject(Obj,self);
-  Obj.FieldByName('PASSWRD').AsString := EncStr(Obj.FieldbyName('PASSWRD').AsString,ENC_KEY);
-  if CdsTable.RecordCount = 0 then
-    Obj.FieldByName('TENANT_ID').AsInteger := 1
-  else
-    Obj.FieldByName('TENANT_ID').AsInteger := Obj.FieldByName('TENANT_ID').AsInteger;
-  //以上语句在与远程服务器连接后，从服务器端赋值
-  CdsTable.edit;
-  Obj.WriteToDataSet(CdsTable);
-  CdsTable.Post;
-  if Factor.UpdateBatch(CdsTable,'TTenant',nil) then
-    UpdateToGlobal(Obj);
+  Save;
+  ModalResult := mrNo;
 end;
 
-procedure TfrmTenant.RzBitBtn1Click(Sender: TObject);
-var Temp: TZQuery;
+procedure TfrmTenant.Open;
+var Temp:TZQuery;
 begin
-  inherited;
-  if Trim(cxedtLOGIN_NAME.Text) = '' then
-    begin
-      cxedtLOGIN_NAME.SetFocus;
-      raise Exception.Create('请输入登录名！');
-    end;
-  if Trim(cxedtPasswrd.Text) = '' then
-    begin
-      cxedtPasswrd.SetFocus;
-      raise Exception.Create('请输入密码！');
-    end;
   Temp := TZQuery.Create(nil);
   try
-    Temp.SQL.Text := 'Select LOGIN_NAME,PASSWRD from CA_TANENT where LOGIN_NAME='''+Trim(cxedtLOGIN_NAME.Text)+'''';
+    Temp.Close;
+    Temp.SQL.Text := 'Select * From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+inttostr(Global.TENANT_ID);
     Factor.Open(Temp);
-    if Temp.IsEmpty then raise Exception.Create(cxedtLOGIN_NAME.Text+'登录名无效！');
-    if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(Temp.FieldbyName('PASSWRD').AsString,ENC_KEY)) then
-      begin
-        cxedtPasswrd.SetFocus;
-        raise Exception.Create('无效密码,请重新输入！');
-      end;
-    Factor.ExecSQL(''); 
+    Obj.Clear;
+    Obj.ReadFromDataSet(Temp);
+    ReadFromObject(Obj,Self);
   finally
     Temp.Free;
   end;
 end;
 
-procedure TfrmTenant.Label20Click(Sender: TObject);
+function TfrmTenant.Check: boolean;
+var Temp: TZQuery;
 begin
-  inherited;
-  RzPage.ActivePageIndex := 1;
-  Open;
+  Temp := TZQuery.Create(nil);
+  try
+    Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID''';
+    Factor.Open(Temp);
+    result := (Temp.Fields[0].asString<>'');
+  finally
+    Temp.free;
+  end;
 end;
 
-procedure TfrmTenant.FormDestroy(Sender: TObject);
+procedure TfrmTenant.Login_F(Account, PassWrd: string);
+var
+  Temp: TZQuery;
+  Tenant: TCaTenant;
+  Login: TCaLogin;
 begin
-  inherited;
-  Obj.Free;
-end;
-
-procedure TfrmTenant.btnOkClick(Sender: TObject);
-var Tmp: TZQuery;
-begin
-  inherited;
-  Save;
-  Tmp := Global.GetZQueryFromName('CA_TENANT');
-  RzPage.ActivePageIndex := 0;   
-  if Tmp.RecordCount = 1 then
+  if (Account = '') and (PassWrd = '') then
     begin
-      cxedtLOGIN_NAME.Text := Tmp.FieldbyName('LOGIN_NAME').AsString;
-      cxedtPasswrd.SetFocus;
-      Label20.Caption := '更新注册';
-    end
-    else
-    begin
-      cxedtLOGIN_NAME.SetFocus;
+      try
+        Temp := TZQuery.Create(nil);
+        Temp.Close;
+        Temp.SQL.Text := 'Select LOGIN_NAME,PASSWRD From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID=(Select Value from Sys_Define Where Define = ''TENANT_ID'')';
+        Factor.Open(Temp);
+        Account := Temp.FieldByName('LOGIN_NAME').AsString;
+        PASSWRD := Temp.FieldByName('PASSWRD').AsString;
+      finally
+        Temp.Free;
+      end;
     end;
+  Login := CaFactory.coLogin(Account,DecStr(PassWrd,ENC_KEY));
+  Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
+  //Open;
+  CdsTable.Edit;
+  CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+  CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+  CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+  CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+  CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+  CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+  CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+  CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+  CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+  CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+  CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+  CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+  CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+  CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+  CdsTable.FieldByName('PASSWRD').AsString := Tenant.PASSWRD;
+  CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+  CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+  CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+  CdsTable.Post;
+  //Factor.UpdateBatch(CdsTable,'TTenant',nil);
+  Global.TENANT_ID := Tenant.TENANT_ID;
+  Global.TENANT_NAME := Tenant.TENANT_NAME;
 end;
 
-procedure TfrmTenant.Open;
-begin
-  Factor.Open(CdsTable,'TTenant',nil);
-
-  if RzPage.ActivePageIndex = 0 then
-    begin
-      if CdsTable.RecordCount = 1 then
-        begin
-          Label20.Caption := '更新注册';
-          cxedtLOGIN_NAME.Text := CdsTable.FieldbyName('LOGIN_NAME').AsString;
-          cxedtPasswrd.SetFocus;
-        end;
-    end
-    else
-    begin
-      Obj.ReadFromDataSet(CdsTable);
-      ReadFromObject(Obj,self);
-      edtPASSWRD.Text := DecStr(Obj.FieldbyName('PASSWRD').AsString,ENC_KEY);
-      edtPASSWRD1.Text := edtPASSWRD.Text;
-      btnOk.Caption := '保存(&s)';
-    end;
-end;
-
-procedure TfrmTenant.FormShow(Sender: TObject);
+procedure TfrmTenant.Paint;
 begin
   inherited;
-  RzPage.ActivePageIndex := 0;
-  Open;
+
 end;
 
 end.

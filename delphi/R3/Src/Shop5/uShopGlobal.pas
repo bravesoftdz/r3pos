@@ -29,6 +29,7 @@ type
     PUB_GOODSSORT5: TZQuery;
     PUB_GOODSSORT6: TZQuery;
     PUB_GOODSSORT7: TZQuery;
+    PUB_PARAMS: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;
@@ -46,7 +47,8 @@ type
     procedure LoadRight;
     //1.操作日志 2.数据日志
     procedure WriteLogInfo(LogType:integer;ModId:string;LogName:string;LogInfo:string);
-
+    //检测网络
+    function CheckNetwork:boolean;
     //检测数据库主机
     function CheckHostLocal: boolean;
     function GetVersionFlag:integer;
@@ -250,6 +252,11 @@ end;
 procedure TShopGlobal.SetParameter(ParamName, Value: string);
 begin
 
+end;
+
+function TShopGlobal.CheckNetwork: boolean;
+begin
+  result := true;
 end;
 
 initialization

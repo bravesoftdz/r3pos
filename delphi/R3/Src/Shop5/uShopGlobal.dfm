@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 419
-  Top = 197
+  Left = 412
+  Top = 115
   Height = 562
   Width = 692
   object SYS_DEFINE: TZQuery
@@ -427,5 +427,16 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
+  end
+  object PUB_PARAMS: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,TYPE_CODE from PUB_PARAMS order by  TYP' +
+        'E_CODE,CODE_ID')
+    Params = <>
+    Left = 240
+    Top = 384
   end
 end

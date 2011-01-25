@@ -22,7 +22,7 @@ begin
   Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
   ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
-  Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,COMM,TIME_STAMP) values(:TENANT_ID * 1000+1,:LICENSE_CODE,'+
+  Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,COMM,TIME_STAMP) values(:TENANT_ID * 10000+1,:LICENSE_CODE,'+
   ':SHORT_TENANT_NAME,:TENANT_SPELL,:TENANT_ID,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
   Result := True;

@@ -24,10 +24,11 @@ Procedure CreateLevelTree(DataSet:TDataSet;ATree:TRzTreeView;
   LevelField:String=''; //LEVELID字段名 默认2号字段
   ImageIndex:Integer=0;
   SelectIndex:Integer=0;
-  SortField:string=''
+  SortField:string='';
+  RootNode:TTreeNode=nil
   );overload;
 //清除树结点及其所指向的TObject对象
-procedure ClearTree(ATree:TRzTreeView);overload;
+procedure ClearTree(ATree:TRzTreeView;RootNode:TTreeNode=nil);overload;
 
 //跟据父子关系建树
 Procedure CreateParantTree(DataSet:TDataSet;ATree:TRzCheckTree;
@@ -47,10 +48,11 @@ Procedure CreateLevelTree(DataSet:TDataSet;ATree:TRzCheckTree;
   LevelField:String=''; //LEVELID字段名 默认2号字段
   ImageIndex:Integer=0;
   SelectIndex:Integer=0;
-  SortField:string=''
+  SortField:string='';
+  RootNode:TTreeNode=nil
   );overload;
 //清除树结点及其所指向的TObject对象
-procedure ClearTree(ATree:TRzCheckTree);overload;
+procedure ClearTree(ATree:TRzCheckTree;RootNode:TTreeNode=nil);overload;
 //清加根结点
 procedure AddRoot(ATree:TRzTreeView;RootName:string);
 type
@@ -97,37 +99,73 @@ Begin
  Result := 1;
 End;
 
-procedure ClearTree(ATree:TRzTreeView);
-var i:Integer;
+procedure ClearTree(ATree:TRzTreeView;RootNode:TTreeNode=nil);
+var
+  i:Integer;
+  Node:TTreeNode;
 begin
- for i:=0 to ATree.Items.Count-1 do
-   begin
-   if (ATree.Items[I].Data <> Nil) then
+ if RootNode=nil then
+ begin
+   for i:=0 to ATree.Items.Count-1 do
+     begin
+     if (ATree.Items[I].Data <> Nil) then
+        begin
+          TObject(ATree.Items[I].Data).free;
+          ATree.Items[I].Data := nil;
+        end;
+     end;
+   ATree.Items.Clear;
+ end
+ else
+ begin
+   Node := RootNode.getFirstChild;
+   while Node<>nil do
       begin
-        TObject(ATree.Items[I].Data).free;
-        ATree.Items[I].Data := nil;
+        ClearTree(ATree,Node);
+        Node := RootNode.getFirstChild;
       end;
-   end;
- ATree.Items.Clear;
+   TObject(RootNode.Data).free;
+   RootNode.Data := nil;
+   ATree.Items.Delete(RootNode); 
+ end;
 end;
-procedure ClearTree(ATree:TRzCheckTree);
-var i:Integer;
+procedure ClearTree(ATree:TRzCheckTree;RootNode:TTreeNode=nil);
+var
+  i:Integer;
+  Node:TTreeNode;
 begin
- for i:=0 to ATree.Items.Count-1 do
-   begin
-   if (ATree.Items[I].Data <> Nil) then
+ if RootNode=nil then
+ begin
+   for i:=0 to ATree.Items.Count-1 do
+     begin
+     if (ATree.Items[I].Data <> Nil) then
+        begin
+          TObject(ATree.Items[I].Data).free;
+          ATree.Items[I].Data := nil;
+        end;
+     end;
+   ATree.Items.Clear;
+ end
+ else
+ begin
+   Node := RootNode.getFirstChild;
+   while Node<>nil do
       begin
-        TObject(ATree.Items[I].Data).free;
+        ClearTree(ATree,Node);
+        Node := RootNode.getFirstChild;
       end;
-   end;
- ATree.Items.Clear;
+   TObject(RootNode.Data).free;
+   RootNode.Data := nil;
+   ATree.Items.Delete(RootNode); 
+ end;
 end;
 Procedure CreateLevelTree(DataSet:TDataSet;ATree:TRzTreeView;
   ATreeFormat:String='333333333';
   KeyField:string='';ListField:string='';LevelField:String='';
   ImageIndex:Integer=0;
   SelectIndex:Integer=0;
-  SortField:string=''
+  SortField:string='';
+  RootNode:TTreeNode=nil
 );
 
 Var Node:Array[1..MaxLevelTree] Of TTreeNode;
@@ -148,7 +186,8 @@ begin
     else
       ALevelField := 0;
  Level:=0;
- ClearTree(ATree);
+ if RootNode<>nil then
+    ClearTree(ATree);
  with ATree,DataSet Do
   begin
    First;
@@ -160,7 +199,7 @@ begin
       if Level>MaxLevelTree then
          Raise Exception.Create('级别溢出，树状最大级别支持10级。');
       if Level<=1 then
-      Node[Level]:=Items.AddChildObject(Nil,Trim(Fields[1].AsString),AObj) Else
+         Node[Level]:=Items.AddChildObject(RootNode,Trim(Fields[1].AsString),AObj) Else
       Node[Level]:=Items.AddChildObject(Node[Level-1],Trim(Fields[1].AsString),AObj);
       Node[Level].ImageIndex :=ImageIndex;
       Node[Level].SelectedIndex :=SelectIndex;
@@ -184,7 +223,8 @@ Procedure CreateLevelTree(DataSet:TDataSet;ATree:TRzCheckTree;
   KeyField:string='';ListField:string='';LevelField:String='';
   ImageIndex:Integer=0;
   SelectIndex:Integer=0;
-  SortField:string=''
+  SortField:string='';
+  RootNode:TTreeNode=nil
   );
 
 Var Node:Array[1..MaxLevelTree] Of TTreeNode;
@@ -206,7 +246,8 @@ begin
       ALevelField := 0;
 
  Level:=0;
- ClearTree(ATree);
+ if RootNode<>nil then
+    ClearTree(ATree);
  with ATree,DataSet Do
   begin
    First;
@@ -218,7 +259,7 @@ begin
       if Level>MaxLevelTree then
          Raise Exception.Create('级别溢出，树状最大级别支持10级。');
       if Level<=1 then
-      Node[Level]:=Items.AddChildObject(Nil,Trim(Fields[1].AsString),AObj) Else
+      Node[Level]:=Items.AddChildObject(RootNode,Trim(Fields[1].AsString),AObj) Else
       Node[Level]:=Items.AddChildObject(Node[Level-1],Trim(Fields[1].AsString),AObj);
       Node[Level].ImageIndex :=ImageIndex;
       Node[Level].SelectedIndex :=SelectIndex;

@@ -291,7 +291,7 @@ begin
     end;
   //前后检测——以上检测只判断注册界面不允许为空的字段
   Save;
-  ModalResult := mrCancel;
+  ModalResult := mrok;
 end;
 
 procedure TfrmTenant.Open;

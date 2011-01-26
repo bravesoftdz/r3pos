@@ -180,18 +180,18 @@ begin
      end;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-            'select 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
-  result := 'select 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';

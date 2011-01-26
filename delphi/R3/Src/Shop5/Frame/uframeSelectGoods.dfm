@@ -38,9 +38,9 @@ inherited frameSelectGoods: TframeSelectGoods
             TabOrder = 0
             object RzTree: TRzTreeView
               Left = 2
-              Top = 57
+              Top = 38
               Width = 152
-              Height = 282
+              Height = 301
               SelectionPen.Color = clBtnShadow
               Align = alClient
               Ctl3D = True
@@ -56,39 +56,26 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 2
               Width = 152
-              Height = 55
+              Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 1
               Color = clWhite
               TabOrder = 0
               object Label2: TLabel
-                Left = 12
-                Top = 31
-                Width = 24
+                Left = 9
+                Top = 11
+                Width = 48
                 Height = 12
-                Caption = #26174#31034
+                Caption = #21830#21697#23646#24615
               end
               object fndGODS_FLAG1: TcxComboBox
-                Left = 40
-                Top = 27
-                Width = 96
+                Left = 64
+                Top = 7
+                Width = 77
                 Height = 20
-                Properties.Items.Strings = (
-                  #25353#21830#21697#20998#31867
-                  #25353#21697#29260#21378#23478
-                  #25353#20027#20379#24212#21830)
                 Properties.OnChange = fndGODS_FLAGPropertiesChange
                 TabOrder = 0
-              end
-              object CheckBox1: TCheckBox
-                Left = 12
-                Top = 7
-                Width = 97
-                Height = 17
-                Caption = #24320#21551#22810#36873
-                TabOrder = 1
-                OnClick = CheckBox1Click
               end
             end
           end
@@ -102,9 +89,9 @@ inherited frameSelectGoods: TframeSelectGoods
             TabOrder = 1
             object DBGridEh1: TDBGridEh
               Left = 2
-              Top = 57
+              Top = 38
               Width = 418
-              Height = 282
+              Height = 301
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = dsList
@@ -202,7 +189,7 @@ inherited frameSelectGoods: TframeSelectGoods
                   EditButtons = <>
                   FieldName = 'NEW_OUTPRICE'
                   Footers = <>
-                  Title.Caption = #38646#21806#20215
+                  Title.Caption = #26631#20934#21806#20215
                   Title.Color = clWhite
                   Width = 42
                 end>
@@ -211,7 +198,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 2
               Width = 418
-              Height = 55
+              Height = 36
               Align = alTop
               BevelOuter = bvLowered
               Color = clWhite
@@ -220,38 +207,26 @@ inherited frameSelectGoods: TframeSelectGoods
                 Left = 1
                 Top = 1
                 Width = 416
-                Height = 53
+                Height = 34
                 Align = alClient
                 BorderOuter = fsNone
                 BorderWidth = 1
                 Color = clWhite
                 TabOrder = 0
                 object Label8: TLabel
-                  Left = 8
+                  Left = 184
                   Top = 11
-                  Width = 96
+                  Width = 24
                   Height = 12
-                  Caption = #36755#20837#35201#26597#35810#30340#20869#23481
-                end
-                object Label1: TLabel
-                  Left = 8
-                  Top = 34
-                  Width = 252
-                  Height = 12
-                  Caption = #25903#25345#65288#36135#21495#12289#21697#21517#12289#25340#38899#30721#12289#26465#30721#65289#20851#20581#23383#26597#35810
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
+                  Caption = #25628#32034
                 end
                 object edtSearch: TcxTextEdit
                   Tag = -1
-                  Left = 109
+                  Left = 216
                   Top = 7
-                  Width = 116
+                  Width = 121
                   Height = 20
+                  Hint = #36135#21495#12289#21517#31216#12289#25340#38899#30721#12289#26465#30721
                   ParentShowHint = False
                   ShowHint = False
                   TabOrder = 0
@@ -259,7 +234,7 @@ inherited frameSelectGoods: TframeSelectGoods
                   OnKeyDown = edtSearchKeyDown
                 end
                 object btnFilter: TRzBitBtn
-                  Left = 235
+                  Left = 347
                   Top = 5
                   Width = 59
                   Height = 24
@@ -271,6 +246,15 @@ inherited frameSelectGoods: TframeSelectGoods
                   TabOrder = 1
                   OnClick = btnFilterClick
                   NumGlyphs = 2
+                end
+                object chkMultSelect: TCheckBox
+                  Left = 13
+                  Top = 8
+                  Width = 116
+                  Height = 17
+                  Caption = #21516#26102#36873#25321#22810#21830#21697
+                  TabOrder = 2
+                  OnClick = chkMultSelectClick
                 end
               end
             end

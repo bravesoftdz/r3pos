@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, ComCtrls, RzTreeVw, Grids, DBGridEh, cxControls, cxContainer,
-  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, DBClient, ADODB, ObjBase,
+  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, zBase,
   cxMaskEdit, cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset,
   ZDataset;
 
@@ -21,7 +21,6 @@ type
     fndPanel: TPanel;
     RzPanel5: TRzPanel;
     Label8: TLabel;
-    Label1: TLabel;
     edtSearch: TcxTextEdit;
     RzPanel1: TRzPanel;
     Splitter1: TSplitter;
@@ -34,8 +33,8 @@ type
     N4: TMenuItem;
     Label2: TLabel;
     fndGODS_FLAG1: TcxComboBox;
-    CheckBox1: TCheckBox;
     cdsList: TZQuery;
+    chkMultSelect: TCheckBox;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure btnFilterClick(Sender: TObject);
     procedure RzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -55,7 +54,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-    procedure CheckBox1Click(Sender: TObject);
+    procedure chkMultSelectClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -67,9 +66,9 @@ type
     MaxId:string;
     FMultiSelect: boolean;
     procedure InitGrid;
-    procedure LoadLevelSort;
-    procedure LoadBrandInfo;
-    procedure LoadProvInfo;
+    procedure LoadTree;
+    procedure LoadList;
+    procedure LoadProv;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
     procedure SetMultiSelect(const Value: boolean);
@@ -81,7 +80,7 @@ type
   end;
 
 implementation
-uses uCtrlUtil, uGlobal, uTreeUtil, uShopGlobal;
+uses uCtrlUtil, uGlobal, uTreeUtil, uShopGlobal, uDsUtil;
 {$R *.dfm}
 
 { TframeSelectGoods }
@@ -101,11 +100,10 @@ begin
 end;
 
 procedure TframeSelectGoods.InitGrid;
-var rs: TADODataSet;
+var rs: TZQuery;
 begin
   inherited;
-  fndGODS_FLAG1.ItemIndex := 0;
-  rs := Global.GetADODataSetFromName('PUB_MEAUNITS');
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   rs.First;
   while not rs.Eof do
     begin
@@ -113,28 +111,46 @@ begin
       DBGridEh1.Columns[5].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
+  rs := Global.GetZQueryFromName('PUB_PARAMS');
+  rs.Filtered := false;
+  rs.Filter := 'CODE_TYPE=''SORT_TYPE''';
+  rs.Filtered := true;
+  TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
+  fndGODS_FLAG1.ItemIndex := 0;
 end;
 
 procedure TframeSelectGoods.Open(Id: string);
 var
-  rs:TClientDataSet;
+  rs:TZQuery;
+  sm:TMemoryStream;
 begin
   if not Visible then Exit;
   if Id='' then cdsList.close;
-  rs := TClientDataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   cdsList.DisableControls;
+  sm := TMemoryStream.Create;
   try
-    rs.CommandText := EncodeSQL(Id);
+    rs.SQL.Text := EncodeSQL(Id);
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    if rs.Params.FindParam('MAXID')<>nil then
+       rs.Params.ParamByName('MAXID').AsString := MaxId;
+    if rs.Params.FindParam('KEYVALUE')<>nil then
+       rs.Params.ParamByName('KEYVALUE').AsString := trim(edtSearch.Text);
+    if rs.Params.FindParam('SORT_ID')<>nil then
+       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+    if rs.Params.FindParam('LEVEL_ID')<>nil then
+       rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if rs.Params.FindParam('RELATION_ID')<>nil then
+       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
-    if Id='' then
-       cdsList.Data := rs.Data
-    else
-       cdsList.AppendData(rs.Data,true);
-    if rs.RecordCount <100 then IsEnd := True else IsEnd := false;
+    rs.SaveToStream(sm);
+    cdsList.AddFromStream(sm);
+    if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
   finally
     cdsList.EnableControls;
+    sm.Free;
     rs.Free;
   end;
 end;
@@ -142,36 +158,44 @@ end;
 function TframeSelectGoods.EncodeSQL(id: string): string;
 var w:string;
 begin
-  w := 'and j.COMP_ID='''+Global.CompanyId+''' and j.COMM not in (''02'',''12'') ';
+  w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + 'j.GODS_ID>='''+id+'''';
+      w := w + 'j.GODS_ID>=:MAXID';
      end;
   if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
      begin
       if w<>'' then w := w + ' and ';
-      case fndGODS_FLAG1.ItemIndex of
-      0:w := w + 'b.LEVEL_ID like '''+TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').asString+'%''';
-      1:w := w + 'j.BRAND = '''+TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').asString+'''';
-      2:w := w + 'j.PROVIDE = '''+TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').asString+'''';
+      case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+      1:w := w + 'b.LEVEL_ID like :LEVEL_ID +''%'' and b.RELATION_ID=:RELATION_ID ';
+      else
+        w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsString+' = :SORT_ID ';
       end;
      end;
   if trim(edtSearch.Text)<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + '(j.GODS_CODE like ''%'+trim(edtSearch.Text)+'%'' or j.BCODE like ''%'+trim(edtSearch.Text)+'%'' or j.GODS_NAME like ''%'+trim(edtSearch.Text)+'%'' or j.GODS_SPELL like ''%'+trim(edtSearch.Text)+'%'' or Exists(select * from PUB_BARCODE where BARCODE like ''%'+trim(edtSearch.Text)+''' and GODS_ID=j.GODS_ID))';
+      w := w + '(j.GODS_CODE like ''%''+:KEYVALUE +''%'' or j.GODS_NAME like ''%''+:KEYVALUE +''%'' or j.GODS_SPELL like ''%''+:KEYVALUE +''%'' or BARCODE like ''%''+:KEYVALUE )';
      end;
-//  if Rb1.Checked then
-  result := 'select top 100 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,PUB_GOODSSORT b where j.SORT_ID=b.SORT_ID '+w+') l '+
+  case Factor.iDbType of
+  0:
+  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where COMP_ID='''+Global.CompanyId+''' group by GODS_ID) r '+
-            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID'
-//  else
-//  result := 'select top 100 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,PUB_GOODSSORT b where j.SORT_ID=b.SORT_ID '+w+') l '+
-//            'inner join '+
-//            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where COMP_ID='''+Global.CompanyId+''' group by GODS_ID having sum(AMOUNT)<>0) r '+
-//            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID'
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+  4:
+  result := 'select tp.* from ('+
+            'select 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'left outer join '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
+  5:
+  result := 'select 0 as A,l.*,r.AMOUNT from(select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'left outer join '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';
+  end;
 end;
 
 procedure TframeSelectGoods.cdsListAfterScroll(DataSet: TDataSet);
@@ -208,7 +232,7 @@ begin
   cdsList.FieldByName('A').AsInteger :=1 ;
   cdsList.Post;
 end;
-var bs:TADODataSet;
+var 
   i:integer;
 begin
   inherited;
@@ -273,12 +297,9 @@ procedure TframeSelectGoods.edtSearchKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   inherited;
-  //if Key=VK_UP then cdsList.Prior;
-  //if Key=VK_DOWN then cdsList.Next;
-  if Key=VK_RETURN then
+   if Key=VK_RETURN then
      begin
        Open('');
-       //edtSearch.Text := '';
        DBGridEh1.SetFocus;
      end;
 
@@ -350,19 +371,20 @@ end;
 procedure TframeSelectGoods.FormCreate(Sender: TObject);
 begin
   inherited;
-  DBGridEh1.Columns[3].Visible := ShopGlobal.GetChkRight('600041');
+  // 判断是否有查询库存权限
+  //DBGridEh1.Columns[3].Visible := ShopGlobal.GetChkRight('600041');
   N2.Enabled:=False;
   N3.Enabled:=False;
   N4.Enabled:=False;
 end;
 
-procedure TframeSelectGoods.CheckBox1Click(Sender: TObject);
+procedure TframeSelectGoods.chkMultSelectClick(Sender: TObject);
 begin
   inherited;
-  MultiSelect := CheckBox1.Checked;
-  N2.Visible := CheckBox1.Checked;
-  N3.Visible := CheckBox1.Checked;
-  N4.Visible := CheckBox1.Checked;
+  MultiSelect := chkMultSelect.Checked;
+  N2.Visible := chkMultSelect.Checked;
+  N3.Visible := chkMultSelect.Checked;
+  N4.Visible := chkMultSelect.Checked;
 end;
 
 procedure TframeSelectGoods.N2Click(Sender: TObject);
@@ -431,56 +453,13 @@ begin
   end;
 end;
 
-procedure TframeSelectGoods.LoadBrandInfo;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.Close;
-    rs.CommandText := 'select CODE_ID as SORT_ID,CODE_NAME as SORT_NAME,null as PID from PUB_CODE_INFO where CODE_TYPE=6 and CODE_ID in (select distinct BRAND from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''') order by CODE_ID';
-    Factor.Open(rs);
-    CreateParantTree(rs, RzTree, 'SORT_ID', 'SORT_NAME', 'PID');
-    AddRoot(rzTree,'全部商品');
-  finally
-    if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
-    rs.free;
-  end;
-end;
-
-procedure TframeSelectGoods.LoadLevelSort;
-var rs: TADODataSet;
-begin
-  try
-    rs := Global.GetADODataSetFromName('PUB_GOODSSORT');
-    CreateLevelTree(rs, rzTree, '3333333333', 'SORT_ID', 'SORT_NAME', 'LEVEL_ID', 1, 3);
-    AddRoot(rzTree,'全部商品');
-  finally
-    if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
-  end;
-end;
-
-procedure TframeSelectGoods.LoadProvInfo;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select CLIENT_ID as SORT_ID, CLIENT_NAME as SORT_NAME,null as PID from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')';
-    Factor.Open(rs);
-    CreateParantTree(rs, RzTree, 'SORT_ID', 'SORT_NAME', 'PID');
-    AddRoot(rzTree,'全部商品');
-  finally
-    if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
-    rs.free;
-  end;
-end;
-
 procedure TframeSelectGoods.fndGODS_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
-  case fndGODS_FLAG1.ItemIndex of
-  0:LoadLevelSort;
-  1:LoadBrandInfo;
-  2:LoadProvInfo;
+  case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+  1:LoadTree;
+  3:LoadProv;
+  else LoadList;
   end;
 end;
 
@@ -489,6 +468,81 @@ begin
   inherited;
   if Column.FieldName='A' then
     N2Click(nil);
+end;
+
+procedure TframeSelectGoods.LoadList;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+begin
+  case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+  2:rs := Global.GetZQueryFromName('PUB_CATE_INFO');
+  4:rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
+  5:rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
+  6:rs := Global.GetZQueryFromName('PUB_AREA_INFO');
+  7:rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  8:rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  end;
+  rs.First;
+  while not rs.Eof do
+    begin
+      AObj := TRecord_.Create(rs);
+      AObj.ReadFromDataSet(rs);
+      rzTree.Items.AddObject(nil,rs.FieldbyName('CODE_NAME').AsString,AObj); 
+      rs.Next;
+    end;
+  AddRoot(rzTree,'全部商品');
+  if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+end;
+
+procedure TframeSelectGoods.LoadProv;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+begin
+  rs := Global.GetZQueryFromName('PUB_CLIENTINFO'); 
+  rs.First;
+  while not rs.Eof do
+    begin
+      AObj := TRecord_.Create(rs);
+      AObj.ReadFromDataSet(rs);
+      rzTree.Items.AddObject(nil,rs.FieldbyName('CODE_NAME').AsString,AObj); 
+      rs.Next;
+    end;
+  AddRoot(rzTree,'全部商品');
+  if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+end;
+
+procedure TframeSelectGoods.LoadTree;
+var
+  rs:TZQuery;
+  w,i:integer;
+  AObj:TRecord_;
+begin
+  ClearTree(rzTree);
+  rs := Global.GetZQueryFromName('PUB_GOODSSORT');
+  rs.SortedFields := 'RELATION_ID';
+  w := -1;
+  rs.First;
+  while not rs.Eof do
+    begin
+      if w<>rs.FieldByName('RELATION_ID').AsInteger then
+         begin
+           AObj := TRecord_.Create;
+           AObj.ReadFromDataSet(rs);
+           rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+           w := rs.FieldByName('RELATION_ID').AsInteger;
+         end;
+      rs.Next;
+    end;
+  for i:=rzTree.Items.Count-1 downto 0 do
+    begin
+      rs.Filtered := false;
+      rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+      rs.Filtered := true;
+      rs.SortedFields := 'LEVEL_ID';
+      CreateLevelTree(rs,rzTree,'33333333','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+    end;
 end;
 
 end.

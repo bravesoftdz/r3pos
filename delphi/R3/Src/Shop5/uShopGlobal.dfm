@@ -187,7 +187,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS' +
-        '],[SMALL_UNITS],[BIG_UNITS],[SMALLTO_CALC],[BIGTO_CALC],'
+        ',SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
       '       NEW_INPRICE,NEW_OUTPRICE,NEW_LOWPRICE from VIW_GOODSINFO '
       'where COMM not in ('#39'02'#39','#39'12'#39')'
       'and TENANT_ID=:TENANT_ID order by GODS_CODE')

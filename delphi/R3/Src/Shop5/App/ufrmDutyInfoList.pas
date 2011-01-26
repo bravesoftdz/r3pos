@@ -120,12 +120,13 @@ begin
   
   case Factor.iDbType of
    0: SQL:='Select DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDUTY_ID '+
-           'From CA_DUTY_INFO where TENANT=:TENANT and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
+           'From CA_DUTY_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
    5: SQL:='Select DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDUTY_ID '+
-           'From CA_DUTY_INFO where TENANT=:TENANT and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
+           'From CA_DUTY_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
   end;
   cdsBrowser.Close;
   cdsBrowser.SQL.Text:=SQL;
+  cdsBrowser.Params.AssignValues(ftParams); 
   Factor.Open(cdsBrowser);
 end;
 

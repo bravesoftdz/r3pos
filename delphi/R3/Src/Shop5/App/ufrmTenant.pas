@@ -303,8 +303,14 @@ begin
   try
     Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID''';
     Factor.Open(Temp);
-    TENANT_ID := Temp.Fields[0].AsInteger;
     result := (Temp.Fields[0].asString<>'');
+    // zhangsenrong 20110-01-26
+    if result then
+       begin
+         TENANT_ID := Temp.Fields[0].AsInteger;
+         Global.TENANT_ID := Temp.Fields[0].AsInteger;
+       end;
+    //
   finally
     Temp.free;
   end;

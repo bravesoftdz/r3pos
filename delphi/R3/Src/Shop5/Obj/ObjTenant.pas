@@ -7,7 +7,9 @@ type
   TTenant = class(TZFactory)
   private
     //记录行集新增检测函数，返回值是True 则可以新增当前记录
-    function BeforeInsertRecord(AGlobal: IdbHelp):Boolean;override;
+    function BeforeInsertRecord(AGlobal: IdbHelp):Boolean;
+    //记录行集修改检测函数，返回值是True 则可以修改当前记录
+    function BeforeModifyRecord(AGlobal: IdbHelp):Boolean;
     procedure InitClass;override;
   end;
 
@@ -27,6 +29,16 @@ begin
   AGlobal.ExecSQL(Str,Self);
   Result := True;
 
+end;
+
+function TTenant.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str: String;
+begin
+  Str := 'update CA_SHOP_INFO set LICENSE_CODE=:LICENSE_CODE,SHOP_NAME=:SHORT_TENANT_NAME,SHOP_SPELL=:TENANT_SPELL,TENANT_ID=:TENANT_ID,'+
+         'COMM=''00'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where SHOP_ID=:OLD_TENANT_ID * 10000+1';
+  AGlobal.ExecSQL(Str,self);
+  Result := True;
 end;
 
 procedure TTenant.InitClass;

@@ -2,7 +2,7 @@ inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
   Left = 243
   Top = 92
-  Height = 562
+  Height = 612
   Width = 692
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
@@ -164,11 +164,22 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=1 an' +
-        'd COMM not in ('#39'02'#39','#39'12'#39')')
-    Params = <>
+        'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENAN' +
+        'T_ID=:TENANT_ID and CODE_TYPE='#39'1'#39' and  COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
     Left = 240
     Top = 216
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
   end
   object PUB_GOODSINFO: TZQuery
     FieldDefs = <>
@@ -259,122 +270,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 240
-    Top = 296
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSSORT2: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=2  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 560
-    Top = 96
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSSORT4: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=4  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 560
-    Top = 240
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSSORT5: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=5  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 560
-    Top = 312
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSSORT6: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=6  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 560
-    Top = 376
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSSORT7: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=7  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 560
-    Top = 440
+    Top = 288
     ParamData = <
       item
         DataType = ftUnknown
@@ -391,7 +287,7 @@ inherited ShopGlobal: TShopGlobal
         'E_CODE,CODE_ID')
     Params = <>
     Left = 240
-    Top = 384
+    Top = 360
   end
   object CA_DEPT_INFO: TZQuery
     FieldDefs = <>
@@ -436,31 +332,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 240
-    Top = 416
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object PUB_GOODSCLIENT: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select * from VIW_CLIENTINFO where CLIENT_TYPE=1 and  COMM not i' +
-        'n ('#39'02'#39','#39'12'#39')'
-      'and TENANT_ID=:TENANT_ID')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'TENANT_ID'
-        ParamType = ptUnknown
-      end>
     Left = 368
-    Top = 80
+    Top = 88
     ParamData = <
       item
         DataType = ftUnknown
@@ -476,7 +349,7 @@ inherited ShopGlobal: TShopGlobal
       
         ' from VIW_GOODSSORT where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=' +
         '1 and TENANT_ID=:TENANT_ID '
-      ' order by LEVEL_ID,SEQ_NO')
+      'order by LEVEL_ID,SEQ_NO')
     Params = <
       item
         DataType = ftUnknown
@@ -492,22 +365,115 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
-  object PUB_GOODSBRAND: TZQuery
+  object PUB_CATE_INFO: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
       
-        'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID from VIW_GOODSSORT ' +
-        'where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=4  and TENANT_ID=:TE' +
-        'NANT_ID  order by LEVEL_ID,SEQ_NO')
+        'select '#39'#'#39' as SORT_ID,'#39#26080#31867#21035#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as ' +
+        'SEQ_NO from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
+      'union all'
+      'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
+      
+        'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
+        'T_TYPE='#39'2'#39
+      'order  by  4')
     Params = <
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 376
-    Top = 136
+    Left = 368
+    Top = 152
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_IMPT_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as SORT_ID,'#39#26080#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as SE' +
+        'Q_NO from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
+      'union all'
+      'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
+      
+        'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
+        'T_TYPE='#39'5'#39
+      'order  by  4')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 216
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_COLOR_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as SORT_ID,'#39#19981#20998#33394#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as ' +
+        'SEQ_NO from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
+      'union all'
+      'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
+      
+        'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
+        'T_TYPE='#39'7'#39
+      'order  by  4')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 280
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_SIZE_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as SORT_ID,'#39#19981#20998#30721#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as ' +
+        'SEQ_NO from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
+      'union all'
+      'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
+      
+        'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
+        'T_TYPE='#39'8'#39
+      'order  by  4')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 336
     ParamData = <
       item
         DataType = ftUnknown

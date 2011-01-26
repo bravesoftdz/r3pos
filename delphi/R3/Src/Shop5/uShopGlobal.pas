@@ -22,17 +22,14 @@ type
     PUB_CLIENTINFO: TZQuery;
     PUB_CUSTOMER: TZQuery;
     PUB_MEAUNITS: TZQuery;
-    PUB_GOODSSORT2: TZQuery;
-    PUB_GOODSSORT4: TZQuery;
-    PUB_GOODSSORT5: TZQuery;
-    PUB_GOODSSORT6: TZQuery;
-    PUB_GOODSSORT7: TZQuery;
     PUB_PARAMS: TZQuery;
     CA_DEPT_INFO: TZQuery;
     PUB_BRAND_INFO: TZQuery;
-    PUB_GOODSCLIENT: TZQuery;
     PUB_GOODSSORT: TZQuery;
-    PUB_GOODSBRAND: TZQuery;
+    PUB_CATE_INFO: TZQuery;
+    PUB_IMPT_INFO: TZQuery;
+    PUB_COLOR_INFO: TZQuery;
+    PUB_SIZE_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

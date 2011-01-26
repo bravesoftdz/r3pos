@@ -1,6 +1,6 @@
 inherited frmDutyInfo: TfrmDutyInfo
-  Left = 296
-  Top = 218
+  Left = 270
+  Top = 292
   Caption = #32844#21153#26723#26696
   ClientHeight = 315
   ClientWidth = 421

@@ -55,10 +55,11 @@ type
 
 
 implementation
-uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal;
+uses
+  uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal;
 {$R *.dfm}
 
-{ TfrmDeptDutyInfo }
+{ TfrmDutyInfo }
 
 procedure TfrmDutyInfo.Append;
 var
@@ -117,20 +118,21 @@ procedure TfrmDutyInfo.Save;
     else
       Temp.Edit;
 
-    //AObj.WriteToDataSet(Temp,False);
-    for i:=0 to AObj.Count-1 do
+    AObj.WriteToDataSet(Temp,False);
+    {for i:=0 to AObj.Count-1 do
     begin
       FName:=trim(AObj.Fields[i].FieldName);
       if Temp.FindField(FName)<>nil then
         Temp.FieldByName(FName).Value:=AObj.Fields[i].AsValue;
-    end;
+    end;}
     Temp.Post;
     
     //ÐÞ¸ÄLEVEL_IDÖµ:
     NewID:=trim(AObj.FieldByName('LEVEL_ID').AsString);
     OldID:=trim(AObj.FieldByName('LEVEL_ID').AsOldString);
-    if NewID<>OldID then
+    if (NewID<>OldID) and (OldID<>'') then
     begin
+      Temp.SortedFields := 'DUTY_ID';
       Temp.First;
       while not Temp.Eof do
       begin
@@ -145,6 +147,7 @@ procedure TfrmDutyInfo.Save;
         end;
         Temp.Next;
       end;
+      Temp.SortedFields:='LEVEL_ID';
     end;
   end;
 var

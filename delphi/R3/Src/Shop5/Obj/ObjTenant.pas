@@ -7,9 +7,9 @@ type
   TTenant = class(TZFactory)
   private
     //记录行集新增检测函数，返回值是True 则可以新增当前记录
-    function BeforeInsertRecord(AGlobal: IdbHelp):Boolean;
+    function BeforeInsertRecord(AGlobal: IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 则可以修改当前记录
-    function BeforeModifyRecord(AGlobal: IdbHelp):Boolean;
+    function BeforeModifyRecord(AGlobal: IdbHelp):Boolean;override;
     procedure InitClass;override;
   end;
 

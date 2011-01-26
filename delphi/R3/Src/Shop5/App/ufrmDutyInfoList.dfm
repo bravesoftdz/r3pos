@@ -5,6 +5,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
   Height = 521
   Caption = #32844#21153#26723#26696#31649#29702
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -383,7 +384,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
   object DataSource1: TDataSource
     DataSet = cdsBrowser
     Left = 361
-    Top = 170
+    Top = 178
   end
   object PopupMenu2: TPopupMenu
     Left = 297

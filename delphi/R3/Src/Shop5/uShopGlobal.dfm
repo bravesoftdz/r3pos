@@ -347,9 +347,9 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID'
       
-        ' from VIW_GOODSSORT where COMM not in ('#39'02'#39','#39'12'#39') and SORT_TYPE=' +
-        '1 and TENANT_ID=:TENANT_ID '
-      'order by LEVEL_ID,SEQ_NO')
+        'RELATION_ID,RELATION_NAME from VIW_GOODSSORT where COMM not in (' +
+        #39'02'#39','#39'12'#39') and SORT_TYPE=1 and TENANT_ID=:TENANT_ID '
+      'order by RELATION_ID DESC,LEVEL_ID,SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

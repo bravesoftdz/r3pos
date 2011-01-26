@@ -73,7 +73,8 @@ var
   SFVersion:string;
   //行业版本 1.FIG 服装版 2.MKT 超市版  3.OHR 标准版  4.DLI 食品业
   CLVersion:string;
-
+  //产品编码
+  ProductID:string;
 implementation
 uses uFnUtil;
 {$R *.dfm}

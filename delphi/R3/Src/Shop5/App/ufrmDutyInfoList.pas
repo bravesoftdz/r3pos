@@ -7,7 +7,8 @@ uses
   Dialogs, uframeToolForm, ExtCtrls, ComCtrls, RzTreeVw, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, ActnList, Menus, ToolWin,
   StdCtrls, RzLabel, RzTabs, RzPanel, DB, ADODB, zBase, RzButton,
-  jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh, Buttons;
+  jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh, Buttons,
+  DBGrids;
 
 type
   TfrmDutyInfoList = class(TframeToolForm)
@@ -69,8 +70,10 @@ type
     procedure Sort_PriorClick(Sender: TObject);
     procedure Sort_NextClick(Sender: TObject);
     procedure Sort_LastClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
-    procedure DetyTreeSort(SortType: string); //职务树型排序
+    ftParams: TftParamList;  
+    procedure DutyTreeSort(SortType: string); //职务树型排序
   public
     locked, IsCompany : boolean;
     procedure AddRecord(AObj:TRecord_);
@@ -91,22 +94,35 @@ uses uGlobal,ufrmDutyInfo,uTreeUtil,uShopGlobal, ufrmEhLibReport;
 
 procedure TfrmDutyInfoList.actFindExecute(Sender: TObject);
 var
-  str,SQL: String;
+  str,SQL,LEVEL_ID: String;
 begin
   inherited;
+  str:='';
+  SQL:='';
   if (rzTree.Selected <> nil) and (rzTree.Selected.Level > 0 ) then
   begin
-    str:=' and LEVEL_ID='''+TRecord_(rzTree.Selected.Data).FieldbyName('DUTY_ID').AsString+
-         ''' or DUTY_ID='''+TRecord_(rzTree.Selected.Data).FieldbyName('DUTY_ID').AsString+'''';
+    LEVEL_ID:=trim(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString);
+    if LEVEL_ID<>'' then
+    begin
+      ftParams.ParamByName('LEVEL_ID').AsString:=LEVEL_ID; //设置参数值
+      case Factor.iDbType of
+       0: str:=str+' and substring(LEVEL_ID,1,'+InttoStr(length(LEVEL_ID))+')=:LEVEL_ID ';
+       5: str:=str+' and substr(LEVEL_ID,1,'+InttoStr(length(LEVEL_ID))+')=:LEVEL_ID '
+      end;  
+    end;
   end;
+
   if edtKey.Text<>'' then
-     str:=' and (DUTY_ID like ''%'+trim(edtKEY.Text)+'%'' or DUTY_NAME like ''%'+trim(edtKEY.Text)+
-          '%'' or DUTY_SPELL like ''%'+trim(edtKEY.Text)+'%'') ';
+  begin
+    ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'''; //设置参数值
+    str:=str+' and (DUTY_ID like :KEYVALUE or DUTY_NAME like :KEYVALUE or DUTY_SPELL like :KEYVALUE) ';
+  end;
+  
   case Factor.iDbType of
    0: SQL:='Select DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDUTY_ID '+
-           'From CA_DUTY_INFO where COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
+           'From CA_DUTY_INFO where TENANT=:TENANT and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
    5: SQL:='Select DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,TENANT_ID,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDUTY_ID '+
-           'From CA_DUTY_INFO where COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
+           'From CA_DUTY_INFO where TENANT=:TENANT and COMM not in (''02'',''12'') '+str+' order by DUTY_ID';
   end;
   cdsBrowser.Close;
   cdsBrowser.SQL.Text:=SQL;
@@ -217,15 +233,24 @@ end;
 procedure TfrmDutyInfoList.edtKeyPropertiesChange(Sender: TObject);
 begin
   inherited;
+  //TZQueyr组件不支持本地模糊查询，Onchange在实时取数据太消耗资源，关闭掉
+  {
   locked:=True;
   try
-    if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter := 'DUTY_ID like ''%'+trim(edtKEY.Text)+'%'' or DUTY_NAME like ''%'+trim(edtKEY.Text)+'%'' or DUTY_SPELL like ''%'+trim(edtKEY.Text)+'%'' ';
-    cdsBrowser.Filtered := (trim(edtKEY.Text)<>'');
+    //关键字参数发生变化时间查询
+    if trim(ftParams.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
+    begin
+      if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
+      ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%''';
+      cdsBrowser.close;
+      cdsBrowser.Params.AssignValues(ftParams);
+      Factor.Open(cdsBrowser);      
+    end;
   finally
     locked:=False;
   end;
+  }
+
 end;
 
 procedure TfrmDutyInfoList.rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -364,6 +389,10 @@ end;
 
 procedure TfrmDutyInfoList.FormCreate(Sender: TObject);
 begin
+  //创建参数对象:
+  ftParams:=TftParamList.Create(nil);
+  ftParams.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
@@ -402,7 +431,6 @@ begin
   rs.SortedFields:='LEVEL_ID';
   rs.SortType:=stAscending;
   CreateLevelTree(rs,rzTree,'333333333','Duty_ID','Duty_NAME','LEVEL_ID',1,3,'');
-  //rs.SortedFields:='';
   Obj  := TRecord_.Create;
   try
     Obj.ReadField(rs);
@@ -470,7 +498,7 @@ begin
   Factor.Open(ShopGlobal.CA_DUTY_INFO);
 end;
 
-procedure TfrmDutyInfoList.DetyTreeSort(SortType: string);
+procedure TfrmDutyInfoList.DutyTreeSort(SortType: string);
 var
   CurObj: TRecord_;
   Params: TftParamList;
@@ -499,25 +527,32 @@ end;
 procedure TfrmDutyInfoList.Sort_FirstClick(Sender: TObject);
 begin
   inherited;
-  DetyTreeSort('FIRST');
+  DutyTreeSort('FIRST');
 end;
 
 procedure TfrmDutyInfoList.Sort_PriorClick(Sender: TObject);
 begin
   inherited;
-  DetyTreeSort('PRIOR');
+  DutyTreeSort('PRIOR');
 end;
 
 procedure TfrmDutyInfoList.Sort_NextClick(Sender: TObject);
 begin
   inherited;
-  DetyTreeSort('NEXT');
+  DutyTreeSort('NEXT');
 end;
 
 procedure TfrmDutyInfoList.Sort_LastClick(Sender: TObject);
 begin
   inherited;
-  DetyTreeSort('LAST');
+  DutyTreeSort('LAST');
+end;
+
+
+procedure TfrmDutyInfoList.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  ftParams.Free;   //释放参数对象  
 end;
 
 end.

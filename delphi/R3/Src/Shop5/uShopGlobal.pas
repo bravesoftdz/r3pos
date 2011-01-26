@@ -30,6 +30,7 @@ type
     PUB_IMPT_INFO: TZQuery;
     PUB_COLOR_INFO: TZQuery;
     PUB_SIZE_INFO: TZQuery;
+    PUB_AREA_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

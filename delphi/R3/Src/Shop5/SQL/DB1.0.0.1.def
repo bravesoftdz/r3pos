@@ -1,0 +1,23 @@
+--需求默认初始化的编码
+
+--管理组 CODE_TYPE=12
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'1','总店','ZD','12','1','00',strftime('%s','now','localtime')-1293840000);
+
+--结算方式 CODE_TYPE=6
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'1','现金','XJ','6','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'2','记账','JZ','6','2','00',strftime('%s','now','localtime')-1293840000);
+
+--销售方式 CODE_TYPE=2
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'1','门店销售','MDXS','2','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'2','集团销售','JTXS','2','2','00',strftime('%s','now','localtime')-1293840000);
+
+--收支项目 CODE_TYPE=3
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'1','销售收入','XSSR','2','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'2','销售成本','XSCB','2','2','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'3','应交税金','YJSJ','2','3','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'4','应付工资','YFGZ','2','4','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(:TENANT_ID,'5','管理费用','GLFY','2','5','00',strftime('%s','now','localtime')-1293840000);
+
+--为每个门店初始化现金账户
+ insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,comm,time_stamp) 
+ values(:TENANT_ID,:SHOP_ID,newid(),'现金','XJ','A',0,0,0,0,'00',strftime('%s','now','localtime')-1293840000);

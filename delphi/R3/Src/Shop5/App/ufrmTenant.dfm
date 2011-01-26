@@ -1,6 +1,7 @@
 inherited frmTenant: TfrmTenant
   Left = 508
   Top = 215
+  ActiveControl = cxedtLOGIN_NAME
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -16,9 +17,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 476
     Height = 326
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet
@@ -122,7 +123,7 @@ inherited frmTenant: TfrmTenant
           Width = 114
           Height = 20
           Properties.EchoMode = eemPassword
-          TabOrder = 0
+          TabOrder = 1
           ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
         end
         object cxedtLOGIN_NAME: TcxTextEdit
@@ -130,7 +131,7 @@ inherited frmTenant: TfrmTenant
           Top = 88
           Width = 114
           Height = 20
-          TabOrder = 1
+          TabOrder = 0
           ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
         end
         object RzBitBtn1: TRzBitBtn

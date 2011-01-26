@@ -231,7 +231,7 @@ insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values
 
 --企业资料
 CREATE TABLE [CA_TENANT](
-    --企业代码
+    --企业代码 1000001
 	[TENANT_ID] int NOT NULL,
     --登录名称 例:celeb.net
 	[LOGIN_NAME] [varchar](50) NOT NULL,
@@ -271,8 +271,12 @@ CREATE TABLE [CA_TENANT](
 	[REGION_ID] [varchar](10) NULL,
     --服务器编号
 	[SRVR_ID] [varchar](10) NULL,
+    --状态
+	[AUDIT_STATUS] [varchar](1) NOT NULL,
     --软件产品编号
 	[PROD_ID] [varchar](10) NULL,
+    --注册日期
+	[CREA_DATE] varchar(10) NULL ,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_TENANT_COMM] DEFAULT ('00'),
     --更新时间 从2011-01-01开始的秒数  
@@ -507,6 +511,8 @@ CREATE TABLE [CA_USERS](
 	[EMAIL] [varchar](50) NULL,
     --QQ号
 	[QQ] [varchar](50) NULL,
+    --盟盟号
+	[MM] [varchar](50) NULL,
     --MSN号
 	[MSN] [varchar](50) NULL,
     --证件号码
@@ -1295,21 +1301,13 @@ CREATE INDEX IX_CA_RIGHTS_TIME_STAMP ON CA_RIGHTS(TENANT_ID,TIME_STAMP);
 
 --商品常用指标
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','分类','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','类别','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','厂家','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','品牌','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','重点<是否重点品牌>','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','省内外','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('7','颜色组','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('8','尺码组','SORT_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --商品分类属性
 CREATE TABLE [PUB_GOODSSORT] (
@@ -1543,11 +1541,8 @@ and B.COMM not in ('02','12') and C.COMM not in ('02','12') and C.RELATION_STATU
 
 --条码类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','计量单位','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','包装1','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','包装2','BARCODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --条码表
 CREATE TABLE [PUB_BARCODE] (
@@ -1603,29 +1598,19 @@ and C.COMM not in ('02','12') and D.COMM not in ('02','12') and D.RELATION_STATU
 
 --定价方式
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','统一定价','PRICE_METHOD','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','门店定价','PRICE_METHOD','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --优惠类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','不优惠','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','统一折扣率','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000); 
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','分类折扣率','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','指定售价','AGIO_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --积分类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','不积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按金额积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按毛利积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按数量积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --客户分类
 CREATE TABLE [PUB_PRICEGRADE] (
@@ -1663,11 +1648,8 @@ CREATE INDEX IX_PUB_PRICEGRADE_TENANT_ID ON PUB_PRICEGRADE(TENANT_ID);
 CREATE INDEX IX_PUB_PRICEGRADE_TIME_STAMP ON PUB_PRICEGRADE(TENANT_ID,TIME_STAMP);
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','客户分类','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','结算方式','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('7','银行编码','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000)
-GO
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('7','银行编码','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
 --企业客户
 CREATE TABLE [PUB_CLIENTINFO] (
@@ -1855,17 +1837,12 @@ from PUB_CUSTOMER;
 
 --IC状态
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','可用','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','暂用','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('9','注销','IC_STATUS','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --IC类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','记录卡','IC_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','不记名','IC_TYPE','00',strftime('%s','now','localtime')-1293840000);
-GO
 
 --储值卡信息
 CREATE TABLE [PUB_IC_INFO] (

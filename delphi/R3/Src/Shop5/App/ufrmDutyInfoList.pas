@@ -114,8 +114,11 @@ begin
 
   if edtKey.Text<>'' then
   begin
-    ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'''; //设置参数值
-    str:=str+' and (DUTY_ID like :KEYVALUE or DUTY_NAME like :KEYVALUE or DUTY_SPELL like :KEYVALUE) ';
+    ftParams.ParamByName('KEYVALUE').AsString:=trim(edtKEY.Text); //设置参数值
+    case Factor.iDbType of
+     0: str:=str+' and (DUTY_ID like ''%''+ :KEYVALUE + ''%'' or DUTY_NAME like ''%''+ :KEYVALUE + ''%'' or DUTY_SPELL like ''%''+ :KEYVALUE + ''%'') ';
+     5: str:=str+' and (DUTY_ID like ''%''|| :KEYVALUE || ''%'' or DUTY_NAME like ''%''|| :KEYVALUE || ''%'' or DUTY_SPELL like ''%''|| :KEYVALUE || ''%'') ';
+    end;
   end;
   
   case Factor.iDbType of

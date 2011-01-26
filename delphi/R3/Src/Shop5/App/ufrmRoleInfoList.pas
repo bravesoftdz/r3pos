@@ -84,8 +84,11 @@ begin
   inherited;  
   if edtKey.Text<>'' then
   begin
-    ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'''; 
-    str:=' and (ROLE_ID like :KEYVALUE or ROLE_NAME like :KEYVALUE or ROLE_SPELL like :KEYVALUE) ';
+    ftParams.ParamByName('KEYVALUE').AsString:=trim(edtKEY.Text);
+    case Factor.iDbType of
+     0: str:=' and (ROLE_ID like ''%''+ :KEYVALUE + ''%'' or ROLE_NAME like ''%''+ :KEYVALUE + ''%'' or ROLE_SPELL like ''%''+ :KEYVALUE + ''%'') ';
+     5: str:=' and (ROLE_ID like ''%''|| :KEYVALUE || ''%'' or ROLE_NAME like ''%''|| :KEYVALUE || ''%'' or ROLE_SPELL like ''%''|| :KEYVALUE || ''%'') ';
+    end;
   end;
   str:='Select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
        ' From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';

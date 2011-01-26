@@ -113,8 +113,11 @@ begin
 
     if edtKey.Text<>'' then
     begin
-      ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%''';
-      str:=' and (DEPT_ID like :KEYVALUE or DEPT_NAME like :KEYVALUE or DEPT_SPELL like :KEYVALUE) ';
+      ftParams.ParamByName('KEYVALUE').AsString:=trim(edtKEY.Text);
+      case Factor.iDbType of
+       0: str:=' and (DEPT_ID like ''%''+:KEYVALUE+''%'' or DEPT_NAME like ''%''+:KEYVALUE+''%'' or DEPT_SPELL like ''%''+:KEYVALUE+''%'') ';
+       5: str:=' and (DEPT_ID like ''%''||:KEYVALUE||''%'' or DEPT_NAME like ''%''||:KEYVALUE||''%'' or DEPT_SPELL like ''%''||:KEYVALUE||''%'') ';
+      end;
     end;
     
     case Factor.iDbType of

@@ -235,6 +235,7 @@ begin
   inherited;
   RzPage.ActivePageIndex := 1;
   Open;
+  if edtLOGIN_NAME.CanFocus then edtLOGIN_NAME.SetFocus;
 end;
 
 procedure TfrmTenant.FormDestroy(Sender: TObject);

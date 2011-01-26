@@ -946,7 +946,7 @@ inherited frmTenant: TfrmTenant
         Top = 176
         Width = 111
         Height = 20
-        TabOrder = 3
+        TabOrder = 7
       end
       object edtLINKMAN: TcxTextEdit
         Tag = 9
@@ -954,7 +954,7 @@ inherited frmTenant: TfrmTenant
         Top = 197
         Width = 111
         Height = 20
-        TabOrder = 5
+        TabOrder = 9
       end
       object edtTELEPHONE: TcxTextEdit
         Tag = 10
@@ -962,7 +962,7 @@ inherited frmTenant: TfrmTenant
         Top = 197
         Width = 111
         Height = 20
-        TabOrder = 6
+        TabOrder = 10
       end
       object edtFAXES: TcxTextEdit
         Tag = 8
@@ -970,7 +970,7 @@ inherited frmTenant: TfrmTenant
         Top = 176
         Width = 111
         Height = 20
-        TabOrder = 7
+        TabOrder = 8
       end
       object edtLICENSE_CODE: TcxTextEdit
         Tag = 3
@@ -978,7 +978,7 @@ inherited frmTenant: TfrmTenant
         Top = 76
         Width = 159
         Height = 20
-        TabOrder = 8
+        TabOrder = 3
       end
       object edtADDRESS: TcxTextEdit
         Tag = 11
@@ -986,7 +986,7 @@ inherited frmTenant: TfrmTenant
         Top = 220
         Width = 183
         Height = 20
-        TabOrder = 9
+        TabOrder = 11
       end
       object edtPOSTALCODE: TcxTextEdit
         Tag = 12
@@ -994,7 +994,7 @@ inherited frmTenant: TfrmTenant
         Top = 219
         Width = 71
         Height = 20
-        TabOrder = 10
+        TabOrder = 12
       end
       object edtPASSWRD: TcxTextEdit
         Tag = 4
@@ -1003,7 +1003,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         Properties.EchoMode = eemPassword
-        TabOrder = 11
+        TabOrder = 4
       end
       object edtPASSWRD1: TcxTextEdit
         Tag = 5
@@ -1012,7 +1012,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         Properties.EchoMode = eemPassword
-        TabOrder = 12
+        TabOrder = 5
       end
       object btnOk: TRzBitBtn
         Left = 209
@@ -1053,7 +1053,7 @@ inherited frmTenant: TfrmTenant
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 4
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'

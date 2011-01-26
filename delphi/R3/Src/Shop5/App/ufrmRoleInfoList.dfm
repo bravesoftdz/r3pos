@@ -5,6 +5,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
   Height = 521
   Caption = #26435#38480#35282#33394#26723#26696#31649#29702
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -376,6 +377,8 @@ inherited frmRoleInfoList: TfrmRoleInfoList
     end
   end
   object cdsBrowser: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
     SQL.Strings = (
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +

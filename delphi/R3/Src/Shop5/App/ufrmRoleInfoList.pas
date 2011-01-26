@@ -60,8 +60,9 @@ type
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
-    { Private declarations }
+    ftParams: TftParamList;  
   public
     locked, IsCompany : boolean;
     procedure AddRecord(AObj:TRecord_);
@@ -82,12 +83,16 @@ var
 begin
   inherited;  
   if edtKey.Text<>'' then
-     str:=' and (ROLE_ID like ''%'+trim(edtKEY.Text)+'%'' or ROLE_NAME like ''%'+trim(edtKEY.Text)+'%'' or ROLE_SPELL like ''%'+trim(edtKEY.Text)+'%'') ';
+  begin
+    ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'''; 
+    str:=' and (ROLE_ID like :KEYVALUE or ROLE_NAME like :KEYVALUE or ROLE_SPELL like :KEYVALUE) ';
+  end;
   str:='Select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
-                       ' From CA_ROLE_INFO where COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
+       ' From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
   cdsBrowser.Close;
   cdsBrowser.Filter:='';
   cdsBrowser.SQL.Text:=str;
+  cdsBrowser.Params.AssignValues(ftParams);
   Factor.Open(cdsBrowser);
 end;
 
@@ -191,16 +196,23 @@ var
   FilterCnd: string;
 begin
   inherited;
-  Locked:=True;
+  //TZQueyr组件不支持本地模糊查询，Onchange在实时取数据太消耗资源，关闭掉
+  {
+  locked:=True;
   try
-    FilterCnd:=' ROLE_ID like ''%'+trim(edtKEY.Text)+'%'' or ROLE_NAME like ''%'+trim(edtKEY.Text)+
-               '%'' or ROLE_SPELL like ''%'+trim(edtKEY.Text)+'%'' ';
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter :=FilterCnd;
-    cdsBrowser.Filtered :=(trim(edtKEY.Text)<>'');
+    //关键字参数发生变化时间查询
+    if trim(ftParams.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
+    begin
+      if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
+      ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%''';
+      cdsBrowser.close;
+      cdsBrowser.Params.AssignValues(ftParams);
+      Factor.Open(cdsBrowser);      
+    end;
   finally
     locked:=False;
   end;
+  }
 end;
 
 procedure TfrmRoleInfoList.rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -300,6 +312,10 @@ end;
 
 procedure TfrmRoleInfoList.FormCreate(Sender: TObject);
 begin
+  //创建参数对象:
+  ftParams:=TftParamList.Create(nil);
+  ftParams.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
@@ -363,6 +379,12 @@ begin
       free;
     end;
   end;
+end;
+
+procedure TfrmRoleInfoList.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  ftParams.Free;   //释放参数对象  
 end;
 
 end.

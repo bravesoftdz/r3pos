@@ -85,8 +85,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select DUTY_ID,DUTY_SPELL,DUTY_NAME from CA_DUTY_INFO where COMM' +
-        ' not in ('#39'02'#39','#39'12'#39')'
+        'select DUTY_ID,DUTY_SPELL,DUTY_NAME,LEVEL_ID from CA_DUTY_INFO w' +
+        'here COMM not in ('#39'02'#39','#39'12'#39')'
       'and TENANT_ID=:TENANT_ID order by LEVEL_ID')
     Params = <
       item

@@ -138,11 +138,11 @@ var
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
-  Obj.Clear;
   WriteToObject(Obj,self);
   Obj.FieldByName('PASSWRD').AsString := EncStr(Obj.FieldbyName('PASSWRD').AsString,ENC_KEY);
   Obj.FieldByName('TENANT_SPELL').AsString := FnString.GetWordSpell(edtTENANT_NAME.Text);
-
+  Obj.FieldByName('TENANT_TYPE').AsString := '3';
+  Obj.FieldByName('AUDIT_STATUS').AsString := '0';
   Tenant.TENANT_ID := Obj.FieldByName('TENANT_ID').AsInteger;
   Tenant.LOGIN_NAME := Obj.FieldByName('LOGIN_NAME').AsString;
   Tenant.TENANT_NAME := Obj.FieldByName('TENANT_NAME').AsString;
@@ -153,6 +153,8 @@ begin
   Tenant.LINKMAN := Obj.FieldByName('LINKMAN').AsString;
   Tenant.TELEPHONE := Obj.FieldByName('TELEPHONE').AsString;
   Tenant.FAXES := Obj.FieldByName('FAXES').AsString;
+  Tenant.QQ := Obj.FieldByName('QQ').AsString;
+  Tenant.MSN := Obj.FieldByName('MSN').AsString;
   Tenant.LICENSE_CODE := Obj.FieldByName('LICENSE_CODE').AsString;
   Tenant.ADDRESS := Obj.FieldByName('ADDRESS').AsString;
   Tenant.POSTALCODE := Obj.FieldByName('POSTALCODE').AsString;
@@ -161,6 +163,7 @@ begin
   Tenant.REGION_ID := Obj.FieldByName('REGION_ID').AsString;
   Tenant.SRVR_ID := Obj.FieldByName('SRVR_ID').AsString;
   Tenant.PROD_ID := Obj.FieldByName('PROD_ID').AsString;
+  Tenant.AUDIT_STATUS := Obj.FieldByName('AUDIT_STATUS').AsString;
 
   Tenant := CaFactory.coRegister(Tenant);
   //
@@ -213,14 +216,17 @@ begin
       CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
       CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
       CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+      CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
+      CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
       CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
       CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
       CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
       CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
-      CdsTable.FieldByName('PASSWRD').AsString := Tenant.PASSWRD;
+      CdsTable.FieldByName('PASSWRD').AsString := EncStr(Tenant.PASSWRD,ENC_KEY);
       CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
       CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+      CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
       Factor.UpdateBatch(CdsTable,'TTenant',nil);
     end;
@@ -262,11 +268,11 @@ begin
       if edtSHORT_TENANT_NAME.CanFocus then edtSHORT_TENANT_NAME.SetFocus;
       raise Exception.Create('企业简称不能为空！');
     end;
-  if Trim(edtLEGAL_REPR.Text) = '' then
-    begin
-      if edtLEGAL_REPR.CanFocus then edtLEGAL_REPR.SetFocus;
-      raise Exception.Create('法人代表不能为空！');
-    end;
+//  if Trim(edtLEGAL_REPR.Text) = '' then
+//    begin
+//      if edtLEGAL_REPR.CanFocus then edtLEGAL_REPR.SetFocus;
+//      raise Exception.Create('法人代表不能为空！');
+//    end;
   if Trim(edtPASSWRD.Text) = '' then
     begin
       if edtPASSWRD.CanFocus then edtPASSWRD.SetFocus;

@@ -14,6 +14,8 @@ type
     LINKMAN:string;
     TELEPHONE:string;
     FAXES:string;
+    MSN:string;
+    QQ:string;
     HOMEPAGE:string;
     ADDRESS:string;
     POSTALCODE:string;
@@ -22,6 +24,7 @@ type
     REGION_ID:string;
     SRVR_ID:string;
     PROD_ID:string;
+    AUDIT_STATUS:string;
   end;
   TCaLogin=record
     TENANT_ID:integer;

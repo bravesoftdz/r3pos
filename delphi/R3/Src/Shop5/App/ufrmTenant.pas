@@ -66,6 +66,7 @@ type
     Label23: TLabel;
     RzLabel2: TRzLabel;
     Bevel1: TBevel;
+    Label24: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure Label20Click(Sender: TObject);

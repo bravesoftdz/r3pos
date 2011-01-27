@@ -1762,6 +1762,7 @@ begin
         stDouble: RowAccessor.SetDouble(I, ResultSet.GetDouble(I));
         stBigDecimal: RowAccessor.SetBigDecimal(I, ResultSet.GetBigDecimal(I));
         stString: RowAccessor.SetPChar(I, ResultSet.GetPChar(I));
+        //stString: RowAccessor.SetString(I, ResultSet.GetString(I));
         stUnicodeString: RowAccessor.SetUnicodeString(I, ResultSet.GetUnicodeString(I));
         stBytes: RowAccessor.SetBytes(I, ResultSet.GetBytes(I));
         stDate: RowAccessor.SetDate(I, ResultSet.GetDate(I));

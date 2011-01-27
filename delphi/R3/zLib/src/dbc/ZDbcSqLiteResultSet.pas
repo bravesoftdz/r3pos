@@ -340,7 +340,7 @@ end;
 function TZSQLiteResultSet.GetPChar(ColumnIndex: Integer): PChar;
 var
   Temp: PPChar;
-  s:string;
+  s:String;
 begin
 {$IFNDEF DISABLE_CHECKING}
   CheckClosed;
@@ -355,9 +355,8 @@ begin
   //zhangsenrong 2011-01-26
   if Result<>nil then
      begin
-       s := StrPas(result);
-       s := UTF8ToAnsi(s);
-       result := pchar(s);
+       s := UTF8ToAnsi(StrPas(Result));
+       StrLCopy(Result,Pchar(s),length(s));
      end;
 end;
 

@@ -1,8 +1,8 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 244
-  Top = 0
-  Height = 560
+  Left = 134
+  Top = 112
+  Height = 594
   Width = 692
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
@@ -423,7 +423,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
-  object PUB_COLOR_INFO: TZQuery
+  object PUB_COLOR_GROUP: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -452,7 +452,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
-  object PUB_SIZE_INFO: TZQuery
+  object PUB_SIZE_GROUP: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -503,6 +503,54 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 368
     Top = 392
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_COLOR_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select COLOR_ID,COLOR_NAME,COLOR_SPELL,SORT_ID7S,SEQ_NO from VIW' +
+        '_COLOR_INFO '
+      'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
+      'order  by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 488
+    Top = 280
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_SIZE_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select SIZE_ID,SIZE_NAME,SIZE_SPELL,SORT_ID8S,SEQ_NO from VIW_SI' +
+        'ZE_INFO '
+      'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
+      'order  by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 488
+    Top = 336
     ParamData = <
       item
         DataType = ftUnknown

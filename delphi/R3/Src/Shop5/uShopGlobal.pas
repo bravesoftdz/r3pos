@@ -28,9 +28,11 @@ type
     PUB_GOODSSORT: TZQuery;
     PUB_CATE_INFO: TZQuery;
     PUB_IMPT_INFO: TZQuery;
+    PUB_COLOR_GROUP: TZQuery;
+    PUB_SIZE_GROUP: TZQuery;
+    PUB_AREA_INFO: TZQuery;
     PUB_COLOR_INFO: TZQuery;
     PUB_SIZE_INFO: TZQuery;
-    PUB_AREA_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

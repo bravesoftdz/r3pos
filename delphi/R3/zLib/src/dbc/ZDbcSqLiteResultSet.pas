@@ -340,6 +340,7 @@ end;
 function TZSQLiteResultSet.GetPChar(ColumnIndex: Integer): PChar;
 var
   Temp: PPChar;
+  s:string;
 begin
 {$IFNDEF DISABLE_CHECKING}
   CheckClosed;
@@ -351,6 +352,13 @@ begin
   Inc(Temp, ColumnIndex - 1);
   Result := Temp^;
   LastWasNull := Result = nil;
+  //zhangsenrong 2011-01-26
+  if Result<>nil then
+     begin
+       s := StrPas(result);
+       s := UTF8ToAnsi(s);
+       result := pchar(s);
+     end;
 end;
 
 {**
@@ -368,8 +376,10 @@ var
 begin
   Buffer := GetPChar(ColumnIndex);
   if Buffer <> nil then
-    Result := StrPas(Buffer)
+    result := StrPas(Buffer)
   else Result := '';
+  //zhangsenrong 2011-01-26
+  result := UTF8toAnsi(result);
 end;
 
 {**

@@ -166,14 +166,16 @@ var
   ColumnCount: Integer;
   ColumnValues: PPChar;
   ColumnNames: PPChar;
+  UTF8SQL:string;
 begin
   ErrorMessage := '';
   SQLTail := '';
   ColumnCount := 0;
-  ErrorCode := FPlainDriver.Compile(FHandle, PChar(SQL), Length(SQL), SQLTail,
+  UTF8SQL := AnsiToUTF8(SQL);
+  ErrorCode := FPlainDriver.Compile(FHandle, PChar(UTF8SQL), Length(UTF8SQL), SQLTail,
     StmtHandle, ErrorMessage);
-  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, SQL);
-  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, SQL);
+  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, UTF8SQL);
+  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, UTF8SQL);
 
   try
     ErrorCode := FPlainDriver.Step(StmtHandle, ColumnCount,
@@ -184,7 +186,7 @@ begin
     raise;
   end;
 
-  Result := CreateResultSet(SQL, StmtHandle, ColumnCount, ColumnNames,
+  Result := CreateResultSet(UTF8SQL, StmtHandle, ColumnCount, ColumnNames,
     ColumnValues);
 end;
 
@@ -203,12 +205,14 @@ function TZSQLiteStatement.ExecuteUpdate(const SQL: string): Integer;
 var
   ErrorCode: Integer;
   ErrorMessage: PChar;
+  UTF8SQL:string;
 begin
   ErrorMessage := '';
-  ErrorCode := FPlainDriver.Execute(FHandle, PChar(SQL), nil, nil,
+  UTF8SQL := AnsiToUTF8(SQL);
+  ErrorCode := FPlainDriver.Execute(FHandle, PChar(UTF8SQL), nil, nil,
     ErrorMessage);
-  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, SQL);
-  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, SQL);
+  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, UTF8SQL);
+  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, UTF8SQL);
   Result := FPlainDriver.Changes(FHandle);
   LastUpdateCount := Result;
 end;
@@ -242,14 +246,16 @@ var
   ColumnCount: Integer;
   ColumnValues: PPChar;
   ColumnNames: PPChar;
+  UTF8SQL:string;
 begin
   ErrorMessage := '';
   SQLTail := '';
   ColumnCount := 0;
-  ErrorCode := FPlainDriver.Compile(FHandle, PChar(SQL), Length(SQL), SQLTail,
+  UTF8SQL := AnsiToUTF8(SQL);
+  ErrorCode := FPlainDriver.Compile(FHandle, PChar(UTF8SQL), Length(UTF8SQL), SQLTail,
     StmtHandle, ErrorMessage);
-  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, SQL);
-  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, SQL);
+  CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, UTF8SQL);
+  DriverManager.LogMessage(lcExecute, FPlainDriver.GetProtocol, UTF8SQL);
 
   try
     ErrorCode := FPlainDriver.Step(StmtHandle, ColumnCount,
@@ -264,7 +270,7 @@ begin
   if ColumnCount <> 0 then
   begin
     Result := True;
-    LastResultSet := CreateResultSet(SQL, StmtHandle, ColumnCount, ColumnNames,
+    LastResultSet := CreateResultSet(UTF8SQL, StmtHandle, ColumnCount, ColumnNames,
       ColumnValues);
   end
   { Processes regular query. }

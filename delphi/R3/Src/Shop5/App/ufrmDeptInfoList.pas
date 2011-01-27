@@ -106,7 +106,8 @@ begin
       begin
         case Factor.iDbType of
          0: str:=' and substring(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
-         1: str:=' and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
+         4: str:=' '; //and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
+         5: str:=' and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
         end;
       end;
     end;

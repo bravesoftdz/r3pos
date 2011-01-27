@@ -3,7 +3,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
   Top = 107
   Width = 735
   Height = 521
-  Caption = #26435#38480#35282#33394#26723#26696#31649#29702
+  Caption = #35282#33394#26723#26696
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow

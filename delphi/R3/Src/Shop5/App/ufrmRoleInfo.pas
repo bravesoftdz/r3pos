@@ -60,7 +60,7 @@ procedure TfrmRoleInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  edtROLE_ID.Text := TSequence.GetMaxID('',Factor,'ROLE_ID','CA_ROLE_INFO','000');
+  edtROLE_ID.Text :=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'ROLE_ID','CA_ROLE_INFO','000');
 end;
 
 procedure TfrmRoleInfo.Edit(code: string);

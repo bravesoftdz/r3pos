@@ -6,7 +6,7 @@
 unit ZBase;
 
 interface
-uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings,Dialogs;
+uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings;
 
 type
 TftParam=class(TParam);
@@ -39,8 +39,10 @@ TField_=Class(TInterfacedObject)
     procedure SetAsFloat(const Value: Real);
     procedure SetAsString(const Value: String);
     procedure SetAsValue(const Value: Variant);
-    function  GetAsInteger: Integer;
-    procedure SetAsInteger(const Value: Integer);
+    function  GetAsInteger: Longint;
+    procedure SetAsInteger(const Value: Longint);
+    function  GetAsInt64: Int64;
+    procedure SetAsInt64(const Value: Int64);
     procedure SetTitleCaption(const Value: String);
     procedure SetVisible(const Value: Boolean);
     procedure SetAsBoolean(const Value: Boolean);
@@ -51,12 +53,14 @@ TField_=Class(TInterfacedObject)
     procedure SetTableName(const Value: string);
     procedure SetAsOldBoolean(const Value: Boolean);
     procedure SetAsOldFloat(const Value: Real);
-    procedure SetAsOldInteger(const Value: Integer);
+    procedure SetAsOldInteger(const Value: Longint);
+    procedure SetAsOldInt64(const Value: Int64);
     procedure SetAsOldString(const Value: String);
     procedure SetAsOldValue(const Value: Variant);
     function GetAsOldBoolean: Boolean;
     function GetAsOldFloat: Real;
-    function GetAsOldInteger: Integer;
+    function GetAsOldInteger: Longint;
+    function GetAsOldInt64: Int64;
     function GetAsOldString: String;
     function GetAsOldValue: Variant;
     function GetAsDatetime: TDatetime;
@@ -94,7 +98,9 @@ TField_=Class(TInterfacedObject)
     //字段是当前值转换成浮点型
     Property AsFloat:Real Read GetAsFloat write SetAsFloat;
     //字段是当前值转换成整形
-    Property AsInteger:Integer Read GetAsInteger write SetAsInteger;
+    Property AsInteger:Longint Read GetAsInteger write SetAsInteger;
+    //字段是当前值转换成整形
+    Property AsInt64:Int64 Read GetAsInt64 write SetAsInt64;
     //字段是当前值转换成Variant
     Property AsValue:Variant Read GetAsValue write SetAsValue;
     //字段转化为日期型
@@ -110,6 +116,8 @@ TField_=Class(TInterfacedObject)
     Property AsOldFloat:Real read GetAsOldFloat write SetAsOldFloat;
     //字段是原值转换成整形
     Property AsOldInteger:Integer read GetAsOldInteger write SetAsOldInteger;
+    //字段是原值转换成整形
+    Property AsOldInt64:Int64 read GetAsOldInt64 write SetAsOldInt64;
     //字段是原值转换成Variant
     Property AsOldValue:Variant read GetAsOldValue write SetAsOldValue;
     Property AsOldBoolean:Boolean  read GetAsOldBoolean write SetAsOldBoolean;
@@ -387,12 +395,12 @@ begin
   end; //End Case
   case Field.DataSet.UpdateStatus of
      usModified:begin
-        if not VarIsClear(Field.Value) then
+        if not VarIsClear(Field.NewValue) then
            begin
-              if VarIsStr(Field.Value) and (Field.Value='') then
+              if VarIsStr(Field.NewValue) and (Field.NewValue='') then
                  FNewValue  := null
               else
-                 FNewValue  := Field.Value;
+                 FNewValue  := Field.NewValue;
            end
         else
            begin
@@ -403,10 +411,10 @@ begin
            end;
        end;
      usInserted:begin
-          if VarIsStr(Field.Value) and (Field.Value='') then
+          if VarIsStr(Field.NewValue) and (Field.NewValue='') then
              FNewValue  := null
           else
-             FNewValue  := Field.Value;
+             FNewValue  := Field.NewValue;
        end;
      else
        begin
@@ -454,7 +462,15 @@ begin
      Result := FNewValue
 end;
 
-function TField_.GetAsInteger: Integer;
+function TField_.GetAsInt64: Int64;
+begin
+  if VarIsNull(FNewValue) or VarIsClear(FNewValue) then
+     Result := 0
+  else
+     Result := FNewValue;
+end;
+
+function TField_.GetAsInteger: Longint;
 begin
   if VarIsNull(FNewValue) or VarIsClear(FNewValue) then
      Result := 0
@@ -489,7 +505,15 @@ begin
      Result := FOldValue
 end;
 
-function TField_.GetAsOldInteger: Integer;
+function TField_.GetAsOldInt64: Int64;
+begin
+  if VarIsNull(FOldValue) or VarIsClear(FOldValue) then
+     Result := 0
+  else
+     Result := FOldValue
+end;
+
+function TField_.GetAsOldInteger: Longint;
 begin
   if VarIsNull(FOldValue) or VarIsClear(FOldValue) then
      Result := 0
@@ -552,7 +576,12 @@ begin
   FNewValue := Value;
 end;
 
-procedure TField_.SetAsInteger(const Value: Integer);
+procedure TField_.SetAsInt64(const Value: Int64);
+begin
+  FNewValue := Value;
+end;
+
+procedure TField_.SetAsInteger(const Value: Longint);
 begin
   FNewValue := Value;
 end;
@@ -588,7 +617,12 @@ begin
   FOldValue := Value;
 end;
 
-procedure TField_.SetAsOldInteger(const Value: Integer);
+procedure TField_.SetAsOldInt64(const Value: Int64);
+begin
+  FOldValue := Value;
+end;
+
+procedure TField_.SetAsOldInteger(const Value: Longint);
 begin
   FOldValue := Value;
 end;
@@ -796,7 +830,6 @@ begin
          end;
       TmpField.AssignValue(ADataSet.Fields[i]);
     end;
-    
 end;
 
 procedure TRecord_.WriteToDataSet(ADataSet: TDataSet;IsExists:Boolean=true);
@@ -821,7 +854,13 @@ begin
        if VarIsClear(Field.NewValue) or (VarIsStr(Field.NewValue) and (Field.NewValue='')) then
           ADataSet.Fields[i].Value := null
        else
-          ADataSet.Fields[i].Value := Field.NewValue;
+          begin
+            case ADataSet.Fields[i].DataType of
+              ftLargeint:ADataSet.Fields[i].AsInteger := Field.asInt64;
+            else
+              ADataSet.Fields[i].Value := Field.NewValue;
+            end;
+          end;
     end;
 end;
 

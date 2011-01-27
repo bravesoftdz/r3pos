@@ -79,7 +79,7 @@ CREATE TABLE [CA_SN_INFO](
     --系列号状态
 	[SN_STATUS] [varchar](1) NOT NULL,
     --门店代码
-	[SHOP_ID] int NOT NULL,
+	[SHOP_ID] bigint NOT NULL,
     --激活日期
 	[ACTV_DATE] [varchar](10) NOT NULL,
     --有效截止日期
@@ -271,7 +271,7 @@ CREATE TABLE [CA_TENANT](
 	[REGION_ID] [varchar](10) NULL,
     --服务器编号
 	[SRVR_ID] [varchar](10) NULL,
-    --状态
+    --状态 0申请 1已审
 	[AUDIT_STATUS] [varchar](1) NOT NULL,
     --软件产品编号
 	[PROD_ID] [varchar](10) NULL,
@@ -385,7 +385,7 @@ CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TENANT_ID,TIME_STAMP);
 --门店资料
 CREATE TABLE [CA_SHOP_INFO](
     --门店代码 企业代码+4位序号
-	[SHOP_ID] int NOT NULL,
+	[SHOP_ID] bigint NOT NULL,
     --经营许可证
 	[LICENSE_CODE] [varchar](50) NOT NULL,
     --门店名称
@@ -486,7 +486,7 @@ CREATE TABLE [CA_USERS](
     --密码
 	[PASS_WRD] [varchar](50) NULL,
     --所属门店 
-	[SHOP_ID] int NOT NULL,
+	[SHOP_ID] bigint NOT NULL,
     --所属部门
 	[DEPT_ID] int NOT NULL,
     --所属职务,多职务用,号分隔
@@ -548,7 +548,8 @@ CREATE view [VIW_USERS]
 as
 select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,PASS_WRD,COMM from CA_USERS
 union all
-select TENANT_ID,TENANT_ID*1000+1 as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD';
+select TENANT_ID,TENANT_ID*10000+1 as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,
+VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD';
 
 --代码信息表
 CREATE TABLE [PUB_CODE_INFO](
@@ -826,7 +827,7 @@ CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112105','山东省.烟台市 ','SDS.YTS ','8','220','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112106','山东省.青岛市 ','SDS.QDS ','8','221','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112107','山东省.莱芜市 ','SDS.LWS ','8','222','00',strftime('%s','now','localtime')-1293840000);
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112108','济宁市 山东省.','JNS SDS.','8','223','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112108','山东省.济宁市 ','JNS SDS.','8','223','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112109','山东省.荷泽市 ','SDS.HZS ','8','224','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112110','山东省.日照市 ','SDS.RZS ','8','225','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112111','山东省.藤州市 ','SDS.TZS ','8','226','00',strftime('%s','now','localtime')-1293840000);
@@ -1718,7 +1719,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
         --可用余额
 	[BALANCE] [decimal](18, 3) NULL ,
         --所属门店
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -1752,7 +1753,7 @@ CREATE TABLE [PUB_CUSTOMER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --入会门店
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --会员卡号
 	[CUST_CODE] [varchar] (20) NOT NULL ,
         --会员名称

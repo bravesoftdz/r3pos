@@ -5,7 +5,7 @@ CREATE TABLE [PUB_GOODSPRICE] (
         --客户类型 # 号为所有客户
 	[PRICE_ID] [varchar] (36) NOT NULL , 
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --货号编码
 	[GODS_ID] [varchar] (36) NOT NULL ,
         --定价方式<变价方式>
@@ -36,13 +36,13 @@ select A.[TENANT_ID],A.[GODS_ID],A.[GODS_CODE],A.[GODS_ID] as SECOND_ID,A.[GODS_
        A.[SORT_ID1],A.[SORT_ID2],A.[SORT_ID3],A.[SORT_ID4],A.[SORT_ID5],A.[SORT_ID6],A.[SORT_ID7],A.[SORT_ID8],
        A.[BARCODE],A.[CALC_UNITS],A.[SMALL_UNITS],A.[BIG_UNITS],A.[SMALLTO_CALC],A.[BIGTO_CALC],
        A.[NEW_INPRICE],
-       case when isnull(B.COMM,'02') not in ('02','12') then 2 else 1 end as POLICY_TYPE,
-       case when isnull(B.COMM,'02') not in ('02','12') then B.[NEW_OUTPRICE] else A.[NEW_OUTPRICE] end NEW_OUTPRICE,
-       case when isnull(B.COMM,'02') not in ('02','12') then isnull(B.[NEW_OUTPRICE1],B.[NEW_OUTPRICE]*A.SMALLTO_CALC) else A.[NEW_OUTPRICE]*A.SMALLTO_CALC end NEW_OUTPRICE1,
-       case when isnull(B.COMM,'02') not in ('02','12') then isnull(B.[NEW_OUTPRICE2],B.[NEW_OUTPRICE]*A.BIGTO_CALC) else A.[NEW_OUTPRICE]*A.BIGTO_CALC end NEW_OUTPRICE2,
+       case when ifnull(B.COMM,'02') not in ('02','12') then 2 else 1 end as POLICY_TYPE,
+       case when ifnull(B.COMM,'02') not in ('02','12') then B.[NEW_OUTPRICE] else A.[NEW_OUTPRICE] end NEW_OUTPRICE,
+       case when ifnull(B.COMM,'02') not in ('02','12') then ifnull(B.[NEW_OUTPRICE1],B.[NEW_OUTPRICE]*A.SMALLTO_CALC) else A.[NEW_OUTPRICE]*A.SMALLTO_CALC end NEW_OUTPRICE1,
+       case when ifnull(B.COMM,'02') not in ('02','12') then ifnull(B.[NEW_OUTPRICE2],B.[NEW_OUTPRICE]*A.BIGTO_CALC) else A.[NEW_OUTPRICE]*A.BIGTO_CALC end NEW_OUTPRICE2,
        A.[NEW_LOWPRICE],A.[USING_BARTER],A.[BARTER_INTEGRAL],
        A.[USING_PRICE],A.[HAS_INTEGRAL],A.[USING_BATCH_NO],A.[REMARK],A.[COMM],A.[TIME_STAMP]
-from VIW_GOODSINFO A left outer jion PUB_GOODSPRICE B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID
+from VIW_GOODSINFO A left outer join PUB_GOODSPRICE B ON A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID;
 
 --变价记录
 CREATE TABLE [LOG_PRICING_INFO] (
@@ -57,7 +57,7 @@ CREATE TABLE [LOG_PRICING_INFO] (
         --客户类型 # 号为所有客户
 	[PRICE_ID] [varchar] (36) NOT NULL , 
         --门店代码 0 时代码所有门店
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --货号编码
 	[GODS_ID] [varchar] (36) NOT NULL ,
         --定价方式
@@ -91,7 +91,7 @@ CREATE TABLE [STO_STORAGE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --批号，没批号用 #号
 	[BATCH_NO] [varchar] (20) NOT NULL,
         --货品代码
@@ -136,7 +136,7 @@ CREATE TABLE [SAL_PRICEORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --开单门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --开始时间 yyyy-mm-dd hh:mm:ss
 	[BEGIN_DATE] [varchar] (25) NOT NULL ,
         --结束时间 yyyy-mm-dd hh:mm:ss
@@ -173,12 +173,11 @@ CREATE TABLE [SAL_PROM_SHOP] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
   CONSTRAINT [PK_SAL_PROM_SHOP] PRIMARY KEY (ROWS_ID)
 );
 
 CREATE INDEX IX_SAL_PROM_SHOP_TENANT_ID ON SAL_PROM_SHOP(TENANT_ID);
-CREATE INDEX IX_SAL_PROM_SHOP_TIME_STAMP ON SAL_PROM_SHOP(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_SAL_PROM_SHOP_SHOP_ID ON SAL_PROM_SHOP(TENANT_ID,PROM_ID);
 
 --促销单明细
@@ -215,8 +214,8 @@ CREATE INDEX IX_SAL_PRICEDATA_GODS_ID ON SAL_PRICEDATA(GODS_ID);
 --各门店促销价格
 CREATE view [VIW_PROM_PRICE]
 as
-select C.SHOP_ID,B.PRICE_ID,A.TENANT_ID,A.GODS_ID,A.NEW_OUTPRICE,A.NEW_OUTPRICE1,A.NEW_OUTPRICE2,A.RATE_OFF,A.AGIO_RATE,A.ISINTEGRAL from SAL_PRICEDATA A,SAL_PRICEORDER B,SAL_PROD_SHOP C
-where A.TENANT_ID=B.TENANT_ID and A.PROD_ID=B.PROD_ID and A.TENANT_ID=C.TENANT_ID and A.PROD_ID=C.PROD_ID and B.COMM not in ('02','12') and B.CHK_DATE IS NOT NULL and 
+select C.SHOP_ID,B.PRICE_ID,A.TENANT_ID,A.GODS_ID,A.NEW_OUTPRICE,A.NEW_OUTPRICE1,A.NEW_OUTPRICE2,A.RATE_OFF,A.AGIO_RATE,A.ISINTEGRAL from SAL_PRICEDATA A,SAL_PRICEORDER B,SAL_PROM_SHOP C
+where A.TENANT_ID=B.TENANT_ID and A.PROM_ID=B.PROM_ID and A.TENANT_ID=C.TENANT_ID and A.PROM_ID=C.PROM_ID and B.COMM not in ('02','12') and B.CHK_DATE IS NOT NULL and 
 B.BEGIN_DATE<=strftime('%Y-%m-%d %H:%M:%S','now','localtime') and B.END_DATE>=strftime('%Y-%m-%d %H:%M:%S','now','localtime');
 
 --发票类型
@@ -226,14 +225,14 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','
 --入库类单据类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','入库单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','调拨单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退货单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退Huo单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
 --入库单表头
 CREATE TABLE [STK_STOCKORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --入库单号
 	[STOCK_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -276,7 +275,7 @@ CREATE TABLE [STK_STOCKORDER] (
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_STK_STOCKORDER] PRIMARY KEY 
 	(
-		[COMP_ID],
+		[SHOP_ID],
 		[STOCK_ID]
 	)
 );
@@ -295,7 +294,7 @@ CREATE TABLE [STK_STOCKDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --入库单号
 	[STOCK_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -354,7 +353,7 @@ select
    A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
    round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as TAX_MONEY,
    A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
-from STK_STOCKDATA A,STK_STOCKORDER_ B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.STOCK_TYPE in (1,3) and B.COMM not in ('02','12');
+from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.STOCK_TYPE in (1,3) and B.COMM not in ('02','12');
 
 --调拨接收单视图
 CREATE VIEW VIW_MOVEINDATA
@@ -369,7 +368,7 @@ from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销售单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','调拨单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退货单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退Huo单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','零售单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','销售方式','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -379,7 +378,7 @@ CREATE TABLE [SAL_SALESORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --销售单号
 	[SALES_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -472,13 +471,18 @@ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,tim
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','礼券','LQ','1','5','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1','6','00',strftime('%s','now','localtime')-1293840000);
 
+CREATE VIEW VIW_PAYMENT
+as
+select B.TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,A.COMM,A.TIME_STAMP from PUB_CODE_INFO A,CA_TENANT B where A.TENANT_ID=0 and A.CODE_TYPE='1'
+union all
+select TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,COMM,TIME_STAMP from PUB_CODE_INFO where TENANT_ID>0 and CODE_TYPE='1';
 
 --销售单明细
 CREATE TABLE [SAL_SALESDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --销售单号
 	[SALES_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -540,7 +544,7 @@ as
 select 
   A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BATCH_NO,B.BARTER_INTEGRAL,
   B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.IS_PRESENT,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE, 
-  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
+  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.AMOUNT,
   round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as TAX_MONEY,
   B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,
   B.AGIO_MONEY
@@ -552,7 +556,7 @@ as
 select 
   A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BATCH_NO,B.BARTER_INTEGRAL,
   B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.IS_PRESENT,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE, 
-  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
+  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.AMOUNT,
   round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as TAX_MONEY,
   B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,
   B.AGIO_MONEY
@@ -569,7 +573,7 @@ CREATE TABLE [SAL_IC_GLIDE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --销售单号
 	[SALES_ID] [varchar] (36) NOT NULL ,
         --IC卡号
@@ -609,7 +613,7 @@ CREATE TABLE [SAL_INTEGRAL_GLIDE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --会员号
 	[CUST_ID] [varchar] (36) NOT NULL ,
         --流水日期
@@ -653,19 +657,19 @@ CREATE TABLE [STO_CHANGECODE] (
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_STO_CHANGECODE] PRIMARY KEY 
 	(
-		[TENANT_ID,CHANGE_CODE]
+		[TENANT_ID],[CHANGE_CODE]
 	) 
-) ;
+);
 
-insert into BAS_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'1','损益','2','00',strftime('%s','now','localtime')-1293840000);
-insert into BAS_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'2','领用','2','00',strftime('%s','now','localtime')-1293840000);
+insert into STO_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'1','损益','2','00',strftime('%s','now','localtime')-1293840000);
+insert into STO_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'2','领用','2','00',strftime('%s','now','localtime')-1293840000);
 
 --调整单
 CREATE TABLE [STO_CHANGEORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号
 	[CHANGE_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -712,7 +716,7 @@ CREATE TABLE [STO_CHANGEDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号
 	[CHANGE_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -781,7 +785,7 @@ CREATE TABLE [STK_INDENTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号
 	[INDE_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -840,7 +844,7 @@ CREATE TABLE [STK_INDENTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --订单号
@@ -908,7 +912,7 @@ CREATE TABLE [SAL_INDENTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号
 	[INDE_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -969,7 +973,7 @@ CREATE TABLE [SAL_INDENTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --订单号
@@ -1053,7 +1057,7 @@ CREATE TABLE [STO_PRINTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --盘点状态
@@ -1074,7 +1078,7 @@ CREATE TABLE [STO_PRINTORDER] (
 		[SHOP_ID],
 		[PRINT_DATE]
 	)
-) ;
+);
 
 CREATE INDEX IX_STO_PRINTORDER_TENANT_ID ON STO_PRINTORDER(TENANT_ID);
 CREATE INDEX IX_STO_PRINTORDER_PRINT_DATE ON STO_PRINTORDER(SHOP_ID,PRINT_DATE);
@@ -1086,7 +1090,7 @@ CREATE TABLE [STO_PRINTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --批号，没批号用 #号
@@ -1125,7 +1129,7 @@ CREATE TABLE [STO_CHECKDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --批号，没批号用 #号
@@ -1164,7 +1168,7 @@ CREATE TABLE [ACC_ACCOUNT_INFO] (
         --帐户代码
 	[ACCOUNT_ID] [varchar] (36) NOT NULL ,
         --所属门店<为每个门店自动创建一个<现金账户>
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --帐户名称
 	[ACCT_NAME] [varchar] (50) NOT NULL ,
         --拼音码
@@ -1196,7 +1200,7 @@ CREATE VIEW VIW_ACCOUNT_INFO
 as
 select TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO where SHOP_ID>0
 union all
-select A.TENANT_ID,B.SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO A,CA_SHOP_INFO B where A.SHOP_ID=0 and A.TENANT_ID=B.TENANT_ID
+select A.TENANT_ID,B.SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO A,CA_SHOP_INFO B where A.SHOP_ID=0 and A.TENANT_ID=B.TENANT_ID;
 
 --定义收支项目编号
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','收支项目','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1210,7 +1214,7 @@ CREATE TABLE [ACC_RECVABLE_INFO] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --序号
 	[ABLE_ID] [varchar] (36) NOT NULL ,
         --客户
@@ -1247,11 +1251,11 @@ CREATE TABLE [ACC_RECVABLE_INFO] (
 	)
 ) ;
 
-CREATE INDEX IX_ACC_ACCOUNT_INFO_TENANT_ID ON ACC_ACCOUNT_INFO(TENANT_ID);
-CREATE INDEX IX_ACC_ACCOUNT_INFO_TIME_STAMP ON ACC_ACCOUNT_INFO(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_ACC_ACCOUNT_INFO_ABLE_DATE ON ACC_ACCOUNT_INFO(ABLE_DATE);
-CREATE INDEX IX_ACC_ACCOUNT_INFO_CLIENT_ID ON ACC_ACCOUNT_INFO(TENANT_ID,CLIENT_ID);
-CREATE INDEX IX_ACC_ACCOUNT_INFO_SALES_ID ON ACC_ACCOUNT_INFO(SALES_ID);
+CREATE INDEX IX_ACC_RECVABLE_INFO_TENANT_ID ON ACC_RECVABLE_INFO(TENANT_ID);
+CREATE INDEX IX_ACC_RECVABLE_INFO_TIME_STAMP ON ACC_RECVABLE_INFO(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_ACC_RECVABLE_INFO_ABLE_DATE ON ACC_RECVABLE_INFO(ABLE_DATE);
+CREATE INDEX IX_ACC_RECVABLE_INFO_CLIENT_ID ON ACC_RECVABLE_INFO(TENANT_ID,CLIENT_ID);
+CREATE INDEX IX_ACC_RECVABLE_INFO_SALES_ID ON ACC_RECVABLE_INFO(SALES_ID);
 
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','应付款','ABLE_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1263,7 +1267,7 @@ CREATE TABLE [ACC_PAYABLE_INFO] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --序号
 	[ABLE_ID] [varchar] (36) NOT NULL ,
         --供应商
@@ -1311,7 +1315,7 @@ CREATE TABLE [ACC_PAYORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[PAY_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -1358,7 +1362,7 @@ CREATE TABLE [ACC_PAYDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[PAY_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -1382,15 +1386,15 @@ CREATE INDEX IX_ACC_PAYDATA_ABLE_ID ON ACC_PAYDATA(TENANT_ID,ABLE_ID);
 CREATE VIEW VIW_PAYDATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.PAY_ID,A.ABLE_ID,A.ABLE_TYPE,A.PAY_MNY,B.PAY_DATE,B.CLIENT_NO,B.PAYM_ID,B.ITEM_NO,B.ACCOUNT_ID,B.GLIDE_NO,B.PAY_USER
+  A.TENANT_ID,A.SHOP_ID,A.PAY_ID,A.ABLE_ID,A.ABLE_TYPE,A.PAY_MNY,B.PAY_DATE,B.CLIENT_ID,B.PAYM_ID,B.ITEM_ID,B.ACCOUNT_ID,B.GLIDE_NO,B.PAY_USER
 from ACC_PAYDATA A,ACC_PAYORDER B where A.TENANT_ID=B.TENANT_ID and A.PAY_ID=B.PAY_ID and B.COMM not in ('02','12');
 
 --收款单
-CREATE TABLE [ACC_RECVRDER] (
+CREATE TABLE [ACC_RECVORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[RECV_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -1427,17 +1431,17 @@ CREATE TABLE [ACC_RECVRDER] (
 	) 
 ) ;
 
-CREATE INDEX IX_ACC_RECVRDER_TENANT_ID ON ACC_RECVRDER(TENANT_ID);
-CREATE INDEX IX_ACC_RECVRDER_TIME_STAMP ON ACC_RECVRDER(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_ACC_RECVRDER_PAY_DATE ON ACC_RECVRDER(RECV_DATE);
-CREATE INDEX IX_ACC_RECVRDER_INFO_CLIENT_ID ON ACC_RECVRDER(CLIENT_ID);
+CREATE INDEX IX_ACC_RECVORDER_TENANT_ID ON ACC_RECVORDER(TENANT_ID);
+CREATE INDEX IX_ACC_RECVORDER_TIME_STAMP ON ACC_RECVORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_ACC_RECVORDER_PAY_DATE ON ACC_RECVORDER(RECV_DATE);
+CREATE INDEX IX_ACC_RECVORDER_INFO_CLIENT_ID ON ACC_RECVORDER(CLIENT_ID);
 
 --收款单明细
 CREATE TABLE [ACC_RECVDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[RECV_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -1450,7 +1454,7 @@ CREATE TABLE [ACC_RECVDATA] (
 	[RECV_MNY] [decimal](18, 3) NULL ,
 	CONSTRAINT [PK_ACC_RECVDATA] PRIMARY KEY  
 	(
-		[TENANT_ID],[RECVID],[SEQNO]
+		[TENANT_ID],[RECV_ID],[SEQNO]
 	) 
 ) ;
 
@@ -1461,7 +1465,7 @@ CREATE INDEX IX_ACC_RECVDATA_ABLE_ID ON ACC_RECVDATA(TENANT_ID,ABLE_ID);
 CREATE VIEW VIW_RECVDATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.RECV_ID,A.ABLE_ID,A.RECV_TYPE,A.RECV_MNY,B.RECV_DATE,B.CLIENT_NO,B.PAYM_ID,B.ITEM_NO,B.ACCOUNT_ID,B.GLIDE_NO,B.RECV_USER
+  A.TENANT_ID,A.SHOP_ID,A.RECV_ID,A.ABLE_ID,A.RECV_TYPE,A.RECV_MNY,B.RECV_DATE,B.CLIENT_ID,B.PAYM_ID,B.ITEM_ID,B.ACCOUNT_ID,B.GLIDE_NO,B.RECV_USER
 from ACC_RECVDATA A,ACC_RECVORDER B where A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID and B.COMM not in ('02','12');
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','收入','IORO_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1472,7 +1476,7 @@ CREATE TABLE [ACC_IOROORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[IORO_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -1519,7 +1523,7 @@ CREATE TABLE [ACC_IORODATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[IORO_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -1542,10 +1546,10 @@ CREATE INDEX IX_ACC_IORODATA_CLIENT_ID ON ACC_IORODATA(TENANT_ID,IORO_ID);
 CREATE VIEW VIW_IORODATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.ACCOUNT_ID,A.IORO_INFO,A.IORO_MNY,B.IORO_DATE,B.CLIENT_NO,B.ITEM_ID,B.DEPT_ID,B.GLIDE_NO,B.IORO_USER,
+  A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.ACCOUNT_ID,A.IORO_INFO,A.IORO_MNY,B.IORO_DATE,B.CLIENT_ID,B.ITEM_ID,B.DEPT_ID,B.GLIDE_NO,B.IORO_USER,
   case when B.IORO_TYPE='1' then A.IORO_MNY else 0 end as IN_MONEY,
   case when B.IORO_TYPE='2' then A.IORO_MNY else 0 end as OUT_MONEY
-from ACC_IORODATA A,ACC_IORORDER B where A.TENANT_ID=B.TENANT_ID and A.IORO_ID=B.IORO_ID and B.COMM not in ('02','12');
+from ACC_IORODATA A,ACC_IOROORDER B where A.TENANT_ID=B.TENANT_ID and A.IORO_ID=B.IORO_ID and B.COMM not in ('02','12');
 
 
 
@@ -1556,7 +1560,7 @@ CREATE TABLE [ACC_CLOSE_FORDAY] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --关账日期
 	[CLSE_DATE] int NULL ,
         --结算方式
@@ -1598,7 +1602,7 @@ CREATE TABLE [ACC_TRANSORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[TRANS_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -1641,7 +1645,7 @@ CREATE TABLE [SAL_BOMORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码<发布门店>
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号序号
 	[BOM_ID] [varchar] (36) NOT NULL ,
         --流水号
@@ -1691,7 +1695,7 @@ CREATE TABLE [SAL_BOMDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] int NOT NULL ,
+	[SHOP_ID] bigint NOT NULL ,
         --单号
 	[BOM_ID] [varchar] (36) NOT NULL ,
         --序号
@@ -1727,3 +1731,4 @@ CREATE TABLE [SAL_BOMDATA] (
 CREATE INDEX IX_SAL_BOMDATA_TENANT_ID ON SAL_BOMDATA(TENANT_ID);
 CREATE INDEX IX_SAL_BOMDATA_TIME_STAMP ON SAL_BOMDATA(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_SAL_BOMDATA_GODS_ID ON SAL_BOMDATA(TENANT_ID,GODS_ID);
+

@@ -429,12 +429,14 @@ end;
 procedure TfrmDutyInfoList.CreateTree;
 var rs:TZQuery;
     Obj:TRecord_;
-    Root,P:TTreeNode;
+    ParamRoot,Root,P:TTreeNode;
 begin
   rs := Global.GetZQueryFromName('CA_DUTY_INFO');
   rs.SortedFields:='LEVEL_ID';
   rs.SortType:=stAscending;
-  CreateLevelTree(rs,rzTree,'333333333','Duty_ID','Duty_NAME','LEVEL_ID',1,3,'');
+  ParamRoot:=nil;
+  if RzTree.Items.Count>0 then ParamRoot:=rzTree.Items[0];
+  CreateLevelTree(rs,rzTree,'333333333','Duty_ID','Duty_NAME','LEVEL_ID',1,3,'',ParamRoot);
   Obj  := TRecord_.Create;
   try
     Obj.ReadField(rs);

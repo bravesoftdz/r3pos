@@ -134,7 +134,6 @@ end;
 
 procedure TfrmTenant.Save;
 var
-  Temp: TZQuery;
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
@@ -170,11 +169,9 @@ begin
   Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
   //以上语句在与远程服务器连接后，从服务器端获取企业ID值
 
-  if CdsTable.Locate('TENANT_ID',TENANT_ID,[]) then
-    CdsTable.edit
-  else
-    CdsTable.Append;
+  CdsTable.edit;
   Obj.WriteToDataSet(CdsTable);
+
   CdsTable.Post;
   Factor.UpdateBatch(CdsTable,'TTenant',nil);
   Global.TENANT_ID := Tenant.TENANT_ID;
@@ -295,10 +292,15 @@ begin
 end;
 
 procedure TfrmTenant.Open;
+var Params:TftParamList;
 begin
-  CdsTable.Close;
-  CdsTable.SQL.Text := 'Select * From CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+inttostr(TENANT_ID);
-  Factor.Open(CdsTable);
+  Params := TftParamList.Create;
+  try
+     Params.ParamByName('TENANT_ID').AsInteger := TENANT_ID;
+     Factor.Open(CdsTable,'TTenant',Params);
+  finally
+    Params.Free;
+  end;
   Obj.Clear;
   Obj.ReadFromDataSet(CdsTable);
   ReadFromObject(Obj,Self);

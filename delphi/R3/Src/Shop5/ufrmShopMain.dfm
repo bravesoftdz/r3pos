@@ -1,8 +1,8 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 199
-  Top = 154
+  Left = 334
+  Top = 175
   Width = 820
-  Height = 558
+  Height = 555
   Caption = ''
   Menu = nil
   Position = poDesigned
@@ -13,7 +13,7 @@ inherited frmShopMain: TfrmShopMain
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 496
+    Top = 493
     Width = 804
     Height = 24
     Panels = <
@@ -33,7 +33,7 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel5: TPanel [1]
     Left = 0
-    Top = 485
+    Top = 482
     Width = 804
     Height = 0
     Align = alBottom
@@ -5071,7 +5071,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 7
     Top = 99
     Width = 147
-    Height = 386
+    Height = 383
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -5170,7 +5170,7 @@ inherited frmShopMain: TfrmShopMain
     end
     object Panel9: TPanel
       Left = 0
-      Top = 367
+      Top = 364
       Width = 147
       Height = 19
       Align = alBottom
@@ -5216,7 +5216,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 30
       Width = 27
-      Height = 337
+      Height = 334
       Align = alLeft
       BackgroundColor = 14996141
       Color = clWhite
@@ -5274,7 +5274,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 27
       Top = 30
       Width = 120
-      Height = 337
+      Height = 334
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -5293,9 +5293,18 @@ inherited frmShopMain: TfrmShopMain
           end
           item
             Action = actfrmRoleInfoList
+          end
+          item
+            Action = actfrmUsers
+          end
+          item
+            Action = actfrmDeptInfoList
+          end
+          item
+            Caption = 'Item6'
           end>
         Opened = True
-        OpenedHeight = 88
+        OpenedHeight = 148
         UseGradients = True
         Caption = 'RzGroup1'
         ParentColor = False
@@ -5825,7 +5834,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 0
     Top = 99
     Width = 7
-    Height = 386
+    Height = 383
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 5
@@ -5833,7 +5842,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 7
-      Height = 386
+      Height = 383
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -5866,7 +5875,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 796
     Top = 99
     Width = 8
-    Height = 386
+    Height = 383
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 6
@@ -5874,7 +5883,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 8
-      Height = 386
+      Height = 383
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -5905,7 +5914,7 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel10: TPanel [7]
     Left = 0
-    Top = 485
+    Top = 482
     Width = 804
     Height = 11
     Align = alBottom
@@ -6036,7 +6045,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 154
     Top = 99
     Width = 11
-    Height = 386
+    Height = 383
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 8
@@ -6044,7 +6053,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 30
       Width = 11
-      Height = 356
+      Height = 353
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -6487,6 +6496,27 @@ inherited frmShopMain: TfrmShopMain
     object actfrmRoleInfoList: TAction
       Caption = #35282#33394#26723#26696
       OnExecute = actfrmRoleInfoListExecute
+    end
+    object actfrmDeptInfoList: TAction
+      Caption = #37096#38376#26723#26696
+      OnExecute = actfrmDeptInfoListExecute
+    end
+    object actfrmUsers: TAction
+      Caption = #21592#24037#26723#26696
+      OnExecute = actfrmUsersExecute
+    end
+    object actfrmGoodsSort: TAction
+      Caption = #21830#21697#20998#31867
+    end
+    object actfrmBrandInfo: TAction
+      Caption = #21697#29260#26723#26696
+      OnExecute = actfrmBrandInfoExecute
+    end
+    object actfrmFactoryInfo: TAction
+      Caption = #29983#20135#21378#23478
+    end
+    object actfrm: TAction
+      Caption = 'actfrm'
     end
   end
   inherited PopupMenu: TPopupMenu

@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxControls, cxContainer, cxEdit, cxCheckBox, RzButton,
   jpeg, ExtCtrls, StdCtrls, cxSpinEdit, IniFiles, cxButtonEdit,
-  zrComboBoxList, DB, ADODB, cxCalendar, ZAbstractRODataset, ZDataset;
+  zrComboBoxList, DB, ADODB, cxCalendar, ZAbstractRODataset, ZDataset,
+  Grids, DBGridEh, ZAbstractDataset;
 type
   TLoginParam=Record
     UserID:String;

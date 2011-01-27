@@ -174,6 +174,12 @@ type
     actfrmDutyInfoList: TAction;
     RzGroup1: TRzGroup;
     actfrmRoleInfoList: TAction;
+    actfrmDeptInfoList: TAction;
+    actfrmUsers: TAction;
+    actfrmGoodsSort: TAction;
+    actfrmBrandInfo: TAction;
+    actfrmFactoryInfo: TAction;
+    actfrm: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -194,6 +200,9 @@ type
     procedure actfrmMeaUnitsExecute(Sender: TObject);
     procedure actfrmDutyInfoListExecute(Sender: TObject);
     procedure actfrmRoleInfoListExecute(Sender: TObject);
+    procedure actfrmDeptInfoListExecute(Sender: TObject);
+    procedure actfrmUsersExecute(Sender: TObject);
+    procedure actfrmBrandInfoExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -221,7 +230,6 @@ type
     procedure LoadFrame;
     procedure InitVersioin;
     function GetDeskFlag:string;
-    function CheckRegister:boolean;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
     function Login(Locked:boolean=false):boolean;
@@ -238,7 +246,7 @@ var
 implementation
 uses
   uFnUtil,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
-  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits;
+  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -462,7 +470,7 @@ begin
   if Logined then
      begin
        Loging := false;
-       Global.SHOP_ID := StrtoInt(Params.ShopId);
+       Global.SHOP_ID := StrtoInt64(Params.ShopId);
        Global.SHOP_NAME := Params.ShopName;
        Global.UserID := Params.UserID;
        Global.UserName := Params.UserName;
@@ -512,17 +520,18 @@ var prm:string;
 begin
   if Logined then Exit;
   try
-    if not ConnectToDb then Exit;
-    Logined := Login(false);
-  finally
-    if not Application.Terminated then
-    begin
-       if not frmShopMain.Visible then
+    if not ConnectToDb then
        begin
-         frmShopMain.Show;
-         frmShopMain.WindowState := wsMaximized;
-       end;    
-    end;
+         Application.Terminate;
+         Exit;
+       end;
+    Logined := Login(false);
+    if not frmShopMain.Visible and Logined then
+    begin
+      frmShopMain.Show;
+      frmShopMain.WindowState := wsMaximized;
+    end;    
+  finally
   end;
 end;
 
@@ -627,11 +636,6 @@ begin
   finally
     Factory.Free;
   end;
-end;
-
-function TfrmShopMain.CheckRegister:boolean;
-begin
-  result := TfrmTenant.coRegister(self);
 end;
 
 procedure TfrmShopMain.Timer1Timer(Sender: TObject);
@@ -826,7 +830,6 @@ begin
 end;
 
 function TfrmShopMain.ConnectToDb:boolean;
-var rs:TZQuery;
 begin
   result := false;
   if not FileExists(Global.InstallPath+'Data\R3.db') then
@@ -835,25 +838,7 @@ begin
   Factor.Connect;
   if not UpdateDbVersion then Exit;
   ShopGlobal.offline := true;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
-    Factor.Open(rs);
-    if rs.IsEmpty then
-       begin
-         //ShopGlobal.TENANT_ID := 1000001;
-         //ShopGlobal.TENANT_NAME := '测试..';
-         if not CheckRegister then Exit;
-         result := true;
-       end
-    else
-       begin
-         ShopGlobal.TENANT_ID := rs.Fields[0].AsInteger;
-         result := true;
-       end;
-  finally
-    rs.Free;
-  end;
+  result := TfrmTenant.coRegister(self);
 end;
 
 procedure TfrmShopMain.actfrmMeaUnitsExecute(Sender: TObject);
@@ -919,6 +904,63 @@ begin
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDeptInfoListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmDeptInfo);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDeptInfo.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmUsersExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmUsers);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmUsers.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmBrandInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+//  TfrmGoodssort.AddDialog(
 end;
 
 end.

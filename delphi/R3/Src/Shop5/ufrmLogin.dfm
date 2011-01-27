@@ -1,6 +1,6 @@
 inherited frmLogin: TfrmLogin
-  Left = 321
-  Top = 181
+  Left = 323
+  Top = 183
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#38470
   ClientHeight = 263
@@ -473,21 +473,21 @@ inherited frmLogin: TfrmLogin
   end
   object lblName: TLabel [1]
     Left = 51
-    Top = 115
+    Top = 119
     Width = 60
     Height = 12
     Caption = #29992#25143#24080#21495#65306
   end
   object lblPass: TLabel [2]
     Left = 51
-    Top = 141
+    Top = 149
     Width = 60
     Height = 12
     Caption = #25805#20316#21475#20196#65306
   end
   object Label3: TLabel [3]
     Left = 299
-    Top = 140
+    Top = 148
     Width = 52
     Height = 12
     Cursor = crHandPoint
@@ -502,7 +502,7 @@ inherited frmLogin: TfrmLogin
   end
   object Label6: TLabel [4]
     Left = 109
-    Top = 169
+    Top = 177
     Width = 186
     Height = 12
     Caption = #40664#35748#31649#29702#21592#24080#21495'/'#21475#20196#65306'admin/1234'
@@ -660,7 +660,7 @@ inherited frmLogin: TfrmLogin
   end
   object cxedtPasswrd: TcxTextEdit [9]
     Left = 111
-    Top = 136
+    Top = 144
     Width = 184
     Height = 20
     Properties.EchoMode = eemPassword
@@ -677,7 +677,7 @@ inherited frmLogin: TfrmLogin
   end
   object cxedtUsers: TcxTextEdit [11]
     Left = 111
-    Top = 111
+    Top = 115
     Width = 184
     Height = 20
     TabOrder = 5

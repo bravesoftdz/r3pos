@@ -37,7 +37,11 @@ uses
   ObjRoleInfo in 'Obj\ObjRoleInfo.pas',
   ObjUsers in 'Obj\ObjUsers.pas',
   ObjTenant in 'Obj\ObjTenant.pas',
-  uCaFactory in 'App\uCaFactory.pas';
+  uCaFactory in 'App\uCaFactory.pas',
+  ufrmDeptInfo in 'App\ufrmDeptInfo.pas' {frmDeptInfo},
+  ufrmDeptInfoList in 'App\ufrmDeptInfoList.pas' {frmDeptInfoList},
+  ufrmGoodssort in 'App\ufrmGoodssort.pas' {frmGoodssort},
+  uframeSelectGoods in 'Frame\uframeSelectGoods.pas' {frameSelectGoods};
 
 {$R *.res}
 var
@@ -47,7 +51,9 @@ var
 begin
   Application.Initialize;
   SFVersion := '.NET';
+  CLVersion := '.MKT';
   DBVersion := 'DB1.0.0.1';
+  ProductID := 'R3_RYC';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmShopMain, frmShopMain);

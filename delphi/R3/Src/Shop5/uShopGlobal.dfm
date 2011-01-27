@@ -1,8 +1,8 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 243
-  Top = 92
-  Height = 612
+  Left = 244
+  Top = 0
+  Height = 560
   Width = 692
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
@@ -153,8 +153,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 an' +
-        'd COMM not in ('#39'02'#39','#39'12'#39')')
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE=8 and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <>
     Left = 240
     Top = 152

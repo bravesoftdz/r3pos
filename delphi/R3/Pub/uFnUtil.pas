@@ -1,7 +1,7 @@
 unit uFnUtil;
 
 interface
-uses Classes,SysUtils,Controls,Windows;
+uses Classes,SysUtils,Controls,Windows,Math;
 Const
   CodeFormat='0123456789'+
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
@@ -68,10 +68,43 @@ FnSystem=Class
     Class function GetWinDir:string;
     Class function GetNetBIOSAddr:string;
   end;
+  
+
+//十六进制(S)-->>十进制(I)  [重写:Jey]
+function hextoint(s: string): Integer;
+//二进制(S)-->>十进制(D)    [重写:Jey]
+function Bintoint(s: string): Double;
+//十进制转换为二进制字符串  [重写:Jey]
+function inttoBin(i: integer): string;
 implementation
 uses NB30;
 {$R wbtext.res} //资源文件，必须
 
+//十六进制(S)-->>十进制(I)  [重写:Jey]
+function hextoint(s: string): Integer;
+begin          //$代表16进制
+  Result:=StrToInt('$'+s);
+end;
+
+//十进制转换为二进制字符串  [重写:Jey]
+function inttoBin(i: integer): string;
+begin
+ while i <>0 do
+ begin          //i mod 2取模,再使用format格式化
+   result:=Format('%d'+result,[i mod 2]);
+   i:=i div 2
+ end
+end;
+
+//二进制(S)-->>十进制(D)    [重写:Jey]
+function Bintoint(s: string): Double;
+begin
+  while Length(s) <>0 do
+  begin          //2^(长度-1)次方
+    if s[1]='1' then  Result:=Result+power(2,Length(s)-1);
+    s:=Copy(s,2,Length(s));
+  end
+end;
 { FnTime }
 
 class function FnTime.fnDatetimeToStr(pDate: TDateTime): string;

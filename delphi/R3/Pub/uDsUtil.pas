@@ -394,7 +394,7 @@ begin
   if CreateGUID(g)=S_OK then
      result := GuidToString(g)
   else
-     result := TSequence.GetSequence('NEWID','---','',15);
+     result := inttostr(Global.SHOP_ID)+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
 end.

@@ -7,7 +7,7 @@ uses
   Dialogs, uframeDialogForm, RzButton, ActnList, Menus, RzTabs, ExtCtrls,
   RzPanel, cxMemo, cxMaskEdit, cxButtonEdit, zrComboBoxList, cxControls,
   cxContainer, cxEdit, cxTextEdit, StdCtrls,DB,ZDataset,zBase, DBClient,
-  ZAbstractRODataset, ZAbstractDataset;
+  ZAbstractRODataset, ZAbstractDataset, Grids, DBGrids;
 
 type
   TfrmDutyInfo = class(TframeDialogForm)
@@ -67,7 +67,7 @@ var
 begin
   Open('');
   dbState:=dsInsert;
-  edtDUTY_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DUTY_ID','CA_DUTY_INFO','0000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
+  edtDUTY_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DUTY_ID','CA_DUTY_INFO','000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
 end;
 
 procedure TfrmDutyInfo.Edit(code: string);
@@ -171,7 +171,8 @@ begin
   CheckDutyNameIsExists; //判断职务是否存在
 
   WriteTo(Aobj);  //写入Obj记录对象
-  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID; 
+  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID;
+
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then  Exit;
   AObj.WriteToDataSet(cdsTable);
@@ -231,7 +232,7 @@ var
   PosIdx: integer;
   DUTY_ID,Level_ID,Cnd: string;
 begin
-  if not cdsTable.Active then Exit;   
+  if not cdsTable.Active then Exit;
   if dbState=dsBrowse then Exit;
   if dbState=dsEdit then
   begin

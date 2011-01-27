@@ -1,8 +1,8 @@
 object Global: TGlobal
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 425
-  Top = 211
+  Left = 427
+  Top = 212
   Height = 374
   Width = 485
 end

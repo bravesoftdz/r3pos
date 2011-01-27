@@ -24,7 +24,7 @@ type
     Fupgrade: boolean;
     FTENANT_ID: integer;
     FTENANT_NAME: string;
-    FSHOP_ID: integer;
+    FSHOP_ID: int64;
     FSHOP_NAME: string;
     { Private declarations }
     function  GetUserID: string;
@@ -73,7 +73,7 @@ type
     //企业名称
     property TENANT_NAME:string read FTENANT_NAME write FTENANT_NAME;
     //门店代码
-    property SHOP_ID:integer read FSHOP_ID write FSHOP_ID;
+    property SHOP_ID:int64 read FSHOP_ID write FSHOP_ID;
     //门店名称
     property SHOP_NAME:string read FSHOP_NAME write FSHOP_NAME;
     //职务代码 多个由","号分隔

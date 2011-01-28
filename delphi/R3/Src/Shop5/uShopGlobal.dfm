@@ -589,7 +589,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
-  object PUB_INDTYPE_INFO: TZQuery
+  object PUB_IDNTYPE_INFO: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (

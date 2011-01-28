@@ -34,7 +34,7 @@ type
     PUB_COLOR_INFO: TZQuery;
     PUB_SIZE_INFO: TZQuery;
     PUB_BARCODE: TZQuery;
-    PUB_INDTYPE_INFO: TZQuery;
+    PUB_IDNTYPE_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

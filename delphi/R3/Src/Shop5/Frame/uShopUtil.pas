@@ -8,7 +8,7 @@ uses
   cxRadioGroup,cxSpinEdit,cxCheckBox,cxButtonEdit;
 
 //添加下拉选择框
-procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TDataSet=nil);
+procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TZQuery=nil);
 //清除下拉选择框
 procedure ClearCbxPickList(Cbx:TcxComboBox);
 //初始freme窗体
@@ -121,7 +121,7 @@ begin
   Cbx.Properties.Items.Clear;
 end;
 
-procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TDataSet=nil);
+procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TZQuery=nil);
 var
   rs:TZQuery;
   AObj:TRecord_;
@@ -135,7 +135,7 @@ begin
        rs.Filter := 'TYPE_CODE='''+copy(Cbx.Name,4,50)+''''
     else
        rs.Filter := 'TYPE_CODE='''+cname+'''';
-  rs.Filtered := true;
+    rs.Filtered := true;
   end
   else
     rs := temp;

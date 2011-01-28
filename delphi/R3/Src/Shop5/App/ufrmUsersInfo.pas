@@ -39,7 +39,6 @@ type
     edtUSER_NAME: TcxTextEdit;
     lab_USER_SPELL: TRzLabel;
     edtUSER_SPELL: TcxTextEdit;
-    RzLabel7: TRzLabel;
     edtSHOP_ID: TzrComboBoxList;
     lab_DUTY_IDS: TRzLabel;
     RzLabel4: TRzLabel;
@@ -57,8 +56,14 @@ type
     Lab_MSN: TRzLabel;
     edtMSN: TcxTextEdit;
     lab_SHOP_ID: TRzLabel;
-    edtIDN_TYPE: TcxComboBox;
     RzLabel3: TRzLabel;
+    RzLabel5: TRzLabel;
+    RzLabel6: TRzLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    RzLabel9: TRzLabel;
+    edtIDN_TYPE: TcxComboBox;
+    lab_MM: TRzLabel;
+    edtMM: TcxTextEdit;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -91,15 +96,20 @@ uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, uShopGlobal;//,ufrmDe
 {$R *.dfm}
 
 procedure TfrmUsersInfo.Append;
-//var tmp:TADODataSet;
 begin
   Open('');
   dbState := dsInsert;
-  edtACCOUNT.Text:='自动编号..';
   edtSEX.ItemIndex := 0;
-  {edtWORK_DATE.Date := Global.SysDate;
-  edtSHOP_ID.KeyValue := Global.CompanyID;
-  edtSHOP_ID.Text := Global.CompanyName;}
+  edtWORK_DATE.Date := Global.SysDate;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
+  if (edtDUTY_IDS.DataSet.Active) and (not edtDUTY_IDS.DataSet.IsEmpty) then
+    begin
+      edtDUTY_IDS.DataSet.First;
+      edtDUTY_IDS.KeyValue:= edtDUTY_IDS.DataSet.FieldByName(edtDUTY_IDS.KeyField).AsString;
+      edtDUTY_IDS.Text:= edtDUTY_IDS.DataSet.FieldByName(edtDUTY_IDS.ListField).AsString;
+    end;
+  edtIDN_TYPE.ItemIndex := 0;
 end;
 
 procedure TfrmUsersInfo.Btn_CloseClick(Sender: TObject);
@@ -123,8 +133,11 @@ begin
     ccid:=ccid
   else
     ccid:=Global.CompanyID;}
-
+  AddCbxPickList(edtIDN_TYPE,'',Global.GetZQueryFromName('PUB_IDNTYPE_INFO')); 
   edtSHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtDUTY_IDS.DataSet := Global.GetZQueryFromName('CA_DUTY_INFO');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+
   Aobj := TRecord_.Create;
 end;
 
@@ -147,8 +160,9 @@ begin
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
     edtUSER_SPELL.Text:=AObj.FieldByName('USER_SPELL').AsString;
-    edtSHOP_ID.Text:=Aobj.FieldByName('SHOP_ID').AsString;
-    edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_NAMES').AsString;
+    edtSHOP_ID.KeyValue:=Aobj.FieldByName('SHOP_ID').AsInt64;
+    edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;
+    edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_IDS_TEXT').AsString;
     edtSEX.ItemIndex:=AObj.FieldByName('SEX').AsInteger;
     dbState := dsBrowse;
   finally
@@ -263,11 +277,8 @@ begin
   if dbState = dsInsert then
   begin
     AObj.FieldbyName('USER_ID').AsString := TSequence.NewId;
-    AObj.FieldbyName('DEPT_ID').AsString := '111';   // 本行只为隐形附值，以后完善要删除
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   end;
-  if (AObj.FieldbyName('ACCOUNT').AsString='') or (AObj.FieldbyName('ACCOUNT').AsString='自动编号..') then
-     AObj.FieldbyName('ACCOUNT').AsString := AObj.FieldbyName('USER_ID').AsString;
   if dbState=dsInsert then
     cdsTable.Append
   else if dbState=dsEdit then
@@ -301,7 +312,6 @@ end;
 procedure TfrmUsersInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  edtDUTY_IDS.DataSet:=Global.GetZQueryFromName('CA_DUTY_INFO');
   if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
 end;
 
@@ -318,7 +328,7 @@ begin
   RzLabel1.Visible:=True;
   RzLabel2.Visible:=True;
   RzLabel4.Visible:=True;
-  RzLabel7.Visible:=True;
+  //RzLabel7.Visible:=True;
   Btn_Save.Visible := (value<>dsBrowse);
   case dbState of
   dsInsert:Caption:='用户档案--(新增)';
@@ -329,7 +339,7 @@ begin
       RzLabel1.Visible:=False;
       RzLabel2.Visible:=False;
       RzLabel4.Visible:=False;
-      RzLabel7.Visible:=False;
+      //RzLabel7.Visible:=False;
     end;
   end;
 end;

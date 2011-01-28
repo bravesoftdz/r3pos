@@ -1,7 +1,7 @@
 inherited frmMeaUnits: TfrmMeaUnits
   Left = 645
   Top = 192
-  Caption = #21830#21697#21333#20301#31649#29702
+  Caption = ''
   ClientHeight = 350
   ClientWidth = 349
   Color = clWhite
@@ -20,7 +20,7 @@ inherited frmMeaUnits: TfrmMeaUnits
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #21830#21697#21333#20301#26723#26696
+        Caption = ''
         inherited RzPanel2: TRzPanel
           Width = 335
           Height = 271
@@ -251,6 +251,8 @@ inherited frmMeaUnits: TfrmMeaUnits
   end
   object cdsUnit: TZQuery
     SortedFields = 'SEQ_NO'
+    FieldDefs = <>
+    CachedUpdates = True
     AfterEdit = cdsUnitAfterEdit
     BeforePost = cdsUnitBeforePost
     OnNewRecord = cdsUnitNewRecord

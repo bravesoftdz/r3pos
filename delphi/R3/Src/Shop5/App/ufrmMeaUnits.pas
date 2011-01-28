@@ -50,6 +50,7 @@ type
       Shift: TShiftState);
   private
     FFlag: integer;
+    MyCaption: String;
     procedure SetFlag(const Value: integer);
     { Private declarations }
   public
@@ -239,8 +240,8 @@ begin
   begin
     exit;
   end;
-  if cdsUnit.FieldByName('UNIT_NAME').AsString='' then raise Exception.Create('单位名称不能为空！');
-  if cdsUnit.FieldByName('UNIT_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！');
+  {if cdsUnit.FieldByName('UNIT_NAME').AsString='' then raise Exception.Create('单位名称不能为空！');
+  if cdsUnit.FieldByName('UNIT_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！'); }
 end;
 
 procedure TfrmMeaUnits.cdsUnitNewRecord(DataSet: TDataSet);
@@ -252,6 +253,8 @@ end;
 procedure TfrmMeaUnits.FormShow(Sender: TObject);
 begin
   inherited;
+  Self.Caption := MyCaption;
+  RzPage.Pages[0].Caption := MyCaption;
   Open;
   btnSave.Enabled:=False;
   DBGridEh1.SetFocus;
@@ -335,6 +338,8 @@ begin
 end;
 
 procedure TfrmMeaUnits.FormCreate(Sender: TObject);
+var
+  temp: TZQuery;
 begin
   {if not ShopGlobal.GetChkRight('200043') then
   begin
@@ -343,6 +348,11 @@ begin
     btnSave.Enabled:=False;
     btnDelete.Enabled:=False;
   end;  }
+  temp := Global.GetZQueryFromName('PUB_PARAMS');
+  temp.Filtered := False;
+  temp.Filter := ' TYPE_CODE=''SORT_TYPE'' and CODE_ID=2';
+  temp.Filtered := True;
+  MyCaption := temp.Fields[1].AsString;
 end;
 
 procedure TfrmMeaUnits.CtrlUpExecute(Sender: TObject);

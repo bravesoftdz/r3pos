@@ -8,7 +8,7 @@ uses
   cxRadioGroup,cxSpinEdit,cxCheckBox,cxButtonEdit;
 
 //添加下拉选择框
-procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='');
+procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TDataSet=nil);
 //清除下拉选择框
 procedure ClearCbxPickList(Cbx:TcxComboBox);
 //初始freme窗体
@@ -121,19 +121,24 @@ begin
   Cbx.Properties.Items.Clear;
 end;
 
-procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='');
+procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TDataSet=nil);
 var
   rs:TZQuery;
   AObj:TRecord_;
   i:integer;
 begin
-  rs := Global.GetZQueryFromName('PUB_PARAMS');
-  rs.Filtered := false;
-  if cname='' then
-     rs.Filter := 'TYPE_CODE='''+copy(Cbx.Name,4,50)+''''
-  else
-     rs.Filter := 'TYPE_CODE='''+cname+'''';
+  if temp=nil then
+  begin
+    rs := Global.GetZQueryFromName('PUB_PARAMS');
+    rs.Filtered := false;
+    if cname='' then
+       rs.Filter := 'TYPE_CODE='''+copy(Cbx.Name,4,50)+''''
+    else
+       rs.Filter := 'TYPE_CODE='''+cname+'''';
   rs.Filtered := true;
+  end
+  else
+    rs := temp;
   try
   if not rs.IsEmpty then ClearCbxPickList(cbx);
   rs.First;

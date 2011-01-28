@@ -145,6 +145,24 @@ inherited frmUsers: TfrmUsers
                     Width = 80
                   end
                   item
+                    EditButtons = <>
+                    FieldName = 'QQ'
+                    Footers = <>
+                    Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'MSN'
+                    Footers = <>
+                    Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'MM'
+                    Footers = <>
+                    Width = 80
+                  end
+                  item
                     Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'EMAIL'
@@ -536,7 +554,9 @@ inherited frmUsers: TfrmUsers
       00000000}
   end
   object Cds_Users: TZQuery
+    FieldDefs = <>
     AfterScroll = Cds_UsersAfterScroll
+    CachedUpdates = True
     Params = <>
     Left = 62
     Top = 240

@@ -856,7 +856,7 @@ begin
        else
           begin
             case ADataSet.Fields[i].DataType of
-              ftLargeint:ADataSet.Fields[i].AsString := Field.asInt64;
+              ftLargeint:ADataSet.Fields[i].AsString := InttoStr(Field.asInt64);
             else
               ADataSet.Fields[i].Value := Field.NewValue;
             end;

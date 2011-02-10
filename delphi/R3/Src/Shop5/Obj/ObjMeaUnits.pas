@@ -23,7 +23,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where (CALC_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (SMALL_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (BIG_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where (CALC_UNITS=:OLD_UNIT_ID) or (SMALL_UNITS=:OLD_UNIT_ID)'+
+    ' or (BIG_UNITS=:OLD_UNIT_ID) and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
@@ -45,7 +46,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select UNIT_ID,COMM,SEQ_NO from PUB_MEAUNITS where  UNIT_NAME='''+FieldbyName('UNIT_NAME').AsString+'''';
+    rs.SQL.Text := 'select UNIT_ID,COMM,SEQ_NO from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     rs.First;
     while not rs.Eof do
@@ -53,7 +54,7 @@ begin
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的分组，重新启动原有编码
            begin
              FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
-             AGlobal.ExecSQL('delete from PUB_MEAUNITS where UNIT_ID=:UNIT_ID ',self);
+             AGlobal.ExecSQL('delete from PUB_MEAUNITS where UNIT_ID=:UNIT_ID and TENANT_ID=:TENANT_ID ',self);
            end
         else
            Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsString+'"单位名称不能重复设置');
@@ -71,7 +72,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where  UNIT_NAME='''+FieldbyName('UNIT_NAME').AsString+''' and UNIT_ID<>'''+FieldbyName('UNIT_ID').AsString+''' and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and UNIT_ID<>:UNIT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsString+'"单位名称不能重复设置');
   finally

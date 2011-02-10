@@ -3,6 +3,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
   Caption = #21830#21697#20998#31867#31649#29702
   ClientHeight = 370
   ClientWidth = 513
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12

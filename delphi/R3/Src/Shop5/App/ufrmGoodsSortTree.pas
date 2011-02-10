@@ -3,11 +3,10 @@ unit ufrmGoodsSortTree;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeDialogForm, ActnList, Menus, ExtCtrls, RzPanel,DB,
-   DBClient, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls,
-  RzButton, ComCtrls, RzTreeVw,zBase,ADODB, RzTabs, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
+  Dialogs, uframeDialogForm, ActnList, Menus, ExtCtrls, RzPanel, cxControls, DB,
+  cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, ComCtrls, RzTreeVw, zBase,
+  RzTabs, ZAbstractRODataset, ZAbstractDataset, ZDataset, Grids, DBGrids;
 
 type
   TfrmGoodsSortTree = class(TframeDialogForm)
@@ -61,8 +60,9 @@ type
     procedure rzTreeKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtSORT_NAMEExit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
-    FInFlag: integer;
+    FInFlag,Sort_Type: integer;
     procedure SetInFlag(const Value: integer);
     { Private declarations }
   public
@@ -82,7 +82,7 @@ type
     procedure ButtonChange5;//删除按钮按下后, 按钮的变化
     property  InFlag:integer read FInFlag write SetInFlag;  //1:其它窗体调用这个窗体
     procedure Show;
-    class function AddDialog(Owner:TForm;var AObj:TRecord_):boolean;
+    class function AddDialog(Owner:TForm;var AObj:TRecord_;SORT_TYPE:Integer):boolean;
     { Public declarations }
   end;
 
@@ -182,7 +182,7 @@ begin
         raise Exception.Create('分类名称'+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString+'的拼音码不能为空！');
       end;
       AObj.FieldbyName('LEVEL_ID').AsString := GetLevelId(rzTree.Items[i]);
-      AObj.FieldbyName('SORT_TYPE').AsInteger := rzTree.Items[i].Level +1;
+      AObj.FieldbyName('SORT_TYPE').AsInteger := Sort_Type;
       AObj.FieldbyName('SEQ_NO').AsInteger := rzTree.Items[i].Index +1;
       if rzTree.Items[i].Level>4 then Raise Exception.Create('货品分类级别不能超过5级...');
       // 在此添加同级是否有重名分类
@@ -546,7 +546,7 @@ begin
 end;
 
 class function TfrmGoodsSortTree.AddDialog(Owner: TForm;
-  var AObj: TRecord_): boolean;
+  var AObj: TRecord_;SORT_TYPE:Integer): boolean;
 begin
    {if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑商品分类!');
    if not ShopGlobal.GetChkRight('200033') then Raise Exception.Create('你没有编辑商品分类的权限,请和管理员联系.');}
@@ -554,6 +554,7 @@ begin
     begin
       try
         InFlag:=1;
+        Sort_Type := SORT_TYPE;
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -599,9 +600,10 @@ begin
   Param := TftParamList.Create(nil);
   try
     Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Param.ParamByName('SORT_TYPE').AsInteger := 1;
+    Param.ParamByName('SORT_TYPE').AsInteger := Sort_Type;
     cdsGoodSort.Close;
     Factor.Open(cdsGoodSort,'TGoodsSort',Param);
+    ClearTree(rzTree);
     CreateLevelTree(cdsGoodSort,rzTree,'4444444444','SORT_ID','SORT_NAME','LEVEL_ID',1,3);
     dbState := dsEdit;
     InitButton;
@@ -787,6 +789,12 @@ begin
   end;}
   if InFlag=1 then
     Append;
+end;
+
+procedure TfrmGoodsSortTree.FormCreate(Sender: TObject);
+begin
+  inherited;
+  Sort_Type := 1;
 end;
 
 end.

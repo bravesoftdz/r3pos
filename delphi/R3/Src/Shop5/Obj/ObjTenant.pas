@@ -27,7 +27,7 @@ begin
   ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
   Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,SEQ_NO,LINKMAN,'+
-  'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values(:TENANT_ID*10000+1,:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
+  'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values(cast(:TENANT_ID *10000+1 as varchar(11)),:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
   '''1'',:TENANT_ID,:REGION_ID,1,:LINKMAN,:TELEPHONE,:ADDRESS,:POSTALCODE,:FAXES,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
 
@@ -71,7 +71,7 @@ begin
 
   //为每个门店初始化现金账户
   Str := 'insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,comm,time_stamp)'+
-  ' values(:TENANT_ID,:TENANT_ID * 10000+1,'''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,cast(:TENANT_ID *10000+1 as varchar(11)),'''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
   //为企业初始化管理员

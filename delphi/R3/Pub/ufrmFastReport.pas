@@ -5,8 +5,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ComCtrls, ToolWin, ExtCtrls,ObjBase,
-  FR_View, FR_Class, FR_DSet, FR_DBSet, DB, ADODB,ufrmFilterDialog,
-  FR_E_RTF, FR_E_HTM, FR_E_TXT, FR_E_CSV,DbClient, FR_E_PDF, FR_Desgn;
+  FR_View, FR_Class, FR_DSet, FR_DBSet, DB,
+  FR_E_RTF, FR_E_HTM, FR_E_TXT, FR_E_CSV,DbClient, FR_E_PDF, FR_Desgn,
+  ZAbstractRODataset, ZDataset;
 type
   TFilterEvent=procedure(Var SQL:string) of Object;
 type
@@ -26,7 +27,6 @@ type
     actPrint: TAction;
     actExit: TAction;
     actPrintSetup: TAction;
-    actFilter: TAction;
     actPrior: TAction;
     actNext: TAction;
     actZoom: TAction;
@@ -47,7 +47,6 @@ type
     N10: TMenuItem;
     N14: TMenuItem;
     N15: TMenuItem;
-    adoTable: TADODataSet;
     frTable: TfrDBDataSet;
     frCSVExport1: TfrCSVExport;
     frHTMExport1: TfrHTMExport;
@@ -71,6 +70,7 @@ type
     frDesigner1: TfrDesigner;
     ToolButton4: TToolButton;
     actFormer: TAction;
+    adoTable: TZReadOnlyQuery;
     procedure actOnePageExecute(Sender: TObject);
     procedure actPageWidthExecute(Sender: TObject);
     procedure actZoomExecute(Sender: TObject);
@@ -79,7 +79,6 @@ type
     procedure actPrintSetupExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
-    procedure actFilterExecute(Sender: TObject);
     procedure HTML1Click(Sender: TObject);
     procedure CSV1Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -101,8 +100,6 @@ type
     FOnFilterEvent: TFilterEvent;
     FIsFree :Boolean;
     Desgn:boolean;
-    function  SetFilter: string;
-    procedure SetFilterRecord(const Value: TRecord_);
     procedure SetfrReport(const Value: TfrReport);
     procedure SetFilterText(const Value: string);
     procedure SetSelectSQL(const Value: string);
@@ -113,7 +110,6 @@ type
     procedure OpenReport(SQL:string);
     procedure DoFormer;
 
-    property FilterRecord:TRecord_ read FFilterRecord write SetFilterRecord;
     property frReport:TfrReport read FfrReport write SetfrReport;
     property FilterText:string read FFilterText write SetFilterText;
     property SelectSQL:string read FSelectSQL write SetSelectSQL;
@@ -143,38 +139,13 @@ var GlobalIndex:Integer=-1;
     Language:Integer=0;
 implementation
 {$R *.dfm}
-uses CommonFunc,RzSplit,udmIcon,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer;
+uses RzSplit,udmIcon,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer,uGlobal;
 { TfrmFastReport }
 var SaveIndex:Integer=-1;
-function TfrmFastReport.SetFilter: string;
-var Filter:string;
-    SQLInfo:TSQLInfoList;
-    List:TStrings;
-begin
- if FilterText='' then
-    begin
-      Result := SelectSQL;
-      Exit;
-    end;
- if Trim(FilterText)<>'' then
-   Filter := FilterText;
- List := TStringList.Create;
- try
- List.Add(Filter);
- if TSQLParse.GetTableNameFromSQL(SelectSQL,SQLInfo) then
-    begin
-      Result := TSQLParse.UpdateTableName(PChar(SelectSQL),SQLInfo,List);
-    end
- else
-    Result := SelectSQL;
- finally
-    List.Free;
- end;
-end;
 procedure TfrmFastReport.DoFormer;
 var
   s:string;
-  Temp :TADODataSet;
+  Temp :TZQuery;
   sm:TFileStream;
   r:integer;
 begin
@@ -182,9 +153,11 @@ begin
   if s='' then Exit;
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
   sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s,fmOpenRead);
-  Temp := TADODataSet.Create(nil);
+  Temp := TZQuery.Create(nil);
   try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport.Name+'''';
+     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+     Temp.ParamByName('frfFileName').AsString := frReport.Name;
+     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Factor.Open(Temp);
      Temp.Edit;
      Temp.FieldByName('frfFileName').AsString := frReport.Name;
@@ -213,14 +186,13 @@ begin
   if AfrReport=nil then
      Raise Exception.Create('AfrReport参数没有Create');
   try
-    FilterRecord := nil;
     FfrReport := AfrReport;
     OpenFile(AfrReport,GlobalIndex);
     frReport.Dataset := frTable;
     frReport.Preview := frPreview1;
     SelectSQL := CommandText;
     adoTable.Close;
-    adoTable.CommandText := CommandText;
+    adoTable.SQL.Text := CommandText;
     Factor.Open(adoTable);
     if frReport.PrepareReport then
        begin
@@ -255,19 +227,12 @@ begin
   end;
 end;
 
-procedure TfrmFastReport.SetFilterRecord(const Value: TRecord_);
-begin
-  FFilterRecord := Value;
-  actFilter.Visible := (Value<>nil);
-end;
-
 function TfrmFastReport.ShowReport(CommandText: string;
   AfrReport: TfrReport; AFilterRecord: TRecord_=nil;IsShowModal:Boolean=True): Boolean;
 begin
   if AfrReport=nil then
      Raise Exception.Create('AfrReport参数没有Create');
   try
-    FilterRecord := AFilterRecord;
     FfrReport := AfrReport;
     OpenFile(AfrReport,GlobalIndex);
     frReport.Dataset := frTable;
@@ -322,7 +287,7 @@ end;
 procedure TfrmFastReport.actPrintSetupExecute(Sender: TObject);
 var
   i:Integer;
-  Temp :TADODataSet;
+  Temp :TZQuery;
   sm:TMemoryStream;
   s:string;
 begin
@@ -335,10 +300,12 @@ begin
      end
   else
   begin
-  temp := TADODataSet.Create(nil);
+  temp := TZQuery.Create(nil);
   sm := TMemoryStream.Create;
   try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport.Name +'''';
+     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     Temp.ParamByName('frfFileName').AsString := frReport.Name;
      Factor.Open(Temp);
      if not Temp.IsEmpty then
      begin
@@ -387,12 +354,11 @@ begin
     if not FileExists(FileName) then
        Raise Exception.Create(FileName+'文件没找到。');
     frReport.LoadFromFile(FileName);
-    FilterRecord := nil;
     frReport.Dataset := frTable;
     frReport.Preview := frPreview1;
     SelectSQL := CommandText;
     adoTable.Close;
-    adoTable.CommandText := CommandText;
+    adoTable.SQL.Text := CommandText;
     Factor.Open(adoTable);
     if frReport.PrepareReport then
        begin
@@ -440,7 +406,6 @@ begin
     if not FileExists(FileName) then
        Raise Exception.Create(FileName+'文件没找到。');
     frReport.LoadFromFile(FileName);
-    FilterRecord := AFilterRecord;
     frReport.Dataset := frTable;
     frReport.Preview := frPreview1;
     SelectSQL := CommandText;
@@ -481,56 +446,6 @@ begin
   FSelectSQL := Value;
 end;
 
-procedure TfrmFastReport.actFilterExecute(Sender: TObject);
-var PacketFilter:TPacketFilterList;
-    SQLInfo:TSQLInfoList;
-    Str:string;
-    List:TStrings;
-    i:Integer;
-begin
-  //使用自定义方式。
-  if Assigned(OnFilterEvent) then
-    begin
-      OnFilterEvent(Str);
-      if Str<>'' then
-         OpenReport(Str);
-      Exit;
-    end;
-  if FFilterRecord=nil then
-     Raise Exception.Create('没有定义过滤条件');
-  if FFilterRecord.Count =0 then
-     Raise Exception.Create('没有定义过滤条件');
-  PacketFilter := TPacketFilterList.create;
-  try
-  if TfrmFilterDialog.ShowExecute(FFilterRecord,PacketFilter) then
-     begin
-         SQLInfo := TSQLInfoList.Create;
-         try
-         if TSQLParse.GetTableNameFromSQL(SelectSQL,SQLInfo) then
-            begin
-               List := TStringList.Create;
-               try
-               for i:=0 to SQLInfo.Count -1 do
-                  begin
-                    List.Add(PacketFilter.FilterByName(SQLInfo.SQLInfo[I].TableName));
-                  end;
-               Str := TSQLParse.UpdateTableName(PChar(SelectSQL),SQLInfo,List);
-               finally
-                 List.Free;
-               end;
-            end
-         else
-            Str := SelectSQL;
-         finally
-            SQLInfo.Free;
-         end;
-         OpenReport(Str);
-     end;
-  finally
-    PacketFilter.Free;
-  end;
-end;
-
 procedure TfrmFastReport.SetIsCanFilter(const Value: Boolean);
 begin
   FIsCanFilter := Value;
@@ -544,7 +459,7 @@ end;
 procedure TfrmFastReport.OpenReport(SQL: string);
 begin
   adoTable.Close;
-  adoTable.CommandText := SQL;
+  adoTable.SQL.Text := SQL;
   Factor.Open(adoTable);
   frReport.ShowReport;
 end;
@@ -780,14 +695,13 @@ begin
   if AfrReport=nil then
      Raise Exception.Create('AfrReport参数没有Create');
   try
-    FilterRecord := nil;
     FfrReport := AfrReport;
     OpenFile(AfrReport,GlobalIndex);
     frReport.Dataset := frTable;
     frReport.Preview := frPreview1;
     SelectSQL := CommandText;
     adoTable.Close;
-    adoTable.CommandText := CommandText;
+    adoTable.SQL.Text := CommandText;
     Factor.Open(adoTable);
   if frReport.PrepareReport then
      begin
@@ -830,7 +744,7 @@ end;
 procedure TfrmFastReport.frDesigner1SaveReport(Report: TfrReport;
   var ReportName: String; SaveAs: Boolean; var Saved: Boolean);
 var
-  Temp :TADODataSet;
+  Temp :TZQuery;
   sm:TMemoryStream;
   s:string;
   r:integer;
@@ -856,10 +770,12 @@ begin
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
   if r<0 then Exit;
   if r=0 then s := '' else s := inttostr(r);
-  Temp := TADODataSet.Create(nil);
+  Temp := TZQuery.Create(nil);
   sm := TMemoryStream.Create;
   try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport.Name +'''';
+     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+     Temp.ParamByName('frfFileName').AsString := frReport.Name;
+     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Factor.Open(Temp);
      sm.Clear;
      frReport.SaveToStream(sm);

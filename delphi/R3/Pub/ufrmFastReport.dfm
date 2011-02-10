@@ -233,13 +233,6 @@ inherited frmFastReport: TfrmFastReport
       ShortCut = 16467
       OnExecute = actPrintSetupExecute
     end
-    object actFilter: TAction
-      Caption = #36807#28388
-      ImageIndex = 43
-      ShortCut = 16454
-      Visible = False
-      OnExecute = actFilterExecute
-    end
     object actPrior: TAction
       Caption = #19978#39029
       ImageIndex = 11
@@ -282,11 +275,6 @@ inherited frmFastReport: TfrmFastReport
     Left = 208
     Top = 175
     ReportForm = {18000000}
-  end
-  object adoTable: TADODataSet
-    Parameters = <>
-    Left = 176
-    Top = 223
   end
   object frTable: TfrDBDataSet
     DataSet = adoTable
@@ -356,5 +344,11 @@ inherited frmFastReport: TfrmFastReport
     OnSaveReport = frDesigner1SaveReport
     Left = 222
     Top = 197
+  end
+  object adoTable: TZReadOnlyQuery
+    FieldDefs = <>
+    Params = <>
+    Left = 172
+    Top = 225
   end
 end

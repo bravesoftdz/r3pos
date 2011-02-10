@@ -228,15 +228,19 @@ begin
   if Column.Field = nil then Exit;
   case SortMarket of
     smNoneEh:begin
-        TZAbstractRODataset(DataSet).SortedFields  := '';
+        TZQuery(DataSet).IndexFieldNames  := ADOSort + '';
       end;
     smDownEh:begin
-        TZAbstractRODataset(DataSet).SortedFields := Column.FieldName;
-        TZAbstractRODataset(DataSet).SortType := stDescending;
+        if ADOSort='' then
+           TZQuery(DataSet).IndexFieldNames  := Column.FieldName +' DESC'
+        else
+           TZQuery(DataSet).IndexFieldNames  := ADOSort + ';' +Column.FieldName +' DESC';
       end;
     smUpEh:begin
-        TZAbstractRODataset(DataSet).SortedFields := Column.FieldName;
-        TZAbstractRODataset(DataSet).SortType := stAscending;
+        if ADOSort='' then
+           TZQuery(DataSet).IndexFieldNames  := Column.FieldName +' DESC'
+        else
+           TZQuery(DataSet).IndexFieldNames  := ADOSort + ';' +Column.FieldName +' ASC';
       end;
   end;
 end;

@@ -394,7 +394,7 @@ begin
   if CreateGUID(g)=S_OK then
      result := GuidToString(g)
   else
-     result := inttostr(Global.SHOP_ID)+formatDatetime('YYYYMMDDHHNNSS',now());
+     result := Global.SHOP_ID+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
 end.

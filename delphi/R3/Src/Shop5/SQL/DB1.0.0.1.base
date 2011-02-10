@@ -79,7 +79,7 @@ CREATE TABLE [CA_SN_INFO](
     --系列号状态
 	[SN_STATUS] [varchar](1) NOT NULL,
     --门店代码
-	[SHOP_ID] bigint NOT NULL,
+	[SHOP_ID] [varchar] (11) NOT NULL,
     --激活日期
 	[ACTV_DATE] [varchar](10) NOT NULL,
     --有效截止日期
@@ -351,7 +351,7 @@ CREATE INDEX IX_CA_RELATIONS_TIME_STAMP ON CA_RELATIONS(TIME_STAMP);
 --部门资料
 CREATE TABLE [CA_DEPT_INFO](
     --部门代码 企业代码+3位序号
-	[DEPT_ID] int NOT NULL,
+	[DEPT_ID] [varchar] (10) NOT NULL,
     --部门名称
 	[DEPT_NAME] [varchar](50) NOT NULL,
     --拼音码
@@ -385,7 +385,7 @@ CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TENANT_ID,TIME_STAMP);
 --门店资料
 CREATE TABLE [CA_SHOP_INFO](
     --门店代码 企业代码+4位序号
-	[SHOP_ID] bigint NOT NULL,
+	[SHOP_ID] [varchar] (11) NOT NULL,
     --经营许可证
 	[LICENSE_CODE] [varchar](50) NOT NULL,
     --门店名称
@@ -486,9 +486,9 @@ CREATE TABLE [CA_USERS](
     --密码
 	[PASS_WRD] [varchar](50) NULL,
     --所属门店 
-	[SHOP_ID] bigint NOT NULL,
+	[SHOP_ID] [varchar] (11) NOT NULL,
     --所属部门
-	[DEPT_ID] int NOT NULL,
+	[DEPT_ID] [varchar] (10) NOT NULL,
     --所属职务,多职务用,号分隔
 	[DUTY_IDS] [varchar](100) NOT NULL,
     --所属职务名称,多职务用,号分隔
@@ -1338,6 +1338,78 @@ CREATE INDEX IX_PUB_GOODSSORT_SORT_TYPE ON PUB_GOODSSORT(TENANT_ID,SORT_TYPE);
 
 CREATE INDEX IX_PUB_GOODSSORT_TIME_STAMP ON PUB_GOODSSORT(TENANT_ID,TIME_STAMP);
 
+--颜色档案
+CREATE TABLE [PUB_COLOR_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --颜色代码<guid>
+	[COLOR_ID] [varchar] (36) NOT NULL ,
+        --所属分组<多个用,号分隔>
+	[SORT_ID7S] [varchar] (36) NOT NULL ,
+        --分类名称
+	[COLOR_NAME] [varchar] (30) NOT NULL ,
+        --拼音码
+	[COLOR_SPELL] [varchar] (30) NOT NULL ,
+        --条码标号
+	[BARCODE_FLAG] [varchar] (3) NULL ,
+        --排序号
+	[SEQ_NO] [int] NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_COLOR_INFO_COMM] DEFAULT ('00'),
+        --时间戳 从2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  CONSTRAINT [PK_PUB_COLOR_INFO] PRIMARY KEY (TENANT_ID,COLOR_ID)
+);
+CREATE INDEX IX_PUB_COLOR_INFO_TENANT_ID ON PUB_COLOR_INFO(TENANT_ID);
+CREATE INDEX IX_PUB_COLOR_INFO_TIME_STAMP ON PUB_COLOR_INFO(TENANT_ID,TIME_STAMP);
+
+--企业经营计量单位,自经营计量单位+连接计量单位
+
+CREATE view [VIW_COLOR_INFO]
+as
+select 2 as RELATION_FLAG,[TENANT_ID],[COLOR_ID],[SORT_ID7S],[COLOR_NAME],[COLOR_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
+from PUB_COLOR_INFO
+union all
+select 1 as RELATION_FLAG,C.RELATI_ID as [TENANT_ID],[COLOR_ID],[SORT_ID7S],[COLOR_NAME],[COLOR_SPELL],[SEQ_NO],A.[COMM],A.[TIME_STAMP]
+from PUB_COLOR_INFO A,CA_RELATION B,CA_RELATIONS C
+where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID and C.RELATION_STATUS='2' and C.COMM not in ('02','12');
+
+--尺码档案
+CREATE TABLE [PUB_SIZE_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --尺码代码<guid>
+	[SIZE_ID] [varchar] (36) NOT NULL ,
+        --所属分组<多个用,号分隔>
+	[SORT_ID8S] [varchar] (36) NOT NULL ,
+        --分类名称
+	[SIZE_NAME] [varchar] (30) NOT NULL ,
+        --拼音码
+	[SIZE_SPELL] [varchar] (30) NOT NULL ,
+        --条码标号
+	[BARCODE_FLAG] [varchar] (2) NULL ,
+        --排序号
+	[SEQ_NO] [int] NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_SIZE_INFO_COMM] DEFAULT ('00'),
+        --时间戳 从2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  CONSTRAINT [PK_PUB_SIZE_INFO] PRIMARY KEY (TENANT_ID,SIZE_ID)
+);
+CREATE INDEX IX_PUB_SIZE_INFO_TENANT_ID ON PUB_SIZE_INFO(TENANT_ID);
+CREATE INDEX IX_PUB_SIZE_INFO_TIME_STAMP ON PUB_SIZE_INFO(TENANT_ID,TIME_STAMP);
+
+--企业经营计量单位,自经营计量单位+连接计量单位
+
+CREATE view [VIW_SIZE_INFO]
+as
+select 2 as RELATION_FLAG,[TENANT_ID],[SIZE_ID],[SORT_ID8S],[SIZE_NAME],[SIZE_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
+from PUB_SIZE_INFO
+union all
+select 1 as RELATION_FLAG,C.RELATI_ID as [TENANT_ID],[SIZE_ID],[SORT_ID8S],[SIZE_NAME],[SIZE_SPELL],[SEQ_NO],A.[COMM],A.[TIME_STAMP]
+from PUB_SIZE_INFO A,CA_RELATION B,CA_RELATIONS C
+where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID and C.RELATION_STATUS='2' and C.COMM not in ('02','12');
+
 --经营类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','连锁经营','RELATION_FLAG','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','自主经营','RELATION_FLAG','00',strftime('%s','now','localtime')-1293840000);
@@ -1719,7 +1791,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
         --可用余额
 	[BALANCE] [decimal](18, 3) NULL ,
         --所属门店
-	[SHOP_ID] bigint NOT NULL ,
+	[SHOP_ID] [varchar] (11) NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -1753,7 +1825,7 @@ CREATE TABLE [PUB_CUSTOMER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --入会门店
-	[SHOP_ID] bigint NOT NULL ,
+	[SHOP_ID] [varchar] (11) NOT NULL ,
         --会员卡号
 	[CUST_CODE] [varchar] (20) NOT NULL ,
         --会员名称

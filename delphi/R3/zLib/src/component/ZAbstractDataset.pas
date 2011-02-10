@@ -1420,6 +1420,7 @@ begin
     FetchCount := 0;
     CurrentRows.Clear;
     CachedUpdates := true;
+    Fields.Clear;
     CreateFields;
     BindFields(True);
     { Initializes accessors and buffers. }

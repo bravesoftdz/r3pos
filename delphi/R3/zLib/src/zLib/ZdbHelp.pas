@@ -523,6 +523,21 @@ begin
   if not SaveTrans then dbHelp.BeginTrans;
   SQLUpdate := TZdbUpdate.Create(nil);
   try
+    //更新记录前
+    for i:=0 to FList.Count -1 do
+      begin
+        SQLUpdate.dbHelp := dbHelp;
+        SQLUpdate.Factory := TZFactory(FList[i]);
+        with TZFactory(FList[i]) do
+          begin
+            if ZClassName<>'' then
+               begin
+                 ReadFromDataSet(DataSet);
+                 BeforeUpdateRecord(dbHelp);
+               end;
+          end;
+      end;
+    //更新记录中
     for i:=0 to FList.Count -1 do
       begin
         SQLUpdate.dbHelp := dbHelp;
@@ -539,9 +554,20 @@ begin
                  SQLUpdate.DeleteSQL.Text := DeleteSQL.Text;
                  SQLUpdate.ModifySQL.Text := UpdateSQL.Text;
                  SQLUpdate.InsertSQL.Text := InsertSQL.Text;
-                 ReadFromDataSet(DataSet);
-                 BeforeUpdateRecord(dbHelp);
                  dbHelp.UpdateBatch(DataSet);
+               end;
+          end;
+      end;
+    //更新记录后
+    for i:=0 to FList.Count -1 do
+      begin
+        SQLUpdate.dbHelp := dbHelp;
+        SQLUpdate.Factory := TZFactory(FList[i]);
+        with TZFactory(FList[i]) do
+          begin
+            if ZClassName<>'' then
+               begin
+                 ReadFromDataSet(DataSet);
                  BeforeCommitRecord(dbHelp);
                end;
           end;
@@ -654,18 +680,21 @@ end;
 
 procedure TZdbUpdate.PSBeforeDeleteSQL;
 begin
+  Factory.ReadFromDataSet(Factory.DataSet);
   Factory.BeforeDeleteRecord(dbHelp);
 
 end;
 
 procedure TZdbUpdate.PSBeforeInsertSQL;
 begin
+  Factory.ReadFromDataSet(Factory.DataSet);
   Factory.BeforeInsertRecord(dbHelp);
 
 end;
 
 procedure TZdbUpdate.PSBeforeModifySQL;
 begin
+  Factory.ReadFromDataSet(Factory.DataSet);
   Factory.BeforeModifyRecord(dbHelp);
 
 end;

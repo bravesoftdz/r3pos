@@ -102,7 +102,7 @@ begin
   try
      Temp.SQL.Text :=
          'select max(PRINT_DATE) from ('+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='+inttostr(SHOP_ID)+' ) j';
+         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' ) j';
      Factor.Open(Temp);
      if Temp.Fields[0].AsString = '' then
         begin

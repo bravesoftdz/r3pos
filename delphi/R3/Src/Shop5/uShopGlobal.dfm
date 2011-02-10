@@ -239,7 +239,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
-        'LL,ADDRESS,IC_CARDNO'
+        'LL,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RATE,PRICE_ID'
       ' from VIW_CLIENTINFO '
       'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'1'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')
@@ -264,7 +264,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
-        'LL,ADDRESS,IC_CARDNO'
+        'LL,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RATE,PRICE_ID'
       ' from VIW_CUSTOMER'
       'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'2'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')

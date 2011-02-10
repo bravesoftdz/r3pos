@@ -41,7 +41,12 @@ uses
   ufrmDeptInfo in 'App\ufrmDeptInfo.pas' {frmDeptInfo},
   ufrmDeptInfoList in 'App\ufrmDeptInfoList.pas' {frmDeptInfoList},
   ufrmGoodssort in 'App\ufrmGoodssort.pas' {frmGoodssort},
-  uframeSelectGoods in 'Frame\uframeSelectGoods.pas' {frameSelectGoods};
+  uframeSelectGoods in 'Frame\uframeSelectGoods.pas' {frameSelectGoods},
+  uframeDialogProperty in 'Frame\uframeDialogProperty.pas' {frameDialogProperty},
+  uframeOrderForm in 'Frame\uframeOrderForm.pas' {frameOrderForm},
+  uframeOrderToolForm in 'Frame\uframeOrderToolForm.pas' {frameOrderToolForm},
+  ufrmStockOrder in 'App\ufrmStockOrder.pas' {frmStockOrder},
+  ufrmStockOrderList in 'App\ufrmStockOrderList.pas' {frmStockOrderList};
 
 {$R *.res}
 var

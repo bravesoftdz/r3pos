@@ -179,7 +179,7 @@ type
     actfrmGoodsSort: TAction;
     actfrmBrandInfo: TAction;
     actfrmFactoryInfo: TAction;
-    actfrm: TAction;
+    actfrmStockOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -203,6 +203,7 @@ type
     procedure actfrmDeptInfoListExecute(Sender: TObject);
     procedure actfrmUsersExecute(Sender: TObject);
     procedure actfrmBrandInfoExecute(Sender: TObject);
+    procedure actfrmStockOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -246,7 +247,7 @@ var
 implementation
 uses
   uFnUtil,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
-  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers;
+  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -465,12 +466,11 @@ begin
   Logined := false;
   Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
   result := Logined;
-  Logined := true;
   if Locked then Exit;
   if Logined then
      begin
        Loging := false;
-       Global.SHOP_ID := StrtoInt64(Params.ShopId);
+       Global.SHOP_ID := Params.ShopId;
        Global.SHOP_NAME := Params.ShopName;
        Global.UserID := Params.UserID;
        Global.UserName := Params.UserName;
@@ -655,8 +655,8 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
   try
-    Caption := F.ReadString('soft','name','好店铺')+' 版本:'+RzVersionInfo.FileVersion;
-    Application.Title := F.ReadString('soft','name','好店铺');
+    Caption := F.ReadString('soft','name','零售终端管理系统(R3)')+' 版本:'+RzVersionInfo.FileVersion;
+    Application.Title := F.ReadString('soft','name','零售终端管理系统(R3)');
     SFVersion := F.ReadString('soft','SFVersion','.NET');
   finally
     F.Free;
@@ -961,6 +961,28 @@ begin
   Application.Restore;
   frmShopDesk.SaveToFront;
 //  TfrmGoodssort.AddDialog(
+end;
+
+procedure TfrmShopMain.actfrmStockOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStockOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStockOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

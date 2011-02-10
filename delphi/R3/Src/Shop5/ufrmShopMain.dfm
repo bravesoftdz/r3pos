@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 334
-  Top = 175
+  Left = 198
+  Top = 154
   Width = 820
   Height = 555
   Caption = ''
@@ -5301,7 +5301,7 @@ inherited frmShopMain: TfrmShopMain
             Action = actfrmDeptInfoList
           end
           item
-            Caption = 'Item6'
+            Action = actfrmStockOrderList
           end>
         Opened = True
         OpenedHeight = 148
@@ -6515,8 +6515,9 @@ inherited frmShopMain: TfrmShopMain
     object actfrmFactoryInfo: TAction
       Caption = #29983#20135#21378#23478
     end
-    object actfrm: TAction
-      Caption = 'actfrm'
+    object actfrmStockOrderList: TAction
+      Caption = #36827#36135#20837#24211
+      OnExecute = actfrmStockOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

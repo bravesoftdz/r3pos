@@ -160,7 +160,7 @@ begin
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
     edtUSER_SPELL.Text:=AObj.FieldByName('USER_SPELL').AsString;
-    edtSHOP_ID.KeyValue:=Aobj.FieldByName('SHOP_ID').AsInt64;
+    edtSHOP_ID.KeyValue:=Aobj.FieldByName('SHOP_ID').AsString;
     edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;
     edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_IDS_TEXT').AsString;
     edtSEX.ItemIndex:=AObj.FieldByName('SEX').AsInteger;

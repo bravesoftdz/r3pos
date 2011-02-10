@@ -251,6 +251,8 @@ inherited frmGoodssort: TfrmGoodssort
   end
   object cdsUnit: TZQuery
     SortedFields = 'SEQ_NO'
+    FieldDefs = <>
+    CachedUpdates = True
     AfterEdit = cdsUnitAfterEdit
     BeforePost = cdsUnitBeforePost
     OnNewRecord = cdsUnitNewRecord

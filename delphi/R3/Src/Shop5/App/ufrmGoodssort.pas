@@ -4,9 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, Grids, DBGridEh, DB, DBClient,ZBase,ADODB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel, RzButton,
+  Grids, DBGridEh, DB, ZBase, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmGoodssort = class(TframeDialogForm)

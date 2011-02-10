@@ -140,14 +140,11 @@ begin
            if not Connect then Exit;
         end;
         cxbtnCancel.Enabled := not Locked;
-//        cxcbxCompany.Enabled := not Locked and cxcbxCompany.Enabled;
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
         cxcbSave.Visible := not Locked;
         if Locked then
            begin
-//             cxcbxCompany.KeyValue := Global.SHOP_ID;
-//             cxcbxCompany.Text := Global.SHOP_NAME;
              cxedtUsers.Text := Global.UserID;
              cxedtUsers.Text := Global.UserName;
            end;

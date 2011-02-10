@@ -1,6 +1,6 @@
 object frmBasic: TfrmBasic
-  Left = 435
-  Top = 192
+  Left = 437
+  Top = 195
   Width = 557
   Height = 414
   Caption = 'Basic'

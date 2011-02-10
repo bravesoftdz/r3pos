@@ -3,10 +3,9 @@ unit ufrmClientSort;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, Grids, DBGridEh, DB, DBClient,zBase,ADODB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Dialogs,
+  uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel, RzButton, Grids,
+  DBGridEh, DB, zBaseA, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmClientSort = class(TframeDialogForm)

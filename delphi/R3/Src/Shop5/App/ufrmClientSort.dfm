@@ -1,7 +1,7 @@
 inherited frmClientSort: TfrmClientSort
   Left = 309
   Top = 189
-  Caption = #20225#19994#20998#31867#31649#29702
+  Caption = #23458#25143#20998#31867#31649#29702
   ClientHeight = 347
   ClientWidth = 349
   OnCreate = FormCreate
@@ -19,7 +19,7 @@ inherited frmClientSort: TfrmClientSort
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #20225#19994#31867#21035
+        Caption = #23458#25143#31867#21035
         inherited RzPanel2: TRzPanel
           Width = 335
           Height = 267

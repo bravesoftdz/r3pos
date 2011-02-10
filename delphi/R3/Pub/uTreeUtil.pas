@@ -2,7 +2,7 @@ unit uTreeUtil;
 
 interface
 uses
-  Windows, Messages, SysUtils,ComCtrls,RzTreeVw,DB,ObjBase,Classes;
+  Windows, Messages, SysUtils,ComCtrls,RzTreeVw,DB,ZBase,Classes;
 Const
  MaxLevelTree=10;
 

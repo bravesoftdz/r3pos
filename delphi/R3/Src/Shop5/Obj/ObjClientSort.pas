@@ -1,7 +1,7 @@
 unit ObjClientSort;
 
 interface
-uses Dialogs,SysUtils,zBase,Classes,ZIntf,AdoDb,uIdComm,ObjCommon,ZDataset;
+uses Dialogs,SysUtils,zBase,Classes,ZIntf,ObjCommon,ZDataset;
 type
   TClientSort=class(TZFactory)
   public
@@ -24,8 +24,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    //rs.CommandText := 'select count(*) from PUB_CLIENTINFO where SORT_ID='''+FieldbyName('CODE_ID').AsOldString+''' and COMM not in (''02'',''12'')';
-    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where SORT_ID=:OLD_CODE_ID and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where SORT_ID=:OLD_CODE_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在供应商资料中使用不能删除.');
@@ -42,7 +41,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=5 and CODE_NAME='''+FieldbyName('CODE_NAME').AsString+'''';
+    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=5 and CODE_NAME=:CODE_NAME and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     FieldbyName('CODE_ID').AsString := '';
     rs.First;
@@ -51,7 +50,7 @@ begin
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的分组，重新启动原有编码
            begin
              FieldbyName('CODE_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-             AGlobal.ExecSQL('delete from PUB_CODE_INFO where CODE_ID=:CODE_ID and CODE_TYPE=5',self);
+             AGlobal.ExecSQL('delete from PUB_CODE_INFO where CODE_ID=:CODE_ID and CODE_TYPE=5 and TENANT_ID=:TENANT_ID ',self);
            end
         else
            Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"供应商类别不能重复设置');
@@ -70,9 +69,10 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where CODE_TYPE=5 and CODE_NAME='''+FieldbyName('CODE_NAME').AsString+''' and CODE_ID<>'''+FieldbyName('CODE_ID').AsString+''' and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where CODE_TYPE=5 and CODE_NAME=:CODE_NAME '+
+    'and CODE_ID<>:CODE_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"供应商类别不能重复设置');
+    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"客户类别不能重复设置');
   finally
     rs.Free;
   end;

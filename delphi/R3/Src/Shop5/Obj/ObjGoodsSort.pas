@@ -84,15 +84,17 @@ var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text := 'select SORT_ID,SORT_NAME,SORT_SPELL,SORT_TYPE,TENANT_ID,SEQ_NO from PUB_GOODSSORT where SORT_TYPE = :SORT_TYPE and COMM not in (''02'',''12'')  order by SEQ_NO';
-  IsSQLUpdate := True;
-  Str := 'insert into PUB_GOODSSORT(SORT_ID,SORT_NAME,SORT_SPELL,SORT_TYPE,TENANT_ID,SEQ_NO,TIME_STAMP) '
-    + 'VALUES(:SORT_ID,:SORT_NAME,:SORT_SPELL,:SORT_TYPE,:TENANT_ID,:SEQ_NO,'+GetTimeStamp(5)+')';
+  //初始化查询
+  SelectSQL.Text := 'select SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID '+
+  ' from PUB_GOODSSORT where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE order by LEVEL_ID';
+  //初始化更新逻辑          SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO
+  IsSQLUpdate := true;
+  Str :='insert into PUB_GOODSSORT (SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID,COMM,TIME_STAMP) values (:SORT_ID,:LEVEL_ID,:SORT_NAME,:SORT_TYPE,:SORT_SPELL,:SEQ_NO,:TENANT_ID,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update PUB_GOODSSORT set SORT_ID=:SORT_ID,SORT_NAME=:SORT_NAME,SORT_SPELL=:SORT_SPELL,TENANT_ID=:TENANT_ID,SEQ_NO=:SEQ_NO,'
-    + 'COMM='+GetCommStr(5)+',TIME_STAMP='+GetTimeStamp(5)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID = :OLD_TENANT_ID';
-  UpdateSQL.Text := Str;
-  Str := 'update PUB_GOODSSORT set COMM=''02'',TIME_STAMP='+GetTimeStamp(5)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID = :OLD_TENANT_ID';
+  Str :='update PUB_GOODSSORT set SORT_ID=:SORT_ID,LEVEL_ID=:LEVEL_ID,SORT_NAME=:SORT_NAME,SORT_TYPE=:SORT_TYPE,SORT_SPELL=:SORT_SPELL,SEQ_NO=:SEQ_NO,TENANT_ID=:TENANT_ID,'
+      + 'COMM='+ GetCommStr(iDbType) + ','+'TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID';
+  UpdateSQL.Text :=  Str;
+  Str := 'update PUB_GOODSSORT set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID';
   DeleteSQL.Text := Str;
 end;
 initialization

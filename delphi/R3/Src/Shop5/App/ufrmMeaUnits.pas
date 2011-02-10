@@ -4,9 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, Grids, DBGridEh, DB, DBClient,zBase,ADODB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,RzButton,
+  Grids, DBGridEh, DB, zBase, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmMeaUnits = class(TframeDialogForm)

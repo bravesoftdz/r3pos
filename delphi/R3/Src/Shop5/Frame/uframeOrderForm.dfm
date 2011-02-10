@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 599
-  Top = 322
+  Left = 460
+  Top = 227
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
@@ -365,7 +365,7 @@ inherited frameOrderForm: TframeOrderForm
           Footers = <>
           Title.Caption = #21830#21697#21517#31216
           Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
-          Width = 162
+          Width = 142
           Control = fndGODS_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
         end
@@ -377,6 +377,13 @@ inherited frameOrderForm: TframeOrderForm
           Tag = 1
           Title.Caption = #36135#21495
           Width = 61
+        end
+        item
+          EditButtons = <>
+          FieldName = 'BARCODE'
+          Footers = <>
+          Title.Caption = #26465#30721
+          Width = 93
         end
         item
           EditButtons = <>
@@ -599,14 +606,19 @@ inherited frameOrderForm: TframeOrderForm
         Size = 36
       end
       item
-        Name = 'GODS_NAME'
+        Name = 'BARCODE'
         DataType = ftString
-        Size = 100
+        Size = 50
       end
       item
         Name = 'GODS_CODE'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 50
       end
       item
         Name = 'UNIT_ID'
@@ -616,23 +628,28 @@ inherited frameOrderForm: TframeOrderForm
       item
         Name = 'BATCH_NO'
         DataType = ftString
-        Size = 50
+        Size = 20
       end
       item
         Name = 'IS_PRESENT'
         DataType = ftInteger
       end
       item
-        Name = 'BARCODE'
+        Name = 'LOCUS_NO'
         DataType = ftString
         Size = 50
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
       end>
     CachedUpdates = True
     Params = <>
     Left = 72
     Top = 264
   end
-  object cdsProperty: TZQuery
+  object edtProperty: TZQuery
     FieldDefs = <
       item
         Name = 'SEQNO'
@@ -644,14 +661,14 @@ inherited frameOrderForm: TframeOrderForm
         Size = 36
       end
       item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 100
-      end
-      item
         Name = 'GODS_CODE'
         DataType = ftString
         Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
       end
       item
         Name = 'UNIT_ID'
@@ -666,6 +683,16 @@ inherited frameOrderForm: TframeOrderForm
       item
         Name = 'IS_PRESENT'
         DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
       end
       item
         Name = 'PROPERTY_01'

@@ -1,6 +1,5 @@
 inherited frameDialogForm: TframeDialogForm
-  Left = 284
-  Top = 228
+  Left = 287
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #24377#20986#24335#31383#20307#27169#29256

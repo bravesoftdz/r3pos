@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzPanel, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, DB, StdCtrls, ZBase, Math, Buttons, RzTabs,
-  cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset, ZDataset, ADODB;
+  cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 const
   WM_DIALOG_PULL=WM_USER+1;
@@ -56,7 +56,7 @@ type
     munAppendRow: TMenuItem;
     munDivRow: TMenuItem;
     edtTable: TZQuery;
-    cdsProperty: TZQuery;
+    edtProperty: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -177,7 +177,7 @@ type
     function PropertyEnabled:boolean;
     function IsKeyPress:boolean;virtual;
     procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);virtual;
-    procedure BulkAmount(UINT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
+    procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);virtual;
     procedure AmountToCalc(Amount:Real);virtual;
     procedure PriceToCalc(APrice:Real);virtual;
     procedure AMoneyToCalc(AMoney:Real);virtual;
@@ -189,7 +189,6 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
 
-    procedure AddBCodeColumn;virtual;
     //输入会员号
     procedure WriteInfo(id:string);virtual;
     //整单折扣
@@ -269,12 +268,8 @@ begin
      begin
         if not gRepeat then
             begin
-              r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt]),[]);
-              if r then
-                 begin
-                   if edtTable.FieldbyName('UNIT_ID').AsString<>UNIT_ID then UnitToCalc(UNIT_ID);
-                   Exit;
-                 end;
+              r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',UNIT_ID,pt,null,null]),[]);
+              if r then Exit;
             end;
         inc(RowID);
         if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
@@ -299,12 +294,12 @@ begin
   CanAppend := false;
   isZero := false;
   inherited;
-  AddBCodeColumn;
+  Fcid := '';
   Initform(self);
   AObj := TRecord_.Create;
   dbState := dsBrowse;
   TabSheet := nil;
-  fndGODS_ID.DataSet := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  fndGODS_ID.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
   basInfo := fndGODS_ID.DataSet;
   edtTable.Close;
   edtTable.CreateDataSet;
@@ -668,7 +663,7 @@ end;
 
 procedure TframeOrderForm.fndGODS_IDSaveValue(Sender: TObject);
 var AObj:TRecord_;
-  rs:TADODataSet;
+  rs:TZQuery;
   pt:boolean;
 begin
   inherited;
@@ -678,12 +673,22 @@ begin
   try
   if edtTable.FieldbyName('GODS_ID').AsString <> '' then
      begin
-       if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
-          begin
-            fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
-            fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
-            Exit;
-          end;
+       if edtTable.FieldByName('BOM_ID').AsString = '' then
+       begin
+         if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
+            begin
+              fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+              fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+              Exit;
+            end;
+       end
+       else
+       begin
+          MessageBox(Handle,pchar('礼盒包装不能单商品修改，请删除重新扫码'),'友情提示',MB_OK+MB_ICONINFORMATION);
+          fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+          fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+          Exit;
+       end;
      end;
   if VarIsNull(fndGODS_ID.KeyValue) then
   begin
@@ -693,7 +698,7 @@ begin
   begin
     AObj := TRecord_.Create;
     try
-      rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+      rs := Global.GetZQueryFromName('PUB_GOODSINFO');
       if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
       begin
         AObj.ReadFromDataSet(rs);
@@ -763,7 +768,7 @@ end;
 
 function TframeOrderForm.DecodeBarcode(BarCode: string):integer;
 var
-  rs:TADODataSet;
+  rs:TZQuery;
   AObj:TRecord_;
   r,bulk:Boolean;
   uid:string;
@@ -821,127 +826,76 @@ begin
      end
   else
   begin
-  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   try
     if InputMode=0 then
     begin
-    rs.CommandText := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from PUB_BARCODE A where A.BARCODE like ''%'+trim(BarCode)+''' and (COMP_ID=''----'' or COMP_ID='''+Global.CompanyID+''') and COMM not in (''02'',''12'')';
-    Factor.Open(rs);
-    end;
-    if rs.IsEmpty then
-       begin
-         if FnString.IsCustBarCode(BarCode) and (InputMode=0) then
-            begin
-              vgds := GetBarCodeID(BarCode);
-              if Length(BarCode)=13 then
-                 vP1 := GetBarCodeSize(BarCode)
-              else
+      case Factor.iDbType of
+      0,3:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''+:BARCODE and A.COMM not in (''02'',''12'')';
+      1,4,5:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''||:BARCODE and A.COMM not in (''02'',''12'')';
+      end;
+      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      rs.ParamByName('BARCODE').AsString := Barcode;
+      Factor.Open(rs);
+      end;
+      if rs.IsEmpty then
+         begin
+            //看看货号是否存在
+            rs.Close;
+            rs.SQL.Text := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+            rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            rs.ParamByName('GODS_CODE').AsString := Barcode;
+            Factor.Open(rs);
+            if rs.IsEmpty then
+               begin
+                 Exit;
+               end;
+            if rs.RecordCount > 1 then
+               begin
+                 fndStr := BarCode;
+                 result := 1;
+                 Exit;
+               end
+            else
+               begin
+                 vgds := rs.FieldbyName('GODS_ID').AsString;
                  vP1 := '#';
-              if Length(BarCode)=13 then
-                 vP2 := GetBarCodeColor(BarCode)
-              else
                  vP2 := '#';
-              vBtNo := '#';
-              rs.Close;
-              rs.CommandText := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and BCODE='''+vgds+''' and COMP_ID='''+Global.CompanyID+'''';
-              Factor.Open(rs);
-              if rs.IsEmpty then
-                 begin
-                    //rs.Close;
-                    //rs.CommandText := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and (GODS_CODE='''+BarCode+''') and COMP_ID='''+Global.CompanyID+'''';
-                    //Factor.Open(rs);
-                    if rs.IsEmpty then
-                       begin
-                         Exit;
-                         //Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.InvaildBarcode','"%s"是无效条码.',[BarCode]));
-                       end;
-                    //if rs.RecordCount > 1 then
-                    //   begin
-                    //     fndStr := BarCode;
-                    //     result := 1;
-                    //     Exit;
-                    //   end
-                    //else
-                    //   begin
-                    //     vgds := rs.FieldbyName('GODS_ID').AsString;
-                    //     vP1 := '#';
-                    //     vP2 := '#';
-                    //     vBtNo := '#';
-                    //     uid := rs.FieldbyName('UNIT_ID').asString;
-                    //   end;
-                 end
-              else
-                 begin
-                   vgds := rs.FieldbyName('GODS_ID').AsString;
-                   uid := rs.FieldbyName('UNIT_ID').asString;
-                 end;
-            end
-         else
-            begin
-              rs.Close;
-              rs.CommandText := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and (GODS_CODE='''+BarCode+''') and COMP_ID='''+Global.CompanyID+'''';
-              Factor.Open(rs);
-              if rs.IsEmpty then
-                 begin
-                   Exit;
-                   //Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.InvaildBarcode','"%s"是无效条码.',[BarCode]));
-                 end;
-              if rs.RecordCount > 1 then
-                 begin
-                   fndStr := BarCode;
-                   result := 1;
-                   Exit;
-                 end
-              else
-                 begin
-                   vgds := rs.FieldbyName('GODS_ID').AsString;
-                   vP1 := '#';
-                   vP2 := '#';
-                   vBtNo := '#';
-                   uid := rs.FieldbyName('UNIT_ID').asString;
-                 end;
-            end;
-       end
-    else
-       begin
-          if rs.RecordCount > 1 then
-             begin
-               fndStr := BarCode;
-               result := 1;
-               Exit;
-             end
-          else
-             begin
-               vgds := rs.FieldbyName('GODS_ID').AsString;
-               vP1 := rs.FieldbyName('PROPERTY_01').AsString;
-               vP2 := rs.FieldbyName('PROPERTY_02').AsString;
-               if vP1='' then vP1 := '#';
-               if vP2='' then vP2 := '#';
-               uid := rs.FieldbyName('UNIT_ID').AsString;
-               vBtNo := rs.FieldbyName('BATCH_NO').AsString;
-               //rs.Close;
-               //rs.CommandText := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and (GODS_CODE='''+BarCode+''') and COMP_ID='''+Global.CompanyID+'''';
-               //Factor.Open(rs);
-               //if not rs.IsEmpty then
-               //   begin
-               //     fndStr := BarCode;
-               //     result := 1;
-               //     Exit;
-               //   end;
-             end;
+                 vBtNo := '#';
+                 uid := rs.FieldbyName('UNIT_ID').asString;
+               end;
+         end
+      else
+         begin
+            if rs.RecordCount > 1 then
+               begin
+                 fndStr := BarCode;
+                 result := 1;
+                 Exit;
+               end
+            else
+               begin
+                 vgds := rs.FieldbyName('GODS_ID').AsString;
+                 vP1 := rs.FieldbyName('PROPERTY_01').AsString;
+                 vP2 := rs.FieldbyName('PROPERTY_02').AsString;
+                 if vP1='' then vP1 := '#';
+                 if vP2='' then vP2 := '#';
+                 uid := rs.FieldbyName('UNIT_ID').AsString;
+                 vBtNo := rs.FieldbyName('BATCH_NO').AsString;
+               end;
        end;
   finally
     rs.Free;
   end;
   end;
 
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   AObj := TRecord_.Create;
   try
     if rs.Locate('GODS_ID',vgds,[]) then
        AObj.ReadFromDataSet(rs)
     else
-       Exit;//Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.InvaildBarcode','"%s"是无效条码.',[BarCode]));
+       Exit;
     result := 0;
     AddRecord(AObj,uid,true);
     edtTable.Edit;
@@ -956,7 +910,7 @@ begin
 end;
 procedure TframeOrderForm.AmountToCalc(Amount: Real);
 var
-  rs:TADODataSet;
+  rs:TZQuery;
   AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Real;
   Field:TField;
 begin
@@ -964,33 +918,26 @@ begin
   Locked := true;
   try
       if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
-      rs := TADODataSet.Create(nil);
-      try
-        rs.Close;
-        rs.CommandText := 'select CALC_UNITS,BIG_UNITS,SMALL_UNITS,SMALLTO_CALC,BIGTO_CALC from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''' and GODS_ID='''+edtTable.FieldByName('GODS_ID').asString+'''';
-        Factor.Open(rs);
-        if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
-        if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
-           begin
-            SourceScale := 1;
-           end
-        else
-        if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
-           begin
-            SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
-           end
-        else
-        if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
-           begin
-            SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
-           end
-        else
-           begin
-            SourceScale := 1;
-           end;
-      finally
-        rs.Free;
-      end;
+      rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+         begin
+          SourceScale := 1;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+         end
+      else
+         begin
+          SourceScale := 1;
+         end;
       Field := edtTable.FindField('CALC_AMOUNT');
       if Field<>nil then
          begin
@@ -1008,6 +955,8 @@ begin
             edtProperty.FieldByName('UNIT_ID').AsString := edtTable.FieldByName('UNIT_ID').AsString;
             edtProperty.FieldByName('IS_PRESENT').AsString := edtTable.FieldByName('IS_PRESENT').AsString;
             edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
+            edtProperty.FieldByName('BOM_ID').AsString := edtTable.FieldByName('BOM_ID').AsString;
+            edtProperty.FieldByName('LOCUS_NO').AsString := edtTable.FieldByName('LOCUS_NO').AsString;
             edtProperty.FieldByName('CALC_AMOUNT').AsFloat := edtProperty.FieldByName('AMOUNT').AsFloat * SourceScale;
             edtProperty.Post;
             edtProperty.Next;
@@ -1069,8 +1018,7 @@ begin
   end;
 end;
 
-procedure TframeOrderForm.WriteAmount(UNIT_ID, PROPERTY_01,
-  PROPERTY_02: string; Amt: real; Appended: boolean);
+procedure TframeOrderForm.WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt: real; Appended: boolean);
 var b:boolean;
 begin
   b := PropertyEnabled;
@@ -1094,15 +1042,7 @@ begin
     Raise Exception.Create('AMOUNT字段没找到');
   if b then
      begin
-       if edtProperty.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;PROPERTY_01;PROPERTY_02',VarArrayOf([
-          edtTable.FieldbyName('GODS_ID').AsString,
-          edtTable.FieldbyName('BATCH_NO').AsString,
-          UNIT_ID,
-          edtTable.FieldbyName('IS_PRESENT').AsString,
-          PROPERTY_01,
-          PROPERTY_02
-         ]),[])
-       then
+       if edtProperty.Locate('SEQNO;PROPERTY_01;PROPERTY_02',VarArrayOf([edtTable.FieldbyName('SEQNO').AsInteger,PROPERTY_01,PROPERTY_01]),[]) then
          begin
            edtProperty.Edit;
            edtTable.Edit;
@@ -1118,8 +1058,10 @@ begin
          end;
        edtProperty.FieldByName('SEQNO').AsString := edtTable.FieldbyName('SEQNO').AsString;
        edtProperty.FieldByName('GODS_ID').AsString := edtTable.FieldbyName('GODS_ID').AsString;
+       edtProperty.FieldByName('BOM_ID').AsString := edtTable.FieldbyName('BOM_ID').AsString;
        edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldbyName('BATCH_NO').AsString;
        edtProperty.FieldByName('IS_PRESENT').AsString := edtTable.FieldbyName('IS_PRESENT').AsString;
+       edtProperty.FieldByName('LOCUS_NO').AsString := edtTable.FieldbyName('LOCUS_NO').AsString;
        edtProperty.FieldByName('UNIT_ID').AsString := UNIT_ID;
        edtProperty.FieldByName('PROPERTY_01').AsString := PROPERTY_01;
        edtProperty.FieldByName('PROPERTY_02').AsString := PROPERTY_02;
@@ -1133,10 +1075,10 @@ begin
   edtTable.Post;
 end;
 
-procedure TframeOrderForm.BulkAmount(UINT_ID:string;Amt, Pri, mny: real;Appended:boolean=false);
+procedure TframeOrderForm.BulkAmount(UNIT_ID:string;Amt, Pri, mny: real;Appended:boolean=false);
 begin
    if PropertyEnabled then Raise Exception.Create(XDictFactory.GetMsgString('frame.NoSupportPropertyEnabled','散装商品不支持带颜色及尺码属性的商品...'));
-   if edtTable.FieldbyName('UNIT_ID').AsString <> UINT_ID then Raise Exception.Create(XDictFactory.GetMsgString('frame.NoSupportUnitConvert','散装商品不支持多单位转换...'));
+   if edtTable.FieldbyName('UNIT_ID').AsString <> UNIT_ID then Raise Exception.Create(XDictFactory.GetMsgString('frame.NoSupportUnitConvert','散装商品不支持多单位转换...'));
    if Pri<>0 then
       begin
         if (edtTable.FindField('APRICE')<>nil) then
@@ -1180,20 +1122,18 @@ end;
 procedure TframeOrderForm.UnitToCalc(UNIT_ID: string);
 var AMount,SourceScale:Real;
     Field:TField;
-    rs:TADODataSet;
+    rs:TZQuery;
     u:integer;
 begin
   if Locked then Exit;
   if UNIT_ID=edtTable.FieldbyName('UNIT_ID').AsString  then Exit;
   Locked := True;
-  rs := TADODataSet.Create(nil);
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   try
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
       Field := edtTable.FindField('AMOUNT');
       if Field=nil then Exit;
       AMount := Field.asFloat;
-      rs.Close;
-      rs.CommandText := 'select CALC_UNITS,BIG_UNITS,SMALL_UNITS,SMALLTO_CALC,BIGTO_CALC from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''' and GODS_ID='''+edtTable.FieldByName('GODS_ID').asString+'''';
-      Factor.Open(rs);
       if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
       edtTable.FieldByName('UNIT_ID').AsString := UNIT_ID;
       edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
@@ -1246,7 +1186,6 @@ begin
            AMountToCalc(AMount);
          end;
   finally
-     rs.Free;
      Locked := false;
   end;
 end;
@@ -1542,15 +1481,15 @@ end;
 
 function TframeOrderForm.PropertyEnabled: boolean;
 var
-  rs:TADODataSet;
+  rs:TZQuery;
 begin
   result := false;
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then 
   result := not (
-       ((rs.FieldbyName('PROPERTY_01').AsString = '') or (rs.FieldbyName('PROPERTY_01').AsString = '#'))
+       ((rs.FieldbyName('SORT_ID7').AsString = '') or (rs.FieldbyName('SORT_ID7').AsString = '#'))
          and
-       ((rs.FieldbyName('PROPERTY_02').AsString = '') or (rs.FieldbyName('PROPERTY_02').AsString = '#'))
+       ((rs.FieldbyName('SORT_ID8').AsString = '') or (rs.FieldbyName('SORT_ID8').AsString = '#'))
        );
 end;
 
@@ -1570,39 +1509,42 @@ end;
 
 function TframeOrderForm.CheckRepeat(AObj: TRecord_;var pt:boolean): boolean;
 var
-  r,r1,r2:integer;
+  r,c:integer;
 begin
   result := false;
   if gRepeat then Exit;
   r := edtTable.FieldbyName('SEQNO').AsInteger;
   edtTable.DisableControls;
   try
-    r1 := 0;
-    r2 := 0;
+    c := 0;
     edtTable.First;
     while not edtTable.Eof do
       begin
-        if (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+        if
+           (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (edtTable.FieldbyName('IS_PRESENT').AsString = AObj.FieldbyName('IS_PRESENT').AsString)
+           and
+           (edtTable.FieldbyName('UNIT_ID').AsString = AObj.FieldbyName('UNIT_ID').AsString)
+           and
+           (edtTable.FieldbyName('LOCUS_NO').AsString = AObj.FieldbyName('LOCUS_NO').AsString)
+           and
+           (edtTable.FieldbyName('BOM_ID').AsString = AObj.FieldbyName('BOM_ID').AsString)
            and
            (edtTable.FieldbyName('SEQNO').AsInteger <> r)
         then
            begin
-             if edtTable.FieldbyName('IS_PRESENT').AsString='1' then inc(r2) else inc(r1);
+             inc(c);
+             break;
            end;
         edtTable.Next;
       end;
-    if (r1>0) and (r2>0) then result := true
-    else
-    begin
-      if r1=0 then
-         pt := false
-      else
-      if r2=0 then
-         begin
-           if MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-              pt := true else result := true;
-         end;
-    end;
+    pt := false;
+    if c>0 then
+      begin
+        if MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+           result := false else result := true;
+      end;
   finally
     edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;
@@ -1664,14 +1606,14 @@ begin
 end;
 procedure TframeOrderForm.InitGrid;
 var
-  rs:TADODataSet;
+  rs:TZQuery;
   Column:TColumnEh;
 begin
   inherited;
   Column := FindColumn('UNIT_ID');
   if Column<>nil then
   begin
-  rs := Global.GetADODataSetFromName('PUB_MEAUNITS');
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   rs.First;
   while not rs.Eof do
     begin
@@ -1685,14 +1627,7 @@ begin
   end;
   Column := FindColumn('IS_PRESENT');
   if Column<>nil then
-  begin
-  Column.KeyList.Clear;
-  Column.KeyList.Add('1');
-  Column.KeyList.Add('0');  
-  Column.Checkboxes := true;
-  Column.ReadOnly := false;
-  Column.OnUpdateData := IsPresentUpdateData;
-  end;
+  Column.ReadOnly := true;
 end;
 procedure TframeOrderForm.OpenDialogGoods;
 var
@@ -1825,22 +1760,25 @@ begin
   edtTable.Close;
   edtProperty.CreateDataSet;
   edtTable.CreateDataSet;
-  edtTable.Sort := '';
   RowID := 0;
   DataSet.First;
   while not DataSet.Eof do
     begin
       if HasPrice then
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;APRICE',
+         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT;APRICE',
               VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
                         DataSet.FieldbyName('BATCH_NO').AsString,
                         DataSet.FieldbyName('UNIT_ID').AsString,
-                        DataSet.FieldbyName('IS_PRESENT').AsString,DataSet.FieldbyName('IS_PRESENT').AsCurrency]),[])
+                        DataSet.FieldbyName('BOM_ID').AsString,
+                        DataSet.FieldbyName('LOCUS_NO').AsString,
+                        DataSet.FieldbyName('IS_PRESENT').AsString,DataSet.FieldbyName('APRICE').AsCurrency]),[])
       else
-         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT',
+         r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;BOM_ID;LOCUS_NO;IS_PRESENT',
               VarArrayOf([DataSet.FieldbyName('GODS_ID').AsString,
                         DataSet.FieldbyName('BATCH_NO').AsString,
                         DataSet.FieldbyName('UNIT_ID').AsString,
+                        DataSet.FieldbyName('BOM_ID').AsString,
+                        DataSet.FieldbyName('LOCUS_NO').AsString,
                         DataSet.FieldbyName('IS_PRESENT').AsString]),[]);
       if r then
       begin
@@ -1851,7 +1789,8 @@ begin
             begin
               case edtTable.Fields[i].Tag of
               1:edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
-              2:edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
+              else
+                edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
               end;
             end;
           end;
@@ -1877,29 +1816,7 @@ begin
       edtProperty.Post;
       DataSet.Next;
     end;
-    edtTable.Sort := 'SEQNO';
-{  edtTable.First;
-  while not edtTable.Eof do
-    begin
-      if edtTable.FieldbyName('GODS_ID').asString<>'' then
-      begin
-      edtProperty.Filtered := false;
-      if HasPrice then
-         edtProperty.Filter := 'GODS_ID='''+edtTable.FieldbyName('GODS_ID').asString+''' and BATCH_NO='''+edtTable.FieldbyName('BATCH_NO').asString+''' and UNIT_ID='''+edtTable.FieldbyName('UNIT_ID').asString+''' and IS_PRESENT='+edtTable.FieldbyName('IS_PRESENT').asString+' and APRICE='+edtTable.FieldbyName('APRICE').asString
-      else
-         edtProperty.Filter := 'GODS_ID='''+edtTable.FieldbyName('GODS_ID').asString+''' and BATCH_NO='''+edtTable.FieldbyName('BATCH_NO').asString+''' and UNIT_ID='''+edtTable.FieldbyName('UNIT_ID').asString+''' and IS_PRESENT='+edtTable.FieldbyName('IS_PRESENT').asString;
-      edtProperty.Filtered := true;
-      edtProperty.First;
-      while not edtProperty.Eof do
-        begin
-          edtProperty.edit;
-          edtProperty.FieldbyName('SEQNO').AsInteger := edtTable.FieldbyName('SEQNO').AsInteger;
-          edtProperty.Post;
-          edtProperty.Next;
-        end;
-      end;
-      edtTable.Next;
-    end; }
+    edtTable.SortedFields := 'SEQNO';
   finally
     edtTable.EnableControls;
   end;
@@ -1908,13 +1825,13 @@ end;
 procedure TframeOrderForm.WriteTo(DataSet: TDataSet);
 var
   i,r:integer;
-  bs:TADODataSet;
+  bs:TZQuery;
   lc:boolean;
 begin
   if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
   edtTable.DisableControls;
   try
-  bs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   DataSet.First;
   while not DataSet.Eof do DataSet.Delete;
   edtTable.First;
@@ -1922,24 +1839,32 @@ begin
     begin
       if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
          Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[edtTable.FieldbyName('GODS_NAME').AsString+'('+edtTable.FieldbyName('GODS_CODE').AsString+')']));
-      if ((bs.FieldbyName('PROPERTY_01').AsString = '') or (bs.FieldbyName('PROPERTY_01').AsString = '#'))
+      if ((bs.FieldbyName('SORT_ID7').AsString = '') or (bs.FieldbyName('SORT_ID7').AsString = '#'))
          and
-         ((bs.FieldbyName('PROPERTY_02').AsString = '') or (bs.FieldbyName('PROPERTY_02').AsString = '#'))
+         ((bs.FieldbyName('SORT_ID8').AsString = '') or (bs.FieldbyName('SORT_ID8').AsString = '#'))
       then
          begin
-           if HasPrice then
-              lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;APRICE',
-                   VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
-                            edtTable.FieldbyName('BATCH_NO').AsString,
-                            edtTable.FieldbyName('UNIT_ID').AsString,
-                            edtTable.FieldbyName('IS_PRESENT').AsString,edtTable.FieldbyName('APRICE').AsCurrency]),[])
-           else
-              lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT',
-                   VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
-                            edtTable.FieldbyName('BATCH_NO').AsString,
-                            edtTable.FieldbyName('UNIT_ID').AsString,
-                            edtTable.FieldbyName('IS_PRESENT').AsString]),[]);
-           if lc then Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[edtTable.FieldbyName('GODS_NAME').AsString]));
+           if not gRepeat then
+           begin
+             if HasPrice then
+                lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID;APRICE',
+                     VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
+                              edtTable.FieldbyName('BATCH_NO').AsString,
+                              edtTable.FieldbyName('UNIT_ID').AsString,
+                              edtTable.FieldbyName('LOCUS_NO').AsString,
+                              edtTable.FieldbyName('BOM_ID').AsString,
+                              edtTable.FieldbyName('IS_PRESENT').AsString,edtTable.FieldbyName('APRICE').AsCurrency]),[])
+             else
+                lc := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',
+                     VarArrayOf([edtTable.FieldbyName('GODS_ID').AsString,
+                              edtTable.FieldbyName('BATCH_NO').AsString,
+                              edtTable.FieldbyName('UNIT_ID').AsString,
+                              edtTable.FieldbyName('IS_PRESENT').AsString,
+                              edtTable.FieldbyName('LOCUS_NO').AsString,
+                              edtTable.FieldbyName('BOM_ID').AsString
+                              ]),[]);
+             if lc then Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[edtTable.FieldbyName('GODS_NAME').AsString]));
+           end;
            DataSet.Append;
            inc(r);
            for i:=0 to edtTable.Fields.Count -1 do
@@ -2218,40 +2143,32 @@ end;
 
 procedure TframeOrderForm.ConvertUnit;
 var
-  rs:TADODataSet;
+  rs:TZQuery;
   uid:string;
 begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select GODS_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''' and GODS_ID='''+edtTable.FieldbyName('GODS_ID').AsString+'''';
-    Factor.Open(rs);
-    if not rs.IsEmpty then
-       begin
-         if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('SMALL_UNITS').AsString<>'') then
-            begin
-              uid := rs.FieldByName('SMALL_UNITS').AsString;
-            end
-         else
-         if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
-            begin
-              uid := rs.FieldByName('BIG_UNITS').AsString;
-            end
-         else
-         if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('SMALL_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
-            begin
-              uid := rs.FieldByName('BIG_UNITS').AsString;
-            end
-         else
-            uid := rs.FieldByName('CALC_UNITS').AsString;
-         if uid=edtTable.FieldByName('UNIT_ID').AsString then Exit;
-         UnitToCalc(uid);
-       end;
-    fndUNIT_ID.Visible := false;
-  finally
-    rs.Free;
-  end;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('SMALL_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('SMALL_UNITS').AsString;
+     end
+  else
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('CALC_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('BIG_UNITS').AsString;
+     end
+  else
+  if (edtTable.FieldByName('UNIT_ID').AsString = rs.FieldByName('SMALL_UNITS').AsString) and (rs.FieldByName('BIG_UNITS').AsString<>'') then
+     begin
+       uid := rs.FieldByName('BIG_UNITS').AsString;
+     end
+  else
+     uid := rs.FieldByName('CALC_UNITS').AsString;
+  if uid=edtTable.FieldByName('UNIT_ID').AsString then Exit;
+  UnitToCalc(uid);
+  fndUNIT_ID.Visible := false;
 end;
 
 procedure TframeOrderForm.Setcid(const Value: string);
@@ -2261,7 +2178,7 @@ end;
 
 function TframeOrderForm.Getcid: string;
 begin
-  if fcid='' then result := Global.CompanyID else result := fcid;
+  if fcid='' then result := Global.Shop_Id else result := fcid;
 end;
 
 procedure TframeOrderForm.SetSaved(const Value: boolean);
@@ -2620,14 +2537,14 @@ end;
 procedure TframeOrderForm.DBGridEh1Columns3BeforeShowControl(
   Sender: TObject);
 var
-  rs:TADODataSet;
-  us:TADODataSet;
+  rs:TZQuery;
+  us:TZQuery;
 begin
   inherited;
   fndUNIT_ID.Tag := 1;
   try
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
-  us := Global.GetADODataSetFromName('PUB_MEAUNITS');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  us := Global.GetZQueryFromName('PUB_MEAUNITS');
   fndUNIT_ID.Properties.Items.Clear;
   if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
@@ -2722,14 +2639,14 @@ end;
 procedure TframeOrderForm.fndUNIT_IDPropertiesChange(Sender: TObject);
 var
   w:integer;
-  rs:TADODataSet;
+  rs:TZQuery;
 begin
   inherited;
   if fndUNIT_ID.Tag = 1 then Exit;
   if fndUNIT_ID.ItemIndex < 0 then Exit;
   if not fndUNIT_ID.Visible then Exit;
   w := Integer(fndUNIT_ID.Properties.Items.Objects[fndUNIT_ID.ItemIndex]);
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
        edtTable.Edit;
@@ -2752,20 +2669,6 @@ begin
   FbasInfo := Value;
 end;
 
-procedure TframeOrderForm.AddBCodeColumn;
-var
-  Column:TColumnEh;
-begin
-  Column := DBGridEh1.Columns.Add;
-  Column.Index := 3;
-  Column.FieldName := 'BARCODE';
-  Column.Title.Caption := '条码';
-  Column.Width := 119;
-  Column.Visible := true;
-  Column.ReadOnly := true;
-  Column.Tag := 1;
-end;
-
 function TframeOrderForm.IsKeyPress: boolean;
 begin
   result := not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused;
@@ -2774,11 +2677,12 @@ end;
 function TframeOrderForm.EnCodeBarcode: string;
 var b:string;
 begin
+  basInfo.Filtered := false;
   if basInfo.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
        b := basInfo.FieldbyName('BARCODE').asString;
-       if (b='') and (basInfo.FieldbyName('BCODE').asString<>'') then
-          b := GetBarCode(basInfo.FieldbyName('BCODE').asString,'#','#');
+       //if (b='') and (basInfo.FieldbyName('BCODE').asString<>'') then
+       //   b := GetBarCode(basInfo.FieldbyName('BCODE').asString,'#','#');
      end
   else
      b := '';
@@ -2833,7 +2737,7 @@ begin
   inherited;
   if not edtTable.Active then exit;
   if edtTable.FieldByName('GODS_ID').AsString='' then exit;
-  with TfrmGoodsInfo.Create(self) do
+{  with TfrmGoodsInfo.Create(self) do
     begin
       try
         Open(edtTable.FieldByName('GODS_ID').AsString);
@@ -2842,7 +2746,7 @@ begin
         free;
       end;
     end;
-
+}
 end;
 
 procedure TframeOrderForm.SetCanAppend(const Value: boolean);
@@ -2918,7 +2822,8 @@ begin
 end;
 
 procedure TframeOrderForm.munInsertRowClick(Sender: TObject);
-var r:integer;
+var
+  r,sr:integer;
 begin
   inherited;
   if not edtTable.Active then Exit;
@@ -2928,7 +2833,8 @@ begin
   r := edtTable.FieldbyName('SEQNO').AsInteger;
   edtTable.DisableControls;
   try
-    edtTable.Sort := '';
+    edtTable.SortedFields := 'GODS_ID';
+    edtTable.Filtered := false;
     edtTable.First;
     while not edtTable.Eof do
       begin
@@ -2940,6 +2846,7 @@ begin
            end;
         edtTable.Next;
       end;
+    edtProperty.Filtered := false;
     edtProperty.First;
     while not edtProperty.Eof do
       begin
@@ -2958,7 +2865,7 @@ begin
     if edtTable.FindField('SEQNO')<> nil then
        edtTable.FindField('SEQNO').asInteger := r;
     edtTable.Post;
-    edtTable.Sort := 'SEQNO';
+    edtTable.SortedFields := 'SEQNO';
     edtTable.Locate('SEQNO',r,[]); 
     edtTable.Edit;
     fndGODS_ID.KeyValue := null;

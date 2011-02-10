@@ -7,7 +7,7 @@ uses
   Dialogs, uframeToolForm, ActnList, Menus, ComCtrls, ToolWin, StdCtrls,
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,FR_Class,
   cxContainer, cxEdit, cxTextEdit, DB, ADODB, DBClient,uframeOrderForm,
-  jpeg;
+  jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TframeOrderToolForm = class(TframeToolForm)
@@ -22,7 +22,6 @@ type
     DBGridEh1: TDBGridEh;
     ToolButton10: TToolButton;
     ToolButton13: TToolButton;
-    cdsList: TClientDataSet;
     dsList: TDataSource;
     ToolButton12: TToolButton;
     actPrior: TAction;
@@ -38,6 +37,7 @@ type
     mnmFormer3: TMenuItem;
     mnmFormer4: TMenuItem;
     mnmFormer5: TMenuItem;
+    cdsList: TZQuery;
     procedure actNewExecute(Sender: TObject);
     procedure RzPageDblClick(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -105,14 +105,14 @@ begin
        rzPage.ActivePageIndex := p;
        if not CurOrder.IsNull then
           begin
-            CurOrder.cid := Global.CompanyID;
+            CurOrder.cid := Global.SHOP_ID;
             CurOrder.NewOrder;
             inc(idx);
             rzPage.ActivePage.Caption := '新建'+inttostr(idx);
           end
        else
           begin
-            CurOrder.cid := Global.CompanyID;
+            CurOrder.cid := Global.SHOP_ID;
             CurOrder.NewOrder;
             rzPage.ActivePage.Caption := '新建'+inttostr(idx);
           end;
@@ -121,7 +121,7 @@ begin
      begin
        if (CurOrder<>nil) and ((CurOrder.dbState = dsBrowse) or CurOrder.IsNull or not CurOrder.Modifyed) then
           begin
-            CurOrder.cid := Global.CompanyID;
+            CurOrder.cid := Global.SHOP_ID;
             CurOrder.NewOrder;
             inc(idx);
             rzPage.ActivePage.Caption := '新建'+inttostr(idx);
@@ -139,7 +139,7 @@ begin
          form.ContainerHanle := Page.Handle;
          rzPage.ActivePage := Page;
          form.SetParantDisplay(rzPage.ActivePage);
-         form.cid := Global.CompanyID;
+         form.cid := Global.SHOP_ID;
          form.NewOrder;
          RzPage.OnChange(nil);
        except
@@ -270,7 +270,7 @@ begin
      begin
        rzPage.ActivePageIndex := p;
        if cid='' then
-          TframeOrderForm(rzPage.Pages[p].Data).cid := Global.CompanyId
+          TframeOrderForm(rzPage.Pages[p].Data).cid := Global.SHOP_ID
        else
           TframeOrderForm(rzPage.Pages[p].Data).cid := cid;
        TframeOrderForm(rzPage.Pages[p].Data).Open(id);
@@ -291,7 +291,7 @@ begin
          rzPage.ActivePage := Page;
          form.SetParantDisplay(rzPage.ActivePage);
          if cid='' then
-            form.cid := Global.CompanyId
+            form.cid := Global.SHOP_ID
          else
             form.cid := cid;
          form.Open(id);

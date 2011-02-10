@@ -156,8 +156,14 @@ begin
 end;
 
 function TframeSelectGoods.EncodeSQL(id: string): string;
-var w:string;
+var
+  w:string;
+  sc:string;
 begin
+  case Factor.iDbType of
+  0:sc := '+';
+  1,4,5: sc := '||';
+  end;
   w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then
      begin
@@ -168,7 +174,7 @@ begin
      begin
       if w<>'' then w := w + ' and ';
       case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
-      1:w := w + 'b.LEVEL_ID like :LEVEL_ID +''%'' and b.RELATION_ID=:RELATION_ID ';
+      1:w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID ';
       else
         w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsString+' = :SORT_ID ';
       end;
@@ -176,7 +182,7 @@ begin
   if trim(edtSearch.Text)<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + '(j.GODS_CODE like ''%''+:KEYVALUE +''%'' or j.GODS_NAME like ''%''+:KEYVALUE +''%'' or j.GODS_SPELL like ''%''+:KEYVALUE +''%'' or BARCODE like ''%''+:KEYVALUE )';
+      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or BARCODE like ''%'''+sc+':KEYVALUE )';
      end;
   case Factor.iDbType of
   0:

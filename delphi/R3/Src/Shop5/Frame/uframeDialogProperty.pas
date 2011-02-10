@@ -5,19 +5,16 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  Grids, DBGridEh, RzButton, DB, ADODB, ZBase, StdCtrls, DBClient;
+  Grids, DBGridEh, RzButton, DB, ADODB, ZBase, StdCtrls, DBClient,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TframeDialogProperty = class(TframeDialogForm)
     DBGridEh1: TDBGridEh;
     RzBitBtn2: TRzBitBtn;
     btnOk: TRzBitBtn;
-    edtTable: TADODataSet;
     DataSource1: TDataSource;
-    edtTableCODE_NAME: TStringField;
-    edtTableCODE_ID: TStringField;
     stbHint: TPanel;
-    cdsStorage: TADODataSet;
     Shape1: TShape;
     Label1: TLabel;
     Label2: TLabel;
@@ -25,10 +22,10 @@ type
     PopupMenu1: TPopupMenu;
     actAddColor: TAction;
     actAddSize: TAction;
-    edtTableSEQ_NO: TIntegerField;
     N1: TMenuItem;
     N2: TMenuItem;
-    PubProperty: TClientDataSet;
+    edtTable: TZQuery;
+    cdsStorage: TZQuery;
     procedure edtTableCalcFields(DataSet: TDataSet);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -71,71 +68,62 @@ uses uGlobal,uXDictFactory,uShopGlobal;
 
 procedure TframeDialogProperty.CreateGrid(AObj:TRecord_);
 var
-  rs,bs,us:TADODataSet;
+  cs,ss,bs,us:TZQuery;
   Field:TField;
   Column:TColumnEh;
   r,c:integer;
 begin
-  bs := Global.GetADODataSetFromName('BAS_GOODSINFO');
-  bs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]);
-//  btnSize.Visible := (bs.FieldbyName('PROPERTY_01').AsString <> '');
-//  btnColor.Visible := (bs.FieldbyName('PROPERTY_02').AsString <> '');
-  us := Global.GetADODataSetFromName('PUB_MEAUNITS');
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('无效商品代码,代码:'+AObj.FieldbyName('GODS_ID').AsString+'');
+  cs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  ss := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  us := Global.GetZQueryFromName('PUB_MEAUNITS');
   if us.Locate('UNIT_ID',bs.FieldbyName('UNIT_ID').AsString,[]) then unitName := us.FieldbyName('UNIT_NAME').AsString;
   edtTable.Close;
   DBGridEh1.FrozenCols := 0;
-  rs := TADODataSet.Create(nil);
   edtTable.DisableControls;
   try
     //处理尺码
-    if (bs.FieldbyName('PROPERTY_01').AsString = '') or (bs.FieldbyName('PROPERTY_01').AsString = '#') then
+    if (bs.FieldbyName('SORT_ID8').AsString = '') or (bs.FieldbyName('SORT_ID8').AsString = '#') then
        begin
           Column := DBGridEh1.Columns.Add;
           Column.FieldName := 'SIZE_#';
           Column.Width := 30;
-          Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码') +'|无';
+          Column.Title.Caption := '尺码|无';
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
           Field := TBCDField.Create(edtTable);
           Field.FieldName := 'SIZE_#';
           Field.DataSet := edtTable;
-//          edtTable.Fields.Add(Field);
        end
     else
        begin
-          rs.Close;
-          if bs.FieldbyName('PROPERTY_01').AsString='G' then //自定义颜色
-             rs.CommandText := 'select ''000''+B.CODE_ID as CODE_ID,B.CODE_NAME from PUB_PROPERTY A,PUB_CODE_INFO B where A.CODE_ID=B.CODE_ID and A.GODS_ID='''+bs.FieldbyName('GODS_ID').AsString+''' and A.CODE_TYPE=2 and B.CODE_TYPE=2 and A.COMM not in (''02'',''12'') order by A.SEQ_NO'
-          else
-             rs.CommandText := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_ID like '''+bs.FieldbyName('PROPERTY_01').AsString+'%'' and len(CODE_ID)>3 and CODE_TYPE=2 and COMM not in (''02'',''12'') order by SEQ_NO';
-          Factor.Open(rs);
-          rs.First;
-          while not rs.Eof do
+
+          ss.First;
+          while not ss.Eof do
              begin
+               if pos(','+bs.FieldbyName('SORT_ID8').AsString+',',','+ss.FieldbyName('SORT_ID8S').AsString+',')>0 then
+               begin
                Column := DBGridEh1.Columns.Add;
-               Column.FieldName := 'SIZE_'+copy(rs.FieldbyName('CODE_ID').AsString,4,3);
+               Column.FieldName := 'SIZE_'+ss.FieldbyName('SIZE_ID').AsString;
                Column.Width := 30;
-               Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码')+'|'+rs.FieldbyName('CODE_NAME').AsString;
+               Column.Title.Caption := '尺码|'+ss.FieldbyName('SIZE_NAME').AsString;
                Column.Footer.ValueType := fvtSum;
                Column.Alignment := taCenter;
                Column.ReadOnly := false;
-               Field := TBCDField.Create(edtTable);
-               Field.FieldName := 'SIZE_'+copy(rs.FieldbyName('CODE_ID').AsString,4,3);
-               Field.DataSet := edtTable;
-//               edtTable.Fields.Add(Field);
-               rs.Next;
+               edtTable.FieldDefs.Add('SIZE_'+ss.FieldbyName('SIZE_ID').AsString,ftBCD,0);
+               end;
+               ss.Next;
              end;
           Column := DBGridEh1.Columns.Add;
           Column.FieldName := 'SIZE_#';
           Column.Width := 30;
-          Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码')+'|无';
+          Column.Title.Caption := '尺码|无';
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
-          Field := TBCDField.Create(edtTable);
-          Field.FieldName := 'SIZE_#';
-          Field.DataSet := edtTable;
+          edtTable.FieldDefs.Add('SIZE_#',ftBCD,0);
           Column := DBGridEh1.Columns.Add;
           Column.FieldName := 'SIZE_TOTAL';
           Column.Width := 40;
@@ -143,16 +131,15 @@ begin
           Column.Footer.ValueType := fvtSum;
           Column.Alignment := taCenter;
           Column.ReadOnly := false;
-          Field := TBCDField.Create(edtTable);
-          Field.FieldName := 'SIZE_TOTAL';
-          Field.DataSet := edtTable;
-          Field.Calculated := true;
-//          edtTable.Fields.Add(Field);
        end;
     // end
     edtTable.CreateDataSet;
+    Field := TBCDField.Create(edtTable);
+    Field.FieldName := 'SIZE_TOTAL';
+    Field.DataSet := edtTable;
+    Field.Calculated := true;
     //处理颜色
-    if (bs.FieldbyName('PROPERTY_02').AsString = '') or (bs.FieldbyName('PROPERTY_02').AsString = '#') then
+    if (bs.FieldbyName('SORT_ID7').AsString = '') or (bs.FieldbyName('SORT_ID7').AsString = '#') then
        begin
           edtTable.Append;
           edtTable.FieldbyName('CODE_NAME').AsString := '无';
@@ -160,21 +147,18 @@ begin
        end
     else
        begin
-          rs.Close;
-          if bs.FieldbyName('PROPERTY_02').AsString='G' then //自定义颜色
-             rs.CommandText := 'select ''000''+B.CODE_ID as CODE_ID,B.CODE_NAME from PUB_PROPERTY A,PUB_CODE_INFO B where A.CODE_ID=B.CODE_ID and A.GODS_ID='''+bs.FieldbyName('GODS_ID').AsString+''' and B.CODE_TYPE=4 and A.CODE_TYPE=4 and A.COMM not in (''02'',''12'') order by A.SEQ_NO'
-          else
-             rs.CommandText := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_ID like '''+bs.FieldbyName('PROPERTY_02').AsString+'%'' and len(CODE_ID)>3 and CODE_TYPE=4 and COMM not in (''02'',''12'') order by SEQ_NO';
-          Factor.Open(rs);
-          rs.First;
-          while not rs.Eof do
+          cs.First;
+          while not cs.Eof do
              begin
+               if pos(','+bs.FieldbyName('SORT_ID7').AsString+',',','+ss.FieldbyName('SORT_ID7S').AsString+',')>0 then
+               begin
                edtTable.Append;
-               edtTable.FieldbyName('CODE_NAME').AsString := rs.FieldbyName('CODE_NAME').AsString;
-               edtTable.FieldbyName('CODE_ID').AsString := copy(rs.FieldbyName('CODE_ID').AsString,4,3);
+               edtTable.FieldbyName('CODE_NAME').AsString := cs.FieldbyName('CODE_NAME').AsString;
+               edtTable.FieldbyName('CODE_ID').AsString := cs.FieldbyName('CODE_ID').AsString;
                inc(r);
                edtTable.FieldbyName('SEQ_NO').AsInteger := r;
-               rs.Next;
+               end;
+               cs.Next;
              end;
           edtTable.Append;
           edtTable.FieldbyName('CODE_NAME').AsString := '无';
@@ -182,12 +166,9 @@ begin
           inc(r);
           edtTable.FieldbyName('SEQ_NO').AsInteger := r;
        end;
-    // end
-
   finally
     edtTable.First;
     edtTable.EnableControls;
-    rs.free;
   end;
   if DBGridEh1.Columns.Count > 1 then DBGridEh1.FrozenCols := 1;
 end;
@@ -285,10 +266,14 @@ end;
 procedure TframeDialogProperty.OpenStroage(AObj: TRecord_);
 begin
   cdsStorage.Close;
-  if AObj.FieldbyName('BATCH_NO').AsString = '#' then
-     cdsStorage.CommandText := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where COMP_ID='''+Global.CompanyID+''' and GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+''' group by PROPERTY_01,PROPERTY_02'
+  if (AObj.FieldbyName('BATCH_NO').AsString = '#') or (AObj.FieldbyName('BATCH_NO').AsString = '') then
+     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID group by PROPERTY_01,PROPERTY_02'
   else
-     cdsStorage.CommandText := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where COMP_ID='''+Global.CompanyID+''' and GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+AObj.FieldbyName('BATCH_NO').AsString+''' group by PROPERTY_01,PROPERTY_02';
+     cdsStorage.SQL.Text := 'select sum(AMOUNT) as AMOUNT,PROPERTY_01,PROPERTY_02 from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO group by PROPERTY_01,PROPERTY_02';
+  cdsStorage.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsStorage.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID; 
+  cdsStorage.Params.ParamByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+  if cdsStorage.Params.FindParam('BATCH_NO')<>nil then cdsStorage.Params.FindParam('BATCH_NO').AsString := AObj.FieldbyName('BATCH_NO').AsString;
   Factor.Open(cdsStorage);
 end;
 

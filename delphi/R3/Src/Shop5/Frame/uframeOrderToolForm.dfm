@@ -1,8 +1,8 @@
 inherited frameOrderToolForm: TframeOrderToolForm
   Left = 119
-  Top = 50
+  Top = 238
   Width = 862
-  Height = 710
+  Height = 522
   Caption = 'frameOrderToolForm'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -11,13 +11,13 @@ inherited frameOrderToolForm: TframeOrderToolForm
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 846
-    Height = 642
+    Height = 454
     inherited RzPanel2: TRzPanel
       Width = 836
-      Height = 632
+      Height = 444
       inherited RzPage: TRzPageControl
         Width = 830
-        Height = 626
+        Height = 438
         Color = clWindow
         FlatColor = clBtnFace
         ParentColor = False
@@ -33,7 +33,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
           Caption = #21333#25454#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 828
-            Height = 599
+            Height = 411
             BorderShadow = clWindow
             Color = clWindow
             FlatColor = clWindow
@@ -51,7 +51,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               Left = 5
               Top = 78
               Width = 818
-              Height = 516
+              Height = 328
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -237,12 +237,6 @@ inherited frameOrderToolForm: TframeOrderToolForm
       OnExecute = actNextExecute
     end
   end
-  object cdsList: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    Left = 345
-    Top = 193
-  end
   object dsList: TDataSource
     DataSet = cdsList
     Left = 382
@@ -275,5 +269,12 @@ inherited frameOrderToolForm: TframeOrderToolForm
       Tag = 5
       OnClick = mnmFormer5Click
     end
+  end
+  object cdsList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 350
+    Top = 192
   end
 end

@@ -186,8 +186,8 @@ inherited frameDialogProperty: TframeDialogProperty
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 205
-    Top = 144
+    Left = 285
+    Top = 72
   end
   inherited actList: TActionList
     object actAddColor: TAction
@@ -197,30 +197,9 @@ inherited frameDialogProperty: TframeDialogProperty
       Caption = #28155#21152#23610#30721
     end
   end
-  object edtTable: TADODataSet
-    OnCalcFields = edtTableCalcFields
-    Parameters = <>
-    Left = 118
-    Top = 109
-    object edtTableCODE_NAME: TStringField
-      FieldName = 'CODE_NAME'
-      Size = 30
-    end
-    object edtTableCODE_ID: TStringField
-      FieldName = 'CODE_ID'
-    end
-    object edtTableSEQ_NO: TIntegerField
-      FieldName = 'SEQ_NO'
-    end
-  end
   object DataSource1: TDataSource
     DataSet = edtTable
     Left = 158
-    Top = 109
-  end
-  object cdsStorage: TADODataSet
-    Parameters = <>
-    Left = 198
     Top = 109
   end
   object PopupMenu1: TPopupMenu
@@ -233,10 +212,21 @@ inherited frameDialogProperty: TframeDialogProperty
       Action = actAddSize
     end
   end
-  object PubProperty: TClientDataSet
-    Aggregates = <>
+  object edtTable: TZQuery
+    SortedFields = 'SEQ_NO'
+    FieldDefs = <>
+    OnCalcFields = edtTableCalcFields
+    CachedUpdates = True
     Params = <>
-    Left = 237
-    Top = 107
+    IndexFieldNames = 'SEQ_NO Asc'
+    Left = 126
+    Top = 110
+  end
+  object cdsStorage: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 126
+    Top = 142
   end
 end

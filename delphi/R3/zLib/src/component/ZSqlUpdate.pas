@@ -84,7 +84,6 @@ type
     //FOSPATCH
     FRefreshSQL: TZSQLStrings;
     //FOSPATCH
-
     FParamCheck: Boolean;
     FParams: TParams;
     FMultiStatements: Boolean;
@@ -128,6 +127,8 @@ type
     procedure WriteParamData(Writer: TWriter);
 
   protected
+    FOldRowAccessor, FNewRowAccessor:TZRowAccessor;
+    
     procedure DefineProperties(Filer: TFiler); override;
     procedure CalculateDefaults(Sender: IZCachedResultSet;
       RowAccessor: TZRowAccessor);
@@ -749,6 +750,8 @@ begin
     else
       Exit;
   end;
+  FOldRowAccessor := OldRowAccessor;
+  FNewRowAccessor := NewRowAccessor;
 
   case UpdateType of
     utInserted:
@@ -758,7 +761,6 @@ begin
     utModified:
       DoBeforeModifySQL;
   end;
-
   if Dataset is TZAbstractRODataset then
     (Dataset as TZAbstractRODataset).Connection.ShowSqlHourGlass;
   CalcDefaultValues :=

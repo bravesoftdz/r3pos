@@ -6,7 +6,8 @@
 unit ZdbHelp;
 
 interface
-uses Classes,SysUtils,Windows,DB,Variants,ZIntf,ZAbstractRODataset, ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, ZSqlUpdate;
+uses Classes,SysUtils,Windows,DB,Variants,ZIntf,ZAbstractRODataset, ZDbcCache,
+     ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, ZSqlUpdate;
 type
   TdbHelp=class(TInterfacedObject, IdbHelp)
   private
@@ -59,6 +60,8 @@ type
     procedure PSAfterModifySQL(Sender: TObject);
     procedure SetdbHelp(const Value: IdbHelp);
     procedure SetFactory(const Value: TZFactory);
+
+    procedure ReadData;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
@@ -680,23 +683,95 @@ end;
 
 procedure TZdbUpdate.PSBeforeDeleteSQL;
 begin
-  Factory.ReadFromDataSet(Factory.DataSet);
+  ReadData;
   Factory.BeforeDeleteRecord(dbHelp);
 
 end;
 
 procedure TZdbUpdate.PSBeforeInsertSQL;
 begin
-  Factory.ReadFromDataSet(Factory.DataSet);
+  ReadData;
   Factory.BeforeInsertRecord(dbHelp);
 
 end;
 
 procedure TZdbUpdate.PSBeforeModifySQL;
 begin
-  Factory.ReadFromDataSet(Factory.DataSet);
+  ReadData;
   Factory.BeforeModifyRecord(dbHelp);
 
+end;
+
+procedure TZdbUpdate.ReadData;
+var
+  i:integer;
+  WasNull:boolean;
+begin
+  for i:=0 to Factory.Count -1 do
+     begin
+      case FNewRowAccessor.GetColumnType(i+1)  of
+        stBoolean:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetBoolean(i+1, WasNull);
+        stByte:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetByte(i+1, WasNull);
+        stShort:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetShort(i+1, WasNull);
+        stInteger:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetInt(i+1, WasNull);
+        stLong:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetLong(i+1, WasNull);
+        stFloat:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetFloat(i+1, WasNull);
+        stDouble:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetDouble(i+1, WasNull);
+        stBigDecimal:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetBigDecimal(i+1, WasNull);
+        stString, stUnicodeString:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetString(i+1, WasNull);
+        stBytes:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetBytes(i+1, WasNull);
+        stDate:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetDate(i+1, WasNull);
+        stTime:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetTime(i+1, WasNull);
+        stTimestamp:
+          Factory.Fields[i].NewValue := FNewRowAccessor.GetTimestamp(i+1, WasNull);
+      end;
+      if WasNull then Factory.Fields[i].NewValue := null;
+      if FNewRowAccessor.RowBuffer.UpdateType = utModified then
+         begin
+            case FNewRowAccessor.GetColumnType(i+1)  of
+              stBoolean:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetBoolean(i+1, WasNull);
+              stByte:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetByte(i+1, WasNull);
+              stShort:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetShort(i+1, WasNull);
+              stInteger:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetInt(i+1, WasNull);
+              stLong:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetLong(i+1, WasNull);
+              stFloat:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetFloat(i+1, WasNull);
+              stDouble:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetDouble(i+1, WasNull);
+              stBigDecimal:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetBigDecimal(i+1, WasNull);
+              stString, stUnicodeString:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetString(i+1, WasNull);
+              stBytes:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetBytes(i+1, WasNull);
+              stDate:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetDate(i+1, WasNull);
+              stTime:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetTime(i+1, WasNull);
+              stTimestamp:
+                Factory.Fields[i].OldValue := FOldRowAccessor.GetTimestamp(i+1, WasNull);
+            end;
+         end
+      else
+         Factory.Fields[i].OldValue := Factory.Fields[i].NewValue;
+     end;
 end;
 
 procedure TZdbUpdate.SetdbHelp(const Value: IdbHelp);

@@ -108,10 +108,12 @@ type
     function CancelBatch:Boolean;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList=nil):Boolean;overload; stdcall;
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
     function Open(DataSet:TDataSet):Boolean;overload;stdcall;
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList=nil):Boolean;overload; stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;stdcall;
 
     //返回执行影响记录数
@@ -334,6 +336,7 @@ begin
   if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
   result := TZFactoryClass(FactoryClass).Create;
   result.iDbType := dbHelp.iDbType;
+  result.ZClassName:=AClassName;  //类名AClassName传入
 end;
 
 destructor TdbResolver.Destroy;
@@ -347,7 +350,7 @@ begin
 end;
 
 function TdbResolver.Open(DataSet: TDataSet; AClassName: String;
-  Params:TftParamList=nil): Boolean;
+  Params:TftParamList): Boolean;
 var
   Factory:TZFactory;
 begin
@@ -483,7 +486,8 @@ begin
   Factory.InitClass;
   if DataSet.ClassNameIs('TZQuery') then
      begin
-       TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
+       if not TZQuery(DataSet).Active then   //要判断，CommitBatch前进行打包时，会把数据集给关闭掉
+          TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
        if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
      end
   else
@@ -601,6 +605,17 @@ begin
   finally
     Factory.Free;
   end;
+end;
+
+function TdbResolver.Open(DataSet: TDataSet; AClassName: String): Boolean;
+begin
+  result := Open(DataSet,AClassName,nil);
+end;
+
+function TdbResolver.UpdateBatch(DataSet: TDataSet;
+  AClassName: String): Boolean;
+begin
+  result := UpdateBatch(DataSet,AClassName,nil);
 end;
 
 { TZdbUpdate }

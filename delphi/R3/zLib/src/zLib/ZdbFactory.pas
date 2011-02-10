@@ -46,11 +46,13 @@ type
     function CancelBatch:Boolean;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList=nil):Boolean;overload; stdcall;
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
     function Open(DataSet:TDataSet):Boolean;overload;stdcall;
 
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList=nil):Boolean;overload; stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;stdcall;
 
     //返回执行影响记录数
@@ -185,6 +187,17 @@ function TdbFactory.ExecProc(AClassName: String;
   Params: TftParamList): String;
 begin
   result := dbResolver.ExecProc(AClassName,Params);
+end;
+
+function TdbFactory.Open(DataSet: TDataSet; AClassName: String): Boolean;
+begin
+  result := Open(DataSet,AClassName,nil);
+end;
+
+function TdbFactory.UpdateBatch(DataSet: TDataSet;
+  AClassName: String): Boolean;
+begin
+  result := UpdateBatch(DataSet,AClassName,nil);
 end;
 
 end.

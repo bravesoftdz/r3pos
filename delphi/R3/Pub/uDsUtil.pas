@@ -408,17 +408,14 @@ var
   g:TGuid;
 begin
   if CreateGUID(g)=S_OK then
-<<<<<<< .mine
   begin
      result :=trim(GuidToString(g));
      result :=Copy(result,2,length(result)-2);  //È¥µô"{}"
   end else
      result :=Global.SHOP_ID+formatDatetime('YYYYMMDDHHNNSS',now());
-=======
      result := GuidToString(g)
   else
      result := Global.SHOP_ID+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
->>>>>>> .r208
 end;
 
 

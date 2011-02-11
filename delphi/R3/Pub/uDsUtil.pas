@@ -17,10 +17,11 @@ type
 
  TSequence=class
  public
-   class function GetSequence(SEQU_ID,COMP_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
-   class function GetSequence(AFactor:TdbFactory;SEQU_ID,COMP_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
+   class function GetTimeStamp(iDbType:Integer):string;  //根据iDbType返回数据库时间戳函数
+   class function GetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
+   class function GetSequence(AFactor:TdbFactory;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
    {$IFDEF LIBV4.0}
-   class function GetSequence(AFactor:TIdFactor;SEQU_ID,COMP_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
+   class function GetSequence(AFactor:TIdFactor;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
    {$ENDIF}
    class function GetMaxID(FlagText:String;Factor:TdbFactory;FieldName,TableName:String;nLen:String;CondiStr:String=''):String;overload;
    {$IFDEF LIBV4.0}
@@ -96,6 +97,17 @@ end;
 
 { TSequence }
 
+
+class function TSequence.GetTimeStamp(iDbType: Integer): string;
+begin
+  case iDbType of
+    0: result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    4: result := '86400*(days(current date)-days(date(''2011-01-01'')))+midnight_seconds(current timestamp)';
+    5: result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
+    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+  end;
+end;
+
 class function TSequence.GetIntegerID(Factor: TdbFactory; FieldName,
   TableName, CondiStr: String): Integer;
 Var DataSet:TZQuery;
@@ -106,7 +118,7 @@ Begin
      Begin
         Close;
         SQL.Clear;
-        SQL.Add('Select Max('+FieldName+') From '+TableName);
+        SQL.Add('select max('+FieldName+') from '+TableName);
         if CondiStr<>'' then
            SQL.Text := SQL.Text +' where '+CondiStr;
 
@@ -156,7 +168,7 @@ Begin
 end;
 
 
-class function TSequence.GetSequence(SEQU_ID, COMP_ID, FLAG_TEXT: string;
+class function TSequence.GetSequence(SEQU_ID, TENANT_ID, FLAG_TEXT: string;
   nLen: Integer;Number:Integer=1): String;
   function GetFormat:string;
     var i:Integer;
@@ -175,24 +187,26 @@ begin
      if not InTrans then Factor.BeginTrans(10);
      try
        case Factor.iDbType of
-       0:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
-       1:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
-       3:begin
-          Factor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''');
-          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
+       0:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+       1:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
+       4:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE WITH RS ';
+       3,5:
+         begin
+          Factor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
          end;
        end;
        Factor.Open(Temp);
        if Temp.IsEmpty then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'insert into SYS_SEQUENCE(COMP_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM) values('''+COMP_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''','+Inttostr(Number)+',''00'')';
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''','+Inttostr(Number)+',''00'','+TSequence.GetTimeStamp(Factor.iDbType)+')';
           end
        else
        if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO='+Inttostr(Number)+' where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO='+Inttostr(Number)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end
        else
           begin
@@ -207,7 +221,7 @@ begin
                end
             else
                Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger+1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+Number)+' where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+Number)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end;
        Factor.ExecSQL(Str);
        if not InTrans then Factor.CommitTrans;
@@ -220,7 +234,7 @@ begin
   end;
 end;
 
-class function TSequence.GetSequence(AFactor: TdbFactory; SEQU_ID, COMP_ID,
+class function TSequence.GetSequence(AFactor: TdbFactory; SEQU_ID, TENANT_ID,
   FLAG_TEXT: string; nLen: Integer): String;
   function GetFormat:string;
     var i:Integer;
@@ -238,24 +252,26 @@ begin
      AFactor.BeginTrans(10);
      try
        case AFactor.iDbType of
-       0: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
-       1: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
-       3:begin
-          AFactor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''');
-          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
-         end;
+       0: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+       1: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
+       4: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE WITH RS ';
+       3,5
+         :begin
+            AFactor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+            Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+          end;
        end;
        AFactor.Open(Temp);
        if Temp.IsEmpty then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'insert into SYS_SEQUENCE(COMP_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM) values('''+COMP_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'')';
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+TSequence.GetTimeStamp(Factor.iDbType)+')';
           end
        else
        if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end
        else
           begin
@@ -271,7 +287,7 @@ begin
                end
             else
                Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger+1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end;
        AFactor.ExecSQL(Str);
        AFactor.CommitTrans;
@@ -322,7 +338,7 @@ Begin
   end;
 end;
 
-class function TSequence.GetSequence(AFactor: TIdFactor; SEQU_ID, COMP_ID,
+class function TSequence.GetSequence(AFactor: TIdFactor; SEQU_ID, TENANT_ID,
   FLAG_TEXT: string; nLen: Integer): String;
   function GetFormat:string;
     var i:Integer;
@@ -340,24 +356,24 @@ begin
      AFactor.BeginTrans(10);
      try
        case AFactor.iDbType of
-       0: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
-       1: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
+       0: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+       1: Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
        3:begin
-          AFactor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''');
-          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+''' ';
+          AFactor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
          end;
       end;
        AFactor.Open(Temp);
        if Temp.IsEmpty then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'insert into SYS_SEQUENCE(COMP_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM) values('''+COMP_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'')';
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+TSequence.GetTimeStamp(Factor.iDbType)+')';
           end
        else
        if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end
        else
           begin
@@ -373,7 +389,7 @@ begin
                end
             else
                Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger+1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where COMP_ID='''+COMP_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end;
        AFactor.ExecSQL(Str);
        AFactor.CommitTrans;
@@ -392,9 +408,18 @@ var
   g:TGuid;
 begin
   if CreateGUID(g)=S_OK then
+<<<<<<< .mine
+  begin
+     result :=trim(GuidToString(g));
+     result :=Copy(result,2,length(result)-2);  //去掉"{}"
+  end else
+     result :=Global.SHOP_ID+formatDatetime('YYYYMMDDHHNNSS',now());
+=======
      result := GuidToString(g)
   else
      result := Global.SHOP_ID+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
+>>>>>>> .r208
 end;
+
 
 end.

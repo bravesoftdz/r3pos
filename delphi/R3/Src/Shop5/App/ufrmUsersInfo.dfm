@@ -1,8 +1,8 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 414
-  Top = 170
+  Left = 462
+  Top = 223
   Caption = #29992#25143#26723#26696
-  ClientHeight = 442
+  ClientHeight = 351
   ClientWidth = 529
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -12,12 +12,12 @@ inherited frmUsersInfo: TfrmUsersInfo
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 529
-    Height = 442
+    Height = 351
     BorderColor = clWhite
     Color = clWhite
     object RzLabel1: TRzLabel [0]
       Left = 235
-      Top = 10
+      Top = 16
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -32,7 +32,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object lab_ACCOUNT: TRzLabel [1]
       Left = 7
-      Top = 11
+      Top = 17
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -47,7 +47,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object lab_USER_NAME: TRzLabel [2]
       Left = 7
-      Top = 36
+      Top = 41
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -62,7 +62,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object lab_USER_SPELL: TRzLabel [3]
       Left = 240
-      Top = 36
+      Top = 41
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -77,7 +77,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object lab_SHOP_ID: TRzLabel [4]
       Left = 240
-      Top = 91
+      Top = 98
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -92,7 +92,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object lab_DUTY_IDS: TRzLabel [5]
       Left = 7
-      Top = 91
+      Top = 98
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -107,7 +107,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel4: TRzLabel [6]
       Left = 235
-      Top = 90
+      Top = 98
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -123,7 +123,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel13: TRzLabel [7]
       Left = 7
-      Top = 64
+      Top = 70
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -138,7 +138,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel2: TRzLabel [8]
       Left = 235
-      Top = 35
+      Top = 41
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -153,7 +153,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel3: TRzLabel [9]
       Left = 469
-      Top = 89
+      Top = 98
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -168,7 +168,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel5: TRzLabel [10]
       Left = 247
-      Top = 11
+      Top = 17
       Width = 100
       Height = 12
       AutoSize = False
@@ -182,7 +182,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel6: TRzLabel [11]
       Left = 240
-      Top = 64
+      Top = 70
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -197,7 +197,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object RzLabel9: TRzLabel [12]
       Left = 469
-      Top = 63
+      Top = 70
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -211,9 +211,9 @@ inherited frmUsersInfo: TfrmUsersInfo
       ParentFont = False
     end
     inherited RzPage: TRzPageControl
-      Top = 120
+      Top = 127
       Width = 519
-      Height = 285
+      Height = 187
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
@@ -223,11 +223,11 @@ inherited frmUsersInfo: TfrmUsersInfo
         Color = clWhite
         inherited RzPanel2: TRzPanel
           Width = 515
-          Height = 258
+          Height = 160
           BorderColor = clWhite
           Color = clWhite
           object lab_WORK_DATE: TRzLabel
-            Left = 1
+            Left = 235
             Top = 41
             Width = 100
             Height = 12
@@ -243,7 +243,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           end
           object lab_REMARK: TRzLabel
             Left = 1
-            Top = 192
+            Top = 88
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -256,99 +256,9 @@ inherited frmUsersInfo: TfrmUsersInfo
             Font.Style = []
             ParentFont = False
           end
-          object lab_POSTALCODE: TRzLabel
-            Left = 49
-            Top = 140
-            Width = 52
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #37038#25919#32534#30721
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object lab_OFFI_TELE: TRzLabel
-            Left = 1
-            Top = 66
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #21150#20844#30005#35805
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object lab_MOBILE: TRzLabel
-            Left = 1
-            Top = 91
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #31227#21160#30005#35805
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object lab_FAMI_TELE: TRzLabel
-            Left = 234
-            Top = 66
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #23478#24237#30005#35805
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object lab_FAMI_ADDR: TRzLabel
-            Left = 1
-            Top = 166
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #32852#31995#22320#22336
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object lab_EMAIL: TRzLabel
-            Left = 1
-            Top = 116
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #30005#23376#37038#31665
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
           object lab_DIMI_DATE: TRzLabel
-            Left = 234
-            Top = 41
+            Left = 235
+            Top = 66
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -363,7 +273,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           end
           object labIDN_TYPE: TRzLabel
             Left = 1
-            Top = 16
+            Top = 41
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -377,8 +287,8 @@ inherited frmUsersInfo: TfrmUsersInfo
             ParentFont = False
           end
           object LabID_NUMBER: TRzLabel
-            Left = 234
-            Top = 16
+            Left = 1
+            Top = 66
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -391,14 +301,199 @@ inherited frmUsersInfo: TfrmUsersInfo
             Font.Style = []
             ParentFont = False
           end
-          object RzLabel8: TRzLabel
-            Left = 234
-            Top = 91
+          object labBIRTHDAY: TRzLabel
+            Left = 235
+            Top = 16
             Width = 100
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = 'QQ'#21495#30721
+            Caption = #20986#29983#26085#26399
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object labDEGREES: TRzLabel
+            Left = 1
+            Top = 16
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #23398#21382
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object edtREMARK: TcxMemo
+            Left = 106
+            Top = 87
+            Width = 355
+            Height = 68
+            TabOrder = 4
+          end
+          object edtWORK_DATE: TcxDateEdit
+            Left = 340
+            Top = 36
+            Width = 121
+            Height = 20
+            TabOrder = 2
+          end
+          object edtDIMI_DATE: TcxDateEdit
+            Left = 340
+            Top = 61
+            Width = 121
+            Height = 20
+            TabOrder = 3
+          end
+          object edtID_NUMBER: TcxTextEdit
+            Left = 106
+            Top = 61
+            Width = 121
+            Height = 20
+            Properties.OnChange = edt_USER_NAMEPropertiesChange
+            TabOrder = 1
+          end
+          object edtIDN_TYPE: TcxComboBox
+            Left = 106
+            Top = 36
+            Width = 121
+            Height = 20
+            TabOrder = 0
+          end
+          object edtBIRTHDAY: TcxDateEdit
+            Left = 340
+            Top = 11
+            Width = 121
+            Height = 20
+            TabOrder = 5
+          end
+          object edtDEGREES: TcxComboBox
+            Left = 106
+            Top = 11
+            Width = 121
+            Height = 20
+            TabOrder = 6
+          end
+        end
+      end
+      object TabSheet2: TRzTabSheet
+        Color = clWhite
+        Caption = #32852#31995#20449#24687
+        object RzPanel1: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 515
+          Height = 160
+          Align = alClient
+          BorderOuter = fsButtonUp
+          BorderColor = clWhite
+          Color = clWhite
+          TabOrder = 0
+          object lab_POSTALCODE: TRzLabel
+            Left = 49
+            Top = 96
+            Width = 52
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #37038#25919#32534#30721
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object lab_OFFI_TELE: TRzLabel
+            Left = 1
+            Top = 72
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #21150#20844#30005#35805
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object lab_MOBILE: TRzLabel
+            Left = 1
+            Top = 47
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #25163#26426
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object lab_FAMI_TELE: TRzLabel
+            Left = 1
+            Top = 22
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #23478#24237#30005#35805
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object lab_FAMI_ADDR: TRzLabel
+            Left = 1
+            Top = 121
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #32852#31995#22320#22336
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object lab_EMAIL: TRzLabel
+            Left = 235
+            Top = 97
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #30005#23376#37038#31665
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel8: TRzLabel
+            Left = 235
+            Top = 22
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = 'QQ'
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -407,8 +502,8 @@ inherited frmUsersInfo: TfrmUsersInfo
             ParentFont = False
           end
           object Lab_MSN: TRzLabel
-            Left = 234
-            Top = 116
+            Left = 235
+            Top = 47
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -423,7 +518,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           end
           object lab_MM: TRzLabel
             Left = 283
-            Top = 140
+            Top = 71
             Width = 52
             Height = 12
             Alignment = taRightJustify
@@ -436,112 +531,76 @@ inherited frmUsersInfo: TfrmUsersInfo
             Font.Style = []
             ParentFont = False
           end
-          object edtREMARK: TcxMemo
-            Left = 106
-            Top = 187
-            Width = 355
-            Height = 68
-            TabOrder = 13
-          end
           object edtPOSTALCODE: TcxTextEdit
             Left = 106
-            Top = 136
+            Top = 92
             Width = 121
             Height = 20
-            TabOrder = 10
+            TabOrder = 0
           end
           object edtOFFI_TELE: TcxTextEdit
             Left = 106
-            Top = 61
+            Top = 67
             Width = 121
             Height = 20
-            TabOrder = 4
+            TabOrder = 1
           end
           object edtMOBILE: TcxTextEdit
             Left = 106
-            Top = 86
-            Width = 121
-            Height = 20
-            TabOrder = 6
-          end
-          object edtFAMI_TELE: TcxTextEdit
-            Left = 340
-            Top = 61
-            Width = 121
-            Height = 20
-            TabOrder = 5
-          end
-          object edtFAMI_ADDR: TcxTextEdit
-            Left = 106
-            Top = 162
-            Width = 237
-            Height = 20
-            TabOrder = 12
-          end
-          object edtEMAIL: TcxTextEdit
-            Left = 106
-            Top = 111
-            Width = 121
-            Height = 20
-            TabOrder = 8
-          end
-          object edtWORK_DATE: TcxDateEdit
-            Left = 106
-            Top = 36
+            Top = 42
             Width = 121
             Height = 20
             TabOrder = 2
           end
-          object edtDIMI_DATE: TcxDateEdit
-            Left = 340
-            Top = 36
+          object edtFAMI_TELE: TcxTextEdit
+            Left = 106
+            Top = 17
             Width = 121
             Height = 20
             TabOrder = 3
           end
-          object edtID_NUMBER: TcxTextEdit
+          object edtFAMI_ADDR: TcxTextEdit
+            Left = 106
+            Top = 117
+            Width = 355
+            Height = 20
+            TabOrder = 4
+          end
+          object edtEMAIL: TcxTextEdit
             Left = 340
-            Top = 11
+            Top = 92
             Width = 121
             Height = 20
-            Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 1
+            TabOrder = 5
           end
           object edtQQ: TcxTextEdit
             Left = 340
-            Top = 86
+            Top = 17
+            Width = 121
+            Height = 20
+            Properties.OnChange = edt_USER_NAMEPropertiesChange
+            TabOrder = 6
+          end
+          object edtMSN: TcxTextEdit
+            Left = 340
+            Top = 42
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 7
           end
-          object edtMSN: TcxTextEdit
-            Left = 340
-            Top = 111
-            Width = 121
-            Height = 20
-            Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 9
-          end
-          object edtIDN_TYPE: TcxComboBox
-            Left = 106
-            Top = 11
-            Width = 121
-            Height = 20
-            TabOrder = 0
-          end
           object edtMM: TcxTextEdit
             Left = 340
-            Top = 136
+            Top = 67
             Width = 121
             Height = 20
-            TabOrder = 11
+            TabOrder = 8
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 405
+      Top = 314
       Width = 519
       Height = 32
       BorderColor = clWhite
@@ -604,14 +663,14 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtACCOUNT: TcxTextEdit
       Left = 113
-      Top = 6
+      Top = 12
       Width = 121
       Height = 20
       TabOrder = 1
     end
     object edtUSER_NAME: TcxTextEdit
       Left = 113
-      Top = 31
+      Top = 37
       Width = 121
       Height = 20
       Properties.OnChange = edt_USER_NAMEPropertiesChange
@@ -619,7 +678,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtUSER_SPELL: TcxTextEdit
       Left = 346
-      Top = 31
+      Top = 37
       Width = 121
       Height = 20
       Enabled = False
@@ -627,7 +686,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtSHOP_ID: TzrComboBoxList
       Left = 346
-      Top = 86
+      Top = 94
       Width = 121
       Height = 20
       Properties.AutoSelect = False
@@ -669,7 +728,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtDUTY_IDS: TzrComboBoxList
       Left = 113
-      Top = 86
+      Top = 94
       Width = 121
       Height = 20
       Properties.AutoSelect = False
@@ -704,7 +763,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtSEX: TRadioGroup
       Left = 114
-      Top = 50
+      Top = 57
       Width = 150
       Height = 33
       Columns = 3
@@ -716,7 +775,7 @@ inherited frmUsersInfo: TfrmUsersInfo
     end
     object edtDEPT_ID: TzrComboBoxList
       Left = 346
-      Top = 58
+      Top = 66
       Width = 121
       Height = 20
       Properties.AutoSelect = False

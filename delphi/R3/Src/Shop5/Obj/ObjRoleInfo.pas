@@ -52,9 +52,12 @@ begin
   try
     try
       tmp:=TZQuery.Create(nil);
-      tmp.Close;
-      tmp.SQL.Text:='Select Count(*) as ReSum from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+
-           ' and '';''+ROLE_IDS+'';'' like ''%;''+:ROLE_ID+'';%''  ';
+      Str:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') ';
+      case AGlobal.iDbType of
+       0:   Str:=Str+' and '',''+ ROLE_IDS +'','' like ''%,''+ :ROLE_ID +'',%''  ';
+       4,5: Str:=Str+' and '',''|| ROLE_IDS ||'','' like ''%,''|| :ROLE_ID ||'',%''  ';
+      end;
+      tmp.SQL.Text:=Str;
       tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then

@@ -117,7 +117,7 @@ begin
         raise Exception.Create('职务'+Params.ParamByName('DUTY_NAME').asString+'有下级职务不能删除！');
       tmp.Close;
       tmp.SQL.Text:='Select Count(*) as ReSum From CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and '+
-           ' '';''+DUTY_IDS+'';'' Like '';''+:DUTY_ID+'';'' ';
+           ' '',''+DUTY_IDS+'','' Like ''%,''+:DUTY_ID+'',%'' ';
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('职务'+Params.ParamByName('DUTY_NAME').asString+'有用户使用不能删除！');

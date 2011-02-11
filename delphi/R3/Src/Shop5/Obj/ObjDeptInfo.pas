@@ -44,10 +44,10 @@ begin
   else OldIDLen:=InttoStr(Length(OldLEVEL_ID));  
 
   case iDbType of
-    0: Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID + SubString(LEVEL_ID,'+OldIDLen+'+1,100) '+
-         ' Where TENANT_ID=:OLD_TENANT_ID and Left(LEVEL_ID,'+OldIDLen+')=:OLD_LEVEL_ID ';
-    5: Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID || SubStr(LEVEL_ID,'+OldIDLen+'+1,100) '+
-         ' Where TENANT_ID=:OLD_TENANT_ID and SubStr(LEVEL_ID,1,'+OldIDLen+')=:OLD_LEVEL_ID ';
+   0:   Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID + SubString(LEVEL_ID,'+OldIDLen+'+1,100) '+
+           ' Where TENANT_ID=:OLD_TENANT_ID and Left(LEVEL_ID,'+OldIDLen+')=:OLD_LEVEL_ID ';
+   4,5: Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID || SubStr(LEVEL_ID,'+OldIDLen+'+1,100) '+
+           ' Where TENANT_ID=:OLD_TENANT_ID and SubStr(LEVEL_ID,1,'+OldIDLen+')=:OLD_LEVEL_ID ';
   end;
 end;
 
@@ -73,9 +73,9 @@ begin
   KeyFields:='DEPT_ID';
   //初始化查询
   case iDbType of
-   0:Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
+   0:   Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
           ' From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
-   5:Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
+   4,5: Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
           ' From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
   end;
   selectSQL.Text:=Str;
@@ -108,24 +108,24 @@ begin
     tmp:=TZQuery.Create(nil);
     try
       vLen:=InttoStr(Length(Params.ParamByName('LEVEL_ID').asString));
+      case AGlobal.iDbType of
+       0  : Str:=' and ((LEVEL_ID like :LEVEL_ID + ''%'') and (length(LEVEL_ID)>'+vLen+')) ';
+       4,5: Str:=' and ((LEVEL_ID like :LEVEL_ID ||''%'') and (length(LEVEL_ID)>'+vLen+')) ';
+      end;
       tmp.Close;
-      tmp.SQL.Text:='select Count(*) as ReSum From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+
-                    ' and ((LEVEL_ID like :LEVEL_ID+''%'') and (length(LEVEL_ID)>'+vLen+')) ';
-      if Params<>nil then
-        tmp.Params.AssignValues(Params);
+      tmp.SQL.Text:='select Count(*) as ReSum From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Str;
+      if Params<>nil then tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('部门'+Params.ParamByName('DEPT_NAME').asString+'有下级部门不能删除！');
       tmp.Close;                             
-      tmp.SQL.Text:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and '+
-                    ' COMM not in (''02'',''12'') and DEPT_ID=:DEPT_ID ';
+      tmp.SQL.Text:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and DEPT_ID=:DEPT_ID ';
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('部门'+Params.ParamByName('DEPT_NAME').asString+'有用户使用不能删除！');
 
-      Str:='Update CA_DEPT_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-           ' where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
-      AGlobal.ExecSQL(Str);
+      Str:='Update CA_DEPT_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
+      AGlobal.ExecSQL(Str,Params);
       AGlobal.CommitTrans;
     finally
       tmp.Free;
@@ -145,18 +145,39 @@ end;
 function TDeptInfoSort.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
   Qry: TZQuery;
-  Str,vlen,MoveKind,FirstLEVEL_ID: string;
+  Str,TopStr,vlen,MoveKind,FirstLEVEL_ID: string;
 begin
-  Result:=False;   
+  Result:=False;
   vlen:=InttoStr(Length(Params.ParamByName('OLD_LEVEL_ID').AsString));
   MoveKind:=trim(UpperCase(Params.ParamByName('movekind').AsString));
-  if (MoveKind='FIRST') or (MoveKind='PRIOR') then
-    Str:='select LEVEL_ID From CA_DEPT_INFO Where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID<:OLD_LEVEL_ID and Length(LEVEL_ID)='+vlen+' Order by LEVEL_ID Desc '
-  else
-    Str:='select LEVEL_ID From CA_DEPT_INFO Where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID>:OLD_LEVEL_ID and Length(LEVEL_ID)='+vlen+' Order by LEVEL_ID  ';
-
-  if(MoveKind='NEXT') or (MoveKind='PRIOR') then
-    Str:=Str+' limit 2 ';
+  //查询出需要修改的树型的记录:
+  case AGlobal.iDbType of
+   0: //SQL Server
+    begin
+      if MoveKind='FIRST' then
+        Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID<:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID desc '
+      else if MoveKind='PRIOR' then
+        Str:='select top 2 LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID<:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID desc '
+      else if MoveKind='NEXT' then
+        Str:='select top 2 LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID>:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID  '
+      else if MoveKind='LAST' then
+        Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID>:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID  ';
+    end;
+   4: //DB2
+    begin
+      Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and length(LEVEL_ID)='+vlen+' ';
+      if (MoveKind='FIRST') or (MoveKind='PRIOR') then Str:=Str+' LEVEL_ID<:OLD_LEVEL_ID Order by LEVEL_ID desc '
+      else Str:=Str+' LEVEL_ID>:OLD_LEVEL_ID order by LEVEL_ID ';
+      if(MoveKind='NEXT') or (MoveKind='PRIOR') then Str:=Str+' fetch first 2 rows only ';
+    end;
+   5: //SQLITE
+    begin
+      Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and length(LEVEL_ID)='+vlen+' ';
+      if (MoveKind='FIRST') or (MoveKind='PRIOR') then Str:=Str+' LEVEL_ID<:OLD_LEVEL_ID Order by LEVEL_ID desc '
+      else Str:=Str+' LEVEL_ID>:OLD_LEVEL_ID order by LEVEL_ID ';
+      if(MoveKind='NEXT') or (MoveKind='PRIOR') then Str:=Str+' limit 2 ';
+    end;
+  end;
 
   AGlobal.BeginTrans;
   try
@@ -164,15 +185,21 @@ begin
       Qry:=TZQuery.Create(nil);
       Qry.Close;
       Qry.SQL.Text:=Str;
-      Qry.Params.AssignValues(Params); 
+      Qry.Params.AssignValues(Params);  
       AGlobal.Open(Qry);
       if not Qry.Active then Exit;
       if Qry.RecordCount=0 then Exit;
-      //先将当前的选中的记录给设置成: _开头的
+      {-------------------------------------------------------------------------
+       说明: (1)先将当前的选中的LEVEl_ID改成：'_LEVEL_ID'
+             (2)按取出数据执行循环将逐条修改上一条的LEVEL_ID;
+             (3)循环结束后，将[_LEVEL_ID]改成 循环后最后一条的LEVEL_ID
+       -------------------------------------------------------------------------}
+      //(1)、先将当前的选中的记录给设置成: _开头的
       FirstLEVEL_ID:=trim(Params.ParamByName('LEVEL_ID').AsString);
       Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,Params.ParamByName('OLD_LEVEL_ID').AsString);
       AGlobal.ExecSQL(Str,Params);
-      //循环执行
+
+      //(2)、循环执行[修改LVEVLEID]
       Params.ParamByName('LEVEL_ID').Value:=Params.ParamByName('OLD_LEVEL_ID').Value;
       while not Qry.Eof do
       begin
@@ -181,7 +208,7 @@ begin
         AGlobal.ExecSQL(Str,Params);
         Qry.Next;
       end;
-      //把刚才修改“_”开头的给改正确
+      //(3)、把刚才修改“_”开头的给改正确
       Params.ParamByName('LEVEL_ID').AsString:=Params.ParamByName('OLD_LEVEL_ID').AsString;
       Params.ParamByName('OLD_LEVEL_ID').AsString:=FirstLEVEL_ID;
       Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,FirstLEVEL_ID);

@@ -249,7 +249,7 @@ begin
     end;
   end;
   drpDeptDuty.Close;
-  drpDeptDuty.SQL.Text:='select * from CA_DUTY_INFO where TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+
+  drpDeptDuty.SQL.Text:='select * from CA_DUTY_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+
                         ' and COMM not in (''02'',''12'') '+Cnd;
   Factor.Open(drpDeptDuty);
 end;

@@ -5,7 +5,6 @@ inherited frmDutyInfoList: TfrmDutyInfoList
   Height = 521
   Caption = #32844#21153#26723#26696#31649#29702
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -196,19 +195,11 @@ inherited frmDutyInfoList: TfrmDutyInfoList
                     Width = 31
                   end
                   item
-                    Alignment = taRightJustify
-                    EditButtons = <>
-                    FieldName = 'DUTY_ID'
-                    Footers = <>
-                    Title.Caption = #32844#21153#20195#30721
-                    Width = 54
-                  end
-                  item
                     EditButtons = <>
                     FieldName = 'DUTY_NAME'
                     Footers = <>
                     Title.Caption = #32844#21153#21517#31216
-                    Width = 109
+                    Width = 133
                   end
                   item
                     Alignment = taRightJustify
@@ -216,7 +207,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
                     FieldName = 'DUTY_SPELL'
                     Footers = <>
                     Title.Caption = #25340#38899#30721
-                    Width = 59
+                    Width = 65
                   end
                   item
                     EditButtons = <>

@@ -46,8 +46,8 @@ inherited frmClientInfo: TfrmClientInfo
             ParentFont = False
           end
           object RzLabel3: TRzLabel
-            Left = 267
-            Top = 16
+            Left = -9
+            Top = 62
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -92,7 +92,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel17: TRzLabel
             Left = -9
-            Top = 62
+            Top = 85
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -106,7 +106,7 @@ inherited frmClientInfo: TfrmClientInfo
             ParentFont = False
           end
           object RzLabel18: TRzLabel
-            Left = -9
+            Left = 267
             Top = 85
             Width = 100
             Height = 12
@@ -122,7 +122,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel19: TRzLabel
             Left = 267
-            Top = 39
+            Top = 16
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -137,7 +137,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel20: TRzLabel
             Left = 267
-            Top = 62
+            Top = 39
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -152,7 +152,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel21: TRzLabel
             Left = 267
-            Top = 85
+            Top = 62
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -166,103 +166,73 @@ inherited frmClientInfo: TfrmClientInfo
             ParentFont = False
           end
           object edtINVOICE_FLAG: TcxComboBox
-            Left = 372
-            Top = 12
+            Left = 96
+            Top = 58
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 4
+            TabOrder = 2
           end
           object edtACCOUNT: TcxTextEdit
             Left = 96
             Top = 35
             Width = 170
             Height = 20
-            TabOrder = 1
+            TabOrder = 0
           end
           object edtREMARK: TcxMemo
             Left = 96
             Top = 105
             Width = 398
             Height = 67
-            TabOrder = 8
+            TabOrder = 7
           end
           object edtIC_CARDNO: TcxTextEdit
             Left = 96
-            Top = 58
-            Width = 170
-            Height = 20
-            TabOrder = 2
-          end
-          object edtBALANCE: TcxTextEdit
-            Left = 96
             Top = 81
-            Width = 121
+            Width = 170
             Height = 20
             TabOrder = 3
           end
+          object edtBALANCE: TcxTextEdit
+            Left = 372
+            Top = 81
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 1
+          end
           object edtACCU_INTEGRAL: TcxTextEdit
+            Left = 372
+            Top = 12
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 4
+          end
+          object edtRULE_INTEGRAL: TcxTextEdit
             Left = 372
             Top = 35
             Width = 121
             Height = 20
+            Enabled = False
             TabOrder = 5
           end
-          object edtRULE_INTEGRAL: TcxTextEdit
+          object edtINTEGRAL: TcxTextEdit
             Left = 372
             Top = 58
             Width = 121
             Height = 20
+            Enabled = False
             TabOrder = 6
           end
-          object edtINTEGRAL: TcxTextEdit
-            Left = 372
-            Top = 81
-            Width = 121
-            Height = 20
-            TabOrder = 7
-          end
-          object edtBANK_ID: TzrComboBoxList
+          object edtBANK_ID: TcxComboBox
             Left = 96
             Top = 12
             Width = 121
             Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            TabOrder = 0
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-            KeyField = 'CODE_ID'
-            ListField = 'CODE_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CODE_NAME'
-                Footers = <>
-                Title.Caption = #23610#30721#32452
-                Width = 121
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CODE_SPELL'
-                Footers = <>
-                Visible = False
-              end>
-            DropWidth = 176
-            DropHeight = 130
-            ShowTitle = False
-            AutoFitColWidth = True
-            OnAddClick = edtSORT_IDAddClick
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew]
-            DropListStyle = lsFixed
-            OnSaveValue = edtSORT_IDSaveValue
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 8
           end
         end
       end
@@ -759,8 +729,8 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel8: TRzLabel
-        Left = -9
-        Top = 76
+        Left = 265
+        Top = 53
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -774,8 +744,8 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel16: TRzLabel
-        Left = 265
-        Top = 53
+        Left = -9
+        Top = 76
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -912,16 +882,16 @@ inherited frmClientInfo: TfrmClientInfo
         TabOrder = 0
       end
       object edtSETTLE_CODE: TcxComboBox
-        Left = 97
-        Top = 72
+        Left = 371
+        Top = 49
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 5
       end
       object edtPRICE_ID: TcxComboBox
-        Left = 371
-        Top = 49
+        Left = 97
+        Top = 72
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList

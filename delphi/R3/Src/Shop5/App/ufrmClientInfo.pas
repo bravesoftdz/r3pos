@@ -78,7 +78,7 @@ type
     edtSHOP_ID: TzrComboBoxList;
     RzLabel23: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
-    edtBANK_ID: TzrComboBoxList;
+    edtBANK_ID: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -125,6 +125,7 @@ begin
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
   edtSETTLE_CODE.ItemIndex:=0;
   edtPRICE_ID.ItemIndex := 0;
+  edtBANK_ID.ItemIndex := 0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSORT_ID.KeyValue:='#';
@@ -158,8 +159,6 @@ begin
     edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
-    edtBANK_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BANK_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('BANK_ID').AsString);
-    edtBANK_ID.KeyValue := Aobj.FieldByName('BANK_ID').AsString;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -323,12 +322,12 @@ begin
   edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  edtBANK_ID.DataSet := Global.GetZQueryFromName('PUB_BANK_INFO');  
   {ccid:=IntToStr(Global.SHOP_ID);
   if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
     ccid:=ccid
   else
     ccid:=IntToStr(Global.SHOP_ID);}
+
   try
     Tmp := TZQuery.Create(nil);
     Tmp.Close;
@@ -343,8 +342,20 @@ begin
         edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
         Tmp.Next;
       end;
+
+    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
+    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
+    Tmp.First;
+    while not Tmp.Eof do
+      begin
+        AObj_ := TRecord_.Create;
+        AObj_.ReadFromDataSet(Tmp);
+        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
+        Tmp.Next;
+      end;
+
   finally
-    Tmp.Free;
+    //Tmp.Free;
   end;
 end;
 

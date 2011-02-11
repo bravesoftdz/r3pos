@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 378
-  Top = 82
+  Left = 274
+  Top = 116
   Height = 594
   Width = 692
   object SYS_DEFINE: TZQuery
@@ -174,7 +174,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 240
-    Top = 216
+    Top = 224
     ParamData = <
       item
         DataType = ftUnknown
@@ -188,15 +188,17 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select A.GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNI' +
-        'TS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
-      '       ifnull(B.NEW_INPRICE,A.NEW_INPRICE) as NEW_INPRICE,'
+        'select A.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
+        'ME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
       
-        '       ifnull(B.NEW_INPRICE1,A.NEW_INPRICE*A.SMALLTO_CALC) as NE' +
-        'W_INPRICE1,'
+        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE else B' +
+        '.NEW_INPRICE end as NEW_INPRICE,'
       
-        '       ifnull(B.NEW_INPRICE2,A.NEW_INPRICE*A.BIGTO_CALC) as NEW_' +
-        'INPRICE2,'
+        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE*A.SMAL' +
+        'LTO_CALC else B.NEW_INPRICE1 end as NEW_INPRICE1,'
+      
+        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE*A.BIGT' +
+        'O_CALC else B.NEW_INPRICE2 end as NEW_INPRICE2,'
       '       NEW_OUTPRICE,'
       '       NEW_OUTPRICE1,'
       '       NEW_OUTPRICE2,'
@@ -263,8 +265,9 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
-        'LL,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RATE,PRICE_ID'
+        'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,LINKMAN,CL' +
+        'IENT_SPELL,ADDRESS,TELEPHONE2,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG' +
+        ',TAX_RATE,PRICE_ID'
       ' from VIW_CUSTOMER'
       'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'2'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')
@@ -552,8 +555,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 488
-    Top = 288
+    Left = 512
+    Top = 48
     ParamData = <
       item
         DataType = ftUnknown
@@ -576,8 +579,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 488
-    Top = 360
+    Left = 512
+    Top = 120
     ParamData = <
       item
         DataType = ftUnknown
@@ -622,5 +625,67 @@ inherited ShopGlobal: TShopGlobal
     Params = <>
     Left = 240
     Top = 478
+  end
+  object PUB_SALE_STYLE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 512
+    Top = 192
+  end
+  object PUB_BANK_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE=7 and TENANT_ID in (0,:TENANT_ID ) and COMM not in ('#39'02'#39',' +
+        #39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 512
+    Top = 256
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_CLIENTSORT: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
+        'Q_NO '
+      'union all'
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO wh' +
+        'ere CODE_TYPE=5 and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39 +
+        '12'#39')'
+      'order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 512
+    Top = 320
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
   end
 end

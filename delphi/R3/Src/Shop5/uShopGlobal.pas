@@ -35,6 +35,9 @@ type
     PUB_SIZE_INFO: TZQuery;
     PUB_BARCODE: TZQuery;
     PUB_IDNTYPE_INFO: TZQuery;
+    PUB_SALE_STYLE: TZQuery;
+    PUB_BANK_INFO: TZQuery;
+    PUB_CLIENTSORT: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

@@ -529,9 +529,9 @@ begin
     ParamValue := Params.FindParam(Config.ParamNames[I]);
     ParamName := Config.ParamNames[I];
     OldParam := False;{Seqparam:=False;}
-    if StrLIComp(PChar(ParamName), 'NEW_', 4) = 0 then begin
-      ParamName := Copy(ParamName, 5, Length(ParamName) - 4)
-    end else
+//    if StrLIComp(PChar(ParamName), 'NEW_', 4) = 0 then begin
+//      ParamName := Copy(ParamName, 5, Length(ParamName) - 4)
+//    end else
     if StrLIComp(PChar(ParamName), 'OLD_', 4) = 0 then begin
       ParamName := Copy(ParamName, 5, Length(ParamName) - 4);
       OldParam := True;

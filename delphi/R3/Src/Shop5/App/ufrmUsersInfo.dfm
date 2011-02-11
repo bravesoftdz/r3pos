@@ -214,9 +214,11 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 127
       Width = 519
       Height = 187
+      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
+      TabIndex = 1
       TabOrder = 7
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -336,21 +338,21 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 87
             Width = 355
             Height = 68
-            TabOrder = 4
+            TabOrder = 6
           end
           object edtWORK_DATE: TcxDateEdit
             Left = 340
             Top = 36
             Width = 121
             Height = 20
-            TabOrder = 2
+            TabOrder = 4
           end
           object edtDIMI_DATE: TcxDateEdit
             Left = 340
             Top = 61
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 5
           end
           object edtID_NUMBER: TcxTextEdit
             Left = 106
@@ -358,28 +360,28 @@ inherited frmUsersInfo: TfrmUsersInfo
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 1
+            TabOrder = 2
           end
           object edtIDN_TYPE: TcxComboBox
             Left = 106
             Top = 36
             Width = 121
             Height = 20
-            TabOrder = 0
+            TabOrder = 1
           end
           object edtBIRTHDAY: TcxDateEdit
             Left = 340
             Top = 11
             Width = 121
             Height = 20
-            TabOrder = 5
+            TabOrder = 3
           end
           object edtDEGREES: TcxComboBox
             Left = 106
             Top = 11
             Width = 121
             Height = 20
-            TabOrder = 6
+            TabOrder = 0
           end
         end
       end
@@ -536,28 +538,28 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 92
             Width = 121
             Height = 20
-            TabOrder = 0
+            TabOrder = 3
           end
           object edtOFFI_TELE: TcxTextEdit
             Left = 106
             Top = 67
             Width = 121
             Height = 20
-            TabOrder = 1
+            TabOrder = 2
           end
           object edtMOBILE: TcxTextEdit
             Left = 106
             Top = 42
             Width = 121
             Height = 20
-            TabOrder = 2
+            TabOrder = 1
           end
           object edtFAMI_TELE: TcxTextEdit
             Left = 106
             Top = 17
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 0
           end
           object edtFAMI_ADDR: TcxTextEdit
             Left = 106
@@ -571,7 +573,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 92
             Width = 121
             Height = 20
-            TabOrder = 5
+            TabOrder = 8
           end
           object edtQQ: TcxTextEdit
             Left = 340
@@ -579,7 +581,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 6
+            TabOrder = 5
           end
           object edtMSN: TcxTextEdit
             Left = 340
@@ -587,14 +589,14 @@ inherited frmUsersInfo: TfrmUsersInfo
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 7
+            TabOrder = 6
           end
           object edtMM: TcxTextEdit
             Left = 340
             Top = 67
             Width = 121
             Height = 20
-            TabOrder = 8
+            TabOrder = 7
           end
         end
       end
@@ -666,7 +668,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 12
       Width = 121
       Height = 20
-      TabOrder = 1
+      TabOrder = 0
     end
     object edtUSER_NAME: TcxTextEdit
       Left = 113
@@ -674,7 +676,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Width = 121
       Height = 20
       Properties.OnChange = edt_USER_NAMEPropertiesChange
-      TabOrder = 2
+      TabOrder = 1
     end
     object edtUSER_SPELL: TcxTextEdit
       Left = 346
@@ -682,7 +684,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Width = 121
       Height = 20
       Enabled = False
-      TabOrder = 0
+      TabOrder = 2
     end
     object edtSHOP_ID: TzrComboBoxList
       Left = 346
@@ -737,7 +739,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           Default = True
         end>
       Properties.ReadOnly = True
-      TabOrder = 5
+      TabOrder = 4
       InGrid = False
       KeyValue = Null
       FilterFields = 'DUTY_NAME;DUTY_ID;DUTY_SPELL'
@@ -784,7 +786,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           Default = True
         end>
       Properties.ReadOnly = True
-      TabOrder = 4
+      TabOrder = 5
       InGrid = False
       KeyValue = Null
       FilterFields = 'DEPT_ID;DEPT_NAME;DEPT_SPELL'

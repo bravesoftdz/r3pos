@@ -742,7 +742,7 @@ begin
           Factory.Fields[i].NewValue := FNewRowAccessor.GetTimestamp(i+1, WasNull);
       end;
       if WasNull then Factory.Fields[i].NewValue := null;
-      if FNewRowAccessor.RowBuffer.UpdateType = utModified then
+      if FNewRowAccessor.RowBuffer.UpdateType in [utModified,utDeleted] then
          begin
             case FNewRowAccessor.GetColumnType(i+1)  of
               stBoolean:

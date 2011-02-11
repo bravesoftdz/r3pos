@@ -69,10 +69,8 @@ type
     procedure Sort_PriorClick(Sender: TObject);
     procedure Sort_NextClick(Sender: TObject);
     procedure Sort_LastClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
   private
-    locked, IsCompany : boolean;  
-    ftParams: TftParamList;
+    locked, IsCompany : boolean;
     procedure DeptTreeSort(SortType: string); //职务树型排序
   public
     procedure AddRecord(AObj:TRecord_);
@@ -100,36 +98,39 @@ begin
   try
     if (rzTree.Selected <> nil) and (rzTree.Selected.Level > 0 ) then
     begin
-      ftParams.ParamByName('LEVEL_ID').AsString:=TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
       vLen:=Length(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString);
       if vLen>0 then
       begin
         case Factor.iDbType of
-         0: str:=' and substring(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
-         4: str:=' '; //and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
-         5: str:=' and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
+         0:   str:=' and substring(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
+         4,5: str:=' and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
         end;
       end;
     end;
 
     if edtKey.Text<>'' then
     begin
-      ftParams.ParamByName('KEYVALUE').AsString:=trim(edtKEY.Text);
       case Factor.iDbType of
-       0: str:=' and (DEPT_ID like ''%''+:KEYVALUE+''%'' or DEPT_NAME like ''%''+:KEYVALUE+''%'' or DEPT_SPELL like ''%''+:KEYVALUE+''%'') ';
-       5: str:=' and (DEPT_ID like ''%''||:KEYVALUE||''%'' or DEPT_NAME like ''%''||:KEYVALUE||''%'' or DEPT_SPELL like ''%''||:KEYVALUE||''%'') ';
+       0:   str:=' and (DEPT_ID like ''%''+:KEYVALUE+''%'' or DEPT_NAME like ''%''+:KEYVALUE+''%'' or DEPT_SPELL like ''%''+:KEYVALUE+''%'') ';
+       4,5: str:=' and (DEPT_ID like ''%''||:KEYVALUE||''%'' or DEPT_NAME like ''%''||:KEYVALUE||''%'' or DEPT_SPELL like ''%''||:KEYVALUE||''%'') ';
       end;
     end;
-    
+
     case Factor.iDbType of
-     0: SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
-             'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
-     5: SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
-             'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
+     0:   SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
+                'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
+     4,5: SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
+                'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
     end;
     cdsBrowser.Close;
     cdsBrowser.SQL.Text:=SQL;
-    cdsBrowser.Params.AssignValues(ftParams);
+    //设置参数:
+    if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
+      cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    if cdsBrowser.Params.FindParam('LEVEL_ID')<>nil then
+      cdsBrowser.ParamByName('LEVEL_ID').AsString:=TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
+      cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
     Factor.Open(cdsBrowser);
   finally
   end;
@@ -239,17 +240,15 @@ end;
 procedure TfrmDeptInfoList.edtKeyPropertiesChange(Sender: TObject);
 begin
   inherited;
-  //TZQueyr组件不支持本地模糊查询，Onchange在实时取数据太消耗资源，关闭掉
-  {
-  locked:=True;
+  //TZQueyr组件不支持缓存模糊过滤（Filter），Onchange在实时取数据太消耗资源，关闭掉
+ {locked:=True;
   try
     //前后两次参数值不一样时间才重新刷新
-    if trim(ftParams.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
+    if trim(cdsBrowser.Params.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
     begin
-      ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'' '; //关键字的查询参数值
       if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
       cdsBrowser.Close;
-      cdsBrowser.Params.AssignValues(ftParams);
+      cdsBrowser.Params.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%'' '; //关键字的查询参数值
       Factor.Open(cdsBrowser);
     end;
   finally
@@ -391,10 +390,6 @@ end;
 
 procedure TfrmDeptInfoList.FormCreate(Sender: TObject);
 begin
-  //创建参数对象:
-  ftParams:=TftParamList.Create(nil);
-  ftParams.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID; 
-
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
@@ -527,12 +522,6 @@ procedure TfrmDeptInfoList.Sort_LastClick(Sender: TObject);
 begin
   inherited;
   DeptTreeSort('LAST');
-end;
-
-procedure TfrmDeptInfoList.FormDestroy(Sender: TObject);
-begin
-  inherited;
-  ftParams.Free;   //释放参数对象
 end;
 
 end.

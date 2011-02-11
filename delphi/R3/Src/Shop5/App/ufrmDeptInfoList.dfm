@@ -5,7 +5,6 @@ inherited frmDeptInfoList: TfrmDeptInfoList
   Height = 521
   Caption = #37096#38376#31649#29702
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -194,14 +193,6 @@ inherited frmDeptInfoList: TfrmDeptInfoList
                     Footers = <>
                     Title.Caption = #24207#21495
                     Width = 31
-                  end
-                  item
-                    Alignment = taRightJustify
-                    EditButtons = <>
-                    FieldName = 'DEPT_ID'
-                    Footers = <>
-                    Title.Caption = #37096#38376#20195#30721
-                    Width = 54
                   end
                   item
                     EditButtons = <>

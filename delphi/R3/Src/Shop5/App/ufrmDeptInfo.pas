@@ -73,7 +73,7 @@ var
 begin
   Open('');
   dbState:=dsInsert;
-  edtDEPT_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DEPT_ID','CA_DEPT_INFO','0000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
+  edtDEPT_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DEPT_ID','CA_DEPT_INFO','000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
 end;
 
 procedure TfrmDeptInfo.Edit(code: string);

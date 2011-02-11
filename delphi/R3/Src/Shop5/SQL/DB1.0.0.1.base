@@ -501,6 +501,10 @@ CREATE TABLE [CA_USERS](
 	[TENANT_ID] int NOT NULL,
     --性别  男\女\保密
 	[SEX] [varchar](4) NULL,
+    --生日 
+	[BIRTHDAY] [varchar] (10) NULL,
+	  --学历
+	[DEGREES] varchar(36) null,
     --手机号
 	[MOBILE] [varchar](11) NULL,
     --办公电话
@@ -583,6 +587,9 @@ CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('8','地区编码','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('11','证件类型','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('12','管理群组','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('13','月均收入','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('14','学历','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('15','职业','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','身份证','SFZ','11','1','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','驾驶证','JSZ','11','2','00',strftime('%s','now','localtime')-1293840000);
@@ -592,6 +599,37 @@ CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','学生证','XSZ','11','2','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','经营许可证','JYXKZ','11','2','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','QT','11','2','00',strftime('%s','now','localtime')-1293840000);
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','1000以下','','13','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','1000-2000','','13','2','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','2000-3000','','13','3','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','3000-4000','','13','4','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','4000-5000','','13','5','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','5000以上','','13','6','00',strftime('%s','now','localtime')-1293840000);
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','小学','XX','14','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','初中','CZ','14','2','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','高中','GZ','14','3','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','专科','ZK','14','4','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','本科','BK','14','5','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','硕士','SS','14','6','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','博士','BS','14','7','00',strftime('%s','now','localtime')-1293840000);
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','金融','XX','15','1','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','地产','CZ','15','2','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','汽车','GZ','15','3','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','IT信息技术','ZK','15','4','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','顾问咨询','BK','15','5','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','媒体出版','SS','15','6','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','事业机关','BS','15','7','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('8','教育培训','BS','15','8','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('9','旅游休闲','BS','15','9','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('10','制造','BS','15','10','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('11','零售','BS','15','11','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('12','能源','BS','15','12','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('13','国际贸易','BS','15','13','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('14','物流','BS','15','14','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','BS','15','99','00',strftime('%s','now','localtime')-1293840000);
 
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100','北京市','BJS','8','1','00',strftime('%s','now','localtime')-1293840000);
  insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100100','北京市.西城区','BJS.XCQ','8','2','00',strftime('%s','now','localtime')-1293840000);
@@ -1417,12 +1455,12 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --企业经营商品分类,自经营分类+连锁分类
 CREATE view [VIW_GOODSSORT]
 as
-select 2 as RELATION_FLAG,0 as RELATION_ID,'自主经营' as RELATION_NAME,[TENANT_ID],[SORT_ID],[LEVEL_ID],[SORT_NAME],[SORT_TYPE],[SORT_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
-from PUB_GOODSSORT
-union all
 select 1 as RELATION_FLAG,B.RELATION_ID,B.RELATION_NAME,C.RELATI_ID as [TENANT_ID],[SORT_ID],A.[LEVEL_ID],[SORT_NAME],[SORT_TYPE],[SORT_SPELL],[SEQ_NO],A.[COMM],A.[TIME_STAMP]
 from PUB_GOODSSORT A,CA_RELATION B,CA_RELATIONS C
 where A.TENANT_ID=B.TENANT_ID and B.RELATION_ID=C.RELATION_ID and C.RELATION_STATUS='2' and C.COMM not in ('02','12');
+union all
+select 2 as RELATION_FLAG,0 as RELATION_ID,'自主经营' as RELATION_NAME,[TENANT_ID],[SORT_ID],[LEVEL_ID],[SORT_NAME],[SORT_TYPE],[SORT_SPELL],[SEQ_NO],[COMM],[TIME_STAMP]
+from PUB_GOODSSORT
 
 --计量单位
 CREATE TABLE [PUB_MEAUNITS] (
@@ -1801,6 +1839,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
 
 CREATE INDEX IX_PUB_CLIENTINFO_TENANT_ID ON PUB_CLIENTINFO(TENANT_ID);
 CREATE INDEX IX_PUB_CLIENTINFO_TIME_STAMP ON PUB_CLIENTINFO(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_PUB_CLIENTINFO_CLIENT_ID ON PUB_CLIENTINFO(CLIENT_ID);
 
 --企业客户+我的供应商+我的经销商
 CREATE VIEW VIW_CLIENTINFO
@@ -1880,6 +1919,14 @@ CREATE TABLE [PUB_CUSTOMER] (
 	[INTEGRAL] [decimal](18, 3) NULL ,
         --可用余额
 	[BALANCE] [decimal](18, 3) NULL ,
+	      --月收入
+	[MONTH_PAY] varchar(36) null,
+	      --学历
+	[DEGREES] varchar(36) null,
+	      --职业
+	[OCCUPATION] varchar(36) null,
+	      --工作单位
+	[JOBUNIT] varchar(50) null,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CUSTOMER_COMM] DEFAULT ('00'),
         --备注
@@ -1891,6 +1938,7 @@ CREATE TABLE [PUB_CUSTOMER] (
 
 CREATE INDEX IX_PUB_CUSTOMER_TENANT_ID ON PUB_CUSTOMER(TENANT_ID);
 CREATE INDEX IX_PUB_CUSTOMER_TIME_STAMP ON PUB_CUSTOMER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_PUB_CUSTOMER_CUST_ID ON PUB_CUSTOMER(CUST_ID);
 
 --所有消费者<会员+企业客户>
 CREATE VIEW VIW_CUSTOMER

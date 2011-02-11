@@ -84,9 +84,9 @@ begin
      str:=' and ( [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
                   ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
-  Cds_Users.SQL.Text:='Select A.USER_ID,A.ACCOUNT,A.ENCODE,A.USER_NAME,A.USER_SPELL,A.PASS_WRD,A.SHOP_ID,A.DEPT_ID,A.DUTY_IDS,A.DUTY_NAMES,A.ROLE_IDS,A.ROLE_NAMES,A.TENANT_ID,'+
-                    'A.SEX,A.MOBILE,A.OFFI_TELE,A.FAMI_TELE,A.EMAIL,A.QQ,A.MSN,A.MM,A.ID_NUMBER,A.IDN_TYPE,A.FAMI_ADDR,A.POSTALCODE,A.WORK_DATE,A.DIMI_DATE,A.REMARK From CA_USERS A '
-                  +' Where TENANT_ID='+ IntToStr(Global.TENANT_ID) + str;
+  Cds_Users.SQL.Text:='Select A.USER_ID,A.ACCOUNT,A.ENCODE,A.USER_NAME,A.USER_SPELL,A.PASS_WRD,A.SHOP_ID,A.DEPT_ID,A.DUTY_IDS,A.DUTY_NAMES,'+
+  'A.ROLE_IDS,A.ROLE_NAMES,A.TENANT_ID,A.BIRTHDAY,A.DEGREES,A.SEX,A.MOBILE,A.OFFI_TELE,A.FAMI_TELE,A.EMAIL,A.QQ,A.MSN,A.MM,A.ID_NUMBER,A.IDN_TYPE,'
+  +'A.FAMI_ADDR,A.POSTALCODE,A.WORK_DATE,A.DIMI_DATE,A.REMARK From CA_USERS A  Where COMM not in (''02'',''12'') and TENANT_ID='+ IntToStr(Global.TENANT_ID) + str;
   Factor.Open(Cds_Users);
 end;
 
@@ -114,7 +114,7 @@ begin
     Params:=TftParamList.Create(nil);
     try
       Params.ParamByName('USER_ID').asString:=Cds_Users.FieldByName('USER_ID').AsString;
-      Params.ParamByName('USER_NAME').asString:=Cds_Users.FieldByName('USER_NAME').AsString;
+      Params.ParamByName('TENANT_ID').asString:=Cds_Users.FieldByName('TENANT_ID').AsString;
       Factor.ExecProc('TUsersDelete',Params);
     finally
       Params.Free;

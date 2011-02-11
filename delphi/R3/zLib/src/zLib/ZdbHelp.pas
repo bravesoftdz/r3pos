@@ -554,10 +554,14 @@ begin
             else
                begin
                  TZQuery(DataSet).UpdateObject := SQLUpdate;
-                 SQLUpdate.DeleteSQL.Text := DeleteSQL.Text;
-                 SQLUpdate.ModifySQL.Text := UpdateSQL.Text;
-                 SQLUpdate.InsertSQL.Text := InsertSQL.Text;
-                 dbHelp.UpdateBatch(DataSet);
+                 try
+                   SQLUpdate.DeleteSQL.Text := DeleteSQL.Text;
+                   SQLUpdate.ModifySQL.Text := UpdateSQL.Text;
+                   SQLUpdate.InsertSQL.Text := InsertSQL.Text;
+                   dbHelp.UpdateBatch(DataSet);
+                 finally
+                   TZQuery(DataSet).UpdateObject := nil;
+                 end;
                end;
           end;
       end;

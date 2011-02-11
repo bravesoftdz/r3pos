@@ -110,63 +110,21 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Top = 68
             Width = 398
             Height = 98
-            TabOrder = 4
+            TabOrder = 3
           end
           object edtTAX_RATE: TcxTextEdit
             Left = 371
             Top = 42
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtACCOUNT: TcxTextEdit
             Left = 94
             Top = 42
             Width = 170
             Height = 20
-            TabOrder = 1
-          end
-          object edtBANK_ID: TzrComboBoxList
-            Left = 94
-            Top = 17
-            Width = 121
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
             TabOrder = 0
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-            KeyField = 'CODE_ID'
-            ListField = 'CODE_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CODE_NAME'
-                Footers = <>
-                Title.Caption = #23610#30721#32452
-                Width = 121
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CODE_SPELL'
-                Footers = <>
-                Visible = False
-              end>
-            DropWidth = 176
-            DropHeight = 130
-            ShowTitle = False
-            AutoFitColWidth = True
-            OnAddClick = edtSORT_IDAddClick
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew]
-            DropListStyle = lsFixed
-            OnSaveValue = edtSORT_IDSaveValue
           end
           object edtINVOICE_FLAG: TcxComboBox
             Left = 371
@@ -174,7 +132,15 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 2
+            TabOrder = 1
+          end
+          object edtBANK_ID: TcxComboBox
+            Left = 94
+            Top = 17
+            Width = 121
+            Height = 20
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 4
           end
         end
       end

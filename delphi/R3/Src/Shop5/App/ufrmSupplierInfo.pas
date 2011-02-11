@@ -43,7 +43,6 @@ type
     RzLabel9: TRzLabel;
     RzLabel10: TRzLabel;
     edtACCOUNT: TcxTextEdit;
-    edtBANK_ID: TzrComboBoxList;
     RzLabel3: TRzLabel;
     edtINVOICE_FLAG: TcxComboBox;
     labLINKMAN: TRzLabel;
@@ -68,6 +67,7 @@ type
     edtHOMEPAGE: TcxTextEdit;
     RzLabel23: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
+    edtBANK_ID: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -146,8 +146,6 @@ begin
     edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
-    edtBANK_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BANK_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('BANK_ID').AsString);
-    edtBANK_ID.KeyValue := Aobj.FieldByName('BANK_ID').AsString;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -299,6 +297,9 @@ begin
   inherited;
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
   Aobj := TRecord_.Create;
+  edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
+  edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');  
   {ccid:=IntToStr(Global.SHOP_ID);
   if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
     ccid:=ccid
@@ -318,8 +319,20 @@ begin
         edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
         Tmp.Next;
       end;
+
+    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
+    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
+    Tmp.First;
+    while not Tmp.Eof do
+      begin
+        AObj_ := TRecord_.Create;
+        AObj_.ReadFromDataSet(Tmp);
+        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
+        Tmp.Next;
+      end;
+
   finally
-    Tmp.Free;
+    //Tmp.Free;
   end;
 end;
 
@@ -360,10 +373,7 @@ end;
 procedure TfrmSupplierInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
-  edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
-  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  edtBANK_ID.DataSet := Global.GetZQueryFromName('PUB_BANK_INFO');  
+
   if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
 end;
 

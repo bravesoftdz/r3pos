@@ -1,7 +1,7 @@
 inherited frmMeaUnits: TfrmMeaUnits
   Left = 645
   Top = 192
-  Caption = ''
+  Caption = #35745#37327#21333#20301
   ClientHeight = 350
   ClientWidth = 349
   Color = clWhite
@@ -20,7 +20,7 @@ inherited frmMeaUnits: TfrmMeaUnits
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = ''
+        Caption = #21333#20301#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 335
           Height = 271

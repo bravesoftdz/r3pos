@@ -49,7 +49,6 @@ type
       Shift: TShiftState);
   private
     FFlag: integer;
-    MyCaption: String;
     procedure SetFlag(const Value: integer);
     { Private declarations }
   public
@@ -57,6 +56,7 @@ type
     procedure Save;
     { Public declarations }
     class function AddDialog(Owner:TForm;var AObj:TRecord_):boolean;
+    class function ShowDialog(Owner:TForm):boolean;
     property Flag:integer read FFlag write SetFlag; //1:其它窗体调用这个窗体
   end;
 
@@ -97,10 +97,7 @@ begin
     cdsUnit.EnableControls;
   end;
   cdsUnit.Append;
-  cdsUnit.FieldByName('UNIT_ID').AsString := TSequence.NewId;
-  cdsUnit.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsUnit.FieldByName('UNIT_NAME').AsString := '';
-  cdsUnit.Post;
+
   DBGridEh1.SetFocus;
   DBGridEh1.Col:=1;
   DBGridEh1.EditorMode := true;
@@ -174,9 +171,16 @@ begin
 end;
 
 procedure TfrmMeaUnits.Open;
+var
+  Param: TftParamList;
 begin
-    Factor.Open(cdsUnit,'TMeaUnits');
-
+  try
+    Param := TftParamList.Create;
+    Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(cdsUnit,'TMeaUnits',Param);
+  finally
+    Param.Free;
+  end;
   if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
 end;
 
@@ -211,7 +215,7 @@ begin
     Factor.UpdateBatch(cdsUnit,'TMeaUnits');
   except
     cdsUnit.Close;
-    Factor.Open(cdsUnit,'TMeaUnits');
+    Open;
     if not cdsUnit.IsEmpty then
     begin
       if i=0 then i:=1;
@@ -222,8 +226,6 @@ begin
     raise;    
   end;
   Global.RefreshTable('PUB_MEAUNITS');
-  cdsUnit.Close;
-  Factor.Open(cdsUnit,'TMeaUnits');
   if not cdsUnit.IsEmpty then
   begin
     if i=0 then i:=1;
@@ -247,13 +249,13 @@ procedure TfrmMeaUnits.cdsUnitNewRecord(DataSet: TDataSet);
 begin
   inherited;
   cdsUnit.FieldByName('SEQ_NO').AsString:=IntToStr(cdsUnit.RecordCount+1);
+  cdsUnit.FieldByName('UNIT_ID').AsString := TSequence.NewId;
+  cdsUnit.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;  
 end;
 
 procedure TfrmMeaUnits.FormShow(Sender: TObject);
 begin
   inherited;
-  Self.Caption := MyCaption;
-  RzPage.Pages[0].Caption := MyCaption;
   Open;
   btnSave.Enabled:=False;
   DBGridEh1.SetFocus;
@@ -337,8 +339,6 @@ begin
 end;
 
 procedure TfrmMeaUnits.FormCreate(Sender: TObject);
-var
-  temp: TZQuery;
 begin
   {if not ShopGlobal.GetChkRight('200043') then
   begin
@@ -347,11 +347,7 @@ begin
     btnSave.Enabled:=False;
     btnDelete.Enabled:=False;
   end;  }
-  temp := Global.GetZQueryFromName('PUB_PARAMS');
-  temp.Filtered := False;
-  temp.Filter := ' TYPE_CODE=''SORT_TYPE'' and CODE_ID=2';
-  temp.Filtered := True;
-  MyCaption := temp.Fields[1].AsString;
+
 end;
 
 procedure TfrmMeaUnits.CtrlUpExecute(Sender: TObject);
@@ -478,6 +474,18 @@ begin
     if (not ShopGlobal.GetChkRight('200043')) then exit;
     CtrlEndExecute(nil);
   end;
+end;
+
+class function TfrmMeaUnits.ShowDialog(Owner: TForm): boolean;
+begin
+  with TfrmMeaUnits.Create(Owner) do
+    begin
+      try
+        ShowModal;
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

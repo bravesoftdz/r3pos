@@ -1,41 +1,31 @@
 inherited frmGoodsSortTree: TfrmGoodsSortTree
   Left = 613
-  Caption = #21830#21697#20998#31867#31649#29702
+  Caption = ''
   ClientHeight = 370
-  ClientWidth = 513
-  OnCreate = FormCreate
+  ClientWidth = 434
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 513
+    Width = 434
     Height = 370
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 503
+      Width = 424
       Height = 320
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #21830#21697#20998#31867#26723#26696
+        Caption = ''
         inherited RzPanel2: TRzPanel
-          Width = 499
+          Width = 420
           Height = 293
           BorderColor = clWhite
           Color = clWhite
-          object Label18: TLabel
-            Left = 180
-            Top = 29
-            Width = 80
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #20998#31867#20195#30721
-          end
           object Label1: TLabel
             Left = 180
-            Top = 58
+            Top = 37
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -44,7 +34,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
           end
           object Label2: TLabel
             Left = 181
-            Top = 89
+            Top = 68
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -53,21 +43,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
           end
           object Label11: TLabel
             Left = 393
-            Top = 58
-            Width = 6
-            Height = 12
-            Alignment = taRightJustify
-            Caption = '*'
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clRed
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label3: TLabel
-            Left = 361
-            Top = 88
+            Top = 37
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -82,7 +58,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
           object rzTree: TRzTreeView
             Left = 5
             Top = 5
-            Width = 172
+            Width = 196
             Height = 283
             SelectionPen.Color = clBtnShadow
             Align = alLeft
@@ -101,8 +77,8 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             OnStartDrag = rzTreeStartDrag
           end
           object edtSORT1: TRzBitBtn
-            Left = 413
-            Top = 18
+            Left = 212
+            Top = 99
             Width = 83
             Height = 26
             Anchors = [akTop, akRight]
@@ -120,42 +96,34 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             ParentFont = False
             TextShadowColor = clWhite
             TextShadowDepth = 4
-            TabOrder = 4
+            TabOrder = 3
             TextStyle = tsRaised
             ThemeAware = False
             OnClick = edtSORT1Click
             NumGlyphs = 2
             Spacing = 5
           end
-          object edtSORT_ID: TcxTextEdit
-            Tag = 1
-            Left = 271
-            Top = 25
-            Width = 66
-            Height = 20
-            TabOrder = 1
-          end
           object edtSORT_NAME: TcxTextEdit
             Left = 271
-            Top = 54
+            Top = 33
             Width = 122
             Height = 20
             Properties.OnChange = edtSORT_NAMEPropertiesChange
-            TabOrder = 2
+            TabOrder = 1
             OnExit = edtSORT_NAMEExit
           end
           object edtSORT_SPELL: TcxTextEdit
             Left = 271
-            Top = 84
+            Top = 63
             Width = 90
             Height = 20
             Enabled = False
             Properties.OnChange = edtSORT_SPELLPropertiesChange
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtSORT2: TRzBitBtn
-            Left = 413
-            Top = 52
+            Left = 212
+            Top = 130
             Width = 83
             Height = 26
             Anchors = [akTop, akRight]
@@ -173,10 +141,37 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             ParentFont = False
             TextShadowColor = clWhite
             TextShadowDepth = 4
-            TabOrder = 5
+            TabOrder = 4
             TextStyle = tsRaised
             ThemeAware = False
             OnClick = edtSORT2Click
+            NumGlyphs = 2
+            Spacing = 5
+          end
+          object edtDelete: TRzBitBtn
+            Left = 326
+            Top = 130
+            Width = 83
+            Height = 26
+            Anchors = [akTop, akRight]
+            Caption = #21024#38500'(&D)'
+            Color = clSilver
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = [fsBold]
+            HighlightColor = 16026986
+            HotTrack = True
+            HotTrackColor = 3983359
+            HotTrackColorType = htctActual
+            ParentFont = False
+            TextShadowColor = clWhite
+            TextShadowDepth = 4
+            TabOrder = 5
+            TextStyle = tsRaised
+            ThemeAware = False
+            OnClick = edtDeleteClick
             NumGlyphs = 2
             Spacing = 5
           end
@@ -185,11 +180,11 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
     end
     inherited btPanel: TRzPanel
       Top = 325
-      Width = 503
+      Width = 424
       BorderColor = clWhite
       Color = clWhite
       object edtExit: TRzBitBtn
-        Left = 426
+        Left = 349
         Top = 6
         Width = 70
         Height = 26
@@ -207,7 +202,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 3
+        TabOrder = 2
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = edtExitClick
@@ -215,7 +210,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
         Spacing = 5
       end
       object edtSave: TRzBitBtn
-        Left = 179
+        Left = 184
         Top = 6
         Width = 70
         Height = 26
@@ -241,35 +236,8 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
         NumGlyphs = 2
         Spacing = 5
       end
-      object edtDelete: TRzBitBtn
-        Left = 343
-        Top = 6
-        Width = 70
-        Height = 26
-        Anchors = [akTop, akRight]
-        Caption = #21024#38500'(&D)'
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 2
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = edtDeleteClick
-        NumGlyphs = 2
-        Spacing = 5
-      end
       object edtCancel: TRzBitBtn
-        Left = 261
+        Left = 266
         Top = 6
         Width = 70
         Height = 26
@@ -298,11 +266,12 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 200
-    Top = 192
+    Left = 215
+    Top = 288
   end
   inherited actList: TActionList
-    Top = 152
+    Left = 255
+    Top = 248
     object CtrlUp: TAction
       Caption = #21521#19978
       OnExecute = CtrlUpExecute
@@ -322,8 +291,8 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
   end
   object PopupMenu1: TPopupMenu
     AutoHotkeys = maManual
-    Left = 198
-    Top = 157
+    Left = 213
+    Top = 253
     object N1: TMenuItem
       Action = CtrlUp
     end
@@ -341,7 +310,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 238
-    Top = 189
+    Left = 253
+    Top = 285
   end
 end

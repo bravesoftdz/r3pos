@@ -92,7 +92,7 @@ begin
     while not cdsCODE_INFO.Eof do
     begin
       if cdsCODE_INFO.FieldByName('CODE_NAME').AsString='' then
-        raise Exception.Create('类别名称不能为空！');
+        raise Exception.Create('名称不能为空！');
       if cdsCODE_INFO.FieldByName('CODE_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
       cdsCODE_INFO.Next;
@@ -101,10 +101,6 @@ begin
     cdsCODE_INFO.EnableControls;
   end;
   cdsCODE_INFO.Append;
-  cdsCODE_INFO.FieldByName('CODE_ID').AsString := TSequence.NewId;
-  cdsCODE_INFO.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsCODE_INFO.FieldByName('CODE_NAME').AsString := '';
-  cdsCODE_INFO.Post;
   DBGridEh1.SetFocus;
   DBGridEh1.Col:=1;
   DBGridEh1.EditorMode := true;  
@@ -113,7 +109,7 @@ end;
 procedure TfrmCode_Info.btnDeleteClick(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('确认要删除"'+cdsCODE_INFO.FieldbyName('CODE_NAME').AsString+'"单位类别？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,pchar('确认要删除"'+cdsCODE_INFO.FieldbyName('CODE_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsCODE_INFO.Delete;
   if cdsCODE_INFO.State in [dsEdit,dsInsert] then cdsCODE_INFO.Post;
   //删除后重新排序
@@ -154,7 +150,7 @@ begin
     while not cdsCODE_INFO.Eof do
     begin
       if cdsCODE_INFO.FieldByName('CODE_NAME').AsString='' then
-        raise Exception.Create('类别名称不能为空！');
+        raise Exception.Create('名称不能为空！');
       if cdsCODE_INFO.FieldByName('CODE_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
       cdsCODE_INFO.Next;
@@ -183,8 +179,8 @@ begin
   begin
     exit;
   end;
-  if cdsCODE_INFO.FieldByName('CODE_NAME').AsString='' then raise Exception.Create('类别名称不能为空！');
-  if cdsCODE_INFO.FieldByName('CODE_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！');
+ { if cdsCODE_INFO.FieldByName('CODE_NAME').AsString='' then raise Exception.Create('名称不能为空！');
+  if cdsCODE_INFO.FieldByName('CODE_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！');  }
 
 end;
 
@@ -192,6 +188,9 @@ procedure TfrmCode_Info.cdsCODE_INFONewRecord(DataSet: TDataSet);
 begin
   inherited;
   cdsCODE_INFO.FieldByName('SEQ_NO').AsString:=IntToStr(cdsCODE_INFO.RecordCount+1);
+  cdsCODE_INFO.FieldByName('CODE_ID').AsString := TSequence.NewId;
+  cdsCODE_INFO.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsCODE_INFO.FieldByName('CODE_TYPE').AsInteger := Code_type;
 end;
 
 procedure TfrmCode_Info.Open;
@@ -239,7 +238,7 @@ begin
     Factor.UpdateBatch(cdsCODE_INFO,'TClientSort');
   except
     cdsCODE_INFO.Close;
-    Factor.Open(cdsCODE_INFO,'TClientSort');
+    Open;
     if not cdsCODE_INFO.IsEmpty then
     begin
       if i=0 then i:=1;
@@ -250,9 +249,7 @@ begin
     btnSave.Enabled:=False;
     raise;    
   end;
-  //Global.RefreshTable('PUB_ClientSort');
-  cdsCODE_INFO.Close;
-  Factor.Open(cdsCODE_INFO,'TClientSort');
+  Global.RefreshTable('PUB_ClientSort');
   if not cdsCODE_INFO.IsEmpty then
   begin
     if i=0 then i:=1;
@@ -303,7 +300,7 @@ begin
   inherited;
   if btnSave.Enabled=True  then
   begin
-    i:=MessageBox(Handle,Pchar('单位类别有修改,是否要保存吗?'),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
+    i:=MessageBox(Handle,Pchar('记录有修改,是否要保存吗?'),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
     if i=2 then
       abort
     else if i=6 then
@@ -322,8 +319,8 @@ end;
 class function TfrmCode_Info.AddDialog(Owner: TForm;
   var AObj: TRecord_;CODETYPE:Integer): boolean;
 begin
-   //if (not ShopGlobal.GetIsCompany(Global.UserID))  then raise Exception.Create('不是总店，不能编辑单位分类!');
-   //if not ShopGlobal.GetChkRight('400004') then Raise Exception.Create('你没有编辑单位分类的权限,请和管理员联系.');
+   //if (not ShopGlobal.GetIsCompany(Global.UserID))  then raise Exception.Create('不是总店，不能编辑本模块!');
+   //if not ShopGlobal.GetChkRight('400004') then Raise Exception.Create('你没有编辑本模块的权限,请和管理员联系.');
    with TfrmCODE_INFO.Create(Owner) do
     begin
       try
@@ -513,7 +510,7 @@ var Tmp:TZQuery;
 begin
   FCode_type := Value;
   Tmp := Global.GetZQueryFromName('PUB_PARAMS');
-  if Tmp.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['TYPE_CODE',IntToStr(Code_type)]),[]) then
+  if Tmp.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['CODE_TYPE',IntToStr(Code_type)]),[]) then
     begin
       Self.Caption := Tmp.Fields[1].AsString+'管理';
       RzPage.Pages[0].Caption := Tmp.Fields[1].AsString + '信息';

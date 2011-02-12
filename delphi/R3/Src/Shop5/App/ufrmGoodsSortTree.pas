@@ -12,8 +12,6 @@ type
   TfrmGoodsSortTree = class(TframeDialogForm)
     rzTree: TRzTreeView;
     edtSORT1: TRzBitBtn;
-    Label18: TLabel;
-    edtSORT_ID: TcxTextEdit;
     Label1: TLabel;
     Label2: TLabel;
     edtSORT_NAME: TcxTextEdit;
@@ -21,7 +19,6 @@ type
     edtSORT2: TRzBitBtn;
     edtExit: TRzBitBtn;
     edtSave: TRzBitBtn;
-    edtDelete: TRzBitBtn;
     edtCancel: TRzBitBtn;
     PopupMenu1: TPopupMenu;
     CtrlUp: TAction;
@@ -33,8 +30,8 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     Label11: TLabel;
-    Label3: TLabel;
     cdsGoodSort: TZQuery;
+    edtDelete: TRzBitBtn;
     procedure FormShow(Sender: TObject);
     procedure edtSORT2Click(Sender: TObject);
     procedure edtSaveClick(Sender: TObject);
@@ -60,10 +57,11 @@ type
     procedure rzTreeKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtSORT_NAMEExit(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
-    FInFlag,Sort_Type: integer;
+    FInFlag: integer;
+    FSort_Type: Integer;
     procedure SetInFlag(const Value: integer);
+    procedure SetSort_Type(const Value: Integer);
     { Private declarations }
   public
     locked,IsShop:boolean;
@@ -81,18 +79,20 @@ type
     procedure ButtonChange4;//取消按钮按下后，按钮的变化
     procedure ButtonChange5;//删除按钮按下后, 按钮的变化
     property  InFlag:integer read FInFlag write SetInFlag;  //1:其它窗体调用这个窗体
-    procedure Show;
-    class function AddDialog(Owner:TForm;var AObj:TRecord_;SORT_TYPE:Integer):boolean;
+    procedure ShowInfo;
+    class function AddDialog(Owner:TForm;var AObj:TRecord_; SORTTYPE:Integer=1):boolean;
+    class function ShowDialog(Owner:TForm;SORTTYPE:Integer=1):boolean;
+    property Sort_Type: Integer read FSort_Type write SetSort_Type;
     { Public declarations }
   end;
 
 implementation
-uses uTreeUtil,uShopUtil,uGlobal,uFnUtil,uDsUtil, uShopGlobal;
+uses uTreeUtil,uShopUtil,uGlobal,uFnUtil,uDsUtil, uShopGlobal, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmGoodsSortTree.FormShow(Sender: TObject);
 begin
-  Show;
+  ShowInfo;
 end;
 
 procedure TfrmGoodsSortTree.edtSORT2Click(Sender: TObject);
@@ -132,7 +132,6 @@ begin
   locked := true;
   try
     ReadFromObject(AObj,self);
-    edtSORT_ID.Text := '自动编号';
     edtSORT_NAME.SetFocus;
   finally
     locked := false;
@@ -214,7 +213,7 @@ begin
      exit;
   end;
   Global.RefreshTable('PUB_GOODSSORT');
-  Show;
+  ShowInfo;
   //找刷新前的节点
   if rzTree.Items.Count<>0 then
   begin
@@ -243,7 +242,6 @@ begin
   locked := true;
   try
     ReadFromObject(TRecord_(rzTree.Selected.Data),self);
-    if edtSORT_ID.Text = '' then edtSORT_ID.Text := '自动编号';
   finally
     locked := false;
   end;
@@ -459,7 +457,6 @@ end;
 procedure TfrmGoodsSortTree.ButtonChange1;
 begin
   edtSORT_NAME.Enabled:=True;
-  //edtSORT_SPELL.Enabled:=True;
   edtSORT2.Enabled:=True;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
@@ -469,7 +466,6 @@ end;
 procedure TfrmGoodsSortTree.ButtonChange2;
 begin
   edtSORT_NAME.Enabled:=True;
-  //edtSORT_SPELL.Enabled:=True;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
   edtDelete.Enabled:=True;
@@ -497,10 +493,8 @@ begin
   edtSORT2.Enabled:=True;
   edtDelete.Enabled:=True;
   edtSORT_NAME.Enabled:=True;
-  //edtSORT_SPELL.Enabled:=True;
   if rzTree.Items.Count=0 then
   begin
-    edtSORT_ID.Text:='';
     edtSORT_NAME.Text:='';
     edtSORT_SPELL.Text:='';
     edtDelete.Enabled:=False;
@@ -513,14 +507,12 @@ procedure TfrmGoodsSortTree.ButtonChange5;
 begin
   if rzTree.Items.Count=0 then
   begin
-    edtSORT_ID.Text:='';
     edtSORT_NAME.Text:='';
     edtSORT_SPELL.Text:='';
     edtDelete.Enabled:=False;
     edtSORT1.Enabled:=True;
     edtSORT2.Enabled:=False;
     edtSORT_NAME.Enabled:=False;
-    //edtSORT_SPELL.Enabled:=False;
   end;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
@@ -538,15 +530,14 @@ begin
   begin
     edtDelete.Enabled:=False;
     edtSORT_NAME.Enabled:=False;
-    //edtSORT_SPELL.Enabled:=False;
-    edtSORT2.Enabled:=False;    
+    edtSORT2.Enabled:=False;
   end;
   edtSave.Enabled:=False;
   edtCancel.Enabled:=False;
 end;
 
 class function TfrmGoodsSortTree.AddDialog(Owner: TForm;
-  var AObj: TRecord_;SORT_TYPE:Integer): boolean;
+  var AObj: TRecord_;SORTTYPE:Integer): boolean;
 begin
    {if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑商品分类!');
    if not ShopGlobal.GetChkRight('200033') then Raise Exception.Create('你没有编辑商品分类的权限,请和管理员联系.');}
@@ -554,7 +545,7 @@ begin
     begin
       try
         InFlag:=1;
-        Sort_Type := SORT_TYPE;
+        Sort_Type := SORTTYPE;
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -587,7 +578,6 @@ begin
   locked := true;
   try
     ReadFromObject(AObj,self);
-    edtSORT_ID.Text := '自动编号';
     edtSORT_NAME.SetFocus;
   finally
     locked := false;
@@ -619,15 +609,7 @@ begin
   inherited;
   if edtSORT_NAME.Focused then exit;
   if edtSORT_SPELL.Focused then exit;
-  if (Key in [ord('A')..ord('Z')])
-     or
-     (Key in [ord('a')..ord('z')])
-     or
-     (Key in [ord('0')..ord('9')])
-  then
-  begin
-    edtSORT_ID.SetFocus;
-  end;
+
 end;
 
 procedure TfrmGoodsSortTree.CtrlUpExecute(Sender: TObject);
@@ -726,12 +708,11 @@ begin
   begin
      if TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString<>'' then
      begin
-        Show;
+        ShowInfo;
         FindNode(TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString).Selected:=True;
      end
      else
      begin
-       edtSORT_ID.Text:='';
        edtSORT_NAME.Text:='';
        rzTree.Selected.Text := edtSORT_NAME.Text;
        TRecord_(rzTree.Selected.Data).FieldByName('SORT_NAME').AsString:='';
@@ -761,11 +742,10 @@ begin
       end;
     end;
     ButtonChange4;
-    edtSORT_ID.SetFocus;
   end;
 end;
 
-procedure TfrmGoodsSortTree.Show;
+procedure TfrmGoodsSortTree.ShowInfo;
 begin
   Open;
   {IsShop:=ShopGlobal.get(Global.UserID);
@@ -791,10 +771,34 @@ begin
     Append;
 end;
 
-procedure TfrmGoodsSortTree.FormCreate(Sender: TObject);
+class function TfrmGoodsSortTree.ShowDialog(Owner: TForm;
+  SORTTYPE: Integer): boolean;
 begin
-  inherited;
-  Sort_Type := 1;
+  with TfrmGoodsSortTree.Create(Owner) do
+    begin
+      try
+        Sort_Type := SORTTYPE;
+        ShowModal;
+      finally
+        Free;
+      end;
+    end;
+end;
+
+procedure TfrmGoodsSortTree.SetSort_Type(const Value: Integer);
+var Tmp: TZQuery;
+begin
+  FSort_Type := Value;
+
+  Tmp := Global.GetZQueryFromName('PUB_PARAMS');
+  if Tmp.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['SORT_TYPE',IntToStr(Sort_Type)]),[]) then
+    begin
+      Self.Caption := Tmp.Fields[1].AsString+'管理';
+      RzPage.Pages[0].Caption := Tmp.Fields[1].AsString+'信息';
+    end
+  else
+    raise Exception.Create('无效 SORT_TYPE 值！');
+
 end;
 
 end.

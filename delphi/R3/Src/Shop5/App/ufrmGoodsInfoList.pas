@@ -143,7 +143,7 @@ var ARect:TRect;
 begin
 
   if (trim(Lowercase(Column.FieldName))='selflag') and
-     (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_FLAG').AsString)<>'2') then
+     (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_ID').AsString)<>'0') then
     DBGridEh1.Canvas.Brush.Color:= clGray;
 
 
@@ -173,9 +173,28 @@ end;
 
 function TfrmGoodsInfoList.EncodeSQL(id: string;var Cnd:string): string;
 var
-  w,vCnd:string;
+  w,vCnd,GoodTab:string;
 begin
   vCnd:='';
+  GoodTab:=
+    '(select J.TENANT_ID as TENANT_ID,J.RELATION_ID as RELATION_ID,J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
+    ' case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end as NEW_INPRICE,'+
+    ' case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.SMALLTO_CALC else C.NEW_INPRICE1 end as NEW_INPRICE1,'+
+    ' case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.BIGTO_CALC else C.NEW_INPRICE2 end as NEW_INPRICE2,'+
+    ' RTL_OUTPRICE, '+  //标准售价
+    ' NEW_LOWPRICE, '+  //最低售价
+    ' NEW_OUTPRICE, '+
+    ' NEW_OUTPRICE1, '+
+    ' NEW_OUTPRICE2, '+
+    ' NEW_LOWPRICE,'+
+    ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,J.COMM as COMM,'+
+    ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,REMARK '+#13+
+    'from (select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
+    ' union all '+
+    ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
+    ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID ) J '+
+    ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID )';
+
   w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then w := w + ' and j.GODS_ID>=:MAXID';
 
@@ -212,25 +231,24 @@ begin
   Cnd:=vCnd;
   case Factor.iDbType of
   0:
-  result := 'select top 100 0 as selflag,'''+Global.SHOP_ID+''' as SHOP_ID,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT from '+
+  result := 'select top 600 0 as selflag,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-     'select 0 as selflag,'''+Global.SHOP_ID+''' as SHOP_ID,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT from '+
+     'select 0 as selflag,,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
-     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 100  rows only';
+     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
-  result := 'select 0 as selflag,'''+Global.SHOP_ID+''' as SHOP_ID,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,'+
-     'l.*,r.AMOUNT as AMOUNT from '+
-     ' (select j.* from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select 0 as selflag,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then Cast((l.NEW_INPRICE*100/l.NEW_OUTPRICE) as varchar(12)) || ''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     ' (select j.* from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID  group by GODS_ID) r '+
-     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 100 ';
+     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 100 ';   
   end;
 end;
 
@@ -273,6 +291,10 @@ begin
     rs.SQL.Text:=EncodeSQL(Id,Cnd);
     if rs.Params.FindParam('TENANT_ID')<>nil then
        rs.Params.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
+    if rs.Params.FindParam('SHOP_ID')<>nil then
+       rs.Params.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
+    if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then
+       rs.Params.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
     if rs.Params.FindParam('MAXID')<>nil then
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then
@@ -388,7 +410,8 @@ begin
   LoadTree;
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);
-    TDbGridEhSort.InitForm(self);
+  //暂关闭Gird表头排序
+  //TDbGridEhSort.InitForm(self);
 end;
 
 procedure TfrmGoodsInfoList.edtKeyKeyDown(Sender: TObject; var Key: Word;
@@ -503,7 +526,7 @@ begin
     cdsBrowser.DisableControls;
     try
       cdsBrowser.Filtered := false;
-      cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_FLAG=''2'')';
+      cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
       cdsBrowser.Filtered := true;
       if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
 
@@ -513,7 +536,7 @@ begin
         cdsBrowser.First;
         while not cdsBrowser.Eof do //缓存删除记录
         begin
-          if (trim(cdsBrowser.FieldByName('selflag').AsString)='1') and (trim(cdsBrowser.FieldByName('RELATION_FLAG').AsString)='2') then
+          if (trim(cdsBrowser.FieldByName('selflag').AsString)='1') and (trim(cdsBrowser.FieldByName('RELATION_ID').AsString)='0') then
           begin
             if tmpGlobal.Locate('GODS_ID',cdsBrowser.FieldByName('GODS_ID').AsString,[]) then
               tmpGlobal.Delete;
@@ -679,7 +702,8 @@ begin
   inherited;
   edtProperty1.Free;
   edtProperty2.Free;
-  TDbGridEhSort.FreeForm(self);
+  //暂关闭Gird表头排序
+  //TDbGridEhSort.FreeForm(self);
 end;
 
 procedure TfrmGoodsInfoList.N4Click(Sender: TObject);
@@ -916,7 +940,7 @@ begin
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Exit;
   if trim(LowerCase(Column.FieldName))='selflag' then
   begin
-    if trim(cdsBrowser.FieldByName('RELATION_FLAG').AsString)<>'2' then //非自主经营的不能选择删除
+    if trim(cdsBrowser.FieldByName('RELATION_ID').AsString)<>'0' then //非自主经营的不能选择删除
     begin
       cdsBrowser.Edit;
       cdsBrowser.FieldByName('selflag').AsBoolean:=False;
@@ -958,8 +982,8 @@ begin
     rs.Filtered := false;
     rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
     rs.Filtered := true;
-    rs.SortedFields := 'LEVEL_ID';
-    CreateLevelTree(rs,rzTree,'33333333','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+    rs.SortedFields := 'LEVEL_ID';      //'33333333'
+    CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
   end;
   rzTree.OnChange:=self.DoTreeChange;
 

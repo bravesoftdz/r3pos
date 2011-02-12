@@ -247,7 +247,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
-                    Width = 161
+                    Width = 152
                   end
                   item
                     EditButtons = <>
@@ -255,21 +255,27 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #35745#37327#21333#20301
-                    Width = 37
+                    Width = 34
                   end
                   item
                     Alignment = taRightJustify
                     EditButtons = <>
-                    FieldName = 'NEW_OUTPRICE'
+                    FieldName = 'RTL_OUTPRICE'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #26631#20934#21806#20215
                     Width = 62
                   end
                   item
+                    EditButtons = <>
+                    FieldName = 'NEW_LOWPRICE'
+                    Footers = <>
+                    Title.Caption = #26368#20302#21806#20215
+                  end
+                  item
                     Alignment = taRightJustify
                     EditButtons = <>
-                    FieldName = 'MY_OUTPRICE'
+                    FieldName = 'NEW_OUTPRICE'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #26412#24215#21806#20215
@@ -281,16 +287,14 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     FieldName = 'NEW_INPRICE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #36827#36135#21333#20215
+                    Title.Caption = #21442#32771#36827#20215
                     Width = 58
                   end
                   item
-                    DisplayFormat = '#0%'
                     EditButtons = <>
                     FieldName = 'PROFIT_RATE'
                     Footers = <>
                     Title.Caption = #36827#20215#25240#25187#29575
-                    Width = 40
                   end
                   item
                     EditButtons = <>

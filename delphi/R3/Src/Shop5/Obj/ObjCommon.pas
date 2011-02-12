@@ -43,15 +43,15 @@ begin
   case iDbType of
   0:begin
      result := stringreplace(SQL,'ifnull','isnull',[rfReplaceAll]);
-     result := stringreplace(SQL,'nvl','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'nvl','isnull',[rfReplaceAll]);
     end;
   1,4:begin
      result := stringreplace(SQL,'ifnull','nvl',[rfReplaceAll]);
-     result := stringreplace(SQL,'isnull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'isnull','nvl',[rfReplaceAll]);
     end;
   5:begin
      result := stringreplace(SQL,'nvl','ifnull',[rfReplaceAll]);
-     result := stringreplace(SQL,'isnull','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'isnull','ifnull',[rfReplaceAll]);
     end;
   end;
 end;

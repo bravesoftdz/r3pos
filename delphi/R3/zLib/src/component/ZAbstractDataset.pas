@@ -1391,7 +1391,7 @@ begin
  if State in [dsEdit,dsInsert] then Post;
  DisableControls;
  try
-   if IsEmpty then Exit;
+//   if IsEmpty then Exit;
    Stream.Size := 0;
    Stream.Position := 0;
    WriteHeader;

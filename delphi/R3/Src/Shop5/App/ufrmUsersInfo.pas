@@ -85,6 +85,7 @@ type
     //ccid:string;
     Aobj:TRecord_;
     Saved:Boolean;
+    procedure IniDegrees;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -108,6 +109,7 @@ begin
   edtWORK_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  edtDEGREES.ItemIndex :=2;  
   if (edtDUTY_IDS.DataSet.Active) and (not edtDUTY_IDS.DataSet.IsEmpty) then
     begin
       edtDUTY_IDS.DataSet.First;
@@ -142,7 +144,7 @@ begin
   edtSHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDUTY_IDS.DataSet := Global.GetZQueryFromName('CA_DUTY_INFO');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
-
+  IniDegrees;
   Aobj := TRecord_.Create;
 end;
 
@@ -467,6 +469,29 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmUsersInfo.IniDegrees;
+var Tem:TZQuery;
+    Aobj_:TRecord_;
+begin
+  try
+    Tem := TZQuery.Create(nil);
+    Tem.Close;
+    Tem.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''14'' and TENANT_ID=0 order by SEQ_NO';
+    Factor.Open(Tem);
+    if not Tem.IsEmpty then ClearCbxPickList(edtDEGREES);
+    Tem.First;
+    while not Tem.Eof do
+      begin
+        Aobj_ := TRecord_.Create;
+        Aobj_.ReadFromDataSet(Tem);
+        edtDEGREES.Properties.Items.AddObject(Tem.FieldbyName('CODE_NAME').AsString,Aobj_);
+        Tem.Next;
+      end;
+  finally
+    Tem.Free;
+  end;
 end;
 
 end.

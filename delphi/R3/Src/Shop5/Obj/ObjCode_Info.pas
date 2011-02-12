@@ -83,7 +83,7 @@ var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text := 'select TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') order by SEQ_NO';
+  SelectSQL.Text := 'select TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,CODE_TYPE,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') order by SEQ_NO';
   IsSQLUpdate := True;
   Str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO,CODE_TYPE,COMM,TIME_STAMP) '
     + 'VALUES(:TENANT_ID,:CODE_ID,:CODE_NAME,:CODE_SPELL,:SEQ_NO,:CODE_TYPE,''00'','+GetTimeStamp(iDbType)+')';

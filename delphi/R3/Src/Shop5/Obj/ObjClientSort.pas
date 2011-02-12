@@ -41,7 +41,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=5 and CODE_NAME=:CODE_NAME and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     FieldbyName('CODE_ID').AsString := '';
     rs.First;

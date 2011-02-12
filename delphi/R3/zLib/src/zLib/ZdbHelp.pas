@@ -174,33 +174,30 @@ var
   i:integer;
 begin
   result := -1;
-  if ObjectFactory=nil then
-     begin
-       if not ZConn.ExecuteDirect(SQL,result) then result := -1;
-     end
-  else
-     begin
-       ZQuery := TZQuery.Create(nil);
-       try
-         ZQuery.Connection := ZConn;           
-         ZQuery.SQL.Text := SQL;
-         if ObjectFactory is TParams then
-            ZQuery.Params.AssignValues(TParams(ObjectFactory))
-         else
-         begin
-         for i:=0 to ZQuery.Params.Count -1 do
-            begin
-              if copy(ZQuery.Params[i].Name,1,4)='OLD_' then
-                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue
-              else
-                 ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).NewValue;
-            end;
-         end;
-         ZQuery.ExecSQL;
-       finally
-         ZQuery.Free;
+  ZQuery := TZQuery.Create(nil);
+  try
+    ZQuery.Connection := ZConn;
+    ZQuery.SQL.Text := SQL;
+    if ObjectFactory<>nil then
+       begin
+           if ObjectFactory is TParams then
+              ZQuery.Params.AssignValues(TParams(ObjectFactory))
+           else
+           begin
+           for i:=0 to ZQuery.Params.Count -1 do
+              begin
+                if copy(ZQuery.Params[i].Name,1,4)='OLD_' then
+                   ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue
+                else
+                   ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).NewValue;
+              end;
+           end;
        end;
-     end;
+    ZQuery.ExecSQL;
+    result := ZQuery.RowsAffected;
+  finally
+    ZQuery.Free;
+  end;
 end;
 
 function TdbHelp.GetConnectionString: WideString;

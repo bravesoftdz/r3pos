@@ -85,7 +85,7 @@ var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text := 'select UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO from PUB_MEAUNITS where COMM not in (''02'',''12'')  order by SEQ_NO';
+  SelectSQL.Text := 'select UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO from PUB_MEAUNITS where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID order by SEQ_NO';
   IsSQLUpdate := True;
   Str := 'insert into PUB_MEAUNITS(UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO,COMM,TIME_STAMP) '
     + 'VALUES(:UNIT_ID,:UNIT_NAME,:UNIT_SPELL,:TENANT_ID,:SEQ_NO,''00'','+GetTimeStamp(5)+')';

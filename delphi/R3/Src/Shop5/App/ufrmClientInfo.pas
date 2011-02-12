@@ -113,7 +113,7 @@ var
   frmClientInfo: TfrmClientInfo;
 
 implementation
-uses uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil,ufrmCODE_INFO,uShopGlobal;//,ufrmREGION
+uses uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil,ufrmCodeInfo,uShopGlobal;//,ufrmREGION
 {$R *.dfm}
 
 procedure TfrmClientInfo.Append;
@@ -355,7 +355,7 @@ begin
       end;
 
   finally
-    //Tmp.Free;
+
   end;
 end;
 
@@ -486,7 +486,7 @@ begin
   inherited;
   AObj := TRecord_.Create;
   try
-    if TfrmCODE_INFO.AddDialog(self,AObj) then
+    if TfrmCodeInfo.AddDialog(Self,Aobj,5) then
        begin
          edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
          edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;

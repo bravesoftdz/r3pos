@@ -321,7 +321,7 @@ class function TfrmCodeInfo.AddDialog(Owner: TForm;
 begin
    //if (not ShopGlobal.GetIsCompany(Global.UserID))  then raise Exception.Create('不是总店，不能编辑本模块!');
    //if not ShopGlobal.GetChkRight('400004') then Raise Exception.Create('你没有编辑本模块的权限,请和管理员联系.');
-   with TfrmCODE_INFO.Create(Owner) do
+   with TfrmCodeInfo.Create(Owner) do
     begin
       try
         Flag:=1;
@@ -494,7 +494,7 @@ end;
 class function TfrmCodeInfo.ShowDialog(Owner: TForm;
   CODETYPE: Integer): boolean;
 begin
-  with TfrmCode_Info.Create(Owner) do
+  with TfrmCodeInfo.Create(Owner) do
     begin
       try
         Code_type := CODETYPE;

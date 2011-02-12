@@ -98,6 +98,7 @@ type
     Saved,locked:boolean;
     Aobj:TRecord_;
     DefInvFlag:integer;
+    procedure IniComb;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -313,8 +314,6 @@ begin
 end;
 
 procedure TfrmClientInfo.FormCreate(Sender: TObject);
-var Tmp: TZQuery;
-    AObj_: TRecord_;
 begin
   inherited;
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
@@ -327,36 +326,8 @@ begin
     ccid:=ccid
   else
     ccid:=IntToStr(Global.SHOP_ID);}
+  IniComb;
 
-  try
-    Tmp := TZQuery.Create(nil);
-    Tmp.Close;
-    Tmp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
-    Factor.Open(Tmp);
-    if not Tmp.IsEmpty then ClearCbxPickList(edtSETTLE_CODE);
-    Tmp.First;
-    while not Tmp.Eof do
-      begin
-        AObj_ := TRecord_.Create;
-        AObj_.ReadFromDataSet(Tmp);
-        edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
-        Tmp.Next;
-      end;
-
-    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
-    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
-    Tmp.First;
-    while not Tmp.Eof do
-      begin
-        AObj_ := TRecord_.Create;
-        AObj_.ReadFromDataSet(Tmp);
-        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
-        Tmp.Next;
-      end;
-
-  finally
-
-  end;
 end;
 
 procedure TfrmClientInfo.FormDestroy(Sender: TObject);
@@ -589,6 +560,40 @@ begin
   finally
     AObj.Free;
   end; }
+end;
+
+procedure TfrmClientInfo.IniComb;
+var Tmp: TZQuery;
+    Aobj: TRecord_;
+begin
+  try
+    Tmp := TZQuery.Create(nil);
+    Tmp.Close;
+    Tmp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
+    Factor.Open(Tmp);
+    if not Tmp.IsEmpty then ClearCbxPickList(edtSETTLE_CODE);
+    Tmp.First;
+    while not Tmp.Eof do
+      begin
+        AObj_ := TRecord_.Create;
+        AObj_.ReadFromDataSet(Tmp);
+        edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
+        Tmp.Next;
+      end;
+
+    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
+    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
+    Tmp.First;
+    while not Tmp.Eof do
+      begin
+        AObj_ := TRecord_.Create;
+        AObj_.ReadFromDataSet(Tmp);
+        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
+        Tmp.Next;
+      end;
+  finally
+
+  end;
 end;
 
 end.

@@ -564,7 +564,7 @@ end;
 
 procedure TfrmClientInfo.IniComb;
 var Tmp: TZQuery;
-    Aobj: TRecord_;
+    Aobj_: TRecord_;
 begin
   try
     Tmp := TZQuery.Create(nil);

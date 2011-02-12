@@ -170,6 +170,7 @@ procedure TfrmCodeInfo.btnExitClick(Sender: TObject);
 begin
   inherited;
   close;
+  ModalResult := mrOk;  
 end;
 
 procedure TfrmCodeInfo.cdsCODE_INFOBeforePost(DataSet: TDataSet);

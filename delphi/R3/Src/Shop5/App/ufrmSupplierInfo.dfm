@@ -1,6 +1,6 @@
 inherited frmSupplierInfo: TfrmSupplierInfo
-  Left = 643
-  Top = 246
+  Left = 710
+  Top = 284
   Caption = #20379#24212#21830#26723#26696
   ClientHeight = 366
   ClientWidth = 528

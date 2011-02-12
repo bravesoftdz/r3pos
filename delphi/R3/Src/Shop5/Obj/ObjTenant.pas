@@ -82,6 +82,25 @@ begin
   ' values(:TENANT_ID,''PASSWRD'',''79415A40'',0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
+  //为企业初始化职务
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:TENANT_ID*1000+1,''老板'',''001'',''LB'',''企业经营者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:TENANT_ID*1000+2,''店长'',''001001'',''DZ'',''门店管理者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:TENANT_ID*1000+3,''收银员'',''001001001'',''SYY'',''门店收银负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:TENANT_ID*1000+4,''导购员'',''001001002'',''DGY'',''门店业务负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
+
+  //为企业初始化部门
+  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:TENANT_ID*1000+1,''总店'',''001'',''ZD'',''后台仓库'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
+
   Result := True;
 
 end;

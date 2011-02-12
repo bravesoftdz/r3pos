@@ -24,20 +24,20 @@ type
     CtrlDown: TAction;
     CtrlHome: TAction;
     CtrlEnd: TAction;
-    cdsUnit: TZQuery;
+    cdsGoodsSort: TZQuery;
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnAppendClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
-    procedure cdsUnitBeforePost(DataSet: TDataSet);
-    procedure cdsUnitNewRecord(DataSet: TDataSet);
+    procedure cdsGoodsSortBeforePost(DataSet: TDataSet);
+    procedure cdsGoodsSortNewRecord(DataSet: TDataSet);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure cdsUnitAfterEdit(DataSet: TDataSet);
+    procedure cdsGoodsSortAfterEdit(DataSet: TDataSet);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure FormCreate(Sender: TObject);
@@ -51,15 +51,18 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     FFlag: integer;
-    SortType: Integer;
+    FSort_Type: integer;
     procedure SetFlag(const Value: integer);
+    procedure SetSort_Type(const Value: integer);
     { Private declarations }
   public
     procedure Open;
     procedure Save;
     { Public declarations }
-    class function AddDialog(Owner:TForm;var AObj:TRecord_;SORT_TYPE: Integer):boolean;
+    class function AddDialog(Owner:TForm;var AObj:TRecord_;SORTTYPE: Integer=1):boolean;
+    class function ShowDialog(Owner:TForm;SORTTYPE: Integer=1):boolean;
     property Flag:integer read FFlag write SetFlag; //1:其它窗体调用这个窗体
+    property Sort_Type:integer read FSort_Type write SetSort_Type;
   end;
 
 implementation
@@ -70,40 +73,36 @@ procedure TfrmGoodssort.DBGridEh1Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
-  cdsUnit.FieldByName('SORT_SPELL').AsString:=Fnstring.GetWordSpell(Text,3);
+  cdsGoodsSort.FieldByName('SORT_SPELL').AsString:=Fnstring.GetWordSpell(Text,3);
   btnSave.Enabled:=True;
 end;
 
 procedure TfrmGoodssort.btnAppendClick(Sender: TObject);
 begin
   inherited;
-  if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
-  if not cdsUnit.IsEmpty then
+  if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
+  if not cdsGoodsSort.IsEmpty then
   begin
-    cdsUnit.Last;
-    if (cdsUnit.FieldByName('SORT_NAME').AsString='') and (cdsUnit.FieldByName('SORT_SPELL').AsString='') and (cdsUnit.FieldByName('SORT_ID').AsString='') then
+    cdsGoodsSort.Last;
+    if (cdsGoodsSort.FieldByName('SORT_NAME').AsString='') and (cdsGoodsSort.FieldByName('SORT_SPELL').AsString='') and (cdsGoodsSort.FieldByName('SORT_ID').AsString='') then
       exit;
   end;
-  cdsUnit.DisableControls;
+  cdsGoodsSort.DisableControls;
   try
-    cdsUnit.First;
-    while not cdsUnit.Eof do
+    cdsGoodsSort.First;
+    while not cdsGoodsSort.Eof do
     begin
-      if cdsUnit.FieldByName('SORT_NAME').AsString='' then
-        raise Exception.Create('分类名称不能为空！');
-      if cdsUnit.FieldByName('SORT_SPELL').AsString='' then
+      if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then
+        raise Exception.Create('名称不能为空！');
+      if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
-      cdsUnit.Next;
+      cdsGoodsSort.Next;
     end;
   finally
-    cdsUnit.EnableControls;
+    cdsGoodsSort.EnableControls;
   end;
-  cdsUnit.Append;
-  cdsUnit.FieldByName('SORT_ID').AsString := TSequence.NewId;
-  cdsUnit.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsUnit.FieldByName('SORT_TYPE').AsInteger := SortType;
-  //cdsUnit.FieldByName('SORT_NAME').AsString := '';
-  cdsUnit.Post;
+  cdsGoodsSort.Append;
+
   DBGridEh1.SetFocus;
   DBGridEh1.Col:=1;
   DBGridEh1.EditorMode := true;
@@ -112,26 +111,26 @@ end;
 procedure TfrmGoodssort.btnDeleteClick(Sender: TObject);
 begin
   inherited;
-  if MessageBox(Handle,pchar('确认要删除"'+cdsUnit.FieldbyName('SORT_NAME').AsString+'"单位？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  cdsUnit.Delete;
-  if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
+  if MessageBox(Handle,pchar('确认要删除"'+cdsGoodsSort.FieldbyName('SORT_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  cdsGoodsSort.Delete;
+  if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
   //删除后重新排序
-  cdsUnit.DisableControls;
+  cdsGoodsSort.DisableControls;
   try
-    cdsUnit.First;
-    while not cdsUnit.Eof do
+    cdsGoodsSort.First;
+    while not cdsGoodsSort.Eof do
     begin
-      cdsUnit.Edit;
-      cdsUnit.FieldByName('SEQ_NO').AsString:=IntToStr(cdsUnit.RecNo);
-      cdsUnit.Post;
-      cdsUnit.Next;
+      cdsGoodsSort.Edit;
+      cdsGoodsSort.FieldByName('SEQ_NO').AsString:=IntToStr(cdsGoodsSort.RecNo);
+      cdsGoodsSort.Post;
+      cdsGoodsSort.Next;
     end;
   finally
-    cdsUnit.EnableControls;
+    cdsGoodsSort.EnableControls;
   end;
   btnSave.Enabled:=True;
   //如果删除后没有记录，删除按钮不能操作
-  if cdsUnit.IsEmpty then
+  if cdsGoodsSort.IsEmpty then
   begin
     btnDelete.Enabled:=False;
     Exit;
@@ -141,25 +140,25 @@ end;
 procedure TfrmGoodssort.btnSaveClick(Sender: TObject);
 begin
   inherited;
-  if cdsUnit.State in [dsInsert,dsEdit] then cdsUnit.Post;
-  if (cdsUnit.FieldbyName('SORT_NAME').AsString='') and (cdsUnit.FieldbyName('SORT_SPELL').AsString='') and (cdsUnit.FieldbyName('SORT_ID').AsString='')then
+  if cdsGoodsSort.State in [dsInsert,dsEdit] then cdsGoodsSort.Post;
+  if (cdsGoodsSort.FieldbyName('SORT_NAME').AsString='') and (cdsGoodsSort.FieldbyName('SORT_SPELL').AsString='') and (cdsGoodsSort.FieldbyName('SORT_ID').AsString='')then
   begin
-    if not cdsUnit.IsEmpty then
-      cdsUnit.Delete;
+    if not cdsGoodsSort.IsEmpty then
+      cdsGoodsSort.Delete;
   end;
-  cdsUnit.DisableControls;
+  cdsGoodsSort.DisableControls;
   try
-    cdsUnit.First;
-    while not cdsUnit.Eof do
+    cdsGoodsSort.First;
+    while not cdsGoodsSort.Eof do
     begin
-      if cdsUnit.FieldByName('SORT_NAME').AsString='' then
-        raise Exception.Create('分类名称不能为空！');
-      if cdsUnit.FieldByName('SORT_SPELL').AsString='' then
+      if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then
+        raise Exception.Create('名称不能为空！');
+      if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then
         raise Exception.Create('拼音码不能为空！');
-      cdsUnit.Next;
+      cdsGoodsSort.Next;
     end;
   finally
-    cdsUnit.EnableControls;
+    cdsGoodsSort.EnableControls;
   end;
   Save;
   //别的窗体调用此窗体
@@ -177,91 +176,93 @@ begin
 end;
 
 procedure TfrmGoodssort.Open;
-var Param: TftParamList;
+var Params: TftParamList;
 begin
-  Param := TftParamList.Create(nil);
-
+  Params := TftParamList.Create(nil);
   try
-    Param.ParamByName('SORT_TYPE').asInteger := SortType;
-    Factor.Open(cdsUnit,'TGoodsSort',Param);
+    Params.ParamByName('SORT_TYPE').asInteger := Sort_Type;
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(cdsGoodsSort,'TGoodsSort',Params);
   finally
-    Param.Free;
+    Params.Free;
   end;
-  if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
+  if cdsGoodsSort.IsEmpty then btnDelete.Enabled:=False;
 end;
 
 procedure TfrmGoodssort.Save;
 var c:integer;
     i:integer;
 begin
-  i:=cdsUnit.RecNo;
-  if cdsUnit.IsEmpty then
+  i:=cdsGoodsSort.RecNo;
+  if cdsGoodsSort.IsEmpty then
     i:=0;
-  cdsUnit.DisableControls;
+  cdsGoodsSort.DisableControls;
   try
     c := 0;
-    cdsUnit.First;
-    while not cdsUnit.Eof do
+    cdsGoodsSort.First;
+    while not cdsGoodsSort.Eof do
       begin
         inc(c);
-        if c = cdsUnit.FieldByName('SEQ_NO').AsInteger THEN
+        if c = cdsGoodsSort.FieldByName('SEQ_NO').AsInteger THEN
           begin
-            cdsUnit.Next;
+            cdsGoodsSort.Next;
             Continue;
           end;
-        cdsUnit.Edit;
-        cdsUnit.FieldByName('SEQ_NO').AsInteger := c;
-        cdsUnit.Post;
-        cdsUnit.Next;
+        cdsGoodsSort.Edit;
+        cdsGoodsSort.FieldByName('SEQ_NO').AsInteger := c;
+        cdsGoodsSort.Post;
+        cdsGoodsSort.Next;  
       end;
   finally
-    cdsUnit.EnableControls;
+    cdsGoodsSort.EnableControls;
   end;
   try
-    Factor.UpdateBatch(cdsUnit,'TGoodsSort');
+    Factor.UpdateBatch(cdsGoodsSort,'TGoodsSort');
   except
-    cdsUnit.Close;
-    Factor.Open(cdsUnit,'TGoodsSort');
-    if not cdsUnit.IsEmpty then
+    cdsGoodsSort.Close;
+    Open;
+    if not cdsGoodsSort.IsEmpty then
     begin
       if i=0 then i:=1;
-      cdsUnit.RecNo:=i;
+      cdsGoodsSort.RecNo:=i;
     end;
-    if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
+    if cdsGoodsSort.IsEmpty then btnDelete.Enabled:=False;
     btnSave.Enabled:=False;
     raise;    
   end;
   Global.RefreshTable('PUB_GOODSSORT');
-  cdsUnit.Close;
-  Factor.Open(cdsUnit,'TGoodsSort');
-  if not cdsUnit.IsEmpty then
+  if not cdsGoodsSort.IsEmpty then
   begin
     if i=0 then i:=1;
-    cdsUnit.RecNo:=i;
+    cdsGoodsSort.RecNo:=i;
   end;
-  if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
+  if cdsGoodsSort.IsEmpty then btnDelete.Enabled:=False;
 end;
 
-procedure TfrmGoodssort.cdsUnitBeforePost(DataSet: TDataSet);
+procedure TfrmGoodssort.cdsGoodsSortBeforePost(DataSet: TDataSet);
 begin
   inherited;
-  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and (cdsUnit.FieldByName('SORT_ID').AsString='') then
+  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and (cdsGoodsSort.FieldByName('SORT_ID').AsString='') then
   begin
     exit;
   end;
-  if cdsUnit.FieldByName('SORT_NAME').AsString='' then raise Exception.Create('分类名称不能为空！');
-  if cdsUnit.FieldByName('SORT_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！');
+ { if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then raise Exception.Create('分类名称不能为空！');
+  if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！'); }
 end;
 
-procedure TfrmGoodssort.cdsUnitNewRecord(DataSet: TDataSet);
+procedure TfrmGoodssort.cdsGoodsSortNewRecord(DataSet: TDataSet);
 begin
   inherited;
-  cdsUnit.FieldByName('SEQ_NO').AsString:=IntToStr(cdsUnit.RecordCount+1);
+  cdsGoodsSort.FieldByName('SEQ_NO').AsString:=IntToStr(cdsGoodsSort.RecordCount+1);
+  cdsGoodsSort.FieldByName('SORT_ID').AsString := TSequence.NewId;
+  cdsGoodsSort.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsGoodsSort.FieldByName('SORT_TYPE').AsInteger := Sort_Type;
 end;
 
 procedure TfrmGoodssort.FormShow(Sender: TObject);
 begin
   inherited;
+
   Open;
   btnSave.Enabled:=False;
   DBGridEh1.SetFocus;
@@ -272,7 +273,7 @@ begin
     btnAppend.Enabled:=False;
     btnDelete.Enabled:=False;
   end;
-  cdsUnit.Last;
+  cdsGoodsSort.Last;
 end;
 
 procedure TfrmGoodssort.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -296,7 +297,7 @@ begin
   inherited;
   if btnSave.Enabled=True  then
   begin
-    i:=MessageBox(Handle,Pchar('商品分类有修改,是否要保存吗?'),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
+    i:=MessageBox(Handle,Pchar('记录有修改,是否要保存吗?'),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
     if i=2 then
       abort
     else if i=6 then
@@ -304,24 +305,24 @@ begin
   end;
 end;
 
-procedure TfrmGoodssort.cdsUnitAfterEdit(DataSet: TDataSet);
+procedure TfrmGoodssort.cdsGoodsSortAfterEdit(DataSet: TDataSet);
 begin
   inherited;
   btnSave.Enabled:=True;
 end;
 class function TfrmGoodssort.AddDialog(Owner: TForm;
-  var AObj: TRecord_;SORT_TYPE:Integer): boolean;
+  var AObj: TRecord_;SORTTYPE:Integer): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
+   //if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑本模块的权限,请和管理员联系.');
    with TfrmGoodsSort.Create(Owner) do
     begin
       try
         Flag:=1;
-        SortType := SORT_TYPE;
+        SortType := SORTTYPE;
         ShowModal;
         if ModalResult=MROK then
         begin
-          AObj.ReadFromDataSet(cdsUnit);
+          AObj.ReadFromDataSet(cdsGoodsSort);
           result :=True;
         end
         else
@@ -354,101 +355,102 @@ begin
     btnSave.Enabled:=False;
     btnDelete.Enabled:=False;
   end;  }
+
 end;
 
 procedure TfrmGoodssort.CtrlUpExecute(Sender: TObject);
 var SEQ_NO,UNIT_ID,SEQ_NO1,UNIT_ID1:string;
 begin
   inherited;
-  if cdsUnit.IsEmpty then exit;
-  if cdsUnit.RecordCount=1 then exit;
-  if cdsUnit.RecNo=1 then exit;
-  if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
-  if cdsUnit.RecNo=cdsUnit.RecordCount then
+  if cdsGoodsSort.IsEmpty then exit;
+  if cdsGoodsSort.RecordCount=1 then exit;
+  if cdsGoodsSort.RecNo=1 then exit;
+  if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
+  if cdsGoodsSort.RecNo=cdsGoodsSort.RecordCount then
   begin
-    if cdsUnit.FieldByName('SORT_NAME').AsString='' then
+    if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then
     begin
-      cdsUnit.Delete;
+      cdsGoodsSort.Delete;
       exit;
     end;
-    if cdsUnit.FieldByName('SORT_SPELL').AsString='' then
+    if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then
     begin
-      cdsUnit.Delete;
+      cdsGoodsSort.Delete;
       exit;
     end;
   end;
-  SEQ_NO:=cdsUnit.FieldByName('SEQ_NO').AsString;
-  UNIT_ID:=cdsUnit.FieldByName('SORT_ID').AsString;
-  cdsUnit.Prior;
-  SEQ_NO1:=cdsUnit.FieldByName('SEQ_NO').AsString;
-  UNIT_ID1:=cdsUnit.FieldByName('SORT_ID').AsString;
-  if cdsUnit.Locate('SORT_ID',UNIT_ID1,[]) then
+  SEQ_NO:=cdsGoodsSort.FieldByName('SEQ_NO').AsString;
+  UNIT_ID:=cdsGoodsSort.FieldByName('SORT_ID').AsString;
+  cdsGoodsSort.Prior;
+  SEQ_NO1:=cdsGoodsSort.FieldByName('SEQ_NO').AsString;
+  UNIT_ID1:=cdsGoodsSort.FieldByName('SORT_ID').AsString;
+  if cdsGoodsSort.Locate('SORT_ID',UNIT_ID1,[]) then
   begin
-    cdsUnit.Edit;
-    cdsUnit.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO);
-    cdsUnit.Post;
+    cdsGoodsSort.Edit;
+    cdsGoodsSort.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO);
+    cdsGoodsSort.Post;
   end;
-  if cdsUnit.Locate('SORT_ID',UNIT_ID,[]) then
+  if cdsGoodsSort.Locate('SORT_ID',UNIT_ID,[]) then
   begin
-    cdsUnit.Edit;
-    cdsUnit.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO1);
-    cdsUnit.Post;
+    cdsGoodsSort.Edit;
+    cdsGoodsSort.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO1);
+    cdsGoodsSort.Post;
   end;
-  cdsUnit.indexfieldnames:='SEQ_NO';
+  cdsGoodsSort.indexfieldnames:='SEQ_NO';
 end;
 
 procedure TfrmGoodssort.CtrlDownExecute(Sender: TObject);
 var SEQ_NO,UNIT_ID,SEQ_NO1,UNIT_ID1:string;
 begin
   inherited;
-  if cdsUnit.IsEmpty then exit;
-  if cdsUnit.RecordCount=1 then exit;
-  if cdsUnit.RecNo=cdsUnit.RecordCount then exit;
-  if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
-  if cdsUnit.RecNo=cdsUnit.RecordCount then
+  if cdsGoodsSort.IsEmpty then exit;
+  if cdsGoodsSort.RecordCount=1 then exit;
+  if cdsGoodsSort.RecNo=cdsGoodsSort.RecordCount then exit;
+  if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
+  if cdsGoodsSort.RecNo=cdsGoodsSort.RecordCount then
   begin
-    if cdsUnit.FieldByName('SORT_NAME').AsString='' then
+    if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then
     begin
-      cdsUnit.Delete;
+      cdsGoodsSort.Delete;
       exit;
     end;
-    if cdsUnit.FieldByName('SORT_SPELL').AsString='' then
+    if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then
     begin
-      cdsUnit.Delete;
+      cdsGoodsSort.Delete;
       exit;
     end;
   end;
-  SEQ_NO:=cdsUnit.FieldByName('SEQ_NO').AsString;
-  UNIT_ID:=cdsUnit.FieldByName('SORT_ID').AsString;
-  cdsUnit.Next;
-  SEQ_NO1:=cdsUnit.FieldByName('SEQ_NO').AsString;
-  UNIT_ID1:=cdsUnit.FieldByName('SORT_ID').AsString;
-  if cdsUnit.Locate('SORT_ID',UNIT_ID1,[]) then
+  SEQ_NO:=cdsGoodsSort.FieldByName('SEQ_NO').AsString;
+  UNIT_ID:=cdsGoodsSort.FieldByName('SORT_ID').AsString;
+  cdsGoodsSort.Next;
+  SEQ_NO1:=cdsGoodsSort.FieldByName('SEQ_NO').AsString;
+  UNIT_ID1:=cdsGoodsSort.FieldByName('SORT_ID').AsString;
+  if cdsGoodsSort.Locate('SORT_ID',UNIT_ID1,[]) then
   begin
-    cdsUnit.Edit;
-    cdsUnit.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO);
-    cdsUnit.Post;
+    cdsGoodsSort.Edit;
+    cdsGoodsSort.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO);
+    cdsGoodsSort.Post;
   end;
-  if cdsUnit.Locate('SORT_ID',UNIT_ID,[]) then
+  if cdsGoodsSort.Locate('SORT_ID',UNIT_ID,[]) then
   begin
-    cdsUnit.Edit;
-    cdsUnit.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO1);
-    cdsUnit.Post;
+    cdsGoodsSort.Edit;
+    cdsGoodsSort.FieldByName('SEQ_NO').AsInteger:=StrToInt(SEQ_NO1);
+    cdsGoodsSort.Post;
   end;
-  cdsUnit.indexfieldnames:='SEQ_NO';
+  cdsGoodsSort.indexfieldnames:='SEQ_NO';
 end;
 
 procedure TfrmGoodssort.CtrlHomeExecute(Sender: TObject);
 begin
   inherited;
-  while cdsUnit.RecNo>1 do
+  while cdsGoodsSort.RecNo>1 do
    CtrlUpExecute(nil);
 end;
 
 procedure TfrmGoodssort.CtrlEndExecute(Sender: TObject);
 begin
   inherited;
-  while cdsUnit.RecNo<cdsUnit.RecordCount do
+  while cdsGoodsSort.RecNo<cdsGoodsSort.RecordCount do
   CtrlDownExecute(nil);
 end;
 
@@ -487,6 +489,36 @@ procedure TfrmGoodssort.DBGridEh1Columns3UpdateData(Sender: TObject;
 begin
   inherited;
   btnSave.Enabled:=True;
+end;
+
+class function TfrmGoodssort.ShowDialog(Owner: TForm;
+  SORTTYPE: Integer): boolean;
+begin
+  with TfrmGoodssort.Create(Owner) do
+    begin
+      try
+        Sort_Type := SORTTYPE;
+        ShowModal;
+      finally
+        Free;
+      end;
+    end;
+end;
+
+procedure TfrmGoodssort.SetSort_Type(const Value: integer);
+var
+  Tmp:TZQuery;
+begin
+  FSort_Type := Value;
+  Tmp := Global.GetZQueryFromName('PUB_PARAMS');
+  if Tmp.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['SORT_TYPE',IntToStr(Sort_Type)]),[]) then
+    begin
+      Self.Caption :=  Tmp.Fields[1].AsString+'管理';
+      RzPage.Pages[0].Caption :=  Tmp.Fields[1].AsString+'信息';
+    end
+  else
+    Raise Exception.Create('无效的SORT_TYPE值！');
+
 end;
 
 end.

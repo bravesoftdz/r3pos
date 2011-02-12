@@ -1,6 +1,6 @@
 inherited frmGoodssort: TfrmGoodssort
-  Left = 606
-  Top = 180
+  Left = 842
+  Top = 172
   Caption = #21830#21697#20998#31867#31649#29702
   ClientHeight = 350
   ClientWidth = 349
@@ -73,7 +73,7 @@ inherited frmGoodssort: TfrmGoodssort
                 EditButtons = <>
                 FieldName = 'SORT_NAME'
                 Footers = <>
-                Title.Caption = #20998#31867#21517#31216
+                Title.Caption = #21517'    '#31216
                 Title.Color = clWhite
                 Width = 150
                 OnUpdateData = DBGridEh1Columns1UpdateData
@@ -228,7 +228,7 @@ inherited frmGoodssort: TfrmGoodssort
     end
   end
   object dsUnit: TDataSource
-    DataSet = cdsUnit
+    DataSet = cdsGoodsSort
     Left = 110
     Top = 173
   end
@@ -249,13 +249,13 @@ inherited frmGoodssort: TfrmGoodssort
       Action = CtrlEnd
     end
   end
-  object cdsUnit: TZQuery
+  object cdsGoodsSort: TZQuery
     SortedFields = 'SEQ_NO'
     FieldDefs = <>
     CachedUpdates = True
-    AfterEdit = cdsUnitAfterEdit
-    BeforePost = cdsUnitBeforePost
-    OnNewRecord = cdsUnitNewRecord
+    AfterEdit = cdsGoodsSortAfterEdit
+    BeforePost = cdsGoodsSortBeforePost
+    OnNewRecord = cdsGoodsSortNewRecord
     Params = <>
     IndexFieldNames = 'SEQ_NO Asc'
     Left = 38

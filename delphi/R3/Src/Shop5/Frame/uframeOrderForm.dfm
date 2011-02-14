@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 460
-  Top = 227
+  Left = 417
+  Top = 124
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256

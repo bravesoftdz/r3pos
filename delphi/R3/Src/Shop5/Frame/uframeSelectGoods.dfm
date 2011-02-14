@@ -1,6 +1,6 @@
 inherited frameSelectGoods: TframeSelectGoods
-  Left = 305
-  Top = 145
+  Left = 307
+  Top = 147
   ActiveControl = DBGridEh1
   Caption = #21830#21697#36873#25321#26694
   ClientHeight = 401
@@ -70,6 +70,7 @@ inherited frameSelectGoods: TframeSelectGoods
                 Caption = #21830#21697#23646#24615
               end
               object fndGODS_FLAG1: TcxComboBox
+                Tag = -1
                 Left = 64
                 Top = 7
                 Width = 77

@@ -113,10 +113,11 @@ begin
     end;
   rs := Global.GetZQueryFromName('PUB_PARAMS');
   rs.Filtered := false;
-  rs.Filter := 'CODE_TYPE=''SORT_TYPE''';
+  rs.Filter := 'TYPE_CODE=''SORT_TYPE''';
   rs.Filtered := true;
   TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
   fndGODS_FLAG1.ItemIndex := 0;
+  LoadTree;
 end;
 
 procedure TframeSelectGoods.Open(Id: string);
@@ -132,6 +133,7 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
     if rs.Params.FindParam('MAXID')<>nil then
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then
@@ -173,10 +175,10 @@ begin
   if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
      begin
       if w<>'' then w := w + ' and ';
-      case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+      case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
       1:w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID ';
       else
-        w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsString+' = :SORT_ID ';
+        w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
       end;
      end;
   if trim(edtSearch.Text)<>'' then
@@ -186,20 +188,20 @@ begin
      end;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
-  result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';
   end;
 end;
@@ -462,7 +464,8 @@ end;
 procedure TframeSelectGoods.fndGODS_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
-  case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+  if not Visible then Exit;
+  case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:LoadTree;
   3:LoadProv;
   else LoadList;
@@ -481,7 +484,8 @@ var
   rs:TZQuery;
   AObj:TRecord_;
 begin
-  case TRecord_(fndGODS_FLAG1.Properties.Items[fndGODS_FLAG1.ItemIndex]).FieldByName('SORT_ID').AsInteger of
+  ClearTree(rzTree);
+  case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   2:rs := Global.GetZQueryFromName('PUB_CATE_INFO');
   4:rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
   5:rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
@@ -494,7 +498,7 @@ begin
     begin
       AObj := TRecord_.Create(rs);
       AObj.ReadFromDataSet(rs);
-      rzTree.Items.AddObject(nil,rs.FieldbyName('CODE_NAME').AsString,AObj); 
+      rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj); 
       rs.Next;
     end;
   AddRoot(rzTree,'全部商品');
@@ -547,7 +551,7 @@ begin
       rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
       rs.Filtered := true;
       rs.SortedFields := 'LEVEL_ID';
-      CreateLevelTree(rs,rzTree,'33333333','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+      CreateLevelTree(rs,rzTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
     end;
 end;
 

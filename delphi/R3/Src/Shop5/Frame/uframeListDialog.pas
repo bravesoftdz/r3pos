@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, ComCtrls, RzTreeVw, Grids, DBGridEh, cxControls, cxContainer,
-  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, DBClient, ZDataSet,ZBase;
+  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, ZDataSet,ZBase,
+  ZAbstractRODataset, ZAbstractDataset;
 
 type
   TframeListDialog = class(TframeDialogForm)
@@ -17,14 +18,14 @@ type
     fndPanel: TPanel;
     RzPanel5: TRzPanel;
     Label8: TLabel;
-    Label1: TLabel;
     edtSearch: TcxTextEdit;
-    cdsList: TClientDataSet;
     dsList: TDataSource;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    RzBitBtn1: TRzBitBtn;
+    cdsList: TZQuery;
     procedure RzBitBtn2Click(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -54,7 +55,10 @@ type
     procedure ParserField(ListField:String);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    //多选对话框
+    
     class function FindMDialog(AOwner:TForm;SQL:string;Fields:string;vList:TRecordList):boolean;
+    //单选对话框
     class function FindDialog(AOwner:TForm;SQL:string;Fields:string;AObj: TRecord_):boolean;
     property MultiSelect:boolean read FMultiSelect write SetMultiSelect;
   end;
@@ -98,7 +102,7 @@ begin
   cdsList.FieldByName('A').AsInteger :=1 ;
   cdsList.Post;
 end;
-var bs:TADODataSet;
+var 
   i:integer;
 begin
   inherited;
@@ -250,7 +254,7 @@ begin
         MultiSelect := True;
         ParserField(Fields);
         cdsList.Close;
-        cdsList.CommandText := SQL;
+        cdsList.SQL.Text := SQL;
         Factor.Open(cdsList);
         result := (ShowModal=MROK);
         if result then
@@ -279,7 +283,7 @@ begin
         MultiSelect := false;
         ParserField(Fields);
         cdsList.Close;
-        cdsList.CommandText := SQL;
+        cdsList.SQL.Text := SQL;
         Factor.Open(cdsList);
         result := (ShowModal=MROK);
         if result then

@@ -14,11 +14,10 @@ type
     RzPanel5: TRzPanel;
     btnOk: TRzBitBtn;
     RzBitBtn2: TRzBitBtn;
-    edtSearch: TcxTextEdit;
-    Label8: TLabel;
-    RzBitBtn1: TRzBitBtn;
-    RzBitBtn3: TRzBitBtn;
     RzTree: TRzTreeView;
+    Label8: TLabel;
+    edtSearch: TcxTextEdit;
+    RzBitBtn4: TRzBitBtn;
     procedure RzBitBtn1Click(Sender: TObject);
     procedure RzBitBtn3Click(Sender: TObject);
     procedure RzBitBtn2Click(Sender: TObject);

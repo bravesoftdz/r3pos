@@ -93,25 +93,17 @@ type
     edtSORT_ID5: TzrComboBoxList;
     edtSORT_ID4: TzrComboBoxList;
     edtSORT_ID3: TzrComboBoxList;
-    Lbl_4: TLabel;
-    Lbl_5: TLabel;
-    Lbl_6: TLabel;
-    Lbl_2: TLabel;
-    Lbl_3: TLabel;
     Label24: TLabel;
     PUB_GoodsPrice1: TZQuery;
     Label12: TLabel;
-    edtSORT_ID1: TzrComboBoxList;
     Lbl_1: TLabel;
     edtPRICE_METHOD: TcxComboBox;
     Label31: TLabel;
     edtNEW_LOWPRICE: TcxTextEdit;
-    Label21: TLabel;
+    LblColorGroup: TLabel;
     edtSORT_ID7: TzrComboBoxList;
-    Lbl_7: TLabel;
     lblSizeGroup: TLabel;
     edtSORT_ID8: TzrComboBoxList;
-    Lbl_8: TLabel;
     Log_GoodsPrice: TZQuery;
     edtUSING_BARTER: TGroupBox;
     RB_USING_BARTER: TRadioButton;
@@ -119,7 +111,8 @@ type
     Label47: TLabel;
     edtBARTER_INTEGRAL: TcxSpinEdit;
     RzPnl_Price: TRzPanel;
-    GridPrice: TDBGridEh;
+    DBGridEh1: TDBGridEh;
+    edtSORT_ID1: TcxButtonEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -138,9 +131,8 @@ type
     procedure edtNEW_OUTPRICEPropertiesChange(Sender: TObject);
     procedure btnAppendClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure edtSORT_ID1AddClick(Sender: TObject);
+    procedure edtSORT_ID1_AddClick(Sender: TObject);
     procedure edtCALC_UNITSSaveValue(Sender: TObject);
-    procedure edtSORT_ID1SaveValue(Sender: TObject);
     procedure edtSMALL_UNITSSaveValue(Sender: TObject);
     procedure edtBIG_UNITSSaveValue(Sender: TObject);
     procedure edtSORT_ID3SaveValue(Sender: TObject);
@@ -165,6 +157,8 @@ type
     procedure edtNEW_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
     procedure edtUSING_PRICEClick(Sender: TObject);
     procedure RB_USING_BARTERClick(Sender: TObject);
+    procedure edtSORT_ID1PropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     FRELATION_FLAG: Integer; //Append传入的商品分类的类型[连锁经营和自主经营] 1、2
     FSortID: string;      //Append传入的SortID值
@@ -173,12 +167,16 @@ type
     SmallBarCode:string;  //小包装条形码
     BigBarCode: string;   //大包装条形码
 
+    //商品分类: SORT_ID1_KeyValue
+    SORT_ID1_KeyValue: string;
+
     procedure EditKeyPress(Sender: TObject; var Key: Char);    
     procedure AddSORT_IDClick(Sender: TObject; SortType: integer); //添加Add
     procedure CheckGoodsFieldIsEmpty; //判断商品非空属性是否为空；
     procedure CheckGoodsNameIsExist; //判断商品名称是否存在本地缓存中存在
     function  GetIsRELATION_FLAG: Boolean; //返回判断是否可编辑
     procedure SetZrCbxDefaultValue(SetCbx: TzrComboBoxList);  //设置默认值
+    procedure CheckCLVersionSetParams;  //判断行业版本设置参数;
   public
      AObj:TRecord_;
      SORT_ID1,flag,ccid:string;
@@ -214,7 +212,7 @@ implementation
 
 uses
   uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,uShopGlobal,
-  ufrmGoodssort, ufrmGoodsSortTree;
+  ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog;
 
   //ufrmGoodsSort, ufrmBrandInfo, ufrmColorInfo, ufrmClientInfo,ufrmSizeInfo ,
   //ufrmGoodsColorDialog,ufrmGoodsSizeDialog
@@ -236,22 +234,21 @@ begin
   begin
     if Sort_ID<>'' then
     begin
-      edtSORT_ID1.KeyValue:=Sort_ID;
+      SORT_ID1_KeyValue:=Sort_ID;
       edtSORT_ID1.Text:=Sort_Name;
-    end
-    else
+    end else
     begin
-      edtSORT_ID1.KeyValue:=SaveSid;
+      SORT_ID1_KeyValue:=SaveSid;
       edtSORT_ID1.Text:=Savesname;
     end;
     edtUSING_PRICE.ItemIndex := 0;
     edtHAS_INTEGRAL.ItemIndex := 0;
     edtGODS_TYPE.ItemIndex := 0;
     edtUSING_BATCH_NO.ItemIndex:=1;
-    RB_USING_BARTER.Checked:=true;
+    RB_NotUSING_BARTER.Checked:=true;
     //统计指标默认值:
     SetZrCbxDefaultValue(edtSORT_ID2);
-    SetZrCbxDefaultValue(edtSORT_ID3);
+    //SetZrCbxDefaultValue(edtSORT_ID3);  主供应商 改为  允许为空
     SetZrCbxDefaultValue(edtSORT_ID4);
     SetZrCbxDefaultValue(edtSORT_ID5);
     SetZrCbxDefaultValue(edtSORT_ID6);
@@ -298,14 +295,16 @@ var
   rs: TZQuery;
 begin
   inherited;
-  RzPage.ActivePageIndex := 0;
+  RzPage.ActivePageIndex := 0;    
+  CheckCLVersionSetParams; //判断行业版本设置相应控件: 服装版本显示颜色和条码组
   TabGoodPrice.TabVisible:=False;  //价格管理分页 默认为False;
+
   AObj := TRecord_.Create;
   edtCALC_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   edtSMALL_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   edtBIG_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   //商品的的8个SORT_ID数据集:
-  edtSORT_ID1.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');     //分类
+  //edtSORT_ID1.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');     //分类
   edtSORT_ID2.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');     //类别[烟草:一类烟、二类烟、三类烟]
   edtSORT_ID3.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');    //主供应商
   edtSORT_ID4.DataSet:=Global.GetZQueryFromName('PUB_BRAND_INFO');    //品牌
@@ -436,8 +435,10 @@ begin
   begin
     AObj.FieldbyName('GODS_ID').AsString :=TSequence.NewId;  //GUID号
     if trim(edtGODS_CODE.Text)='自动编号' then
-      AObj.FieldbyName('GODS_CODE').AsString :=TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6)  //企业内码ID
-    else AObj.FieldbyName('GODS_CODE').AsString:=trim(edtGODS_CODE.Text);
+    begin
+      edtGODS_CODE.Text:=TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
+      AObj.FieldbyName('GODS_CODE').AsString :=edtGODS_CODE.Text;  //企业内码ID
+    end else AObj.FieldbyName('GODS_CODE').AsString:=trim(edtGODS_CODE.Text);
   end;
 
   if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') then
@@ -462,7 +463,7 @@ begin
   cdsGoods.Post;
 
   //(2)写条码
-  SaveSId := edtSORT_ID1.KeyValue;
+  SaveSId :=SORT_ID1_KeyValue;
   SaveSName := edtSORT_ID1.Text;
   //写入商品的条形码表
   WriteBarCode('');
@@ -536,7 +537,7 @@ begin
       AObj1:=TRecord_.Create;
       try
         AObj.CopyTo(AObj1);
-        Append(self.FRELATION_FLAG ,edtSORT_ID1.KeyValue,edtSORT_ID1.Text,'');
+        Append(self.FRELATION_FLAG , SORT_ID1_KeyValue, edtSORT_ID1.Text,'');
         locked := true;
         try
           ReadFromObject(AObj1);
@@ -588,6 +589,9 @@ begin
   RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);
   RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);
   
+  //商品分类：
+  SORT_ID1_KeyValue:=trim(AObj.FieldbyName('SORT_ID1').AsString);
+  edtSORT_ID1.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',SORT_ID1_KeyValue);
 
   //主供应商:
   edtSORT_ID3.KeyValue:=AObj.FieldbyName('SORT_ID3').AsString;  //主供应商ID
@@ -627,7 +631,7 @@ begin
   AObj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
 
   //写入商品类别[edtSORT_ID1.KeyValue ..  edtSORT_ID8.KeyValue]
-  AObj.FieldByName('SORT_ID1').AsString:=edtSORT_ID1.KeyValue;
+  AObj.FieldByName('SORT_ID1').AsString:=SORT_ID1_KeyValue;
   AObj.FieldByName('SORT_ID2').AsString:=edtSORT_ID2.KeyValue;
   AObj.FieldByName('SORT_ID3').AsString:=edtSORT_ID3.KeyValue;
   AObj.FieldByName('SORT_ID4').AsString:=edtSORT_ID4.KeyValue;
@@ -1010,12 +1014,6 @@ begin
   Label9.Visible:=true;
   Label41.Visible:=true;
   Label42.Visible:=true;
-  Lbl_1.Visible:=true;
-  Lbl_2.Visible:=true;
-  Lbl_3.Visible:=true;
-  Lbl_4.Visible:=true;
-  Lbl_5.Visible:=true;
-  Lbl_6.Visible:=true;
   edtGODS_TYPE.Enabled:=True;
   edtUSING_PRICE.Enabled:=True;
   edtUSING_BATCH_NO.Enabled:=True;
@@ -1042,12 +1040,6 @@ begin
       Label9.Visible:=False;
       Label41.Visible:=False;
       Label42.Visible:=False;
-      Lbl_1.Visible:=False;
-      Lbl_2.Visible:=False;
-      Lbl_3.Visible:=False;
-      Lbl_4.Visible:=False;
-      Lbl_5.Visible:=False;
-      Lbl_6.Visible:=False;
       edtGODS_TYPE.Enabled:=False;
       edtUSING_PRICE.Enabled:=False;
       edtUSING_BATCH_NO.Enabled:=False;
@@ -1256,7 +1248,7 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.edtSORT_ID1AddClick(Sender: TObject);
+procedure TfrmGoodsInfo.edtSORT_ID1_AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   AObj := TRecord_.Create;
@@ -1278,17 +1270,6 @@ begin
   begin
     if MessageBox(Handle,'没找到你想查找的“计量单位”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     edtCALC_UNITS.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
-procedure TfrmGoodsInfo.edtSORT_ID1SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID1.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“商品分类”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID1.OnAddClick(nil);
     Exit;
   end;
 end;
@@ -1519,7 +1500,7 @@ begin
     if trim(edtBARCODE1.Text)='' then exit;
     if ReadBarCode_INFO(trim(edtBARCODE1.Text)) then
     begin
-      if edtSORT_ID1.asString<>'' then edtNEW_OUTPRICE.SetFocus else edtSORT_ID1.SetFocus;
+      if (self.SORT_ID1_KeyValue<>'') and (trim(edtSORT_ID1.Text)<>'') then edtNEW_OUTPRICE.SetFocus else edtSORT_ID1.SetFocus;
     end;
   end;
   //  if not(Key in ['0'..'9']) then Key := #0;
@@ -1828,7 +1809,7 @@ begin
   end;
 
   {==  商品SORT_ID1..8  ==}
-  if Trim(edtSORT_ID1.KeyValue)='' then
+  if (SORT_ID1_KeyValue<>'') and (Trim(edtSORT_ID1.Text)='') then
   begin
     if edtSORT_ID1.CanFocus then edtSORT_ID1.SetFocus;
     raise Exception.Create('商品分类不能为空！');
@@ -1838,11 +1819,14 @@ begin
     if edtSORT_ID2.CanFocus then edtSORT_ID2.SetFocus;
     raise Exception.Create('商品类别不能为空！');
   end;
+
+  {
   if Trim(edtSORT_ID3.KeyValue)='' then
   begin
     if edtSORT_ID3.CanFocus then edtSORT_ID3.SetFocus;
     raise Exception.Create('商品主供应商不能为空！');
   end;
+  }
   if Trim(edtSORT_ID4.KeyValue)='' then
   begin
     if edtSORT_ID4.CanFocus then edtSORT_ID4.SetFocus;
@@ -2122,7 +2106,7 @@ end;
 procedure TfrmGoodsInfo.edtUSING_PRICEClick(Sender: TObject);
 begin
   inherited;
-  TabGoodPrice.TabVisible:=(edtUSING_PRICE.ItemIndex=0); 
+  //TabGoodPrice.TabVisible:=(edtUSING_PRICE.ItemIndex=0); 
 end;
 
 procedure TfrmGoodsInfo.RB_USING_BARTERClick(Sender: TObject);
@@ -2130,6 +2114,44 @@ begin
   if RB_NotUSING_BARTER.Checked then
     edtBARTER_INTEGRAL.Value:=0;
   edtBARTER_INTEGRAL.Enabled:=RB_USING_BARTER.Checked;
+end;
+
+procedure TfrmGoodsInfo.CheckCLVersionSetParams;
+begin
+  LblColorGroup.Visible:=(trim(CLVersion)='FIG');
+  edtSORT_ID7.Visible:=LblColorGroup.Visible;
+  lblSizeGroup.Visible:=LblColorGroup.Visible;
+  edtSORT_ID8.Visible:=LblColorGroup.Visible;
+
+  if not LblColorGroup.Visible then
+  begin
+    GB_Small.Top:=22;
+    GB_Big.Top:=103;
+  end else
+  begin
+    GB_Small.Top:=35;
+    GB_Big.Top:=116;
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtSORT_ID1PropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var
+  rs:TRecord_;
+begin
+  inherited;
+  rs := TRecord_.Create;
+  try
+  if TframeTreeFindDialog.FindDialog1(self,Global.GetZQueryFromName('PUB_GOODSSORT'),
+      'SORT_ID','LEVEL_ID','SORT_NAME','444444',rs)
+  then
+     begin
+       SORT_ID1_KeyValue := rs.FieldbyName('SORT_ID').AsString;
+       edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
+     end;
+  finally
+     rs.Free;
+  end;
 end;
 
 end.

@@ -49,12 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 519
       Height = 232
+      ActivePage = tabProperty
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 2
+      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -68,7 +69,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Height = 12
           Alignment = taRightJustify
         end
-        object Label21: TLabel
+        object LblColorGroup: TLabel
           Left = 36
           Top = 15
           Width = 36
@@ -81,20 +82,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Font.Name = #23435#20307
           Font.Style = []
           ParentFont = False
-        end
-        object Lbl_7: TLabel
-          Left = 217
-          Top = 15
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
+          Visible = False
         end
         object lblSizeGroup: TLabel
           Left = 287
@@ -109,20 +97,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Font.Name = #23435#20307
           Font.Style = []
           ParentFont = False
-        end
-        object Lbl_8: TLabel
-          Left = 473
-          Top = 15
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
+          Visible = False
         end
         object GB_Small: TGroupBox
           Left = 26
@@ -404,6 +379,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             end>
           Properties.ReadOnly = True
           TabOrder = 0
+          Visible = False
           InGrid = False
           KeyValue = Null
           FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
@@ -440,6 +416,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             end>
           Properties.ReadOnly = True
           TabOrder = 1
+          Visible = False
           InGrid = False
           KeyValue = Null
           FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
@@ -500,14 +477,14 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           BorderOuter = fsFlat
           BorderColor = clGray
           TabOrder = 1
-          object GridPrice: TDBGridEh
+          Visible = False
+          object DBGridEh1: TDBGridEh
             Left = 1
             Top = 1
             Width = 486
             Height = 148
             Align = alClient
             AllowedOperations = [alopUpdateEh]
-            Ctl3D = True
             Flat = True
             FooterColor = clWindow
             FooterFont.Charset = GB2312_CHARSET
@@ -518,7 +495,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             FrozenCols = 2
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-            ParentCtl3D = False
             RowHeight = 20
             TabOrder = 0
             TitleFont.Charset = GB2312_CHARSET
@@ -562,7 +538,15 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                   '')
                 ReadOnly = True
                 Title.Caption = #31649#29702#24211#23384
-                Width = 106
+                Width = 116
+              end
+              item
+                EditButtons = <>
+                Footers = <>
+              end
+              item
+                EditButtons = <>
+                Footers = <>
               end>
           end
         end
@@ -779,76 +763,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Caption = #37325#28857#21697#29260
           Font.Charset = GB2312_CHARSET
           Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Lbl_4: TLabel
-          Left = 254
-          Top = 21
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Lbl_5: TLabel
-          Left = 254
-          Top = 87
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Lbl_6: TLabel
-          Left = 254
-          Top = 109
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Lbl_2: TLabel
-          Left = 254
-          Top = 43
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Lbl_3: TLabel
-          Left = 254
-          Top = 65
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-          Caption = '*'
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
           Font.Height = -12
           Font.Name = #23435#20307
           Font.Style = []
@@ -1543,51 +1457,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         TabOrder = 8
         OnKeyPress = edtPROFIT_RATEKeyPress
       end
-      object edtSORT_ID1: TzrComboBoxList
-        Left = 385
-        Top = 69
-        Width = 100
-        Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = True
-        TabOrder = 5
-        InGrid = False
-        KeyValue = Null
-        FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-        KeyField = 'SORT_ID'
-        ListField = 'SORT_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'SORT_NAME'
-            Footers = <>
-            Title.Caption = #20998#31867#21517#31216
-            Width = 50
-          end
-          item
-            EditButtons = <>
-            FieldName = 'SORT_ID'
-            Footers = <>
-            Title.Caption = #20195#30721
-            Visible = False
-            Width = 50
-          end>
-        DropWidth = 100
-        DropHeight = 120
-        ShowTitle = False
-        AutoFitColWidth = True
-        OnAddClick = edtSORT_ID1AddClick
-        ShowButton = True
-        LocateStyle = lsDark
-        Buttons = [zbNew]
-        DropListStyle = lsEditFixed
-        OnSaveValue = edtSORT_ID1SaveValue
-        MultiSelect = False
-      end
       object edtNEW_LOWPRICE: TcxTextEdit
         Left = 385
         Top = 113
@@ -1596,6 +1465,20 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 10
         OnKeyPress = edtNEW_OUTPRICEKeyPress
+      end
+      object edtSORT_ID1: TcxButtonEdit
+        Left = 385
+        Top = 69
+        Width = 100
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        Properties.ReadOnly = True
+        Properties.OnButtonClick = edtSORT_ID1PropertiesButtonClick
+        TabOrder = 5
       end
     end
   end

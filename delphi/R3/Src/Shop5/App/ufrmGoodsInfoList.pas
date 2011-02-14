@@ -184,8 +184,8 @@ begin
     ' RTL_OUTPRICE, '+  //标准售价
     ' NEW_LOWPRICE, '+  //最低售价
     ' NEW_OUTPRICE, '+
-    ' NEW_OUTPRICE1, '+
-    ' NEW_OUTPRICE2, '+
+    ' NEW_OUTPRICE1,'+
+    ' NEW_OUTPRICE2,'+
     ' NEW_LOWPRICE,'+
     ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,J.COMM as COMM,'+
     ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,REMARK '+#13+
@@ -242,7 +242,7 @@ begin
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
-     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
+     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600 rows only ';
   5:
   result := 'select 0 as selflag,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then Cast((l.NEW_INPRICE*100/l.NEW_OUTPRICE) as varchar(12)) || ''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.* from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
@@ -256,17 +256,27 @@ procedure TfrmGoodsInfoList.Open(Id: string);
 var StrmData: TStream;
   Cnd: string; rs:TZQuery;  
   function GetReCount(Cnd: string): integer;
-  var str: string; tmpQry:TZQuery;
+  var str,GoodTab: string; tmpQry:TZQuery;
   begin
     result:=0;
     tmpQry:=TZQuery.Create(nil);
     try
-      str:='Select count(*) as RESUM from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and '+
+      GoodTab:=
+        '(select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
+        ' union all '+
+        ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
+        ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
+
+      str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and '+
            ' j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
       tmpQry.Close;
       tmpQry.SQL.Text:=str;
       if tmpQry.Params.FindParam('TENANT_ID')<>nil then
          tmpQry.Params.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
+      if tmpQry.Params.FindParam('SHOP_ID_ROOT')<>nil then
+         tmpQry.Params.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
+      if tmpQry.Params.FindParam('SHOP_ID')<>nil then
+         tmpQry.Params.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
       if tmpQry.Params.FindParam('KEYVALUE')<>nil then
          tmpQry.Params.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
       if tmpQry.Params.FindParam('SORT_ID')<>nil then

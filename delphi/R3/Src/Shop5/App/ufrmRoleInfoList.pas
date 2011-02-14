@@ -62,7 +62,6 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    ftParams: TftParamList;  
   public
     locked, IsCompany : boolean;
     procedure AddRecord(AObj:TRecord_);
@@ -73,7 +72,7 @@ type
 
 implementation
 
-uses uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport;
+uses uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport,uCtrlUtil;
 
 {$R *.dfm}
 
@@ -84,18 +83,20 @@ begin
   inherited;  
   if edtKey.Text<>'' then
   begin
-    ftParams.ParamByName('KEYVALUE').AsString:=trim(edtKEY.Text);
     case Factor.iDbType of
-     0: str:=' and (ROLE_ID like ''%''+ :KEYVALUE + ''%'' or ROLE_NAME like ''%''+ :KEYVALUE + ''%'' or ROLE_SPELL like ''%''+ :KEYVALUE + ''%'') ';
-     5: str:=' and (ROLE_ID like ''%''|| :KEYVALUE || ''%'' or ROLE_NAME like ''%''|| :KEYVALUE || ''%'' or ROLE_SPELL like ''%''|| :KEYVALUE || ''%'') ';
+     0  : str:=' and (ROLE_ID like ''%''+ :KEYVALUE + ''%'' or ROLE_NAME like ''%''+ :KEYVALUE + ''%'' or ROLE_SPELL like ''%''+ :KEYVALUE + ''%'') ';
+     4,5: str:=' and (ROLE_ID like ''%''|| :KEYVALUE || ''%'' or ROLE_NAME like ''%''|| :KEYVALUE || ''%'' or ROLE_SPELL like ''%''|| :KEYVALUE || ''%'') ';
     end;
   end;
-  str:='Select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
+  str:='Select Cast(100 as integer) as AA,ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
        ' From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
   cdsBrowser.Close;
-  cdsBrowser.Filter:='';
   cdsBrowser.SQL.Text:=str;
-  cdsBrowser.Params.AssignValues(ftParams);
+  //设置参数:
+  if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
+     cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
+     cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
   Factor.Open(cdsBrowser);
 end;
 
@@ -204,13 +205,12 @@ begin
   locked:=True;
   try
     //关键字参数发生变化时间查询
-    if trim(ftParams.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
+    if trim(cdsBrowser.Params.ParamByName('KEYVALUE').AsString)<>trim('''%'+trim(edtKEY.Text)+'%''') then
     begin
       if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
-      ftParams.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%''';
       cdsBrowser.close;
-      cdsBrowser.Params.AssignValues(ftParams);
-      Factor.Open(cdsBrowser);      
+      cdsBrowser.Params.ParamByName('KEYVALUE').AsString:='''%'+trim(edtKEY.Text)+'%''';
+      Factor.Open(cdsBrowser);
     end;
   finally
     locked:=False;
@@ -315,14 +315,13 @@ end;
 
 procedure TfrmRoleInfoList.FormCreate(Sender: TObject);
 begin
-  //创建参数对象:
-  ftParams:=TftParamList.Create(nil);
-  ftParams.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
-  IsCompany:=true; //
+  IsCompany:=true;
+  
+  //暂关闭Gird表头排序
+  //TDbGridEhSort.InitForm(self);
 end;
 
 procedure TfrmRoleInfoList.DBGridEh1DblClick(Sender: TObject);
@@ -387,7 +386,8 @@ end;
 procedure TfrmRoleInfoList.FormDestroy(Sender: TObject);
 begin
   inherited;
-  ftParams.Free;   //释放参数对象  
+  //暂关闭Gird表头排序
+  //TDbGridEhSort.FreeForm(self);
 end;
 
 end.

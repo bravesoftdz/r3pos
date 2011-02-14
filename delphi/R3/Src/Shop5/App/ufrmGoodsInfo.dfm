@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 196
-  Top = 112
+  Left = 193
+  Top = 107
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 426
@@ -240,7 +240,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Height = 20
             Properties.OnChange = edtSMALLTO_CALCPropertiesChange
             TabOrder = 1
-            OnKeyPress = edtSMALLTO_CALCKeyPress
+            OnKeyPress = edtNEW_OUTPRICEKeyPress
           end
           object edtBARCODE2: TcxTextEdit
             Left = 80
@@ -255,7 +255,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Width = 100
             Height = 20
             TabOrder = 3
-            OnKeyPress = edtMY_OUTPRICE1KeyPress
+            OnKeyPress = edtNEW_OUTPRICEKeyPress
           end
         end
         object GB_Big: TGroupBox
@@ -374,7 +374,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Height = 20
             Properties.OnChange = edtBIGTO_CALCPropertiesChange
             TabOrder = 1
-            OnKeyPress = edtBIGTO_CALCKeyPress
+            OnKeyPress = edtNEW_OUTPRICEKeyPress
           end
           object edtBARCODE3: TcxTextEdit
             Left = 80
@@ -389,7 +389,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Width = 100
             Height = 20
             TabOrder = 3
-            OnKeyPress = edtMY_OUTPRICE2KeyPress
+            OnKeyPress = edtNEW_OUTPRICEKeyPress
           end
         end
         object edtSORT_ID7: TzrComboBoxList
@@ -470,7 +470,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Caption = #20215#26684#31649#29702
         object Label24: TLabel
           Left = 16
-          Top = 15
+          Top = 13
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -481,14 +481,90 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Font.Name = #23435#20307
           Font.Style = []
           ParentFont = False
+          Visible = False
         end
         object edtPRICE_METHOD: TcxComboBox
           Left = 68
-          Top = 11
+          Top = 9
           Width = 140
           Height = 20
           Properties.DropDownListStyle = lsFixedList
           TabOrder = 0
+          Visible = False
+        end
+        object RzPnl_Price: TRzPanel
+          Left = 15
+          Top = 41
+          Width = 488
+          Height = 150
+          BorderOuter = fsFlat
+          BorderColor = clGray
+          TabOrder = 1
+          object GridPrice: TDBGridEh
+            Left = 1
+            Top = 1
+            Width = 486
+            Height = 148
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            Ctl3D = True
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FrozenCols = 2
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+            ParentCtl3D = False
+            RowHeight = 20
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SORT_ID3'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #20379#24212#21830
+                Width = 129
+              end
+              item
+                EditButtons = <>
+                FieldName = 'SORT_ID4'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #21697#29260
+                Width = 57
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GODS_TYPE'
+                Footers = <>
+                KeyList.Strings = (
+                  '0'
+                  '1')
+                PickList.Strings = (
+                  #21542' '
+                  #26159' '
+                  '')
+                ReadOnly = True
+                Title.Caption = #31649#29702#24211#23384
+                Width = 106
+              end>
+          end
         end
       end
       inherited TabSheet1: TRzTabSheet
@@ -541,26 +617,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Alignment = taRightJustify
             Caption = #21551#29992#31215#20998#25442#36141
           end
-          object Label46: TLabel
-            Left = 290
-            Top = 136
-            Width = 72
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #31215#20998#25442#36141#20851#31995
-          end
-          object edtUSING_BARTER: TRadioGroup
-            Left = 30
-            Top = 148
-            Width = 200
-            Height = 40
-            Columns = 2
-            Items.Strings = (
-              #21551#29992
-              #31105#29992)
-            TabOrder = 4
-            OnClick = edtUSING_BARTERClick
-          end
           object edtGODS_TYPE: TRadioGroup
             Left = 30
             Top = 25
@@ -608,29 +664,48 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               #19981#31215#20998)
             TabOrder = 3
           end
-          object GroupBox3: TGroupBox
-            Left = 288
-            Top = 148
-            Width = 200
+          object edtUSING_BARTER: TGroupBox
+            Left = 30
+            Top = 151
+            Width = 459
             Height = 40
-            TabOrder = 5
+            TabOrder = 4
             object Label47: TLabel
-              Left = 14
-              Top = 18
+              Left = 60
+              Top = 16
               Width = 60
               Height = 12
               Alignment = taRightJustify
               Caption = #25442#36141#31215#20998#65306
             end
+            object RB_USING_BARTER: TRadioButton
+              Left = 8
+              Top = 14
+              Width = 48
+              Height = 17
+              Caption = #21551#29992
+              TabOrder = 0
+              OnClick = RB_USING_BARTERClick
+            end
+            object RB_NotUSING_BARTER: TRadioButton
+              Left = 266
+              Top = 14
+              Width = 48
+              Height = 17
+              Caption = #31105#29992
+              Checked = True
+              TabOrder = 1
+              TabStop = True
+            end
             object edtBARTER_INTEGRAL: TcxSpinEdit
-              Left = 73
-              Top = 13
-              Width = 101
+              Left = 119
+              Top = 11
+              Width = 85
               Height = 20
               Properties.ImmediatePost = True
               Properties.MaxValue = 99999999.000000000000000000
               Properties.ValueType = vtFloat
-              TabOrder = 0
+              TabOrder = 2
               ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
             end
           end
@@ -640,8 +715,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Color = clWhite
         Caption = #32479#35745#25351#26631
         object Label17: TLabel
-          Left = 28
-          Top = 42
+          Left = 35
+          Top = 41
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -654,8 +729,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Label40: TLabel
-          Left = 40
-          Top = 64
+          Left = 47
+          Top = 63
           Width = 36
           Height = 12
           Alignment = taRightJustify
@@ -668,8 +743,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Label29: TLabel
-          Left = 28
-          Top = 21
+          Left = 35
+          Top = 20
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -682,8 +757,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Label13: TLabel
-          Left = 275
-          Top = 20
+          Left = 35
+          Top = 87
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -696,8 +771,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Label44: TLabel
-          Left = 275
-          Top = 42
+          Left = 35
+          Top = 109
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -710,7 +785,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Lbl_4: TLabel
-          Left = 245
+          Left = 254
           Top = 21
           Width = 6
           Height = 12
@@ -724,8 +799,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Lbl_5: TLabel
-          Left = 477
-          Top = 19
+          Left = 254
+          Top = 87
           Width = 6
           Height = 12
           Alignment = taRightJustify
@@ -738,8 +813,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Lbl_6: TLabel
-          Left = 477
-          Top = 41
+          Left = 254
+          Top = 109
           Width = 6
           Height = 12
           Alignment = taRightJustify
@@ -752,7 +827,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Lbl_2: TLabel
-          Left = 244
+          Left = 254
           Top = 43
           Width = 6
           Height = 12
@@ -766,7 +841,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object Lbl_3: TLabel
-          Left = 244
+          Left = 254
           Top = 65
           Width = 6
           Height = 12
@@ -780,7 +855,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object edtSORT_ID6: TzrComboBoxList
-          Left = 79
+          Left = 87
           Top = 61
           Width = 162
           Height = 20
@@ -825,7 +900,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID2: TzrComboBoxList
-          Left = 79
+          Left = 87
           Top = 39
           Width = 162
           Height = 20
@@ -870,9 +945,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID5: TzrComboBoxList
-          Left = 327
-          Top = 38
-          Width = 146
+          Left = 86
+          Top = 105
+          Width = 163
           Height = 20
           Properties.AutoSelect = False
           Properties.Buttons = <
@@ -920,9 +995,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID4: TzrComboBoxList
-          Left = 327
-          Top = 16
-          Width = 146
+          Left = 86
+          Top = 83
+          Width = 163
           Height = 20
           Properties.AutoSelect = False
           Properties.Buttons = <
@@ -970,7 +1045,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID3: TzrComboBoxList
-          Left = 79
+          Left = 87
           Top = 17
           Width = 162
           Height = 20
@@ -1188,7 +1263,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label10: TLabel
-        Left = 330
+        Left = 329
         Top = 95
         Width = 48
         Height = 12
@@ -1314,7 +1389,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label12: TLabel
-        Left = 330
+        Left = 329
         Top = 73
         Width = 48
         Height = 12
@@ -1342,7 +1417,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label31: TLabel
-        Left = 331
+        Left = 329
         Top = 118
         Width = 48
         Height = 12
@@ -1372,7 +1447,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         TabOrder = 2
       end
       object edtGODS_CODE: TcxTextEdit
-        Tag = 1
         Left = 86
         Top = 26
         Width = 100
@@ -1396,7 +1470,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 7
-        OnKeyPress = edtMY_OUTPRICEKeyPress
+        OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
       object edtCALC_UNITS: TzrComboBoxList
         Left = 86
@@ -1458,7 +1532,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtNEW_INPRICEPropertiesChange
         TabOrder = 9
-        OnKeyPress = edtNEW_INPRICEKeyPress
+        OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
       object edtPROFIT_RATE: TcxMaskEdit
         Left = 86
@@ -1514,14 +1588,14 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         OnSaveValue = edtSORT_ID1SaveValue
         MultiSelect = False
       end
-      object cxTextEdit1: TcxTextEdit
+      object edtNEW_LOWPRICE: TcxTextEdit
         Left = 385
         Top = 113
         Width = 100
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 10
-        OnKeyPress = edtMY_OUTPRICEKeyPress
+        OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
     end
   end
@@ -1748,6 +1822,41 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       end>
     Left = 291
     Top = 387
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'COMP_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object Log_GoodsPrice: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
+        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
+      
+        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
+        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
+      ' or'
+      
+        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
+        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
+      ' or'
+      
+        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
+        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
+        'TYPE=2) and COMP_TYPE=2)'
+      ') order by ACCOUNT')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'COMP_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 129
+    Top = 389
     ParamData = <
       item
         DataType = ftUnknown

@@ -38,6 +38,9 @@ type
     PUB_SALE_STYLE: TZQuery;
     PUB_BANK_INFO: TZQuery;
     PUB_CLIENTSORT: TZQuery;
+    PUB_PRICEGRADE: TZQuery;
+    ACC_ACCOUNT_INFO: TZQuery;
+    ACC_ITEM_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

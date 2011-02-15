@@ -166,7 +166,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENAN' +
-        'T_ID=:TENANT_ID and CODE_TYPE='#39'1'#39' and  COMM not in ('#39'02'#39','#39'12'#39')')
+        'T_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown
@@ -188,27 +188,36 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select A.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
+        'select J.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
         'ME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
       
-        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE else B' +
+        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE else C' +
         '.NEW_INPRICE end as NEW_INPRICE,'
       
-        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE*A.SMAL' +
-        'LTO_CALC else B.NEW_INPRICE1 end as NEW_INPRICE1,'
+        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.SMAL' +
+        'LTO_CALC else C.NEW_INPRICE1 end as NEW_INPRICE1,'
       
-        '       case when B.NEW_INPRICE is null then A.NEW_INPRICE*A.BIGT' +
-        'O_CALC else B.NEW_INPRICE2 end as NEW_INPRICE2,'
+        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.BIGT' +
+        'O_CALC else C.NEW_INPRICE2 end as NEW_INPRICE2,'
       '       NEW_OUTPRICE,'
       '       NEW_OUTPRICE1,'
       '       NEW_OUTPRICE2,'
       '       NEW_LOWPRICE,'
-      '       SORT_ID7,SORT_ID8 '
+      '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL'
+      'from ('
       
-        'from VIW_GOODSPRICE A left join PUB_GOODSINFOEXT B on A.GODS_ID=' +
-        'B.GODS_ID and A.TENANT_ID=B.TENANT_ID'
-      'where A.COMM not in ('#39'02'#39','#39'12'#39') and A.SHOP_ID in (0,:SHOP_ID)'
-      'and A.TENANT_ID=:TENANT_ID order by GODS_CODE')
+        'select * from VIW_GOODSPRICE where POLICY_TYPE=2 and SHOP_ID=:SH' +
+        'OP_ID and TENANT_ID=:TENANT_ID'
+      'union all'
+      'select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '
+      
+        'where B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=' +
+        'B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and' +
+        ' A.TENANT_ID=:TENANT_ID'
+      
+        ') J left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TE' +
+        'NANT_ID=C.TENANT_ID'
+      'where J.COMM not in ('#39'02'#39','#39'12'#39') order by J.GODS_CODE')
     Params = <
       item
         DataType = ftUnknown
@@ -218,6 +227,11 @@ inherited ShopGlobal: TShopGlobal
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID_ROOT'
         ParamType = ptUnknown
       end>
     IndexFieldNames = 'GODS_ID Asc'
@@ -232,6 +246,11 @@ inherited ShopGlobal: TShopGlobal
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID_ROOT'
         ParamType = ptUnknown
       end>
   end
@@ -362,7 +381,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 88
     ParamData = <
       item
@@ -375,7 +394,7 @@ inherited ShopGlobal: TShopGlobal
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
-      'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID'
+      'select SORT_ID,SORT_NAME,SORT_SPELL,LEVEL_ID,'
       
         'RELATION_ID,RELATION_NAME from VIW_GOODSSORT where COMM not in (' +
         #39'02'#39','#39'12'#39') and SORT_TYPE=1 and TENANT_ID=:TENANT_ID '
@@ -386,7 +405,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 24
     ParamData = <
       item
@@ -415,7 +434,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 152
     ParamData = <
       item
@@ -444,7 +463,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 216
     ParamData = <
       item
@@ -473,7 +492,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 288
     ParamData = <
       item
@@ -502,7 +521,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 360
     ParamData = <
       item
@@ -531,7 +550,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 352
     Top = 416
     ParamData = <
       item
@@ -555,8 +574,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 512
-    Top = 48
+    Left = 456
+    Top = 24
     ParamData = <
       item
         DataType = ftUnknown
@@ -579,8 +598,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 512
-    Top = 120
+    Left = 456
+    Top = 96
     ParamData = <
       item
         DataType = ftUnknown
@@ -634,8 +653,8 @@ inherited ShopGlobal: TShopGlobal
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
         'E_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <>
-    Left = 512
-    Top = 192
+    Left = 456
+    Top = 168
   end
   object PUB_BANK_INFO: TZQuery
     FieldDefs = <>
@@ -651,8 +670,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 512
-    Top = 256
+    Left = 456
+    Top = 232
     ParamData = <
       item
         DataType = ftUnknown
@@ -679,8 +698,74 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 512
-    Top = 320
+    Left = 456
+    Top = 296
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_PRICEGRADE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select * from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and COMM' +
+        ' not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 456
+    Top = 360
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object ACC_ACCOUNT_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select * from VIW_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and CO' +
+        'MM not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 456
+    Top = 416
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object ACC_ITEM_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select * from VIW_ITEM_INFO where TENANT_ID=:TENANT_ID and COMM ' +
+        'not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 456
+    Top = 472
     ParamData = <
       item
         DataType = ftUnknown

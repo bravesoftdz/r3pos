@@ -1245,7 +1245,7 @@ CREATE INDEX IX_ACC_ACCOUNT_INFO_TIME_STAMP ON ACC_ACCOUNT_INFO(TENANT_ID,TIME_S
 
 CREATE VIEW VIW_ACCOUNT_INFO
 as
-select TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO;
+select TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,COMM,TIME_STAMP from ACC_ACCOUNT_INFO;
 
 --定义收支项目编号
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','收支项目','CODE_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -1382,6 +1382,8 @@ CREATE TABLE [ACC_PAYORDER] (
 	[PAY_DATE] int NULL ,
         --付款人
 	[PAY_USER] [varchar] (30) NULL ,
+        --付款总计
+	[PAY_MNY] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -1461,6 +1463,8 @@ CREATE TABLE [ACC_RECVORDER] (
 	[RECV_DATE] int NULL ,
         --付款人
 	[RECV_USER] [varchar] (30) NULL ,
+        --收款合计
+	[RECV_MNY] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员

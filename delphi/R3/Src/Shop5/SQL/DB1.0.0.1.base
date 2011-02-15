@@ -1545,29 +1545,29 @@ CREATE TABLE [PUB_GOODSINFO] (
         --库存选项
 	[GODS_TYPE] [tinyint] NULL ,
         --分类1
-	[SORT_ID1] [varchar] (36) NOT NULL ,
+	[SORT_ID1] [varchar] (36) NULL ,
         --分类2
-	[SORT_ID2] [varchar] (36) NOT NULL ,
+	[SORT_ID2] [varchar] (36) NULL ,
         --分类3
-	[SORT_ID3] [varchar] (36) NOT NULL ,
+	[SORT_ID3] [varchar] (36) NULL ,
         --分类4
-	[SORT_ID4] [varchar] (36) NOT NULL ,
+	[SORT_ID4] [varchar] (36) NULL ,
         --分类5
-	[SORT_ID5] [varchar] (36) NOT NULL ,
+	[SORT_ID5] [varchar] (36) NULL ,
         --分类6
-	[SORT_ID6] [varchar] (36) NOT NULL ,
+	[SORT_ID6] [varchar] (36) NULL ,
         --颜色组
-	[SORT_ID7] [varchar] (36) NOT NULL ,
+	[SORT_ID7] [varchar] (36) NULL ,
         --尺码组
-	[SORT_ID8] [varchar] (36) NOT NULL ,
+	[SORT_ID8] [varchar] (36) NULL ,
 	      --计量单位条码
-	[BARCODE] [varchar] (30) NOT NULL ,
+	[BARCODE] [varchar] (30) NULL ,
         --计量单位
-	[CALC_UNITS] [varchar] (4) NOT NULL ,
+	[CALC_UNITS] [varchar] (36) NOT NULL ,
         --包装1单位
-	[SMALL_UNITS] [varchar] (10) NULL ,
+	[SMALL_UNITS] [varchar] (36) NULL ,
         --包装2单位
-	[BIG_UNITS] [varchar] (4) NULL ,
+	[BIG_UNITS] [varchar] (36) NULL ,
         --包装1转换系数
 	[SMALLTO_CALC] [decimal](18, 3) NULL ,
         --包装2转换系数

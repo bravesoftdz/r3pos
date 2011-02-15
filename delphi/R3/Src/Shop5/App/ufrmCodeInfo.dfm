@@ -1,11 +1,12 @@
 inherited frmCodeInfo: TfrmCodeInfo
   Left = 492
   Top = 246
+  ActiveControl = DBGridEh1
   Caption = #23458#25143#20998#31867#31649#29702
   ClientHeight = 347
   ClientWidth = 349
+  OnActivate = FormActivate
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -248,7 +249,8 @@ inherited frmCodeInfo: TfrmCodeInfo
   object cdsCODE_INFO: TZQuery
     FieldDefs = <>
     CachedUpdates = True
-    AfterEdit = cdsCODE_INFOAfterEdit
+    BeforeInsert = cdsCODE_INFOBeforeInsert
+    BeforeEdit = cdsCODE_INFOBeforeEdit
     BeforePost = cdsCODE_INFOBeforePost
     OnNewRecord = cdsCODE_INFONewRecord
     Params = <>

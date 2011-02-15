@@ -33,10 +33,8 @@ type
     procedure btnExitClick(Sender: TObject);
     procedure cdsCODE_INFOBeforePost(DataSet: TDataSet);
     procedure cdsCODE_INFONewRecord(DataSet: TDataSet);
-    procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure cdsCODE_INFOAfterEdit(DataSet: TDataSet);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -47,6 +45,9 @@ type
     procedure CtrlEndExecute(Sender: TObject);
     procedure DBGridEh1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormActivate(Sender: TObject);
+    procedure cdsCODE_INFOBeforeEdit(DataSet: TDataSet);
+    procedure cdsCODE_INFOBeforeInsert(DataSet: TDataSet);
   private
     IsCompany:Boolean;
     FFlag: integer;
@@ -101,9 +102,12 @@ begin
     cdsCODE_INFO.EnableControls;
   end;
   cdsCODE_INFO.Append;
-  DBGridEh1.SetFocus;
-  DBGridEh1.Col:=1;
-  DBGridEh1.EditorMode := true;  
+  if Visible then
+  begin
+    DBGridEh1.SetFocus;
+    DBGridEh1.Col:=1;
+    DBGridEh1.EditorMode := true;
+  end;
 end;
 
 procedure TfrmCodeInfo.btnDeleteClick(Sender: TObject);
@@ -176,10 +180,10 @@ end;
 procedure TfrmCodeInfo.cdsCODE_INFOBeforePost(DataSet: TDataSet);
 begin
   inherited;
-  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and  (cdsCODE_INFO.FieldByName('CODE_ID').AsString='') then
-  begin
-    exit;
-  end;
+//  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and  (cdsCODE_INFO.FieldByName('CODE_ID').AsString='') then
+//  begin
+//    exit;
+//  end;
  { if cdsCODE_INFO.FieldByName('CODE_NAME').AsString='' then raise Exception.Create('名称不能为空！');
   if cdsCODE_INFO.FieldByName('CODE_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！');  }
 
@@ -259,22 +263,6 @@ begin
   if cdsCODE_INFO.IsEmpty then btnDelete.Enabled:=False;
 end;
 
-procedure TfrmCodeInfo.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open;
-  btnSave.Enabled:=False;
-  DBGridEh1.SetFocus;
-  //其它窗体调用此窗体，直接新增记录
-  if Flag=1 then
-  begin
-    btnAppendClick(nil);
-    btnAppend.Enabled:=False;
-    btnDelete.Enabled:=False;
-  end;
-  cdsCODE_INFO.Last;
-end;
-
 procedure TfrmCodeInfo.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
@@ -286,12 +274,6 @@ begin
     DBGridEh1.Canvas.Brush.Color := clAqua;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-end;
-
-procedure TfrmCodeInfo.cdsCODE_INFOAfterEdit(DataSet: TDataSet);
-begin
-  inherited;
-  btnSave.Enabled:=True;
 end;
 
 procedure TfrmCodeInfo.FormClose(Sender: TObject;
@@ -327,6 +309,16 @@ begin
       try
         Flag:=1;
         Code_type := CODETYPE;
+        Open;
+        btnSave.Enabled:=False;
+//        DBGridEh1.SetFocus;
+        //其它窗体调用此窗体，直接新增记录
+        if Flag=1 then
+        begin
+          btnAppend.Enabled:=False;
+          btnDelete.Enabled:=False;
+          btnAppendClick(nil);
+        end;
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -499,6 +491,9 @@ begin
     begin
       try
         Code_type := CODETYPE;
+        Open;
+        btnSave.Enabled:=False;
+//  DBGridEh1.SetFocus;
         ShowModal;
       finally
         Free;
@@ -518,6 +513,32 @@ begin
     end
   else
     Raise Exception.Create('无效的 CODE_TYPE 值！');
+end;
+
+procedure TfrmCodeInfo.FormActivate(Sender: TObject);
+begin
+  inherited;
+  if cdsCODE_INFO.State <> dsBrowse then
+  begin
+    DBGridEh1.SetFocus;
+    DBGridEh1.Col:=1;
+    DBGridEh1.EditorMode := true;
+  end;
+
+end;
+
+procedure TfrmCodeInfo.cdsCODE_INFOBeforeEdit(DataSet: TDataSet);
+begin
+  inherited;
+  btnSave.Enabled:=True;
+
+end;
+
+procedure TfrmCodeInfo.cdsCODE_INFOBeforeInsert(DataSet: TDataSet);
+begin
+  inherited;
+  btnSave.Enabled:=True;
+
 end;
 
 end.

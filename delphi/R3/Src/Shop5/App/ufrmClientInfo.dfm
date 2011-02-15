@@ -19,10 +19,8 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 113
       Width = 518
       Height = 207
-      ActivePage = TabSheet2
       Color = clWhite
       ParentColor = False
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -957,22 +955,15 @@ inherited frmClientInfo: TfrmClientInfo
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'CODE_NAME'
+            FieldName = 'PRICE_NAME'
             Footers = <>
-            Title.Caption = #23610#30721#32452
+            Title.Caption = #31561#32423#21517#31216
             Width = 121
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CODE_SPELL'
-            Footers = <>
-            Visible = False
           end>
         DropWidth = 176
         DropHeight = 130
         ShowTitle = False
         AutoFitColWidth = True
-        OnAddClick = edtSORT_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]

@@ -90,6 +90,7 @@ type
     procedure edtSORT_IDSaveValue(Sender: TObject);
     procedure edtCLIENT_TYPEPropertiesChange(Sender: TObject);
     procedure edtREGION_IDAddClick(Sender: TObject);
+    procedure edtPRICE_IDAddClick(Sender: TObject);
   private
     ccid:string;
     { Private declarations }
@@ -125,10 +126,11 @@ begin
   edtCLIENT_CODE.SelectAll;
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
   edtSETTLE_CODE.ItemIndex:=0;
-  //edtPRICE_ID.ItemIndex := 0;
   edtBANK_ID.ItemIndex := 0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Global.GetZQueryFromName('PUB_PRICEGRADE').fieldbyname('PRICE_ID').AsString);
+  edtPRICE_ID.KeyValue := Global.GetZQueryFromName('PUB_PRICEGRADE').fieldbyname('PRICE_ID').AsString;
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='нч';
   edtREGION_ID.KeyValue:='#';
@@ -595,6 +597,12 @@ begin
   finally
 
   end;
+end;
+
+procedure TfrmClientInfo.edtPRICE_IDAddClick(Sender: TObject);
+begin
+  inherited;
+//
 end;
 
 end.

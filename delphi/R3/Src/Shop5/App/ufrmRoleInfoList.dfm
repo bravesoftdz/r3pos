@@ -173,19 +173,11 @@ inherited frmRoleInfoList: TfrmRoleInfoList
                     Width = 31
                   end
                   item
-                    Alignment = taRightJustify
-                    EditButtons = <>
-                    FieldName = 'ROLE_ID'
-                    Footers = <>
-                    Title.Caption = #35282#33394#20195#30721
-                    Width = 54
-                  end
-                  item
                     EditButtons = <>
                     FieldName = 'ROLE_NAME'
                     Footers = <>
                     Title.Caption = #35282#33394#21517#31216
-                    Width = 109
+                    Width = 98
                   end
                   item
                     Alignment = taRightJustify
@@ -193,7 +185,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
                     FieldName = 'ROLE_SPELL'
                     Footers = <>
                     Title.Caption = #25340#38899#30721
-                    Width = 59
+                    Width = 74
                   end
                   item
                     EditButtons = <>

@@ -4,7 +4,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 426
-  ClientWidth = 529
+  ClientWidth = 528
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -42,20 +42,19 @@ inherited frmGoodsInfo: TfrmGoodsInfo
     ParentFont = False
   end
   inherited bgPanel: TRzPanel
-    Width = 529
+    Width = 528
     Height = 426
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
       Top = 145
-      Width = 519
+      Width = 518
       Height = 232
-      ActivePage = tabProperty
+      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -174,7 +173,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Default = True
               end>
             Properties.ReadOnly = True
+            Properties.OnChange = edtSMALL_UNITSPropertiesChange
             TabOrder = 0
+            OnExit = edtSMALL_UNITSExit
             InGrid = False
             KeyValue = Null
             FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -230,7 +231,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Width = 100
             Height = 20
             TabOrder = 3
-            OnKeyPress = edtNEW_OUTPRICEKeyPress
+            OnKeyPress = edtMY_OUTPRICE1KeyPress
           end
         end
         object GB_Big: TGroupBox
@@ -308,7 +309,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Default = True
               end>
             Properties.ReadOnly = True
+            Properties.OnChange = edtBIG_UNITSPropertiesChange
             TabOrder = 0
+            OnExit = edtBIG_UNITSExit
             InGrid = False
             KeyValue = Null
             FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -364,7 +367,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Width = 100
             Height = 20
             TabOrder = 3
-            OnKeyPress = edtNEW_OUTPRICEKeyPress
+            OnKeyPress = edtMY_OUTPRICE2KeyPress
           end
         end
         object edtSORT_ID7: TzrComboBoxList
@@ -444,47 +447,24 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       end
       object TabGoodPrice: TRzTabSheet [1]
         Color = clWhite
-        Caption = #20215#26684#31649#29702
-        object Label24: TLabel
-          Left = 16
-          Top = 13
-          Width = 48
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #23450#20215#26041#24335
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-          Visible = False
-        end
-        object edtPRICE_METHOD: TcxComboBox
-          Left = 68
-          Top = 9
-          Width = 140
-          Height = 20
-          Properties.DropDownListStyle = lsFixedList
-          TabOrder = 0
-          Visible = False
-        end
+        Caption = ' '#20250#21592#20215' '
         object RzPnl_Price: TRzPanel
-          Left = 15
-          Top = 41
-          Width = 488
-          Height = 150
+          Left = 11
+          Top = 16
+          Width = 491
+          Height = 175
           BorderOuter = fsFlat
           BorderColor = clGray
-          TabOrder = 1
-          Visible = False
-          object DBGridEh1: TDBGridEh
+          TabOrder = 0
+          object PriceGrid: TDBGridEh
             Left = 1
             Top = 1
-            Width = 486
-            Height = 148
+            Width = 489
+            Height = 173
             Align = alClient
             AllowedOperations = [alopUpdateEh]
+            AutoFitColWidths = True
+            DataSource = PRICEPrice_DS
             Flat = True
             FooterColor = clWindow
             FooterFont.Charset = GB2312_CHARSET
@@ -508,54 +488,60 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
+            OnDrawColumnCell = PriceGridDrawColumnCell
+            OnExit = PriceGridExit
+            OnKeyPress = PriceGridKeyPress
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'SORT_ID3'
+                FieldName = 'SEQNO'
+                Footers = <>
+                Title.Caption = #24207#21495
+                Width = 29
+              end
+              item
+                EditButtons = <>
+                FieldName = 'PRICE_Name'
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #20379#24212#21830
-                Width = 129
+                Title.Caption = #20250#21592#31561#32423
+                Width = 83
               end
               item
                 EditButtons = <>
-                FieldName = 'SORT_ID4'
+                FieldName = 'PROFIT_RATE'
                 Footers = <>
-                ReadOnly = True
-                Title.Caption = #21697#29260
-                Width = 57
+                Title.Caption = #25240#25187#29575'(%)'
               end
               item
                 EditButtons = <>
-                FieldName = 'GODS_TYPE'
+                FieldName = 'NEW_OUTPRICE'
                 Footers = <>
-                KeyList.Strings = (
-                  '0'
-                  '1')
-                PickList.Strings = (
-                  #21542' '
-                  #26159' '
-                  '')
-                ReadOnly = True
-                Title.Caption = #31649#29702#24211#23384
-                Width = 116
+                Title.Caption = #35745#37327#21333#20301#21806#20215
+                Width = 86
               end
               item
                 EditButtons = <>
+                FieldName = 'NEW_OUTPRICE1'
                 Footers = <>
+                Title.Caption = #23567#21253#35013#21806#20215
+                Width = 93
               end
               item
                 EditButtons = <>
+                FieldName = 'NEW_OUTPRICE2'
                 Footers = <>
+                Title.Caption = #22823#21253#35013#21806#20215
+                Width = 86
               end>
           end
         end
       end
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #39640#32423#23646#24615
+        Caption = #21830#21697#36873#39033
         inherited RzPanel2: TRzPanel
-          Width = 515
+          Width = 514
           Height = 205
           BorderColor = clWhite
           BorderShadow = clWhite
@@ -669,7 +655,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Height = 17
               Caption = #21551#29992
               TabOrder = 0
-              OnClick = RB_USING_BARTERClick
             end
             object RB_NotUSING_BARTER: TRadioButton
               Left = 266
@@ -680,6 +665,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Checked = True
               TabOrder = 1
               TabStop = True
+              OnClick = RB_NotUSING_BARTERClick
             end
             object edtBARTER_INTEGRAL: TcxSpinEdit
               Left = 119
@@ -700,7 +686,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Caption = #32479#35745#25351#26631
         object Label17: TLabel
           Left = 35
-          Top = 41
+          Top = 63
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -714,7 +700,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label40: TLabel
           Left = 47
-          Top = 63
+          Top = 85
           Width = 36
           Height = 12
           Alignment = taRightJustify
@@ -742,7 +728,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label13: TLabel
           Left = 35
-          Top = 87
+          Top = 43
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -756,7 +742,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label44: TLabel
           Left = 35
-          Top = 109
+          Top = 108
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -770,7 +756,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtSORT_ID6: TzrComboBoxList
           Left = 87
-          Top = 61
+          Top = 83
           Width = 162
           Height = 20
           Properties.AutoSelect = False
@@ -815,7 +801,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtSORT_ID2: TzrComboBoxList
           Left = 87
-          Top = 39
+          Top = 61
           Width = 162
           Height = 20
           Properties.AutoSelect = False
@@ -859,9 +845,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID5: TzrComboBoxList
-          Left = 86
+          Left = 87
           Top = 105
-          Width = 163
+          Width = 162
           Height = 20
           Properties.AutoSelect = False
           Properties.Buttons = <
@@ -909,9 +895,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           MultiSelect = False
         end
         object edtSORT_ID4: TzrComboBoxList
-          Left = 86
-          Top = 83
-          Width = 163
+          Left = 87
+          Top = 39
+          Width = 162
           Height = 20
           Properties.AutoSelect = False
           Properties.Buttons = <
@@ -1020,15 +1006,15 @@ inherited frmGoodsInfo: TfrmGoodsInfo
     end
     inherited btPanel: TRzPanel
       Top = 377
-      Width = 519
+      Width = 518
       Height = 44
       Color = clWhite
       TabOrder = 2
       DesignSize = (
-        519
+        518
         44)
       object btnOk: TRzBitBtn
-        Left = 343
+        Left = 342
         Top = 9
         Width = 67
         Height = 26
@@ -1055,7 +1041,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 435
+        Left = 434
         Top = 9
         Width = 67
         Height = 26
@@ -1085,7 +1071,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 519
+      Width = 518
       Height = 140
       Align = alTop
       BorderOuter = fsNone
@@ -1397,7 +1383,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Default = True
           end>
         Properties.ReadOnly = True
+        Properties.OnChange = edtCALC_UNITSPropertiesChange
         TabOrder = 4
+        OnExit = edtCALC_UNITSExit
         InGrid = False
         KeyValue = Null
         FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -1464,7 +1452,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 10
-        OnKeyPress = edtNEW_OUTPRICEKeyPress
+        OnKeyPress = edtNEW_LOWPRICEKeyPress
       end
       object edtSORT_ID1: TcxButtonEdit
         Left = 385
@@ -1479,6 +1467,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Properties.ReadOnly = True
         Properties.OnButtonClick = edtSORT_ID1PropertiesButtonClick
         TabOrder = 5
+        OnKeyPress = edtSORT_ID1KeyPress
       end
     end
   end
@@ -1501,76 +1490,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
     object CtrlDown2: TAction
       Caption = #21521#19979
     end
-  end
-  object cdsGoods1: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 217
-    Top = 384
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object BarCode1: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 257
-    Top = 384
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
   end
   object BarCode: TZQuery
     FieldDefs = <>
@@ -1642,7 +1561,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParamType = ptUnknown
       end>
   end
-  object PUB_GoodsPrice: TZQuery
+  object CdsMemberPrice: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
@@ -1677,74 +1596,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParamType = ptUnknown
       end>
   end
-  object PUB_GoodsPrice1: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 291
-    Top = 387
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-  end
-  object Log_GoodsPrice: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    SQL.Strings = (
-      
-        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
-        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      
-        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
-        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
-        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
-      ' or'
-      
-        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
-        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
-        'TYPE=2) and COMP_TYPE=2)'
-      ') order by ACCOUNT')
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
-    Left = 129
-    Top = 389
-    ParamData = <
-      item
-        DataType = ftUnknown
-        Name = 'COMP_ID'
-        ParamType = ptUnknown
-      end>
+  object PRICEPrice_DS: TDataSource
+    DataSet = CdsMemberPrice
+    Left = 117
+    Top = 393
   end
 end

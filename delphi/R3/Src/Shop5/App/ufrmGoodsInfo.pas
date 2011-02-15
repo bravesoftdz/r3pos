@@ -77,11 +77,9 @@ type
     CtrlUp2: TAction;
     CtrlDown2: TAction;
     Label19: TLabel;
-    cdsGoods1: TZQuery;
-    BarCode1: TZQuery;
     BarCode: TZQuery;
     cdsGoods: TZQuery;
-    PUB_GoodsPrice: TZQuery;
+    CdsMemberPrice: TZQuery;
     Label45: TLabel;
     Label17: TLabel;
     Label40: TLabel;
@@ -93,26 +91,23 @@ type
     edtSORT_ID5: TzrComboBoxList;
     edtSORT_ID4: TzrComboBoxList;
     edtSORT_ID3: TzrComboBoxList;
-    Label24: TLabel;
-    PUB_GoodsPrice1: TZQuery;
     Label12: TLabel;
     Lbl_1: TLabel;
-    edtPRICE_METHOD: TcxComboBox;
     Label31: TLabel;
     edtNEW_LOWPRICE: TcxTextEdit;
     LblColorGroup: TLabel;
     edtSORT_ID7: TzrComboBoxList;
     lblSizeGroup: TLabel;
     edtSORT_ID8: TzrComboBoxList;
-    Log_GoodsPrice: TZQuery;
     edtUSING_BARTER: TGroupBox;
     RB_USING_BARTER: TRadioButton;
     RB_NotUSING_BARTER: TRadioButton;
     Label47: TLabel;
     edtBARTER_INTEGRAL: TcxSpinEdit;
     RzPnl_Price: TRzPanel;
-    DBGridEh1: TDBGridEh;
+    PriceGrid: TDBGridEh;
     edtSORT_ID1: TcxButtonEdit;
+    PRICEPrice_DS: TDataSource;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -156,11 +151,22 @@ type
     procedure edtPROFIT_RATEKeyPress(Sender: TObject; var Key: Char);
     procedure edtNEW_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
     procedure edtUSING_PRICEClick(Sender: TObject);
-    procedure RB_USING_BARTERClick(Sender: TObject);
-    procedure edtSORT_ID1PropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure edtSORT_ID1PropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure PriceGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure PriceGridExit(Sender: TObject);
+    procedure RB_NotUSING_BARTERClick(Sender: TObject);
+    procedure edtSORT_ID1KeyPress(Sender: TObject; var Key: Char);
+    procedure PriceGridKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCALC_UNITSPropertiesChange(Sender: TObject);
+    procedure edtSMALL_UNITSPropertiesChange(Sender: TObject);
+    procedure edtBIG_UNITSPropertiesChange(Sender: TObject);
+    procedure edtSMALL_UNITSExit(Sender: TObject);
+    procedure edtCALC_UNITSExit(Sender: TObject);
+    procedure edtBIG_UNITSExit(Sender: TObject);
+    procedure edtMY_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtNEW_LOWPRICEKeyPress(Sender: TObject; var Key: Char);
+    procedure edtMY_OUTPRICE2KeyPress(Sender: TObject; var Key: Char);
   private
-    FRELATION_FLAG: Integer; //Append传入的商品分类的类型[连锁经营和自主经营] 1、2
     FSortID: string;      //Append传入的SortID值
     FSortName: string;    //Append传入的SortName值
     UnitBarCode: string;  //计量单位条形码
@@ -170,13 +176,15 @@ type
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
 
-    procedure EditKeyPress(Sender: TObject; var Key: Char);    
+    procedure EditKeyPress(Sender: TObject; var Key: Char);
     procedure AddSORT_IDClick(Sender: TObject; SortType: integer); //添加Add
     procedure CheckGoodsFieldIsEmpty; //判断商品非空属性是否为空；
     procedure CheckGoodsNameIsExist; //判断商品名称是否存在本地缓存中存在
-    function  GetIsRELATION_FLAG: Boolean; //返回判断是否可编辑
     procedure SetZrCbxDefaultValue(SetCbx: TzrComboBoxList);  //设置默认值
     procedure CheckCLVersionSetParams;  //判断行业版本设置参数;
+    function  GetColumnIdx(Gird:TDBGridEh; ColName: string): integer;  //返回Gird列Idx
+    procedure CheckTabGoodPriceVisible; //判断会员价格是否显示
+    procedure CALC_MenberProfitPrice(CdsMemberPrice: TZQuery; CALCType: integer; IsAll: Boolean=False);  //计算会员价折扣单价
   public
      AObj:TRecord_;
      SORT_ID1,flag,ccid:string;
@@ -185,7 +193,7 @@ type
      locked:boolean;
      //截小数
      function  ConvertToFight(value: Currency; deci: Integer): real;
-     procedure Append(FRELATION_FLAG: Integer; Sort_ID:string; Sort_Name:string; GODS_ID:string);
+     procedure Append(Sort_ID:string; Sort_Name:string; GODS_ID:string);
      procedure Edit(code: string);
      procedure Open(code: string);
      procedure OpenCopyNew(code: string);
@@ -197,12 +205,11 @@ type
      procedure SetdbState(const Value: TDataSetState); override;
      procedure EditPrice; //只能修改价格
      procedure WriteBarCode(str:string);  //写入条形码
-     procedure ReadGoodsBarCode(CdsBarCode: TZQuery);          //读取商品条码
-     function  ReadBarCode_INFO(str:string):boolean;  //传入条码读取
-     procedure WriteGoodsPrices(InObj: TRecord_);  //写入商品价格
+     procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
+     procedure ReadGoodsBarCode(CdsBarCode: TZQuery);      //读取商品条码
+     function  ReadBarCode_INFO(BarCode: string):boolean;  //传入条码读取
      class function AddDialog(Owner:TForm;var _AObj:TRecord_;Default:string=''):boolean;
      class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
-     property  IsRELATION_FLAG: Boolean read GetIsRELATION_FLAG;
   end;
 
 var
@@ -212,7 +219,7 @@ implementation
 
 uses
   uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,uShopGlobal,
-  ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog;
+  ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo;
 
   //ufrmGoodsSort, ufrmBrandInfo, ufrmColorInfo, ufrmClientInfo,ufrmSizeInfo ,
   //ufrmGoodsColorDialog,ufrmGoodsSizeDialog
@@ -220,7 +227,7 @@ uses
 
 {$R *.dfm}
 
-procedure TfrmGoodsInfo.Append(FRELATION_FLAG: Integer; Sort_ID,Sort_Name,GODS_ID:string);
+procedure TfrmGoodsInfo.Append(Sort_ID,Sort_Name,GODS_ID:string);
 begin
   FSortID:=Sort_ID;
   FSortName:=Sort_Name;
@@ -252,13 +259,11 @@ begin
     SetZrCbxDefaultValue(edtSORT_ID4);
     SetZrCbxDefaultValue(edtSORT_ID5);
     SetZrCbxDefaultValue(edtSORT_ID6);
-    //默认调价方式:
-    if edtPRICE_METHOD.Properties.Items.Count>0 then
-      edtPRICE_METHOD.ItemIndex:=0;
     if not edtCALC_UNITS.DataSet.IsEmpty then
     begin
       edtCALC_UNITS.KeyValue := edtCALC_UNITS.DataSet.FieldbyName('UNIT_ID').AsString;
       edtCALC_UNITS.Text := edtCALC_UNITS.DataSet.FieldbyName('UNIT_NAME').AsString;
+      if not TabGoodPrice.TabVisible then CheckTabGoodPriceVisible; //判断会员价格是否显示     
     end;
     edtSORT_ID7.KeyValue:='#';
     edtSORT_ID7.Text:='无';
@@ -285,14 +290,13 @@ begin
   Tmp:=Global.GetZQueryFromName('CA_TENANT');
   if Tmp.Locate('TENANT_ID',AObj.FieldByName('TENANT_ID').AsString,[]) then
   begin
-    if trim(cdsGoods.FieldByName('RELATION_FLAG').AsString)='1' then
+    if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then
       EditPrice;
   end;
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
-var
-  rs: TZQuery;
+var rs: TZQuery;
 begin
   inherited;
   RzPage.ActivePageIndex := 0;    
@@ -314,7 +318,6 @@ begin
   edtSORT_ID8.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');     //尺码
 
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
-
   //进位法则
   // CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
 
@@ -355,7 +358,7 @@ begin
       Params.ParamByName('GODS_ID').asString := code;
       Factor.AddBatch(cdsGoods,'TGoodsInfo',Params);
       Factor.AddBatch(BarCode,'TPUB_BARCODE',Params);
-      Factor.AddBatch(PUB_GoodsPrice,'TGoodsPrice',Params);
+      Factor.AddBatch(CdsMemberPrice,'TGoodsPrice',Params);
       Factor.OpenBatch;
       AObj.ReadFromDataSet(cdsGoods);
       ReadFromObject(AObj);
@@ -420,14 +423,12 @@ procedure TfrmGoodsInfo.Save;
       Temp.Post;
    end;
 var i,j:integer;
-    BARCODECOMP_ID:string;
+    CurObj: TRecord_;
+    CurType: TFieldType;
+    BARCODE_ID,BARCODECOMP_ID:string;
     Params:TftParamList;
     IsModifPrice: Boolean;
 begin
-  //保存前关闭日志数据集
-  if dbState=dsEdit then 
-    Log_GoodsPrice.Close;
-
   CheckGoodsFieldIsEmpty;  //检查商品非空字段是否为空?
   CheckGoodsNameIsExist;   //检查商品编码和商品名称是否在本地缓村中存在[]
 
@@ -442,8 +443,11 @@ begin
   end;
 
   if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') then
-    edtBARCODE1.Text := GetBarCode(AObj.FieldbyName('GODS_CODE').asString,'#','#');
-    
+  begin
+    BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6); 
+    edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#');          
+  end;
+
   WriteToObject(AObj);  //表单的控件的Value写入Obj对象中:
 
   if (AObj.FieldbyName('GODS_CODE').AsString='') or (pos('自动编号',AObj.FieldbyName('GODS_CODE').AsString)>0) then
@@ -468,20 +472,28 @@ begin
   //写入商品的条形码表
   WriteBarCode('');
 
-  //(3)写商品价格表
-  WriteGoodsPrices(AObj);   //传递入:AObj 读取GODE_ID、单价
-  
+  //(3)写会员定价表[循环删除掉没有输入价格]
+  WriteMemberPrice(AObj.FieldbyName('GODS_ID').AsString);   //写入会员价
+
   Factor.BeginBatch;
+  Params:=TftParamList.Create(nil);
   try
-    Factor.AddBatch(cdsGoods,'TGoodsInfo',nil);
-    Factor.AddBatch(BarCode,'TPUB_BARCODE',nil);
-    Factor.AddBatch(PUB_GoodsPrice,'TGoodsPrice',nil);
-    if (dbState=dsEdit) and (Log_GoodsPrice.Active) and (Log_GoodsPrice.RecordCount=1) then
-      Factor.AddBatch(Log_GoodsPrice,'TGoodsPriceLog',nil);
-    Factor.CommitBatch;
-  except
-    Factor.CancelBatch;
-    Raise;
+    try
+      if dbState=dsEdit then
+      begin
+        Params.ParamByName('ROWS_ID').AsString:=TSequence.NewId;     //GUID号
+        Params.ParamByName('PRICING_USER').AsString:=Global.UserID;  //操作员
+      end;
+      Factor.AddBatch(cdsGoods,'TGoodsInfo',Params);
+      Factor.AddBatch(BarCode,'TPUB_BARCODE',nil);
+      Factor.AddBatch(CdsMemberPrice,'TGoodsPrice',nil);   
+      Factor.CommitBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+  finally
+    Params.Free;
   end;
   UnitBarCode:=Trim(edtBARCODE1.Text);
   SmallBarCode:=Trim(edtBARCODE2.Text);
@@ -537,7 +549,7 @@ begin
       AObj1:=TRecord_.Create;
       try
         AObj.CopyTo(AObj1);
-        Append(self.FRELATION_FLAG , SORT_ID1_KeyValue, edtSORT_ID1.Text,'');
+        Append(SORT_ID1_KeyValue, edtSORT_ID1.Text,'');
         locked := true;
         try
           ReadFromObject(AObj1);
@@ -600,9 +612,6 @@ begin
   //读取商品其它表属性；
   ReadGoodsBarCode(self.BarCode);     //读取条码
 
-  //价格已写在商品视图[定价方式：暂时不显示]
-  // if PUB_GoodsPrice.Active then edtPRICE_METHOD.ItemIndex:=TdsItems.FindItems(edtPRICE_METHOD.Properties.Items,'CODE_ID',PUB_GoodsPrice.FieldbyName('PRICE_METHOD').AsString);
-
   edtNEW_OUTPRICE.Text:=FloattoStr(AObj.fieldbyname('RTL_OUTPRICE').AsFloat);   //标准售价
   edtMY_OUTPRICE.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE').AsFloat);    //门店售价
   edtMY_OUTPRICE1.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE1').AsFloat);  //包装1门店售价
@@ -617,6 +626,7 @@ begin
   if StrtoFloatDef(edtMY_OUTPRICE.Text,0)>0  then AObj.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloat(edtMY_OUTPRICE.Text);    //本店售价
   if StrtoFloatDef(edtMY_OUTPRICE1.Text,0)>0 then AObj.FieldByName('NEW_OUTPRICE1').AsFloat:=StrtoFloat(edtMY_OUTPRICE1.Text);
   if StrtoFloatDef(edtMY_OUTPRICE2.Text,0)>0 then AObj.FieldByName('NEW_OUTPRICE2').AsFloat:=StrtoFloat(edtMY_OUTPRICE2.Text);
+  AObj.FieldByName('SHOP_ID').AsString:=Global.SHOP_ID;
   AObj.FieldbyName('USING_PRICE').AsInteger := edtUSING_PRICE.ItemIndex+1;    //会员折扣率
   AObj.FieldbyName('GODS_TYPE').AsInteger := edtGODS_TYPE.ItemIndex+1;        //库存管理选项
   AObj.FieldbyName('HAS_INTEGRAL').AsInteger := edtHAS_INTEGRAL.ItemIndex+1;  //会员积分
@@ -906,16 +916,16 @@ procedure TfrmGoodsInfo.edtSORT_ID3AddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  {AObj := TRecord_.Create;
+  AObj := TRecord_.Create;
   try
     if TfrmClientInfo.AddDialog(self,AObj) then
-       begin
-         edtPROVIDE.KeyValue :=AObj.FieldbyName('CLIENT_ID').AsString;
-         edtPROVIDE.Text := AObj.FieldbyName('CLIENT_NAME').asString;
-       end;
+    begin
+      edtSORT_ID3.KeyValue :=AObj.FieldbyName('CLIENT_ID').AsString;
+      edtSORT_ID3.Text := AObj.FieldbyName('CLIENT_NAME').asString;
+    end;
   finally
     AObj.Free;
-  end;}
+  end;
 end;
 
 procedure TfrmGoodsInfo.edtSORT_ID7AddClick(Sender: TObject);
@@ -939,6 +949,8 @@ begin
     if Trim(edtSMALLTO_CALC.Text)='' then edtSMALLTO_CALC.Text:='0';
     if (Trim(edtMY_OUTPRICE.Text)<>'') and (Trim(edtSMALL_UNITS.AsString)<>'') then
        edtMY_OUTPRICE1.Text:=FloatToStr(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtSMALLTO_CALC.Text,0));
+    //计算会员价:
+    CALC_MenberProfitPrice(CdsMemberPrice,0);
   finally
     locked:=False;
   end;
@@ -957,6 +969,8 @@ begin
        edtMY_OUTPRICE1.Text:=FloatToStr(ConvertToFight(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtSMALLTO_CALC.Text,0),Deci));
     if (Trim(edtBIGTO_CALC.Text)<>'') and (Trim(edtBIG_UNITS.AsString)<>'') then
        edtMY_OUTPRICE2.Text:=FloatToStr(ConvertToFight(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtBIGTO_CALC.Text,0),Deci));
+
+    CheckTabGoodPriceVisible;  //判断是否显示会员价页
   finally
     locked := false;
   end;
@@ -980,6 +994,7 @@ begin
     AObj.Free;
   end; }
 end;
+
 procedure TfrmGoodsInfo.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 var i:integer;
@@ -1050,7 +1065,7 @@ begin
   end;
 end;
 
-class function TfrmGoodsInfo.AddDialog(Owner: TForm; var _AObj: TRecord_;Default:string=''): boolean;
+class function TfrmGoodsInfo.AddDialog(Owner: TForm; var _AObj: TRecord_; Default:string=''): boolean;
 function IsChinese(str:string):Boolean;
 var i:integer;
 begin
@@ -1070,10 +1085,10 @@ begin
     begin
       try
         if (Pos('{',Default)>0) and (Pos('}',Default)>0) then
-          Append(0,'','',Default)
+          Append('','',Default)
         else
         begin
-          Append(0,'','','');
+          Append('','','');
           if Default<>'' then
           begin
             if IsChinese(Default) then
@@ -1480,7 +1495,6 @@ begin
   finally
      locked := false;
   end;
-
 end;
 
 procedure TfrmGoodsInfo.RzBitBtn4Click(Sender: TObject);
@@ -1515,6 +1529,9 @@ begin
     if Trim(edtBIGTO_CALC.Text)='' then edtBIGTO_CALC.Text:='0';
     if (Trim(edtMY_OUTPRICE.Text)<>'') and (Trim(edtBIG_UNITS.AsString)<>'') then
        edtMY_OUTPRICE2.Text:=FloatToStr(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtBIGTO_CALC.Text,0));
+
+    //计算会员价:
+    CALC_MenberProfitPrice(CdsMemberPrice,0);
   finally
     locked:=False;
   end;
@@ -1571,84 +1588,21 @@ begin
  }
 end;
 
-function TfrmGoodsInfo.ReadBarCode_INFO(str: string):boolean;
-var tmp,tmp1: TZQuery;
+function TfrmGoodsInfo.ReadBarCode_INFO(BarCode: string):boolean;
+var tmp: TZQuery;
 begin
     result := false;
     tmp:=TZQuery.Create(nil);
     try
       tmp.Close;
-      tmp.SQL.Text:='select BARCODE,CODE_ID, CODE_NAME,UNIT_NAME,SALE_PRICE, '+
-      ' BARCODE1,UNIT_NAME1, BARCODE2,UNIT_NAME2,SMALLTO_CALC,BIGTO_CALC '+
-      ' from SYS_BARCODE_INFO where COMM not in (''02'',''12'') '+
-      ' and (BARCODE ='+QuotedStr(str)+' or BARCODE1 ='+QuotedStr(str)+' or BARCODE2 ='+QuotedStr(str)+')';
+      tmp.SQL.Text:='select GODS_ID,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from PUB_BARCODE '+
+        ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and (BARCODE ='+QuotedStr(BarCode)+') ';
+      tmp.Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
       Factor.Open(tmp);
       if not tmp.IsEmpty then
       begin
         result := true;
-        if tmp.FieldByName('CODE_ID').AsString<>'' then
-        begin
-          edtGODS_CODE.Text:=tmp.FieldByName('CODE_ID').AsString;
-        end;
-        edtBARCODE1.Text:=tmp.FieldByName('BARCODE').AsString;
-        if tmp.FieldByName('CODE_NAME').AsString<>'' then
-        begin
-          edtGODS_NAME.Text:=tmp.FieldByName('CODE_NAME').AsString;
-        end;
-        if tmp.FieldByName('UNIT_NAME').AsString<>'' then
-        begin
-          tmp1:=Global.GetZQueryFromName('PUB_MEAUNITS');
-          tmp1.Filtered:=False;
-          tmp1.Filter:=' UNIT_NAME='+QuotedStr(tmp.FieldByName('UNIT_NAME').AsString);
-          tmp1.Filtered:=True;
-          if tmp1.FieldByName('UNIT_ID').AsString<>'' then
-          begin
-            edtCALC_UNITS.KeyValue:=tmp1.FieldByName('UNIT_ID').AsString;
-            edtCALC_UNITS.Text:=tmp1.FieldByName('UNIT_NAME').AsString;
-          end;
-        end;
-        if tmp.FieldByName('SALE_PRICE').AsString<>'' then
-        begin
-          edtNEW_OUTPRICE.Text:=tmp.FieldByName('SALE_PRICE').AsString;
-        end;   
-
-        if tmp.FieldByName('UNIT_NAME1').AsString<>'' then
-        begin
-          tmp1:=Global.GetZQueryFromName('PUB_MEAUNITS');
-          tmp1.Filtered:=False;
-          tmp1.Filter:=' UNIT_NAME='+QuotedStr(tmp.FieldByName('UNIT_NAME1').AsString);
-          tmp1.Filtered:=True;
-          if tmp1.FieldByName('UNIT_ID').AsString<>'' then
-          begin
-            edtSMALL_UNITS.KeyValue:=tmp1.FieldByName('UNIT_ID').AsString;
-            edtSMALL_UNITS.Text:=tmp1.FieldByName('UNIT_NAME').AsString;
-            if tmp.FieldByName('SMALLTO_CALC').AsString<>'' then
-              edtSMALLTO_CALC.Text:=tmp.FieldByName('SMALLTO_CALC').AsString;
-          end;
-        end;
-        if tmp.FieldByName('BARCODE1').AsString<>'' then
-        begin
-          edtBARCODE2.Text:=tmp.FieldByName('BARCODE1').AsString;
-        end;
-        
-        if tmp.FieldByName('UNIT_NAME2').AsString<>'' then
-        begin
-          tmp1:=Global.GetZQueryFromName('PUB_MEAUNITS');
-          tmp1.Filtered:=False;
-          tmp1.Filter:=' UNIT_NAME='+QuotedStr(tmp.FieldByName('UNIT_NAME2').AsString);
-          tmp1.Filtered:=True;
-          if tmp1.FieldByName('UNIT_ID').AsString<>'' then
-          begin
-            edtBIG_UNITS.KeyValue:=tmp1.FieldByName('UNIT_ID').AsString;
-            edtBIG_UNITS.Text:=tmp1.FieldByName('UNIT_NAME').AsString;
-            if tmp.FieldByName('BIGTO_CALC').AsString<>'' then
-              edtBIGTO_CALC.Text:=tmp.FieldByName('BIGTO_CALC').AsString;
-          end;
-        end;
-        if tmp.FieldByName('BARCODE2').AsString<>'' then
-        begin
-          edtBARCODE3.Text:=tmp.FieldByName('BARCODE2').AsString;
-        end;
+        ReadGoodsBarCode(tmp);  
       end;
    finally
      tmp.Free;
@@ -1716,8 +1670,7 @@ begin
        edtMY_OUTPRICE2.Text:=FloatToStr(ConvertToFight(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtBIGTO_CALC.Text,0),Deci));
   finally
      locked := false;
-  end;
-
+  end; 
 end;
 
 procedure TfrmGoodsInfo.CheckGOODSNameIsExist;
@@ -1767,29 +1720,6 @@ begin
   end;
 end;
 
-function TfrmGoodsInfo.GetIsRELATION_FLAG: Boolean;
-var
-  rs: TZQuery;
-  ParamValue: integer;
-begin
-  result:=False;
-  rs:=Global.GetZQueryFromName('PUB_PARAMS');
-  try
-    rs.Filtered:=False;
-    rs.Filter:=' TYPE_CODE=''RELATION_FLAG'' and CODE_NAME=''自主经营'' ';
-    rs.Filtered:=true;
-    if (rs.Active) and (not rs.IsEmpty) then
-      ParamValue:=rs.fieldbyName('CODE_ID').AsInteger;
-    if (cdsGoods.Active) and (trim(cdsGoods.FieldByName('GODS_ID').AsString)<>'') then
-      result:=(ParamValue=cdsGoods.FieldByName('RELATION_FLAG').AsInteger)
-    else
-      result:=(ParamValue=self.FRELATION_FLAG);
-  finally
-    rs.Filtered:=False;
-    rs.Filter:='';
-  end;
-end;
-
 procedure TfrmGoodsInfo.CheckGoodsFieldIsEmpty;
 begin
   if Trim(edtGODS_NAME.Text)='' then
@@ -1805,11 +1735,23 @@ begin
   if Trim(edtNEW_OUTPRICE.Text)='' then
   begin
     if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
-    raise Exception.Create('零售价不能为空！');
+    raise Exception.Create('标准售价不能为空！');
   end;
+  //判断: 标准售价  与  低售价
+  if StrToFloatDef(edtNEW_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0) then
+  begin
+    if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+    raise Exception.Create(' 标准售价不能低于本店的最低售价！ ');
+  end;
+  //判断: 门店售价  与  低售价
+  if StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0) then
+  begin
+    if edtMY_OUTPRICE.CanFocus then edtMY_OUTPRICE.SetFocus;
+    raise Exception.Create(' 门店售价不能低于本店的最低售价！ ');
+  end; 
 
   {==  商品SORT_ID1..8  ==}
-  if (SORT_ID1_KeyValue<>'') and (Trim(edtSORT_ID1.Text)='') then
+  if (SORT_ID1_KeyValue='') or (Trim(edtSORT_ID1.Text)='') then
   begin
     if edtSORT_ID1.CanFocus then edtSORT_ID1.SetFocus;
     raise Exception.Create('商品分类不能为空！');
@@ -1981,56 +1923,15 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.WriteGoodsPrices(InObj: TRecord_);
-var PRICE_METHOD: string;
-  CurObj: TRecord_; 
-begin
-  PRICE_METHOD:='';
-  PUB_GoodsPrice.Edit; 
-  if trim(PUB_GoodsPrice.FieldByName('PRICE_ID').AsString)='' then
-    PUB_GoodsPrice.FieldByName('PRICE_ID').AsString:='#';//对所有门店定价: # TSequence.NewId;
-  PUB_GoodsPrice.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-  PUB_GoodsPrice.FieldByName('SHOP_ID').AsString:=ShopGlobal.SHOP_ID;
-  PUB_GoodsPrice.FieldByName('GODS_ID').AsString:=InObj.fieldbyName('GODS_ID').AsString;
-  if edtPRICE_METHOD.ItemIndex>-1 then
-  begin
-    CurObj:=TRecord_(edtPRICE_METHOD.Properties.Items.Objects[edtPRICE_METHOD.ItemIndex]);
-    PRICE_METHOD:=CurObj.fieldbyName('CODE_ID').AsString;
-  end;
-  PUB_GoodsPrice.FieldByName('PRICE_METHOD').AsString:=PRICE_METHOD;
-  PUB_GoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloat(edtMY_OUTPRICE.Text);
-  PUB_GoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat:=StrtoFloat(edtMY_OUTPRICE1.Text);
-  PUB_GoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat:=StrtoFloat(edtMY_OUTPRICE2.Text);
-  PUB_GoodsPrice.Post;
-
-  //本店售价改变时:
-  if (AObj.FieldByName('NEW_OUTPRICE').AsFloat <>AObj.FieldByName('NEW_OUTPRICE').AsOldFloat) or
-     (AObj.FieldByName('NEW_OUTPRICE1').AsFloat<>AObj.FieldByName('NEW_OUTPRICE1').AsOldFloat) or
-     (AObj.FieldByName('NEW_OUTPRICE2').AsFloat<>AObj.FieldByName('NEW_OUTPRICE2').AsOldFloat) then
-  begin
-    Log_GoodsPrice.Close;
-    Log_GoodsPrice.SQL.Text:='select * from LOG_PRICING_INFO where 1=2 ';
-    Factor.Open(Log_GoodsPrice); 
-    Log_GoodsPrice.Edit;
-    Log_GoodsPrice.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //GUID号
-    Log_GoodsPrice.FieldByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date()); //日志日期
-    Log_GoodsPrice.FieldByName('PRICING_USER').AsString:=ShopGlobal.UserID;  //GUID号
-    Log_GoodsPrice.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID; //企业ID
-    Log_GoodsPrice.FieldByName('PRICE_ID').AsString:='#';                 //1、客户类型 #号为所有客户;  2、若会员则是会员号
-    Log_GoodsPrice.FieldByName('SHOP_ID').AsString:=ShopGlobal.SHOP_ID;   //SHOP_ID号
-    Log_GoodsPrice.FieldByName('GODS_ID').AsString:=InObj.fieldbyName('GODS_ID').AsString;
-    Log_GoodsPrice.FieldByName('PRICE_METHOD').AsString:=PRICE_METHOD;
-    Log_GoodsPrice.FieldByName('ORG_OUTPRICE').AsFloat :=InObj.fieldbyName('NEW_OUTPRICE').AsOldFloat;
-    Log_GoodsPrice.FieldByName('ORG_OUTPRICE1').AsFloat:=InObj.fieldbyName('NEW_OUTPRICE1').AsOldFloat;
-    Log_GoodsPrice.FieldByName('ORG_OUTPRICE2').AsFloat:=InObj.fieldbyName('NEW_OUTPRICE2').AsOldFloat;
-    Log_GoodsPrice.FieldByName('NEW_OUTPRICE').AsFloat :=InObj.fieldbyName('NEW_OUTPRICE').AsFloat;
-    Log_GoodsPrice.FieldByName('NEW_OUTPRICE1').AsFloat:=InObj.fieldbyName('NEW_OUTPRICE1').AsFloat;
-    Log_GoodsPrice.FieldByName('NEW_OUTPRICE2').AsFloat:=InObj.fieldbyName('NEW_OUTPRICE2').AsFloat;
-    Log_GoodsPrice.Post;
-  end;
-end;
-
 procedure TfrmGoodsInfo.ReadGoodsBarCode(CdsBarCode: TZQuery);
+  function GetUnitName(UnitID: string): string;
+  var rs: TZQuery; 
+  begin
+    result:='';
+    rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+    if (rs<>nil) and (rs.Locate('UNIT_ID',trim(UnitID),[])) then  
+      result:=trim(rs.fieldbyName('UNIT_NAME').AsString);
+  end;
 begin
   if not CdsBarCode.Active then Exit;
   CdsBarCode.First;
@@ -2039,17 +1940,23 @@ begin
     if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='0' then
     begin
       UnitBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtBARCODE1.Text:=CdsBarCode.fieldbyName('BARCODE').AsString; 
+      edtBARCODE1.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      edtCALC_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
+      edtCALC_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);
     end else
     if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='1' then
     begin
       SmallBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
       edtBARCODE2.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      edtSMALL_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
+      edtSMALL_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);
     end else
     if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='2' then
     begin
       BigBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
       edtBARCODE3.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      edtBIG_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
+      edtBIG_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);      
     end;
     CdsBarCode.Next;
   end;
@@ -2106,14 +2013,7 @@ end;
 procedure TfrmGoodsInfo.edtUSING_PRICEClick(Sender: TObject);
 begin
   inherited;
-  //TabGoodPrice.TabVisible:=(edtUSING_PRICE.ItemIndex=0); 
-end;
-
-procedure TfrmGoodsInfo.RB_USING_BARTERClick(Sender: TObject);
-begin
-  if RB_NotUSING_BARTER.Checked then
-    edtBARTER_INTEGRAL.Value:=0;
-  edtBARTER_INTEGRAL.Enabled:=RB_USING_BARTER.Checked;
+  CheckTabGoodPriceVisible;
 end;
 
 procedure TfrmGoodsInfo.CheckCLVersionSetParams;
@@ -2152,6 +2052,291 @@ begin
   finally
      rs.Free;
   end;
+end;
+
+procedure TfrmGoodsInfo.PriceGridDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var RecNo: string; ARect:TRect; 
+begin
+  inherited;
+  if (Column.FieldName = 'SEQNO') and (PriceGrid.DataSource.DataSet.Active)then
+  begin
+    ARect := Rect;
+    PriceGrid.canvas.FillRect(ARect);
+    RecNo:=Inttostr(PriceGrid.DataSource.DataSet.RecNo);
+    DrawText(PriceGrid.Canvas.Handle,pchar(RecNo),length(RecNo),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+end;
+
+procedure TfrmGoodsInfo.PriceGridExit(Sender: TObject);
+begin
+  inherited;
+  if not (CdsMemberPrice.State in [dsEdit, dsInsert]) then
+    CdsMemberPrice.Edit;
+  CdsMemberPrice.Post;
+end;
+
+procedure TfrmGoodsInfo.RB_NotUSING_BARTERClick(Sender: TObject);
+begin
+  inherited;
+  if RB_NotUSING_BARTER.Checked then
+    edtBARTER_INTEGRAL.Value:=0;
+  edtBARTER_INTEGRAL.Enabled:=RB_USING_BARTER.Checked;
+end;
+
+procedure TfrmGoodsInfo.edtSORT_ID1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  Key:=#0;
+  self.edtSORT_ID1.Properties.OnButtonClick(Sender,1);
+end;
+
+procedure TfrmGoodsInfo.PriceGridKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    //会车进行计算
+    if trim(PriceGrid.Columns[PriceGrid.Col].FieldName)='PROFIT_RATE' then  //在折扣率列
+      CALC_MenberProfitPrice(self.CdsMemberPrice,0)
+    else if trim(PriceGrid.Columns[PriceGrid.Col].FieldName)='NEW_OUTPRICE' then  //在折扣率列
+      CALC_MenberProfitPrice(self.CdsMemberPrice,1);
+    if CdsMemberPrice.State<>dsEdit then CdsMemberPrice.Edit;
+    CdsMemberPrice.Post;
+    if PriceGrid.Col<PriceGrid.Columns.Count-1 then PriceGrid.Col:= PriceGrid.Col + 1; //跳下一列
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtCALC_UNITSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  PriceGrid.FieldColumns['NEW_OUTPRICE'].Visible:=(edtCALC_UNITS.KeyValue<>'');
+  if edtCALC_UNITS.KeyValue<>'' then
+  begin
+    PriceGrid.FieldColumns['NEW_OUTPRICE'].Title.Caption:='计量单位('+edtCALC_UNITS.Text+')售价';
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtSMALL_UNITSPropertiesChange(Sender: TObject);
+var
+  i: integer;
+begin
+  inherited;
+  PriceGrid.FieldColumns['NEW_OUTPRICE1'].Visible:=(edtSMALL_UNITS.KeyValue<>'');
+  if edtSMALL_UNITS.Text<>'' then
+  begin
+    i:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE1');
+    if (i>0) and (i<PriceGrid.Columns.Count-1) then
+      PriceGrid.Columns[i].Title.Caption:='小包装('+edtSMALL_UNITS.Text+')售价';
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtBIG_UNITSPropertiesChange(Sender: TObject);
+var
+  i:integer;
+begin
+  inherited;
+  PriceGrid.FieldColumns['NEW_OUTPRICE2'].Visible:=(edtBIG_UNITS.KeyValue<>'');
+  if edtBIG_UNITS.Text<>'' then
+  begin
+    i:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE2');
+    if (i>0) and (i<PriceGrid.Columns.Count-1) then
+      PriceGrid.Columns[i].Title.Caption:='大包装('+edtBIG_UNITS.Text+')售价';
+  end;
+end;
+
+procedure TfrmGoodsInfo.CheckTabGoodPriceVisible;
+var
+  Cal_UNit,Cal_UNi: Boolean;
+  i: integer;
+begin
+  TabGoodPrice.TabVisible:=False;
+  if edtUSING_PRICE.ItemIndex=1 then Exit; {==是否启用会员价==}
+  if (trim(edtCALC_UNITS.Text)='') and (trim(edtSMALL_UNITS.Text)='') and (trim(edtBIG_UNITS.Text)='') then Exit;  //三个单位都同时为空情况;
+  if StrtoFloatDef(edtNEW_OUTPRICE.Text,0)<=0 then Exit;
+  TabGoodPrice.TabVisible:=true;
+  //判断Columns的显示:
+  for i:=0 to PriceGrid.Columns.Count-1 do
+  begin
+    if trim(PriceGrid.Columns[i].FieldName)='NEW_OUTPRICE' then
+    begin
+      if (edtCALC_UNITS.KeyValue=null) or (trim(edtCALC_UNITS.Text)='') then
+        PriceGrid.Columns[i].Visible:=False
+      else
+        PriceGrid.Columns[i].Visible:=true;
+    end;
+    if trim(PriceGrid.Columns[i].FieldName)='NEW_OUTPRICE1' then
+    begin
+      if (edtSMALL_UNITS.KeyValue=null) or (trim(edtSMALL_UNITS.Text)='') then
+        PriceGrid.Columns[i].Visible:=False
+      else
+        PriceGrid.Columns[i].Visible:=true;
+    end;
+    if trim(PriceGrid.Columns[i].FieldName)='NEW_OUTPRICE2' then
+    begin
+      if (edtBIG_UNITS.KeyValue=null) or (trim(edtBIG_UNITS.Text)='') then
+        PriceGrid.Columns[i].Visible:=False
+      else
+        PriceGrid.Columns[i].Visible:=true;
+    end;
+  end;
+end;
+
+function TfrmGoodsInfo.GetColumnIdx(Gird:TDBGridEh; ColName: string): integer;
+var i: integer;
+begin
+  result:=0;
+  for i:=0 to Gird.Columns.Count-1 do
+  begin
+    if trim(Gird.Columns[i].FieldName)=trim(ColName) then
+      result:=i;
+  end;
+end;
+
+procedure TfrmGoodsInfo.CALC_MenberProfitPrice(CdsMemberPrice: TZQuery; CALCType: integer; IsAll: Boolean);
+var
+  CurObj: TRecord_;
+  ColIdx: integer;
+  NewOutPrice,PROFIT_RATE: Real;
+begin
+  if not (dbState in [dsInsert, dsEdit]) then Exit;
+  if CdsMemberPrice.State=dsEdit then CdsMemberPrice.Post;
+  NewOutPrice:=StrToFloatDef(edtNEW_OUTPRICE.Text,0); 
+  if NewOutPrice<=0 then exit;
+  if not CdsMemberPrice.Active then exit;
+  try
+    CurObj:=TRecord_.Create;
+    CurObj.ReadFromDataSet(CdsMemberPrice);
+    case CALCType of  // 0:根据折扣率计算折扣价  1: 根据折扣价计算折扣率
+     0:
+      begin
+        PROFIT_RATE:=CurObj.FieldByName('PROFIT_RATE').AsFloat*0.01;  //折扣率
+        if PROFIT_RATE>1 then
+        begin
+          CurObj.FieldByName('PROFIT_RATE').AsFloat:=100;
+          PROFIT_RATE:=1;
+        end;
+        ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE');
+        if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) then
+          CurObj.FieldByName('NEW_OUTPRICE').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE,Deci);
+        ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE1');
+        if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) and (StrToFloatDef(edtSMALLTO_CALC.Text,0)>0) then
+          CurObj.FieldByName('NEW_OUTPRICE1').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*StrToFloatDef(edtSMALLTO_CALC.Text,0),Deci);
+        ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE2');
+        if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) and (StrToFloatDef(edtBIGTO_CALC.Text,0)>0) then
+          CurObj.FieldByName('NEW_OUTPRICE2').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*StrToFloatDef(edtBIGTO_CALC.Text,0),Deci);
+      end;
+     1:
+      begin
+        ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE');
+        if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) then
+          CurObj.FieldByName('PROFIT_RATE').AsFloat:=StrtoFloat(FormatFloat('#0',(100*CurObj.FieldByName('NEW_OUTPRICE').AsFloat)/NewOutPrice));
+      end;
+    end;
+    CurOBj.WriteToDataSet(CdsMemberPrice);
+  finally
+    CurOBj.Free;
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtSMALL_UNITSExit(Sender: TObject);
+begin
+  inherited;
+  CheckTabGoodPriceVisible; //判断会员价格是否显示
+end;
+
+procedure TfrmGoodsInfo.edtCALC_UNITSExit(Sender: TObject);
+begin
+  inherited;
+  CheckTabGoodPriceVisible; //判断会员价格是否显示
+end;
+
+procedure TfrmGoodsInfo.edtBIG_UNITSExit(Sender: TObject);
+begin
+  inherited;
+  CheckTabGoodPriceVisible; //判断会员价格是否显示
+end;
+
+procedure TfrmGoodsInfo.WriteMemberPrice(GODS_ID: String); //写如会员表
+var
+  NewOutPrice, PROFIT_RATE: Real;
+  CurObj: TRecord_;
+begin
+  if not CdsMemberPrice.Active then Exit;
+  try
+    CurObj:=TRecord_.Create;
+    CdsMemberPrice.First;
+    while not CdsMemberPrice.Eof do
+    begin
+      CurObj.ReadFromDataSet(CdsMemberPrice);
+      if (trim(CurObj.FieldByName('Flag').AsString)='') and
+         (CurObj.FieldByName('NEW_OUTPRICE').AsFloat=0) and (CurObj.FieldByName('NEW_OUTPRICE1').AsFloat=0) and
+         (CurObj.FieldByName('NEW_OUTPRICE2').AsFloat=0) then
+      begin
+        CdsMemberPrice.Delete;  //若都没有单价则直接删除
+      end else
+      begin
+        CurObj.FieldByName('TENANT_ID').AsInteger:=shopGlobal.TENANT_ID;  //企业ID
+        CurObj.FieldByName('SHOP_ID').AsString:=shopGlobal.SHOP_ID;       //门店ID
+        CurObj.FieldByName('GODS_ID').AsString:=GODS_ID;                  //货物ID
+        //if CurObj.FieldByName('PRICE_ID').AsString='' then                //
+        //  CurObj.FieldByName('PRICE_ID').AsString:=TSequence.NewId;       //定价ID
+        if CurObj.FieldByName('PRICE_METHOD').AsString='' then
+          CurObj.FieldByName('PRICE_METHOD').AsString:='1';               //门店定价
+
+        //重新计算
+        NewOutPrice:=StrToFloatDef(edtNEW_OUTPRICE.Text,0);
+        PROFIT_RATE:=CurObj.fieldbyName('PROFIT_RATE').AsFloat*0.01;
+        if (NewOutPrice>0) and (PROFIT_RATE>0) then
+        begin
+          if CurObj.fieldbyName('NEW_OUTPRICE').AsFloat=0 then
+            CurObj.FieldByName('NEW_OUTPRICE').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE,Deci);
+          if (CurObj.fieldbyName('NEW_OUTPRICE1').AsFloat=0) and (StrToFloatDef(edtSMALLTO_CALC.Text,0)>0) then
+            CurObj.FieldByName('NEW_OUTPRICE1').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*(StrToFloatDef(edtSMALLTO_CALC.Text,0)),Deci);
+          if (CurObj.fieldbyName('NEW_OUTPRICE2').AsFloat=0) and (StrToFloatDef(edtBIG_UNITS.Text,0)>0) then
+            CurObj.FieldByName('NEW_OUTPRICE2').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*(StrToFloatDef(edtBIGTO_CALC.Text,0)),Deci);
+          CurObj.WriteToDataSet(CdsMemberPrice);
+          CdsMemberPrice.Post;
+        end;
+        CdsMemberPrice.Next;
+      end;
+    end;
+  finally
+    CurObj.Free;
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtMY_OUTPRICE1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;  
+  EditKeyPress(Sender,Key);
+end;
+
+procedure TfrmGoodsInfo.edtNEW_LOWPRICEKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if key=#13 then
+  begin
+    if edtSORT_ID7.Visible then edtSORT_ID7.SetFocus
+    else edtSMALL_UNITS.SetFocus;
+  end;
+  EditKeyPress(Sender,Key);
+end;
+
+procedure TfrmGoodsInfo.edtMY_OUTPRICE2KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    RzPage.ActivePage:=TabGoodPrice;
+    PriceGrid.SetFocus;
+    PriceGrid.Col:=2;
+  end;
+  EditKeyPress(Sender,Key);
 end;
 
 end.

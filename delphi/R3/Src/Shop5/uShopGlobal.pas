@@ -53,7 +53,8 @@ type
     function GetSysDate: TDate;override;
   public
     { Public declarations }
-    function GetChkRight(id:string;userid:string=''):boolean;
+    function GetChkRight(id:string;userid:string=''):boolean; overload;
+    function GetChkRight(MID: string; SEQUNo: integer; userid:string=''):boolean; overload;
 
     procedure LoadRight;
     //1.操作日志 2.数据日志
@@ -188,26 +189,104 @@ begin
      end;
 end;
 
-procedure TShopGlobal.LoadRight;
-var Roles:string;
+function TShopGlobal.GetChkRight(MID: string; SEQUNo: integer; userid: string): boolean;
+var
+  rs,us:TZQuery;
+  CHK_Value: integer;
+  uid,myRoles:string;
 begin
-  Exit;
-{  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
-  Roles := CA_USERS.FieldbyName('DUTY_IDS').AsString; 
-  CA_RIGHTS.Close;
-  case Factor.iDbType of
-  0:CA_RIGHTS.SQL.Text :=
-    'select j.MID,IsNull(b.CHK,j.CHK) as CHK from '+
-    '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and COMP_ID='''+Global.CompanyID+''' group by MID ) j '+
-    'left outer join '+
-    '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+Global.UserID+''' and COMP_ID=''----'' and UTYPE=1 group by MID ) b on j.MID=b.MID';
-  3:CA_RIGHTS.SQL.Text :=
-    'select j.MID,iif(IsNull(b.CHK),j.CHK,b.CHK) as CHK from '+
-    '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and COMP_ID='''+Global.CompanyID+''' group by MID ) j '+
-    'left outer join '+
-    '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+Global.UserID+''' and COMP_ID=''----'' and UTYPE=1 group by MID ) b on j.MID=b.MID';
+  result := false;
+  CHK_Value:=0;
+  if userid='' then uid := Global.UserID else uid := userid;
+  if uid = 'admin' then
+  begin
+    result := true;
+    Exit;
   end;
-  Factor.Open(CA_RIGHTS);  }
+  if uid=Global.UserID then
+  begin
+    if not CA_RIGHTS.Active then Exit;
+    begin
+      try
+        //CA_RIGHTS.Filter 过滤MODU_ID的记录:
+        CA_RIGHTS.Filtered:=False;
+        CA_RIGHTS.Filter:='MODU_ID='''+MID+''' ';
+        CA_RIGHTS.Filtered:=true;
+        CA_RIGHTS.First;
+        while not CA_RIGHTS.Eof do
+        begin
+          CHK_Value:=(CA_RIGHTS.fieldbyName('CHK').AsInteger or CHK_Value); //不同角色进行 OR 运算
+          CA_RIGHTS.Next;
+        end;
+        //对应位进行 and 预算，返回是否有权限
+        result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
+      finally
+        CA_RIGHTS.Filtered:=False;
+        CA_RIGHTS.Filter:='';
+      end;
+    end;
+  end else
+  begin
+    rs := TZQuery.Create(nil);
+    try
+       us := Global.GeTZQueryFromName('CA_USERS');
+       if not us.Locate('USER_ID',uid,[]) then Raise Exception.Create('无效用户名...');
+       myRoles := us.FieldbyName('DUTY_IDS').AsString;
+       rs.Close;
+       rs.SQL.Text:='(select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where MODU_ID='''+MID+''' and R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and R.ROLE_ID=B.ROLE_ID and '+
+         ' R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''')) '+
+         ' union all '+
+         ' (select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and MODU_ID='''+MID+''' and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID) ';
+       if rs.Params.FindParam('TENANT_ID')<>nil then
+         rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+       if rs.Params.FindParam('USER_ID')<>nil then
+         rs.ParamByName('USER_ID').AsString:=uid;
+       Factor.Open(rs);
+       if rs.Active and not rs.IsEmpty then
+       begin
+         while not CA_RIGHTS.Eof do
+         begin
+           CHK_Value:=(CA_RIGHTS.fieldbyName('CHK').AsInteger or CHK_Value);
+           CA_RIGHTS.Next;
+         end;
+         result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
+       end;
+     finally
+       rs.free;
+     end;
+   end;
+end;
+
+procedure TShopGlobal.LoadRight;
+var
+  Roles,Str:string;
+begin
+  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
+  Roles := CA_USERS.FieldbyName('DUTY_IDS').AsString;
+  case Factor.iDbType of
+   0,5:
+    begin //SQLITE环境下通过，Ms SQL Server语法一样
+      Str:='select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
+        ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') '+
+        ' union all '+
+        ' select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
+    end;
+   1:
+    begin
+      Str:='';
+    end;
+   4:
+    begin
+      Str:='';
+    end;
+  end;
+  CA_RIGHTS.Close;
+  CA_RIGHTS.SQL.Text:=Str;
+  if CA_RIGHTS.Params.FindParam('TENANT_ID')<>nil then
+    CA_RIGHTS.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if CA_RIGHTS.Params.FindParam('USER_ID')<>nil then
+    CA_RIGHTS.ParamByName('USER_ID').AsString:=Global.UserID;
+  Factor.Open(CA_RIGHTS);
 end;
 
 procedure TShopGlobal.Setoffline(const Value: boolean);
@@ -270,6 +349,7 @@ function TShopGlobal.CheckNetwork: boolean;
 begin
   result := true;
 end;
+
 
 initialization
 finalization

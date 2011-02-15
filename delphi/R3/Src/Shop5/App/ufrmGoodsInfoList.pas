@@ -73,6 +73,7 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure BitBtn1Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure GetNo;
@@ -99,7 +100,7 @@ implementation
 
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil,
-  uShopUtil,uFnUtil,ufrmEhLibReport;
+  uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort;
 
 {$R *.dfm}
  
@@ -177,12 +178,12 @@ var
 begin
   vCnd:='';
   GoodTab:=
-    '(select J.TENANT_ID as TENANT_ID,J.RELATION_ID as RELATION_ID,J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
+    '(select J.TENANT_ID as TENANT_ID,RELATION_ID,J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end as NEW_INPRICE,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.SMALLTO_CALC else C.NEW_INPRICE1 end as NEW_INPRICE1,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.BIGTO_CALC else C.NEW_INPRICE2 end as NEW_INPRICE2,'+
     ' RTL_OUTPRICE, '+  //标准售价
-    ' NEW_LOWPRICE, '+  //最低售价
+    ' NEW_LOWPRICE, '+  //最低售价                                                        
     ' NEW_OUTPRICE, '+
     ' NEW_OUTPRICE1,'+
     ' NEW_OUTPRICE2,'+
@@ -231,20 +232,20 @@ begin
   Cnd:=vCnd;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as selflag,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+  result := 'select top 600 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-     'select 0 as selflag,,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     'select 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600 rows only ';
   5:
-  result := 'select 0 as selflag,case when RELATION_ID=0 then 2 else 1 end as RELATION_FLAG,case when l.NEW_OUTPRICE<>0 then Cast((l.NEW_INPRICE*100/l.NEW_OUTPRICE) as varchar(12)) || ''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+  result := 'select 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then Cast((l.NEW_INPRICE*100/l.NEW_OUTPRICE) as varchar(12)) || ''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.* from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID  group by GODS_ID) r '+
@@ -435,29 +436,27 @@ end;
 
 procedure TfrmGoodsInfoList.actNewExecute(Sender: TObject);
 var
-  Relation:Integer; 
   CurObj: TRecord_;
   sid,sname:string;
 begin
   inherited;
   //if not ShopGlobal.GetChkRight('200036') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
-  {
-  if rzTree.Selected=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
+
+  //if rzTree.Selected=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
   CurObj:=TRecord_(rzTree.Selected.Data);
   if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
-  if CurObj.FieldByName('RELATION_FLAG').AsInteger<>2 then // RELATION_FLAG=2 自主经营
-    Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
-
-  sid := CurObj.FieldbyName('SORT_ID').AsString;
-  sname := CurObj.FieldbyName('SORT_NAME').AsString;
-  Relation:= CurObj.FieldbyName('RELATION_FLAG').AsInteger;
-  }
-
+  if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then // RELATION_FLAG=2 自主经营
+  begin
+    //Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
+    sid := CurObj.FieldbyName('SORT_ID').AsString;
+    sname := CurObj.FieldbyName('SORT_NAME').AsString;
+  end;
+  
   with TfrmGoodsInfo.Create(self) do
   begin
     try
       OnSave := AddRecord;
-      Append(Relation,sid,sname,'');
+      Append(sid,sname,'');
       ShowModal;
     finally
       free;
@@ -745,7 +744,7 @@ begin
     begin
       try
         OnSave := AddRecord;
-        Append(0,'','',cdsBrowser.FieldByName('GODS_ID').AsString);
+        Append('','',cdsBrowser.FieldByName('GODS_ID').AsString);
         ShowModal;
       finally
         free;
@@ -995,6 +994,7 @@ begin
     rs.SortedFields := 'LEVEL_ID';      //'33333333'
     CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
   end;
+  rzTree.FullExpand; //展开树
   rzTree.OnChange:=self.DoTreeChange;
 
   {Obj:= TRecord_.Create;
@@ -1015,6 +1015,13 @@ end;
 procedure TfrmGoodsInfoList.DoTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   Open('');
+end;
+
+procedure TfrmGoodsInfoList.BitBtn1Click(Sender: TObject);
+var
+  CurObj: TRecord_;
+begin
+ 
 end;
 
 end.

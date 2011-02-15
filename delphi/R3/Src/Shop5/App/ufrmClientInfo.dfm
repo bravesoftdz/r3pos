@@ -1,6 +1,6 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 501
-  Top = 207
+  Left = 715
+  Top = 262
   Caption = #23458#25143#26723#26696
   ClientHeight = 365
   ClientWidth = 528
@@ -19,8 +19,10 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 113
       Width = 518
       Height = 207
+      ActivePage = TabSheet2
       Color = clWhite
       ParentColor = False
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -830,6 +832,7 @@ inherited frmClientInfo: TfrmClientInfo
         Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
       end
       object edtREGION_ID: TzrComboBoxList
         Left = 371
@@ -842,7 +845,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -872,6 +875,7 @@ inherited frmClientInfo: TfrmClientInfo
         LocateStyle = lsDark
         Buttons = [zbNew]
         DropListStyle = lsFixed
+        MultiSelect = False
       end
       object edtCLIENT_CODE: TcxTextEdit
         Left = 97
@@ -884,14 +888,6 @@ inherited frmClientInfo: TfrmClientInfo
       object edtSETTLE_CODE: TcxComboBox
         Left = 371
         Top = 49
-        Width = 121
-        Height = 20
-        Properties.DropDownListStyle = lsFixedList
-        TabOrder = 5
-      end
-      object edtPRICE_ID: TcxComboBox
-        Left = 97
-        Top = 72
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -909,7 +905,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 7
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -939,6 +935,50 @@ inherited frmClientInfo: TfrmClientInfo
         Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
+      end
+      object edtPRICE_ID: TzrComboBoxList
+        Left = 97
+        Top = 72
+        Width = 121
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 7
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'PRICE_NAME;PRICE_SPELL'
+        KeyField = 'PRICE_ID'
+        ListField = 'PRICE_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CODE_NAME'
+            Footers = <>
+            Title.Caption = #23610#30721#32452
+            Width = 121
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CODE_SPELL'
+            Footers = <>
+            Visible = False
+          end>
+        DropWidth = 176
+        DropHeight = 130
+        ShowTitle = False
+        AutoFitColWidth = True
+        OnAddClick = edtSORT_IDAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew]
+        DropListStyle = lsFixed
+        OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
       end
     end
   end

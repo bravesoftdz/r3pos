@@ -73,12 +73,12 @@ type
     RzLabel8: TRzLabel;
     RzLabel16: TRzLabel;
     edtSETTLE_CODE: TcxComboBox;
-    edtPRICE_ID: TcxComboBox;
     RzLabel22: TRzLabel;
     edtSHOP_ID: TzrComboBoxList;
     RzLabel23: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
     edtBANK_ID: TcxComboBox;
+    edtPRICE_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -125,7 +125,7 @@ begin
   edtCLIENT_CODE.SelectAll;
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
   edtSETTLE_CODE.ItemIndex:=0;
-  edtPRICE_ID.ItemIndex := 0;
+  //edtPRICE_ID.ItemIndex := 0;
   edtBANK_ID.ItemIndex := 0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
@@ -160,6 +160,8 @@ begin
     edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
+    edtPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Aobj.FieldByName('PRICE_ID').AsString);
+    edtSHOP_ID.KeyValue := Aobj.FieldByName('PRICE_ID').AsString;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -215,13 +217,10 @@ begin
      raise Exception.Create('地区不能为空！');
   end;
 
-  if edtPRICE_ID.Visible then
-  begin                                                
-    if edtPRICE_ID.ItemIndex=-1  then
-    begin
-      if edtPRICE_ID.CanFocus then edtPRICE_ID.SetFocus;
-      Raise Exception.Create('客户等级不能为空！');
-    end;
+  if trim(edtPRICE_ID.AsString) = '' then
+  begin
+    if edtPRICE_ID.CanFocus then edtPRICE_ID.SetFocus;
+    Raise Exception.Create('客户等级不能为空！');
   end;
 
   if edtSETTLE_CODE.ItemIndex = -1 then
@@ -300,6 +299,7 @@ begin
   Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.AsString;
   Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
   Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
+  Aobj.FieldByName('PRICE_ID').AsString := edtPRICE_ID.AsString;
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
     AObj.FieldbyName('CLIENT_CODE').AsString :=TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6);
   //判断档案是否有修改
@@ -321,6 +321,7 @@ begin
   edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
   {ccid:=IntToStr(Global.SHOP_ID);
   if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
     ccid:=ccid

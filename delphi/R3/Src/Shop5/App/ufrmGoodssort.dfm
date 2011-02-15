@@ -253,6 +253,7 @@ inherited frmGoodssort: TfrmGoodssort
     SortedFields = 'SEQ_NO'
     FieldDefs = <>
     CachedUpdates = True
+    BeforeInsert = cdsGoodsSortBeforeInsert
     AfterEdit = cdsGoodsSortAfterEdit
     BeforePost = cdsGoodsSortBeforePost
     OnNewRecord = cdsGoodsSortNewRecord

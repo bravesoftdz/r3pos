@@ -49,6 +49,7 @@ type
       Shift: TShiftState);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure cdsGoodsSortBeforeInsert(DataSet: TDataSet);
   private
     FFlag: integer;
     FSort_Type: integer;
@@ -102,10 +103,12 @@ begin
     cdsGoodsSort.EnableControls;
   end;
   cdsGoodsSort.Append;
-
-  DBGridEh1.SetFocus;
-  DBGridEh1.Col:=1;
-  DBGridEh1.EditorMode := true;
+  if Visible then
+    begin
+      DBGridEh1.SetFocus;
+      DBGridEh1.Col:=1;
+      DBGridEh1.EditorMode := true;
+    end;
 end;
 
 procedure TfrmGoodssort.btnDeleteClick(Sender: TObject);
@@ -242,11 +245,11 @@ end;
 procedure TfrmGoodssort.cdsGoodsSortBeforePost(DataSet: TDataSet);
 begin
   inherited;
-  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and (cdsGoodsSort.FieldByName('SORT_ID').AsString='') then
+  {if (DBGridEh1.Row=DBGridEh1.RowCount-1) and (cdsGoodsSort.FieldByName('SORT_ID').AsString='') then
   begin
     exit;
   end;
- { if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then raise Exception.Create('分类名称不能为空！');
+  if cdsGoodsSort.FieldByName('SORT_NAME').AsString='' then raise Exception.Create('分类名称不能为空！');
   if cdsGoodsSort.FieldByName('SORT_SPELL').AsString='' then raise Exception.Create('拼音码不能为空！'); }
 end;
 
@@ -265,7 +268,7 @@ begin
 
   Open;
   btnSave.Enabled:=False;
-  DBGridEh1.SetFocus;
+  //DBGridEh1.SetFocus;
   //别的窗体调用此窗体，直接新增
   if Flag=1 then
   begin
@@ -273,7 +276,6 @@ begin
     btnAppend.Enabled:=False;
     btnDelete.Enabled:=False;
   end;
-  cdsGoodsSort.Last;
 end;
 
 procedure TfrmGoodssort.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -318,7 +320,7 @@ begin
     begin
       try
         Flag:=1;
-        SortType := SORTTYPE;
+        Sort_Type := SORTTYPE;
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -519,6 +521,12 @@ begin
   else
     Raise Exception.Create('无效的SORT_TYPE值！');
 
+end;
+
+procedure TfrmGoodssort.cdsGoodsSortBeforeInsert(DataSet: TDataSet);
+begin
+  inherited;
+  btnSave.Enabled := True;
 end;
 
 end.

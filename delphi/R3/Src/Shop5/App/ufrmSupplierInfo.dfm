@@ -110,21 +110,21 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Top = 68
             Width = 398
             Height = 98
-            TabOrder = 3
+            TabOrder = 4
           end
           object edtTAX_RATE: TcxTextEdit
             Left = 371
             Top = 42
             Width = 121
             Height = 20
-            TabOrder = 2
+            TabOrder = 3
           end
           object edtACCOUNT: TcxTextEdit
             Left = 94
             Top = 42
             Width = 170
             Height = 20
-            TabOrder = 0
+            TabOrder = 1
           end
           object edtINVOICE_FLAG: TcxComboBox
             Left = 371
@@ -132,7 +132,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 1
+            TabOrder = 2
           end
           object edtBANK_ID: TcxComboBox
             Left = 94
@@ -140,7 +140,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 4
+            TabOrder = 0
           end
         end
       end
@@ -708,6 +708,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
       end
       object edtREGION_ID: TzrComboBoxList
         Left = 371
@@ -720,7 +721,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -750,6 +751,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         LocateStyle = lsDark
         Buttons = [zbNew]
         DropListStyle = lsFixed
+        MultiSelect = False
       end
       object edtCLIENT_CODE: TcxTextEdit
         Left = 97
@@ -765,7 +767,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371
@@ -809,6 +811,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
       end
     end
   end

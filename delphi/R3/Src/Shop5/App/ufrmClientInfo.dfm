@@ -171,28 +171,28 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 2
+            TabOrder = 3
           end
           object edtACCOUNT: TcxTextEdit
             Left = 96
             Top = 35
             Width = 170
             Height = 20
-            TabOrder = 0
+            TabOrder = 1
           end
           object edtREMARK: TcxMemo
             Left = 96
             Top = 105
             Width = 398
             Height = 67
-            TabOrder = 7
+            TabOrder = 8
           end
           object edtIC_CARDNO: TcxTextEdit
             Left = 96
             Top = 81
             Width = 170
             Height = 20
-            TabOrder = 3
+            TabOrder = 4
           end
           object edtBALANCE: TcxTextEdit
             Left = 372
@@ -200,7 +200,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 1
+            TabOrder = 2
           end
           object edtACCU_INTEGRAL: TcxTextEdit
             Left = 372
@@ -208,7 +208,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 4
+            TabOrder = 5
           end
           object edtRULE_INTEGRAL: TcxTextEdit
             Left = 372
@@ -216,7 +216,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 5
+            TabOrder = 6
           end
           object edtINTEGRAL: TcxTextEdit
             Left = 372
@@ -224,7 +224,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 6
+            TabOrder = 7
           end
           object edtBANK_ID: TcxComboBox
             Left = 96
@@ -232,7 +232,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 8
+            TabOrder = 0
           end
         end
       end
@@ -820,7 +820,7 @@ inherited frmClientInfo: TfrmClientInfo
             Footers = <>
             Visible = False
           end>
-        DropWidth = 176
+        DropWidth = 121
         DropHeight = 130
         ShowTitle = False
         AutoFitColWidth = True
@@ -843,7 +843,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 5
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -889,7 +889,7 @@ inherited frmClientInfo: TfrmClientInfo
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 4
+        TabOrder = 5
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371
@@ -903,7 +903,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 7
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -946,7 +946,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 7
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'PRICE_NAME;PRICE_SPELL'
@@ -960,7 +960,7 @@ inherited frmClientInfo: TfrmClientInfo
             Title.Caption = #31561#32423#21517#31216
             Width = 121
           end>
-        DropWidth = 176
+        DropWidth = 121
         DropHeight = 130
         ShowTitle = False
         AutoFitColWidth = True

@@ -266,7 +266,6 @@ begin
     btnAppend.Enabled:=False;
     btnDelete.Enabled:=False;
   end;
-  cdsUnit.Last;
 end;
 
 procedure TfrmMeaUnits.DBGridEh1DrawColumnCell(Sender: TObject;

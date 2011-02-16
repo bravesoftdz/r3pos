@@ -290,10 +290,10 @@ begin
     end;
   if sysLogFile and Assigned(Factor) and Factor.Connected then
      WriteDestroyLogFile;
-  except
-  end;
   TDbGridEhExport.FreeForm(self);
   TDbGridEhMark.FreeForm(self);
+  except
+  end;
   inherited;
 end;
 

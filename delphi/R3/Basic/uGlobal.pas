@@ -26,6 +26,7 @@ type
     FTENANT_NAME: string;
     FSHOP_ID: string;
     FSHOP_NAME: string;
+    FSHORT_TENANT_NAME: string;
     { Private declarations }
     function  GetUserID: string;
     function  GetUserName: string;
@@ -41,6 +42,7 @@ type
     procedure SetIsAxCall(const Value: Boolean);
     procedure Setupgrade(const Value: boolean);
     procedure SetTENANT_ID(const Value: integer);
+    procedure SetSHORT_TENANT_NAME(const Value: string);
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -72,6 +74,8 @@ type
     property TENANT_ID:integer read FTENANT_ID write SetTENANT_ID;
     //企业名称
     property TENANT_NAME:string read FTENANT_NAME write FTENANT_NAME;
+    //企业简称
+    property SHORT_TENANT_NAME:string read FSHORT_TENANT_NAME write SetSHORT_TENANT_NAME;
     //门店代码
     property SHOP_ID:string read FSHOP_ID write FSHOP_ID;
     //门店名称
@@ -247,6 +251,8 @@ begin
            TZQuery(Components[i]).Close;
            if TZQuery(Components[i]).Params.FindParam('SHOP_ID')<>nil then
               TZQuery(Components[i]).Params.FindParam('SHOP_ID').AsString := SHOP_ID;
+           if TZQuery(Components[i]).Params.FindParam('SHOP_ID_ROOT')<>nil then
+              TZQuery(Components[i]).Params.FindParam('SHOP_ID_ROOT').AsString := inttostr(TENANT_ID)+'0001';
            if TZQuery(Components[i]).Params.FindParam('TENANT_ID')<>nil then
               TZQuery(Components[i]).Params.FindParam('TENANT_ID').AsInteger := TENANT_ID;
            if TZQuery(Components[i]).Params.FindParam('USER_ID')<>nil then
@@ -460,6 +466,8 @@ begin
      begin
        if TZQuery(Result).Params.FindParam('SHOP_ID')<>nil then
           TZQuery(Result).Params.FindParam('SHOP_ID').AsString := SHOP_ID;
+       if TZQuery(Result).Params.FindParam('SHOP_ID_ROOT')<>nil then
+          TZQuery(Result).Params.FindParam('SHOP_ID_ROOT').AsString := inttostr(TENANT_ID)+'0001';
        if TZQuery(Result).Params.FindParam('TENANT_ID')<>nil then
           TZQuery(Result).Params.FindParam('TENANT_ID').AsInteger := TENANT_ID;
        if TZQuery(Result).Params.FindParam('USER_ID')<>nil then
@@ -472,6 +480,11 @@ end;
 procedure TGlobal.SetTENANT_ID(const Value: integer);
 begin
   FTENANT_ID := Value;
+end;
+
+procedure TGlobal.SetSHORT_TENANT_NAME(const Value: string);
+begin
+  FSHORT_TENANT_NAME := Value;
 end;
 
 initialization

@@ -43,7 +43,7 @@ inherited frameTreeFindDialog: TframeTreeFindDialog
                 35)
               object Label8: TLabel
                 Left = 24
-                Top = 12
+                Top = 11
                 Width = 72
                 Height = 12
                 Caption = #36755#20837#26597#35810#20869#23481
@@ -51,7 +51,7 @@ inherited frameTreeFindDialog: TframeTreeFindDialog
               object edtSearch: TcxTextEdit
                 Tag = -1
                 Left = 103
-                Top = 8
+                Top = 7
                 Width = 135
                 Height = 20
                 ParentShowHint = False
@@ -62,7 +62,7 @@ inherited frameTreeFindDialog: TframeTreeFindDialog
               end
               object RzBitBtn4: TRzBitBtn
                 Left = 243
-                Top = 5
+                Top = 4
                 Width = 67
                 Height = 26
                 Anchors = [akTop, akRight]

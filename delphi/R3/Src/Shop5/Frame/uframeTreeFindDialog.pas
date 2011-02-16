@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, RzButton,
-  ComCtrls, RzTreeVw, DB, ObjBase;
+  ComCtrls, RzTreeVw, DB, ZBase;
 
 type
   TframeTreeFindDialog = class(TframeDialogForm)
@@ -92,7 +92,7 @@ end;
 procedure TframeTreeFindDialog.edtSearchKeyPress(Sender: TObject;
   var Key: Char);
 var
-  i:integer;
+  i:integer;                                                           
   item:TTreeNode;
 begin
   inherited;

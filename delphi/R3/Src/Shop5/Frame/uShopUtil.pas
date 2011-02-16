@@ -599,7 +599,12 @@ begin
            if TcxDateEdit(Components[i]).EditValue = null then
               AObj.FieldbyName(fldname).AsString := ''
            else
-              AObj.FieldbyName(fldname).AsString := formatDatetime('YYYY-MM-DD',TcxDateEdit(Components[i]).Date);
+              begin
+                if AObj.FieldbyName(fldname).DataType = ftString then
+                   AObj.FieldbyName(fldname).AsString := formatDatetime('YYYY-MM-DD',TcxDateEdit(Components[i]).Date)
+                else
+                   AObj.FieldbyName(fldname).asInteger := StrtoInt(formatDatetime('YYYYMMDD',TcxDateEdit(Components[i]).Date));
+              end;
          end;
       if Components[i] is TcxMemo then
          begin

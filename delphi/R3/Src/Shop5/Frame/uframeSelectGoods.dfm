@@ -104,7 +104,7 @@ inherited frameSelectGoods: TframeSelectGoods
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               FrozenCols = 1
-              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               PopupMenu = PopupMenu1
               RowHeight = 23

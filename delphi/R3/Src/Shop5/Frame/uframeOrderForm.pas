@@ -279,7 +279,7 @@ begin
         edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
         edtTable.FieldByName('IS_PRESENT').asInteger := pt;
         if UNIT_ID='' then
-           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
+           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('CALC_UNITS').AsString
         else
            edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
         edtTable.FieldbyName('BATCH_NO').AsString := '#';
@@ -701,7 +701,12 @@ begin
       rs := Global.GetZQueryFromName('PUB_GOODSINFO');
       if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
       begin
-        AObj.ReadFromDataSet(rs);
+        AObj.ReadField(edtTable); 
+        AObj.ReadFromDataSet(rs,false);
+        AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+        AObj.FieldbyName('IS_PRESENT').AsString := '0';
+        AObj.FieldbyName('LOCUS_NO').AsString := '#';
+        AObj.FieldbyName('BATCH_NO').AsString := '#';
         pt := false;
         if CheckRepeat(AObj,pt) then
            begin
@@ -2548,7 +2553,7 @@ begin
   fndUNIT_ID.Properties.Items.Clear;
   if rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
-       if us.Locate('UNIT_ID',rs.FieldbyName('UNIT_ID').AsString,[]) then
+       if us.Locate('UNIT_ID',rs.FieldbyName('CALC_UNITS').AsString,[]) then
           fndUNIT_ID.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(0));
        if us.Locate('UNIT_ID',rs.FieldbyName('SMALL_UNITS').AsString,[]) then
           fndUNIT_ID.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(1));
@@ -2651,7 +2656,7 @@ begin
      begin
        edtTable.Edit;
        case w of
-       0:UnitToCalc(rs.FieldbyName('UNIT_ID').AsString);
+       0:UnitToCalc(rs.FieldbyName('CALC_UNITS').AsString);
        1:UnitToCalc(rs.FieldbyName('SMALL_UNITS').AsString);
        2:UnitToCalc(rs.FieldbyName('BIG_UNITS').AsString);
        end;

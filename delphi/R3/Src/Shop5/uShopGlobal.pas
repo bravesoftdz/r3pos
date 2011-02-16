@@ -52,7 +52,8 @@ type
   protected
     function GetSysDate: TDate;override;
   public
-    { Public declarations }
+    { Public declarations }   
+    function GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter:string=''): Boolean;
     function GetChkRight(id:string;userid:string=''):boolean; overload;
     function GetChkRight(MID: string; SEQUNo: integer; userid:string=''):boolean; overload;
 
@@ -206,25 +207,7 @@ begin
   if uid=Global.UserID then
   begin
     if not CA_RIGHTS.Active then Exit;
-    begin
-      try
-        //CA_RIGHTS.Filter 过滤MODU_ID的记录:
-        CA_RIGHTS.Filtered:=False;
-        CA_RIGHTS.Filter:='MODU_ID='''+MID+''' ';
-        CA_RIGHTS.Filtered:=true;
-        CA_RIGHTS.First;
-        while not CA_RIGHTS.Eof do
-        begin
-          CHK_Value:=(CA_RIGHTS.fieldbyName('CHK').AsInteger or CHK_Value); //不同角色进行 OR 运算
-          CA_RIGHTS.Next;
-        end;
-        //对应位进行 and 预算，返回是否有权限
-        result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
-      finally
-        CA_RIGHTS.Filtered:=False;
-        CA_RIGHTS.Filter:='';
-      end;
-    end;
+    result:=GetOperRight(CA_RIGHTS,SEQUNo,'MODU_ID='''+MID+''''); //返回判断
   end else
   begin
     rs := TZQuery.Create(nil);
@@ -242,15 +225,8 @@ begin
        if rs.Params.FindParam('USER_ID')<>nil then
          rs.ParamByName('USER_ID').AsString:=uid;
        Factor.Open(rs);
-       if rs.Active and not rs.IsEmpty then
-       begin
-         while not CA_RIGHTS.Eof do
-         begin
-           CHK_Value:=(CA_RIGHTS.fieldbyName('CHK').AsInteger or CHK_Value);
-           CA_RIGHTS.Next;
-         end;
-         result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
-       end;
+       if (rs.Active) and (not rs.IsEmpty) then
+       result:=GetOperRight(rs,SEQUNo,''); //返回判断
      finally
        rs.free;
      end;
@@ -350,6 +326,35 @@ begin
   result := true;
 end;
 
+
+function TShopGlobal.GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter: string): Boolean;
+var CHK_Value: integer;
+begin
+  if not CdsRight.Active then Exit;
+  try
+    CHK_Value:=0;
+    if Filter<>'' then //CA_RIGHTS.Filter 过滤的记录
+    begin
+      CdsRight.Filtered:=False;
+      CdsRight.Filter:=Filter;
+      CdsRight.Filtered:=true;
+    end;
+    CdsRight.First;
+    while not CdsRight.Eof do
+    begin
+      CHK_Value:=(CdsRight.fieldbyName('CHK').AsInteger or CHK_Value); //不同角色进行 OR 运算
+      CdsRight.Next;
+    end;
+    //对应位进行 and 预算，返回是否有权限
+    result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
+  finally
+    if Filter<>'' then
+    begin
+      CA_RIGHTS.Filtered:=False;
+      CA_RIGHTS.Filter:='';
+    end;
+  end;
+end;
 
 initialization
 finalization

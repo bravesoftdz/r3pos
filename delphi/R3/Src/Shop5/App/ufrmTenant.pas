@@ -333,12 +333,13 @@ begin
   try
     Temp := TZQuery.Create(nil);
     Temp.Close;
-    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
+    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME,SHORT_TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
     Factor.Open(Temp);
     if NetWork then CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
     Result := True;
     Global.TENANT_ID := Temp.FieldByName('TENANT_ID').AsInteger;
     Global.TENANT_NAME := Temp.FieldByName('TENANT_NAME').AsString;
+    Global.SHORT_TENANT_NAME := Temp.FieldByName('SHORT_TENANT_NAME').AsString;
   finally
     Temp.Free;
   end;

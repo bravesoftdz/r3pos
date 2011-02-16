@@ -100,6 +100,10 @@ begin
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,cast(:TENANT_ID *1000+1 as varchar(10)),''总店'',''001'',''ZD'',''后台仓库'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
+  //初始化会员等级
+  Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
+  'values(:TENANT_ID,'''+TSequence.NewId+''',''普通会员'',''PTFY'',0,0,0,0,0,0,1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
 
   Result := True;
 

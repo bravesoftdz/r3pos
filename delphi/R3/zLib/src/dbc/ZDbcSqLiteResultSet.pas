@@ -248,13 +248,13 @@ begin
       begin
         ColumnType := ConvertSQLiteTypeToSQLType(TypeName^,
           FieldPrecision, FieldDecimals);
-        Inc(TypeName);
       end
       else
       begin
         ColumnType := ConvertSQLiteTypeToSQLType('',
           FieldPrecision, FieldDecimals);
       end;
+      Inc(TypeName);
       ColumnDisplaySize := FieldPrecision;
       AutoIncrement := False;
       Precision := FieldPrecision;

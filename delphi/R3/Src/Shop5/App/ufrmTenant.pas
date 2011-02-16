@@ -82,7 +82,7 @@ type
     TENANT_ID: Integer;
     function Check:boolean;
     class function coRegister(Owner:TForm):boolean;
-    function Login_F:Boolean;
+    function Login_F(NetWork:boolean=true):Boolean;
     procedure Save;
     procedure Open;
   end;
@@ -101,17 +101,16 @@ begin
         if result then
           begin
             //ºÏ≤‚Õ¯¬Á
-            result := ShopGlobal.CheckNetwork;
-            if result then
+            if CAFactory.CheckNetwork then
               begin
                 //µ«¬º»œ÷§
-                result := Login_F;
+                result := Login_F(true);
                 if not result then Label19.Caption := 'µ«¬º»œ÷§ ß∞‹ ';
               end
             else
               begin
-                Label19.Caption := 'Õ¯¬Á¡¨Ω” ß∞‹ ';
-                Label19.Tag := -1;
+                Login_F(false);
+                Exit;
               end;
           end;
         if (not result) then
@@ -311,7 +310,7 @@ var Temp: TZQuery;
 begin
   Temp := TZQuery.Create(nil);
   try
-    Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID''';
+    Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID'' and TENANT_ID=0 ';
     Factor.Open(Temp);
     result := (Temp.Fields[0].asString<>'');
     // zhangsenrong 20110-01-26
@@ -326,7 +325,7 @@ begin
   end;
 end;
 
-function TfrmTenant.Login_F:Boolean;
+function TfrmTenant.Login_F(NetWork:boolean=true):Boolean;
 var
   Temp: TZQuery;
 begin
@@ -336,7 +335,7 @@ begin
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
     Factor.Open(Temp);
-    CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+    if NetWork then CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
     Result := True;
     Global.TENANT_ID := Temp.FieldByName('TENANT_ID').AsInteger;
     Global.TENANT_NAME := Temp.FieldByName('TENANT_NAME').AsString;

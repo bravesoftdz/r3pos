@@ -1083,6 +1083,7 @@ inherited frmTenant: TfrmTenant
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
+        MultiSelect = False
       end
     end
   end
@@ -1095,6 +1096,7 @@ inherited frmTenant: TfrmTenant
     Top = 8
   end
   object CdsTable: TZQuery
+    FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 401

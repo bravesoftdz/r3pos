@@ -52,10 +52,9 @@ type
   protected
     function GetSysDate: TDate;override;
   public
-    { Public declarations }   
+    { Public declarations }
     function GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter:string=''): Boolean;
-    function GetChkRight(id:string;userid:string=''):boolean; overload;
-    function GetChkRight(MID: string; SEQUNo: integer; userid:string=''):boolean; overload;
+    function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean; overload;  
 
     procedure LoadRight;
     //1.操作日志 2.数据日志
@@ -143,119 +142,18 @@ begin
   Fokline := Value;
 end;
 
-function TShopGlobal.GetChkRight(id: string;userid:string=''): boolean;
-var
-  uid:string;
-  rs,us:TZQuery;
-  myRoles:string;
-begin
-  result := false;
-  if userid='' then uid := Global.UserID else uid := userid;
-  if uid = 'admin' then
-     begin
-       result := true;
-       Exit;
-     end;
-  if uid=Global.UserID then
-     begin
-       if not CA_RIGHTS.Active then Exit;
-       if CA_RIGHTS.Locate('MID',id,[]) then
-          result := (CA_RIGHTS.FieldByName('CHK').AsInteger > 0);
-     end
-  else
-     begin
-       Exit;
-       rs := TZQuery.Create(nil);
-       try
-         us := Global.GeTZQueryFromName('CA_USERS');
-         if not us.Locate('USER_ID',uid,[]) then Raise Exception.Create('无效用户名...');
-         myRoles := us.FieldbyName('DUTY_IDS').AsString;
-         case Factor.iDbType of
-         0:rs.SQL.Text :=
-           'select j.MID,IsNull(b.CHK,j.CHK) as CHK from '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and TENANT_ID='+inttostr(TENANT_ID)+' group by MID ) j '+
-           'left outer join '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+uid+''' and COMP_ID=''----'' and UTYPE=1 and MID='''+id+''' group by MID ) b on j.MID=b.MID';
-         3:rs.SQL.Text :=
-           'select j.MID,iif(IsNull(b.CHK),0,j.CHK) as CHK from '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') and UTYPE=0 and MID='''+id+''' and TENANT_ID='+inttostr(TENANT_ID)+' group by MID ) j '+
-           'left outer join '+
-           '(select MID,sum(CHK) as CHK from CA_RIGHTS where UID = '''+uid+''' and COMP_ID=''----'' and UTYPE=1 and MID='''+id+''' group by MID ) b on j.MID=b.MID';
-         end;
-         Factor.Open(rs);
-         result := (rs.Fields[1].AsInteger > 0)
-       finally
-         rs.free;
-       end;
-     end;
-end;
-
-function TShopGlobal.GetChkRight(MID: string; SEQUNo: integer; userid: string): boolean;
-var
-  rs,us:TZQuery;
-  CHK_Value: integer;
-  uid,myRoles:string;
-begin
-  result := false;
-  CHK_Value:=0;
-  if userid='' then uid := Global.UserID else uid := userid;
-  if uid = 'admin' then
-  begin
-    result := true;
-    Exit;
-  end;
-  if uid=Global.UserID then
-  begin
-    if not CA_RIGHTS.Active then Exit;
-    result:=GetOperRight(CA_RIGHTS,SEQUNo,'MODU_ID='''+MID+''''); //返回判断
-  end else
-  begin
-    rs := TZQuery.Create(nil);
-    try
-       us := Global.GeTZQueryFromName('CA_USERS');
-       if not us.Locate('USER_ID',uid,[]) then Raise Exception.Create('无效用户名...');
-       myRoles := us.FieldbyName('DUTY_IDS').AsString;
-       rs.Close;
-       rs.SQL.Text:='(select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where MODU_ID='''+MID+''' and R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and R.ROLE_ID=B.ROLE_ID and '+
-         ' R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''')) '+
-         ' union all '+
-         ' (select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and MODU_ID='''+MID+''' and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID) ';
-       if rs.Params.FindParam('TENANT_ID')<>nil then
-         rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-       if rs.Params.FindParam('USER_ID')<>nil then
-         rs.ParamByName('USER_ID').AsString:=uid;
-       Factor.Open(rs);
-       if (rs.Active) and (not rs.IsEmpty) then
-       result:=GetOperRight(rs,SEQUNo,''); //返回判断
-     finally
-       rs.free;
-     end;
-   end;
-end;
-
 procedure TShopGlobal.LoadRight;
 var
   Roles,Str:string;
 begin
   if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
   Roles := CA_USERS.FieldbyName('DUTY_IDS').AsString;
-  case Factor.iDbType of
-   0,5:
-    begin //SQLITE环境下通过，Ms SQL Server语法一样
-      Str:='select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
-        ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') '+
-        ' union all '+
-        ' select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
-    end;
-   1:
-    begin
-      Str:='';
-    end;
-   4:
-    begin
-      Str:='';
-    end;
-  end;
+  Str:=
+    'select j.* from ('+
+    'select MODU_ID,R.ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
+    ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') '+
+    ' union all '+
+    ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ) j';
   CA_RIGHTS.Close;
   CA_RIGHTS.SQL.Text:=Str;
   if CA_RIGHTS.Params.FindParam('TENANT_ID')<>nil then
@@ -326,8 +224,52 @@ begin
   result := true;
 end;
 
+function TShopGlobal.GetChkRight(MID: string; SequNo: integer=1;
+  userid: string=''): boolean;
+var
+  rs,us:TZQuery;
+  CHK_Value: integer;
+  uid,myRoles:string;
+begin
+  result := false;
+  CHK_Value:=0;
+  if userid='' then uid := Global.UserID else uid := userid;
+  if (uid = 'admin') or (uid='administrator') then
+  begin
+    result := true;
+    Exit;
+  end;
+  if uid=Global.UserID then
+  begin
+    if not CA_RIGHTS.Active then Exit;
+    result:=GetOperRight(CA_RIGHTS,SEQUNo,'MODU_ID='''+MID+''''); //返回判断
+  end else
+  begin
+    rs := TZQuery.Create(nil);
+    try
+       us := Global.GeTZQueryFromName('CA_USERS');
+       if not us.Locate('USER_ID',uid,[]) then Raise Exception.Create('无效用户名...');
+       myRoles := us.FieldbyName('DUTY_IDS').AsString;
+       rs.Close;
+       rs.SQL.Text:='(select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where MODU_ID='''+MID+''' and R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and R.ROLE_ID=B.ROLE_ID and '+
+         ' R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''')) '+
+         ' union all '+
+         ' (select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and MODU_ID='''+MID+''' and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID) ';
+       if rs.Params.FindParam('TENANT_ID')<>nil then
+         rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+       if rs.Params.FindParam('USER_ID')<>nil then
+         rs.ParamByName('USER_ID').AsString:=uid;
+       Factor.Open(rs);
+       if (rs.Active) and (not rs.IsEmpty) then
+       result:=GetOperRight(rs,SEQUNo,''); //返回判断
+     finally
+       rs.free;
+     end;
+   end;
+end;
 
-function TShopGlobal.GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter: string): Boolean;
+function TShopGlobal.GetOperRight(CdsRight: TDataSet; SEQUNo: integer;
+  Filter: string): Boolean;
 var CHK_Value: integer;
 begin
   if not CdsRight.Active then Exit;

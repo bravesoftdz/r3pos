@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 320
-  Top = 99
+  Left = 274
+  Top = 116
   Height = 594
   Width = 692
   object SYS_DEFINE: TZQuery
@@ -42,7 +42,7 @@ inherited ShopGlobal: TShopGlobal
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
         'OP_ID from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      'and (TENANT_ID=:TENANT_ID or TENANT_ID=0) order by ACCOUNT')
+      'and TENANT_ID=:TENANT_ID order by ACCOUNT')
     Params = <
       item
         DataType = ftUnknown
@@ -650,11 +650,22 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
-        'E_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39')')
-    Params = <>
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where TEN' +
+        'ANT_ID=:TENANT_ID and CODE_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
     Left = 456
     Top = 168
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
   end
   object PUB_BANK_INFO: TZQuery
     FieldDefs = <>

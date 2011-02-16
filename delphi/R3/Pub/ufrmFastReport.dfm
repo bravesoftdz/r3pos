@@ -337,7 +337,7 @@ inherited frmFastReport: TfrmFastReport
   end
   object frPDFExport1: TfrPDFExport
     ShowDialog = False
-    Left = 284
+    Left = 292
     Top = 233
   end
   object frDesigner1: TfrDesigner
@@ -345,8 +345,9 @@ inherited frmFastReport: TfrmFastReport
     Left = 222
     Top = 197
   end
-  object adoTable: TZReadOnlyQuery
+  object adoTable: TZQuery
     FieldDefs = <>
+    CachedUpdates = True
     Params = <>
     Left = 172
     Top = 225

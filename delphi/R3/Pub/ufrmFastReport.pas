@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, ComCtrls, ToolWin, ExtCtrls,ZBase,
   FR_View, FR_Class, FR_DSet, FR_DBSet, DB,
   FR_E_RTF, FR_E_HTM, FR_E_TXT, FR_E_CSV,DbClient, FR_E_PDF, FR_Desgn,
-  ZAbstractRODataset, ZDataset;
+  ZAbstractRODataset, ZDataset, ZAbstractDataset;
 type
   TFilterEvent=procedure(Var SQL:string) of Object;
 type
@@ -70,7 +70,7 @@ type
     frDesigner1: TfrDesigner;
     ToolButton4: TToolButton;
     actFormer: TAction;
-    adoTable: TZReadOnlyQuery;
+    adoTable: TZQuery;
     procedure actOnePageExecute(Sender: TObject);
     procedure actPageWidthExecute(Sender: TObject);
     procedure actZoomExecute(Sender: TObject);
@@ -139,7 +139,7 @@ var GlobalIndex:Integer=-1;
     Language:Integer=0;
 implementation
 {$R *.dfm}
-uses RzSplit,udmIcon,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer,uGlobal;
+uses RzSplit,udmIcon,uFnUtil,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer,uGlobal;
 { TfrmFastReport }
 var SaveIndex:Integer=-1;
 procedure TfrmFastReport.DoFormer;
@@ -160,8 +160,11 @@ begin
      Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Factor.Open(Temp);
      Temp.Edit;
+     Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Temp.FieldByName('frfFileName').AsString := frReport.Name;
      Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
+     Temp.FieldByName('COMM').AsString := '00';
+     Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
      sm.Position := 0;
      if r<0 then Exit;
      if r=0 then s := '' else s := inttostr(r);
@@ -303,7 +306,7 @@ begin
   temp := TZQuery.Create(nil);
   sm := TMemoryStream.Create;
   try
-     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+     Temp.SQL.Text := 'select * from SYS_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
      Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Temp.ParamByName('frfFileName').AsString := frReport.Name;
      Factor.Open(Temp);
@@ -588,7 +591,7 @@ begin
 end;
 
 procedure TfrmFastReport.OpenFile(frReport: TfrReport;Index:Integer=-1);
-var Temp :TClientDataSet;
+var Temp :TZQuery;
     sm:TStream;
     s:string;
     Field:TField;
@@ -599,17 +602,22 @@ begin
        frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf') ;
        exit;
      end;
-  Temp := TClientDataSet.Create(nil);
+  Temp := TZQuery.Create(nil);
   sm := TMemoryStream.Create;
   try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport.Name +'''';
+     Temp.SQL.Text := 'select * from SYS_FASTFILE where TENANT_ID=:TENANT_ID and frfFileName=:frfFileName';
+     Temp.ParamByName('frfFileName').AsString := frReport.Name;
+     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Factor.Open(Temp);
      if Temp.IsEmpty and frReport.StoreInDFM then
         begin
            frReport.SaveToStream(sm);
            Temp.Append;
+           Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
            Temp.FieldByName('frfFileName').AsString := frReport.Name;
            Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
+           Temp.FieldByName('COMM').AsString := '00';
+           Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
            sm.Position := 0;
            TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
            Temp.Post;
@@ -780,8 +788,11 @@ begin
      sm.Clear;
      frReport.SaveToStream(sm);
      Temp.Edit;
+     Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Temp.FieldByName('frfFileName').AsString := frReport.Name;
      Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
+     Temp.FieldByName('COMM').AsString := '00';
+     Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
      sm.Position := 0;
      TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
      Temp.Post;

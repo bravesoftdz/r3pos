@@ -186,7 +186,7 @@ begin
     else
       ALevelField := 0;
  Level:=0;
- if RootNode<>nil then
+ if RootNode=nil then
     ClearTree(ATree);
  with ATree,DataSet Do
   begin
@@ -246,7 +246,7 @@ begin
       ALevelField := 0;
 
  Level:=0;
- if RootNode<>nil then
+ if RootNode=nil then
     ClearTree(ATree);
  with ATree,DataSet Do
   begin

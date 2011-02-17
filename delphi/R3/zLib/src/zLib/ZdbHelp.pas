@@ -62,6 +62,7 @@ type
     procedure SetFactory(const Value: TZFactory);
 
     procedure ReadData;
+    procedure WriteData;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
@@ -244,6 +245,11 @@ begin
        TZQuery(DataSet).CachedUpdates := true;
        TZQuery(DataSet).Connection := ZConn;
      end;
+  if DataSet.ClassNameIs('TZReadonlyQuery') then
+     begin
+       TZQuery(DataSet).CachedUpdates := true;
+       TZQuery(DataSet).Connection := ZConn;
+     end;
   if DataSet.ClassNameIs('TZTable') then
      begin
        TZTable(DataSet).CachedUpdates := true;
@@ -254,6 +260,10 @@ begin
     result := true;
   finally
     if DataSet.ClassNameIs('TZQuery') then
+       begin
+         TZQuery(DataSet).Connection := nil;
+       end;
+    if DataSet.ClassNameIs('TZReadonlyQuery') then
        begin
          TZQuery(DataSet).Connection := nil;
        end;
@@ -686,21 +696,21 @@ procedure TZdbUpdate.PSBeforeDeleteSQL;
 begin
   ReadData;
   Factory.BeforeDeleteRecord(dbHelp);
-
+  WriteData;
 end;
 
 procedure TZdbUpdate.PSBeforeInsertSQL;
 begin
   ReadData;
   Factory.BeforeInsertRecord(dbHelp);
-
+  WriteData;
 end;
 
 procedure TZdbUpdate.PSBeforeModifySQL;
 begin
   ReadData;
   Factory.BeforeModifyRecord(dbHelp);
-
+  WriteData;
 end;
 
 procedure TZdbUpdate.ReadData;
@@ -783,6 +793,47 @@ end;
 procedure TZdbUpdate.SetFactory(const Value: TZFactory);
 begin
   FFactory := Value;
+end;
+
+procedure TZdbUpdate.WriteData;
+var
+  i:integer;
+  WasNull:boolean;
+begin
+  for i:=0 to Factory.Count -1 do
+     begin
+      if VarIsClear(Factory.Fields[i].NewValue) or VarIsNull(Factory.Fields[i].NewValue) then
+         FNewRowAccessor.SetNull(i+1)
+      else
+      case FNewRowAccessor.GetColumnType(i+1)  of
+        stBoolean:
+          FNewRowAccessor.SetBoolean(i+1,Factory.Fields[i].NewValue);
+        stByte:
+          FNewRowAccessor.SetByte(i+1,Factory.Fields[i].NewValue);
+        stShort:
+          FNewRowAccessor.SetShort(i+1,Factory.Fields[i].NewValue);
+        stInteger:
+          FNewRowAccessor.SetInt(i+1,Factory.Fields[i].NewValue);
+        stLong:
+          FNewRowAccessor.SetLong(i+1,Factory.Fields[i].NewValue);
+        stFloat:
+          FNewRowAccessor.SetFloat(i+1,Factory.Fields[i].NewValue);
+        stDouble:
+          FNewRowAccessor.SetDouble(i+1,Factory.Fields[i].NewValue);
+        stBigDecimal:
+          FNewRowAccessor.SetBigDecimal(i+1,Factory.Fields[i].NewValue);
+        stString, stUnicodeString:
+          FNewRowAccessor.SetString(i+1,Factory.Fields[i].NewValue);
+        stBytes:
+          FNewRowAccessor.SetBytes(i+1,Factory.Fields[i].NewValue);
+        stDate:
+          FNewRowAccessor.SetDate(i+1,Factory.Fields[i].NewValue);
+        stTime:
+          FNewRowAccessor.SetTime(i+1,Factory.Fields[i].NewValue);
+        stTimestamp:
+          FNewRowAccessor.SetTimestamp(i+1,Factory.Fields[i].NewValue);
+      end;
+     end;
 end;
 
 end.

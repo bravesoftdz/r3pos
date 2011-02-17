@@ -708,6 +708,7 @@ begin
         AObj.FieldbyName('LOCUS_NO').AsString := '#';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
         pt := false;
+        
         if CheckRepeat(AObj,pt) then
            begin
              fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;

@@ -17,13 +17,13 @@ function GetAccountRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean
 function GetReckDate(AGlobal:IdbHelp;TENANT_ID,SHOP_ID:string):string;
 //读取系列号
 function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;
-function NewId(AGlobal:IdbHelp):string;
 //更新库存
 //flag 1 进货单，2 销售单 3 其他单
 procedure IncStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String;amt,mny: Real;flag:integer);
 procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:String; amt,mny:Real;flag:integer);
 function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:string): Real;
 
+function NewId(id:string): string;
 //写日志
 procedure WriteLogInfo(AGlobal: IdbHelp;userid:string;LogType:integer;ModId:string;LogName:string;LogInfo:string);
 //组合数据变动说明
@@ -38,6 +38,17 @@ const
 var
   FldXdict:TZReadonlyQuery;
 implementation
+function NewId(id:string): string;
+var
+  g:TGuid;
+begin
+  if CreateGUID(g)=S_OK then
+  begin
+     result :=trim(GuidToString(g));
+     result :=Copy(result,2,length(result)-2);  //去掉"{}"
+  end else
+     result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
+end;
 function ParseSQL(iDbType:integer;SQL:string):string;
 begin
   case iDbType of
@@ -54,15 +65,6 @@ begin
      result := stringreplace(result,'isnull','ifnull',[rfReplaceAll]);
     end;
   end;
-end;
-function NewId(AGlobal:IdbHelp):string;
-var
-  g:TGuid;
-begin
-  if CreateGUID(g)=S_OK then
-     result := GuidToString(g)
-  else
-     result := GetSequence(AGlobal,'NEWID','---','',15);
 end;
 //读取系列号
 function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;
@@ -84,7 +86,7 @@ begin
        1:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' for update';
        else
          begin
-          AGlobal.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+          AGlobal.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
           Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
          end;
        end;
@@ -92,13 +94,13 @@ begin
        if Temp.IsEmpty then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM) values('''+TENANT_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'')';
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('''+TENANT_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
           end
        else
        if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1 where TENANT_ID='''+TENANT_ID+''' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO=1,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='''+TENANT_ID+''' and SEQU_ID='''+SEQU_ID+'''';
           end
        else
           begin
@@ -114,7 +116,7 @@ begin
                end
             else
                Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger+1);
-            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+n)+',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
           end;
        AGlobal.ExecSQL(Str);
   finally
@@ -168,16 +170,16 @@ begin
      if Temp.Fields[0].AsString = '' then
         begin
            Temp.close;
-           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and DEFINE=''USING_DATE''';
+           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE''';
            AGlobal.Open(Temp);
            if Temp.IsEmpty then
-              B := FormatDatetime('YYYY-MM-DD',Date()-1)
+              B := FormatDatetime('YYYYMMDD',Date()-1)
            else
-              B := FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
+              B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
         B := Temp.Fields[0].AsString;
-     Result := formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(B)+1);
+     Result := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(B)+1);
   finally
      Temp.Free;
   end;
@@ -188,7 +190,7 @@ var Temp:TZQuery;
   B:string;
 begin
   Result := False;
-  if pDate>formatDatetime('YYYY-MM-DD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
+  if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
@@ -198,12 +200,12 @@ begin
      if Temp.Fields[0].AsString = '' then
         begin
            Temp.close;
-           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and DEFINE=''USING_DATE''';
+           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE''';
            AGlobal.Open(Temp);
            if Temp.IsEmpty then
-              B := FormatDatetime('YYYY-MM-DD',Date()-1)
+              B := FormatDatetime('YYYYMMDD',Date()-1)
            else
-              B := FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
+              B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
         B := Temp.Fields[0].AsString;
@@ -218,7 +220,7 @@ var Temp:TZQuery;
   B:string;
 begin
   Result := False;
-  if pDate>formatDatetime('YYYY-MM-DD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
+  if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
@@ -228,12 +230,12 @@ begin
      if Temp.Fields[0].AsString = '' then
         begin
            Temp.close;
-           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and DEFINE=''USING_DATE''';
+           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE''';
            AGlobal.Open(Temp);
            if Temp.IsEmpty then
-              B := FormatDatetime('YYYY-MM-DD',Date()-1)
+              B := FormatDatetime('YYYYMMDD',Date()-1)
            else
-              B := FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
+              B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
         B := Temp.Fields[0].AsString;
@@ -297,8 +299,8 @@ begin
      n := AGlobal.ExecSQL(Str) ;
      if n=0 then
         begin
-           Str := 'insert into STO_STORAGE(GODS_ID,TENANT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,NEAR_INDATE,SHOP_ID,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
-                  'values('''+GODS_ID+''','+TENANT_ID+','''+PROPERTY_01+''','''+PROPERTY_02+''','''+BATCH_NO+''','''+formatDatetime('YYYYMMDD',Date())+''','''+SHOP_ID+''','+
+           Str := 'insert into STO_STORAGE(ROWS_ID,GODS_ID,TENANT_ID,SHOP_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,NEAR_INDATE,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
+                  'values('''+NewId(SHOP_ID)+''','''+GODS_ID+''','+TENANT_ID+','''+SHOP_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','''+BATCH_NO+''','''+formatDatetime('YYYYMMDD',Date())+''','+
                   FormatFloat('#0.000',Mny) +','+FormatFloat('#0.000',Amt)+','+FormatFloat('#0.000000',CostPrice)+',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
            AGlobal.ExecSQL(Str);
         end;
@@ -354,8 +356,8 @@ begin
      n := AGlobal.ExecSQL(Str) ;
      if n=0 then
         begin
-           Str := 'insert into STO_STORAGE(GODS_ID,TENANT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,NEAR_OUTDATE,SHOP_ID,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
-                  'values('''+GODS_ID+''','''+TENANT_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','''+BATCH_NO+''','''+formatDatetime('YYYYMMDD',Date())+''','''+SHOP_ID+''','+
+           Str := 'insert into STO_STORAGE(ROWS_ID,GODS_ID,TENANT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,NEAR_OUTDATE,SHOP_ID,AMONEY,AMOUNT,COST_PRICE,COMM,TIME_STAMP) '+
+                  'values('''+NewId(SHOP_ID)+''','''+GODS_ID+''','''+TENANT_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','''+BATCH_NO+''','''+formatDatetime('YYYYMMDD',Date())+''','''+SHOP_ID+''','+
                   FormatFloat('#0.000',-Mny) +','+FormatFloat('#0.000',-Amt)+','+FormatFloat('#0.000000',CostPrice)+',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
            AGlobal.ExecSQL(Str);
         end;

@@ -1,8 +1,8 @@
 inherited frameSelectCustomer: TframeSelectCustomer
-  Left = 262
-  Top = 144
+  Left = 243
+  Top = 202
   ActiveControl = DBGridEh1
-  Caption = #25152#26377#20250#21592#20013#26597#25214'...'
+  Caption = #26597#25214#23458#25143'...'
   ClientHeight = 398
   OnCreate = FormCreate
   OnShow = FormShow
@@ -29,9 +29,9 @@ inherited frameSelectCustomer: TframeSelectCustomer
             TabOrder = 0
             object DBGridEh1: TDBGridEh
               Left = 2
-              Top = 59
+              Top = 42
               Width = 513
-              Height = 273
+              Height = 290
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = dsList
@@ -78,57 +78,24 @@ inherited frameSelectCustomer: TframeSelectCustomer
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'CUST_CODE'
+                  FieldName = 'CLIENT_CODE'
                   Footer.Value = #35760#24405#25968#65306
                   Footer.ValueType = fvtStaticText
                   Footers = <>
                   ReadOnly = True
-                  Title.Caption = #20250#21592#21495
+                  Title.Caption = #23458#25143#21495
                   Title.Color = clWhite
                   Width = 60
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'CUST_NAME'
+                  FieldName = 'CLIENT_NAME'
                   Footer.ValueType = fvtCount
                   Footers = <>
                   ReadOnly = True
-                  Title.Caption = #20250#21592#21517#31216
+                  Title.Caption = #23458#25143#21517#31216
                   Title.Color = clWhite
                   Width = 98
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'BIRTHDAY'
-                  Footers = <>
-                  Title.Caption = #29983#26085
-                  Title.Color = clWhite
-                  Width = 73
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'SEX'
-                  Footers = <>
-                  ReadOnly = True
-                  Title.Caption = #24615#21035
-                  Title.Color = clWhite
-                  Width = 30
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'ADDRESS'
-                  Footers = <>
-                  Title.Caption = #22320#22336
-                  Title.Color = clWhite
-                  Width = 183
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'COMP_NAME'
-                  Footers = <>
-                  Title.Caption = #20837#20250#38376#24215
-                  Title.Color = clWhite
-                  Width = 77
                 end
                 item
                   EditButtons = <>
@@ -136,7 +103,39 @@ inherited frameSelectCustomer: TframeSelectCustomer
                   Footers = <>
                   Title.Caption = #20250#21592#31561#32423
                   Title.Color = clWhite
-                  Width = 79
+                  Width = 61
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TELEPHONE2'
+                  Footers = <>
+                  Title.Caption = #31227#21160#30005#35805
+                  Title.Color = clWhite
+                  Width = 84
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LICENSE_CODE'
+                  Footers = <>
+                  Title.Caption = #35777#20214#21495
+                  Title.Color = clWhite
+                  Width = 99
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ADDRESS'
+                  Footers = <>
+                  Title.Caption = #22320#22336
+                  Title.Color = clWhite
+                  Width = 136
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_NAME'
+                  Footers = <>
+                  Title.Caption = #20837#20250#38376#24215
+                  Title.Color = clWhite
+                  Width = 77
                 end
                 item
                   EditButtons = <>
@@ -151,7 +150,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
               Left = 2
               Top = 2
               Width = 513
-              Height = 57
+              Height = 40
               Align = alTop
               BevelOuter = bvLowered
               Color = clWhite
@@ -160,45 +159,24 @@ inherited frameSelectCustomer: TframeSelectCustomer
                 Left = 1
                 Top = 1
                 Width = 511
-                Height = 55
+                Height = 38
                 Align = alClient
                 BorderOuter = fsNone
                 BorderWidth = 1
                 Color = clWhite
                 TabOrder = 0
-                object Label8: TLabel
-                  Left = 158
-                  Top = 32
-                  Width = 24
-                  Height = 12
-                  Caption = #26597#25214
-                end
-                object Label2: TLabel
-                  Left = 16
-                  Top = 8
-                  Width = 48
-                  Height = 12
-                  Caption = #20250#21592#31561#32423
-                end
-                object Label3: TLabel
-                  Left = 208
-                  Top = 8
-                  Width = 48
-                  Height = 12
-                  Caption = #20837#20250#38376#24215
-                end
                 object Label1: TLabel
-                  Left = 16
-                  Top = 32
+                  Left = 171
+                  Top = 13
                   Width = 48
                   Height = 12
-                  Caption = #26597#25214#33539#22260
+                  Caption = #25628#32034#33539#22260
                 end
                 object edtSearch: TcxTextEdit
                   Tag = -1
-                  Left = 190
-                  Top = 28
-                  Width = 143
+                  Left = 302
+                  Top = 9
+                  Width = 131
                   Height = 20
                   ParentShowHint = False
                   ShowHint = False
@@ -207,87 +185,35 @@ inherited frameSelectCustomer: TframeSelectCustomer
                   OnKeyDown = edtSearchKeyDown
                 end
                 object btnFilter: TRzBitBtn
-                  Left = 342
-                  Top = 26
-                  Width = 74
+                  Left = 438
+                  Top = 7
+                  Width = 59
                   Height = 24
-                  Caption = #26597#25214'(&F)'
+                  Caption = #25628#32034'(&F)'
                   Color = 15791348
                   HighlightColor = 16026986
                   HotTrack = True
                   HotTrackColor = 3983359
-                  TabOrder = 3
+                  TabOrder = 1
                   OnClick = btnFilterClick
                   NumGlyphs = 2
                 end
-                object fndPRICE_ID: TcxComboBox
-                  Tag = -1
-                  Left = 72
-                  Top = 4
-                  Width = 121
-                  Height = 20
-                  Properties.DropDownListStyle = lsFixedList
-                  Properties.OnChange = fndPRICE_IDPropertiesChange
-                  TabOrder = 1
-                end
-                object fndCOMP_ID: TzrComboBoxList
-                  Left = 264
-                  Top = 5
-                  Width = 152
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 2
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_NAME'
-                      Footers = <>
-                      Title.Caption = #38376#24215#21517#31216
-                      Width = 150
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 60
-                    end>
-                  DropWidth = 236
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = False
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  OnSaveValue = fndCOMP_IDSaveValue
-                end
                 object edtFIND_FLAG: TcxComboBox
                   Tag = -1
-                  Left = 72
-                  Top = 28
+                  Left = 224
+                  Top = 9
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #33258#21160#25628#32034
-                    #20250#21592#21495
-                    #20648#20540#21345#21495
+                    #23458#25143#21495
                     #20250#21592#22995#21517
-                    #22320#22336
-                    #31227#21160#30005#35805)
-                  Properties.OnChange = fndPRICE_IDPropertiesChange
-                  TabOrder = 4
+                    #31227#21160#30005#35805
+                    #35777#20214#21495
+                    #20648#20540#21345
+                    #22320#22336)
+                  TabOrder = 2
                 end
               end
             end
@@ -360,14 +286,6 @@ inherited frameSelectCustomer: TframeSelectCustomer
     Left = 200
     Top = 200
   end
-  object cdsList: TClientDataSet
-    Aggregates = <>
-    IndexFieldNames = 'CUST_CODE'
-    Params = <>
-    AfterScroll = cdsListAfterScroll
-    Left = 345
-    Top = 193
-  end
   object dsList: TDataSource
     DataSet = cdsList
     Left = 382
@@ -396,5 +314,12 @@ inherited frameSelectCustomer: TframeSelectCustomer
       Caption = #26174#31034#25152#26377
       OnClick = N1Click
     end
+  end
+  object cdsList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 339
+    Top = 195
   end
 end

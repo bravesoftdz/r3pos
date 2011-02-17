@@ -288,7 +288,7 @@ begin
       CdsRight.Next;
     end;
     //对应位进行 and 预算，返回是否有权限
-    result:=(CHK_Value and (1 shl SEQUNo-1))<>0;
+    result:=(CHK_Value and (1 shl (SEQUNo-1)))<>0;
   finally
     if Filter<>'' then
     begin

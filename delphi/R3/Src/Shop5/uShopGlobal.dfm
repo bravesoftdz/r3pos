@@ -639,11 +639,22 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO'
       
-        'where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID=0 and CODE_TYPE='#39'11'#39 +
-        ' order by SEQ_NO')
-    Params = <>
+        'where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID in (0,:TENANT_ID) an' +
+        'd CODE_TYPE='#39'11'#39' order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
     Left = 240
     Top = 478
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
   end
   object PUB_SALE_STYLE: TZQuery
     FieldDefs = <>
@@ -777,6 +788,75 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 456
     Top = 472
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_MONTH_PAY_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO'
+      
+        'where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID in (0,:TENANT_ID) an' +
+        'd CODE_TYPE='#39'13'#39' order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 584
+    Top = 376
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_DEGREES_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO'
+      
+        'where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID in (0,:TENANT_ID) an' +
+        'd CODE_TYPE='#39'14'#39' order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 584
+    Top = 432
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_OCCUPATION_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO'
+      
+        'where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID in (0,:TENANT_ID) an' +
+        'd CODE_TYPE='#39'15'#39' order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 584
+    Top = 488
     ParamData = <
       item
         DataType = ftUnknown

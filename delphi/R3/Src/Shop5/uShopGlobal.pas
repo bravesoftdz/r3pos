@@ -41,6 +41,9 @@ type
     PUB_PRICEGRADE: TZQuery;
     ACC_ACCOUNT_INFO: TZQuery;
     ACC_ITEM_INFO: TZQuery;
+    PUB_MONTH_PAY_INFO: TZQuery;
+    PUB_DEGREES_INFO: TZQuery;
+    PUB_OCCUPATION_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

@@ -56,6 +56,7 @@ type
     procedure SetCode_type(const Value: Integer);
     { Private declarations }
   public
+    procedure RefreshTable;
     procedure Open;
     procedure Save;
     property  Flag:integer read FFlag write SetFlag;  //1:其它窗体调用这个窗体
@@ -254,7 +255,7 @@ begin
     btnSave.Enabled:=False;
     raise;    
   end;
-  Global.RefreshTable('PUB_ClientSort');
+  RefreshTable;
   if not cdsCODE_INFO.IsEmpty then
   begin
     if i=0 then i:=1;
@@ -311,7 +312,6 @@ begin
         Code_type := CODETYPE;
         Open;
         btnSave.Enabled:=False;
-//        DBGridEh1.SetFocus;
         //其它窗体调用此窗体，直接新增记录
         if Flag=1 then
         begin
@@ -493,7 +493,6 @@ begin
         Code_type := CODETYPE;
         Open;
         btnSave.Enabled:=False;
-//  DBGridEh1.SetFocus;
         ShowModal;
       finally
         Free;
@@ -539,6 +538,26 @@ begin
   inherited;
   btnSave.Enabled:=True;
 
+end;
+
+procedure TfrmCodeInfo.RefreshTable;
+var Str_Table: String;
+begin
+  case Code_type of
+    1: Str_Table := 'PUB_PAYMENT';
+    2: Str_Table := '';
+    3: Str_Table := '';
+    5: Str_Table := 'PUB_CLIENTSORT';
+    6: Str_Table := '';
+    7: Str_Table := 'PUB_BANK_INFO';
+    8: Str_Table := 'PUB_REGION_INFO';
+    11: Str_Table := 'PUB_IDNTYPE_INFO';
+    12: Str_Table := '';
+    13: Str_Table := '';
+    14: Str_Table := '';
+    15: Str_Table := '';
+  end;
+  Global.RefreshTable(Str_Table);
 end;
 
 end.

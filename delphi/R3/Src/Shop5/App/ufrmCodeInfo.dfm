@@ -1,6 +1,6 @@
 inherited frmCodeInfo: TfrmCodeInfo
-  Left = 492
-  Top = 246
+  Left = 548
+  Top = 211
   ActiveControl = DBGridEh1
   Caption = #23458#25143#20998#31867#31649#29702
   ClientHeight = 347

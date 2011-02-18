@@ -1,6 +1,6 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 715
-  Top = 262
+  Left = 438
+  Top = 260
   Caption = #23458#25143#26723#26696
   ClientHeight = 365
   ClientWidth = 528
@@ -47,7 +47,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel3: TRzLabel
             Left = -9
-            Top = 62
+            Top = 60
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -62,7 +62,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel9: TRzLabel
             Left = -9
-            Top = 15
+            Top = 11
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -77,7 +77,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel10: TRzLabel
             Left = -10
-            Top = 38
+            Top = 35
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -92,7 +92,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel17: TRzLabel
             Left = -9
-            Top = 85
+            Top = 84
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -107,7 +107,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel18: TRzLabel
             Left = 267
-            Top = 85
+            Top = 84
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -122,7 +122,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel19: TRzLabel
             Left = 267
-            Top = 16
+            Top = 12
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -137,7 +137,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel20: TRzLabel
             Left = 267
-            Top = 39
+            Top = 36
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -152,7 +152,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel21: TRzLabel
             Left = 267
-            Top = 62
+            Top = 60
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -167,7 +167,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtINVOICE_FLAG: TcxComboBox
             Left = 96
-            Top = 58
+            Top = 56
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
@@ -175,7 +175,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtACCOUNT: TcxTextEdit
             Left = 96
-            Top = 35
+            Top = 32
             Width = 170
             Height = 20
             TabOrder = 1
@@ -189,14 +189,14 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtIC_CARDNO: TcxTextEdit
             Left = 96
-            Top = 81
+            Top = 80
             Width = 170
             Height = 20
             TabOrder = 4
           end
           object edtBALANCE: TcxTextEdit
             Left = 372
-            Top = 81
+            Top = 80
             Width = 121
             Height = 20
             Enabled = False
@@ -204,7 +204,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtACCU_INTEGRAL: TcxTextEdit
             Left = 372
-            Top = 12
+            Top = 8
             Width = 121
             Height = 20
             Enabled = False
@@ -212,7 +212,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtRULE_INTEGRAL: TcxTextEdit
             Left = 372
-            Top = 35
+            Top = 32
             Width = 121
             Height = 20
             Enabled = False
@@ -220,7 +220,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtINTEGRAL: TcxTextEdit
             Left = 372
-            Top = 58
+            Top = 56
             Width = 121
             Height = 20
             Enabled = False
@@ -228,7 +228,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtBANK_ID: TcxComboBox
             Left = 96
-            Top = 12
+            Top = 8
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
@@ -250,7 +250,7 @@ inherited frmClientInfo: TfrmClientInfo
           TabOrder = 0
           object labLINKMAN: TRzLabel
             Left = -10
-            Top = 22
+            Top = 17
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -265,7 +265,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labTELEPHONE1: TRzLabel
             Left = -10
-            Top = 72
+            Top = 69
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -280,7 +280,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labPOSTALCODE: TRzLabel
             Left = -10
-            Top = 120
+            Top = 119
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -295,7 +295,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labFAXES: TRzLabel
             Left = -10
-            Top = 48
+            Top = 44
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -310,7 +310,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labEMAIL: TRzLabel
             Left = 264
-            Top = 96
+            Top = 94
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -325,7 +325,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labTELEPHONE2: TRzLabel
             Left = 264
-            Top = 48
+            Top = 44
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -340,7 +340,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel5: TRzLabel
             Left = -10
-            Top = 96
+            Top = 94
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -370,7 +370,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labMSN: TRzLabel
             Left = 264
-            Top = 72
+            Top = 69
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -385,7 +385,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel12: TRzLabel
             Left = 264
-            Top = 119
+            Top = 118
             Width = 99
             Height = 12
             Alignment = taRightJustify
@@ -400,7 +400,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel23: TRzLabel
             Left = 264
-            Top = 25
+            Top = 20
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -415,49 +415,49 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtLINKMAN: TcxTextEdit
             Left = 97
-            Top = 19
+            Top = 14
             Width = 121
             Height = 20
             TabOrder = 0
           end
           object edtTELEPHONE1: TcxTextEdit
             Left = 97
-            Top = 68
+            Top = 65
             Width = 121
             Height = 20
             TabOrder = 2
           end
           object edtPOSTALCODE: TcxTextEdit
             Left = 97
-            Top = 116
+            Top = 115
             Width = 121
             Height = 20
             TabOrder = 4
           end
           object edtFAXES: TcxTextEdit
             Left = 97
-            Top = 44
+            Top = 40
             Width = 121
             Height = 20
             TabOrder = 1
           end
           object edtEMAIL: TcxTextEdit
             Left = 371
-            Top = 92
+            Top = 90
             Width = 121
             Height = 20
             TabOrder = 8
           end
           object edtQQ: TcxTextEdit
             Left = 371
-            Top = 44
+            Top = 40
             Width = 121
             Height = 20
             TabOrder = 6
           end
           object edtTELEPHONE2: TcxTextEdit
             Left = 97
-            Top = 92
+            Top = 90
             Width = 121
             Height = 20
             TabOrder = 3
@@ -471,21 +471,21 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object edtMSN: TcxTextEdit
             Left = 371
-            Top = 68
+            Top = 65
             Width = 121
             Height = 20
             TabOrder = 7
           end
           object edtHOMEPAGE: TcxTextEdit
             Left = 371
-            Top = 116
+            Top = 115
             Width = 121
             Height = 20
             TabOrder = 9
           end
           object edtLICENSE_CODE: TcxTextEdit
             Left = 371
-            Top = 21
+            Top = 16
             Width = 121
             Height = 20
             TabOrder = 5
@@ -565,7 +565,7 @@ inherited frmClientInfo: TfrmClientInfo
       TabOrder = 2
       object labCLIENT_NAME: TRzLabel
         Left = -10
-        Top = 30
+        Top = 29
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -580,7 +580,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object labCLIENT_SPELL: TRzLabel
         Left = 265
-        Top = 30
+        Top = 29
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -595,7 +595,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel4: TRzLabel
         Left = 493
-        Top = 53
+        Top = 54
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -610,7 +610,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel6: TRzLabel
         Left = -10
-        Top = 52
+        Top = 53
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -625,7 +625,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel13: TRzLabel
         Left = 258
-        Top = 31
+        Top = 30
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -640,7 +640,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel7: TRzLabel
         Left = 265
-        Top = 75
+        Top = 78
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -655,7 +655,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel2: TRzLabel
         Left = 493
-        Top = 75
+        Top = 78
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -670,7 +670,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel14: TRzLabel
         Left = 219
-        Top = 53
+        Top = 54
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -685,7 +685,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel1: TRzLabel
         Left = -10
-        Top = 8
+        Top = 5
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -700,7 +700,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel11: TRzLabel
         Left = 219
-        Top = 8
+        Top = 5
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -715,7 +715,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object labSHOP_ID: TRzLabel
         Left = 264
-        Top = 8
+        Top = 5
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -730,7 +730,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel8: TRzLabel
         Left = 265
-        Top = 53
+        Top = 54
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -745,7 +745,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel16: TRzLabel
         Left = -9
-        Top = 76
+        Top = 79
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -760,7 +760,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel22: TRzLabel
         Left = 219
-        Top = 76
+        Top = 79
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -775,7 +775,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_NAME: TcxTextEdit
         Left = 97
-        Top = 27
+        Top = 26
         Width = 160
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -783,7 +783,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_SPELL: TcxTextEdit
         Left = 371
-        Top = 27
+        Top = 26
         Width = 121
         Height = 20
         Enabled = False
@@ -791,7 +791,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 97
-        Top = 49
+        Top = 50
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -834,7 +834,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtREGION_ID: TzrComboBoxList
         Left = 371
-        Top = 72
+        Top = 75
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -877,7 +877,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_CODE: TcxTextEdit
         Left = 97
-        Top = 5
+        Top = 2
         Width = 121
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -885,7 +885,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtSETTLE_CODE: TcxComboBox
         Left = 371
-        Top = 49
+        Top = 50
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -893,7 +893,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371
-        Top = 5
+        Top = 2
         Width = 121
         Height = 20
         Enabled = False
@@ -937,7 +937,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtPRICE_ID: TzrComboBoxList
         Left = 97
-        Top = 72
+        Top = 75
         Width = 121
         Height = 20
         Properties.AutoSelect = False

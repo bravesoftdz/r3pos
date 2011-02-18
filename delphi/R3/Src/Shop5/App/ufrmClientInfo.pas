@@ -570,10 +570,14 @@ var Tmp: TZQuery;
     Aobj_: TRecord_;
 begin
   try
+   { Tmp := Global.GetZQueryFromName('PUB_CODE_INFO');
+    Tmp.Filtered := False;
+    Tmp.Filter := ' CODE_TYPE = 6 ';
+    Tmp.Filtered := True;}
     Tmp := TZQuery.Create(nil);
     Tmp.Close;
     Tmp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
-    Factor.Open(Tmp);
+    Factor.Open(Tmp); 
     if not Tmp.IsEmpty then ClearCbxPickList(edtSETTLE_CODE);
     Tmp.First;
     while not Tmp.Eof do

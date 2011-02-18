@@ -1,6 +1,6 @@
 inherited frmPriceGradeInfo: TfrmPriceGradeInfo
-  Left = 340
-  Top = 194
+  Left = 524
+  Top = 173
   Caption = #20250#21592#31561#32423#31649#29702
   ClientHeight = 435
   ClientWidth = 603
@@ -688,7 +688,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
       item
         Name = 'SORT_ID'
         DataType = ftString
-        Size = 36
+        Size = 50
       end
       item
         Name = 'SORT_NAME'

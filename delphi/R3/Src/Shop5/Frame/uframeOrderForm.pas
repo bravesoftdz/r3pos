@@ -848,7 +848,7 @@ begin
          begin
             //看看货号是否存在
             rs.Close;
-            rs.SQL.Text := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+            rs.SQL.Text := 'select GODS_ID,CALC_UNITS as UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
             rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             rs.ParamByName('GODS_CODE').AsString := Barcode;
             Factor.Open(rs);
@@ -2681,12 +2681,28 @@ begin
 end;
 
 function TframeOrderForm.EnCodeBarcode: string;
-var b:string;
+var
+  b:string;
+  pbar:TZQuery;
 begin
+  pbar := Global.GetZQueryFromName('PUB_BARCODE'); 
   basInfo.Filtered := false;
   if basInfo.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
-       b := basInfo.FieldbyName('BARCODE').asString;
+       if (basInfo.FieldbyName('CALC_UNITS').asString=edtTable.FieldbyName('UNIT_ID').asString)
+          and
+          (edtTable.FieldbyName('PROPERTY_01').asString='#')
+          and
+          (edtTable.FieldbyName('PROPERTY_02').asString='#')
+       then
+          b := basInfo.FieldbyName('BARCODE').asString
+       else
+          begin
+            if pbar.Locate('GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString,edtTable.FieldbyName('PROPERTY_01').asString,edtTable.FieldbyName('PROPERTY_02').asString,edtTable.FieldbyName('BATCH_NO').asString]),[]) then
+               b := basInfo.FieldbyName('BARCODE').asString
+            else
+               b := '';
+          end;
        //if (b='') and (basInfo.FieldbyName('BCODE').asString<>'') then
        //   b := GetBarCode(basInfo.FieldbyName('BCODE').asString,'#','#');
      end

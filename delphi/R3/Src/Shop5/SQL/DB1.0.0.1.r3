@@ -900,10 +900,12 @@ CREATE TABLE [STK_INDENTDATA] (
 	[PROPERTY_01] [varchar] (36) NOT NULL ,
         --颜色
 	[PROPERTY_02] [varchar] (36) NOT NULL ,
-        --批号
-	[BATCH_NO] [varchar] (36) NOT NULL ,
+        --物流跟踪号
+	[LOCUS_NO] [varchar] (36) NULL ,
         --礼盒跟踪号
 	[BOM_ID] [varchar] (36)  NULL ,
+        --批号
+	[BATCH_NO] [varchar] (36) NULL ,
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --需求数量
@@ -1031,12 +1033,14 @@ CREATE TABLE [SAL_INDENTDATA] (
 	[PROPERTY_01] [varchar] (36) NOT NULL ,
         --颜色
 	[PROPERTY_02] [varchar] (36) NOT NULL ,
-        --批号
-	[BATCH_NO] [varchar] (36) NOT NULL ,
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
+        --物流跟踪号
+	[LOCUS_NO] [varchar] (36) NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NULL ,
+	[BOM_ID] [varchar] (36)  NULL ,
+        --批号
+	[BATCH_NO] [varchar] (36) NULL ,
         --需求数量
 	[DEMAND_AMOUNT] [decimal](18, 3) NULL ,
         --数量

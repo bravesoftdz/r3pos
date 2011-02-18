@@ -108,17 +108,17 @@ CREATE INDEX IX_PUB_SN_INFO_TIME_STAMP ON CA_SN_INFO(TIME_STAMP);
 
 --软件产品信息表
 CREATE TABLE [CA_PROD_INFO](
-    --产品编号
+    --产品编号[产品世代限定] 比如v3/v5版
 	[PROD_ID] varchar(10) NOT NULL,
     --产品名称
 	[PROD_NAME] [varchar](50) NOT NULL,
     --产品简称
 	[PROD_SHORT_NAME] [varchar](20) NOT NULL,
-    --产品版本号 大版本5.0
-	[VERSION] [varchar](10) NOT NULL,
-    --行业类型 MKT 超市<食杂店> FIG 服装 DLI 食品 OHR 通用 
+    --产品版本号 主要可能用于产品功能限定或者产品安装介质关联[产品等级限定] 比如企业版/个人版；
+	[PROD_VERSION] [varchar](10) NOT NULL,
+    --行业类型 MKT 超市<食杂店> FIG 服装 DLI 食品 OHR 通用 [产品行业限定]
 	[INDUSTRY] [varchar](3) NOT NULL,
-    --产品类型 LCL单机版 NET连锁版  
+    --产品类型 LCL单机版 NET连锁版  [产品特殊功能限定]
 	[PROD_FLAG] [varchar](3) NOT NULL,
     --开发日期
 	[DEVE_DATE] [varchar](10) NULL,
@@ -158,7 +158,7 @@ CREATE TABLE [CA_VERSION_INFO](
 	[VERSION_ID] int NOT NULL,
     --产品编号
 	[PROD_ID] varchar(10) NOT NULL,
-    --当前版本号 5.0.0.93
+    --当前版本号 5.0.0.93  [控制升级包/补丁包]
 	[VERSION] [varchar](11) NOT NULL,
     --应用服务器
 	[SRVR_ID] [varchar](10) NOT NULL,

@@ -215,7 +215,7 @@ procedure TfrmPriceGradeInfo.ReadFrom(AObj: TRecord_);
         tmp := Global.GetZQueryFromName('PUB_GOODSSORT');
         for i:=0 to vList.Count-1  do
         begin
-          Str_SORT := COPY(vList.Strings[i],1,36);
+          Str_SORT := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
           //if cds_GoodsPercent.Locate('SORT_NAME',Copy(vList.Strings[i],1,5),[]) then
           if tmp.Locate('SORT_ID',Str_SORT,[]) then
           begin
@@ -280,7 +280,7 @@ begin
     cdsPRICEGRADE.Close;
     Factor.Open(cdsPRICEGRADE,'TPRICEGRADEInfo',Params);
     ClearTree(rzTree);
-    CreateLevelTree(cdsPRICEGRADE,rzTree,'44444444','PRICE_ID','PRICE_NAME','PRICE_ID',1,3);
+    CreateLevelTree(cdsPRICEGRADE,rzTree,'44444444','PRICE_ID','PRICE_NAME','LEVEL_ID',1,3);
     dbState := dsEdit;
     rzTree.SetFocus;
     if rzTree.Items.Count > 0 then rzTree.TopItem.Selected := true;
@@ -300,7 +300,7 @@ begin
     vList.CommaText:=AObj.FieldByName('AGIO_SORTS').AsString;
     for i:=0 to vList.Count-1 do
     begin
-      Str_Sort := Copy(vList.Strings[i],1,36);
+      Str_Sort := Copy(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
       if AObj.FieldByName('MINIMUM_PERCENT').AsFloat>StrToFloat(vList.Values[Str_Sort]) then
       begin
         FindNode(AObj.FieldByName('PRICE_ID').AsString).Selected:=True;

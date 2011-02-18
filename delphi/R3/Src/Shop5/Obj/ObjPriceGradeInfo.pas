@@ -49,8 +49,8 @@ begin
            begin
              FieldbyName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
              case iDbType of
-             0: AGlobal.ExecSQL('delete PUB_PRICEGRADE where PRICE_ID=:PRICE_ID ',self);
-             3: AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID ',self);
+             0: AGlobal.ExecSQL('delete PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
+             3: AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
              end;
            end
         else

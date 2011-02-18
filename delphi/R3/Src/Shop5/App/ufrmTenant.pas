@@ -105,11 +105,13 @@ begin
               begin
                 //登录认证
                 result := Login_F(true);
+                ShopGlobal.offline := false;
                 if not result then Label19.Caption := '登录认证失败 ';
               end
             else
               begin
                 Login_F(false);
+                ShopGlobal.offline := true;
                 Exit;
               end;
           end;

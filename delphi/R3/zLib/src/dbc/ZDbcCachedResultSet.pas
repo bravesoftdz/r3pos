@@ -519,6 +519,7 @@ begin
       //zhangsr 修改
       //FSelectedRow := FInitialRowsList[Index];
       //FRowAccessor.RowBuffer := FSelectedRow;
+      //改后的
       FRowAccessor.RowBuffer := FInitialRowsList[Index];
     end;
   end else

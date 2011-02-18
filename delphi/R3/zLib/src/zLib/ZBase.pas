@@ -395,26 +395,26 @@ begin
   end; //End Case
   case Field.DataSet.UpdateStatus of
      usModified:begin
-        if not VarIsClear(Field.NewValue) then
+        if not VarIsClear(Field.Value) then
            begin
-              if VarIsStr(Field.NewValue) and (Field.NewValue='') then
+              if VarIsStr(Field.Value) and (Field.Value='') then
                  FNewValue  := null
               else
-                 FNewValue  := Field.NewValue;
+                 FNewValue  := Field.Value;
            end
         else
            begin
-              if VarIsStr(Field.OldValue) and (Field.OldValue='') then
+              if VarIsStr(Field.oldValue) and (Field.oldValue='') then
                  FNewValue  := null
               else
-                 FNewValue  := Field.OldValue;
+                 FNewValue  := Field.oldValue;
            end;
        end;
      usInserted:begin
-          if VarIsStr(Field.NewValue) and (Field.NewValue='') then
+          if VarIsStr(Field.Value) and (Field.Value='') then
              FNewValue  := null
           else
-             FNewValue  := Field.NewValue;
+             FNewValue  := Field.Value;
        end;
      else
        begin

@@ -195,7 +195,7 @@ end;
 constructor TZGenericCachedResolver.Create(Statement: IZStatement;
   Metadata: IZResultSetMetadata);
 begin
-  if assigned(Statement) then //zhangsr
+  if assigned(Statement) then //zhangsr 2011-02-18
   begin
   FConnection := Statement.GetConnection;
   FMetadata := Metadata;

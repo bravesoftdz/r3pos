@@ -1206,91 +1206,91 @@ begin
       case RowAccessor.GetColumnType(i) of
       stBoolean:
         begin
+          s5 := ResultSet.GetBoolean(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s5 := ResultSet.GetBoolean(i);
              Stream.Write(s5,SizeOf(s5));
           end;
         end;
       stShort:
         begin
+          s12 := ResultSet.GetShort(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s12 := ResultSet.GetShort(i);
              Stream.Write(s12,SizeOf(s12));
           end;
         end;
       stByte:
         begin
+          s6 := ResultSet.GetByte(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s6 := ResultSet.GetByte(i);
              Stream.Write(s6,SizeOf(s6));
           end;
         end;
       stInteger:
         begin
+          s7 := ResultSet.GetInt(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s7 := ResultSet.GetInt(i);
              Stream.Write(s7,SizeOf(s7));
           end;
         end;
       stLong:
         begin
+          s13 := ResultSet.GetLong(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s13 := ResultSet.GetLong(i);
              Stream.Write(s13,SizeOf(s13));
           end;
         end;
       stFloat:
         begin
+          s8 := ResultSet.GetFloat(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s8 := ResultSet.GetFloat(i);
              Stream.Write(s8,SizeOf(s8));
           end;
         end;
       stDouble:
         begin
+          s9 := ResultSet.GetDouble(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s9 := ResultSet.GetDouble(i);
              Stream.Write(s9,SizeOf(s9));
           end;
         end;
       stBigDecimal:
         begin
+          s10 := ResultSet.GetBigDecimal(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s10 := ResultSet.GetBigDecimal(i);
              Stream.Write(s10,SizeOf(s10));
           end;
         end;
       stString:
         begin
+          s1 := ResultSet.GetString(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s1 := ResultSet.GetString(i);
              w := length(s1);
              Stream.Write(w,SizeOf(Integer));
              Stream.Write(pchar(s1)^,w);
@@ -1298,11 +1298,11 @@ begin
         end;
       stUnicodeString:
         begin
+          s2 := ResultSet.GetUnicodeString(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s2 := ResultSet.GetUnicodeString(i);
              w := length(s2);
              Stream.Write(w,SizeOf(Integer));
              Stream.Write(pchar(s2)^,w*2);
@@ -1310,11 +1310,11 @@ begin
         end;
       stBytes:
         begin
+          s3 := ResultSet.GetBytes(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s3 := ResultSet.GetBytes(i);
              w := high(s3)-low(s3);
              Stream.Write(w,SizeOf(Integer));
              if w>0 then
@@ -1323,21 +1323,21 @@ begin
         end;
       stDate,stTime,stTimestamp:
         begin
+          s11 := ResultSet.GetDate(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s11 := ResultSet.GetDate(i);
              Stream.Write(s11,SizeOf(s11));
           end;
         end;
       stAsciiStream, stUnicodeStream, stBinaryStream:
         begin
+          s4 := ResultSet.GetBlob(i);
           zIsNull := ResultSet.WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             s4 := ResultSet.GetBlob(i);
              w := s4.GetStream.Size;
              Stream.Write(w,SizeOf(w));
              if w>0 then

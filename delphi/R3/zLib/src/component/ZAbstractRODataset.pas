@@ -808,6 +808,7 @@ begin
         if not FetchOneRow then
           Break;
       end;
+//      Result := CurrentRows.Count >= RowCount;
       Result := CurrentRows.Count >= RowCount;
     end;
   finally

@@ -256,7 +256,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','
 --入库类单据类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','入库单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','调拨单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退Huo单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退货单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
 --入库单表头
 CREATE TABLE [STK_STOCKORDER] (
@@ -341,11 +341,11 @@ CREATE TABLE [STK_STOCKDATA] (
         --批号
 	[BATCH_NO] [varchar] (36) NOT NULL ,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36) NULL ,
         --数量
 	[AMOUNT] [decimal](18, 3) NULL ,
         --进货单位标准售价
@@ -531,11 +531,11 @@ CREATE TABLE [SAL_SALESDATA] (
         --批号
 	[BATCH_NO] [varchar] (36) NOT NULL ,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36) NULL ,
         --数量
 	[AMOUNT] [decimal](18, 3) NULL ,
         --销售单位标准售价
@@ -773,9 +773,9 @@ CREATE TABLE [STO_CHANGEDATA] (
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36)  NULL ,
         --批号
 	[BATCH_NO] [varchar] (36) NULL ,
         --数量
@@ -903,7 +903,7 @@ CREATE TABLE [STK_INDENTDATA] (
         --批号
 	[BATCH_NO] [varchar] (36) NOT NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36)  NULL ,
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --需求数量
@@ -1036,7 +1036,7 @@ CREATE TABLE [SAL_INDENTDATA] (
         --单位
 	[UNIT_ID] [varchar] (36) NOT NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36) NULL ,
         --需求数量
 	[DEMAND_AMOUNT] [decimal](18, 3) NULL ,
         --数量
@@ -1143,9 +1143,9 @@ CREATE TABLE [STO_PRINTDATA] (
         --批号，没批号用 #号
 	[BATCH_NO] [varchar] (36) NOT NULL,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36) NULL ,
         --货品代码
 	[GODS_ID] [varchar] (36) NOT NULL ,
         --尺码 不分的用 #号
@@ -1182,9 +1182,9 @@ CREATE TABLE [STO_CHECKDATA] (
         --批号，没批号用 #号
 	[BATCH_NO] [varchar] (36) NOT NULL,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --礼盒跟踪号
-	[BOM_ID] [varchar] (36) NOT NULL ,
+	[BOM_ID] [varchar] (36) NULL ,
         --货品代码
 	[GODS_ID] [varchar] (36) NOT NULL ,
         --尺码 不分的用 #号
@@ -1757,7 +1757,7 @@ CREATE TABLE [SAL_BOMDATA] (
         --批号，没批号用 #号
 	[BATCH_NO] [varchar] (36) NOT NULL,
         --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NOT NULL ,
+	[LOCUS_NO] [varchar] (36) NULL ,
         --货品代码
 	[GODS_ID] [varchar] (36) NOT NULL ,
         --计量单位

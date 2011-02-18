@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 435
-  Top = 345
+  Left = 535
+  Top = 197
   Caption = #29992#25143#26723#26696
   ClientHeight = 351
   ClientWidth = 529
@@ -355,7 +355,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           object edtID_NUMBER: TcxTextEdit
             Left = 106
             Top = 61
-            Width = 121
+            Width = 150
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 2
@@ -725,6 +725,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       LocateStyle = lsDark
       Buttons = []
       DropListStyle = lsFixed
+      MultiSelect = False
     end
     object edtDUTY_IDS: TzrComboBoxList
       Left = 113
@@ -760,6 +761,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       LocateStyle = lsDark
       Buttons = [zbNew]
       DropListStyle = lsFixed
+      MultiSelect = False
     end
     object edtSEX: TRadioGroup
       Left = 114
@@ -822,6 +824,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       LocateStyle = lsDark
       Buttons = []
       DropListStyle = lsFixed
+      MultiSelect = False
     end
   end
   inherited mmMenu: TMainMenu

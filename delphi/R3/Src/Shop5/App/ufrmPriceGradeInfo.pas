@@ -591,7 +591,7 @@ begin
   if ID<>'' then
   begin
     if cdsPRICEGRADE.Locate('PRICE_ID',ID,[]) then
-            cdsPRICEGRADE.Delete;
+      cdsPRICEGRADE.Delete;
   end;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;

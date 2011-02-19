@@ -1592,7 +1592,7 @@ CREATE TABLE [PUB_GOODSINFO] (
 	[USING_BATCH_NO] [int] NOT NULL ,
         --是否管制积分换购
 	[USING_BARTER] [int] NOT NULL ,
-        --积分换购积分
+        --换购积分
 	[BARTER_INTEGRAL] [int] NOT NULL ,
         --备注
 	[REMARK] [varchar] (200) NULL ,
@@ -1733,7 +1733,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按毛利积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按数量积分','INTE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
---客户分类
+--价格
 CREATE TABLE [PUB_PRICEGRADE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,

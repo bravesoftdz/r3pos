@@ -1779,7 +1779,7 @@ CREATE TABLE [PUB_UNION_INFO] (
         --拼音码
 	[UNION_SPELL] [varchar] (50) NOT NULL ,
         --0 禁用指标 1启用指标
-	[INDEX_FLAG] [varchar] (50) NULL ,
+	[INDEX_FLAG] [varchar] (1) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_UNION_INFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -1804,7 +1804,7 @@ CREATE TABLE [PUB_UNION_INDEX] (
         --拼音码
 	[INDEX_SPELL] [varchar] (50) NOT NULL ,
         --指标类型 1是指定选项 ，2是SQL定义选项 可带TENANT_ID参数
-	[INDEX_TYPE] [varchar] (50) NOT NULL ,
+	[INDEX_TYPE] [varchar] (1) NOT NULL ,
         --指标选项
 	[INDEX_OPTION] [varchar] (255) NOT NULL ,
         --通讯标志

@@ -1820,13 +1820,13 @@ CREATE TABLE [SAL_INVOICE_BOOK] (
         --发票终止号
 	[ENDED_NO] int NOT NULL ,
         --合计张数
-	[TOTAL_AMT] [decimal](18, 3) NULL ,
+	[TOTAL_AMT] int NULL ,
         --开票张数
-	[USING_AMT] [decimal](18, 3) NULL ,
+	[USING_AMT] int NULL ,
         --作废张数
-	[CANCEL_AMT] [decimal](18, 3) NULL ,
+	[CANCEL_AMT] int NULL ,
         --结余张数
-	[BALANCE] [decimal](18, 3) NULL ,
+	[BALANCE] int NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INVOICE_BOOK_COMM] DEFAULT ('00'),
         --时间戳 

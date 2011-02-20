@@ -220,12 +220,6 @@ inherited frmDeptInfo: TfrmDeptInfo
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'DEPT_ID'
-                Footers = <>
-                Title.Caption = #37096#38376#20195#30721
-              end
-              item
-                EditButtons = <>
                 FieldName = 'DEPT_NAME'
                 Footers = <>
                 Title.Caption = #37096#38376#21517#31216

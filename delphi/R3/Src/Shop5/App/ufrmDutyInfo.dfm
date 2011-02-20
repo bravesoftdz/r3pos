@@ -175,12 +175,6 @@ inherited frmDutyInfo: TfrmDutyInfo
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'DUTY_ID'
-                Footers = <>
-                Title.Caption = #32844#21153#20195#30721
-              end
-              item
-                EditButtons = <>
                 FieldName = 'DUTY_NAME'
                 Footers = <>
                 Title.Caption = #32844#21153#21517#31216

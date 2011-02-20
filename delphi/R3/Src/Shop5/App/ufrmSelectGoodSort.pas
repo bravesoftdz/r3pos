@@ -50,24 +50,31 @@ procedure TfrmSelectGoodSort.LoadGoodSortTree;
 var
   rs:TZQuery;
   w,i:integer;
-  AObj:TRecord_;
+  AObj,CurObj:TRecord_;
 begin
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   rs.SortedFields := 'RELATION_ID';
   w := -1;
-  rs.First;
-  while not rs.Eof do
-  begin
-    if w<>rs.FieldByName('RELATION_ID').AsInteger then
-       begin
-         AObj := TRecord_.Create;
-         AObj.ReadFromDataSet(rs);
-         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
-         w := rs.FieldByName('RELATION_ID').AsInteger;
-       end;
-    rs.Next;
+  try
+    CurObj:=TRecord_.Create;
+    rs.First;
+    while not rs.Eof do
+    begin
+      CurObj.ReadFromDataSet(rs); 
+      if w<>CurObj.FieldByName('RELATION_ID').AsInteger then
+      begin
+        AObj := TRecord_.Create;
+        AObj.ReadFromDataSet(rs);
+        rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        w := CurObj.FieldByName('RELATION_ID').AsInteger;
+      end;
+      rs.Next;
+    end;
+  finally
+    CurObj.Free;
   end;
+  
   for i:=rzTree.Items.Count-1 downto 0 do
   begin
     rs.Filtered := false;

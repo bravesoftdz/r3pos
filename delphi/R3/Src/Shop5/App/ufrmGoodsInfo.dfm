@@ -49,13 +49,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabGoodPrice
+      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 1
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -509,10 +508,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Width = 83
               end
               item
+                DisplayFormat = '#0.00%'
                 EditButtons = <>
                 FieldName = 'PROFIT_RATE'
                 Footers = <>
                 Title.Caption = #25240#25187#29575'(%)'
+                Width = 62
               end
               item
                 EditButtons = <>
@@ -581,12 +582,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Caption = #20250#21592#31215#20998#36873#39033
           end
           object Label45: TLabel
-            Left = 31
+            Left = 33
             Top = 136
-            Width = 72
+            Width = 48
             Height = 12
             Alignment = taRightJustify
-            Caption = #21551#29992#31215#20998#25442#36141
+            Caption = #31215#20998#25442#36141
           end
           object edtGODS_TYPE: TRadioGroup
             Left = 30
@@ -638,27 +639,20 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           object edtUSING_BARTER: TGroupBox
             Left = 30
             Top = 151
-            Width = 459
+            Width = 458
             Height = 40
             TabOrder = 4
-            object Label47: TLabel
-              Left = 60
-              Top = 16
-              Width = 60
-              Height = 12
-              Alignment = taRightJustify
-              Caption = #25442#36141#31215#20998#65306
-            end
             object RB_USING_BARTER: TRadioButton
-              Left = 8
+              Left = 81
               Top = 14
-              Width = 48
+              Width = 100
               Height = 17
-              Caption = #21551#29992
+              Caption = #21551#29992#20817#25442#31215#20998#65306
               TabOrder = 0
+              OnClick = RB_NotUSING_BARTERClick
             end
             object RB_NotUSING_BARTER: TRadioButton
-              Left = 266
+              Left = 8
               Top = 14
               Width = 48
               Height = 17
@@ -669,14 +663,34 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               OnClick = RB_NotUSING_BARTERClick
             end
             object edtBARTER_INTEGRAL: TcxSpinEdit
-              Left = 119
-              Top = 11
-              Width = 85
+              Left = 181
+              Top = 12
+              Width = 64
               Height = 20
               Properties.ImmediatePost = True
               Properties.MaxValue = 99999999.000000000000000000
               Properties.ValueType = vtFloat
               TabOrder = 2
+              ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
+            end
+            object RB_USING_BARTER2: TRadioButton
+              Left = 284
+              Top = 14
+              Width = 99
+              Height = 17
+              Caption = #21551#29992#25442#36141#31215#20998#65306
+              TabOrder = 3
+              OnClick = RB_NotUSING_BARTERClick
+            end
+            object edtBARTER_INTEGRAL2: TcxSpinEdit
+              Left = 383
+              Top = 12
+              Width = 64
+              Height = 20
+              Properties.ImmediatePost = True
+              Properties.MaxValue = 99999999.000000000000000000
+              Properties.ValueType = vtFloat
+              TabOrder = 4
               ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
             end
           end

@@ -197,6 +197,9 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     KeyList.Strings = (
                       '1'
                       '0')
+                    PickList.Strings = (
+                      '0'
+                      '1')
                     Tag = -1
                     Title.Caption = #36873#20013
                     Width = 18

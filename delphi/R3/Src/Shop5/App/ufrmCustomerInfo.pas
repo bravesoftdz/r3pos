@@ -75,8 +75,6 @@ type
     cdsTable: TZQuery;
     labIDN_TYPE: TRzLabel;
     edtIDN_TYPE: TcxComboBox;
-    RzLabel12: TRzLabel;
-    cmbIC_CARDNO: TcxTextEdit;
     cmbSHOP_ID: TzrComboBoxList;
     RzLabel22: TRzLabel;
     RzLabel11: TRzLabel;
@@ -110,6 +108,8 @@ type
     labOCCUPATION: TRzLabel;
     edtJOBUNIT: TcxTextEdit;
     labJOBUNIT: TRzLabel;
+    edtACCU_INTEGRAL: TcxTextEdit;
+    RzLabel12: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);

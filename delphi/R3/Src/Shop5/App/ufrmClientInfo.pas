@@ -37,9 +37,6 @@ type
     edtCLIENT_CODE: TcxTextEdit;
     RzLabel11: TRzLabel;
     cdsTable: TZQuery;
-    labSHOP_ID: TRzLabel;
-    RzLabel17: TRzLabel;
-    edtIC_CARDNO: TcxTextEdit;
     RzLabel18: TRzLabel;
     edtBALANCE: TcxTextEdit;
     RzLabel19: TRzLabel;
@@ -74,11 +71,12 @@ type
     RzLabel16: TRzLabel;
     edtSETTLE_CODE: TcxComboBox;
     RzLabel22: TRzLabel;
-    edtSHOP_ID: TzrComboBoxList;
     RzLabel23: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
     edtBANK_ID: TcxComboBox;
     edtPRICE_ID: TzrComboBoxList;
+    edtSHOP_ID: TzrComboBoxList;
+    labSHOP_ID: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);

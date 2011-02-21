@@ -1,6 +1,6 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 480
-  Top = 150
+  Left = 476
+  Top = 171
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
   ClientWidth = 530
@@ -271,22 +271,6 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Font.Style = []
             ParentFont = False
           end
-          object RzLabel12: TRzLabel
-            Left = 240
-            Top = 34
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #20648#20540#21345#21495
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-            Visible = False
-          end
           object RzLabel17: TRzLabel
             Left = 240
             Top = 104
@@ -302,13 +286,28 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Font.Style = []
             ParentFont = False
           end
+          object RzLabel12: TRzLabel
+            Left = 241
+            Top = 34
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #32047#35745#31215#20998
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object cmbID_NUMBER: TcxTextEdit
             Left = 109
             Top = 30
             Width = 122
             Height = 20
             Properties.OnChange = edtCUST_NAMEPropertiesChange
-            TabOrder = 0
+            TabOrder = 1
             OnKeyPress = cmbID_NUMBERKeyPress
           end
           object cmbACCU_INTEGRAL: TcxTextEdit
@@ -316,8 +315,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 53
             Width = 121
             Height = 20
+            Enabled = False
             Properties.OnChange = edtCUST_NAMEPropertiesChange
-            TabOrder = 1
+            TabOrder = 6
             OnKeyPress = cmbACCU_INTEGRALKeyPress
           end
           object cmbRULE_INTEGRAL: TcxTextEdit
@@ -325,7 +325,8 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 76
             Width = 121
             Height = 20
-            TabOrder = 2
+            Enabled = False
+            TabOrder = 7
             OnKeyPress = cmbRULE_INTEGRALKeyPress
           end
           object cmbSND_DATE: TcxDateEdit
@@ -333,7 +334,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 53
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 2
           end
           object cmbEND_DATE: TcxDateEdit
             Left = 109
@@ -347,14 +348,14 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 76
             Width = 121
             Height = 20
-            TabOrder = 5
+            TabOrder = 3
           end
           object cmbREMARK: TcxMemo
             Left = 109
             Top = 123
             Width = 360
             Height = 56
-            TabOrder = 6
+            TabOrder = 5
           end
           object edtIDN_TYPE: TcxComboBox
             Left = 109
@@ -362,24 +363,24 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 7
-          end
-          object cmbIC_CARDNO: TcxTextEdit
-            Tag = 1
-            Left = 347
-            Top = 29
-            Width = 121
-            Height = 20
-            TabOrder = 8
-            Visible = False
+            TabOrder = 0
           end
           object cmbINTEGRAL: TcxTextEdit
             Left = 347
             Top = 99
             Width = 121
             Height = 20
-            TabOrder = 9
+            Enabled = False
+            TabOrder = 8
             OnKeyPress = cmbINTEGRALKeyPress
+          end
+          object edtACCU_INTEGRAL: TcxTextEdit
+            Left = 346
+            Top = 30
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 9
           end
         end
       end
@@ -581,7 +582,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 106
             Width = 121
             Height = 20
-            TabOrder = 0
+            TabOrder = 9
             OnKeyPress = cmbOFFI_TELEKeyPress
           end
           object cmbFAMI_ADDR: TcxTextEdit
@@ -589,7 +590,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 153
             Width = 360
             Height = 20
-            TabOrder = 1
+            TabOrder = 11
           end
           object edtREGION_ID: TzrComboBoxList
             Left = 109
@@ -602,7 +603,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 2
+            TabOrder = 0
             InGrid = False
             KeyValue = Null
             FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -638,63 +639,63 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 129
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 5
           end
           object edtQQ: TcxTextEdit
             Left = 348
             Top = 36
             Width = 121
             Height = 20
-            TabOrder = 4
+            TabOrder = 6
           end
           object edtMSN: TcxTextEdit
             Left = 348
             Top = 59
             Width = 121
             Height = 20
-            TabOrder = 5
+            TabOrder = 7
           end
           object edtEMAIL: TcxTextEdit
             Left = 348
             Top = 82
             Width = 121
             Height = 20
-            TabOrder = 6
+            TabOrder = 8
           end
           object edtFAMI_TELE: TcxTextEdit
             Left = 348
             Top = 129
             Width = 121
             Height = 20
-            TabOrder = 7
+            TabOrder = 10
           end
           object edtDEGREES: TcxComboBox
             Left = 109
             Top = 36
             Width = 121
             Height = 20
-            TabOrder = 8
+            TabOrder = 1
           end
           object edtMONTH_PAY: TcxComboBox
             Left = 109
             Top = 82
             Width = 121
             Height = 20
-            TabOrder = 9
+            TabOrder = 3
           end
           object edtOCCUPATION: TcxComboBox
             Left = 109
             Top = 59
             Width = 121
             Height = 20
-            TabOrder = 10
+            TabOrder = 2
           end
           object edtJOBUNIT: TcxTextEdit
             Left = 109
             Top = 106
             Width = 150
             Height = 20
-            TabOrder = 11
+            TabOrder = 4
           end
         end
       end
@@ -1413,7 +1414,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Width = 121
         Height = 20
         Enabled = False
-        TabOrder = 2
+        TabOrder = 5
       end
       object cmbPRICE_ID: TzrComboBoxList
         Left = 113
@@ -1426,7 +1427,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'PRICE_ID;PRICE_NAME;PRICE_SPELL'
@@ -1457,7 +1458,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 79
         Width = 121
         Height = 20
-        TabOrder = 6
+        TabOrder = 7
       end
       object cmbMOVE_TELE: TcxTextEdit
         Left = 113
@@ -1465,7 +1466,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Width = 121
         Height = 20
         Properties.OnChange = edtCUST_NAMEPropertiesChange
-        TabOrder = 7
+        TabOrder = 4
         OnKeyPress = cmbMOVE_TELEKeyPress
       end
       object cmbSEX: TRadioGroup
@@ -1478,7 +1479,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           #22899
           #30007
           #20445#23494)
-        TabOrder = 5
+        TabOrder = 3
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 348
@@ -1491,7 +1492,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 3
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'

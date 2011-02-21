@@ -620,6 +620,7 @@ inherited frmCustomer: TfrmCustomer
           Left = 175
           Top = 0
           Action = actfrmIntegral
+          Visible = False
         end
         object ToolButton3: TToolButton
           Left = 218
@@ -628,12 +629,14 @@ inherited frmCustomer: TfrmCustomer
           DropdownMenu = PopupMenu2
           ImageIndex = 24
           Style = tbsDropDown
+          Visible = False
           OnClick = ToolButton3Click
         end
         object ToolButton5: TToolButton
           Left = 274
           Top = 0
           Action = actRenew
+          Visible = False
         end
         object But_Print: TToolButton
           Left = 317

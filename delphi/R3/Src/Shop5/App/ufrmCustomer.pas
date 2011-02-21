@@ -127,8 +127,8 @@ type
 
 implementation
 uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,
-   ufrmIntegralGlide,ufrmBasic;
-//  ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
+   ufrmBasic;
+//  ufrmIntegralGlide,ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
 
 {$R *.dfm}
 
@@ -505,10 +505,10 @@ begin
 end;
 
 procedure TfrmCustomer.actfrmIntegralExecute(Sender: TObject);
-var rs:TRecord_;
+//var rs:TRecord_;
 begin
   inherited;
-  if Cds_Customer.IsEmpty then Exit;
+  {if Cds_Customer.IsEmpty then Exit;
   rs := TRecord_.Create;
   try
     if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,rs) then
@@ -521,7 +521,7 @@ begin
        end;
   finally
     rs.Free;
-  end;
+  end;}
 end;
 
 procedure TfrmCustomer.N2Click(Sender: TObject);

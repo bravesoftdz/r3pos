@@ -1,8 +1,8 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 438
-  Top = 260
+  Left = 558
+  Top = 249
   Caption = #23458#25143#26723#26696
-  ClientHeight = 365
+  ClientHeight = 364
   ClientWidth = 528
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -12,13 +12,13 @@ inherited frmClientInfo: TfrmClientInfo
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 528
-    Height = 365
+    Height = 364
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
       Top = 113
       Width = 518
-      Height = 207
+      Height = 206
       Color = clWhite
       ParentColor = False
       FixedDimension = 20
@@ -27,7 +27,7 @@ inherited frmClientInfo: TfrmClientInfo
         Caption = #35814#32454#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 514
-          Height = 180
+          Height = 179
           BorderColor = clWhite
           Color = clWhite
           object labHOMEPAGE: TRzLabel
@@ -243,7 +243,7 @@ inherited frmClientInfo: TfrmClientInfo
           Left = 0
           Top = 0
           Width = 514
-          Height = 180
+          Height = 179
           Align = alClient
           BorderColor = clWhite
           Color = clWhite
@@ -494,12 +494,12 @@ inherited frmClientInfo: TfrmClientInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 320
+      Top = 319
       Width = 518
       BorderColor = clWhite
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 335
+        Left = 363
         Top = 9
         Width = 67
         Height = 26
@@ -526,7 +526,7 @@ inherited frmClientInfo: TfrmClientInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 434
+        Left = 450
         Top = 9
         Width = 67
         Height = 26
@@ -594,7 +594,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel4: TRzLabel
-        Left = 493
+        Left = 494
         Top = 54
         Width = 6
         Height = 12
@@ -615,7 +615,7 @@ inherited frmClientInfo: TfrmClientInfo
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #23458#25143#20998#31867
+        Caption = #23458#25143#31867#21035
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -624,7 +624,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel13: TRzLabel
-        Left = 258
+        Left = 259
         Top = 30
         Width = 6
         Height = 12
@@ -654,7 +654,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel2: TRzLabel
-        Left = 493
+        Left = 494
         Top = 78
         Width = 6
         Height = 12
@@ -669,7 +669,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel14: TRzLabel
-        Left = 219
+        Left = 220
         Top = 54
         Width = 6
         Height = 12
@@ -699,7 +699,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel11: TRzLabel
-        Left = 219
+        Left = 220
         Top = 5
         Width = 6
         Height = 12
@@ -759,7 +759,7 @@ inherited frmClientInfo: TfrmClientInfo
         ParentFont = False
       end
       object RzLabel22: TRzLabel
-        Left = 219
+        Left = 220
         Top = 79
         Width = 6
         Height = 12
@@ -975,17 +975,17 @@ inherited frmClientInfo: TfrmClientInfo
   end
   inherited mmMenu: TMainMenu
     Left = 267
-    Top = 96
+    Top = 107
   end
   inherited actList: TActionList
     Left = 307
-    Top = 96
+    Top = 107
   end
   object cdsTable: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 226
-    Top = 96
+    Top = 107
   end
 end

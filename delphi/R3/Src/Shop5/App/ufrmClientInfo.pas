@@ -238,21 +238,16 @@ begin
     end;
 
   if edtCLIENT_NAME.Text<>cdsTable.FieldByName('CLIENT_NAME').AsString  then
-  begin
-    if dbState in [dsEdit,dsInsert] then
     begin
       tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if (tmp.FieldByName('CLIENT_NAME').AsString=edtCLIENT_NAME.Text) and (tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString) then
+      if tmp.Locate('CLIENT_NAME',tmp.FieldbyName('CLIENT_NAME').AsString,[]) then
         begin
-          if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:客户名称已经存在!'),Pchar(Caption),MB_OK);
+          if tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString then
+            begin
+              if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
+              MessageBox(handle,Pchar('提示:客户名称已经存在!'),Pchar(Caption),MB_OK);
+            end;
         end;
-        tmp.Next;
-      end;
     end;
 
     {if dbState=dsInsert then
@@ -270,34 +265,39 @@ begin
         tmp.Next;
       end;
     end;}
-  end;
+
   if dbState=dsEdit then
   begin
     tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-    //tmp.Filtered:=False;
     if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) and (tmp.FieldByName('CLIENT_ID').AsString<>AObj.FieldByName('CLIENT_ID').AsString) then
     begin
       if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
-      raise  Exception.Create('单位代号已经存在，不能重复！');
+      raise  Exception.Create('客户编号已经存在，不能重复！');
     end;
   end;
   if dbState=dsInsert then
   begin
     tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-    tmp.Filtered:=False;
     if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) then
     begin
       if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
-      raise  Exception.Create('单位代号已经存在，不能重复！');
+      raise  Exception.Create('客户编号已经存在，不能重复！');
     end;
   end;
   if dbState = dsInsert then
   begin
     AObj.FieldbyName('CLIENT_ID').AsString := TSequence.NewId;
+    Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
+    Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+    Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Aobj.FieldByName('CLIENT_TYPE').AsString  := '2';
+    Aobj.FieldByName('IC_INFO').AsString := '企业卡';
+    Aobj.FieldByName('UNION_ID').AsString := '#';
+    Aobj.FieldByName('IC_STATUS').AsString := '0';
+    Aobj.FieldByName('IC_TYPE').AsString := '0';
   end;
   WriteToObject(Aobj,self);
-  Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Aobj.FieldByName('CLIENT_TYPE').AsInteger := 2;
+
   Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.AsString;
   Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
   Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
@@ -324,13 +324,9 @@ begin
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
-  {ccid:=IntToStr(Global.SHOP_ID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=IntToStr(Global.SHOP_ID);}
-  IniComb;
 
+  AddCbxPickList(edtBANK_ID,'',Global.GetZQueryFromName('PUB_BANK_INFO'));
+  IniComb;
 end;
 
 procedure TfrmClientInfo.FormDestroy(Sender: TObject);
@@ -585,17 +581,6 @@ begin
         AObj_ := TRecord_.Create;
         AObj_.ReadFromDataSet(Tmp);
         edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
-        Tmp.Next;
-      end;
-
-    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
-    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
-    Tmp.First;
-    while not Tmp.Eof do
-      begin
-        AObj_ := TRecord_.Create;
-        AObj_.ReadFromDataSet(Tmp);
-        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
         Tmp.Next;
       end;
   finally

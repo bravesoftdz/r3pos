@@ -110,8 +110,7 @@ var
 i:integer;
 begin
   inherited;
-  if not Cds_Client.Active then exit;
-  if Cds_Client.IsEmpty then exit;
+  if (not Cds_Client.Active) and (Cds_Client.IsEmpty) then exit;
   //if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
@@ -128,25 +127,31 @@ var
 begin
   inherited;
 
-  Str_Wh := 'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,'+
+  {Str_Wh := 'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,'+
   'SORT_ID,REGION_ID,SETTLE_CODE,ADDRESS,POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,TELEPHONE2,FAXES,HOMEPAGE,'+
   'EMAIL,QQ,MSN,BANK_ID,ACCOUNT,IC_CARDNO,INVOICE_FLAG,REMARK,TAX_RATE,PRICE_ID,ACCU_INTEGRAL,RULE_INTEGRAL,'+
-  'INTEGRAL,BALANCE,SHOP_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and CLIENT_TYPE = ''2'' ';
+  'INTEGRAL,BALANCE,SHOP_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and CLIENT_TYPE = ''2'' ';}
+
+  Str_Wh := 'select 0 as selflag,A.TENANT_ID,A.CLIENT_ID,A.CLIENT_TYPE,A.CLIENT_CODE,A.LICENSE_CODE,A.CLIENT_NAME,A.CLIENT_SPELL,A.SORT_ID,'+
+  'A.REGION_ID,A.SETTLE_CODE,A.ADDRESS,A.POSTALCODE,A.LINKMAN,A.TELEPHONE3,A.TELEPHONE1,A.TELEPHONE2,A.FAXES,A.HOMEPAGE,A.EMAIL,A.QQ,'+
+  'A.MSN,A.BANK_ID,A.ACCOUNT,B.IC_CARDNO,A.INVOICE_FLAG,A.REMARK,A.TAX_RATE,A.PRICE_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,'+
+  'A.SHOP_ID from PUB_CLIENTINFO A left join PUB_IC_INFO B on A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID'+
+  ' where A.COMM not in (''02'',''12'') and IC_TYPE=''0'' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
 
   sqlstring:='';
   if edtKey.Text<>'' then
     begin
-      sqlstring:=' and (CLIENT_NAME LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_SPELL LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_CODE LIKE ''%'+trim(edtKey.Text)+'%'' )';
+      sqlstring:=' and (A.CLIENT_NAME LIKE ''%'+trim(edtKey.Text)+'%'' or A.CLIENT_SPELL LIKE ''%'+trim(edtKey.Text)+'%'' or A.CLIENT_CODE LIKE ''%'+trim(edtKey.Text)+'%'' )';
       Str_Wh:=Str_Wh+sqlstring;
     end;
   if fndSORT_ID.AsString<>'' then
     begin
-      sqlstring:=sqlstring+' and SORT_ID='+QuotedStr(fndSORT_ID.AsString);
-      Str_Wh:=Str_Wh+' and SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+      sqlstring:=sqlstring+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+      Str_Wh:=Str_Wh+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
     end;
 
   Cds_Client.Close;
-  Cds_Client.SQL.Text := Str_Wh+' order by CLIENT_CODE';
+  Cds_Client.SQL.Text := Str_Wh+' order by A.CLIENT_CODE';
   Factor.Open(Cds_Client);
 end;
 

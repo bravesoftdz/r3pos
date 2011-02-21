@@ -312,15 +312,12 @@ begin
 
   DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Clear;
   DBGridEh1.FieldColumns['PRICE_ID'].PickList.Clear;
-  tmp:=Global.GetZQueryFromName('PUB_PARAMS');
-  tmp.Filtered:=False;
-  tmp.Filter:=' TYPE_CODE=''PRICE_ID''';
-  tmp.Filtered:=True;
+  tmp:=Global.GetZQueryFromName('PUB_PRICEGRADE');
   tmp.First;
   while not tmp.Eof do
   begin
-    DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Add(tmp.Fields[0].asstring);
-    DBGridEh1.FieldColumns['PRICE_ID'].PickList.Add(tmp.Fields[1].asstring);
+    DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Add(tmp.Fields[1].asstring);
+    DBGridEh1.FieldColumns['PRICE_ID'].PickList.Add(tmp.Fields[2].asstring);
     tmp.Next;
   end;
 end;

@@ -197,14 +197,6 @@ inherited frmClient: TfrmClient
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'SORT_ID'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #23458#25143#20998#31867
-                    Width = 79
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'CLIENT_CODE'
                     Footers = <>
                     ReadOnly = True
@@ -233,6 +225,14 @@ inherited frmClient: TfrmClient
                     Footers = <>
                     Title.Caption = #23458#25143#31561#32423
                     Width = 56
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SORT_ID'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #23458#25143#20998#31867
+                    Width = 79
                   end
                   item
                     EditButtons = <>

@@ -304,6 +304,7 @@ begin
   Aobj.FieldByName('PRICE_ID').AsString := edtPRICE_ID.AsString;
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
     AObj.FieldbyName('CLIENT_CODE').AsString :=TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6);
+  Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
   cdsTable.Edit;

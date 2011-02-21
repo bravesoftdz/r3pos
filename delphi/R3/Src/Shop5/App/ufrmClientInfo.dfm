@@ -104,6 +104,7 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+            Visible = False
           end
           object RzLabel18: TRzLabel
             Left = 267
@@ -193,6 +194,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 170
             Height = 20
             TabOrder = 4
+            Visible = False
           end
           object edtBALANCE: TcxTextEdit
             Left = 372

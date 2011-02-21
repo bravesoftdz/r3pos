@@ -22,7 +22,8 @@ function TClient.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str: String;
 begin
   Result := False;
-  Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID  ';
+  Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+  ' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
   AGlobal.ExecSQL(Str,Self);
   Result := True;
 end;

@@ -1,6 +1,6 @@
 inherited frmInvoiceInfo: TfrmInvoiceInfo
-  Left = 500
-  Top = 180
+  Left = 493
+  Top = 274
   Caption = #21457#31080#20449#24687
   ClientHeight = 322
   ClientWidth = 504
@@ -426,7 +426,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
           Title.Caption = #24207#21495
           Width = 30
         end>
-      DropWidth = 176
+      DropWidth = 151
       DropHeight = 130
       ShowTitle = True
       AutoFitColWidth = True
@@ -466,7 +466,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
           EditButtons = <>
           FieldName = 'USER_NAME'
           Footers = <>
-          Title.Caption = #37096#38376#21517#31216
+          Title.Caption = #21517'  '#31216
           Width = 80
         end>
       DropWidth = 151
@@ -478,13 +478,6 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       Buttons = []
       DropListStyle = lsFixed
       MultiSelect = False
-    end
-    object edtCREA_DATE: TcxDateEdit
-      Left = 347
-      Top = 13
-      Width = 121
-      Height = 20
-      TabOrder = 3
     end
     object edtENDED_NO: TcxTextEdit
       Left = 113
@@ -499,6 +492,13 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       Width = 121
       Height = 20
       TabOrder = 1
+    end
+    object edtCREA_DATE: TcxDateEdit
+      Left = 347
+      Top = 13
+      Width = 121
+      Height = 20
+      TabOrder = 3
     end
   end
   inherited mmMenu: TMainMenu

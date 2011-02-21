@@ -29,7 +29,6 @@ type
     RzLabel6: TRzLabel;
     edtCREA_USER: TzrComboBoxList;
     RzLabel9: TRzLabel;
-    edtCREA_DATE: TcxDateEdit;
     RzLabel1: TRzLabel;
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
@@ -43,6 +42,7 @@ type
     edtBALANCE: TcxTextEdit;
     edtUSING_AMT: TcxTextEdit;
     RzLabel12: TRzLabel;
+    edtCREA_DATE: TcxDateEdit;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -76,6 +76,7 @@ begin
   Open('');
   dbState := dsInsert;
   edtCREA_DATE.Date := Global.SysDate;
+  //edtCREA_USER.Text := FormatDateTime('YYYY-MM-DD',Global.SysDate);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
   edtCREA_USER.KeyValue := Global.UserID;
@@ -222,7 +223,7 @@ end;
 procedure TfrmInvoiceInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
+  if edtINVH_NO.CanFocus then edtINVH_NO.SetFocus;
 end;
 
 procedure TfrmInvoiceInfo.SetdbState(const Value: TDataSetState);

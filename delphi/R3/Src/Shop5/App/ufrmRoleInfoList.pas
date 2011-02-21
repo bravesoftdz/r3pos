@@ -72,7 +72,8 @@ type
 
 implementation
 
-uses uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport,uCtrlUtil;
+uses uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport,uCtrlUtil,
+  ufrmRoleRights;
 
 {$R *.dfm}
 
@@ -88,7 +89,7 @@ begin
      4,5: str:=' and (ROLE_ID like ''%''|| :KEYVALUE || ''%'' or ROLE_NAME like ''%''|| :KEYVALUE || ''%'' or ROLE_SPELL like ''%''|| :KEYVALUE || ''%'') ';
     end;
   end;
-  str:='Select Cast(100 as integer) as AA,ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
+  str:='Select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
        ' From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text:=str;
@@ -160,7 +161,6 @@ end;
 var Params:TftParamList;
     i:integer;
     rzNode:TTreeNode;
-    tmp:TADODataSet;
 begin
   inherited;
   if not cdsBrowser.Active then exit;
@@ -172,8 +172,6 @@ begin
   begin
     Params:=TftParamList.Create(nil);
     try
-      //Params.ParamByName('DUTY_ID',True).asString:=cdsBrowser.FieldByName('DUTY_ID').AsString;
-      //Params.ParamByName('DUTY_NAME',True).asString:=cdsBrowser.FieldByName('DUTY_NAME').AsString;
       Params.ParamByName('ROLE_ID').asString:=cdsBrowser.FieldByName('ROLE_ID').AsString;
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
       Factor.ExecProc('TRoleInfoDelete',Params);
@@ -333,21 +331,20 @@ end;
 procedure TfrmRoleInfoList.actRIGHTSExecute(Sender: TObject);
 begin
   inherited;
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
-  if not IsCompany then  Raise Exception.Create('不是总店,你没有授权'+Caption+'的权限.');
-  if not ShopGlobal.GetChkRight('100013') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
+//  if not cdsBrowser.Active then exit;
+//  if cdsBrowser.IsEmpty then exit;
+//  if not IsCompany then  Raise Exception.Create('不是总店,你没有授权'+Caption+'的权限.');
+//  if not ShopGlobal.GetChkRight('100013') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
 
- {with TfrmDutyRights.Create(self) do
+  with TfrmRoleRights.Create(self) do
   begin
     try
-      Open(cdsBrowser.FieldByName('DUTY_ID').AsString,cdsBrowser.FieldByName('DUTY_NAME').AsString,cdsBrowser.FieldByName('REMARK').AsString);
+      InitialParams(cdsBrowser.FieldByName('ROLE_ID').AsString,cdsBrowser.FieldByName('ROLE_NAME').AsString,cdsBrowser.FieldByName('REMARK').AsString);
       ShowModal;
     finally
       free;
     end;
   end;
-  }
 end;
 
 procedure TfrmRoleInfoList.cdsBrowserAfterScroll(DataSet: TDataSet);

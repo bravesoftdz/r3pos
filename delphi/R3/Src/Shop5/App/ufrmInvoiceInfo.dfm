@@ -1,6 +1,6 @@
 inherited frmInvoiceInfo: TfrmInvoiceInfo
-  Left = 499
-  Top = 198
+  Left = 500
+  Top = 180
   Caption = #21457#31080#20449#24687
   ClientHeight = 322
   ClientWidth = 504
@@ -455,14 +455,21 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       ListField = 'USER_NAME'
       Columns = <
         item
+          EditButtons = <>
+          FieldName = 'ACCOUNT'
+          Footers = <>
+          Title.Caption = #36134#21495
+          Width = 70
+        end
+        item
           AutoDropDown = True
           EditButtons = <>
           FieldName = 'USER_NAME'
           Footers = <>
           Title.Caption = #37096#38376#21517#31216
-          Width = 90
+          Width = 80
         end>
-      DropWidth = 176
+      DropWidth = 151
       DropHeight = 130
       ShowTitle = True
       AutoFitColWidth = True

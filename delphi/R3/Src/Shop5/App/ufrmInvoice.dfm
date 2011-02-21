@@ -1,6 +1,6 @@
 inherited frmInvoice: TfrmInvoice
-  Left = 304
-  Top = 126
+  Left = 355
+  Top = 151
   Width = 863
   Height = 551
   Caption = #21457#31080#31649#29702
@@ -253,12 +253,18 @@ inherited frmInvoice: TfrmInvoice
                   ParentFont = False
                 end
                 object Label3: TLabel
-                  Left = 28
+                  Left = 32
                   Top = 78
-                  Width = 52
+                  Width = 48
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #21457#31080#26412#21495
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
                 end
                 object RzLabel1: TRzLabel
                   Left = 182
@@ -335,16 +341,9 @@ inherited frmInvoice: TfrmInvoice
                       FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
-                      Width = 120
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SEQ_NO'
-                      Footers = <>
-                      Title.Caption = #24207#21495
-                      Width = 30
+                      Width = 220
                     end>
-                  DropWidth = 176
+                  DropWidth = 224
                   DropHeight = 130
                   ShowTitle = True
                   AutoFitColWidth = True
@@ -378,9 +377,9 @@ inherited frmInvoice: TfrmInvoice
                       FieldName = 'USER_NAME'
                       Footers = <>
                       Title.Caption = #21517'  '#31216
-                      Width = 90
+                      Width = 220
                     end>
-                  DropWidth = 176
+                  DropWidth = 222
                   DropHeight = 130
                   ShowTitle = True
                   AutoFitColWidth = True
@@ -414,15 +413,15 @@ inherited frmInvoice: TfrmInvoice
   inherited RzPanel4: TRzPanel
     Width = 855
     inherited Image1: TImage
-      Left = 527
-      Width = 319
+      Left = 523
+      Width = 323
     end
     inherited Image14: TImage
       Left = 846
     end
     inherited Image3: TImage
-      Left = 527
-      Width = 319
+      Left = 523
+      Width = 323
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -431,18 +430,18 @@ inherited frmInvoice: TfrmInvoice
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 351
+      Width = 347
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 351
+          MinHeight = 347
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 351
+        Width = 347
         ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
@@ -470,28 +469,28 @@ inherited frmInvoice: TfrmInvoice
         object ToolButton2: TToolButton
           Left = 172
           Top = 0
-          Width = 7
+          Width = 3
           Caption = 'ToolButton2'
           ImageIndex = 3
           Style = tbsDivider
         end
         object ToolButton4: TToolButton
-          Left = 179
+          Left = 175
           Top = 0
           Action = actRights
         end
         object But_Print: TToolButton
-          Left = 222
+          Left = 218
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 265
+          Left = 261
           Top = 0
           Action = actPreview
         end
         object ToolButton3: TToolButton
-          Left = 308
+          Left = 304
           Top = 0
           Action = actExit
         end

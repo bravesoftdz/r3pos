@@ -18,25 +18,15 @@ type
     D2: TcxDateEdit;
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
-    Splitter1: TSplitter;
     RzLabel5: TRzLabel;
     fndPROM_ID: TcxTextEdit;
     Label1: TLabel;
-    DataSource1: TDataSource;
     btnOk: TRzBitBtn;
     fndSTATUS: TcxRadioGroup;
-    Timer1: TTimer;
-    DBGridEh2: TDBGridEh;
-    cdsDetail: TZQuery;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure actFindExecute(Sender: TObject);
-    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure DBGridEh2DrawFooterCell(Sender: TObject; DataCol,
-      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -44,22 +34,19 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
   private
-    { Private declarations }
     oid:string;
+    procedure AddGridPRICE_IDItems;  //添加PRICE_ID的Items
   public
-    { Public declarations }
     IsEnd: boolean;
     MaxId:string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
-    procedure OpenDetail(id:string);
   end;
 
 implementation
@@ -74,7 +61,7 @@ begin
 end;
 
 function TfrmPriceOrderList.EncodeSQL(id: string): string;
-var w:string;
+var w,viwName:string;
 begin
   result:='';                                
   w:='where TENANT_ID=:TENANT_ID and BEGIN_DATE>=:BEGDATE and BEGIN_DATE<=:ENDDATE ';
@@ -87,11 +74,14 @@ begin
     if fndSTATUS.ItemIndex=1 then w := w +' and CHK_DATE is null ' else w := w +' and CHK_DATE is not null';
   end;
   if id<>'' then w := w +' and PROM_ID>'''+id+'''';
+  viwName:='(select PROM_ID,GLIDE_NO,BEGIN_DATE,END_DATE,REMARK,PRICE_ID,TENANT_ID from SAL_PRICEORDER '+w+') A '+
+       ' left join (select PROM_ID,Count(*) as GOODSum From SAL_PRICEDATA where TENANT_ID=:TENANT_ID Group by PROM_ID)B on A.PROM_ID=B.PROM_ID '+
+       ' left join (select PROM_ID,count(*) as ShopSum From SAL_PROM_SHOP where TENANT_ID=:TENANT_ID Group by PROM_ID)C on A.PROM_ID=C.PROM_ID ';
   case Factor.iDbType of
-  0,3:result:='select top 600 PROM_ID,GLIDE_NO,BEGIN_DATE,END_DATE,REMARK,PRICE_ID,TENANT_ID from SAL_PRICEORDER '+w+' order by PROM_ID';
+  0,3:result:='select top 600 A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID';
   1: result:='  ';
-  4: result:='select tp.* from (select PROM_ID,GLIDE_NO,BEGIN_DATE,END_DATE,REMARK,PRICE_ID,TENANT_ID from SAL_PRICEORDER '+w+') order by PROM_ID) tp fetch first 600  rows only ';
-  5: result:='select PROM_ID,GLIDE_NO,BEGIN_DATE,END_DATE,REMARK,PRICE_ID,TENANT_ID from SAL_PRICEORDER '+w+' order by PROM_ID LIMIT 600 ';
+  4: result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+') order by A.PROM_ID) tp fetch first 600  rows only ';
+  5: result:='select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From ('+viwName+') order by A.PROM_ID LIMIT 600 ';
   end; 
 end;
 
@@ -128,67 +118,16 @@ begin
   inherited;
   if IsEnd or not DataSet.Eof then Exit;
   if cdsList.ControlsDisabled then Exit;
-  Open(MaxId);
-
+  Open(MaxId);  
 end;
 
 procedure TfrmPriceOrderList.FormCreate(Sender: TObject);
-function FindColumn(FieldName: string): TColumnEh;
-var i:integer;
-begin
-  Result := nil;
-  for i:=0 to DBGridEh2.Columns.Count -1 do
-    begin
-      if UpperCase(DBGridEh2.Columns[i].FieldName)=UpperCase(FieldName) then
-         begin
-           Result := DBGridEh2.Columns[i];
-           Exit;
-         end;
-    end;
-end;
-var
-  rs: TZQuery;
-  Column:TColumnEh;
 begin
   inherited;
   InitGridPickList(DBGridEh1);
-  InitGridPickList(DBGridEh2);
+  AddGridPRICE_IDItems;  //添加PRICE_ID的Items
   D1.Date := date();
   D2.Date := date();
-  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-  Column := FindColumn('CALC_UNITS');
-  if Column<>nil then
-  begin
-  rs.First;
-  while not rs.Eof do
-    begin
-      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      rs.Next;
-    end;
-  end;
-  Column := FindColumn('SMALL_UNITS');
-  if Column<>nil then
-  begin
-  rs.First;
-  while not rs.Eof do
-    begin
-      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      rs.Next;
-    end;
-  end;
-  Column := FindColumn('BIG_UNITS');
-  if Column<>nil then
-  begin
-  rs.First;
-  while not rs.Eof do
-    begin
-      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      rs.Next;
-    end;
-  end;
 end;
 
 procedure TfrmPriceOrderList.FormShow(Sender: TObject);
@@ -197,115 +136,15 @@ begin
   Open(''); 
 end;
 
-procedure TfrmPriceOrderList.OpenDetail(id: string);
-var
-  Params:TftParamList;
-  i:integer;
-begin
-  Params := TftParamList.Create(nil);
-  try
-     oid := id;
-     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Params.ParamByName('PROM_ID').asString := id;
-     cdsDetail.Close;
-     Factor.Open(cdsDetail,'TPriceData',Params);
-     //R3库中没有:  PRICE_TYPE  促销方式
-     {
-     for i:=0 to DBGridEh2.Columns.Count -1 do
-      begin
-        if copy(DBGridEh2.Columns[i].FieldName,1,4)='OUT_' then
-           DBGridEh2.Columns[i].Visible := (cdsList.FieldbyName('PRICE_TYPE').asInteger=1);
-        if copy(DBGridEh2.Columns[i].FieldName,1,5)='AGIO_' then
-           DBGridEh2.Columns[i].Visible := (cdsList.FieldbyName('PRICE_TYPE').asInteger=2);
-        if DBGridEh2.Columns[i].FieldName='CALC_UNITS' then
-           DBGridEh2.Columns[i].Visible := (cdsList.FieldbyName('PRICE_TYPE').asInteger=1);
-        if DBGridEh2.Columns[i].FieldName='SMALL_UNITS' then
-           DBGridEh2.Columns[i].Visible := (cdsList.FieldbyName('PRICE_TYPE').asInteger=1);
-        if DBGridEh2.Columns[i].FieldName='BIG_UNITS' then
-           DBGridEh2.Columns[i].Visible := (cdsList.FieldbyName('PRICE_TYPE').asInteger=1);
-      end;
-     }
-  finally
-     Params.Free;
-  end;
-end;
-
-procedure TfrmPriceOrderList.DBGridEh1CellClick(Column: TColumnEh);
-begin
-  inherited;
-  if cdsList.IsEmpty then Exit;
-  OpenDetail(cdsList.FieldbyName('PROM_ID').AsString);  
-end;
-
 procedure TfrmPriceOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
   Open('');  
 end;
 
-procedure TfrmPriceOrderList.DBGridEh2DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var ARect:TRect;
-begin
-  if Column.FieldName = 'SEQNO' then
-    begin
-      ARect := Rect;
-      DBGridEh2.canvas.Brush.Color := $0000F2F2;
-      DBGridEh2.canvas.FillRect(ARect);
-      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsDetail.RecNo)),length(Inttostr(cdsDetail.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-end;
-
-procedure TfrmPriceOrderList.DBGridEh2DrawFooterCell(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
-  State: TGridDrawState);
-function FindColumn(FieldName: string): TColumnEh;
-var i:integer;
-begin
-  Result := nil;
-  for i:=0 to DBGridEh2.Columns.Count -1 do
-    begin
-      if UpperCase(DBGridEh2.Columns[i].FieldName)=UpperCase(FieldName) then
-         begin
-           Result := DBGridEh2.Columns[i];
-           Exit;
-         end;
-    end;
-end;
-var R:TRect;
-  s:string;
-begin
-  inherited;
-  if Column.FieldName = 'GODS_NAME' then
-     begin
-       R.Left := Rect.Left;
-       R.Top := Rect.Top ;
-       R.Bottom := Rect.Bottom;
-       if FindColumn('GODS_CODE')<>nil then
-       begin
-         if FindColumn('UNIT_ID')=nil then
-            R.Right := Rect.Right + FindColumn('GODS_CODE').Width
-         else
-            R.Right := Rect.Right + FindColumn('GODS_CODE').Width+ FindColumn('UNIT_ID').Width;
-       end
-       else
-       begin
-         if FindColumn('UNIT_ID')=nil then
-            R.Right := Rect.Right + FindColumn('GODS_CODE').Width
-         else
-            R.Right := Rect.Right + FindColumn('GODS_CODE').Width+ FindColumn('UNIT_ID').Width;
-       end;
-       DBGridEh2.Canvas.FillRect(R);
-       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s笔',[Inttostr(cdsDetail.RecordCount)]);
-       DBGridEh2.Canvas.Font.Style := [fsBold];
-       DBGridEh2.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh2.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
-     end;
-end;
-
 procedure TfrmPriceOrderList.actPriorExecute(Sender: TObject);
 var
-  Temp:TADODataSet;
+  Temp:TZQuery;
   Params:TftParamList;
 begin
   inherited;
@@ -319,7 +158,7 @@ begin
              Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TADODataSet.Create(nil);
+          Temp := TZQuery.Create(nil);
           try
              Factor.Open(Temp,'TPriceOrderGetPrior',Params);
              if Temp.Fields[0].asString<>'' then
@@ -334,7 +173,6 @@ begin
   else
      begin
         cdsList.Prior;
-        OpenDetail(cdsList.FieldbyName('PROM_ID').AsString);
      end;
 end;
 
@@ -369,7 +207,6 @@ begin
   else
      begin
         cdsList.Next;
-        OpenDetail(cdsList.FieldbyName('PROM_ID').AsString);
      end;
 end;
 
@@ -440,14 +277,6 @@ begin
 
 end;
 
-procedure TfrmPriceOrderList.Timer1Timer(Sender: TObject);
-begin
-  inherited;
-  if not cdsList.Active then Exit;
-  if cdsList.FieldByName('PROM_ID').AsString <> oid then
-     OpenDetail(cdsList.FieldByName('PROM_ID').AsString);
-end;
-
 procedure TfrmPriceOrderList.actNewExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('500014') then Raise Exception.Create('你没有新增促销单的权限,请和管理员联系.');
@@ -477,6 +306,28 @@ begin
 //  else
 //     actEdit.OnExecute(nil);
 
+end;
+
+procedure TfrmPriceOrderList.AddGridPRICE_IDItems;
+var
+  rs: TZQuery;
+  CurCol: TColumnEh;
+begin
+  CurCol:=FindColumn(DBGridEh1,'PRICE_ID');
+  if CurCol=nil then Exit;
+  CurCol.KeyList.Clear;
+  CurCol.PickList.Clear;
+  rs:=ShopGlobal.GetZQueryFromName('PUB_PRICEGRADE');
+  if (rs<>nil) and (rs.Active) then
+  begin
+    rs.First;
+    while not rs.Eof do
+    begin
+      CurCol.KeyList.Add(rs.fieldbyName('PRICE_ID').AsString);
+      CurCol.PickList.Add(rs.fieldbyName('PRICE_NAME').AsString);
+      rs.Next;
+    end;
+  end;
 end;
 
 end.

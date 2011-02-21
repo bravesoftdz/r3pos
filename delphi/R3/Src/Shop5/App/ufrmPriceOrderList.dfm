@@ -22,16 +22,6 @@ inherited frmPriceOrderList: TfrmPriceOrderList
           inherited RzPanel3: TRzPanel
             Width = 815
             Height = 481
-            object Splitter1: TSplitter [0]
-              Left = 5
-              Top = 252
-              Width = 805
-              Height = 6
-              Cursor = crVSplit
-              Align = alBottom
-              Color = clBtnFace
-              ParentColor = False
-            end
             inherited RzPanel1: TRzPanel
               Width = 805
               Height = 68
@@ -145,9 +135,8 @@ inherited frmPriceOrderList: TfrmPriceOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 73
               Width = 805
-              Height = 179
+              Height = 403
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              OnCellClick = DBGridEh1CellClick
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -173,17 +162,23 @@ inherited frmPriceOrderList: TfrmPriceOrderList
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'PRICE_TYPE'
+                  FieldName = 'PRICE_ID'
                   Footers = <>
-                  Title.Caption = #20419#38144#26041#24335
-                  Width = 104
+                  Title.Caption = #20419#38144#33539#22260
+                  Width = 111
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'AIM_FLAG'
+                  FieldName = 'GoodSum'
                   Footers = <>
-                  Title.Caption = #23458#25143#32676
-                  Width = 98
+                  Title.Caption = #20419#38144#21830#21697#25968
+                  Width = 71
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ShopSum'
+                  Footers = <>
+                  Title.Caption = #20419#38144#38376#24215#25968
                 end
                 item
                   EditButtons = <>
@@ -191,154 +186,6 @@ inherited frmPriceOrderList: TfrmPriceOrderList
                   Footers = <>
                   Title.Caption = #22791#27880
                   Width = 163
-                end>
-            end
-            object DBGridEh2: TDBGridEh
-              Left = 5
-              Top = 258
-              Width = 805
-              Height = 218
-              Align = alBottom
-              AllowedOperations = [alopUpdateEh]
-              DataSource = DataSource1
-              Flat = True
-              FooterColor = clWindow
-              FooterFont.Charset = GB2312_CHARSET
-              FooterFont.Color = clWindowText
-              FooterFont.Height = -12
-              FooterFont.Name = #23435#20307
-              FooterFont.Style = []
-              FooterRowCount = 1
-              FrozenCols = 1
-              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-              RowHeight = 17
-              SumList.Active = True
-              TabOrder = 2
-              TitleFont.Charset = GB2312_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -12
-              TitleFont.Name = #23435#20307
-              TitleFont.Style = []
-              TitleHeight = 20
-              UseMultiTitle = True
-              IsDrawNullRow = False
-              CurrencySymbol = #65509
-              DecimalNumber = 2
-              DigitalNumber = 12
-              OnDrawColumnCell = DBGridEh2DrawColumnCell
-              OnDrawFooterCell = DBGridEh2DrawFooterCell
-              Columns = <
-                item
-                  EditButtons = <>
-                  FieldName = 'SEQNO'
-                  Footers = <>
-                  Title.Caption = #24207#21495
-                  Width = 31
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'GODS_NAME'
-                  Footers = <>
-                  Title.Caption = #21830#21697#21517#31216
-                  Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
-                  Width = 206
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'GODS_CODE'
-                  Footers = <>
-                  ReadOnly = True
-                  Tag = 1
-                  Title.Caption = #36135#21495
-                  Width = 73
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'NEW_OUTPRICE'
-                  Footers = <>
-                  Title.Caption = #24403#21069#21806#20215
-                  Width = 59
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'OUT_PRICE'
-                  Footers = <>
-                  Title.Caption = #35745#37327#21333#20301'|'#21806#20215
-                  Width = 57
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'CALC_UNITS'
-                  Footers = <>
-                  ReadOnly = True
-                  Tag = 1
-                  Title.Caption = #35745#37327#21333#20301'|'#21333#20301
-                  Width = 31
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'OUT_PRICE1'
-                  Footers = <>
-                  Title.Caption = #21253#35013'1|'#21806#20215
-                  Width = 57
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'SMALL_UNITS'
-                  Footers = <>
-                  ReadOnly = True
-                  Tag = 1
-                  Title.Caption = #21253#35013'1|'#21333#20301
-                  Width = 29
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'OUT_PRICE2'
-                  Footers = <>
-                  Title.Caption = #21253#35013'2|'#21806#20215
-                  Width = 54
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'BIG_UNITS'
-                  Footers = <>
-                  ReadOnly = True
-                  Tag = 1
-                  Title.Caption = #21253#35013'2|'#21333#20301
-                  Width = 32
-                end
-                item
-                  Checkboxes = False
-                  EditButtons = <>
-                  FieldName = 'RATE_OFF'
-                  Footers = <>
-                  Title.Caption = #20250#21592'|'#20419#38144
-                  Width = 56
-                end
-                item
-                  DisplayFormat = '#0.00%'
-                  EditButtons = <>
-                  FieldName = 'AGIO_RATE'
-                  Footers = <>
-                  Title.Caption = #20250#21592'|'#20877#25240#29575
-                  Width = 62
-                end
-                item
-                  Alignment = taCenter
-                  ButtonStyle = cbsEllipsis
-                  Checkboxes = True
-                  EditButtons = <>
-                  FieldName = 'ISINTEGRAL'
-                  Footers = <>
-                  KeyList.Strings = (
-                    '1'
-                    '0')
-                  PickList.Strings = (
-                    #26159
-                    #21542)
-                  Title.Caption = #20250#21592'|'#31215#20998
-                  Width = 35
                 end>
             end
           end
@@ -403,23 +250,5 @@ inherited frmPriceOrderList: TfrmPriceOrderList
   end
   inherited cdsList: TZQuery
     AfterScroll = cdsListAfterScroll
-  end
-  object DataSource1: TDataSource
-    DataSet = cdsDetail
-    Left = 377
-    Top = 338
-  end
-  object Timer1: TTimer
-    OnTimer = Timer1Timer
-    Left = 225
-    Top = 202
-  end
-  object cdsDetail: TZQuery
-    FieldDefs = <>
-    AfterScroll = cdsListAfterScroll
-    CachedUpdates = True
-    Params = <>
-    Left = 342
-    Top = 336
   end
 end

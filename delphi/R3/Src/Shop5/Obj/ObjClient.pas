@@ -36,7 +36,7 @@ begin
   try
     Temp.Close;
     try
-      Temp.SQL.Text := 'select * from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+      Temp.SQL.Text := 'select * from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
       AGlobal.Open(Temp);
       if Temp.RecordCount > 0 then
         Raise Exception.Create('此卡号已经存在，不能重复！');
@@ -67,7 +67,7 @@ begin
     try
       Temp.Close;
       Temp.SQL.Text := 'select * from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO'+
-      ' and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID and CLIENT_ID<>:OLD_CLIENT_ID';
+      ' and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID and CLIENT_ID<>:OLD_CLIENT_ID';
       AGlobal.Open(Temp);
       if Temp.RecordCount > 0 then
         Raise Exception.Create('此卡号已经存在，不能重复！');

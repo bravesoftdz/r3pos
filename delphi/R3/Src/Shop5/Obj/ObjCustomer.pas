@@ -84,7 +84,7 @@ begin
      try
        Tmp := TZQuery.Create(nil);
        Tmp.Close;
-       Tmp.SQL.Text := 'Select * From PUB_IC_INFO Where COMM NOT IN(''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+       Tmp.SQL.Text := 'Select * From PUB_IC_INFO Where COMM NOT IN(''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
        AGlobal.Open(Tmp);
        if Tmp.RecordCount > 0 then
           Raise Exception.Create('此卡号已经存在，不能重复！');
@@ -116,7 +116,7 @@ begin
        Tmp := TZQuery.Create(nil);
        Tmp.Close;
        Tmp.SQL.Text := 'select * from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO'+
-      ' and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID and CLIENT_ID<>:OLD_CLIENT_ID';
+      ' and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID and CLIENT_ID<>:OLD_CLIENT_ID';
        AGlobal.Open(Tmp);
        if Tmp.RecordCount > 0 then
           Raise Exception.Create('此卡号已经存在，不能重复！');

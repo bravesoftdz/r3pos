@@ -151,6 +151,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('CLIENT_ID').asString := code;
+    Params.ParamByName('UNION_ID').AsString := '#';
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsTable.Close;
     Factor.Open(cdsTable,'TClient',Params);

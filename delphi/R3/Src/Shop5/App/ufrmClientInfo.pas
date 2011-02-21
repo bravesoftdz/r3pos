@@ -297,14 +297,10 @@ begin
     Aobj.FieldByName('IC_STATUS').AsString := '0';
     Aobj.FieldByName('IC_TYPE').AsString := '0';
   end;
-  WriteToObject(Aobj,self);
+  WriteTo(Aobj);
 
-  Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.AsString;
-  Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
-  Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
-  Aobj.FieldByName('PRICE_ID').AsString := edtPRICE_ID.AsString;
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
-    AObj.FieldbyName('CLIENT_CODE').AsString :=TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6);
+    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetBarCode(TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6),8);
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
@@ -499,6 +495,12 @@ begin
   //Aobj.FieldByName('COMP_ID').AsString:=ccid;
   Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
   Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
+  Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.AsString;
+  Aobj.FieldByName('PRICE_ID').AsString := edtPRICE_ID.AsString;
+  if Trim(edtINTEGRAL.Text)='' then AObj.FieldByName('INTEGRAL').AsString:='0';
+  if Trim(edtACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
+  if Trim(edtRULE_INTEGRAL.Text)='' then AObj.FieldByName('RULE_INTEGRAL').AsString:='0';
+  if Trim(edtBALANCE.Text)='' then AObj.FieldByName('BALANCE').AsString := '0';
 end;
 
 class function TfrmClientInfo.EditDialog(Owner: TForm; id: string;

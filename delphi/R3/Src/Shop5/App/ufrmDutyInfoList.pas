@@ -195,7 +195,6 @@ end;
 var Params:TftParamList;
     i:integer;
     rzNode:TTreeNode;
-    tmp:TADODataSet;
 begin
   inherited;
   if not cdsBrowser.Active then exit;

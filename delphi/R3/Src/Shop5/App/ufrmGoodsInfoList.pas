@@ -85,7 +85,6 @@ type
     MaxId,TENANT_ID:string;
     locked:boolean;
     rcAmt:integer;
-    function  CheckRoot:boolean;
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
     function  EncodeSQL(id:string;var Cnd:string):string;
@@ -479,20 +478,6 @@ begin
         free;
       end;
     end;
-end;
-
-function TfrmGoodsInfoList.CheckRoot: boolean;
-var
-   rs:TADODataSet;
-begin
-   rs := TADODataSet.Create(nil);   
-   try
-     rs.CommandText := 'select UPCOMP_ID from CA_COMPANY where COMP_ID='''+TENANT_ID+'''';
-     Factor.Open(rs);
-     result := (rs.Fields[0].AsString = '');
-   finally
-     rs.Free;
-   end;
 end;
 
 procedure TfrmGoodsInfoList.actEditExecute(Sender: TObject);

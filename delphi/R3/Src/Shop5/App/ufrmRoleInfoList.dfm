@@ -291,7 +291,6 @@ inherited frmRoleInfoList: TfrmRoleInfoList
           Left = 180
           Top = 0
           Action = actRIGHTS
-          Visible = False
         end
         object ToolButton6: TToolButton
           Left = 223

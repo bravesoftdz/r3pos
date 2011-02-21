@@ -11,19 +11,19 @@ inherited frmSupplier: TfrmSupplier
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 734
-    Height = 426
+    Height = 433
     inherited RzPanel2: TRzPanel
       Width = 724
-      Height = 416
+      Height = 423
       inherited RzPage: TRzPageControl
         Width = 718
-        Height = 410
+        Height = 417
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#21830#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 716
-            Height = 383
+            Height = 390
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -130,13 +130,14 @@ inherited frmSupplier: TfrmSupplier
                 LocateStyle = lsDark
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
+                MultiSelect = False
               end
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 66
               Width = 706
-              Height = 312
+              Height = 319
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -145,7 +146,7 @@ inherited frmSupplier: TfrmSupplier
                 Left = 5
                 Top = 5
                 Width = 696
-                Height = 283
+                Height = 290
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -196,14 +197,6 @@ inherited frmSupplier: TfrmSupplier
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'SORT_ID'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #20379#24212#21830#20998#31867
-                    Width = 79
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'CLIENT_CODE'
                     Footers = <>
                     ReadOnly = True
@@ -225,6 +218,14 @@ inherited frmSupplier: TfrmSupplier
                     ReadOnly = True
                     Title.Caption = #25340#38899#30721
                     Width = 77
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SORT_ID'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #20379#24212#21830#20998#31867
+                    Width = 79
                   end
                   item
                     EditButtons = <>
@@ -317,7 +318,7 @@ inherited frmSupplier: TfrmSupplier
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 288
+                Top = 295
                 Width = 696
                 Height = 19
                 Align = alBottom

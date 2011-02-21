@@ -1,8 +1,8 @@
 inherited frmSupplierInfo: TfrmSupplierInfo
   Left = 710
-  Top = 284
+  Top = 276
   Caption = #20379#24212#21830#26723#26696
-  ClientHeight = 366
+  ClientHeight = 374
   ClientWidth = 528
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -12,15 +12,17 @@ inherited frmSupplierInfo: TfrmSupplierInfo
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 528
-    Height = 366
+    Height = 374
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 113
+      Top = 121
       Width = 518
       Height = 208
+      ActivePage = TabSheet2
       Color = clWhite
       ParentColor = False
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -402,7 +404,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 321
+      Top = 329
       Width = 518
       BorderColor = clWhite
       Color = clWhite
@@ -465,7 +467,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       Left = 5
       Top = 5
       Width = 518
-      Height = 108
+      Height = 116
       Align = alTop
       BorderOuter = fsNone
       BorderColor = clWhite
@@ -473,7 +475,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       TabOrder = 2
       object labCLIENT_NAME: TRzLabel
         Left = -10
-        Top = 30
+        Top = 33
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -488,7 +490,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object labCLIENT_SPELL: TRzLabel
         Left = 265
-        Top = 30
+        Top = 33
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -503,7 +505,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel6: TRzLabel
         Left = -10
-        Top = 52
+        Top = 57
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -518,7 +520,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel13: TRzLabel
         Left = 258
-        Top = 31
+        Top = 34
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -533,7 +535,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel7: TRzLabel
         Left = 265
-        Top = 52
+        Top = 57
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -548,7 +550,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel2: TRzLabel
         Left = 493
-        Top = 52
+        Top = 57
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -563,7 +565,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel14: TRzLabel
         Left = 219
-        Top = 53
+        Top = 58
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -578,7 +580,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel1: TRzLabel
         Left = -10
-        Top = 8
+        Top = 9
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -593,7 +595,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel11: TRzLabel
         Left = 219
-        Top = 8
+        Top = 9
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -608,7 +610,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object labSHOP_ID: TRzLabel
         Left = 264
-        Top = 8
+        Top = 9
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -623,7 +625,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel8: TRzLabel
         Left = -9
-        Top = 76
+        Top = 83
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -638,7 +640,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object RzLabel22: TRzLabel
         Left = 219
-        Top = 76
+        Top = 83
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -653,7 +655,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtCLIENT_NAME: TcxTextEdit
         Left = 97
-        Top = 27
+        Top = 30
         Width = 160
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -661,7 +663,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtCLIENT_SPELL: TcxTextEdit
         Left = 371
-        Top = 27
+        Top = 30
         Width = 121
         Height = 20
         Enabled = False
@@ -669,7 +671,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 97
-        Top = 49
+        Top = 54
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -712,7 +714,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtREGION_ID: TzrComboBoxList
         Left = 371
-        Top = 49
+        Top = 54
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -755,7 +757,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtCLIENT_CODE: TcxTextEdit
         Left = 97
-        Top = 5
+        Top = 6
         Width = 121
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -763,7 +765,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtSETTLE_CODE: TcxComboBox
         Left = 97
-        Top = 72
+        Top = 79
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -771,7 +773,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371
-        Top = 5
+        Top = 6
         Width = 121
         Height = 20
         Enabled = False
@@ -817,17 +819,17 @@ inherited frmSupplierInfo: TfrmSupplierInfo
   end
   inherited mmMenu: TMainMenu
     Left = 267
-    Top = 96
+    Top = 115
   end
   inherited actList: TActionList
     Left = 307
-    Top = 96
+    Top = 115
   end
   object cdsTable: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 226
-    Top = 96
+    Top = 115
   end
 end

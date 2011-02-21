@@ -138,7 +138,7 @@ begin
     Params.ParamByName('CLIENT_ID').asString := code;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsTable.Close;
-    Factor.Open(cdsTable,'TClient',Params);
+    Factor.Open(cdsTable,'TSupplier',Params);
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
     edtSORT_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_CLIENTSORT'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SORT_ID').AsString);
@@ -285,7 +285,7 @@ begin
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
-  if Factor.UpdateBatch(cdsTable,'TClient',nil) then
+  if Factor.UpdateBatch(cdsTable,'TSupplier',nil) then
       UpdateToGlobal(Aobj);
   dbState := dsBrowse;
   Saved := true;
@@ -299,11 +299,7 @@ begin
   edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  {ccid:=IntToStr(Global.SHOP_ID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=IntToStr(Global.SHOP_ID);}
+  AddCbxPickList(edtBANK_ID,'',Global.GetZQueryFromName('PUB_BANK_INFO'));
   IniComb;
 end;
 
@@ -557,17 +553,6 @@ begin
         AObj_ := TRecord_.Create;
         AObj_.ReadFromDataSet(Tmp);
         edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
-        Tmp.Next;
-      end;
-
-    Tmp := Global.GetZQueryFromName('PUB_BANK_INFO');
-    if not Tmp.IsEmpty then ClearCbxPickList(edtBANK_ID);
-    Tmp.First;
-    while not Tmp.Eof do
-      begin
-        AObj_ := TRecord_.Create;
-        AObj_.ReadFromDataSet(Tmp);
-        edtBANK_ID.Properties.Items.AddObject(Tmp.FieldByName('').AsString,AObj_);
         Tmp.Next;
       end;
 

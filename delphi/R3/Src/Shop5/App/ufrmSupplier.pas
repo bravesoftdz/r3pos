@@ -128,10 +128,9 @@ var
 begin
   inherited;
 
-  Str_Wh := 'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,'+
-  'SORT_ID,REGION_ID,SETTLE_CODE,ADDRESS,POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,TELEPHONE2,FAXES,HOMEPAGE,'+
-  'EMAIL,QQ,MSN,BANK_ID,ACCOUNT,IC_CARDNO,INVOICE_FLAG,REMARK,TAX_RATE,PRICE_ID,ACCU_INTEGRAL,RULE_INTEGRAL,'+
-  'INTEGRAL,BALANCE,SHOP_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and CLIENT_TYPE = ''1'' ';
+  Str_Wh := 'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,SORT_ID,REGION_ID,SETTLE_CODE,ADDRESS,'+
+  'POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,TELEPHONE2,FAXES,HOMEPAGE,EMAIL,QQ,MSN,BANK_ID,ACCOUNT,INVOICE_FLAG,REMARK,TAX_RATE,PRICE_ID,SHOP_ID'+
+  ' from PUB_CLIENTINFO where COMM not in (''02'',''12'') and TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and CLIENT_TYPE=''1'' ';
 
   sqlstring:='';
   if edtKey.Text<>'' then
@@ -270,11 +269,6 @@ end;
 procedure TfrmSupplier.FormCreate(Sender: TObject);
 begin
   inherited;
-  {ccid:=ShopGlobal.GetCOMP_ID(Global.UserID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=Global.CompanyID; }
   InitGrid;
   fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   TDbGridEhSort.InitForm(self);

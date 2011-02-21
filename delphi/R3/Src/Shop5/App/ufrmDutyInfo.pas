@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, RzButton, ActnList, Menus, RzTabs, ExtCtrls,
   RzPanel, cxMemo, cxMaskEdit, cxButtonEdit, zrComboBoxList, cxControls,
-  cxContainer, cxEdit, cxTextEdit, StdCtrls,DB,ZDataset,zBase, DBClient,
+  cxContainer, cxEdit, cxTextEdit, StdCtrls,DB,ZDataset,zBase, 
   ZAbstractRODataset, ZAbstractDataset, Grids, DBGrids;
 
 type
@@ -314,7 +314,7 @@ class function TfrmDutyInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRec
 begin
   //新R3内ShopGlobal没有此方法:
   //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能修改职务!');
-  if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改职务的权限,请和管理员联系.');
+  // if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改职务的权限,请和管理员联系.');
   with TfrmDutyInfo.Create(Owner) do
   begin
     try

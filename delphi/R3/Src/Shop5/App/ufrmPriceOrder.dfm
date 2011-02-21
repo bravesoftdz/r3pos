@@ -420,6 +420,16 @@ inherited frmPriceOrder: TfrmPriceOrder
       item
         Name = 'ISINTEGRAL'
         DataType = ftInteger
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
       end>
     Left = 48
     Top = 248

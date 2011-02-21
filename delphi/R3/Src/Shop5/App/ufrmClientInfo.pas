@@ -157,8 +157,16 @@ begin
     ReadFromObject(Aobj,Self);
     edtSORT_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_CLIENTSORT'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SORT_ID').AsString);
     edtSORT_ID.KeyValue := Aobj.FieldByName('SORT_ID').AsString;
-    edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
-    edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+    if Aobj.FieldByName('REGION_ID').AsString = '#' then
+      begin
+        edtREGION_ID.Text:='нч';
+        edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+      end
+    else
+      begin
+        edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
+        edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+      end;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
     edtPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Aobj.FieldByName('PRICE_ID').AsString);

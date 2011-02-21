@@ -1,7 +1,7 @@
 unit ObjUsers;
 
 interface
-uses SysUtils,ZBase,Classes,AdoDb,ZIntf,ObjCommon,ZDataset;
+uses SysUtils,ZBase,Classes,ZIntf,ObjCommon,ZDataset;
 
 type
   TUsers=class(TZFactory)
@@ -76,8 +76,8 @@ begin
          'QQ=:QQ,MSN=:MSN,ID_NUMBER=:ID_NUMBER,IDN_TYPE=:IDN_TYPE,FAMI_ADDR=:FAMI_ADDR,POSTALCODE=:POSTALCODE,WORK_DATE=:WORK_DATE,DIMI_DATE=:DIMI_DATE,REMARK=:REMARK,COMM='
           +GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where USER_ID=:OLD_USER_ID and TENANT_ID=:OLD_TENANT_ID ';
   UpdateSQL.Add( Str);
-  {Str := 'update CA_USERS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where USER_ID=:OLD_USER_ID and TENANT_ID=:OLD_TENANT_ID';
-  DeleteSQL.Add( Str); }
+  Str := 'update CA_USERS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where USER_ID=:OLD_USER_ID and TENANT_ID=:OLD_TENANT_ID';
+  DeleteSQL.Add( Str);
 end;
 
 { TUsersDelete }

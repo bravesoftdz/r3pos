@@ -377,7 +377,13 @@ inherited frmInvoice: TfrmInvoice
                       FieldName = 'USER_NAME'
                       Footers = <>
                       Title.Caption = #21517'  '#31216
-                      Width = 220
+                      Width = 176
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'ACCOUNT'
+                      Footers = <>
+                      Title.Caption = #36134#21495
                     end>
                   DropWidth = 222
                   DropHeight = 130
@@ -538,8 +544,8 @@ inherited frmInvoice: TfrmInvoice
     Top = 336
   end
   object PopupMenu1: TPopupMenu
-    Left = 238
-    Top = 155
+    Left = 150
+    Top = 267
     object N1: TMenuItem
       Caption = #25480#26435
       OnClick = N1Click

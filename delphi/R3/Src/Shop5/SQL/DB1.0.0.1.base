@@ -2018,7 +2018,7 @@ CREATE TABLE [PUB_IC_INFO] (
         --发卡日期
 	[CREA_DATE] [varchar] (10) NOT NULL ,
         --有效截止日期
-	[END_DATE] [varchar] (10) NOT NULL ,
+	[END_DATE] [varchar] (10) NULL ,
         --发卡用户
 	[CREA_USER] [varchar] (36) NOT NULL ,
         --摘要

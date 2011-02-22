@@ -222,7 +222,19 @@ procedure TfrmCustomerInfo.Save;
          Temp.Append
       else
          Temp.Edit;
-      AObj.WriteToDataSet(Temp,false);
+      Temp.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+      Temp.FieldByName('LICENSE_CODE').AsString := AObj.FieldbyName('ID_NUMBER').AsString;
+      Temp.FieldByName('CLIENT_CODE').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+      Temp.FieldByName('CLIENT_NAME').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+      Temp.FieldByName('LINKMAN').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+      Temp.FieldByName('CLIENT_SPELL').AsString := AObj.FieldbyName('CUST_SPELL').AsString;
+      Temp.FieldByName('ADDRESS').AsString := AObj.FieldbyName('FAMI_ADDR').AsString;
+      Temp.FieldByName('TELEPHONE2').AsString := AObj.FieldbyName('MOVE_TELE').AsString;
+      Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+      Temp.FieldByName('SETTLE_CODE').AsString := '#';
+      Temp.FieldByName('INVOICE_FLAG').AsString := '0';
+      Temp.FieldByName('TAX_RATE').AsString := '0';
+      Temp.FieldByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
       Temp.Post;
    end;
 var tmp,temp,temp1,tmp1:TZQuery;
@@ -253,14 +265,7 @@ begin
     if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
     raise Exception.Create('会员等级不能为空！');
   end;
-  {if dbState=dsEdit then
-  begin
-    if AObj.FieldbyName('CUST_ID').AsString=cmbINTRODUCER.AsString then
-    begin
-      if cmbINTRODUCER.CanFocus then cmbINTRODUCER.SetFocus;
-      raise Exception.Create('介绍人不能是自己!');
-    end;
-  end;}
+
   //会员检测开始
  if dbState = dsInsert then
   begin
@@ -324,17 +329,11 @@ begin
     if dbState=dsInsert then
     begin
       tmp:=Global.GetZQueryFromName('PUB_CUSTOMER');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('CLIENT_NAME').AsString=cmbCUST_NAME.Text then
+      if tmp.Locate('CLIENT_NAME',Trim(cmbCUST_NAME.Text),[]) then
         begin
           if cmbCUST_NAME.CanFocus then cmbCUST_NAME.SetFocus;
           MessageBox(handle,Pchar('提示:会员姓名已经存在!'),Pchar(Caption),MB_OK);
         end;
-        tmp.Next;
-      end;
     end;
   end;
   //会员检测结束
@@ -353,7 +352,7 @@ begin
       Aobj.FieldByName('IC_TYPE').AsString := '0';
     end;
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='自动编号..') then
-     AObj.FieldbyName('CUST_CODE').AsString :=  FnString.GetBarCode(TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6),8);
+     AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CLIENT_CODE',Global.SHOP_ID,'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);

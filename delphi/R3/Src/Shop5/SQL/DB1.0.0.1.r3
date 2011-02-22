@@ -253,6 +253,7 @@ B.BEGIN_DATE<=strftime('%Y-%m-%d %H:%M:%S','now','localtime') and B.END_DATE>=st
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','收款收据','INVOICE_FLAG','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','普通发票','INVOICE_FLAG','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','增值税票','INVOICE_FLAG','00',strftime('%s','now','localtime')-1293840000);
+
 --入库类单据类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','入库单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','调拨单','STOCK_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -382,10 +383,10 @@ CREATE VIEW VIW_STOCKDATA
 as 
 select
    B.TENANT_ID,B.SHOP_ID,B.STOCK_ID,B.INVOICE_FLAG,B.STOCK_DATE,B.CLIENT_ID,A.BATCH_NO,A.LOCUS_NO,B.GUIDE_USER,
-   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,A.IS_PRESENT,B.CREA_USER,B.GLIDE_NO,B.STOCK_TYPE,
-   A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
+   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,B.CREA_USER,B.GLIDE_NO,B.STOCK_TYPE,
+   A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,B.TAX_RATE,
    round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as TAX_MONEY,
-   A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
+   A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY  
 from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.STOCK_TYPE in (1,3) and B.COMM not in ('02','12');
 
 --调拨接收单视图
@@ -393,10 +394,8 @@ CREATE VIEW VIW_MOVEINDATA
 as 
 select
    B.TENANT_ID,B.SHOP_ID,B.STOCK_ID,B.INVOICE_FLAG,B.STOCK_DATE,B.CLIENT_ID,A.BATCH_NO,A.LOCUS_NO,B.GUIDE_USER,
-   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,A.IS_PRESENT,B.CREA_USER,B.GLIDE_NO,B.STOCK_TYPE,
-   A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
-   round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as TAX_MONEY,
-   A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
+   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,B.CREA_USER,B.GLIDE_NO,
+   A.CALC_AMOUNT,A.CALC_MONEY as COST_MONEY,A.ORG_PRICE*A.AMOUNT as RTL_MONEY,A.AMOUNT
 from STK_STOCKDATA A,STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and B.STOCK_TYPE in (2) and B.COMM not in ('02','12');
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销售单','SALES_TYPE','00',strftime('%s','now','localtime')-1293840000);
@@ -422,6 +421,10 @@ CREATE TABLE [SAL_SALESORDER] (
 	[SALES_TYPE] [int] NOT NULL,
         --客户代码
 	[CLIENT_ID] [varchar] (36) NULL ,
+        --IC卡号
+	[IC_CARDNO] [varchar] (36) NULL ,
+        --商盟编码
+	[UNION_ID] [varchar] (36) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -579,24 +582,22 @@ CREATE INDEX IX_SAL_SALESDATA_GODS_ID ON SAL_SALESDATA(TENANT_ID,GODS_ID);
 CREATE VIEW VIW_SALESDATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BATCH_NO,B.BARTER_INTEGRAL,
-  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.IS_PRESENT,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE, 
-  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.COST_PRICE,B.AMOUNT,
+  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BARTER_INTEGRAL,
+  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE, 
+  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.ORG_PRICE,B.COST_PRICE,B.AMOUNT,A.TAX_RATE,
   round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as TAX_MONEY,
   B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,
-  B.AGIO_MONEY
+  B.AGIO_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,
+  B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2)-round(B.CALC_AMOUNT*B.COST_PRICE,2) as PRF_MONEY
 from SAL_SALESORDER A,SAL_SALESDATA B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.SALES_TYPE in (1,3,4) and A.COMM not in ('02','12');
 
 --调拨出货单视图
 CREATE VIEW VIW_MOVEOUTDATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,B.BATCH_NO,B.BARTER_INTEGRAL,
-  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.IS_PRESENT,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,A.INTEGRAL,B.HAS_INTEGRAL,A.SALES_TYPE,A.SALES_STYLE, 
-  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.COST_PRICE,B.AMOUNT,
-  round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as TAX_MONEY,
-  B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,
-  B.AGIO_MONEY
+  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.SALES_DATE,A.SALES_ID,
+  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO, 
+  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as RTL_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,B.COST_PRICE,B.AMOUNT
 from SAL_SALESORDER A,SAL_SALESDATA B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.SALES_TYPE in (2) and A.COMM not in ('02','12');
 
 --流水类型
@@ -625,6 +626,17 @@ CREATE TABLE [SAL_IC_GLIDE] (
 	[GLIDE_INFO] [varchar] (100) NOT NULL ,
         --流水类型
 	[IC_GLIDE_TYPE] [varchar] (1) NOT NULL ,
+        --结算方式
+	[PAY_A] [decimal](18, 3) NULL ,
+	[PAY_B] [decimal](18, 3) NULL ,
+	[PAY_C] [decimal](18, 3) NULL ,
+	[PAY_D] [decimal](18, 3) NULL ,
+	[PAY_E] [decimal](18, 3) NULL ,
+	[PAY_F] [decimal](18, 3) NULL ,
+	[PAY_G] [decimal](18, 3) NULL ,
+	[PAY_H] [decimal](18, 3) NULL ,
+	[PAY_I] [decimal](18, 3) NULL ,
+	[PAY_J] [decimal](18, 3) NULL ,
         --金额
 	[GLIDE_MNY] [decimal](18, 3) NULL ,
         --通讯标志
@@ -819,17 +831,23 @@ select
   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,B.GLIDE_NO,B.CREA_USER,A.APRICE,A.COST_PRICE,B.DEPT_ID,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*A.CALC_AMOUNT as CALC_AMOUNT,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*A.AMOUNT as AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*A.CALC_MONEY as CALC_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*A.CALC_MONEY as RTL_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*round(A.CALC_AMOUNT*A.COST_PRICE,2) as COST_MONEY,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_AMOUNT else 0 end as PARM1_AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM1_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM1_RTL,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM1_MONEY,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='2' then A.CALC_AMOUNT else 0 end as PARM2_AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='2' then A.CALC_MONEY else 0 end as PARM2_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM2_RTL,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='2' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM2_MONEY,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='3' then A.CALC_AMOUNT else 0 end as PARM3_AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='3' then A.CALC_MONEY else 0 end as PARM3_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM3_RTL,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='3' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM3_MONEY,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='4' then A.CALC_AMOUNT else 0 end as PARM4_AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='4' then A.CALC_MONEY else 0 end as PARM4_MONEY,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM4_RTL,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='4' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM4_MONEY,
   case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='5' then A.CALC_AMOUNT else 0 end as PARM5_AMOUNT,
-  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='5' then A.CALC_MONEY else 0 end as PARM5_MONEY
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM5_RTL,
+  case when B.CHANGE_TYPE=1 then 1 else -1 end*case when B.CHANGE_CODE='5' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM5_MONEY
 from STO_CHANGEDATA A,STO_CHANGEORDER B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and B.COMM not in ('02','12');
 
 --进货订单
@@ -957,7 +975,7 @@ CREATE VIEW VIW_STKINDENTDATA
 as 
 select
    B.TENANT_ID,B.SHOP_ID,B.STOCK_ID,B.INVOICE_FLAG,B.STOCK_DATE,B.CLIENT_ID,A.BATCH_NO,A.LOCUS_NO,B.GUIDE_USER,
-   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,A.IS_PRESENT,B.CREA_USER,B.GLIDE_NO,B.STOCK_TYPE,
+   A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,B.CREA_USER,B.GLIDE_NO,B.STOCK_TYPE,
    A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
    round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as TAX_MONEY,
    A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
@@ -1095,9 +1113,9 @@ CREATE INDEX IX_SAL_INDENTDATA_GODS_ID ON SAL_INDENTDATA(TENANT_ID,GODS_ID);
 CREATE VIEW VIW_SALINDENTDATA
 as
 select 
-  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,B.AGIO_RATE,A.GUIDE_USER,B.POLICY_TYPE,A.INDE_DATE,A.INDE_ID,B.BATCH_NO,B.BARTER_INTEGRAL,
-  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.IS_PRESENT,B.UNIT_ID,B.BATCH_NO,B.HAS_INTEGRAL,A.SALES_STYLE, 
-  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.AMOUNT,
+  A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.CREA_USER,A.INVOICE_FLAG,A.GUIDE_USER,B.POLICY_TYPE,A.INDE_DATE,A.INDE_ID,B.BARTER_INTEGRAL,
+  B.GODS_ID,B.PROPERTY_01,B.PROPERTY_02,B.IS_PRESENT,A.GLIDE_NO,B.UNIT_ID,B.BATCH_NO,B.HAS_INTEGRAL,A.SALES_STYLE, 
+  B.CALC_AMOUNT as CALC_AMOUNT,B.CALC_MONEY as CALC_MONEY,B.AGIO_RATE,B.ORG_PRICE,B.AMOUNT,
   round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as TAX_MONEY,
   B.CALC_MONEY-round(B.CALC_MONEY/(1+case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end)*case when A.INVOICE_FLAG in (2,3) then A.TAX_RATE else 0 end,2) as NOTAX_MONEY,
   B.AGIO_MONEY
@@ -1128,6 +1146,10 @@ CREATE TABLE [STO_PRINTORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+        --审核用户
+	[CHK_USER] [varchar] (36) NULL ,
+        --审核人员
+	[CHK_DATE] [varchar] (10) NULL ,
         --通读标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_PRINTORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
@@ -1618,8 +1640,6 @@ select
   case when B.IORO_TYPE='2' then A.IORO_MNY else 0 end as OUT_MONEY
 from ACC_IORODATA A,ACC_IOROORDER B where A.TENANT_ID=B.TENANT_ID and A.IORO_ID=B.IORO_ID and B.COMM not in ('02','12');
 
-
-
 --交班结账表
 CREATE TABLE [ACC_CLOSE_FORDAY] (
         --行号
@@ -1682,6 +1702,8 @@ CREATE TABLE [ACC_TRANSORDER] (
 	[TRANS_DATE] int NOT NULL ,
         --负责人
 	[TRANS_USER] [varchar] (36) NULL ,
+	      --存取金额
+	[TRANS_MNY] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -1842,3 +1864,787 @@ CREATE INDEX IX_SAL_INVOICE_BOOK_TIME_STAMP ON SAL_INVOICE_BOOK(TENANT_ID,TIME_S
 CREATE INDEX IX_SAL_INVOICE_BOOK_CREA_DATE ON SAL_INVOICE_BOOK(CREA_DATE);
 CREATE INDEX IX_SAL_INVOICE_BOOK_SHOP_ID ON SAL_INVOICE_BOOK(TENANT_ID,SHOP_ID);
 
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','开票','INVOICE_STATUS','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','作废','INVOICE_STATUS','00',strftime('%s','now','localtime')-1293840000);
+
+--发票明细
+CREATE TABLE [SAL_INVOICE_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --流水ID号
+	[INVH_ID] [varchar] (36) NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --开票人
+	[CREA_USER] [varchar] (36) NOT NULL ,
+        --开票日期
+	[CREA_DATE] int NOT NULL ,
+        --客户编码
+	[CLIENT_ID] [varchar] (36)  NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+	      --发票号
+	[INVOICE_NO] int NOT NULL ,
+        --发票状态
+	[INVOICE_STATUS] [varchar] (1) NOT NULL ,
+        --销售单号
+	[SALES_ID] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INVOICE_INFO_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SAL_INVOICE_INFO] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVH_ID],[INVOICE_NO]
+	) 
+);
+
+CREATE INDEX IX_SAL_INVOICE_INFO_TENANT_ID ON SAL_INVOICE_INFO(TENANT_ID);
+CREATE INDEX IX_SAL_INVOICE_INFO_TIME_STAMP ON SAL_INVOICE_INFO(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_SAL_INVOICE_INFO_CREA_DATE ON SAL_INVOICE_INFO(CREA_DATE);
+
+--   台账规划      ---
+--时间:2011-02-21
+--初稿:张森荣
+
+--日结账记录
+CREATE TABLE [RCK_DAYS_CLOSE] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --日期
+	[CREA_DATE] int NOT NULL ,
+        --结账用户
+	[CREA_USER] [varchar] (36) NOT NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_DAYS_CLOSE_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_DAYS_CLOSE] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[CREA_DATE]
+	) 
+);
+
+--月结账记录
+CREATE TABLE [RCK_DAYS_CLOSE] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --日期
+	[MONTH] int NOT NULL ,
+        --结账用户
+	[CREA_USER] [varchar] (36) NOT NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_DAYS_CLOSE_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_DAYS_CLOSE] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[MONTH]
+	) 
+);
+
+--商品日台账
+CREATE TABLE [RCK_GOODS_DAYS] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --日期
+	[CREA_DATE] int NOT NULL ,
+        --客户编码
+	[GODS_ID] [varchar] (36)  NOT NULL ,
+        --批号
+	[BATCH_NO] [varchar] (36) NOT NULL ,
+
+--结账时进销价信息
+        --当时进价
+	[NEW_INPRICE] [decimal](18, 3) NULL ,
+        --当时销价
+	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+
+--期初类台账		
+        --期初数量
+	[ORG_AMT] [decimal](18, 3) NULL ,
+        --期初金额<按当时进价>
+	[ORG_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[ORG_RTL] [decimal](18, 3) NULL ,
+        --期初成本<移动加权成本>
+	[ORG_CST] [decimal](18, 3) NULL ,
+	
+--进货类台账	
+        --进货数量<含退货>
+	[STOCK_AMT] [decimal](18, 3) NULL ,
+        --进货金额<末税>
+	[STOCK_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STOCK_TAX] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[STOCK_RTL] [decimal](18, 3) NULL ,
+        --让利金额<供应商让利>
+	[STOCK_AGO] [decimal](18, 3) NULL ,
+	
+        --其中退货数量
+	[STKRT_AMT] [decimal](18, 3) NULL ,
+        --退货金额<末税>
+	[STKRT_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STKRT_TAX] [decimal](18, 3) NULL ,
+	
+
+--销售类台账	
+        --销售数量<含退货>
+	[SALE_AMT] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[SALE_RTL] [decimal](18, 3) NULL ,
+        --让利金额<销售让利>
+	[SALE_AGO] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALE_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALE_TAX] [decimal](18, 3) NULL ,
+        --销售成本
+	[SALE_CST] [decimal](18, 3) NULL ,
+        --成本单价<移动加权成本>
+	[COST_PRICE] [decimal](18, 6) NULL ,
+        --销售毛利
+	[SALE_PRF] [decimal](18, 3) NULL ,
+	
+	
+        --其中退货数量
+	[SALRT_AMT] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALRT_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALRT_TAX] [decimal](18, 3) NULL ,
+        --退货成本
+	[SALRT_CST] [decimal](18, 3) NULL ,
+	
+--调拨类台账	
+        --调入数量
+	[DBIN_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBIN_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBIN_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBIN_CST] [decimal](18, 3) NULL ,
+	
+        --调出数量
+	[DBOUT_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBOUT_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBOUT_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBOUT_CST] [decimal](18, 3) NULL ,
+	
+--库存类台账	
+        --调整数量
+	[CHANGE1_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE1_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE1_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE1_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE2_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE2_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE2_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE2_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE3_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE3_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE3_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE3_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE4_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE4_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE4_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE4_CST] [decimal](18, 3) NULL ,
+	
+        --调整数量
+	[CHANGE5_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE5_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE5_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE5_CST] [decimal](18, 3) NULL ,
+
+--结存类台账		
+        --结存数量
+	[BAL_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[BAL_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[BAL_RTL] [decimal](18, 3) NULL ,
+        --结存成本<移动加权成本>
+	[BAL_CST] [decimal](18, 3) NULL ,
+	
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_GOODS_DAYS_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_GOODS_DAYS] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[CREA_DATE],[GODS_ID]
+	) 
+);
+CREATE INDEX IX_RCK_GOODS_DAYS_TENANT_ID ON RCK_GOODS_DAYS(TENANT_ID);
+CREATE INDEX IX_RCK_GOODS_DAYS_TIME_STAMP ON RCK_GOODS_DAYS(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_RCK_GOODS_DAYS_CREA_DATE ON RCK_GOODS_DAYS(TENANT_ID,CREA_DATE);
+CREATE INDEX IX_RCK_GOODS_DAYS_GODS_ID ON RCK_GOODS_DAYS(TENANT_ID,GODS_ID);
+
+--成本核算临时表
+CREATE TABLE [TMP_GOODS_DAYS] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --日期
+	[CREA_DATE] int NOT NULL ,
+        --客户编码
+	[GODS_ID] [varchar] (36)  NOT NULL ,
+        --批号
+	[BATCH_NO] [varchar] (36) NOT NULL ,
+	
+--结账时进销价信息
+        --当时进价
+	[NEW_INPRICE] [decimal](18, 3) NULL ,
+        --当时销价
+	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+
+--进货类台账	
+        --进货数量<含退货>
+	[STOCK_AMT] [decimal](18, 3) NULL ,
+        --进货金额<末税>
+	[STOCK_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STOCK_TAX] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[STOCK_RTL] [decimal](18, 3) NULL ,
+        --让利金额<供应商让利>
+	[STOCK_AGO] [decimal](18, 3) NULL ,
+	
+        --其中退货数量
+	[STKRT_AMT] [decimal](18, 3) NULL ,
+        --退货金额<末税>
+	[STKRT_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STKRT_TAX] [decimal](18, 3) NULL ,
+	
+
+--销售类台账	
+        --销售数量<含退货>
+	[SALE_AMT] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[SALE_RTL] [decimal](18, 3) NULL ,
+        --让利金额<销售让利>
+	[SALE_AGO] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALE_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALE_TAX] [decimal](18, 3) NULL ,
+        --销售成本
+	[SALE_CST] [decimal](18, 3) NULL ,
+        --成本单价<移动加权成本>
+	[COST_PRICE] [decimal](18, 6) NULL ,
+        --销售毛利
+	[SALE_PRF] [decimal](18, 3) NULL ,
+	
+	
+        --其中退货数量
+	[SALRT_AMT] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALRT_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALRT_TAX] [decimal](18, 3) NULL ,
+        --退货成本
+	[SALRT_CST] [decimal](18, 3) NULL ,
+	
+--调拨类台账	
+        --调入数量
+	[DBIN_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBIN_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBIN_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBIN_CST] [decimal](18, 3) NULL ,
+	
+        --调出数量
+	[DBOUT_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBOUT_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBOUT_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBOUT_CST] [decimal](18, 3) NULL ,
+	
+--库存类台账	
+        --调整数量
+	[CHANGE1_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE1_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE1_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE1_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE2_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE2_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE2_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE2_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE3_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE3_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE3_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE3_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE4_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE4_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE4_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE4_CST] [decimal](18, 3) NULL ,
+	
+        --调整数量
+	[CHANGE5_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE5_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE5_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE5_CST] [decimal](18, 3) NULL ,
+
+	CONSTRAINT [PK_TMP_GOODS_DAYS] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[CREA_DATE],[GODS_ID]
+	) 
+);
+CREATE INDEX IX_TMP_GOODS_DAYS_TENANT_ID ON TMP_GOODS_DAYS(TENANT_ID);
+CREATE INDEX IX_TMP_GOODS_DAYS_CREA_DATE ON TMP_GOODS_DAYS(TENANT_ID,CREA_DATE);
+CREATE INDEX IX_TMP_GOODS_DAYS_GODS_ID ON TMP_GOODS_DAYS(TENANT_ID,GODS_ID);
+
+--商品月台账
+CREATE TABLE [RCK_GOODS_MONTH] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --月份
+	[MONTH] int NOT NULL ,
+        --客户编码
+	[GODS_ID] [varchar] (36)  NOT NULL ,
+        --批号
+	[BATCH_NO] [varchar] (36) NOT NULL ,
+	
+--结账时进销价信息
+        --当时进价
+	[NEW_INPRICE] [decimal](18, 3) NULL ,
+        --当时销价
+	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+
+--期初类台账		
+        --期初数量
+	[ORG_AMT] [decimal](18, 3) NULL ,
+        --期初金额<按当时进价>
+	[ORG_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[ORG_RTL] [decimal](18, 3) NULL ,
+        --期初成本<移动加权成本>
+	[ORG_CST] [decimal](18, 3) NULL ,
+	
+--进货类台账	
+        --进货数量<含退货>
+	[STOCK_AMT] [decimal](18, 3) NULL ,
+        --进货金额<末税>
+	[STOCK_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STOCK_TAX] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[STOCK_RTL] [decimal](18, 3) NULL ,
+        --让利金额<供应商让利>
+	[STOCK_AGO] [decimal](18, 3) NULL ,
+
+        --其中退货数量
+	[STKRT_AMT] [decimal](18, 3) NULL ,
+        --退货金额<末税>
+	[STKRT_MNY] [decimal](18, 3) NULL ,
+        --进项税额
+	[STKRT_TAX] [decimal](18, 3) NULL ,
+	
+
+--销售类台账	
+        --销售数量<含退货>
+	[SALE_AMT] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[SALE_RTL] [decimal](18, 3) NULL ,
+        --让利金额<销售让利>
+	[SALE_AGO] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALE_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALE_TAX] [decimal](18, 3) NULL ,
+        --销售成本
+	[SALE_CST] [decimal](18, 3) NULL ,
+        --销售毛利
+	[SALE_PRF] [decimal](18, 3) NULL ,
+	
+        --其中退货数量<含退货>
+	[SALRT_AMT] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[SALRT_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[SALRT_TAX] [decimal](18, 3) NULL ,
+        --退货成本
+	[SALRT_CST] [decimal](18, 3) NULL ,
+	
+        --去年同期数量<含退货>
+	[PRIOR_YEAR_AMT] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[PRIOR_YEAR_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[PRIOR_YEAR_TAX] [decimal](18, 3) NULL ,
+        --销项成本
+	[PRIOR_YEAR_CST] [decimal](18, 3) NULL ,
+	
+        --上月销售数量
+	[PRIOR_MONTH_AMT] [decimal](18, 3) NULL ,
+        --销售金额<末税>
+	[PRIOR_MONTH_MNY] [decimal](18, 3) NULL ,
+        --销项税额
+	[PRIOR_MONTH_TAX] [decimal](18, 3) NULL ,
+        --销项成本
+	[PRIOR_MONTH_CST] [decimal](18, 3) NULL ,
+	
+--调拨类台账	
+        --调入数量
+	[DBIN_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBIN_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBIN_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBIN_CST] [decimal](18, 3) NULL ,
+	
+        --调出数量
+	[DBOUT_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[DBOUT_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[DBOUT_RTL] [decimal](18, 3) NULL ,
+        --调拨成本<移动加权成本>
+	[DBOUT_CST] [decimal](18, 3) NULL ,
+	
+--库存类台账	
+        --调整数量
+	[CHANGE1_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE1_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE1_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE1_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE2_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE2_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE2_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE2_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE3_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE3_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE3_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE3_CST] [decimal](18, 3) NULL ,
+
+        --调整数量
+	[CHANGE4_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE4_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE4_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE4_CST] [decimal](18, 3) NULL ,
+	
+        --调整数量
+	[CHANGE5_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[CHANGE5_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[CHANGE5_RTL] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[CHANGE5_CST] [decimal](18, 3) NULL ,
+
+--结存类台账		
+        --结存数量
+	[BAL_AMT] [decimal](18, 3) NULL ,
+        --进项金额<按当时进价>
+	[BAL_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[BAL_RTL] [decimal](18, 3) NULL ,
+        --结存成本<移动加权成本>
+	[BAL_CST] [decimal](18, 3) NULL ,
+        --调整成本<移动加权成本>
+	[ADJ_CST] [decimal](18, 3) NULL ,
+	
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_GOODS_MONTH_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_GOODS_MONTH] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[MONTH],[GODS_ID]
+	) 
+);
+CREATE INDEX IX_RCK_GOODS_MONTH_TENANT_ID ON RCK_GOODS_MONTH(TENANT_ID);
+CREATE INDEX IX_RCK_GOODS_MONTH_TIME_STAMP ON RCK_GOODS_MONTH(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_RCK_GOODS_MONTH_MONTH ON RCK_GOODS_MONTH(TENANT_ID,MONTH);
+CREATE INDEX IX_RCK_GOODS_MONTH_GODS_ID ON RCK_GOODS_MONTH(TENANT_ID,GODS_ID);
+
+--发票月台账
+CREATE TABLE [RCK_INVOICE_MONTH] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --月份
+	[MONTH] int NOT NULL ,
+        --发票代码《发票版号》
+	[INVH_NO] [varchar] (36)  NOT NULL ,
+
+--期初类台账		
+        --期初数量
+	[ORG_AMT] int NULL ,
+        --发票号起始号
+	[ORG_BAMT] int NULL ,
+        --发票号结束号
+	[ORG_EAMT] int NULL ,
+	
+--领用类台账		
+        --领用数量
+	[ASK_AMT] int NULL ,
+        --发票号起始号
+	[ASK_BAMT] int NULL ,
+        --发票号结束号
+	[ASK_EAMT] int NULL ,
+	
+--开票类台账		
+        --开票数量
+	[USE_AMT] int NULL ,
+        --发票号起始号
+	[USE_BAMT] int NULL ,
+        --发票号结束号
+	[USE_EAMT] int NULL ,
+        --开票金额
+	[USE_MNY] [decimal](18, 3) NULL ,
+	
+--作废类台账		
+        --作废数量
+	[CNC_AMT] int NULL ,
+        --发票号起始号
+	[CNC_BAMT] int NULL ,
+        --发票号结束号
+	[CNC_EAMT] int NULL ,
+	
+--结存类台账		
+        --结存数量
+	[BAL_AMT] int NULL ,
+        --发票号起始号
+	[BAL_BAMT] int NULL ,
+        --发票号结束号
+	[BAL_EAMT] int NULL ,
+	
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_INVOICE_MONTH_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_INVOICE_MONTH] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[MONTH],[INVH_NO]
+	) 
+);
+CREATE INDEX IX_RCK_INVOICE_MONTH_TENANT_ID ON RCK_INVOICE_MONTH(TENANT_ID);
+CREATE INDEX IX_RCK_INVOICE_MONTH_TIME_STAMP ON RCK_INVOICE_MONTH(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_RCK_INVOICE_MONTH_MONTH ON RCK_INVOICE_MONTH(TENANT_ID,MONTH);
+
+
+--账户月台账
+CREATE TABLE [RCK_ACCT_MONTH] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --月份
+	[MONTH] int NOT NULL ,
+        --账户代码
+	[ACCOUNT_ID] [varchar] (36)  NOT NULL ,
+
+--期初类台账		
+        --期初金额
+	[ORG_MNY] [decimal](18, 3) NULL ,
+ 
+--收入类台账		
+        --收入金额
+	[IN_MNY] [decimal](18, 3) NULL ,
+
+--支出类台账		
+        --支出金额
+	[OUT_MNY] [decimal](18, 3) NULL ,
+	
+--结存类台账		
+        --结存数量
+	[BAL_MNY] [decimal](18, 3) NULL ,
+	
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_ACCT_MONTH_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_RCK_ACCT_MONTH] PRIMARY KEY   
+	(
+		[TENANT_ID],[SHOP_ID],[MONTH],[ACCOUNT_ID]
+	) 
+);
+
+CREATE INDEX IX_RCK_ACCT_MONTH_TENANT_ID ON RCK_ACCT_MONTH(TENANT_ID);
+CREATE INDEX IX_RCK_ACCT_MONTH_TIME_STAMP ON RCK_ACCT_MONTH(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_RCK_ACCT_MONTH_MONTH ON RCK_ACCT_MONTH(TENANT_ID,MONTH);
+CREATE INDEX IX_RCK_ACCT_MONTH_ACCOUNT_ID ON RCK_ACCT_MONTH(TENANT_ID,ACCOUNT_ID);
+
+create view VIW_GOODS_DAYS
+as
+select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,BATCH_NO,
+   CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO,
+   case when STOCK_TYPE=3 then CALC_AMOUNT else 0 end as STKRT_AMT,
+   case when STOCK_TYPE=3 then NOTAX_MONEY else 0 end as STKRT_MNY,
+   case when STOCK_TYPE=3 then TAX_MONEY else 0 end as STKRT_TAX,   
+   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
+   0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
+   0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   
+   0 as CHANGE3_AMT,0 as CHANGE3_RTL,0 as CHANGE3_CST,   
+   0 as CHANGE4_AMT,0 as CHANGE4_RTL,0 as CHANGE4_CST,   
+   0 as CHANGE5_AMT,0 as CHANGE5_RTL,0 as CHANGE5_CST   
+from VIW_STOCKDATA
+union all
+select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,BATCH_NO,
+   0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
+   CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,CALC_MONEY+AGIO_MONEY as SALE_RTL,AGIO_MONEY as SALE_AGO,
+   COST_MONEY as SALE_CST,
+   PRF_MONEY as SALE_PRF,
+   case when SALES_TYPE=3 then CALC_AMOUNT else 0 end as SALRT_AMT,
+   case when SALES_TYPE=3 then NOTAX_MONEY else 0 end as SALRT_MNY,
+   case when SALES_TYPE=3 then TAX_MONEY else 0 end as SALRT_TAX,
+   case when SALES_TYPE=3 then COST_MONEY else 0 end as SALRT_CST,
+   0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
+   0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
+   0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   
+   0 as CHANGE3_AMT,0 as CHANGE3_RTL,0 as CHANGE3_CST,   
+   0 as CHANGE4_AMT,0 as CHANGE4_RTL,0 as CHANGE4_CST,   
+   0 as CHANGE5_AMT,0 as CHANGE5_RTL,0 as CHANGE5_CST   
+from VIW_SALESDATA
+union all
+select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,BATCH_NO,
+   0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
+   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   CALC_AMOUNT as DBIN_AMT,RTL_MONEY as DBIN_RTL,COST_MONEY as DBIN_CST,
+   0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
+   0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
+   0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   
+   0 as CHANGE3_AMT,0 as CHANGE3_RTL,0 as CHANGE3_CST,   
+   0 as CHANGE4_AMT,0 as CHANGE4_RTL,0 as CHANGE4_CST,   
+   0 as CHANGE5_AMT,0 as CHANGE5_RTL,0 as CHANGE5_CST   
+from VIW_MOVEINDATA
+union all
+select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,BATCH_NO,
+   0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
+   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,   
+   CALC_AMOUNT as DBOUT_AMT,CALC_MONEY+AGIO_MONEY as DBIN_RTL,
+   COST_MONEY as DBOUT_CST,
+   0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
+   0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   
+   0 as CHANGE3_AMT,0 as CHANGE3_RTL,0 as CHANGE3_CST,   
+   0 as CHANGE4_AMT,0 as CHANGE4_RTL,0 as CHANGE4_CST,   
+   0 as CHANGE5_AMT,0 as CHANGE5_RTL,0 as CHANGE5_CST   
+from VIW_MOVEOUTDATA
+union all
+select TENANT_ID,SHOP_ID,CHANGE_DATE as CREA_DATE,GODS_ID,BATCH_NO, 
+   0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
+   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
+PARM1_AMOUNT as CHANGE1_AMT,
+PARM1_RTL as CHANGE1_RTL,
+PARM1_MONEY as CHANGE1_CST,
+PARM2_AMOUNT as CHANGE2_AMT,
+PARM2_RTL as CHANGE2_RTL,
+PARM2_MONEY as CHANGE2_CST,
+PARM3_AMOUNT as CHANGE3_AMT,
+PARM3_RTL as CHANGE3_RTL,
+PARM3_MONEY as CHANGE3_CST,
+PARM4_AMOUNT as CHANGE4_AMT,
+PARM4_RTL as CHANGE4_RTL,
+PARM4_MONEY as CHANGE4_CST,
+PARM5_AMOUNT as CHANGE5_AMT,
+PARM5_RTL as CHANGE5_RTL,
+PARM5_MONEY as CHANGE5_CST
+from VIW_CHANGEDATA;
+
+create view VIW_ACCT_DAYS
+as
+select 1 as FLAG,TENANT_ID,SHOP_ID,CREA_USER,ACCOUNT_ID,PAY_DATE as CREA_DATE,0 as IN_MNY,PAY_MNY as OUT_MNY from VIW_PAYDATA
+union all
+select 2 as FLAG,TENANT_ID,SHOP_ID,CREA_USER,ACCOUNT_ID,RECV_DATE as CREA_DATE,RECV_MNY as IN_MNY,0 as OUT_MNY from VIW_RECVDATA
+union all
+select 3 as FLAG,TENANT_ID,SHOP_ID,CREA_USER,ACCOUNT_ID,IORO_DATE as CREA_DATE,IN_MONEY as IN_MNY,OUT_MONEY as OUT_MNY from VIW_IORODATA
+union all
+select 4 as FLAG,TENANT_ID,SHOP_ID,CREA_USER,IN_ACCOUNT_ID as ACCOUNT_ID,TRANS_DATE as CREA_DATE,TRANS_MNY as IN_MNY,0 as OUT_MNY from ACC_TRANSORDER
+union all
+select 4 as FLAG,TENANT_ID,SHOP_ID,CREA_USER,OUT_ACCOUNT_ID as ACCOUNT_ID,TRANS_DATE as CREA_DATE,0 as IN_MNY,TRANS_MNY as OUT_MNY from ACC_TRANSORDER
+union all
+select 5 as FLAG,A.TENANT_ID,A.SHOP_ID,A.CREA_USER,B.ACCOUNT_ID,CLSE_DATE as CREA_DATE,PAY_A as IN_MNY,0 as OUT_MNY from ACC_CLOSE_FORDAY A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and B.PAYM_ID='A'
+union all
+select 6 as FLAG,A.TENANT_ID,A.SHOP_ID,A.CREA_USER,B.ACCOUNT_ID,A.CREA_DATE,PAY_A as IN_MNY,0 as OUT_MNY from SAL_IC_GLIDE A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and B.PAYM_ID='A';

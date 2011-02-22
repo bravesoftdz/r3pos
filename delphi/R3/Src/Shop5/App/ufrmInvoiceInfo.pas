@@ -49,17 +49,17 @@ type
     procedure Btn_SaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure edtBEGIN_NOFocusChanged(Sender: TObject);
-    procedure edtENDED_NOFocusChanged(Sender: TObject);
-    procedure edtUSING_AMTFocusChanged(Sender: TObject);
-    procedure edtCANCEL_AMTFocusChanged(Sender: TObject);
+    procedure edtBEGIN_NOPropertiesChange(Sender: TObject);
+    procedure edtENDED_NOPropertiesChange(Sender: TObject);
+    procedure edtCANCEL_AMTPropertiesChange(Sender: TObject);
+    procedure edtUSING_AMTPropertiesChange(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     Aobj:TRecord_;
     Saved:Boolean;
-    procedure SetText(Type_i:Integer);
+    procedure Calc;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -355,63 +355,38 @@ begin
     end;
 end;
 
-
-procedure TfrmInvoiceInfo.edtBEGIN_NOFocusChanged(Sender: TObject);
+procedure TfrmInvoiceInfo.Calc;
 begin
-  inherited;
-  try
-    if Trim(edtBEGIN_NO.Text) = '' then Exit;
-    StrToInt64(Trim(edtBEGIN_NO.Text));
-  except
-    edtBEGIN_NO.Text := '0';
-    edtBEGIN_NO.SetFocus;
-  end;
+  edtTOTAL_AMT.Text := IntToStr(StrToInt64Def(Trim(edtENDED_NO.Text),0)-StrToInt64Def(Trim(edtBEGIN_NO.Text),0)+1);
+  edtBALANCE.Text := IntToStr(StrToIntDef(Trim(edtTOTAL_AMT.Text),0)-StrToIntDef(Trim(edtUSING_AMT.Text),0)-StrToIntDef(Trim(edtCANCEL_AMT.Text),0));
 end;
 
-procedure TfrmInvoiceInfo.edtENDED_NOFocusChanged(Sender: TObject);
+procedure TfrmInvoiceInfo.edtBEGIN_NOPropertiesChange(Sender: TObject);
 begin
   inherited;
-  try
-    if Trim(edtENDED_NO.Text) = '' then Exit;
-    StrToInt64(Trim(edtENDED_NO.Text));
-    SetText(1);
-  except
-    edtENDED_NO.Text := '0';
-    edtENDED_NO.SetFocus;
-  end;
+  StrToInt64Def(Trim(edtBEGIN_NO.Text),0);
 end;
 
-procedure TfrmInvoiceInfo.edtUSING_AMTFocusChanged(Sender: TObject);
+procedure TfrmInvoiceInfo.edtENDED_NOPropertiesChange(Sender: TObject);
 begin
   inherited;
-  Try
-    if Trim(edtUSING_AMT.Text) = '' then Exit;
-    StrToInt64(Trim(edtUSING_AMT.Text));
-  except
-    edtUSING_AMT.Text := '0';
-    edtUSING_AMT.SetFocus;
-  end;
+  StrToInt64Def(Trim(edtENDED_NO.Text),0);
+  if StrToInt64Def(Trim(edtENDED_NO.Text),0) > StrToInt64Def(Trim(edtBEGIN_NO.Text),0) then
+    Calc;
 end;
 
-procedure TfrmInvoiceInfo.edtCANCEL_AMTFocusChanged(Sender: TObject);
+procedure TfrmInvoiceInfo.edtCANCEL_AMTPropertiesChange(Sender: TObject);
 begin
   inherited;
-  try
-    if Trim(edtCANCEL_AMT.Text) = '' then Exit;
-    StrToInt64(Trim(edtCANCEL_AMT.Text));
-    SetText(2);
-  except
-    edtCANCEL_AMT.Text := '0';
-    edtCANCEL_AMT.SetFocus;
-  end;
+  StrToIntDef(Trim(edtCANCEL_AMT.Text),0);
+  if StrToIntDef(Trim(edtUSING_AMT.Text),0) > StrToIntDef(Trim(edtCANCEL_AMT.Text),0) then
+    Calc;
 end;
 
-procedure TfrmInvoiceInfo.SetText(Type_i: Integer);
+procedure TfrmInvoiceInfo.edtUSING_AMTPropertiesChange(Sender: TObject);
 begin
-  case Type_i of
-    1:edtTOTAL_AMT.Text := IntToStr(StrToInt64(Trim(edtENDED_NO.Text))-StrToInt64(Trim(edtBEGIN_NO.Text))+1);
-    2:edtBALANCE.Text := IntToStr(StrToInt64(Trim(edtTOTAL_AMT.Text))-StrToInt64(Trim(edtUSING_AMT.Text))-StrToInt64(Trim(edtCANCEL_AMT.Text)));
-  end;
+  inherited;
+  StrToIntDef(Trim(edtUSING_AMT.Text),0);
 end;
 
 end.

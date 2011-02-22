@@ -26,6 +26,9 @@ begin
   Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
   ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
+  Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,''USING_DATE'','''+formatDatetime('YYYY-MM-DD',Date())+''',0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,self);
   Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,SEQ_NO,LINKMAN,'+
   'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values(cast(:TENANT_ID *10000+1 as varchar(11)),:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
   '''1'',:TENANT_ID,:REGION_ID,1,:LINKMAN,:TELEPHONE,:ADDRESS,:POSTALCODE,:FAXES,''00'','+GetTimeStamp(AGlobal.iDbType)+')';

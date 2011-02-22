@@ -188,8 +188,8 @@ procedure TfrmClientInfo.Save;
     else
        Tmp.Edit;
     AObj.WriteToDataSet(Tmp,false);
-    Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
-    Temp.FieldByName('TAX_RATE').AsString := '0';
+    Tmp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
+    Tmp.FieldByName('TAX_RATE').AsString := '0';
     Tmp.Post;
    end;
 var tmp:TZQuery;

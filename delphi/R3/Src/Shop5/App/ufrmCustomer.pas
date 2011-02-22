@@ -150,16 +150,13 @@ end;
 
 procedure TfrmCustomer.actDeleteExecute(Sender: TObject);
   procedure UpdateToGlobal(Str:string);
-  var Tmp:TZQuery;
-  begin
-    Tmp := Global.GetZQueryFromName('BAS_Customer');
-    Tmp.Filtered := false;
-    if Tmp.Locate('CUST_ID',Str,[]) then
-    begin
-      Tmp.Delete;
-      //Tmp.UpdateBatch(arAll);
-    end;
-  end;
+   var Temp:TZQuery;
+   begin
+      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
+      Temp.Filtered := false;
+      if not Temp.Locate('CLIENT_ID',AObj.FieldByName('CUST_ID').AsString,[]) then
+        Temp.Delete;
+   end;
 var i,n:integer;
     tmpGlobal:TZQuery;
 begin

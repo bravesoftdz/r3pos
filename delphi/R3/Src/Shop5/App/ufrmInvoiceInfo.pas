@@ -58,7 +58,7 @@ type
   public
     { Public declarations }
     Aobj:TRecord_;
-    Saved:Boolean;
+    Saved,Chang_State:Boolean;
     procedure Calc;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
@@ -120,6 +120,7 @@ var
 begin
   Params := TftParamList.Create(nil);
   try
+    Chang_State := True;
     Params.ParamByName('INVH_ID').asString := code;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsTable.Close;
@@ -131,6 +132,7 @@ begin
     edtCREA_USER.KeyValue := Aobj.FieldbyName('CREA_USER').AsString;
     edtCREA_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',Aobj.FieldbyName('CREA_USER').AsString);
     dbState := dsBrowse;
+    Chang_State := False;
   finally
   Params.Free;
   end;
@@ -183,6 +185,10 @@ begin
     if edtENDED_NO.CanFocus then edtENDED_NO.SetFocus;
     raise Exception.Create('请输入发票终止号！');
   end;
+  if StrToInt64Def(edtTOTAL_AMT.Text,0) < 0 then
+    Raise Exception.Create('"合计张数"数据不合理,请确定输入是否正确！');
+  if StrToInt64Def(edtBALANCE.Text,0) < 0 then
+    Raise Exception.Create('"结余张数"数据不合理,请确定输入是否正确！');
 
   //此检测，现已经不能只对前台检测，要OBJ中对整个数据库检测
 
@@ -364,29 +370,33 @@ end;
 procedure TfrmInvoiceInfo.edtBEGIN_NOPropertiesChange(Sender: TObject);
 begin
   inherited;
+  if Chang_State then Exit;
   StrToInt64Def(Trim(edtBEGIN_NO.Text),0);
+  Calc;
 end;
 
 procedure TfrmInvoiceInfo.edtENDED_NOPropertiesChange(Sender: TObject);
 begin
   inherited;
+  if Chang_State then Exit;
   StrToInt64Def(Trim(edtENDED_NO.Text),0);
-  if StrToInt64Def(Trim(edtENDED_NO.Text),0) > StrToInt64Def(Trim(edtBEGIN_NO.Text),0) then
-    Calc;
+  Calc;
 end;
 
 procedure TfrmInvoiceInfo.edtCANCEL_AMTPropertiesChange(Sender: TObject);
 begin
   inherited;
+  if Chang_State then Exit;
   StrToIntDef(Trim(edtCANCEL_AMT.Text),0);
-  if StrToIntDef(Trim(edtUSING_AMT.Text),0) > StrToIntDef(Trim(edtCANCEL_AMT.Text),0) then
-    Calc;
+  Calc;
 end;
 
 procedure TfrmInvoiceInfo.edtUSING_AMTPropertiesChange(Sender: TObject);
 begin
   inherited;
+  if Chang_State then Exit;
   StrToIntDef(Trim(edtUSING_AMT.Text),0);
+  Calc;
 end;
 
 end.

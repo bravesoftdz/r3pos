@@ -260,6 +260,8 @@ type
     procedure CancelOrder;
     procedure Open(id:string);
 
+    function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
+    
     procedure AmountToCalc(Amount:Real);
     procedure PriceToCalc(APrice:Real);
     procedure AMoneyToCalc(AMoney:Real);
@@ -874,7 +876,7 @@ begin
     if not (cdsTable.State in [dsEdit,dsInsert]) then cdsTable.Edit;
     cdsTable.FieldByName('APRICE').AsFloat := rs.FieldbyName('V_APRICE').AsFloat;
     cdsTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('V_ORG_PRICE').AsFloat;
-    cdsTable.FieldbyName('COST_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;
+    cdsTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(Global.SHOP_ID,GODS_ID,cdsTable.FieldbyName('BATCH_NO').AsString);
     cdsTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     cdsTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品
@@ -1533,8 +1535,18 @@ begin
   inherited;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CLIENT_ID,CLIENT_NAME,INTEGRAL,BALANCE,PRICE_ID from VIW_CUSTOMER where IC_CARDNO='''+id+''' or CLIENT_CODE='''+id+''' or MOVE_TELE='''+id+''' and LICENSE_CODE='''+id+'''';
+    rs.SQL.Text :=
+      'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+      'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'')';
     Factor.Open(rs);
+    if rs.IsEmpty then
+       begin
+        rs.Close;
+        rs.SQL.Text :=
+          'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID from VIW_CUSTOMER A left outer jion PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+          'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.MOVE_TELE='''+id+''' and A.LICENSE_CODE='''+id+'''';
+        Factor.Open(rs);
+       end;
     if rs.RecordCount<>1  then
        begin
          PostMessage(Handle,WM_DIALOG_PULL,FIND_CUSTOMER_DIALOG,1);
@@ -1546,7 +1558,7 @@ begin
          AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.Fields[1].AsString;
          AObj.FieldbyName('PRICE_ID').AsString := rs.Fields[4].AsString;
          AObj.FieldbyName('BALANCE').AsFloat := rs.Fields[3].AsFloat;
-         AObj.FieldbyName('ACC_INTEGRAL').AsFloat := rs.Fields[2].AsFloat;
+         AObj.FieldbyName('ACCU_INTEGRAL').AsFloat := rs.Fields[2].AsFloat;
          CalcPrice;
          ShowHeader;
        end;
@@ -2492,7 +2504,7 @@ begin
    'A.PAY_E,A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
    'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,B.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='''+tenantid+''' and A.SALES_ID='''+id+''' ) jb '+
-   'left outer join VIW_CUSTOMER b on jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+   'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INVOICE_FLAG'') e on je.INVOICE_FLAG=e.CODE_ID ) jf '+
@@ -2940,8 +2952,11 @@ begin
     cdsTable.First;
     while not cdsTable.Eof do
       begin
-        InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString,true);
-        PriceToCalc(cdsTable.FieldbyName('APrice').asFloat);
+        if (cdsTable.FieldbyName('BOM_ID').AsString = '') and (cdsTable.FieldByName('POLICY_TYPE').AsInteger<>4) then
+        begin
+          InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString,true);
+          PriceToCalc(cdsTable.FieldbyName('APrice').asFloat);
+        end;
         cdsTable.Next;
       end;
   finally
@@ -3026,6 +3041,37 @@ begin
     cdsTable.Edit;
     cdsTable.FieldByName('AMOUNT').AsFloat := - cdsTable.FieldByName('AMOUNT').AsFloat;
     AMountToCalc(cdsTable.FieldByName('AMOUNT').AsFloat);
+  end;
+end;
+
+function TfrmPosMain.GetCostPrice(SHOP_ID, GODS_ID,
+  BATCH_NO: string): real;
+var
+  rs:TZQuery;
+  bs:TZQuery;
+begin
+  rs:=TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select AMONEY,AMOUNT from ('+
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+    rs.ParamByName('GODS_ID').AsString := GODS_ID;
+    rs.ParamByName('BATCH_NO').AsString := BATCH_NO;
+    Factor.Open(rs);
+    if rs.IsEmpty then
+       begin
+         bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+         if bs.Locate('GODS_ID',GODS_ID,[]) then
+            result := bs.FieldbyName('NEW_INPRICE').AsFloat
+         else
+            Raise Exception.Create('没找到经营商品');
+       end
+    else
+       result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
+  finally
+    rs.Free;
   end;
 end;
 

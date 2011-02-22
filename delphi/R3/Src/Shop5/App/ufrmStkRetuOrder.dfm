@@ -76,14 +76,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Height = 12
         Caption = #36827#39033#31246#29575
       end
-      object Label15: TLabel [9]
-        Left = 677
-        Top = 51
-        Width = 6
-        Height = 12
-        Caption = '%'
-      end
-      object Label4: TLabel [10]
+      object Label4: TLabel [9]
         Left = 563
         Top = 72
         Width = 48

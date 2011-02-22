@@ -1,4 +1,4 @@
-unit ufrmStockOrder;
+unit ufrmStkIndentOrder;
 
 interface
 
@@ -11,13 +11,13 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
-  TfrmStockOrder = class(TframeOrderForm)
+  TfrmStkIndentOrder = class(TframeOrderForm)
     lblSTOCK_DATE: TLabel;
     lblCLIENT_ID: TLabel;
     Label1: TLabel;
     Label2: TLabel;
     Label5: TLabel;
-    edtSTOCK_DATE: TcxDateEdit;
+    edtINDE_DATE: TcxDateEdit;
     edtREMARK: TcxTextEdit;
     edtGUIDE_USER: TzrComboBoxList;
     edtINVOICE_FLAG: TcxComboBox;
@@ -29,19 +29,14 @@ type
     edtSHOP_ID: TzrComboBoxList;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    Label12: TLabel;
     Label13: TLabel;
     edtADVA_MNY: TcxTextEdit;
     Label14: TLabel;
-    edtFROM_ID: TcxButtonEdit;
-    Label19: TLabel;
-    Label7: TLabel;
+    Label15: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     Label10: TLabel;
     Label6: TLabel;
-    edtRECV_MNY: TcxTextEdit;
-    edtRECK_MNY: TcxTextEdit;
     edtCHK_DATE: TcxTextEdit;
     edtCHK_USER_TEXT: TcxTextEdit;
     fndRECK_MNY: TcxTextEdit;
@@ -109,7 +104,7 @@ uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsIn
   ;
 {$R *.dfm}
 
-procedure TfrmStockOrder.CancelOrder;
+procedure TfrmStkIndentOrder.CancelOrder;
 begin
   inherited;
   if dbState = dsInsert then
@@ -118,7 +113,7 @@ begin
      Open(oid);
 end;
 
-procedure TfrmStockOrder.DeleteOrder;
+procedure TfrmStkIndentOrder.DeleteOrder;
 begin
   inherited;
   Saved := false;
@@ -131,8 +126,8 @@ begin
   while not cdsDetail.Eof do cdsDetail.Delete;
   Factor.BeginBatch;
   try
-    Factor.AddBatch(cdsHeader,'TStockOrder');
-    Factor.AddBatch(cdsDetail,'TStockData');
+    Factor.AddBatch(cdsHeader,'TStkIndentOrder');
+    Factor.AddBatch(cdsDetail,'TStkIndentData');
     Factor.CommitBatch;
     Saved := true;
   except
@@ -143,7 +138,7 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.EditOrder;
+procedure TfrmStkIndentOrder.EditOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
@@ -153,7 +148,7 @@ begin
   if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
 end;
 
-procedure TfrmStockOrder.FormCreate(Sender: TObject);
+procedure TfrmStkIndentOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   CanAppend := true;
@@ -167,7 +162,7 @@ begin
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
 end;
 
-procedure TfrmStockOrder.InitPrice(GODS_ID, UNIT_ID: string);
+procedure TfrmStkIndentOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs:TZQuery;
   str,InLevel:string;
@@ -194,7 +189,7 @@ begin
   ShowInfo;
 end;
 
-procedure TfrmStockOrder.NewOrder;
+procedure TfrmStkIndentOrder.NewOrder;
 begin
   inherited;
   Open('');
@@ -202,10 +197,10 @@ begin
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
   cid := edtSHOP_ID.KeyValue;
-  AObj.FieldbyName('STOCK_ID').asString := TSequence.NewId();
-  oid := AObj.FieldbyName('STOCK_ID').asString;
+  AObj.FieldbyName('INDE_ID').asString := TSequence.NewId();
+  oid := AObj.FieldbyName('INDE_ID').asString;
   gid := '..新增..';
-  edtSTOCK_DATE.Date := Global.SysDate;
+  edtINDE_DATE.Date := Global.SysDate;
   edtGUIDE_USER.KeyValue := Global.UserID;
   edtGUIDE_USER.Text := Global.UserName;
   edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
@@ -215,7 +210,7 @@ begin
   TabSheet.Caption := '..新建..';
 end;
 
-procedure TfrmStockOrder.Open(id: string);
+procedure TfrmStkIndentOrder.Open(id: string);
 var
   Params:TftParamList;
 begin
@@ -224,11 +219,11 @@ begin
   try
     Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').AsString := cid;
-    Params.ParamByName('STOCK_ID').asString := id;
+    Params.ParamByName('INDE_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TStockOrder',Params);
-      Factor.AddBatch(cdsDetail,'TStockData',Params);
+      Factor.AddBatch(cdsHeader,'TStkIndentOrder',Params);
+      Factor.AddBatch(cdsDetail,'TStkIndentData',Params);
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
@@ -240,7 +235,7 @@ begin
 
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
-    oid := AObj.FieldbyName('STOCK_ID').asString;
+    oid := AObj.FieldbyName('INDE_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     dbState := dsBrowse;
@@ -250,12 +245,12 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.SaveOrder;
+procedure TfrmStkIndentOrder.SaveOrder;
 var mny,amt:real;
 begin
   inherited;
   Saved := false;
-  if edtSTOCK_DATE.EditValue = null then Raise Exception.Create('入库日期不能为空');
+  if edtINDE_DATE.EditValue = null then Raise Exception.Create('订货日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtINVOICE_FLAG.ItemIndex = -1 then Raise Exception.Create('票据类型不能为空');
   ClearInvaid;
@@ -265,7 +260,6 @@ begin
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cid := edtSHOP_ID.asString;
-  AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   Calc;
@@ -283,19 +277,18 @@ begin
          cdsDetail.Edit;
          cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-         cdsDetail.FieldByName('STOCK_ID').AsString := cdsHeader.FieldbyName('STOCK_ID').AsString;
-         cdsDetail.FieldByName('TAX_RATE').AsFloat := cdsHeader.FieldbyName('TAX_RATE').AsFloat;
+         cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
          mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
          amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
     cdsHeader.Edit;
-    cdsHeader.FieldbyName('STOCK_MNY').asFloat := mny;
-    cdsHeader.FieldbyName('STOCK_AMT').asFloat := amt;
+    cdsHeader.FieldbyName('INDE_MNY').asFloat := mny;
+    cdsHeader.FieldbyName('INDE_AMT').asFloat := amt;
     cdsHeader.Post;
-    Factor.AddBatch(cdsHeader,'TStockOrder');
-    Factor.AddBatch(cdsDetail,'TStockData');
+    Factor.AddBatch(cdsHeader,'TStkIndentOrder');
+    Factor.AddBatch(cdsDetail,'TStkIndentData');
     Factor.CommitBatch;
     Saved := true;
   except
@@ -308,7 +301,7 @@ begin
   dbState := dsBrowse;
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
+procedure TfrmStkIndentOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -342,7 +335,7 @@ begin
      end;
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
+procedure TfrmStkIndentOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:integer;
 begin
@@ -362,7 +355,7 @@ begin
   PresentToCalc(r);
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
+procedure TfrmStkIndentOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
@@ -381,7 +374,7 @@ begin
   AMoneyToCalc(r);
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+procedure TfrmStkIndentOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
@@ -400,7 +393,7 @@ begin
   PriceToCalc(r);
 end;
 
-procedure TfrmStockOrder.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
+procedure TfrmStkIndentOrder.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
   if Locked then Exit;
@@ -415,7 +408,7 @@ begin
   Calc;
 end;
 
-procedure TfrmStockOrder.edtCLIENT_IDSaveValue(Sender: TObject);
+procedure TfrmStkIndentOrder.edtCLIENT_IDSaveValue(Sender: TObject);
 var
   rs:TZQuery;
 begin
@@ -443,7 +436,7 @@ begin
   ShowOweInfo;
 end;
 
-function TfrmStockOrder.Calc:real;
+function TfrmStkIndentOrder.Calc:real;
 var
   r:integer;
   TotalFee:real;
@@ -467,27 +460,23 @@ begin
   end;
 //  edtCALC_MONEY.Text := formatFloat('#0.00',TotalFee);
   edtTAX_MONEY.Text := formatFloat('#0.00',(TotalFee/(1+AObj.FieldbyName('TAX_RATE').AsFloat))*AObj.FieldbyName('TAX_RATE').AsFloat);
-  if dbState <> dsBrowse then
-     begin
-       edtRECK_MNY.Text := formatFloat('#0.0##',TotalFee-StrtoFloatDef(edtRECV_MNY.Text,0));
-     end;
 end;
 
-procedure TfrmStockOrder.edtTableAfterPost(DataSet: TDataSet);
+procedure TfrmStkIndentOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
   Calc;
 
 end;
 
-procedure TfrmStockOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
+procedure TfrmStkIndentOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
   var Handled: Boolean);
 begin
   inherited;
   PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,1);
 end;
 
-procedure TfrmStockOrder.AuditOrder;
+procedure TfrmStkIndentOrder.AuditOrder;
 var
   Msg :string;
   Params:TftParamList;
@@ -498,25 +487,25 @@ begin
   if IsAudit then
      begin
        if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
-       if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前进货单执行弃审');
-       if MessageBox(Handle,'确认弃审当前进货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前订货单执行弃审');
+       if MessageBox(Handle,'确认弃审当前订货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
   else
      begin
        if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
-       if MessageBox(Handle,'确认审核当前进货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if MessageBox(Handle,'确认审核当前订货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
     Params := TftParamList.Create(nil);
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      Params.ParamByName('STOCK_ID').asString := cdsHeader.FieldbyName('STOCK_ID').AsString;
+      Params.ParamByName('INDE_ID').asString := cdsHeader.FieldbyName('INDE_ID').AsString;
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
       Params.ParamByName('CHK_USER').asString := Global.UserID;
       if not IsAudit then
-         Msg := Factor.ExecProc('TStockOrderAudit',Params)
+         Msg := Factor.ExecProc('TStkIndentOrderAudit',Params)
       else
-         Msg := Factor.ExecProc('TStockOrderUnAudit',Params) ;
+         Msg := Factor.ExecProc('TStkIndentOrderUnAudit',Params) ;
     finally
        Params.free;
     end;
@@ -549,14 +538,14 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
+procedure TfrmStkIndentOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 
 end;
 
-procedure TfrmStockOrder.PrintBarcode;
+procedure TfrmStkIndentOrder.PrintBarcode;
 {
 procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
 function PubGetBarCode:string;
@@ -642,14 +631,14 @@ begin
   }
 end;
 
-procedure TfrmStockOrder.actPrintBarcodeExecute(Sender: TObject);
+procedure TfrmStkIndentOrder.actPrintBarcodeExecute(Sender: TObject);
 begin
   inherited;
   if IsNull then Raise Exception.Create('请输入商品后，再打印条码'); 
   PrintBarcode;
 end;
 
-procedure TfrmStockOrder.fndGODS_IDSaveValue(Sender: TObject);
+procedure TfrmStkIndentOrder.fndGODS_IDSaveValue(Sender: TObject);
 begin
   if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('200036') then
      begin
@@ -661,7 +650,7 @@ begin
   inherited;
 end;
 
-procedure TfrmStockOrder.fndGODS_IDAddClick(Sender: TObject);
+procedure TfrmStkIndentOrder.fndGODS_IDAddClick(Sender: TObject);
 var r:TRecord_;
 begin
 
@@ -690,7 +679,7 @@ begin
   
 end;
 
-procedure TfrmStockOrder.edtCLIENT_IDAddClick(Sender: TObject);
+procedure TfrmStkIndentOrder.edtCLIENT_IDAddClick(Sender: TObject);
 var r:TRecord_;
 begin
   inherited;
@@ -708,7 +697,7 @@ begin
 
 end;
 
-procedure TfrmStockOrder.edtGUIDE_USERAddClick(Sender: TObject);
+procedure TfrmStkIndentOrder.edtGUIDE_USERAddClick(Sender: TObject);
 var
   r:TRecord_;
 begin
@@ -727,18 +716,18 @@ begin
   
 end;
 
-procedure TfrmStockOrder.ReadHeader;
+procedure TfrmStkIndentOrder.ReadHeader;
 begin
 end;
 
-procedure TfrmStockOrder.ShowOweInfo;
+procedure TfrmStkIndentOrder.ShowOweInfo;
 var
   rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select sum(RECK_MNY),sum(case when STOCK_ID='''+oid+''' then RECK_MNY else 0 end),sum(case when STOCK_ID='''+oid+''' then PAYM_MNY else 0 end) from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+    rs.SQL.Text := 'select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
     Factor.Open(rs);
@@ -746,20 +735,12 @@ begin
        fndRECK_MNY.Text := formatFloat('#0.00',rs.Fields[0].AsFloat)
     else
        fndRECK_MNY.Text := formatFloat('#0.00',0);
-    if rs.Fields[1].asString<>'' then
-       edtRECK_MNY.Text := formatFloat('#0.0##',rs.Fields[1].AsFloat)
-    else
-       edtRECK_MNY.Text := formatFloat('#0.0##',0);
-    if rs.Fields[2].asString<>'' then
-       edtRECV_MNY.Text := formatFloat('#0.0##',rs.Fields[2].AsFloat)
-    else
-       edtRECV_MNY.Text := formatFloat('#0.0##',0);
   finally
     rs.Free;
   end;
 end;
 
-procedure TfrmStockOrder.ShowInfo;
+procedure TfrmStkIndentOrder.ShowInfo;
 var
   rs,bs:TZQuery;
 begin
@@ -793,34 +774,34 @@ begin
   end;
 end;
 
-procedure TfrmStockOrder.edtSHOP_IDSaveValue(Sender: TObject);
+procedure TfrmStkIndentOrder.edtSHOP_IDSaveValue(Sender: TObject);
 begin
   inherited;
   ShowInfo;
 end;
 
-procedure TfrmStockOrder.PresentToCalc(Present: integer);
-begin
-  inherited;
-  ShowInfo;
-
-end;
-
-procedure TfrmStockOrder.UnitToCalc(UNIT_ID: string);
+procedure TfrmStkIndentOrder.PresentToCalc(Present: integer);
 begin
   inherited;
   ShowInfo;
 
 end;
 
-procedure TfrmStockOrder.edtTableAfterScroll(DataSet: TDataSet);
+procedure TfrmStkIndentOrder.UnitToCalc(UNIT_ID: string);
+begin
+  inherited;
+  ShowInfo;
+
+end;
+
+procedure TfrmStkIndentOrder.edtTableAfterScroll(DataSet: TDataSet);
 begin
   inherited;
   if not edtTable.ControlsDisabled then ShowInfo;
 
 end;
 
-procedure TfrmStockOrder.DBGridEh1CellClick(Column: TColumnEh);
+procedure TfrmStkIndentOrder.DBGridEh1CellClick(Column: TColumnEh);
 //var  AdoGradePrice:TADODataSet;
 //     str:string;
 //     Rect:TRect;
@@ -836,7 +817,7 @@ begin
     try
       AdoGradePrice.Close;
       str:='select top 1 APRICE from STK_STOCKORDER A,STK_STOCKDATA B '+
-      ' where A.STOCK_ID=B.STOCK_ID and A.STOCK_TYPE=''1'' '+
+      ' where A.INDE_ID=B.INDE_ID and A.STOCK_TYPE=''1'' '+
       ' AND B.GODS_ID='+QuotedStr(edtTable.FieldByName('GODS_ID').AsString)+
       ' AND A.COMP_ID='+QuotedStr(Global.CompanyID)+
       ' AND B.UNIT_ID='+QuotedStr(edtTable.FieldByName('UNIT_ID').AsString);
@@ -884,24 +865,24 @@ begin
 }
 end;
 
-procedure TfrmStockOrder.AmountToCalc(Amount: Real);
+procedure TfrmStkIndentOrder.AmountToCalc(Amount: Real);
 begin
   inherited;
   edtTable.Edit;
   edtTable.FieldbyName('RTL_MONEY').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat*edtTable.FieldbyName('ORG_PRICE').AsFloat;
 end;
 
-procedure TfrmStockOrder.AgioToCalc(Agio: Real);
+procedure TfrmStkIndentOrder.AgioToCalc(Agio: Real);
 begin
   inherited;
 end;
 
-procedure TfrmStockOrder.AMoneyToCalc(AMoney: Real);
+procedure TfrmStkIndentOrder.AMoneyToCalc(AMoney: Real);
 begin
   inherited;
 end;
 
-procedure TfrmStockOrder.PriceToCalc(APrice: Real);
+procedure TfrmStkIndentOrder.PriceToCalc(APrice: Real);
 begin
   inherited;
 end;

@@ -33,7 +33,6 @@ type
     Label13: TLabel;
     edtADVA_MNY: TcxTextEdit;
     Label14: TLabel;
-    Label15: TLabel;
     edtFROM_ID: TcxButtonEdit;
     Label19: TLabel;
     Label7: TLabel;
@@ -284,6 +283,7 @@ begin
          cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
          cdsDetail.FieldByName('STOCK_ID').AsString := cdsHeader.FieldbyName('STOCK_ID').AsString;
+         cdsDetail.FieldByName('TAX_RATE').AsFloat := cdsHeader.FieldbyName('TAX_RATE').AsFloat;
          mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
          amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
          cdsDetail.Post;

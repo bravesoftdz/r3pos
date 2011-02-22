@@ -507,45 +507,52 @@ begin
       if rs.FieldByName('CODE_ID').AsString = 'A' then
          begin
            lblPAY_A.Caption := rs.FieldbyName('CODE_NAME').AsString;
-           if length(lblPAY_A.Caption)=4 tehn lblPAY_A.Caption := lblPAY_A.Caption + '支付';
+           if length(lblPAY_A.Caption)=4 then lblPAY_A.Caption := lblPAY_A.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'B' then
          begin
            lblPAY_B.Caption := rs.FieldbyName('CODE_NAME').AsString;
-           if length(lblPAY_B.Caption)=4 tehn lblPAY_B.Caption := lblPAY_B.Caption + '支付';
+           if length(lblPAY_B.Caption)=4 then lblPAY_B.Caption := lblPAY_B.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'C' then
          begin
            lblPAY_C.Caption := rs.FieldbyName('CODE_NAME').AsString;
-           if length(lblPAY_A.Caption)=4 tehn lblPAY_A.Caption := lblPAY_A.Caption + '支付';
+           if length(lblPAY_C.Caption)=4 then lblPAY_C.Caption := lblPAY_C.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'D' then
          begin
            lblPAY_D.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_D.Caption)=4 then lblPAY_D.Caption := lblPAY_D.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'E' then
          begin
            lblPAY_E.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_E.Caption)=4 then lblPAY_E.Caption := lblPAY_E.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'F' then
          begin
            lblPAY_F.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_F.Caption)=4 then lblPAY_F.Caption := lblPAY_F.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'G' then
          begin
            lblPAY_G.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_G.Caption)=4 then lblPAY_G.Caption := lblPAY_G.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'H' then
          begin
            lblPAY_H.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_H.Caption)=4 then lblPAY_H.Caption := lblPAY_H.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'I' then
          begin
            lblPAY_I.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_I.Caption)=4 then lblPAY_I.Caption := lblPAY_I.Caption + '支付';
          end;
       if rs.FieldByName('CODE_ID').AsString = 'J' then
          begin
            lblPAY_J.Caption := rs.FieldbyName('CODE_NAME').AsString;
+           if length(lblPAY_J.Caption)=4 then lblPAY_J.Caption := lblPAY_J.Caption + '支付';
          end;
       rs.Next;
     end;

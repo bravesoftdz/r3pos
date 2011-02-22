@@ -290,7 +290,7 @@ begin
   strSql :='select je.*,e.USER_NAME as RECV_USER_TEXT  from ('+strSql+') je '+
            'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.RECV_USER=e.USER_ID ';
   strSql :='select jf.*,f.CLIENT_NAME as CLIENT_ID_TEXT  from ('+strSql+') jf '+
-           'left outer join VIW_CUSTOMER f on jf.CLIENT_ID=f.CLIENT_ID';
+           'left outer join VIW_CUSTOMER f on jf.TENANT_ID=f.TENANT_ID and jf.CLIENT_ID=f.CLIENT_ID';
   strSql :='select jg.*,g.CODE_NAME as PAYM_ID_TEXT  from ('+strSql+') jg '+
            'left outer join VIW_PAYMENT g on jg.TENANT_ID=g.TENANT_ID and jg.PAYM_ID=g.CODE_ID';
   strSql :='select jh.*,h.USER_NAME as CHK_USER_TEXT  from ('+strSql+') jh '+
@@ -397,7 +397,7 @@ begin
   'select A.TENANT_ID,A.SHOP_ID,A.RECV_ID,A.SEQNO,A.RECV_MNY,'+
   'b.ACCT_INFO,c.CLIENT_ID,b.ABLE_DATE,C.ITEM_ID,C.ACCOUNT_ID,C.GLIDE_NO,C.RECV_USER,B.RECK_MNY,B.RECV_MNY as ABLE_RECV_MNY,B.ACCT_MNY,C.RECV_MNY as TOTAL_RECV_MNY,C.REMARK,C.RECV_DATE,B.RECV_TYPE,C.CHK_USER '+
   'from ACC_RECVDATA A,ACC_RECVABLE_INFO B,ACC_RECVORDER C where A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=C.TENANT_ID and A.ABLE_ID=B.ABLE_ID and A.RECV_ID=C.RECV_ID and A.TENANT_ID='+tenantid+' and A.RECV_ID='''+id+''' ) jd '+
-  'left outer join VIW_CUSTOMER d on jd.CLIENT_ID=d.CLIENT_ID ) je '+
+  'left outer join VIW_CUSTOMER d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
   'left outer join VIW_ITEM_INFO e on je.TENANT_ID=e.TENANT_ID and je.ITEM_ID=e.CODE_ID ) jf '+
   'left outer join VIW_ACCOUNT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.ACCOUNT_ID=f.ACCOUNT_ID ) jg '+
   'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+

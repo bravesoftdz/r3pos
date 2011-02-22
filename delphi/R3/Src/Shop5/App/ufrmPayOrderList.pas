@@ -288,7 +288,7 @@ begin
   strSql :='select je.*,e.USER_NAME as PAY_USER_TEXT  from ('+strSql+') je '+
            'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.PAY_USER=e.USER_ID ';
   strSql :='select jf.*,f.CLIENT_NAME as CLIENT_ID_TEXT  from ('+strSql+') jf '+
-           'left outer join VIW_CUSTOMER f on jf.CLIENT_ID=f.CLIENT_ID';
+           'left outer join VIW_CUSTOMER f on jf.TENANT_ID=f.TENANT_ID and jf.CLIENT_ID=f.CLIENT_ID';
   strSql :='select jg.*,g.CODE_NAME as PAYM_ID_TEXT  from ('+strSql+') jg '+
            'left outer join VIW_PAYMENT g on jg.TENANT_ID=g.TENANT_ID and jg.PAYM_ID=g.CODE_ID';
   strSql :='select jh.*,h.USER_NAME as CHK_USER_TEXT  from ('+strSql+') jh '+
@@ -394,7 +394,7 @@ begin
   'select A.TENANT_ID,A.SHOP_ID,A.PAY_ID,A.SEQNO,A.PAY_MNY,'+
   'b.ACCT_INFO,c.CLIENT_ID,b.ABLE_DATE,C.ITEM_ID,C.ACCOUNT_ID,C.GLIDE_NO,C.PAY_USER,B.RECK_MNY,B.PAYM_MNY as ABLE_PAY_MNY,B.ACCT_MNY,C.PAY_MNY as TOTAL_PAY_MNY,C.REMARK,C.PAY_DATE,B.ABLE_TYPE,C.CHK_USER '+
   'from ACC_PAYDATA A,ACC_PAYABLE_INFO B,ACC_PAYORDER C where A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=C.TENANT_ID and A.ABLE_ID=B.ABLE_ID and A.PAY_ID=C.PAY_ID and A.TENANT_ID='+tenantid+' and A.PAY_ID='''+id+''' ) jd '+
-  'left outer join VIW_CLIENTINFO d on jd.CLIENT_ID=d.CLIENT_ID ) je '+
+  'left outer join VIW_CLIENTINFO d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
   'left outer join VIW_ITEM_INFO e on je.TENANT_ID=e.TENANT_ID and je.ITEM_ID=e.CODE_ID ) jf '+
   'left outer join VIW_ACCOUNT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.ACCOUNT_ID=f.ACCOUNT_ID ) jg '+
   'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+

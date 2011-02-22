@@ -1040,7 +1040,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object h11: TLabel
       Left = 700
-      Top = 8
+      Top = 27
       Width = 72
       Height = 12
       Cursor = crHandPoint
@@ -1054,7 +1054,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object h12: TLabel
       Left = 700
-      Top = 28
+      Top = 47
       Width = 66
       Height = 12
       Cursor = crHandPoint

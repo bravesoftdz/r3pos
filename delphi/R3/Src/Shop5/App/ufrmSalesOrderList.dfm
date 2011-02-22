@@ -1,5 +1,5 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
-  Left = 151
+  Left = 152
   Top = 0
   Width = 836
   Height = 607
@@ -356,7 +356,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                   EditButtons = <>
                   FieldName = 'RECV_MNY'
                   Footers = <>
-                  Title.Caption = #24050#25910#37329#39069
+                  Title.Caption = #23454#25910#37329#39069
                   Width = 60
                 end
                 item

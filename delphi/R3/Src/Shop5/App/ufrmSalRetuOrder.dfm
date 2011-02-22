@@ -108,28 +108,21 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Alignment = taRightJustify
         Caption = #38144#39033#31246#29575
       end
-      object Label20: TLabel [12]
-        Left = 673
-        Top = 93
-        Width = 6
-        Height = 12
-        Caption = '%'
-      end
-      object Label21: TLabel [13]
+      object Label21: TLabel [12]
         Left = 195
         Top = 51
         Width = 48
         Height = 12
         Caption = #35746#36135#21333#21495
       end
-      object Label22: TLabel [14]
+      object Label22: TLabel [13]
         Left = 403
         Top = 51
         Width = 36
         Height = 12
         Caption = #39044#20184#27454
       end
-      object Label4: TLabel [15]
+      object Label4: TLabel [14]
         Left = 564
         Top = 114
         Width = 48
@@ -145,7 +138,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       inherited RzPanel4: TRzPanel
         Height = 83
-        TabOrder = 14
+        TabOrder = 13
         inherited Shape1: TShape
           Top = 33
         end
@@ -242,14 +235,14 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 5
         Width = 121
         Height = 20
-        TabOrder = 9
+        TabOrder = 8
       end
       object edtREMARK: TcxTextEdit
         Left = 251
         Top = 110
         Width = 286
         Height = 20
-        TabOrder = 8
+        TabOrder = 7
       end
       object edtINVOICE_FLAG: TcxComboBox
         Left = 619
@@ -258,7 +251,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-        TabOrder = 12
+        TabOrder = 11
       end
       object edtGUIDE_USER: TzrComboBoxList
         Left = 448
@@ -271,7 +264,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 2
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -308,70 +301,28 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         Properties.ValueType = vtFloat
-        TabOrder = 13
-      end
-      object edtSHOP_ID: TzrComboBoxList
-        Left = 251
-        Top = 26
-        Width = 131
-        Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = False
-        TabOrder = 1
-        InGrid = False
-        KeyValue = Null
-        FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-        KeyField = 'COMP_ID'
-        ListField = 'COMP_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'COMP_NAME'
-            Footers = <>
-            Title.Caption = #21517#31216
-          end
-          item
-            EditButtons = <>
-            FieldName = 'COMP_ID'
-            Footers = <>
-            Title.Caption = #20195#30721
-            Width = 20
-          end>
-        DropWidth = 185
-        DropHeight = 180
-        ShowTitle = True
-        AutoFitColWidth = True
-        ShowButton = False
-        LocateStyle = lsDark
-        Buttons = []
-        DropListStyle = lsFixed
-        OnSaveValue = edtSHOP_IDSaveValue
-        MultiSelect = False
+        TabOrder = 12
       end
       object edtSEND_ADDR: TcxTextEdit
         Left = 251
         Top = 89
         Width = 286
         Height = 20
-        TabOrder = 7
+        TabOrder = 6
       end
       object edtTELEPHONE: TcxTextEdit
         Left = 251
         Top = 68
         Width = 131
         Height = 20
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtLINKMAN: TcxTextEdit
         Left = 448
         Top = 68
         Width = 89
         Height = 20
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtSALE_STYLE: TzrComboBoxList
         Left = 619
@@ -384,7 +335,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 10
+        TabOrder = 9
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -414,7 +365,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 47
         Width = 121
         Height = 20
-        TabOrder = 11
+        TabOrder = 10
       end
       object edtFROM_ID: TcxButtonEdit
         Left = 251
@@ -426,14 +377,14 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
             Kind = bkEllipsis
           end>
-        TabOrder = 3
+        TabOrder = 2
       end
       object edtADVA_MNY: TcxTextEdit
         Left = 448
         Top = 47
         Width = 89
         Height = 20
-        TabOrder = 4
+        TabOrder = 3
       end
       object edtTAX_MONEY: TcxTextEdit
         Tag = 1
@@ -448,7 +399,49 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Style.Font.Height = -12
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
+        TabOrder = 14
+      end
+      object edtSHOP_ID: TzrComboBoxList
+        Left = 251
+        Top = 26
+        Width = 131
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
         TabOrder = 15
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+        KeyField = 'SHOP_ID'
+        ListField = 'SHOP_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'SHOP_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SEQ_NO'
+            Footers = <>
+            Title.Caption = #24207#21495
+            Width = 20
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        OnSaveValue = edtSHOP_IDSaveValue
+        MultiSelect = False
       end
     end
     inherited RzPanel3: TRzPanel

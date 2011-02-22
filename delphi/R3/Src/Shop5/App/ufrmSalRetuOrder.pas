@@ -35,7 +35,6 @@ type
     Label10: TLabel;
     fndRECK_MNY: TcxTextEdit;
     Label40: TLabel;
-    edtSHOP_ID: TzrComboBoxList;
     Label1: TLabel;
     fndMY_AMOUNT: TcxTextEdit;
     Label12: TLabel;
@@ -53,7 +52,6 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     Label11: TLabel;
-    Label20: TLabel;
     Label21: TLabel;
     edtFROM_ID: TcxButtonEdit;
     Label22: TLabel;
@@ -62,6 +60,7 @@ type
     cdsDetail: TZQuery;
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
+    edtSHOP_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -96,6 +95,7 @@ type
     procedure ReadHeader;
   protected
     procedure SetInputFlag(const Value: integer);override;
+    procedure SetdbState(const Value: TDataSetState); override;
     //修改列
     procedure GridToGods(Grid:string;id:string);override;
     function IsKeyPress:boolean;override;
@@ -245,7 +245,7 @@ begin
     if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
     edtTable.FieldByName('APRICE').AsFloat := rs.FieldbyName('V_APRICE').AsFloat;
     edtTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('V_ORG_PRICE').AsFloat;
-    edtTable.FieldbyName('COST_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;
+    edtTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(edtSHOP_ID.AsString,GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
     edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品
@@ -970,16 +970,46 @@ var
   rs:TZQuery;
 begin
   inherited;
-{  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   try
-    rs.CommandText := 'select CLIENT_ID,CLIENT_NAME from VIW_CUSTOMER where IC_CARDNO='''+id+'''';
+    rs.SQL.Text :=
+      'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID,INVOICE_FLAG from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+      'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'')';
     Factor.Open(rs);
-    edtCLIENT_ID.KeyValue := rs.Fields[0].AsString;
-    edtCLIENT_ID.Text := rs.Fields[1].AsString;
-    edtCLIENT_ID.OnSaveValue(nil);
+    if rs.IsEmpty then
+       begin
+        rs.Close;
+        rs.SQL.Text :=
+          'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID,INVOICE_FLAG from VIW_CUSTOMER A left outer jion PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+          'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.MOVE_TELE='''+id+''' and A.LICENSE_CODE='''+id+'''';
+        Factor.Open(rs);
+       end;
+    if rs.RecordCount<>1  then
+       begin
+         Raise Exception.Create('无效会员卡号'); 
+         Exit;
+       end
+    else
+       begin
+         AObj.FieldbyName('CLIENT_ID').AsString := rs.Fields[0].AsString;
+         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.Fields[1].AsString;
+         AObj.FieldbyName('PRICE_ID').AsString := rs.Fields[4].AsString;
+         AObj.FieldbyName('BALANCE').AsFloat := rs.Fields[3].AsFloat;
+         AObj.FieldbyName('ACCU_INTEGRAL').AsFloat := rs.Fields[2].AsFloat;
+         Locked := true;
+         try
+           edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
+           if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
+           edtINVOICE_FLAGPropertiesChange(nil);
+           Calc;
+         finally
+           Locked := false;
+         end;
+         ShowOweInfo;
+       end;
   finally
     rs.Free;
-  end; }
+  end;
 end;
 
 procedure TfrmSalRetuOrder.AgioToGods(id: string);
@@ -1345,6 +1375,13 @@ begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 
+end;
+
+procedure TfrmSalRetuOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+  edtSHOP_ID.Properties.ReadOnly := (Value<>dsInsert);
+  if edtSHOP_ID.Properties.ReadOnly then SetEditStyle(dsBrowse,edtSHOP_ID.Style);
 end;
 
 end.

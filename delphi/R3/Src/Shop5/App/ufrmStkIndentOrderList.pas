@@ -1,4 +1,4 @@
-unit ufrmStkRetuOrderList;
+unit ufrmStkIndentOrderList;
 
 interface
 
@@ -12,7 +12,7 @@ uses
   ZAbstractDataset, ZDataset;
 
 type
-  TfrmStkRetuOrderList = class(TframeOrderToolForm)
+  TfrmStkIndentOrderList = class(TframeOrderToolForm)
     ToolButton11: TToolButton;
     D1: TcxDateEdit;
     D2: TcxDateEdit;
@@ -21,11 +21,11 @@ type
     RzLabel4: TRzLabel;
     fndCLIENT_ID: TzrComboBoxList;
     RzLabel5: TRzLabel;
-    fndSTOCK_ID: TcxTextEdit;
+    fndINDE_ID: TcxTextEdit;
     Label1: TLabel;
     btnOk: TRzBitBtn;
     fndSTATUS: TcxRadioGroup;
-    frfStkRetuOrder: TfrReport;
+    frfStockOrder: TfrReport;
     actfrmPayOrder: TAction;
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
@@ -42,7 +42,7 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure frfStkRetuOrderUserFunction(const Name: String; p1, p2,
+    procedure frfStockOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -51,7 +51,7 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actfrmPayOrderExecute(Sender: TObject);
-    procedure frfStkRetuOrderGetValue(const ParName: String;
+    procedure frfStockOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
     { Private declarations }
@@ -67,20 +67,20 @@ type
   end;
 
 implementation
-uses ufrmStkRetuOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
+uses ufrmStkIndentOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
   uShopGlobal;
 {$R *.dfm}
 
-{ TfrmStockOrderList }
+{ TfrmStkIndentOrderList }
 
-function TfrmStkRetuOrderList.EncodeSQL(id: string): string;
+function TfrmStkIndentOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=3';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 ';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
-  if trim(fndSTOCK_ID.Text) <> '' then
-     w := w +' and A.GLIDE_NO like ''%'+trim(fndSTOCK_ID.Text)+'''';
+  if trim(fndINDE_ID.Text) <> '' then
+     w := w +' and A.GLIDE_NO like ''%'+trim(fndINDE_ID.Text)+'''';
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
@@ -91,31 +91,31 @@ begin
        end;
      end;
   if id<>'' then
-     w := w +' and A.STOCK_ID>'''+id+'''';
+     w := w +' and A.INDE_ID>'''+id+'''';
   result :=
-     'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,-A.STOCK_AMT as AMOUNT,-A.STOCK_MNY as AMONEY '+
-     'from STK_STOCKORDER A '+w+' ';
+     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
+     'from STK_INDENTORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
-  result := 'select jc.*,-c.PAYM_MNY as PAYM_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID';
+  result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.STOCK_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID '+w1;
   case Factor.iDbType of
-  0:result := 'select top 600 * from ('+result+') jp order by STOCK_ID';
+  0:result := 'select top 600 * from ('+result+') jp order by INDE_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by STOCK_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+result+') order by STOCK_ID limit 600';
+       'select * from ('+result+') order by INDE_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') order by INDE_ID limit 600';
   else
-    result := 'select * from ('+result+') order by STOCK_ID';
+    result := 'select * from ('+result+') order by INDE_ID';
   end;
 end;
 
-function TfrmStkRetuOrderList.GetFormClass: TFormClass;
+function TfrmStkIndentOrderList.GetFormClass: TFormClass;
 begin
-  result := TfrmStkRetuOrder;
+  result := TfrmStkIndentOrder;
 end;
 
-procedure TfrmStkRetuOrderList.Open(Id: string);
+procedure TfrmStkIndentOrderList.Open(Id: string);
 var
   rs:TZQuery;
   sm:TMemoryStream;
@@ -134,7 +134,7 @@ begin
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
     Factor.Open(rs);
     rs.Last;
-    MaxId := rs.FieldbyName('STOCK_ID').AsString;
+    MaxId := rs.FieldbyName('INDE_ID').AsString;
     if Id='' then
     begin
        rs.SaveToStream(sm);
@@ -154,7 +154,7 @@ begin
   end;
 end;
 
-procedure TfrmStkRetuOrderList.cdsListAfterScroll(DataSet: TDataSet);
+procedure TfrmStkIndentOrderList.cdsListAfterScroll(DataSet: TDataSet);
 begin
   inherited;
   if IsEnd or not DataSet.Eof then Exit;
@@ -163,7 +163,7 @@ begin
 
 end;
 
-procedure TfrmStkRetuOrderList.FormCreate(Sender: TObject);
+procedure TfrmStkIndentOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
@@ -175,21 +175,21 @@ begin
   D2.Date := date();
 end;
 
-procedure TfrmStkRetuOrderList.FormShow(Sender: TObject);
+procedure TfrmStkIndentOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
   if ShopGlobal.GetChkRight('400020') and (rzPage.ActivePageIndex = 0) then actNew.OnExecute(nil);
 end;
 
-procedure TfrmStkRetuOrderList.actFindExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
   Open('');
 
 end;
 
-procedure TfrmStkRetuOrderList.actPriorExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actPriorExecute(Sender: TObject);
 var
   Temp:TZQuery;
   Params:TftParamList;
@@ -202,14 +202,14 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '3';
+          Params.ParamByName('STOCK_TYPE').asString := '1';
           if (CurOrder.gid = '') or (CurOrder.gid='..新增..') then
              Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TStkRetuOrderGetPrior',Params);
+             Factor.Open(Temp,'TStockOrderGetPrior',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally
@@ -225,7 +225,7 @@ begin
      end;
 end;
 
-procedure TfrmStkRetuOrderList.actNextExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actNextExecute(Sender: TObject);
 var
   Temp:TZQuery;
   Params:TftParamList;
@@ -238,14 +238,14 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '3';
+          Params.ParamByName('STOCK_TYPE').asString := '1';
           if CurOrder.gid = '' then
              Params.ParamByName('GLIDE_NO').asString := '00000000000000'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TStkRetuOrderGetNext',Params);
+             Factor.Open(Temp,'TStockOrderGetNext',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally
@@ -261,38 +261,38 @@ begin
      end;
 end;
 
-procedure TfrmStkRetuOrderList.actEditExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400021') then Raise Exception.Create('你没有修改退货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('400021') then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
 
 end;
 
-procedure TfrmStkRetuOrderList.actDeleteExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400022') then Raise Exception.Create('你没有删除退货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('400022') then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'删除当前单据成功,是否继续新增退货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'删除当前单据成功,是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
      end;
 end;
 
-procedure TfrmStkRetuOrderList.actSaveExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actSaveExecute(Sender: TObject);
 begin
   inherited;
   if (CurOrder<>nil) then
@@ -305,37 +305,37 @@ begin
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'是否继续新增退货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
      end;
 end;
 
-procedure TfrmStkRetuOrderList.actAuditExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actAuditExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('400023') then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
 
 end;
 
-procedure TfrmStkRetuOrderList.actInfoExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actInfoExecute(Sender: TObject);
 begin
   inherited;
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
 
 end;
 
-procedure TfrmStkRetuOrderList.frfStkRetuOrderUserFunction(const Name: String;
+procedure TfrmStkIndentOrderList.frfStockOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -347,14 +347,14 @@ begin
      end;
 end;
 
-function TfrmStkRetuOrderList.PrintSQL(tenantid, id: string): string;
+function TfrmStkIndentOrderList.PrintSQL(tenantid, id: string): string;
 begin
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT,'+
    'j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_TAX_MNY,'+
    'j.STOCK_MNY-j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_NOTAX_MNY,'+
-   '(select -sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID and STOCK_ID='''+id+''') as ORDER_OWE_MNY,'+
-   '(select -sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID) as TOTAL_OWE_MNY '+
+   '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID and INDE_ID='''+id+''') as ORDER_OWE_MNY,'+
+   '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID) as TOTAL_OWE_MNY '+
    'from ('+
    'select jl.*,l.CODE_NAME as SETTLE_CODE_TEXT from ('+
    'select jk.*,k.UNIT_NAME from ('+
@@ -367,10 +367,10 @@ begin
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as MOVE_TELE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS,b.FAXES CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
-   'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,-A.STOCK_AMT as STOCK_AMT,-A.STOCK_MNY as STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,'+
-   '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,-B.CALC_MONEY as CALC_MONEY,B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,B.IS_PRESENT from STK_STOCKORDER A,STK_STOCKDATA B '+
-   'where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' ) jb '+
+   'select A.TENANT_ID,A.SHOP_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+   'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.STOCK_AMT,A.STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,'+
+   'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,B.CALC_MONEY,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from STK_STOCKORDER A,STK_STOCKDATA B '+
+   'where A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.INDE_ID and A.TENANT_ID='+tenantid+' and A.INDE_ID='''+id+''' ) jb '+
    'left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -384,7 +384,7 @@ begin
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID)j order by SEQNO';
 end;
 
-procedure TfrmStkRetuOrderList.actPrintExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
@@ -395,12 +395,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStkRetuOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('STOCK_ID').AsString),frfStkRetuOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder);
            end;
       finally
          free;
@@ -408,7 +408,7 @@ begin
     end;
 end;
 
-procedure TfrmStkRetuOrderList.actPreviewExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
@@ -419,12 +419,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStkRetuOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('STOCK_ID').AsString),frfStkRetuOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder,nil,true);
            end;
       finally
          free;
@@ -432,14 +432,14 @@ begin
     end;
 end;
 
-procedure TfrmStkRetuOrderList.actNewExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400020') then Raise Exception.Create('你没有新增退货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('400020') then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
   inherited;
 
 end;
 
-procedure TfrmStkRetuOrderList.DBGridEh1DblClick(Sender: TObject);
+procedure TfrmStkIndentOrderList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
 //  if not ShopGlobal.GetChkRight('400021') then
@@ -449,7 +449,7 @@ begin
 
 end;
 
-procedure TfrmStkRetuOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+procedure TfrmStkIndentOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;
@@ -465,7 +465,7 @@ begin
 
 end;
 
-procedure TfrmStkRetuOrderList.actfrmPayOrderExecute(Sender: TObject);
+procedure TfrmStkIndentOrderList.actfrmPayOrderExecute(Sender: TObject);
 var
   rs:TZQuery;
   clid,cpid,oid:string;
@@ -476,7 +476,7 @@ begin
   try
   if CurOrder<>nil then
      begin
-       clid := TfrmStkRetuOrder(CurOrder).edtCLIENT_ID.AsString;
+       clid := TfrmStkIndentOrder(CurOrder).edtCLIENT_ID.AsString;
        cpid := CurOrder.cid;
        oid := CurOrder.oid;
      end
@@ -485,12 +485,11 @@ begin
        if cdsList.IsEmpty then Exit;
        clid := cdsList.FieldbyName('CLIENT_ID').AsString;
        cpid := cdsList.FieldbyName('SHOP_ID').AsString;
-       oid := cdsList.FieldbyName('STOCK_ID').AsString;
+       oid := cdsList.FieldbyName('INDE_ID').AsString;
      end;
-  rs.SQL.Text :=
-     'select j.* from ( '+
-     'select A.ABLE_ID,A.SHOP_ID,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.STOCK_ID,A.ACCT_INFO,A.ABLE_TYPE,A.ACCT_MNY,A.PAYM_MNY,A.REVE_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
-     'from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+clid+''' and A.RECK_MNY<>0 ) j order by ABLE_ID';
+  rs.SQL.Text
+     :='select A.ABLE_ID,A.SHOP_ID,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.STOCK_ID,A.ACCT_INFO,A.ABLE_TYPE,A.ACCT_MNY,A.PAYM_MNY,A.REVE_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
+     'from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+clid+''' and A.RECK_MNY<>0 order by ABLE_ID';
   Factor.Open(rs);
   if rs.IsEmpty then Raise Exception.Create('当前选中的供应商没有欠款...'); 
   with TfrmPayOrder.Create(self) do
@@ -535,7 +534,7 @@ begin
           end;
         if ShowModal=MROK then
            begin
-             if CurOrder<>nil then TfrmStkRetuOrder(CurOrder).ShowOweInfo;
+             if CurOrder<>nil then TfrmStkIndentOrder(CurOrder).ShowOweInfo;
            end;
       finally
         free;
@@ -547,7 +546,7 @@ begin
   
 end;
 
-procedure TfrmStkRetuOrderList.frfStkRetuOrderGetValue(const ParName: String;
+procedure TfrmStkIndentOrderList.frfStockOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

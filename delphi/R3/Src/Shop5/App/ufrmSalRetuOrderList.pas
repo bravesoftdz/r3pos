@@ -94,7 +94,7 @@ begin
      w := w +' and A.SALES_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,-A.SALE_AMT as AMOUNT,-A.SALE_MNY as AMONEY '+
             'from SAL_SALESORDER A '+w+' ';
-  result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.CLIENT_ID=a.CLIENT_ID';
+  result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,-c.RECV_MNY as RECV_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SALES_ID=c.SALES_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID '+w1;
@@ -245,7 +245,7 @@ begin
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('COMP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
 
@@ -257,7 +257,7 @@ begin
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('TENANT_ID').AsString);
+       OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
 end;
 
@@ -364,7 +364,7 @@ begin
    '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,-B.CALC_MONEY as CALC_MONEY,-B.BARTER_INTEGRAL as BARTER_INTEGRAL,'+
    'B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='''+tenantid+''' and A.SALES_ID='''+id+''' ) jb '+
-   'left outer join VIW_CUSTOMER b on jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+   'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INVOICE_FLAG'') e on je.INVOICE_FLAG=e.CODE_ID ) jf '+
@@ -502,8 +502,9 @@ begin
        oid := cdsList.FieldbyName('SALES_ID').AsString;
      end;
   rs.SQL.Text :=
+     'select j.* from ('+
      'select A.ABLE_ID,A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,A.SALES_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.ACCT_INFO,A.RECV_TYPE,A.ACCT_MNY,A.RECV_MNY,A.REVE_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
-     'from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+clid+''' and A.RECK_MNY<>0 order by ABLE_ID';
+     'from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+clid+''' and A.RECK_MNY<>0 ) j order by ABLE_ID';
   Factor.Open(rs);
   if rs.IsEmpty then Raise Exception.Create('当前选中的客户没有欠款...');
   with TfrmRecvOrder.Create(self) do

@@ -161,7 +161,7 @@ begin
   edtPAYM_ID.ItemIndex := 0;
   edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
   edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
-  edtITEM_ID.DataSet.Locate('CODE_ID','1',[]); 
+  edtITEM_ID.DataSet.Locate('CODE_ID','2',[]); 
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
 end;
@@ -456,7 +456,7 @@ begin
     rs.Close;
     rs.SQL.Text
        :='select A.ABLE_ID,A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.ACCT_INFO,A.ABLE_TYPE,A.ACCT_MNY,A.PAYM_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
-       'from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+edtCLIENT_ID.asString+''' and A.RECK_MNY<>0 order by ABLE_ID';
+       'from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+edtCLIENT_ID.asString+''' and A.RECK_MNY<>0 order by ABLE_ID';
     Factor.Open(rs);
     cdsDetail.First;
     while not cdsDetail.Eof do cdsDetail.Delete;

@@ -1,9 +1,9 @@
-inherited frmSalRetuOrderList: TfrmSalRetuOrderList
+inherited frmSalIndentOrderList: TfrmSalIndentOrderList
   Left = 152
   Top = 0
   Width = 836
   Height = 607
-  Caption = #38144#21806#36864#36135#21333
+  Caption = #38144#21806#35746#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -18,7 +18,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
         Height = 523
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #36864#36135#21333#26597#35810
+          Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 802
             Height = 496
@@ -32,7 +32,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #36864#36135#26085#26399
+                Caption = #38144#21806#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 200
@@ -55,7 +55,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #36864#36135#21333#21495
+                Caption = #38144#21806#21333#21495
               end
               object Label40: TLabel
                 Left = 33
@@ -120,7 +120,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndSALES_ID: TcxTextEdit
+              object fndINDE_ID: TcxTextEdit
                 Left = 89
                 Top = 65
                 Width = 104
@@ -293,7 +293,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                   EditButtons = <>
                   FieldName = 'SALES_DATE'
                   Footers = <>
-                  Title.Caption = #36864#36135#26085#26399
+                  Title.Caption = #38144#21806#26085#26399
                   Width = 67
                 end
                 item
@@ -354,16 +354,22 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'ADVA_MNY'
+                  Footers = <>
+                  Title.Caption = #39044#25910#27454'|'#24212#25910
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'RECV_MNY'
                   Footers = <>
-                  Title.Caption = #24050#36864#37329#39069
+                  Title.Caption = #39044#25910#27454'|'#23454#25910
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #27424#36864#37329#39069
+                  Title.Caption = #39044#25910#27454'|'#27424#27454
                   Width = 59
                 end
                 item
@@ -407,7 +413,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
-        Caption = #24403#21069#20301#32622'->'#38144#21806#36864#36135
+        Caption = #24403#21069#20301#32622'->'#38144#21806#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
@@ -444,7 +450,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
       Caption = #25253#34920
     end
     object actRecv: TAction
-      Caption = #36864#27454
+      Caption = #25910#27454
       ImageIndex = 28
       OnExecute = actRecvExecute
     end
@@ -475,12 +481,12 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
     AfterScroll = cdsListAfterScroll
     IndexFieldNames = 'GLIDE_NO Asc'
   end
-  object frfSalRetuOrder: TfrReport
+  object frfSalesOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfSalRetuOrderGetValue
-    OnUserFunction = frfSalRetuOrderUserFunction
+    OnGetValue = frfSalesOrderGetValue
+    OnUserFunction = frfSalesOrderUserFunction
     Left = 488
     Top = 201
     ReportForm = {
@@ -549,7 +555,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
       00CBCECCE5000A000000000000000000090000008600020000000000FFFFFF00
       000000020000000000000000007408000005004D656D6F320002003500000019
       00000085020000180000000100000001000000000000000500FFFFFF1F2E0200
-      00000000010014005BC6F3D2B5C3FBB3C65DCFFACADBCDCBBBF5B5A500000000
+      00000000010014005BC6F3D2B5C3FBB3C65DCFFACADBB3F6BBF5B5A500000000
       FFFF00000000000200000001000000000400CBCECCE500100000000200000000
       000A0000008600020000000000FFFFFF0000000002000000000000000000FB08
       000006004D656D6F313200020035000000320000004600000012000000010000
@@ -723,7 +729,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
       0000000400CBCECCE5000A000000000000000000080000008600020000000000
       FFFFFF00000000020000000000000000002E1E000006004D656D6F3137000200
       350000005B00000046000000120000000100000001000000000000000000FFFF
-      FF1F2E02000000000001000900CDCBBBF5C3C5B5EA3A00000000FFFF00000000
+      FF1F2E02000000000001000900B7A2BBF5C3C5B5EA3A00000000FFFF00000000
       000200000001000000000400CBCECCE5000A0000000200000000000800000086
       00020000000000FFFFFF0000000002000000000000000000C51E000006004D65
       6D6F3139000200B50000002A0100007C00000014000000010000000100000000

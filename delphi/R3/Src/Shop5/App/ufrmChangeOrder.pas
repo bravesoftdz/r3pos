@@ -208,7 +208,7 @@ begin
   begin
      edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE').AsFloat;
   end;
-  edtTable.FieldbyName('COST_PRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE').AsFloat;
+  edtTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(edtSHOP_ID.AsString,GODS_ID,edtTable.FieldbyName('BATCH_NO').AsString);
   ShowInfo;
 end;
 

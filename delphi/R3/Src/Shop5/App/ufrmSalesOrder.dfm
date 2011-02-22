@@ -108,28 +108,21 @@ inherited frmSalesOrder: TfrmSalesOrder
         Alignment = taRightJustify
         Caption = #38144#39033#31246#29575
       end
-      object Label20: TLabel [12]
-        Left = 673
-        Top = 93
-        Width = 6
-        Height = 12
-        Caption = '%'
-      end
-      object Label21: TLabel [13]
+      object Label21: TLabel [12]
         Left = 195
         Top = 51
         Width = 48
         Height = 12
         Caption = #35746#36135#21333#21495
       end
-      object Label22: TLabel [14]
+      object Label22: TLabel [13]
         Left = 403
         Top = 51
         Width = 36
         Height = 12
         Caption = #39044#20184#27454
       end
-      object Label4: TLabel [15]
+      object Label4: TLabel [14]
         Left = 564
         Top = 114
         Width = 48
@@ -324,21 +317,21 @@ inherited frmSalesOrder: TfrmSalesOrder
         TabOrder = 1
         InGrid = False
         KeyValue = Null
-        FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-        KeyField = 'COMP_ID'
-        ListField = 'COMP_NAME'
+        FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+        KeyField = 'SHOP_ID'
+        ListField = 'SHOP_NAME'
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'COMP_NAME'
+            FieldName = 'SHOP_NAME'
             Footers = <>
             Title.Caption = #21517#31216
           end
           item
             EditButtons = <>
-            FieldName = 'COMP_ID'
+            FieldName = 'SEQ_NO'
             Footers = <>
-            Title.Caption = #20195#30721
+            Title.Caption = #24207#21495
             Width = 20
           end>
         DropWidth = 185

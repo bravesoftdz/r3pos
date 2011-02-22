@@ -1,6 +1,6 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 558
-  Top = 249
+  Left = 753
+  Top = 219
   Caption = #23458#25143#26723#26696
   ClientHeight = 364
   ClientWidth = 528
@@ -19,8 +19,10 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 113
       Width = 518
       Height = 206
+      ActivePage = TabSheet2
       Color = clWhite
       ParentColor = False
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite

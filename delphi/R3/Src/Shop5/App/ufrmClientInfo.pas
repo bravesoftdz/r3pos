@@ -182,35 +182,16 @@ procedure TfrmClientInfo.Save;
   procedure UpdateToGlobal(AObj:TRecord_);
   var Tmp:TZQuery;
   begin
-    Tmp := Global.GetZQueryFromName('PUB_CLIENTINFO');
-    Tmp.Filtered := false;
-    //if AObj.FieldByName('CLIENT_TYPE').AsString<>'3' then
-    //begin
+    Tmp := Global.GetZQueryFromName('PUB_CUSTOMER');
     if (not Tmp.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[])) then
        Tmp.Append
     else
        Tmp.Edit;
     AObj.WriteToDataSet(Tmp,false);
+    Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
+    Temp.FieldByName('TAX_RATE').AsString := '0';
     Tmp.Post;
-    //end;
-    {if AObj.FieldByName('CLIENT_TYPE').AsString<>'2' then
-    begin
-      Tmp := Global.GetZQueryFromName('BAS_CUSTOMER');
-      Tmp.Filtered :=false;
-      if not Tmp.Locate('CUST_ID',AObj.FieldbyName('CLIENT_ID').AsString,[]) then
-        Tmp.Append
-      else
-        Tmp.Edit;
-      Tmp.FieldByName('CUST_ID').AsString:=AObj.FieldbyName('CLIENT_ID').AsString;
-      Tmp.FieldByName('CUST_CODE').AsString:=AObj.FieldbyName('CLIENT_CODE').AsString;
-      Tmp.FieldByName('CUST_NAME').AsString:=AObj.FieldbyName('CLIENT_NAME').AsString;
-      Tmp.FieldByName('CUST_SPELL').AsString:=AObj.FieldbyName('CLIENT_SPELL').AsString;
-      Tmp.FieldByName('IC_CARDNO').AsString:=AObj.FieldbyName('CLIENT_CODE').AsString;
-      Tmp.FieldByName('LINKMAN').AsString:=AObj.FieldbyName('LINKMAN').AsString;
-      Tmp.FieldByName('ADDRESS').AsString:=AObj.FieldbyName('ADDRESS').AsString;
-      Tmp.Post;
-    end; }
-  end;
+   end;
 var tmp:TZQuery;
 j:integer;
 begin

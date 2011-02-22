@@ -99,11 +99,9 @@ procedure TfrmClient.actDeleteExecute(Sender: TObject);
     var Temp:TZQuery;
     begin
       Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
-      Temp.Filtered :=false;
       if Temp.Locate('CLIENT_ID',str,[]) then
       begin
         Temp.Delete;
-        //temp.UpdateBatch(arAll);
       end;
     end;
 var

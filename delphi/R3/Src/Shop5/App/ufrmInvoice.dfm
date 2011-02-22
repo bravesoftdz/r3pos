@@ -106,17 +106,10 @@ inherited frmInvoice: TfrmInvoice
                     Width = 80
                   end
                   item
+                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'BEGIN_NO'
                     Footers = <>
-                    KeyList.Strings = (
-                      '0'
-                      '1'
-                      '2')
-                    PickList.Strings = (
-                      #22899
-                      #30007
-                      #20445#23494)
                     Title.Caption = #21457#31080#36215#22987#21495
                     Width = 80
                   end
@@ -224,7 +217,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object RzLabel6: TRzLabel
                   Left = 20
-                  Top = 56
+                  Top = 57
                   Width = 60
                   Height = 12
                   Alignment = taRightJustify
@@ -239,7 +232,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object labCREA_DATE: TRzLabel
                   Left = 19
-                  Top = 12
+                  Top = 11
                   Width = 60
                   Height = 12
                   Alignment = taRightJustify
@@ -254,7 +247,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object Label3: TLabel
                   Left = 32
-                  Top = 78
+                  Top = 79
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -268,7 +261,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object RzLabel1: TRzLabel
                   Left = 182
-                  Top = 12
+                  Top = 11
                   Width = 20
                   Height = 12
                   Alignment = taRightJustify
@@ -283,7 +276,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object edtKey: TcxTextEdit
                   Left = 85
-                  Top = 75
+                  Top = 76
                   Width = 223
                   Height = 20
                   Properties.OnChange = edtKeyPropertiesChange
@@ -292,7 +285,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object btnOk: TRzBitBtn
                   Left = 319
-                  Top = 73
+                  Top = 74
                   Width = 70
                   Height = 24
                   Action = actFind
@@ -355,7 +348,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object edtCREA_USER: TzrComboBoxList
                   Left = 85
-                  Top = 52
+                  Top = 53
                   Width = 223
                   Height = 20
                   Properties.AutoSelect = False
@@ -397,14 +390,14 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object edtCREA_DATE1: TcxDateEdit
                   Left = 85
-                  Top = 8
+                  Top = 7
                   Width = 100
                   Height = 20
                   TabOrder = 0
                 end
                 object edtCREA_DATE2: TcxDateEdit
                   Left = 208
-                  Top = 8
+                  Top = 7
                   Width = 100
                   Height = 20
                   TabOrder = 1

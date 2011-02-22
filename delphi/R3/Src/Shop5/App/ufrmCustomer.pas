@@ -154,7 +154,7 @@ procedure TfrmCustomer.actDeleteExecute(Sender: TObject);
    begin
       Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
       Temp.Filtered := false;
-      if not Temp.Locate('CLIENT_ID',AObj.FieldByName('CUST_ID').AsString,[]) then
+      if not Temp.Locate('CLIENT_ID',Str,[]) then
         Temp.Delete;
    end;
 var i,n:integer;

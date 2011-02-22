@@ -98,7 +98,7 @@ procedure TfrmClient.actDeleteExecute(Sender: TObject);
     procedure UpdateToGlobal(str:string);
     var Temp:TZQuery;
     begin
-      Temp := Global.GetZQueryFromName('PUB_CLIENTINFO');
+      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
       Temp.Filtered :=false;
       if Temp.Locate('CLIENT_ID',str,[]) then
       begin

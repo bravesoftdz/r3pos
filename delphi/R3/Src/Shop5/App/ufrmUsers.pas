@@ -7,7 +7,7 @@ uses
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
   StdCtrls, RzLabel, ComCtrls, ToolWin, DB, DBClient, ZBase, ADODB,
-  FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh;
 
 type
   TfrmUsers = class(TframeToolForm)
@@ -34,8 +34,8 @@ type
     Label2: TLabel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    frfUsers: TfrReport;
     Cds_Users: TZQuery;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actFindExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -72,7 +72,7 @@ var
   frmUsers: TfrmUsers;
 
 implementation
-uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, uShopGlobal,uCtrlUtil;//ufrmUserRights,ufrmFastReport,
+uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmUserRights,ufrmFastReport,
 {$R *.dfm}
 
 procedure TfrmUsers.actFindExecute(Sender: TObject);
@@ -338,34 +338,27 @@ end;
 
 procedure TfrmUsers.actPrintExecute(Sender: TObject);
 begin
-  {inherited;
-  if not ShopGlobal.GetChkRight('100021') then
+  if not ShopGlobal.GetChkRight('100014') then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  with TfrmFastReport.Create(Self) do
-    begin
-      try
-        if Cds_Users.IsEmpty then Exit;
-        PrintReport(PrintSQL,frfUsers);
-      finally
-        free;
-      end;
-    end;}
+
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintDBGridEh1.Print;
 end;
 
 procedure TfrmUsers.actPreviewExecute(Sender: TObject);
 begin
-  {inherited;
+  inherited;
   if not ShopGlobal.GetChkRight('100021') then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-   with TfrmFastReport.Create(Self) do
-    begin
-      try
-        if Cds_Users.IsEmpty then Exit;
-        ShowReport(PrintSQL,frfUsers,nil,true);
-      finally
-        free;
-      end;
-    end; }
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  with TfrmEhLibReport.Create(self) do
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
 end;
 
 end.

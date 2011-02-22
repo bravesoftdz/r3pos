@@ -26,13 +26,11 @@ type
     But_Info: TToolButton;
     But_Print: TToolButton;
     But_Preview: TToolButton;
-    ToolButton4: TToolButton;
     actRights: TAction;
     btnOk: TRzBitBtn;
     stbPanel: TPanel;
     Label2: TLabel;
     PopupMenu1: TPopupMenu;
-    N1: TMenuItem;
     frfUsers: TfrReport;
     Cds_Invoice: TZQuery;
     edtSHOP_ID: TzrComboBoxList;
@@ -59,9 +57,7 @@ type
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtKeyPropertiesChange(Sender: TObject);
-    procedure actRightsExecute(Sender: TObject);
     procedure Cds_InvoiceAfterScroll(DataSet: TDataSet);
-    procedure N1Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -303,23 +299,6 @@ begin
   Cds_Invoice.Filtered:=(edtKey.Text<>'');
 end;
 
-procedure TfrmInvoice.actRightsExecute(Sender: TObject);
-var str:string;
-begin
-  {inherited;
-  if not Cds_Users.Active then exit;
-  if Cds_Users.IsEmpty then exit;
-  if not ShopGlobal.GetChkRight('100020') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
-  with TfrmUserRights.Create(self) do
-  begin
-    try
-      Open(Cds_Users.FieldByName('USER_ID').AsString,Cds_Users.FieldByName('USER_NAME').AsString,Cds_Users.FieldByName('COMP_ID').AsString,Cds_Users.FieldByName('ACCOUNT').AsString,Cds_Users.FieldByName('DUTY_IDS').AsString);
-      ShowModal;
-    finally
-      free;
-    end;
-  end;}
-end;
 procedure TfrmInvoice.Cds_InvoiceAfterScroll(DataSet: TDataSet);
 var str:string;
 begin
@@ -327,12 +306,6 @@ begin
   if Cds_Invoice.RecNo<=0 then  str:='0'
   else str:=IntToStr(Cds_Invoice.RecNo);
   stbPanel.Caption:='第'+str+'条/共'+inttostr(Cds_Invoice.RecordCount)+'条';
-end;
-
-procedure TfrmInvoice.N1Click(Sender: TObject);
-begin
-  inherited;
-  actRightsExecute(nil);
 end;
 
 procedure TfrmInvoice.FormDestroy(Sender: TObject);

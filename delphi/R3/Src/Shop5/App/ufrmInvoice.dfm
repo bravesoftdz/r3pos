@@ -79,20 +79,6 @@ inherited frmInvoice: TfrmInvoice
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'SHOP_ID'
-                    Footers = <>
-                    Title.Caption = #39046#29992#38376#24215
-                    Width = 120
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER'
-                    Footers = <>
-                    Title.Caption = #39046#29992#20154
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>
                     Title.Caption = #39046#29992#26085#26399
@@ -122,11 +108,17 @@ inherited frmInvoice: TfrmInvoice
                     Width = 80
                   end
                   item
-                    Alignment = taRightJustify
                     EditButtons = <>
-                    FieldName = 'TOTAL_AMT'
+                    FieldName = 'SHOP_ID'
                     Footers = <>
-                    Title.Caption = #21512#35745#24352#25968
+                    Title.Caption = #39046#29992#38376#24215
+                    Width = 120
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_USER'
+                    Footers = <>
+                    Title.Caption = #39046#29992#20154
                     Width = 60
                   end
                   item
@@ -135,6 +127,14 @@ inherited frmInvoice: TfrmInvoice
                     FieldName = 'USING_AMT'
                     Footers = <>
                     Title.Caption = #24320#31080#24352#25968
+                    Width = 60
+                  end
+                  item
+                    Alignment = taRightJustify
+                    EditButtons = <>
+                    FieldName = 'TOTAL_AMT'
+                    Footers = <>
+                    Title.Caption = #21512#35745#24352#25968
                     Width = 60
                   end
                   item
@@ -412,15 +412,15 @@ inherited frmInvoice: TfrmInvoice
   inherited RzPanel4: TRzPanel
     Width = 855
     inherited Image1: TImage
-      Left = 523
-      Width = 323
+      Left = 480
+      Width = 366
     end
     inherited Image14: TImage
       Left = 846
     end
     inherited Image3: TImage
-      Left = 523
-      Width = 323
+      Left = 480
+      Width = 366
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -429,18 +429,18 @@ inherited frmInvoice: TfrmInvoice
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 347
+      Width = 304
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 347
+          MinHeight = 304
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 347
+        Width = 304
         ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
@@ -473,23 +473,18 @@ inherited frmInvoice: TfrmInvoice
           ImageIndex = 3
           Style = tbsDivider
         end
-        object ToolButton4: TToolButton
-          Left = 175
-          Top = 0
-          Action = actRights
-        end
         object But_Print: TToolButton
-          Left = 218
+          Left = 175
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 261
+          Left = 218
           Top = 0
           Action = actPreview
         end
         object ToolButton3: TToolButton
-          Left = 304
+          Left = 261
           Top = 0
           Action = actExit
         end
@@ -528,7 +523,6 @@ inherited frmInvoice: TfrmInvoice
       Caption = #25480#26435
       ImageIndex = 31
       ShortCut = 16466
-      OnExecute = actRightsExecute
     end
   end
   object Ds_Invoice: TDataSource
@@ -539,10 +533,6 @@ inherited frmInvoice: TfrmInvoice
   object PopupMenu1: TPopupMenu
     Left = 150
     Top = 267
-    object N1: TMenuItem
-      Caption = #25480#26435
-      OnClick = N1Click
-    end
   end
   object frfUsers: TfrReport
     InitialZoom = pzDefault

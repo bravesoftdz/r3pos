@@ -796,26 +796,27 @@ end;
 procedure TfrmCustomer.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  {if not ShopGlobal.GetChkRight('300010') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
+  if not ShopGlobal.GetChkRight('100014') then
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+
   PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.Print; }
+  PrintDBGridEh1.Print;
 end;
 
 procedure TfrmCustomer.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  {if not ShopGlobal.GetChkRight('300010') then
+  if not ShopGlobal.GetChkRight('300010') then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
-    begin
-      try
-        Preview(PrintDBGridEh1);
-      finally
-        free;
-      end;
-    end;}
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
 end;
 
 function TfrmCustomer.ShowExecute(AOwner: TForm; Params: String): Boolean;

@@ -75,7 +75,7 @@ type
   end;
 
 implementation
-uses ufrmSupplierInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmBasic;//,ufrmSendGsm
+uses ufrmSupplierInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmBasic;//,ufrmSendGsm
 {$R *.dfm}
 
 procedure TfrmSupplier.actNewExecute(Sender: TObject);
@@ -324,8 +324,9 @@ end;
 procedure TfrmSupplier.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400010') then
+  if not ShopGlobal.GetChkRight('100014') then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
 end;
@@ -337,13 +338,13 @@ begin
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
-    begin
-      try
-        Preview(PrintDBGridEh1);
-      finally
-        free;
-      end;
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
     end;
+  end;
 end;
 procedure TfrmSupplier.DBGridEh1TitleClick(Column: TColumnEh);
 begin

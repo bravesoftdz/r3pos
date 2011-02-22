@@ -247,7 +247,7 @@ begin
   if edtCLIENT_NAME.Text<>cdsTable.FieldByName('CLIENT_NAME').AsString  then
     begin
       tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-      if tmp.Locate('CLIENT_NAME',tmp.FieldbyName('CLIENT_NAME').AsString,[]) then
+      if tmp.Locate('CLIENT_NAME',Trim(edtCLIENT_NAME.Text),[]) then
         begin
           if tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString then
             begin
@@ -306,7 +306,7 @@ begin
   WriteTo(Aobj);
 
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
-    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetBarCode(TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6),8);
+    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CLIENT_CODE',Global.SHOP_ID,'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;

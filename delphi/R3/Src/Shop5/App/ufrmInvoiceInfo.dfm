@@ -298,6 +298,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 10
             Width = 121
             Height = 20
+            Enabled = False
             TabOrder = 0
           end
           object edtCANCEL_AMT: TcxTextEdit
@@ -305,6 +306,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 10
             Width = 121
             Height = 20
+            OnFocusChanged = edtCANCEL_AMTFocusChanged
             TabOrder = 2
           end
           object edtBALANCE: TcxTextEdit
@@ -312,6 +314,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 36
             Width = 121
             Height = 20
+            Enabled = False
             TabOrder = 3
           end
           object edtUSING_AMT: TcxTextEdit
@@ -319,6 +322,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 36
             Width = 121
             Height = 20
+            OnFocusChanged = edtUSING_AMTFocusChanged
             TabOrder = 1
           end
         end
@@ -484,6 +488,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       Top = 67
       Width = 121
       Height = 20
+      OnFocusChanged = edtENDED_NOFocusChanged
       TabOrder = 2
     end
     object edtBEGIN_NO: TcxTextEdit
@@ -491,6 +496,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       Top = 40
       Width = 121
       Height = 20
+      OnFocusChanged = edtBEGIN_NOFocusChanged
       TabOrder = 1
     end
     object edtCREA_DATE: TcxDateEdit

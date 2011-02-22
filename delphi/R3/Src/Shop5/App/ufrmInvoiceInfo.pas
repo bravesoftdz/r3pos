@@ -8,7 +8,7 @@ uses
   StdCtrls, RzLabel, RzButton, cxMemo, cxControls, cxContainer, cxEdit,
   cxTextEdit, ZBase, cxRadioGroup, DB, DBClient, cxDropDownEdit, ADODB,
   cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset;
+  ZAbstractDataset, ZDataset, cxCurrencyEdit;
 
 type
   TfrmInvoiceInfo = class(TframeDialogForm)
@@ -49,12 +49,17 @@ type
     procedure Btn_SaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edtBEGIN_NOFocusChanged(Sender: TObject);
+    procedure edtENDED_NOFocusChanged(Sender: TObject);
+    procedure edtUSING_AMTFocusChanged(Sender: TObject);
+    procedure edtCANCEL_AMTFocusChanged(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     Aobj:TRecord_;
     Saved:Boolean;
+    procedure SetText(Type_i:Integer);
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -350,5 +355,63 @@ begin
     end;
 end;
 
+
+procedure TfrmInvoiceInfo.edtBEGIN_NOFocusChanged(Sender: TObject);
+begin
+  inherited;
+  try
+    if Trim(edtBEGIN_NO.Text) = '' then Exit;
+    StrToInt64(Trim(edtBEGIN_NO.Text));
+  except
+    edtBEGIN_NO.Text := '0';
+    edtBEGIN_NO.SetFocus;
+  end;
+end;
+
+procedure TfrmInvoiceInfo.edtENDED_NOFocusChanged(Sender: TObject);
+begin
+  inherited;
+  try
+    if Trim(edtENDED_NO.Text) = '' then Exit;
+    StrToInt64(Trim(edtENDED_NO.Text));
+    SetText(1);
+  except
+    edtENDED_NO.Text := '0';
+    edtENDED_NO.SetFocus;
+  end;
+end;
+
+procedure TfrmInvoiceInfo.edtUSING_AMTFocusChanged(Sender: TObject);
+begin
+  inherited;
+  Try
+    if Trim(edtUSING_AMT.Text) = '' then Exit;
+    StrToInt64(Trim(edtUSING_AMT.Text));
+  except
+    edtUSING_AMT.Text := '0';
+    edtUSING_AMT.SetFocus;
+  end;
+end;
+
+procedure TfrmInvoiceInfo.edtCANCEL_AMTFocusChanged(Sender: TObject);
+begin
+  inherited;
+  try
+    if Trim(edtCANCEL_AMT.Text) = '' then Exit;
+    StrToInt64(Trim(edtCANCEL_AMT.Text));
+    SetText(2);
+  except
+    edtCANCEL_AMT.Text := '0';
+    edtCANCEL_AMT.SetFocus;
+  end;
+end;
+
+procedure TfrmInvoiceInfo.SetText(Type_i: Integer);
+begin
+  case Type_i of
+    1:edtTOTAL_AMT.Text := IntToStr(StrToInt64(Trim(edtENDED_NO.Text))-StrToInt64(Trim(edtBEGIN_NO.Text))+1);
+    2:edtBALANCE.Text := IntToStr(StrToInt64(Trim(edtTOTAL_AMT.Text))-StrToInt64(Trim(edtUSING_AMT.Text))-StrToInt64(Trim(edtCANCEL_AMT.Text)));
+  end;
+end;
 
 end.

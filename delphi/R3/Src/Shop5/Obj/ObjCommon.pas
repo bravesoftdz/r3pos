@@ -54,15 +54,27 @@ begin
   case iDbType of
   0:begin
      result := stringreplace(SQL,'ifnull','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'IfNull','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'IFNULL','isnull',[rfReplaceAll]);
      result := stringreplace(result,'nvl','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'Nvl','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'NVL','isnull',[rfReplaceAll]);
     end;
   1,4:begin
      result := stringreplace(SQL,'ifnull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IfNull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IFNULL','nvl',[rfReplaceAll]);
      result := stringreplace(result,'isnull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IsNull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'ISNULL','nvl',[rfReplaceAll]);
     end;
   5:begin
      result := stringreplace(SQL,'nvl','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'NVL','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'Nvl','ifnull',[rfReplaceAll]);
      result := stringreplace(result,'isnull','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'ISNULL','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'IsNull','ifnull',[rfReplaceAll]);
     end;
   end;
 end;
@@ -162,10 +174,9 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(PRINT_DATE) from ('+
-//         'select max(PRINT_DATE) as PRINT_DATE from CHK_PRINTORDER where  TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
-//         'union all '+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where  TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' ) j';
+         'select max(CREA_DATE) from ('+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
         begin
@@ -194,8 +205,9 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(PRINT_DATE) from ('+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' ) j';
+         'select max(CREA_DATE) from ('+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
         begin
@@ -224,8 +236,9 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(PRINT_DATE) from ('+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' ) j';
+         'select max(CREA_DATE) from ('+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
         begin
@@ -266,7 +279,7 @@ begin
               'AMONEY=case when (IsNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')=0 then 0 else IsNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+' end,'+
               'NEAR_INDATE=case when '+inttostr(flag)+'=1 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_INDATE end,'+
               'NEAR_OUTDATE=case when '+inttostr(flag)+'=2 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_OUTDATE end,'+
-              'COST_PRICE= case when (IsNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (IsNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(IsNull(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end ,'+
+              'COST_PRICE= round(case when (IsNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (IsNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(IsNull(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end,6) ,'+
               'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
               'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and PROPERTY_01='''+PROPERTY_01+''' and PROPERTY_02='''+PROPERTY_02+''' and BATCH_NO='''+BATCH_NO+''' ';
        3: Str := 'update STO_STORAGE set '+
@@ -274,7 +287,7 @@ begin
               'AMONEY=IIF((IIF(IsNull(AMOUNT),0,AMOUNT)+'+FormatFloat('#0.000',Amt)+')=0,0,IIF(IsNull(AMONEY),0,AMONEY)+'+FormatFloat('#0.000',Mny)+'),'+
               'NEAR_INDATE=IIF('+inttostr(flag)+'=1,'''+formatDatetime('YYYY-MM-DD',Date())+''',NEAR_INDATE),'+
               'NEAR_OUTDATE=IIF('+inttostr(flag)+'=2,'''+formatDatetime('YYYY-MM-DD',Date())+''',NEAR_OUTDATE),'+
-              'COST_PRICE=IIF(IIF(IsNull(AMOUNT),0,AMOUNT)+'+FormatFloat('#0.000',Amt)+'=0,'+FormatFloat('#0.000000',CostPrice)+ ',(IIF(IsNull(AMONEY),0,AMONEY)+'+FormatFloat('#0.000',Mny)+')/(IIF(IsNull(AMOUNT),0,AMOUNT)+'+FormatFloat('#0.000',Amt)+')),'+
+              'COST_PRICE=round(IIF(IIF(IsNull(AMOUNT),0,AMOUNT)+'+FormatFloat('#0.000',Amt)+'=0,'+FormatFloat('#0.000000',CostPrice)+ ',(IIF(IsNull(AMONEY),0,AMONEY)+'+FormatFloat('#0.000',Mny)+')/(IIF(IsNull(AMOUNT),0,AMOUNT)+'+FormatFloat('#0.000',Amt)+')),6),'+
               'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
               'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and PROPERTY_01='''+PROPERTY_01+''' and PROPERTY_02='''+PROPERTY_02+''' and BATCH_NO='''+BATCH_NO+''' ';
        1,4: Str :=
@@ -283,7 +296,7 @@ begin
               'AMONEY=case when (nvl(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')=0 then 0 else nvl(AMONEY,0)+'+FormatFloat('#0.000',Mny)+' end,'+
               'NEAR_INDATE=case when '+inttostr(flag)+'=1 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_INDATE end,'+
               'NEAR_OUTDATE=case when '+inttostr(flag)+'=2 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_OUTDATE end,'+
-              'COST_PRICE= case when (nvl(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (nvl(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(nvl(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end ,'+
+              'COST_PRICE= round(case when (nvl(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (nvl(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(nvl(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end ,6),'+
               'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
               'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and PROPERTY_01='''+PROPERTY_01+''' and PROPERTY_02='''+PROPERTY_02+''' and BATCH_NO='''+BATCH_NO+''' ';
        5: Str :=
@@ -292,7 +305,7 @@ begin
               'AMONEY=case when (IfNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')=0 then 0 else IfNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+' end,'+
               'NEAR_INDATE=case when '+inttostr(flag)+'=1 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_INDATE end,'+
               'NEAR_OUTDATE=case when '+inttostr(flag)+'=2 then '''+formatDatetime('YYYY-MM-DD',Date())+''' else NEAR_OUTDATE end,'+
-              'COST_PRICE= case when (IfNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (IfNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(IfNull(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end ,'+
+              'COST_PRICE= round(case when (IfNull(AMOUNT,0)+'+FormatFloat('#0.000',amt)+')<>0 then (IfNull(AMONEY,0)+'+FormatFloat('#0.000',Mny)+')/(IfNull(AMOUNT,0)+'+FormatFloat('#0.000',Amt)+') else  '+FormatFloat('#0.000000',CostPrice)+' end,6) ,'+
               'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
               'where SHOP_ID='''+SHOP_ID +''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and PROPERTY_01='''+PROPERTY_01+''' and PROPERTY_02='''+PROPERTY_02+''' and BATCH_NO='''+BATCH_NO+''' ';
      end;

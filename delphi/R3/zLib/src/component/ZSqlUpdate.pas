@@ -101,7 +101,8 @@ type
     FAfterInsertSQLStatement: TZAfterInsertSQLStatementEvent;
     FBeforeModifySQLStatement: TZBeforeSQLStatementEvent;
     FAfterModifySQLStatement: TZAfterSQLStatementEvent;
-
+    //¼ÇÊýÆ÷
+    uRow:integer;
     procedure SetUseSequenceFieldForRefreshSQL(const Value: Boolean);
     procedure SetDataset(Value: TDataset);
     function GetSQL(UpdateKind: TUpdateKind): TStrings;
@@ -128,7 +129,8 @@ type
 
   protected
     FOldRowAccessor, FNewRowAccessor:TZRowAccessor;
-    
+
+    procedure DoBeforeApplyUpdate(Sender: TObject);virtual;
     procedure DefineProperties(Filer: TFiler); override;
     procedure CalculateDefaults(Sender: IZCachedResultSet;
       RowAccessor: TZRowAccessor);
@@ -269,6 +271,7 @@ begin
   FDeleteSQL.Dataset := Value;
   FInsertSQL.Dataset := Value;
   FModifySQL.Dataset := Value;
+  uRow := 0;
 end;
 
 {**
@@ -739,7 +742,6 @@ begin
   if (UpdateType = utDeleted)
     and (OldRowAccessor.RowBuffer.UpdateType = utInserted) then
     Exit;
-
   case UpdateType of
     utInserted:
       Config := FInsertSQL;
@@ -750,9 +752,13 @@ begin
     else
       Exit;
   end;
+
   FOldRowAccessor := OldRowAccessor;
   FNewRowAccessor := NewRowAccessor;
 
+  inc(uRow);
+  if uRow=1 then DoBeforeApplyUpdate(DataSet);
+  
   case UpdateType of
     utInserted:
       DoBeforeInsertSQL;
@@ -969,6 +975,11 @@ procedure TZUpdateSQL.DoBeforeModifySQLStatement(const Sender: TObject;
 begin
  if Assigned(FBeforeModifySQLStatement) then
     FBeforeModifySQLStatement(Self, StatementIndex, Execute);
+end;
+
+procedure TZUpdateSQL.DoBeforeApplyUpdate(Sender: TObject);
+begin
+
 end;
 
 end.

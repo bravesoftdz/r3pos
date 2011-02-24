@@ -52,6 +52,7 @@ type
     FdbHelp: IdbHelp;
     FFactory: TZFactory;
   protected
+    procedure DoBeforeApplyUpdate(Sender: TObject);override;
     procedure PSBeforeDeleteSQL(Sender: TObject);
     procedure PSBeforeInsertSQL(Sender: TObject);
     procedure PSBeforeModifySQL(Sender: TObject);
@@ -447,8 +448,11 @@ begin
     SaveTrans := dbHelp.InTransaction;
     if not SaveTrans then dbHelp.BeginTrans;
     try
-      Factory.ReadFromDataSet(DataSet);
-      Factory.BeforeUpdateRecord(dbHelp);
+      //改由SQLUpdate完成
+      //Factory.ReadFromDataSet(DataSet);
+      //Factory.BeforeUpdateRecord(dbHelp);
+      if Factory.Count = 0 then Factory.ReadField(DataSet); 
+      UpdateSQL.DataSet := DataSet;
       UpdateSQL.DeleteSQL.Text := Factory.DeleteSQL.Text;
       UpdateSQL.ModifySQL.Text := Factory.UpdateSQL.Text;
       UpdateSQL.InsertSQL.Text := Factory.InsertSQL.Text;
@@ -533,21 +537,7 @@ begin
   if not SaveTrans then dbHelp.BeginTrans;
   SQLUpdate := TZdbUpdate.Create(nil);
   try
-    //更新记录前
-    for i:=0 to FList.Count -1 do
-      begin
-        SQLUpdate.dbHelp := dbHelp;
-        SQLUpdate.Factory := TZFactory(FList[i]);
-        with TZFactory(FList[i]) do
-          begin
-            if ZClassName<>'' then
-               begin
-                 ReadFromDataSet(DataSet);
-                 BeforeUpdateRecord(dbHelp);
-               end;
-          end;
-      end;
-    //更新记录中
+    //更新记录
     for i:=0 to FList.Count -1 do
       begin
         SQLUpdate.dbHelp := dbHelp;
@@ -556,12 +546,14 @@ begin
           begin
             if ZClassName='' then
                begin
-                 dbHelp.UpdateBatch(DataSet); 
+                 dbHelp.UpdateBatch(DataSet);
                end
             else
                begin
                  TZQuery(DataSet).UpdateObject := SQLUpdate;
                  try
+                   SQLUpdate.DataSet := DataSet;
+                   if Count=0 then ReadField(DataSet);
                    SQLUpdate.DeleteSQL.Text := DeleteSQL.Text;
                    SQLUpdate.ModifySQL.Text := UpdateSQL.Text;
                    SQLUpdate.InsertSQL.Text := InsertSQL.Text;
@@ -677,6 +669,13 @@ begin
   inherited;
 end;
 
+procedure TZdbUpdate.DoBeforeApplyUpdate(Sender: TObject);
+begin
+  inherited;
+  ReadData;
+  Factory.BeforeUpdateRecord(dbHelp);
+end;
+
 procedure TZdbUpdate.PSAfterDeleteSQL;
 begin
 
@@ -779,8 +778,13 @@ begin
               stTimestamp:
                 Factory.Fields[i].OldValue := FOldRowAccessor.GetTimestamp(i+1, WasNull);
             end;
-         end
+            if WasNull then Factory.Fields[i].OldValue := null;
+         end;
+      //为了容错，加入默认值
+      if FNewRowAccessor.RowBuffer.UpdateType in [utDeleted] then
+         Factory.Fields[i].NewValue := Factory.Fields[i].OldValue
       else
+      if FNewRowAccessor.RowBuffer.UpdateType in [utUnmodified,utInserted] then
          Factory.Fields[i].OldValue := Factory.Fields[i].NewValue;
      end;
 end;

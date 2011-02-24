@@ -241,6 +241,8 @@ begin
     with ColumnInfo do
     begin
       ColumnLabel := StrPas(FieldName^);
+      if pos('.',ColumnLabel)>=0 then
+         ColumnLabel := copy(ColumnLabel,pos('.',ColumnLabel)+1,255);
       Inc(FieldName);
       TableName := '';
       ReadOnly := False;

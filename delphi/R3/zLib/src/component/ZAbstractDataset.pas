@@ -99,7 +99,11 @@ type
     FSequenceField: string;
 
     FBeforeApplyUpdates: TNotifyEvent; {bangfauzan addition}
-    FAfterApplyUpdates: TNotifyEvent; {bangfauzan addition}
+    FAfterApplyUpdates: TNotifyEvent;  {bangfauzan addition}
+    procedure SetData(const Value: OleVariant);
+    function GetData: OleVariant;
+    function GetDelta: OleVariant;
+    procedure SetDelta(const Value: OleVariant);
 
   private
     function GetUpdatesPending: Boolean;
@@ -151,11 +155,15 @@ type
     procedure CancelUpdates;
     procedure RevertRecord;
 
-    procedure SaveToStream(Stream:TStream;OnlyChanged:boolean=false;SaveUpdatus:TUpdateStatus=usUnmodified);
+    procedure SaveToStream(Stream:TStream;uss:TUpdateStatusSet=[usUnmodified,usModified,usInserted,usDeleted]);
     procedure LoadFromStream(Stream:TStream);
     procedure AddFromStream(Stream:TStream);
     procedure CreateDataSet;
 
+    function Changed:boolean;
+
+    property Data:OleVariant read GetData write SetData;
+    property Delta:OleVariant read GetDelta write SetDelta;
 
     procedure EmptyDataSet; {bangfauzan addition}
 
@@ -1157,7 +1165,7 @@ begin
  end;
 end;
 
-procedure TZAbstractDataset.SaveToStream(Stream: TStream;OnlyChanged:boolean=false;SaveUpdatus:TUpdateStatus=usUnmodified);
+procedure TZAbstractDataset.SaveToStream(Stream: TStream;uss:TUpdateStatusSet=[usUnmodified,usModified,usInserted,usDeleted]);
 procedure WriteHeader;
 var
   i,w:integer;
@@ -1365,12 +1373,8 @@ begin
      UpdateType := usDeleted
   else
      UpdateType := usUnmodified;
-  if OnlyChanged and (UpdateType=usUnmodified) then Exit;
+  if not(UpdateType in uss) then Exit;
   Stream.Write(row,SizeOf(row));
-  case SaveUpdatus of
-  usInserted:UpdateType := usInserted;
-  usDeleted:UpdateType := usDeleted;
-  end;
   Stream.Write(UpdateType,SizeOf(UpdateType));
   //打包修改前原值
   if UpdateType=usModified then
@@ -1391,7 +1395,6 @@ begin
  if State in [dsEdit,dsInsert] then Post;
  DisableControls;
  try
-//   if IsEmpty then Exit;
    Stream.Size := 0;
    Stream.Position := 0;
    WriteHeader;
@@ -1701,6 +1704,87 @@ begin
   { Performs sorting. }
   if SortedFields <> '' then
       InternalSort;
+end;
+
+procedure TZAbstractDataset.SetData(const Value: OleVariant);
+var
+  Stream :TStringStream;
+begin
+  Close;
+  if VarIsNull(Value) then Exit;
+  if VarIsStr(Value) then Raise Exception.Create('无效数据包');
+  Stream := TStringStream.Create(Value);
+  try
+     Stream.Position := 0;
+     LoadFromStream(Stream);
+  finally
+     Stream.Free;
+  end;    
+end;
+
+function TZAbstractDataset.GetData: OleVariant;
+var
+  Stream :TStringStream;
+begin
+  if not Active then
+     begin
+       result := null;
+       Exit;
+     end;
+  Stream := TStringStream.Create('');
+  try
+     SaveToStream(Stream);
+     result := Stream.DataString;
+  finally
+     Stream.Free;
+  end;
+end;
+
+function TZAbstractDataset.GetDelta: OleVariant;
+var
+  Stream :TStringStream;
+begin
+  if not Active then
+     begin
+       result := null;
+       Exit;
+     end;
+  Stream := TStringStream.Create('');
+  try
+     SaveToStream(Stream,[usModified, usInserted, usDeleted]);
+     result := Stream.DataString;
+  finally
+     Stream.Free;
+  end;
+end;
+
+procedure TZAbstractDataset.SetDelta(const Value: OleVariant);
+var
+  Stream :TStringStream;
+begin
+  Close;
+  if VarIsNull(Value) then Exit;
+  if VarIsStr(Value) then Raise Exception.Create('无效数据包');
+  Stream := TStringStream.Create(Value);
+  try
+     Stream.Position := 0;
+     LoadFromStream(Stream);
+  finally
+     Stream.Free;
+  end;    
+end;
+
+function TZAbstractDataset.Changed: boolean;
+begin
+  result := false;
+  if not Active then Exit;
+  ResultSet.First;
+  while not ResultSet.IsAfterLast do
+     begin
+       result := ResultSet.RowUpdated or ResultSet.RowInserted or ResultSet.RowDeleted;
+       if result then break;
+       ResultSet.Next;
+     end;
 end;
 
 end.

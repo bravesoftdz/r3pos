@@ -2,7 +2,7 @@ inherited frmCloseForDay: TfrmCloseForDay
   Left = 585
   Top = 236
   BorderStyle = bsNone
-  Caption = 'frmCloseForDay'
+  Caption = #20132#29677#20851#36134
   ClientHeight = 255
   ClientWidth = 435
   OldCreateOrder = True
@@ -67,7 +67,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #32467#36134'(&S)'
+        Caption = #20851#36134'(&S)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack

@@ -6,16 +6,24 @@
 unit ZdbFactory;
 
 interface
-uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset;
+uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset,ZClient;
 type
   TdbFactory = class(TComponent)
   private
-    dbResolver:TdbResolver;
+    FThreadLock:TRTLCriticalSection;
+    dbResolver:TCustomdbResolver;
+    FConnMode: integer;
+    FConnStr: string;
+    procedure SetConnMode(const Value: integer);
+    procedure SetConnStr(const Value: string);
+  protected
+    procedure Enter;
+    procedure Leave;
   public
     constructor Create;
     destructor  Destroy;override;
 
-    //设置连接参数
+    //设置连接参数 connmode=1 本地连接 2 Rsp服务连接
     function  Initialize(Const ConnStr:WideString):boolean;stdcall;
     //读取连接串
     function  GetConnectionString:WideString;stdcall;
@@ -60,6 +68,11 @@ type
 
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;stdcall;
+
+    //连接模式 1 是本地连接  2 RSP通讯连接
+    property ConnMode:integer read FConnMode write SetConnMode;
+    //连接字符串
+    property ConnString:string read FConnStr write SetConnStr;
   end;
 implementation
 
@@ -67,137 +80,295 @@ implementation
 
 procedure TdbFactory.BeginTrans(TimeOut: integer);
 begin
-  dbResolver.BeginTrans(TimeOut); 
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    dbResolver.BeginTrans(TimeOut);
+  finally
+    Leave;
+  end;
 end;
 
 procedure TdbFactory.CommitTrans;
 begin
-  dbResolver.CommitTrans;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    dbResolver.CommitTrans;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.Connect: boolean;
 begin
-  result := dbResolver.Connect;
+  DisConnect;
+  Enter;
+  try
+    case ConnMode of
+    2:dbResolver := TZClient.Create;
+    else
+      dbResolver := TdbResolver.Create;
+    end;
+    dbResolver.Initialize(ConnString); 
+    result := dbResolver.Connect;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.Connected: boolean;
 begin
-  result := dbResolver.Connected;
+  result := assigned(dbResolver) and dbResolver.Connected;
 end;
 
 constructor TdbFactory.Create;
 begin
-  dbResolver := TdbResolver.Create;
+  InitializeCriticalSection(FThreadLock);
+  dbResolver := nil;
 end;
 
 destructor TdbFactory.Destroy;
 begin
-  dbResolver := nil;
-  inherited;
+  DisConnect;
+  Enter;
+  try
+    inherited;
+  finally
+     Leave;
+     DeleteCriticalSection(FThreadLock);
+  end;
 end;
 
 function TdbFactory.Open(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
-  result := dbResolver.Open(DataSet,AClassName,Params)
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.Open(DataSet,AClassName,Params)
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.DisConnect: boolean;
 begin
-  result := dbResolver.DisConnect;
+  Enter;
+  try
+    if assigned(dbResolver) then freeandnil(dbResolver);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.ExecSQL(const SQL: WideString;
   ObjectFactory: TZFactory): Integer;
 begin
-  result := dbResolver.ExecSQL(SQL,ObjectFactory);
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.ExecSQL(SQL,ObjectFactory);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.GetConnectionString: WideString;
 begin
-  result := dbResolver.GetConnectionString;
+  result := ConnString;
 end;
 
 function TdbFactory.iDbType: Integer;
 begin
-  result := dbResolver.iDbType;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.iDbType;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.Initialize(const ConnStr: WideString): boolean;
+var
+  vList:TStringList;
 begin
-  result := dbResolver.Initialize(ConnStr);
+  Disconnect;
+  vList := TStringList.Create;
+  try
+    vList.Delimiter := ';';
+    vList.DelimitedText := ConnStr;
+    ConnMode := StrtoIntDef(vList.Values['connmode'],1);
+    FConnStr := ConnStr;
+  finally
+    vList.Free;
+  end;
 end;
 
 function TdbFactory.InTransaction: boolean;
 begin
-  result := dbResolver.InTransaction;
+  result := Assigned(dbResolver) and dbResolver.InTransaction;
 end;
 
 function TdbFactory.Open(DataSet: TDataSet): Boolean;
 begin
-  result := dbResolver.Open(DataSet); 
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.Open(DataSet);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.UpdateBatch(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
-  result := dbResolver.UpdateBatch(DataSet,AClassName,Params);
-  if result then TZAbstractDataset(DataSet).CommitUpdates;
-
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.UpdateBatch(DataSet,AClassName,Params);
+    if result then TZAbstractDataset(DataSet).CommitUpdates;
+  finally
+    Leave;
+  end;
 end;
 
 procedure TdbFactory.RollbackTrans;
 begin
-  dbResolver.RollbackTrans;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    dbResolver.RollbackTrans;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.UpdateBatch(DataSet: TDataSet): Boolean;
 begin
-  result := dbResolver.UpdateBatch(DataSet); 
-  if result then TZAbstractDataset(DataSet).CommitUpdates;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.UpdateBatch(DataSet);
+    if result then TZAbstractDataset(DataSet).CommitUpdates;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.AddBatch(DataSet: TDataSet; AClassName: string;
   Params: TftParamList): Boolean;
 begin
-  result := dbResolver.AddBatch(DataSet,AClassName,Params);
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.AddBatch(DataSet,AClassName,Params);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.BeginBatch: Boolean;
 begin
-  result := dbResolver.BeginBatch;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.BeginBatch;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.CancelBatch: Boolean;
 begin
-  result := dbResolver.CancelBatch;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.CancelBatch;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.CommitBatch: Boolean;
 begin
-  result := dbResolver.CommitBatch;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.CommitBatch;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.OpenBatch: Boolean;
 begin
-  result := dbResolver.OpenBatch;
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.OpenBatch;
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.ExecProc(AClassName: String;
   Params: TftParamList): String;
 begin
-  result := dbResolver.ExecProc(AClassName,Params);
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := dbResolver.ExecProc(AClassName,Params);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.Open(DataSet: TDataSet; AClassName: String): Boolean;
 begin
-  result := Open(DataSet,AClassName,nil);
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := Open(DataSet,AClassName,nil);
+  finally
+    Leave;
+  end;
 end;
 
 function TdbFactory.UpdateBatch(DataSet: TDataSet;
   AClassName: String): Boolean;
 begin
-  result := UpdateBatch(DataSet,AClassName,nil);
+  if dbResolver=nil then Connect;
+  Enter;
+  try
+    result := UpdateBatch(DataSet,AClassName,nil);
+  finally
+    Leave;
+  end;
+end;
+
+procedure TdbFactory.SetConnMode(const Value: integer);
+begin
+  FConnMode := Value;
+  
+end;
+
+procedure TdbFactory.SetConnStr(const Value: string);
+begin
+  FConnStr := Value;
+  Initialize(ConnString);
+end;
+
+procedure TdbFactory.Enter;
+begin
+  EnterCriticalSection(FThreadLock);
+end;
+
+procedure TdbFactory.Leave;
+begin
+  LeaveCriticalSection(FThreadLock);
 end;
 
 end.

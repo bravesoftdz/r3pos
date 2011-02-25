@@ -6,13 +6,15 @@
 unit ZBase;
 
 interface
-uses SysUtils,Classes,Windows,DB,Variants,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings;
+uses SysUtils,Classes,Windows,DB,Variants,FMTBcd,ZIntf,zConst,ZDataset,ZSqlUpdate,ZSqlStrings;
 
 type
 TftParam=class(TParam);
 TftParamList=class(TParams)
   public
     function ParamByName(const Value: string): TParam;
+    class function Encode(Params:TParams):string;
+    class procedure Decode(Params:TParams;str:string);
   end;
 
 TField_=Class(TInterfacedObject)
@@ -196,10 +198,12 @@ TZFactory=Class(TRecord_,IZFactory)
     FDLLHandle: THandle;
     FKeyFields: String;
     FZClassName: string;
+    FZParamWStr: widestring;
     procedure SetIsSQLUpdate(const Value: Boolean);
     procedure SetDLLHandle(const Value: THandle);
     procedure SetKeyFields(const Value: String);
     procedure SetZClassName(const Value: string);
+    procedure SetZParamWStr(const Value: widestring);
   protected
     //初始化对象
     procedure PSInitialize;stdcall;
@@ -254,6 +258,7 @@ TZFactory=Class(TRecord_,IZFactory)
     property SelectSQL:TSQLCache read FSelectSQL;
 
     property ZClassName:string read FZClassName write SetZClassName;
+    property ZParamWStr:widestring read FZParamWStr write SetZParamWStr;
   end;
 
 TZFactoryClass= class of TZFactory;
@@ -930,6 +935,11 @@ function TZProcFactory.Execute(AGlobal: IdbHelp; Params: TftParamList;
 begin
   Result := Execute(AGlobal,Params);
   aData := Msg;
+  if not Result then
+     begin
+       if Msg = '' then Msg := '错误了,TProcFactory的方法是否没有返回值';
+       Raise Exception.Create(Msg);
+     end;
 end;
 
 function TZProcFactory.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
@@ -1147,6 +1157,11 @@ begin
   FZClassName := Value;
 end;
 
+procedure TZFactory.SetZParamWStr(const Value: widestring);
+begin
+  FZParamWStr := Value;
+end;
+
 { TRecordList }
 
 procedure TRecordList.AddRecord(RS: TRecord_);
@@ -1219,6 +1234,178 @@ begin
 end;
 
 { TftParamList }
+
+class procedure TftParamList.Decode(Params: TParams; str: string);
+var
+  i,w,c:integer;
+  ss:TStringStream;
+  cname:string;
+  n:boolean;
+  p1:integer;
+  p2:boolean;
+  p3:Currency;
+  p4:tdatetime;
+  p5:double;
+  p6:int64;
+  p7:TBcd;
+  param:TParam;
+begin
+  ss := TStringStream.Create(str);
+  try
+    ss.Position := 0;
+    ss.Read(c,sizeof(c)); 
+    for i:=0 to c-1 do
+      begin
+        //参数名
+        ss.Read(w,sizeof(w));
+        cname := ss.ReadString(w);
+        //参数类型
+        ss.Read(w,sizeof(w));
+        param := Params.FindParam(cname);
+        if param=nil then
+           begin
+             param := TParam(Params.add);
+             param.Name := cname;
+             param.ParamType := ptInput;
+           end;
+        param.DataType := TFieldType(w);
+        //是否为空
+        ss.Read(n,sizeof(n));
+        if n then continue;
+        //参数值
+        case Params[i].DataType of
+        ftString,ftFixedChar,ftWideString:
+           begin
+             ss.Read(w,sizeof(w));
+             Param.asString := ss.ReadString(w);
+           end;
+        ftSmallint,ftInteger,ftWord:
+           begin
+             ss.Read(p1,sizeof(p1));
+             Params[i].AsInteger := p1;
+           end;
+        ftBoolean:
+           begin
+             ss.Read(p2,sizeof(p2));
+             Params[i].AsBoolean := p2;
+           end;
+        ftCurrency,ftBCD:
+           begin
+             ss.Read(p3,sizeof(p3));
+             Params[i].AsCurrency := p3;
+           end;
+        ftDate,ftTime,ftDateTime:
+           begin
+             ss.Read(p4,sizeof(p4));
+             Params[i].AsDateTime := p4;
+           end;
+        ftFloat:
+           begin
+             ss.Read(p5,sizeof(p5));
+             Params[i].AsFloat := p5;
+           end;
+        ftLargeint:
+           begin
+             ss.Read(p6,sizeof(p6));
+             Params[i].asString := inttostr(p6);
+           end;
+        ftFMTBcd:
+           begin
+             ss.Read(p7,sizeof(p7));
+             Params[i].AsFMTBCD := p7;
+           end;
+        else
+           Raise Exception.Create('不支持的数据参数类型'); 
+        end;
+      end;
+  finally
+    ss.free;
+  end;
+end;
+
+class function TftParamList.Encode(Params: TParams): string;
+var
+  i,w:integer;
+  ss:TStringStream;
+  n:boolean;
+  p1:integer;
+  p2:boolean;
+  p3:Currency;
+  p4:tdatetime;
+  p5:double;
+  p6:int64;
+  p7:TBcd;
+begin
+  ss := TStringStream.Create('');
+  try
+    //写入参数个数
+    w := Params.Count;
+    ss.Write(w,sizeof(w));
+    for i:=0 to Params.Count-1 do
+      begin
+        //参数名
+        w := length(Params[i].Name);
+        ss.Write(w,sizeof(w));
+        ss.WriteString(Params[i].Name);
+        //参数类型
+        w := ord(Params[i].DataType);
+        ss.Write(w,sizeof(w));
+        //是否为空
+        n := Params[i].IsNull;
+        ss.Write(n,sizeof(n));
+        if Params[i].IsNull then continue;
+        //参数值
+        case Params[i].DataType of
+        ftString,ftFixedChar,ftWideString:
+           begin
+             w := length(Params[i].AsString);
+             ss.Write(w,sizeof(w));
+             ss.WriteString(Params[i].AsString);
+           end;
+        ftSmallint,ftInteger,ftWord:
+           begin
+             p1 := Params[i].AsInteger;
+             ss.Write(p1,sizeof(p1));
+           end;
+        ftBoolean:
+           begin
+             p2 := Params[i].AsBoolean;
+             ss.Write(p2,sizeof(p2));
+           end;
+        ftCurrency,ftBCD:
+           begin
+             p3 := Params[i].AsCurrency;
+             ss.Write(p3,sizeof(p3));
+           end;
+        ftDate,ftTime,ftDateTime:
+           begin
+             p4 := Params[i].AsDateTime;
+             ss.Write(p4,sizeof(p4));
+           end;
+        ftFloat:
+           begin
+             p5 := Params[i].AsFloat;
+             ss.Write(p5,sizeof(p5));
+           end;
+        ftLargeint:
+           begin
+             p6 := StrtoInt64Def(Params[i].asString,0);
+             ss.Write(p6,sizeof(p6));
+           end;
+        ftFMTBcd:
+           begin
+             p7 := Params[i].AsFMTBCD;
+             ss.Write(p7,sizeof(p7));
+           end;
+        else
+           Raise Exception.Create('不支持的数据参数类型'); 
+        end;
+      end;
+    result := ss.DataString;
+  finally
+    ss.free;
+  end;
+end;
 
 function TftParamList.ParamByName(const Value: string): TParam;
 begin

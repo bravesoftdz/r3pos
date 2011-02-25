@@ -7,7 +7,7 @@ unit ZdbHelp;
 
 interface
 uses Classes,SysUtils,Windows,DB,Variants,ZIntf,ZAbstractRODataset, ZDbcCache,
-     ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, ZSqlUpdate;
+     ZAbstractDataset, ZDataset, ZConnection, ZDbcIntfs, ZBase, ZSqlUpdate, ComObj;
 type
   TdbHelp=class(TInterfacedObject, IdbHelp)
   private
@@ -72,7 +72,59 @@ type
     property Factory:TZFactory read FFactory write SetFactory;
   end;
 
-  TdbResolver=class
+  TCustomdbResolver=class(TInterfacedPersistent)
+  private
+    Fdbid: integer;
+    procedure Setdbid(const Value: integer);
+  public
+    //设置连接参数
+    function  Initialize(Const ConnStr:WideString):boolean;virtual;abstract;
+    //读取连接串
+    function  GetConnectionString:WideString;virtual;abstract;
+    //连接数据库
+    function  Connect:boolean;virtual;abstract;
+    //检测通讯连接状态
+    function  Connected:boolean;virtual;abstract;
+    //关闭数据库
+    function  DisConnect:boolean;virtual;abstract;
+
+    //开始事务  超时设置 单位秒
+    procedure BeginTrans(TimeOut:integer=-1);virtual;abstract;
+    //提交事务
+    procedure CommitTrans;virtual;abstract;
+    //回滚事务
+    procedure RollbackTrans;virtual;abstract;
+    //是否已经在事务中 True 在事务中
+    function  InTransaction:boolean;virtual;abstract;
+
+    //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
+    function  iDbType:Integer;virtual;abstract;
+
+    //数据包组织
+    function BeginBatch:Boolean;virtual;abstract;
+    function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;virtual;abstract;
+    function OpenBatch:Boolean;virtual;abstract;
+    function CommitBatch:Boolean;virtual;abstract;
+    function CancelBatch:Boolean;virtual;abstract;
+
+    //查询数据;
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload;virtual;abstract;
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload;virtual;abstract;
+    function Open(DataSet:TDataSet):Boolean;overload;virtual;abstract;
+    //提交数据
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload;virtual;abstract;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload;virtual;abstract;
+    function UpdateBatch(DataSet:TDataSet):Boolean;overload;virtual;abstract;
+
+    //返回执行影响记录数
+    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;virtual;abstract;
+
+    //执行远程方式，返回结果
+    function ExecProc(AClassName:String;Params:TftParamList=nil):String;virtual;abstract;
+    
+    property dbid:integer read Fdbid write Setdbid;
+  end;
+  TdbResolver=class(TCustomdbResolver)
   private
     dbHelp:IdbHelp;
     FList:TList;
@@ -83,49 +135,50 @@ type
     destructor Destroy;override;
 
     //设置连接参数
-    function  Initialize(Const ConnStr:WideString):boolean;stdcall;
+    function  Initialize(Const ConnStr:WideString):boolean;override;
     //读取连接串
-    function  GetConnectionString:WideString;stdcall;
+    function  GetConnectionString:WideString;override;
     //连接数据库
-    function  Connect:boolean;stdcall;
+    function  Connect:boolean;override;
     //检测通讯连接状态
-    function  Connected:boolean;stdcall;
+    function  Connected:boolean;override;
     //关闭数据库
-    function  DisConnect:boolean;stdcall;
+    function  DisConnect:boolean;override;
 
     //开始事务  超时设置 单位秒
-    procedure BeginTrans(TimeOut:integer=-1);stdcall;
+    procedure BeginTrans(TimeOut:integer=-1);override;
     //提交事务
-    procedure CommitTrans;stdcall;
+    procedure CommitTrans;override;
     //回滚事务
-    procedure RollbackTrans;stdcall;
+    procedure RollbackTrans;override;
     //是否已经在事务中 True 在事务中
-    function  InTransaction:boolean;stdcall;
+    function  InTransaction:boolean;override;
 
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function  iDbType:Integer;stdcall;
+    function  iDbType:Integer;override;
 
     //数据包组织
-    function BeginBatch:Boolean;
-    function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;
-    function OpenBatch:Boolean;
-    function CommitBatch:Boolean;
-    function CancelBatch:Boolean;
+    function BeginBatch:Boolean;override;
+    function AddBatch(DataSet:TDataSet;AClassName:string='';Params:TftParamList=nil):Boolean;override;
+    function OpenBatch:Boolean;override;
+    function CommitBatch:Boolean;override;
+    function CancelBatch:Boolean;override;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
-    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
-    function Open(DataSet:TDataSet):Boolean;overload;stdcall;
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; override;
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; override;
+    function Open(DataSet:TDataSet):Boolean;overload;override;
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
-    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
-    function UpdateBatch(DataSet:TDataSet):Boolean;overload;stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; override;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; override;
+    function UpdateBatch(DataSet:TDataSet):Boolean;overload;override;
 
     //返回执行影响记录数
-    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;stdcall;
+    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;override;
 
     //执行远程方式，返回结果
-    function ExecProc(AClassName:String;Params:TftParamList=nil):String;stdcall;
+    function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
+
   end;
 
 implementation
@@ -354,9 +407,9 @@ destructor TdbResolver.Destroy;
 var
   i:integer;
 begin
+  dbHelp := nil;
   for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
   FList.Free;
-  dbHelp := nil;
   inherited;
 end;
 
@@ -533,6 +586,7 @@ var
   SQLUpdate:TZdbUpdate;
   SaveTrans:boolean;
 begin
+  if FList.Count = 0 then Raise Exception.Create('没有组合数据包..');
   SaveTrans := dbHelp.InTransaction;
   if not SaveTrans then dbHelp.BeginTrans;
   SQLUpdate := TZdbUpdate.Create(nil);
@@ -595,6 +649,7 @@ function TdbResolver.OpenBatch: Boolean;
 var
   i:integer;
 begin
+  if FList.Count = 0 then Raise Exception.Create('没有组合数据包..');
   result := false;
   try
     for i:=0 to FList.Count -1 do
@@ -838,6 +893,13 @@ begin
           FNewRowAccessor.SetTimestamp(i+1,Factory.Fields[i].NewValue);
       end;
      end;
+end;
+
+{ TCustomdbResolver }
+
+procedure TCustomdbResolver.Setdbid(const Value: integer);
+begin
+  Fdbid := Value;
 end;
 
 end.

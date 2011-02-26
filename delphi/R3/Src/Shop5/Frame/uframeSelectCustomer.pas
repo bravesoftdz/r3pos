@@ -149,13 +149,12 @@ begin
      begin
       if w<>'' then w := w + ' and ';
       case  edtFIND_FLAG.ItemIndex of
-      0:w := w + '(CLIENT_CODE like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-      1:w := w + '(CLIENT_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+      0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+      1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
       2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
       3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
       4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
-      5:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
-      6:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+      5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
       end;
      end;
 

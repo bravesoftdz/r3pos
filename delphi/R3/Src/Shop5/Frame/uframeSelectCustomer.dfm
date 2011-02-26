@@ -207,11 +207,10 @@ inherited frameSelectCustomer: TframeSelectCustomer
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #33258#21160#25628#32034
-                    #23458#25143#21495
+                    #23458#25143#32534#21495
                     #20250#21592#22995#21517
                     #31227#21160#30005#35805
                     #35777#20214#21495
-                    #20648#20540#21345
                     #22320#22336)
                   TabOrder = 2
                 end

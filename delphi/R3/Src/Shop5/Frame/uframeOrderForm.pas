@@ -173,6 +173,7 @@ type
     //重复条码控制
     fndStr:string;
     function EnCodeBarcode:string;
+    function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
     //判断当前记录是否有颜色尺管制
     function PropertyEnabled:boolean;
     function IsKeyPress:boolean;virtual;
@@ -705,7 +706,7 @@ begin
         AObj.ReadFromDataSet(rs,false);
         AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
         AObj.FieldbyName('IS_PRESENT').AsString := '0';
-        AObj.FieldbyName('LOCUS_NO').AsString := '#';
+        AObj.FieldbyName('LOCUS_NO').AsString := '';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
         pt := false;
         
@@ -2690,15 +2691,11 @@ begin
   if basInfo.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then
      begin
        if (basInfo.FieldbyName('CALC_UNITS').asString=edtTable.FieldbyName('UNIT_ID').asString)
-          and
-          (edtTable.FieldbyName('PROPERTY_01').asString='#')
-          and
-          (edtTable.FieldbyName('PROPERTY_02').asString='#')
        then
           b := basInfo.FieldbyName('BARCODE').asString
        else
           begin
-            if pbar.Locate('GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString,edtTable.FieldbyName('PROPERTY_01').asString,edtTable.FieldbyName('PROPERTY_02').asString,edtTable.FieldbyName('BATCH_NO').asString]),[]) then
+            if pbar.Locate('GODS_ID,UNIT_ID,BATCH_NO',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString,edtTable.FieldbyName('BATCH_NO').asString]),[]) then
                b := basInfo.FieldbyName('BARCODE').asString
             else
                b := '';
@@ -2902,6 +2899,37 @@ procedure TframeOrderForm.munAppendRowClick(Sender: TObject);
 begin
   inherited;
   InitRecord;
+end;
+
+function TframeOrderForm.GetCostPrice(SHOP_ID, GODS_ID,
+  BATCH_NO: string): real;
+var
+  rs:TZQuery;
+  bs:TZQuery;
+begin
+  rs:=TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select AMONEY,AMOUNT from ('+
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+    rs.ParamByName('GODS_ID').AsString := GODS_ID;
+    rs.ParamByName('BATCH_NO').AsString := BATCH_NO;
+    Factor.Open(rs);
+    if rs.IsEmpty then
+       begin
+         bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+         if bs.Locate('GODS_ID',GODS_ID,[]) then
+            result := bs.FieldbyName('NEW_INPRICE').AsFloat
+         else
+            Raise Exception.Create('没找到经营商品');
+       end
+    else
+       result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

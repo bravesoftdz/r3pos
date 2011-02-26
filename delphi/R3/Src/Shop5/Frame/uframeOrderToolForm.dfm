@@ -1,5 +1,5 @@
 inherited frameOrderToolForm: TframeOrderToolForm
-  Left = 124
+  Left = 125
   Top = 51
   Width = 862
   Height = 522

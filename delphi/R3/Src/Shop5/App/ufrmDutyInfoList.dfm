@@ -1,6 +1,6 @@
 inherited frmDutyInfoList: TfrmDutyInfoList
-  Left = 193
-  Top = 107
+  Left = 195
+  Top = 114
   Width = 735
   Height = 521
   Caption = #32844#21153#26723#26696#31649#29702
@@ -94,6 +94,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
                   Properties.OnChange = edtKeyPropertiesChange
                   TabOrder = 0
                   OnKeyDown = edtKeyKeyDown
+                  OnKeyPress = edtKeyKeyPress
                 end
                 object btnOk: TRzBitBtn
                   Left = 218
@@ -139,7 +140,6 @@ inherited frmDutyInfoList: TfrmDutyInfoList
               ReadOnly = True
               RowSelect = True
               TabOrder = 1
-              OnChange = rzTreeChange
               OnChanging = rzTreeChanging
             end
             object Panel3: TPanel
@@ -264,7 +264,6 @@ inherited frmDutyInfoList: TfrmDutyInfoList
     inherited Image3: TImage
       Left = 485
       Width = 233
-      OnClick = Image3Click
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

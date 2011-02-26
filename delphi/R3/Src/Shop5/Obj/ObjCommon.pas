@@ -6,6 +6,14 @@ uses SysUtils,ZBase,Classes,DB,uFnUtil,ZIntf,Variants,ZDataSet;
 function GetCommStr(iDbType:integer;alias:string=''):string;
 //处理简单SQL
 function ParseSQL(iDbType:integer;SQL:string):string;
+{======  2011.02.25 Add SQL语句函数转换处理 ======}
+function  GetStrJoin(iDbType:Integer): string; {== 字符连接运算符号 ==}
+{=== 模糊查询Like [] ===}
+function  GetLikeCnd(iDbType:Integer; FieldName,KeyValue,JoinCnd: string; LikeType: string=''; IsParam: Boolean=true): string; overload;   //单个字段模糊查询
+function  GetLikeCnd(iDbType:Integer; AryFieldName: array of string;KeyValue,JoinCnd: string; LikeType: string=''; IsParam: Boolean=true): string; overload; //多个字段模糊查询
+//生成分段取数据SQL语句[默认: 600笔] ViewSQL: 数据表、视图、返回表组合SQL;     SortField: 排序字段;   SortType: 排序类型(desc|asc) ; 每批取记录数;
+function  GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: string; RCount: string='600'): string;
+
 //取时间的SQL
 function  GetTimeStamp(iDbType:Integer):string;
 function GetSysDateFormat(iDbType:integer):string;
@@ -51,6 +59,7 @@ begin
 end;
 function ParseSQL(iDbType:integer;SQL:string):string;
 begin
+  {==判断null函数替换处理==}
   case iDbType of
   0:begin
      result := stringreplace(SQL,'ifnull','isnull',[rfReplaceAll]);
@@ -77,7 +86,161 @@ begin
      result := stringreplace(result,'IsNull','ifnull',[rfReplaceAll]);
     end;
   end;
+  {== 2011.02.25 Add字符函数substring与substr函数替换处理 [substring |substr| mid] ==}
+  case iDbType of
+   0,2: //Ms SQL Server | SYSBASE  [substring]
+    begin
+      result := stringreplace(result,'substr(','substring(',[rfReplaceAll]);
+      result := stringreplace(result,'SubStr(','substring(',[rfReplaceAll]);
+      result := stringreplace(result,'SUBSTR(','substring(',[rfReplaceAll]);
+      result := stringreplace(result,'mid(','substring(',[rfReplaceAll]);
+      result := stringreplace(result,'Mid(','substring(',[rfReplaceAll]);
+      result := stringreplace(result,'MID(','substring(',[rfReplaceAll]);
+    end;
+   3:  //ACCESS
+    begin
+      result := stringreplace(result,'substr(','mid(',[rfReplaceAll]);
+      result := stringreplace(result,'SubStr(','mid(',[rfReplaceAll]);
+      result := stringreplace(result,'SUBSTR(','mid(',[rfReplaceAll]);
+      result := stringreplace(result,'substring(','mid(',[rfReplaceAll]);
+      result := stringreplace(result,'SubString(','mid(',[rfReplaceAll]);
+      result := stringreplace(result,'SUBSTRING(','mid(',[rfReplaceAll]);
+    end;
+   1,4,5: //Oracle | DB2 | SQLITE
+    begin
+      result := stringreplace(result,'substring(','substr(',[rfReplaceAll]);
+      result := stringreplace(result,'SubString(','substr(',[rfReplaceAll]);
+      result := stringreplace(result,'SUBSTRING(','substr(',[rfReplaceAll]);
+      result := stringreplace(result,'mid(','substr(',[rfReplaceAll]);
+      result := stringreplace(result,'Mid(','substr(',[rfReplaceAll]);
+      result := stringreplace(result,'MID(','substr(',[rfReplaceAll]);
+    end;
+  end;
+  {==2011.02.25 Add字符长度函数len()与length函数替换处理 [len |length|char_length] ==}
+  case iDbType of
+   0,3: //Ms SQL Server | Access [substring]
+    begin
+      result := stringreplace(result,'length(','len(',[rfReplaceAll]);
+      result := stringreplace(result,'Length(','len(',[rfReplaceAll]);
+      result := stringreplace(result,'LENGTH(','len(',[rfReplaceAll]);
+      result := stringreplace(result,'char_length(','len(',[rfReplaceAll]);
+      result := stringreplace(result,'Char_Length(','len(',[rfReplaceAll]);
+      result := stringreplace(result,'CHAR_LENGTH(','len(',[rfReplaceAll]);
+    end;
+   2:  //SYSBASE [char_length] 字符长度（字节长度用：data_length）
+    begin
+      result := stringreplace(result,'length(','data_length(',[rfReplaceAll]);
+      result := stringreplace(result,'Length(','data_length(',[rfReplaceAll]);
+      result := stringreplace(result,'LENGTH(','data_length(',[rfReplaceAll]);
+      result := stringreplace(result,'char_length(','data_length(',[rfReplaceAll]);
+      result := stringreplace(result,'Char_Length(','data_length(',[rfReplaceAll]);
+      result := stringreplace(result,'CHAR_LENGTH(','data_length(',[rfReplaceAll]);
+    end;
+   1,4,5: //Oracle | DB2 | SQLITE [length]  [Oracle字节长度:lengthb]
+    begin
+      result := stringreplace(result,'len(','length(',[rfReplaceAll]);
+      result := stringreplace(result,'Len(','length(',[rfReplaceAll]);
+      result := stringreplace(result,'LEN(','length(',[rfReplaceAll]);
+      result := stringreplace(result,'char_length(','length(',[rfReplaceAll]);
+      result := stringreplace(result,'Char_Length(','length(',[rfReplaceAll]);
+      result := stringreplace(result,'CHAR_LENGTH(','length(',[rfReplaceAll]);
+    end;
+  end;    
 end;
+
+{====== 2011.02.25 Add 字符连接运算符号: ======}
+function  GetStrJoin(iDbType:Integer): string;
+begin  //SYSBASE数据库的字符连接符号: + 和 ||均可
+  case iDbType of
+   0,2,3: result:='+';
+   1,4,5: result:='||';
+   else result:='+';
+  end; 
+end;
+
+{====== 2011.02.25 Add 单个字段模糊查询  ======}
+//FieldName: 关键字段;   KeyValue: 关键值（参数或实际值） ；IsParam: 是否是传递参数或实际值
+//JoinCnd 返回查询条件时：是否加条件关系: 如: and | or
+//LikeType参数: 表示左侧或右侧加%,默认为空则 like '%关键字%'
+function  GetLikeCnd(iDbType:Integer; FieldName,KeyValue,JoinCnd: string; LikeType: string='';IsParam: Boolean=true): string; overload;
+var
+  LStr,RStr: string;
+begin
+  result:='';
+  LStr:='%';
+  RStr:='%';
+  if (trim(LikeType)='L') or (trim(LikeType)='l') then RStr:='';
+  if (trim(LikeType)='R') or (trim(LikeType)='r') then LStr:='';
+  case iDbType of
+   0,3:  //MS SQL Server 、Access、SYSBASE
+    begin
+      if IsParam then //传入关键字
+      begin
+        if (LStr<>'') and (RStr='') then
+          result := '('+FieldName+' like '''+LStr+''' + '+KeyValue+')'
+        else if (LStr='') and (RStr<>'') then
+          result:= '('+FieldName+' like '+KeyValue+' + '''+RStr+''')'
+        else if (LStr<>'') and (RStr<>'') then
+          result:= '('+FieldName+' like '''+LStr+''' + '+KeyValue+' + '''+RStr+''')'; 
+      end else
+        result := '('+FieldName+' like '''+LStr+KeyValue+RStr+''')';
+    end;
+   1,4,5: // Oracle 、DB2 与 SQLITE
+    begin
+      if IsParam then //传入关键字
+      begin
+        if (LStr<>'') and (RStr='') then
+          result := '('+FieldName+' like '''+LStr+''' || '+KeyValue+')'
+        else if (LStr='') and (RStr<>'') then
+          result:= '('+FieldName+' like '+KeyValue+' || '''+RStr+''')'
+        else if (LStr<>'') and (RStr<>'') then
+          result:= '('+FieldName+' like '''+LStr+''' || '+KeyValue+' || '''+RStr+''')'; 
+      end else
+        result := '('+FieldName+' like '''+LStr+KeyValue+RStr+''')';
+    end;
+  end;
+  if (result<>'') and (trim(JoinCnd)<>'') then
+    result:=' '+JoinCnd+result;
+end;
+
+{====== 2011.02.25 Add 多个字段模糊查询 ======}
+function  GetLikeCnd(iDbType:Integer; AryFieldName: array of string;KeyValue,JoinCnd: string; LikeType: string='';IsParam: Boolean=true): string; overload;
+var
+  i: integer;
+  CurStr,ReStr: string;
+begin
+  result:='';
+  CurStr:='';
+  ReStr:='';
+  for i:=Low(AryFieldName) to High(AryFieldName) do
+  begin
+    CurStr:=trim(AryFieldName[i]);
+    if CurStr='' then continue;
+    CurStr:=GetLikeCnd(iDbType,CurStr,KeyValue,'',LikeType,IsParam);
+    if CurStr<>'' then
+    begin
+      if ReStr='' then ReStr:=CurStr
+      else ReStr:=ReStr+' or '+CurStr;
+    end;
+  end;
+  if ReStr<>'' then ReStr:='('+ReStr+')';
+  if ReStr<>'' then
+    result:=' '+JoinCnd+ReStr;
+end;
+
+{=== 2011.02.26 生成分段取数据SQL语句[默认: 600笔] ===}
+function GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: string; RCount: string='600'): string;
+begin
+  case iDbType of
+   0,2,3: //2: SYSBASE数据库只支持12.3以上版本
+      result:='select top '+trim(RCount)+' * from ('+ViewSQL+') as tmp  order by '+SortField+' '+SortType;  //（SYSBASE仅仅支持12.3以上版本）
+   1: result:='select * from (select * From ('+ViewSQL+')as tmp order by '+SortField+' '+SortType+') where rownum<= '+trim(RCount)+' order by rownum '+SortType;
+   4: result:='select tp.* from (select * From ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+') tp fetch first '+trim(RCount)+' rows only ';
+   5: result:='select * from ('+ViewSQL+') as tmp order by '+SortField+' '+SortType+' limit '+RCount;
+  end; 
+end;
+
+
 //读取系列号
 function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;
   function GetFormat:string;

@@ -36,8 +36,9 @@ type
     procedure edtUPDUTY_IDBeforeDropList(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edtUPDUTY_IDKeyPress(Sender: TObject; var Key: Char);
   private
-    function  GetLevelID: string;
+    function  GetLevelID(oldLevelID: string): string;
     function  IsEdit(Aobj:TRecord_; cdsTable: TZQuery):Boolean; virtual; //判断是Aobj对象与与数据集Value是否改变
     procedure CheckDutyNameIsExists;  //判断职务是否存在
   public
@@ -56,7 +57,7 @@ type
 
 implementation
 uses
-  uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal;
+  uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal, ObjCommon;
 {$R *.dfm}
 
 { TfrmDutyInfo }
@@ -95,9 +96,14 @@ begin
     CurID:=Copy(CurID,1,Length(CurID)-3);
     zQry:=Global.GetZQueryFromName('CA_DUTY_INFO');
     if (zQry<>nil) and (zQry.Active) and (CurID<>'') then
+    begin
+      edtUPDUTY_ID.KeyValue:=CurID;
       edtUPDUTY_ID.Text:=TdsFind.GetNameByID(zQry,'LEVEL_ID','DUTY_NAME',CurID)
-    else
+    end else
+    begin
+      edtUPDUTY_ID.KeyValue:='';
       edtUPDUTY_ID.Text:='';
+    end;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -171,7 +177,6 @@ begin
   CheckDutyNameIsExists; //判断职务是否存在
 
   WriteTo(Aobj);  //写入Obj记录对象
-  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID;
 
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then  Exit;
@@ -230,27 +235,32 @@ end;
 procedure TfrmDutyInfo.edtUPDUTY_IDBeforeDropList(Sender: TObject);
 var
   PosIdx: integer;
-  DUTY_ID,Level_ID,Cnd: string;
+  DUTY_ID, Level_ID, Cnd: string;
 begin
   if not cdsTable.Active then Exit;
   if dbState=dsBrowse then Exit;
+  Cnd:='';
   if dbState=dsEdit then
   begin
     DUTY_ID:=trim(cdsTable.fieldbyName('DUTY_ID').AsString);
-    if DUTY_ID<>'' then Cnd:=' and (DUTY_ID<>'''+DUTY_ID+''') ';
+    if DUTY_ID<>'' then Cnd:=' and (DUTY_ID<>:DUTY_ID) ';
     Level_ID:=trim(cdsTable.fieldbyName('LEVEL_ID').AsString);
     if Level_ID<>'' then
     begin
       PosIdx:=Length(Level_ID);
-      case Factor.iDbType of
-       0: Cnd:=Cnd+' and not(Left(LEVEL_ID,'+InttoStr(PosIdx)+')='''+Level_ID+''') ';
-       5: Cnd:=Cnd+' and not(SubStr(LEVEL_ID,1,'+InttoStr(PosIdx)+')='''+Level_ID+''') ';
-      end;
+      Cnd:=Cnd+' and not(substring(LEVEL_ID,1,'+InttoStr(PosIdx)+')=:Level_ID) ';
     end;
   end;
+  Cnd:='select LEVEL_ID,DUTY_ID,DUTY_NAME,DUTY_SPELL from CA_DUTY_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Cnd;
+  Cnd:=ParseSQL(Factor.iDbType,Cnd); //函数转换处理
   drpDeptDuty.Close;
-  drpDeptDuty.SQL.Text:='select * from CA_DUTY_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-                        ' and COMM not in (''02'',''12'') '+Cnd;
+  drpDeptDuty.SQL.Text:=Cnd;  
+  if drpDeptDuty.Params.FindParam('TENANT_ID')<>nil then
+    drpDeptDuty.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if drpDeptDuty.Params.FindParam('DUTY_ID')<>nil then
+    drpDeptDuty.ParamByName('DUTY_ID').AsString:=DUTY_ID;
+  if drpDeptDuty.Params.FindParam('LEVEL_ID')<>nil then
+    drpDeptDuty.ParamByName('LEVEL_ID').AsString:=Level_ID;
   Factor.Open(drpDeptDuty);
 end;
 
@@ -259,6 +269,7 @@ begin
   inherited;
   if edtDUTY_NAME.CanFocus then edtDUTY_NAME.SetFocus;
 end;
+
 procedure TfrmDutyInfo.SetdbState(const Value: TDataSetState);
 begin
   inherited;
@@ -267,8 +278,8 @@ begin
   Label6.Visible:=True;
   btnOk.Visible := (Value<>dsBrowse);
   case dbState of
-  dsInsert:Caption:='职务档案--(新增)';
-  dsEdit:Caption:='职务档案--(修改)';
+   dsInsert:Caption:='职务档案--(新增)';
+   dsEdit:Caption:='职务档案--(修改)';
   else
     begin
       Caption:='职务档案';
@@ -280,23 +291,24 @@ begin
 end;
 
 procedure TfrmDutyInfo.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-var i:integer;
+var
+  i: integer;
 begin
   inherited;
   if dbState=dsBrowse then exit;
   try
-   if not((dbState = dsInsert) and (trim(edtDUTY_NAME.Text)='')) then
-   begin
-    WriteTo(AObj);
-    if not IsEdit(Aobj,cdsTable) then Exit;
-    i:=MessageBox(Handle,'职务档案有修改，是否保存修改信息？',pchar(Application.Title),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONINFORMATION);
-    if i=6 then
-       begin
-         Save;
-         if Saved and Assigned(OnSave) then OnSave(AObj);
-       end;
-    if i=2 then abort;
-   end;
+    if not((dbState = dsInsert) and (trim(edtDUTY_NAME.Text)='')) then
+    begin
+      WriteTo(AObj);
+      if not IsEdit(Aobj,cdsTable) then Exit;
+      i:=MessageBox(Handle,'职务档案有修改，是否保存修改信息？',pchar(Application.Title),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONINFORMATION);
+      if i=6 then
+      begin
+        Save;
+        if Saved and Assigned(OnSave) then OnSave(AObj);
+      end;
+      if i=2 then abort;
+    end;
   except
     CanClose := false;
     Raise;
@@ -305,9 +317,10 @@ end;
 
 procedure TfrmDutyInfo.WriteTo(Aobj: TRecord_);
 begin
-  WriteToObject(AObj,self);  
-  Aobj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-  Aobj.FieldByName('DUTY_ID').AsString:=edtDUTY_ID.Text;  
+  WriteToObject(AObj,self);
+  Aobj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  Aobj.FieldByName('DUTY_ID').AsString:=edtDUTY_ID.Text;
+  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID(Aobj.FieldByName('LEVEL_ID').AsString);
 end;
 
 class function TfrmDutyInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;
@@ -370,68 +383,58 @@ end;
 
 procedure TfrmDutyInfo.CheckDutyNameIsExists;
 var
+  IsExist: Boolean;
   tmp: TZQuery;
 begin
   if edtDUTY_NAME.Text<>cdsTable.FieldByName('DUTY_NAME').AsString  then
   begin
-    if dbState=dsEdit then
+    IsExist:=False;
+    tmp:=Global.GetZQueryFromName('CA_DUTY_INFO');
+    tmp.Filtered:=False;
+    tmp.First;
+    while not tmp.Eof do
     begin
-      tmp:=Global.GetZQueryFromName('CA_DUTY_INFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
+      if trim(tmp.FieldByName('DUTY_NAME').AsString)=trim(edtDUTY_NAME.Text) then
       begin
-        if (tmp.FieldByName('DUTY_NAME').AsString=edtDUTY_NAME.Text) and (tmp.FieldByName('DUTY_ID').AsString<>cdsTable.FieldByName('DUTY_ID').AsString) then
+        if (dbState=dsEdit)and (tmp.FieldByName('DUTY_ID').AsString<>cdsTable.FieldByName('DUTY_ID').AsString) then IsExist:=true
+        else if dbState=dsInsert then IsExist:=true;
+        if IsExist then
         begin
           if edtDUTY_NAME.CanFocus then  edtDUTY_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:职务名称已经存在!'),Pchar(Caption),MB_OK);
+          Raise Exception.Create('　　提示:职务名称已经存在！　'); 
+          break;
         end;
-        tmp.Next;
       end;
-    end;
-    if dbState=dsInsert then
-    begin
-      tmp:=Global.GetZQueryFromName('CA_DUTY_INFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('DUTY_NAME').AsString=edtDUTY_NAME.Text then
-        begin
-          if edtDUTY_NAME.CanFocus then edtDUTY_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:职务名称已经存在!'),Pchar(Caption),MB_OK);
-        end;
-        tmp.Next;
-      end;
+      tmp.Next;
     end;
   end;
 end;
 
-function TfrmDutyInfo.GetLevelID: string;
+function TfrmDutyInfo.GetLevelID(oldLevelID: string): string;
 var
-  ZQry:TZQuery; 
-  CurID: string;
+  zQry: TZQuery;
+  LevelID,OldID: string;
 begin
-  if trim(edtUPDUTY_ID.Text)='' then
-    Result:=TSequence.GetMaxID('', Factor,'LEVEL_ID','CA_DUTY_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID))
-  else
+  Result:='';
+  LevelID:='';
+  //判断是否修改过UpDuty_ID
+  if edtUPDUTY_ID.KeyValue=null then LevelID:=''
+  else LevelID:=trim(edtUPDUTY_ID.KeyValue);
+
+  OldID:=trim(oldLevelID);
+  OldID:=Copy(OldID,1,length(OldID)-3);   
+  if (dbState=dsEdit) and (LevelID = OldID) then  //编辑状态里连个值相等则
   begin
-    if edtUPDUTY_ID.DataSet.Active then
-      CurID:=trim(edtUPDUTY_ID.DataSet.FieldbyName('LEVEL_ID').AsString)
-    else
-    begin
-      CurID:=trim(edtUPDUTY_ID.AsString);
-      ZQry:=ShopGlobal.GetZQueryFromName('CA_DUTY_INFO');
-      if (ZQry<>nil) and (ZQry.Active) then
-      begin
-        if ZQry.Locate('DUTY_ID',CurID,[]) then
-         CurID:=trim(ZQry.FieldbyName('LEVEL_ID').AsString)
-        else
-         CurID:='';
-      end;  
-    end;
-    Result:=TSequence.GetMaxID(CurID, Factor,'LEVEL_ID','CA_DUTY_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID));
+    result:=oldLevelID;
+    Exit;
   end;
+  Result:=TSequence.GetMaxID(LevelID, Factor,'LEVEL_ID','CA_DUTY_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID));
+end;
+
+procedure TfrmDutyInfo.edtUPDUTY_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then edtREMARK.SetFocus;
 end;
 
 end.

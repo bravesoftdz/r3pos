@@ -42,9 +42,9 @@ type
     procedure edtUPDEPT_IDBeforeDropList(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edtFAXESKeyPress(Sender: TObject; var Key: Char);
   private
-    UpIDParams: TftParamList;
-    function  GetLevelID: string;
+    function  GetLevelID(oldLevelID: string): string;
     function  IsEdit(Aobj:TRecord_; cdsTable: TZQuery):Boolean; virtual; //判断是Aobj对象与与数据集Value是否改变
     procedure CheckDEPTNameIsExists;  //判断职务是否存在
   public
@@ -62,7 +62,8 @@ type
 
 
 implementation
-uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal;
+uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal,
+  ObjCommon;
 {$R *.dfm}
 
 { TfrmDeptInfo }
@@ -101,9 +102,14 @@ begin
     CurID:=Copy(CurID,1,Length(CurID)-3);
     zQry:=Global.GetZQueryFromName('CA_DEPT_INFO');
     if (zQry<>nil) and (zQry.Active) and (CurID<>'') then
+    begin
+      edtUPDEPT_ID.KeyValue:=CurID;
       edtUPDEPT_ID.Text:=TdsFind.GetNameByID(zQry,'LEVEL_ID','DEPT_NAME',CurID)
-    else
+    end else
+    begin
+      edtUPDEPT_ID.KeyValue:='';
       edtUPDEPT_ID.Text:='';
+    end;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -132,7 +138,7 @@ procedure TfrmDeptInfo.Save;
         Temp.FieldByName(FName).Value:=AObj.Fields[i].AsValue;
     end;}
     Temp.Post;
-    
+
     //修改LEVEL_ID值:
     NewID:=trim(AObj.FieldByName('LEVEL_ID').AsString);
     OldID:=trim(AObj.FieldByName('LEVEL_ID').AsOldString);
@@ -177,7 +183,6 @@ begin
   CheckDEPTNameIsExists; //判断职务是否存在
 
   WriteTo(Aobj);  //写入Obj记录对象
-  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID; 
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then  Exit;
   AObj.WriteToDataSet(cdsTable);
@@ -190,8 +195,6 @@ end;
 
 procedure TfrmDeptInfo.FormCreate(Sender: TObject);
 begin
-  UpIDParams:=TftParamList.Create(nil); //创建选择上级部门的参数对象
-  UpIDParams.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID; 
   inherited;
   AObj := TRecord_.Create;
 end;
@@ -199,7 +202,6 @@ end;
 procedure TfrmDeptInfo.FormDestroy(Sender: TObject);
 begin
   inherited;
-  UpIDParams.Free;  //释放上级部门的参数对象
   AObj.Free;
 end;
 
@@ -246,27 +248,22 @@ begin
   if dbState=dsEdit then
   begin
     DEPT_ID:=trim(cdsTable.fieldbyName('DEPT_ID').AsString);
-    if DEPT_ID<>'' then
-    begin
-      UpIDParams.ParamByName('DEPT_ID').AsString:=DEPT_ID;
-      Cnd:=Cnd+' and (DEPT_ID<>:DEPT_ID) ';
-    end;
+    if DEPT_ID<>'' then Cnd:=Cnd+' and (DEPT_ID<>:DEPT_ID) ';
     
     Level_ID:=trim(cdsTable.fieldbyName('LEVEL_ID').AsString);
     if Level_ID<>'' then
     begin
-      UpIDParams.ParamByName('LEVEL_ID').AsString:=DEPT_ID;
       PosIdx:=Length(Level_ID);
-      case Factor.iDbType of
-       0: Cnd:=Cnd+' and not(substring(LEVEL_ID,1,'+InttoStr(PosIdx)+')=:LEVEL_ID) ';
-       5: Cnd:=Cnd+' and not(substr(LEVEL_ID,1,'+InttoStr(PosIdx)+')=:LEVEL_ID) ';
-      end;
+      Cnd:=Cnd+' and not(substr(LEVEL_ID,1,'+InttoStr(PosIdx)+')=:LEVEL_ID) ';
     end;
   end;
+  Cnd:='select DEPT_NAME,DEPT_ID,DEPT_SPELL,LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Cnd;
+  Cnd:=ParseSQL(Factor.iDbType, Cnd);
   drpDept.Close;
-  drpDept.SQL.Text:='select DEPT_NAME,DEPT_ID,DEPT_SPELL,LEVEL_ID from CA_DEPT_INFO '+
-                    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Cnd;
-  drpDept.Params.AssignValues(UpIDParams);  //读取参数值 
+  drpDept.SQL.Text:=Cnd;
+  if drpDept.Params.FindParam('TENANT_ID')<>nil then drpDept.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if drpDept.Params.FindParam('DEPT_ID')<>nil then drpDept.ParamByName('DEPT_ID').AsString:=DEPT_ID;
+  if drpDept.Params.FindParam('Level_ID')<> nil then drpDept.ParamByName('Level_ID').AsString:=Level_ID;
   Factor.Open(drpDept);
 end;
 
@@ -323,7 +320,8 @@ procedure TfrmDeptInfo.WriteTo(Aobj: TRecord_);
 begin
   WriteToObject(AObj,self);  
   Aobj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-  Aobj.FieldByName('DEPT_ID').AsString:=edtDEPT_ID.Text;  
+  Aobj.FieldByName('DEPT_ID').AsString:=edtDEPT_ID.Text;
+  Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID(Aobj.FieldByName('LEVEL_ID').AsString);
 end;
 
 class function TfrmDeptInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;
@@ -386,68 +384,58 @@ end;
 
 procedure TfrmDeptInfo.CheckDEPTNameIsExists;
 var
+  IsExist: Boolean;
   tmp: TZQuery;
 begin
   if edtDEPT_NAME.Text<>cdsTable.FieldByName('DEPT_NAME').AsString  then
   begin
-    if dbState=dsEdit then
+    IsExist:=False;
+    tmp:=Global.GetZQueryFromName('CA_DEPT_INFO');
+    tmp.Filtered:=False;
+    tmp.First;
+    while not tmp.Eof do
     begin
-      tmp:=Global.GetZQueryFromName('CA_DEPT_INFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
+      if trim(tmp.FieldByName('DEPT_NAME').AsString)=trim(edtDEPT_NAME.Text) then
       begin
-        if (tmp.FieldByName('DEPT_NAME').AsString=edtDEPT_NAME.Text) and (tmp.FieldByName('DEPT_ID').AsString<>cdsTable.FieldByName('DEPT_ID').AsString) then
+        if (dbState=dsEdit)and (tmp.FieldByName('DEPT_ID').AsString<>cdsTable.FieldByName('DEPT_ID').AsString) then IsExist:=true
+        else if dbState=dsInsert then IsExist:=true;
+        if IsExist then
         begin
           if edtDEPT_NAME.CanFocus then  edtDEPT_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:职务名称已经存在!'),Pchar(Caption),MB_OK);
+          Raise Exception.Create('　　提示:部门名称已经存在！　'); 
+          break;
         end;
-        tmp.Next;
       end;
-    end;
-    if dbState=dsInsert then
-    begin
-      tmp:=Global.GetZQueryFromName('CA_DEPT_INFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('DEPT_NAME').AsString=edtDEPT_NAME.Text then
-        begin
-          if edtDEPT_NAME.CanFocus then edtDEPT_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:职务名称已经存在!'),Pchar(Caption),MB_OK);
-        end;
-        tmp.Next;
-      end;
+      tmp.Next;
     end;
   end;
 end;
 
-function TfrmDeptInfo.GetLevelID: string;
+function TfrmDeptInfo.GetLevelID(oldLevelID: string): string;
 var
-  ZQry:TZQuery; 
-  CurID: string;
+  zQry: TZQuery;
+  LevelID,OldID: string;
 begin
-  if trim(edtUPDEPT_ID.Text)='' then
-    Result:=TSequence.GetMaxID('', Factor,'LEVEL_ID','CA_DEPT_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID))
-  else
+  Result:='';
+  LevelID:='';
+  //判断是否修改过CA_DEPT_INFO
+  if edtUPDEPT_ID.KeyValue=null then LevelID:=''
+  else LevelID:=trim(edtUPDEPT_ID.KeyValue);
+
+  OldID:=trim(oldLevelID);
+  OldID:=Copy(OldID,1,length(OldID)-3);   
+  if (dbState=dsEdit) and (LevelID = OldID) then  //编辑状态里连个值相等则
   begin
-    if edtUPDEPT_ID.DataSet.Active then
-      CurID:=trim(edtUPDEPT_ID.DataSet.FieldbyName('LEVEL_ID').AsString)
-    else
-    begin
-      CurID:=trim(edtUPDEPT_ID.AsString);
-      ZQry:=ShopGlobal.GetZQueryFromName('CA_DEPT_INFO');
-      if (ZQry<>nil) and (ZQry.Active) then
-      begin
-        if ZQry.Locate('DEPT_ID',CurID,[]) then
-         CurID:=trim(ZQry.FieldbyName('LEVEL_ID').AsString)
-        else
-         CurID:='';
-      end;  
-    end;
-    Result:=TSequence.GetMaxID(CurID, Factor,'LEVEL_ID','CA_DEPT_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID));
+    result:=oldLevelID;
+    Exit;
   end;
+  Result:=TSequence.GetMaxID(LevelID, Factor,'LEVEL_ID','CA_DEPT_INFO','000','TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID));
+end;
+
+procedure TfrmDeptInfo.edtFAXESKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if key=#13 then edtREMARK.SetFocus;
 end;
 
 end.

@@ -167,10 +167,11 @@ inherited frmDutyInfo: TfrmDutyInfo
               end>
             Properties.ReadOnly = False
             TabOrder = 3
+            OnKeyPress = edtUPDUTY_IDKeyPress
             InGrid = False
             KeyValue = Null
             FilterFields = 'DUTY_NAME;DUTY_ID;DUTY_SPELL'
-            KeyField = 'DUTY_ID'
+            KeyField = 'LEVEL_ID'
             ListField = 'DUTY_NAME'
             Columns = <
               item

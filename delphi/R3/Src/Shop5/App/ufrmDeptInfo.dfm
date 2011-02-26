@@ -1,6 +1,6 @@
 inherited frmDeptInfo: TfrmDeptInfo
-  Left = 234
-  Top = 306
+  Left = 198
+  Top = 110
   Caption = #37096#38376#26723#26696
   ClientHeight = 361
   ClientWidth = 446
@@ -215,7 +215,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             InGrid = False
             KeyValue = Null
             FilterFields = 'DEPT_NAME;DEPT_ID;DEPT_SPELL'
-            KeyField = 'DEPT_ID'
+            KeyField = 'LEVEL_ID'
             ListField = 'DEPT_NAME'
             Columns = <
               item
@@ -248,7 +248,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 221
             Width = 263
             Height = 43
-            TabOrder = 4
+            TabOrder = 7
           end
           object edtTELEPHONE: TcxTextEdit
             Left = 106
@@ -262,14 +262,15 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 134
             Width = 118
             Height = 20
-            TabOrder = 6
+            TabOrder = 4
           end
           object edtFAXES: TcxTextEdit
             Left = 106
             Top = 192
             Width = 118
             Height = 20
-            TabOrder = 7
+            TabOrder = 6
+            OnKeyPress = edtFAXESKeyPress
           end
         end
       end

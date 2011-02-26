@@ -5,9 +5,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  Grids, DBGridEh, RzButton, DB, ADODB, cxControls, cxContainer, cxEdit,
-  cxTextEdit, StdCtrls, cxMaskEdit, cxDropDownEdit, ObjBase, cxButtonEdit,
-  zrComboBoxList, DBClient;
+  Grids, DBGridEh, RzButton, DB, cxControls, cxContainer, cxEdit,
+  cxTextEdit, StdCtrls, cxMaskEdit, cxDropDownEdit, zBase, cxButtonEdit,
+  zrComboBoxList, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TframeSelectCompany = class(TframeDialogForm)
@@ -19,13 +19,13 @@ type
     RzPanel5: TRzPanel;
     Label2: TLabel;
     Label3: TLabel;
-    fndCOMP_TYPE: TcxComboBox;
-    fndGROUP_NAME: TzrComboBoxList;
-    cdsList: TClientDataSet;
+    fndSHOP_TYPE: TcxComboBox;
+    fndREGION_NAME: TzrComboBoxList;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    cdsList: TZQuery;
     procedure RzBitBtn2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -37,8 +37,8 @@ type
     procedure edtGROUP_NAMEPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure fndGROUP_NAMESaveValue(Sender: TObject);
-    procedure fndGROUP_NAMEClearValue(Sender: TObject);
+    procedure fndREGION_NAMESaveValue(Sender: TObject);
+    procedure fndREGION_NAMEClearValue(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -69,25 +69,18 @@ uses uGlobal,uCtrlUtil;
 
 procedure TframeSelectCompany.Open;
 var
-  rs:TADODataSet;
   lid,w:string;
 begin
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('没找到门店档案...');
-  lid := rs.FieldbyName('LEVEL_ID').AsString;
-  if fndCOMP_TYPE.ItemIndex >0 then
-     begin
-       w := w + ' and COMP_TYPE='+TRecord_(fndCOMP_TYPE.Properties.Items.Objects[fndCOMP_TYPE.ItemIndex]).FieldbyName('CODE_ID').asString;
-     end;
-  if fndGROUP_NAME.AsString <> '' then
-     begin
-       w := w + ' and GROUP_NAME='''+fndGROUP_NAME.AsString+'''';
-     end;
+  if fndSHOP_TYPE.ItemIndex >0 then
+    w := w + ' and SHOP_TYPE='+TRecord_(fndSHOP_TYPE.Properties.Items.Objects[fndSHOP_TYPE.ItemIndex]).FieldbyName('CODE_ID').asString;
+  if fndREGION_NAME.AsString <> '' then
+    w := w + ' and REGION_ID='''+fndREGION_NAME.AsString+'''';
+
   cdsList.Close;
-  cdsList.CommandText :=
-  'select 0 as A,COMP_ID,COMP_NAME,COMP_SPELL,COMP_TYPE,UPCOMP_ID,GROUP_NAME,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,SEQ_NO '+
-  'from CA_COMPANY where COMM not in (''02'',''12'') and LEVEL_ID like '''+lid+'%'''+w+' and COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') order by SEQ_NO';
-  Factor.Open(cdsList); 
+  cdsList.SQL.Text:= 'select 0 as A,SHOP_ID,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,SEQ_NO '+
+    ' from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+w+' order by SEQ_NO';
+  if cdsList.Params.FindParam('TENANT_ID')<>nil then cdsList.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  Factor.Open(cdsList);
 end;
 
 class function TframeSelectCompany.PrcCompList(Owner:TForm;MultSelect:boolean;var rs:TRecordList): boolean;
@@ -113,19 +106,21 @@ begin
 end;
 
 procedure TframeSelectCompany.FormCreate(Sender: TObject);
-var tmp:TADODataSet;
+var tmp:TZQuery;
 begin
-  DBGridEh1.FieldColumns['UPCOMP_ID'].PickList.Clear;
-  DBGridEh1.FieldColumns['UPCOMP_ID'].KeyList.Clear;
-  tmp := Global.GetADODataSetFromName('CA_COMPANY');
+  DBGridEh1.FieldColumns['TENANT_ID'].KeyList.Clear;
+  DBGridEh1.FieldColumns['TENANT_ID'].PickList.Clear;
+  DBGridEh1.FieldColumns['TENANT_ID'].KeyList.Add(inttostr(Global.TENANT_ID));
+  DBGridEh1.FieldColumns['TENANT_ID'].PickList.Add(Global.TENANT_NAME);     
+  {tmp := Global.GetZQueryFromName('CA_SHOP_INFO');
   tmp.First;
   while not tmp.Eof do
   begin
     DBGridEh1.FieldColumns['UPCOMP_ID'].KeyList.Add(tmp.Fields[0].asstring);
     DBGridEh1.FieldColumns['UPCOMP_ID'].PickList.Add(tmp.Fields[1].asstring);
     tmp.Next;
-  end;
-  TDbGridEhSort.InitForm(self); 
+  end;}
+  TDbGridEhSort.InitForm(self);
 end;
 
 procedure TframeSelectCompany.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -152,11 +147,9 @@ end;
 
 procedure TframeSelectCompany.InitForm;
 begin
-  fndCOMP_TYPE.Properties.Items.Insert(0,'全部');
-  fndCOMP_TYPE.ItemIndex := 0;
-
-  fndGROUP_NAME.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  
+  fndSHOP_TYPE.Properties.Items.Insert(0,'全部');
+  fndSHOP_TYPE.ItemIndex := 0; 
+  fndREGION_NAME.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');    
 end;
 
 procedure TframeSelectCompany.btnOkClick(Sender: TObject);
@@ -166,31 +159,28 @@ begin
   inherited;
   ds.Clear;
   if CanMultSelect then
-     begin
-       cdsList.Filtered := false;
-       cdsList.Filter := 'A=1';
-       cdsList.Filtered := true;
-       try
-       if cdsList.IsEmpty then Raise Exception.Create('请选择门店后再确认');
-       cdsList.First;
-       while not cdsList.Eof do
-         begin
-           rs := TRecord_.Create;
-           rs.ReadFromDataSet(cdsList);
-           ds.AddRecord(rs);
-           cdsList.Next;
-         end;
-       finally
-         cdsList.Filtered := false;
-       end;
-     end
-  else
-     begin
-       if cdsList.IsEmpty then Raise Exception.Create('请选择门店后再确认');
-       rs := TRecord_.Create;
-       rs.ReadFromDataSet(cdsList);
-       ds.AddRecord(rs);
-     end;
+  begin
+    if cdsList.State<>dsEdit then cdsList.Edit;
+    cdsList.Post;
+    if cdsList.IsEmpty then Raise Exception.Create('请选择门店后再确认');
+    cdsList.First;
+    while not cdsList.Eof do
+    begin
+      if trim(cdsList.FieldByName('A').AsString)='1' then
+      begin
+        rs := TRecord_.Create;
+        rs.ReadFromDataSet(cdsList);
+        ds.AddRecord(rs);
+      end;
+      cdsList.Next;
+    end;
+  end else
+  begin
+    if cdsList.IsEmpty then Raise Exception.Create('请选择门店后再确认');
+    rs := TRecord_.Create;
+    rs.ReadFromDataSet(cdsList);
+    ds.AddRecord(rs);
+  end;
   self.ModalResult := MROK;
 end;
 
@@ -226,13 +216,13 @@ begin
   inherited;
 end;
 
-procedure TframeSelectCompany.fndGROUP_NAMESaveValue(Sender: TObject);
+procedure TframeSelectCompany.fndREGION_NAMESaveValue(Sender: TObject);
 begin
   inherited;
   Open;
 end;
 
-procedure TframeSelectCompany.fndGROUP_NAMEClearValue(Sender: TObject);
+procedure TframeSelectCompany.fndREGION_NAMEClearValue(Sender: TObject);
 begin
   inherited;
   Open;

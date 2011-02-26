@@ -1,6 +1,6 @@
 inherited frameSelectCompany: TframeSelectCompany
-  Left = 239
-  Top = 244
+  Left = 197
+  Top = 156
   ActiveControl = DBGridEh1
   Caption = #38376#24215#36873#25321#26694
   ClientWidth = 531
@@ -20,13 +20,13 @@ inherited frameSelectCompany: TframeSelectCompany
         Caption = #38376#24215#21015#34920
         inherited RzPanel2: TRzPanel
           Width = 517
-          Height = 326
+          Height = 333
           object DBGridEh1: TDBGridEh
             Tag = -1
             Left = 5
             Top = 45
             Width = 507
-            Height = 276
+            Height = 283
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -83,7 +83,7 @@ inherited frameSelectCompany: TframeSelectCompany
               item
                 Alignment = taRightJustify
                 EditButtons = <>
-                FieldName = 'COMP_ID'
+                FieldName = 'SHOP_ID'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38376#24215#20195#30721
@@ -91,7 +91,7 @@ inherited frameSelectCompany: TframeSelectCompany
               end
               item
                 EditButtons = <>
-                FieldName = 'COMP_NAME'
+                FieldName = 'SHOP_NAME'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38376#24215#21517#31216
@@ -99,7 +99,7 @@ inherited frameSelectCompany: TframeSelectCompany
               end
               item
                 EditButtons = <>
-                FieldName = 'COMP_TYPE'
+                FieldName = 'SHOP_TYPE'
                 Footers = <>
                 KeyList.Strings = (
                   '1'
@@ -115,15 +115,15 @@ inherited frameSelectCompany: TframeSelectCompany
               end
               item
                 EditButtons = <>
-                FieldName = 'UPCOMP_ID'
+                FieldName = 'TENANT_ID'
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #38582#23646#32463#38144#21830
+                Title.Caption = #25152#23646#20225#19994
                 Width = 83
               end
               item
                 EditButtons = <>
-                FieldName = 'GROUP_NAME'
+                FieldName = 'REGION_ID'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #29255#21306
@@ -205,7 +205,7 @@ inherited frameSelectCompany: TframeSelectCompany
                 Top = 13
                 Width = 48
                 Height = 12
-                Caption = #38376#24215#31867#22411
+                Caption = #31649#29702#32676#32452
               end
               object Label3: TLabel
                 Left = 208
@@ -214,7 +214,7 @@ inherited frameSelectCompany: TframeSelectCompany
                 Height = 12
                 Caption = #25152#23646#22320#21306
               end
-              object fndCOMP_TYPE: TcxComboBox
+              object fndSHOP_TYPE: TcxComboBox
                 Tag = -1
                 Left = 72
                 Top = 9
@@ -224,7 +224,7 @@ inherited frameSelectCompany: TframeSelectCompany
                 Properties.OnChange = fndCOMP_TYPEPropertiesChange
                 TabOrder = 0
               end
-              object fndGROUP_NAME: TzrComboBoxList
+              object fndREGION_NAME: TzrComboBoxList
                 Tag = -1
                 Left = 264
                 Top = 9
@@ -264,8 +264,9 @@ inherited frameSelectCompany: TframeSelectCompany
                 LocateStyle = lsDark
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
-                OnSaveValue = fndGROUP_NAMESaveValue
-                OnClearValue = fndGROUP_NAMEClearValue
+                OnSaveValue = fndREGION_NAMESaveValue
+                OnClearValue = fndREGION_NAMEClearValue
+                MultiSelect = False
               end
             end
           end
@@ -332,15 +333,8 @@ inherited frameSelectCompany: TframeSelectCompany
   end
   object DataSource1: TDataSource
     DataSet = cdsList
-    Left = 342
-    Top = 173
-  end
-  object cdsList: TClientDataSet
-    Aggregates = <>
-    IndexFieldNames = 'SEQ_NO'
-    Params = <>
-    Left = 310
-    Top = 174
+    Left = 446
+    Top = 117
   end
   object PopupMenu1: TPopupMenu
     AutoHotkeys = maManual
@@ -361,5 +355,12 @@ inherited frameSelectCompany: TframeSelectCompany
       ShortCut = 16452
       OnClick = N3Click
     end
+  end
+  object cdsList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 376
+    Top = 120
   end
 end

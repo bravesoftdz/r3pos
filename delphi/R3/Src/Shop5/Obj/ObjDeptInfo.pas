@@ -26,6 +26,8 @@ type
 
   {== 树型中同一级职务排序 ==}
   TDeptInfoSort=class(TZProcFactory)
+  private
+    function GetMoveNodeData(var zQuery: TZQuery; AGlobal:IdbHelp; Params:TftParamList): Boolean;
   public
     function Execute(AGlobal:IdbHelp; Params:TftParamList):Boolean;override;
   end;
@@ -37,18 +39,16 @@ implementation
 
 class function TGetSQL.GetUpdateDeptTreeSQL(iDbType: Integer; OldLEVEL_ID: string): string;
 var
-  OldIDLen: string; {==旧值的长度==}
+  OldIDLen, SQL, OperChar: string; {==旧值的长度==}
 begin
   Result:='';
+  OperChar:=GetStrJoin(iDbType);
   if OldLEVEL_ID='' then OldIDLen:='0'
-  else OldIDLen:=InttoStr(Length(OldLEVEL_ID));  
+  else OldIDLen:=InttoStr(Length(OldLEVEL_ID));
 
-  case iDbType of
-   0:   Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID + SubString(LEVEL_ID,'+OldIDLen+'+1,100) '+
-           ' Where TENANT_ID=:OLD_TENANT_ID and Left(LEVEL_ID,'+OldIDLen+')=:OLD_LEVEL_ID ';
-   4,5: Result:='Update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID || SubStr(LEVEL_ID,'+OldIDLen+'+1,100) '+
-           ' Where TENANT_ID=:OLD_TENANT_ID and SubStr(LEVEL_ID,1,'+OldIDLen+')=:OLD_LEVEL_ID ';
-  end;
+  SQL:='update CA_DEPT_INFO Set LEVEL_ID=:LEVEL_ID '+OperChar+' ifnull(substr(LEVEL_ID,'+OldIDLen+'+1,length(LEVEL_ID)-'+OldIDLen+'),'''') '+
+       ' where TENANT_ID=:TENANT_ID and substr(LEVEL_ID,1,'+OldIDLen+')=:OLD_LEVEL_ID ';
+  Result:=ParseSQL(iDbType,SQL);
 end;
 
 { TDeptInfo }
@@ -145,80 +145,49 @@ end;
 function TDeptInfoSort.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
   Qry: TZQuery;
-  Str,TopStr,vlen,MoveKind,FirstLEVEL_ID: string;
+  Str, LevelID: string;
+  UpParams: TftParamList;
 begin
   Result:=False;
-  vlen:=InttoStr(Length(Params.ParamByName('OLD_LEVEL_ID').AsString));
-  MoveKind:=trim(UpperCase(Params.ParamByName('movekind').AsString));
-  //查询出需要修改的树型的记录:
-  case AGlobal.iDbType of
-   0: //SQL Server
-    begin
-      if MoveKind='FIRST' then
-        Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID<:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID desc '
-      else if MoveKind='PRIOR' then
-        Str:='select top 2 LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID<:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID desc '
-      else if MoveKind='NEXT' then
-        Str:='select top 2 LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID>:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID  '
-      else if MoveKind='LAST' then
-        Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and LEVEL_ID>:OLD_LEVEL_ID and length(LEVEL_ID)='+vlen+' order by LEVEL_ID  ';
-    end;
-   4: //DB2
-    begin
-      Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and length(LEVEL_ID)='+vlen+' ';
-      if (MoveKind='FIRST') or (MoveKind='PRIOR') then Str:=Str+' LEVEL_ID<:OLD_LEVEL_ID Order by LEVEL_ID desc '
-      else Str:=Str+' LEVEL_ID>:OLD_LEVEL_ID order by LEVEL_ID ';
-      if(MoveKind='NEXT') or (MoveKind='PRIOR') then Str:=Str+' fetch first 2 rows only ';
-    end;
-   5: //SQLITE
-    begin
-      Str:='select LEVEL_ID from CA_DEPT_INFO where TENANT_ID=:OLD_TENANT_ID and length(LEVEL_ID)='+vlen+' ';
-      if (MoveKind='FIRST') or (MoveKind='PRIOR') then Str:=Str+' LEVEL_ID<:OLD_LEVEL_ID Order by LEVEL_ID desc '
-      else Str:=Str+' LEVEL_ID>:OLD_LEVEL_ID order by LEVEL_ID ';
-      if(MoveKind='NEXT') or (MoveKind='PRIOR') then Str:=Str+' limit 2 ';
-    end;
-  end;
-
   AGlobal.BeginTrans;
   try
     try
       Qry:=TZQuery.Create(nil);
-      Qry.Close;
-      Qry.SQL.Text:=Str;
-      Qry.Params.AssignValues(Params);  
-      AGlobal.Open(Qry);
+      UpParams:=TftParamList.Create(nil);
+      GetMoveNodeData(Qry, AGlobal,Params);
       if not Qry.Active then Exit;
       if Qry.RecordCount=0 then Exit;
-      {-------------------------------------------------------------------------
-       说明: (1)先将当前的选中的LEVEl_ID改成：'_LEVEL_ID'
-             (2)按取出数据执行循环将逐条修改上一条的LEVEL_ID;
-             (3)循环结束后，将[_LEVEL_ID]改成 循环后最后一条的LEVEL_ID
-       -------------------------------------------------------------------------}
-      //(1)、先将当前的选中的记录给设置成: _开头的
-      FirstLEVEL_ID:=trim(Params.ParamByName('LEVEL_ID').AsString);
-      Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,Params.ParamByName('OLD_LEVEL_ID').AsString);
-      AGlobal.ExecSQL(Str,Params);
 
-      //(2)、循环执行[修改LVEVLEID]
-      Params.ParamByName('LEVEL_ID').Value:=Params.ParamByName('OLD_LEVEL_ID').Value;
+      {=== 第一步:  先将当前传入的记录给设置成: _开头的  ===}
+      LevelID:=trim(Params.ParamByName('LEVEL_ID').AsString);  
+      Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,LevelID);
+      UpParams.ParamByName('TENANT_ID').AsInteger:=Params.ParamByName('TENANT_ID').AsInteger; //企业ID
+      UpParams.ParamByName('LEVEL_ID').AsString:='_'+LevelID;  //NewLevel_ID [新值作为更新值]
+      UpParams.ParamByName('OLD_LEVEL_ID').AsString:=LevelID;  //OLDLevel_ID [原值作为条件]
+      AGlobal.ExecSQL(Str,UpParams);
+
+      {=== 第二步:  循环执行[] ===}
+      UpParams.ParamByName('LEVEL_ID').AsString:=LevelID;  //把 传入的LevelID 作为: NewLevel_ID [新值作为更新值]
+      Qry.First;
       while not Qry.Eof do
       begin
-        Params.ParamByName('OLD_LEVEL_ID').Value:=Qry.fieldbyName('LEVEL_ID').Value;
+        UpParams.ParamByName('OLD_LEVEL_ID').AsString:=trim(Qry.fieldbyName('LEVEL_ID').AsString); //OLDLevel_ID [原值作为条件]
         Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,Qry.FieldByName('LEVEL_ID').AsString);
-        AGlobal.ExecSQL(Str,Params);
+        AGlobal.ExecSQL(Str,UpParams);
+        UpParams.ParamByName('LEVEL_ID').AsString:=trim(Qry.fieldbyName('LEVEL_ID').AsString); //把 传入的LevelID 作为: NewLevel_ID [新值作为更新值]
         Qry.Next;
       end;
-      //(3)、把刚才修改“_”开头的给改正确
-      Params.ParamByName('LEVEL_ID').AsString:=Params.ParamByName('OLD_LEVEL_ID').AsString;
-      Params.ParamByName('OLD_LEVEL_ID').AsString:=FirstLEVEL_ID;
-      Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,FirstLEVEL_ID);
-      AGlobal.ExecSQL(Str,Params);  
+
+      {=== 第三步:  “_”开头的给改正确  ===}
+      UpParams.ParamByName('OLD_LEVEL_ID').AsString:='_'+LevelID;
+      Str:=TGetSQL.GetUpdateDeptTreeSQL(AGlobal.iDbType,'_'+LevelID);
+      AGlobal.ExecSQL(Str,UpParams);  
       AGlobal.CommitTrans;
       Result:=true;
     finally
+      UpParams.Free;
       Qry.Free;
     end;
-    Result:=True;
   except
     on E:Exception do
     begin
@@ -226,6 +195,35 @@ begin
       AGlobal.RollBackTrans;
     end;
   end;
+end;
+
+function TDeptInfoSort.GetMoveNodeData(var zQuery: TZQuery; AGlobal: IdbHelp; Params: TftParamList): Boolean;
+var
+  Str,vlen,MoveKind: string;
+begin
+  result:=False;
+  vlen:=InttoStr(Length(Params.ParamByName('LEVEL_ID').AsString));
+  MoveKind:=trim(UpperCase(Params.ParamByName('movekind').AsString));
+  if (MoveKind='FIRST') or (MoveKind='PRIOR') then
+    Str:='Select LEVEL_ID From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and LEVEL_ID<:LEVEL_ID and length(LEVEL_ID)='+vlen // +' order by LEVEL_ID desc '
+  else
+    Str:='Select LEVEL_ID From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and LEVEL_ID>:LEVEL_ID and length(LEVEL_ID)='+vlen; // +' order by LEVEL_ID  ';
+  str:=ParseSQL(AGlobal.iDbType,Str); //SQL函数转换
+
+  if MoveKind='FIRST' then
+    str:=str+' order by LEVEL_ID desc '
+  else if MoveKind='PRIOR' then
+    str:=GetBatchSQL(AGlobal.iDbType, str, 'LEVEL_ID', 'desc', '1')
+  else if MoveKind='NEXT' then
+    str:=GetBatchSQL(AGlobal.iDbType, str, 'LEVEL_ID', 'asc', '1')
+  else if MoveKind='LAST' then
+    str:=str+' order by LEVEL_ID asc ';
+
+  zQuery.Close;
+  zQuery.SQL.Text:=Str;
+  zQuery.Params.AssignValues(Params);
+  AGlobal.Open(zQuery);
+  result:=zQuery.Active;
 end;
 
 initialization

@@ -216,7 +216,7 @@ inherited frameSelectCompany: TframeSelectCompany
               end
               object fndSHOP_TYPE: TcxComboBox
                 Tag = -1
-                Left = 72
+                Left = 70
                 Top = 9
                 Width = 121
                 Height = 20

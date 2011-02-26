@@ -1,7 +1,8 @@
 unit uframeSelectCompany;
 
 interface
-
+                ]
+                
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,

@@ -75,6 +75,23 @@ CREATE INDEX IX_PUB_GOODSINFOEXT_TENANT_ID ON PUB_GOODSINFOEXT(TENANT_ID);
 CREATE INDEX IX_PUB_GOODSINFOEXT_GODS_ID ON PUB_GOODSINFOEXT(TENANT_ID,GODS_ID);
 CREATE INDEX IX_PUB_GOODSINFOEXT_TIME_STAMP ON PUB_GOODSINFOEXT(TENANT_ID,TIME_STAMP);
 
+CREATE view [VIW_GOODSPRICEEXT]
+as
+    SELECT 
+      j1.TENANT_ID as TENANT_ID,j1.SHOP_ID, 
+      j1.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,
+       case when J2.NEW_INPRICE is null then J1.NEW_INPRICE else J2.NEW_INPRICE end as NEW_INPRICE,
+       case when J2.NEW_INPRICE is null then J1.NEW_INPRICE*J1.SMALLTO_CALC else J2.NEW_INPRICE1 end as NEW_INPRICE1,
+       case when J2.NEW_INPRICE is null then J1.NEW_INPRICE*J1.BIGTO_CALC else J2.NEW_INPRICE2 end as NEW_INPRICE2,
+       NEW_OUTPRICE,
+       NEW_OUTPRICE1,
+       NEW_OUTPRICE2,
+       NEW_LOWPRICE,
+       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL
+    FROM 
+      VIW_GOODSPRICE j1 LEFT JOIN 
+      PUB_GOODSINFOEXT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID 
+
 --变价记录
 CREATE TABLE [LOG_PRICING_INFO] (
         --行号ID
@@ -508,6 +525,7 @@ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,tim
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('D','记账','JZ','1','4','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','礼券','LQ','1','5','00',strftime('%s','now','localtime')-1293840000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1','6','00',strftime('%s','now','localtime')-1293840000);
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','小额支付','XEZF','1','7','00',strftime('%s','now','localtime')-1293840000);
 
 CREATE VIEW VIW_PAYMENT
 as
@@ -719,7 +737,7 @@ CREATE TABLE [STO_CHANGECODE] (
 	) 
 );
 
-insert into STO_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'1','损益','2','00',strftime('%s','now','localtime')-1293840000);
+insert into STO_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'2','损益','2','00',strftime('%s','now','localtime')-1293840000);
 insert into STO_CHANGECODE(TENANT_ID,CHANGE_CODE,CHANGE_NAME,CHANGE_TYPE,COMM,TIME_STAMP) values(0,'2','领用','2','00',strftime('%s','now','localtime')-1293840000);
 
 --调整单
@@ -1941,6 +1959,10 @@ CREATE TABLE [RCK_MONTH_CLOSE] (
 	[MONTH] int NOT NULL ,
         --结账用户
 	[CREA_USER] [varchar] (36) NOT NULL ,
+        --开始日期
+	[BEGIN_DATE] [varchar] (10) NULL ,
+        --结束日期
+	[END_DATE] [varchar] (10) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -2113,7 +2135,7 @@ CREATE TABLE [RCK_GOODS_DAYS] (
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_RCK_GOODS_DAYS] PRIMARY KEY   
 	(
-		[TENANT_ID],[SHOP_ID],[CREA_DATE],[GODS_ID]
+		[TENANT_ID],[SHOP_ID],[CREA_DATE],[GODS_ID],[BATCH_NO]
 	) 
 );
 CREATE INDEX IX_RCK_GOODS_DAYS_TENANT_ID ON RCK_GOODS_DAYS(TENANT_ID);
@@ -2139,6 +2161,16 @@ CREATE TABLE [TMP_GOODS_DAYS] (
 	[NEW_INPRICE] [decimal](18, 3) NULL ,
         --当时销价
 	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+
+--期初类台账		
+        --期初数量
+	[ORG_AMT] [decimal](18, 3) NULL ,
+        --期初金额<按当时进价>
+	[ORG_MNY] [decimal](18, 3) NULL ,
+        --可销售额<按零售价>
+	[ORG_RTL] [decimal](18, 3) NULL ,
+        --期初成本<移动加权成本>
+	[ORG_CST] [decimal](18, 3) NULL ,
 
 --进货类台账	
         --进货数量<含退货>
@@ -2251,12 +2283,7 @@ CREATE TABLE [TMP_GOODS_DAYS] (
         --可销售额<按零售价>
 	[CHANGE5_RTL] [decimal](18, 3) NULL ,
         --调整成本<移动加权成本>
-	[CHANGE5_CST] [decimal](18, 3) NULL ,
-
-	CONSTRAINT [PK_TMP_GOODS_DAYS] PRIMARY KEY   
-	(
-		[TENANT_ID],[SHOP_ID],[CREA_DATE],[GODS_ID]
-	) 
+	[CHANGE5_CST] [decimal](18, 3) NULL 
 );
 CREATE INDEX IX_TMP_GOODS_DAYS_TENANT_ID ON TMP_GOODS_DAYS(TENANT_ID);
 CREATE INDEX IX_TMP_GOODS_DAYS_CREA_DATE ON TMP_GOODS_DAYS(TENANT_ID,CREA_DATE);
@@ -2437,7 +2464,7 @@ CREATE TABLE [RCK_GOODS_MONTH] (
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_RCK_GOODS_MONTH] PRIMARY KEY   
 	(
-		[TENANT_ID],[SHOP_ID],[MONTH],[GODS_ID]
+		[TENANT_ID],[SHOP_ID],[MONTH],[GODS_ID],[BATCH_NO]
 	) 
 );
 CREATE INDEX IX_RCK_GOODS_MONTH_TENANT_ID ON RCK_GOODS_MONTH(TENANT_ID);
@@ -2561,7 +2588,7 @@ select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,BATCH_NO,
    case when STOCK_TYPE=3 then CALC_AMOUNT else 0 end as STKRT_AMT,
    case when STOCK_TYPE=3 then NOTAX_MONEY else 0 end as STKRT_MNY,
    case when STOCK_TYPE=3 then TAX_MONEY else 0 end as STKRT_TAX,   
-   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as SALE_AMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
    0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
    0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
    0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   
@@ -2589,7 +2616,7 @@ from VIW_SALESDATA
 union all
 select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,BATCH_NO,
    0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
-   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as SALE_AMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
    CALC_AMOUNT as DBIN_AMT,RTL_MONEY as DBIN_RTL,COST_MONEY as DBIN_CST,
    0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
    0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
@@ -2601,8 +2628,8 @@ from VIW_MOVEINDATA
 union all
 select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,BATCH_NO,
    0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
-   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
-   0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,   
+   0 as SALE_AMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,   
    CALC_AMOUNT as DBOUT_AMT,RTL_MONEY as DBIN_RTL,
    COST_MONEY as DBOUT_CST,
    0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
@@ -2614,7 +2641,7 @@ from VIW_MOVEOUTDATA
 union all
 select TENANT_ID,SHOP_ID,CHANGE_DATE as CREA_DATE,GODS_ID,BATCH_NO, 
    0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
-   0 as SALAMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
+   0 as SALE_AMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
    0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,0 as DBOUT_AMT,0 as DBOUT_RTL,0 as DBOUT_CST,   
 PARM1_AMOUNT as CHANGE1_AMT,
 PARM1_RTL as CHANGE1_RTL,

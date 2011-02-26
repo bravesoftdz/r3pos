@@ -84,9 +84,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from ACC_PAYORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and PAY_ID='''+FieldbyName('PAY_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_PAYORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and PAY_ID='''+FieldbyName('PAY_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
     rs.Free;
   end;

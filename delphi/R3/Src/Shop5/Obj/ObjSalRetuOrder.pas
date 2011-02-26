@@ -1,7 +1,7 @@
 unit ObjSalRetuOrder;
 
 interface
-uses Dialogs,SysUtils,zBase,Classes,zintf,ObjCommon,DB,ZDataSet;
+uses Dialogs,SysUtils,zBase,Classes,zintf,ObjCommon,DB,ZDataSet,math;
 type
   TSalRetuOrder=class(TZFactory)
   private
@@ -124,7 +124,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              -FieldbyName('CALC_AMOUNT').asOldFloat,
-             -(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat),3);
+             -roundto((FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat),-2),3);
 //  if not lock then
 //     WriteLogInfo(AGlobal,Parant.FieldbyName('CREA_USER').AsString,2,'500026','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'SAL_SALESDATA',usDeleted));
   Result := True;
@@ -151,7 +151,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              -FieldbyName('CALC_AMOUNT').asFloat,
-             -(FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat),2);
+             -roundto((FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat),-2),2);
   Result := True;
   except
     on E:Exception do
@@ -229,11 +229,21 @@ begin
   if (FieldbyName('CLIENT_ID').AsString<>'') or (FieldbyName('CLIENT_ID').AsOldString<>'') then DoUpgrade(AGlobal);
   if FieldbyName('FROM_ID').AsString <> '' then
      begin
-       SQL := 'update SAL_INDENTDATA set FNSH_AMOUNT=stk.FNSH_AMOUNT from SAL_INDENTDATA j,'+
-              '(select a.FROM_ID,b.GODS_ID,b.BATCH_NO,b.LOCUS_NO,b.BOM_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,sum(b.CALC_AMOUNT) as FNSH_AMOUNT from SAL_SALESORDER a,SAL_SALESDATA b where a.TENANT_ID=b.TENANT_ID and a.SALES_ID=b.SALES_ID and a.FROM_ID=:FROM_ID '+
-              'group by a.FROM_ID,b.GODS_ID,b.BATCH_NO,b.LOCUS_NO,b.BOM_ID,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID) stk '+
-              'where j.INDE_ID=:FROM_ID and j.COMP_ID=:COMP_ID and j.INDE_ID=stk.FROM_ID and j.GODS_ID=stk.GODS_ID and j.BATCH_NO=stk.BATCH_NO and j.LOCUS_NO=stk.LOCUS_NO and '+
-              'j.BOM_ID=stk.BOM_ID and j.PROPERTY_01=stk.PROPERTY_01 and j.PROPERTY_02=stk.PROPERTY_02 and j.UNIT_ID=stk.UNIT_ID';
+        SQL :=
+        'UPDATE SAL_INDENTDATA '+
+        'SET '+
+        '  FNSH_AMOUNT = ( '+
+        '    SELECT '+
+        '      sum( b.CALC_AMOUNT ) '+
+        '    FROM  '+
+        '      SAL_SALESORDER a ,'+
+        '      SAL_SALESDATA b '+
+        '    WHERE '+
+        '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = :TENANT_ID AND a.SALES_ID = :SALES_ID '+
+        '      AND b.GODS_ID = SAL_INDENTDATA.GODS_ID AND b.LOCUS_NO = SAL_INDENTDATA.LOCUS_NO AND b.BATCH_NO = SAL_INDENTDATA.BATCH_NO '+
+        '      AND b.UNIT_ID = SAL_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = SAL_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = SAL_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = SAL_INDENTDATA.IS_PRESENT  '+
+        '  ) '+
+        'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
        AGlobal.ExecSQL(SQL,self); 
      end;
 
@@ -247,41 +257,11 @@ begin
   //还原积分
   if length(FieldbyName('CLIENT_ID').AsOldString)>0 then
   begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select CLIENT_TYPE from VIW_CUSTOMER where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and CLIENT_ID='''+FieldbyName('CLIENT_ID').AsOldString+'''';
-    AGlobal.Open(rs);
-    case rs.FieldbyName('CLIENT_TYPE').AsInteger of
-    0://企业客户
-       begin
-         case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=IsNull(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CLIENT_ID=:OLD_CLIENT_ID',self);
-         3:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=iif(IsNull(INTEGRAL),0,INTEGRAL)- -:OLD_INTEGRAL,ACCU_INTEGRAL=iif(IsNull(ACCU_INTEGRAL),0,ACCU_INTEGRAL) - -:OLD_INTEGRAL'+
-                    ' where CLIENT_ID=:OLD_CLIENT_ID',self);
-         4:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=nvl(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=nvl(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CLIENT_ID=:OLD_CLIENT_ID',self);
-         5:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=IfNull(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=IfNull(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CLIENT_ID=:OLD_CLIENT_ID',self);
-         end;
-       end;
-    2: //普通消费者
-       begin
-         case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=IsNull(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CUST_ID=:OLD_CLIENT_ID',self);
-         3:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=iif(IsNull(INTEGRAL),0,INTEGRAL)- -:OLD_INTEGRAL,ACCU_INTEGRAL=iif(IsNull(ACCU_INTEGRAL),0,ACCU_INTEGRAL) - -:OLD_INTEGRAL'+
-                    ' where CUST_ID=:OLD_CLIENT_ID',self);
-         4:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=nvl(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=nvl(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CUST_ID=:OLD_CLIENT_ID',self);
-         5:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=IfNull(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=IfNull(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
-                    ' where CUST_ID=:OLD_CLIENT_ID',self);
-         end;
-       end;
-    end;
-  finally
-    rs.Free;
-  end;
+     AGlobal.ExecSQL(
+        ParseSQL(iDbType,
+        'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- -:OLD_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) - -:OLD_INTEGRAL'+
+        ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:OLD_CLIENT_ID')
+     ,self);
   end;
   
   if FieldbyName('SALES_MNY').AsOldFloat <> 0 then
@@ -351,41 +331,11 @@ begin
   //更新积分
   if length(FieldbyName('CLIENT_ID').AsString)>0 then
   begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select CLIENT_TYPE from VIW_CUSTOMER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';
-    AGlobal.Open(rs);
-    case rs.FieldbyName('CLIENT_TYPE').AsInteger of
-    0://企业客户
-       begin
-         case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=IsNull(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CLIENT_ID=:CLIENT_ID',self);
-         3:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=iif(IsNull(INTEGRAL),0,INTEGRAL)+ -:INTEGRAL,ACCU_INTEGRAL=iif(IsNull(ACCU_INTEGRAL),0,ACCU_INTEGRAL) + -:INTEGRAL'+
-                    ' where CLIENT_ID=:CLIENT_ID',self);
-         4:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=nvl(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=nvl(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CLIENT_ID=:CLIENT_ID',self);
-         5:AGlobal.ExecSQL('update PUB_CLIENTINFO set INTEGRAL=IfNull(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=IfNull(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CLIENT_ID=:CLIENT_ID',self);
-         end;
-       end;
-    2: //普通消费者
-       begin
-         case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=IsNull(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CUST_ID=:CLIENT_ID',self);
-         3:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=iif(IsNull(INTEGRAL),0,INTEGRAL)+ -:INTEGRAL,ACCU_INTEGRAL=iif(IsNull(ACCU_INTEGRAL),0,ACCU_INTEGRAL) + -:INTEGRAL'+
-                    ' where CUST_ID=:CLIENT_ID',self);
-         4:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=nvl(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=nvl(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CUST_ID=:CLIENT_ID',self);
-         5:AGlobal.ExecSQL('update PUB_CUSTOMER set INTEGRAL=IfNull(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=IfNull(ACCU_INTEGRAL,0) + -:INTEGRAL'+
-                    ' where CUST_ID=:CLIENT_ID',self);
-         end;
-       end;
-    end;
-  finally
-    rs.Free;
-  end;
+     AGlobal.ExecSQL(
+       ParseSQL(iDbType,
+       'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)+ -:INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + -:INTEGRAL'+
+       ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID')
+     ,self);
   end;
   result := true;
 end;
@@ -410,9 +360,9 @@ var
 begin
    if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
       begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString);
+        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('SALES_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString);
+           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
         rs := TZQuery.Create(nil);
         try
           rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE in (:CLSE_DATE ,:OLD_CLSE_DATE ) and CREA_USER=:CREA_USER';
@@ -456,9 +406,9 @@ end;
 
 procedure TSalRetuOrder.DoUpgrade(AGlobal: IdbHelp);
 begin
-  case AGlobal.iDbType of
-  0:AGlobal.ExecSQL('update BAS_CUSTOMER set PRICE_ID=isnull((select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<=A.ACCU_INTEGRAL and INTEGRAL>0 and PRICE_ID not in (''000'',''---'') order by INTEGRAL desc),A.PRICE_ID),COMM=' + GetCommStr(iDbType) + ',' + 'TIME_STAMP='+GetTimeStamp(iDbType)+' from BAS_CUSTOMER A where A.CUST_ID in (:CUST_ID,:OLD_CUST_ID)',self);
-  end;
+//  case AGlobal.iDbType of
+//  0:AGlobal.ExecSQL('update PUB_CUSTOMER set PRICE_ID=isnull((select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<=A.ACCU_INTEGRAL and INTEGRAL>0 and PRICE_ID not in (''000'',''---'') order by INTEGRAL desc),A.PRICE_ID),COMM=' + GetCommStr(iDbType) + ',' + 'TIME_STAMP='+GetTimeStamp(iDbType)+' from BAS_CUSTOMER A where A.CUST_ID in (:CUST_ID,:OLD_CUST_ID)',self);
+//  end;
 end;
 
 procedure TSalRetuOrder.InitClass;
@@ -477,7 +427,7 @@ begin
                '-ADVA_MNY as ADVA_MNY,-PAY_A as PAY_A,-PAY_B as PAY_B,-PAY_C as PAY_C,-PAY_D as PAY_D,-PAY_E as PAY_E,-PAY_F as PAY_F,-PAY_G as PAY_G,-PAY_H as PAY_H,-PAY_I as PAY_I,-PAY_J as PAY_J,-INTEGRAL as INTEGRAL,'+
                'REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,COMM,CREA_DATE,CREA_USER,'+
                'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
-               ' left outer join VIW_CUSTOMER b on jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+               ' left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+

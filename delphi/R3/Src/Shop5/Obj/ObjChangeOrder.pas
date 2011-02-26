@@ -1,7 +1,7 @@
 unit ObjChangeOrder;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB;
+uses Dialogs,SysUtils,ZBase,Classes, ZDataSet,ZIntf,ObjCommon,DB,math;
 type
   TChangeOrder=class(TZFactory)
   private
@@ -122,7 +122,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,3)
+             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,2),3)
   else
   IncStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
@@ -130,7 +130,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,3);
+             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,2),3);
 //  if not lock then
 //  begin
 //  if Parant.FieldbyName('CHANGE_CODE').AsString='1' then
@@ -161,7 +161,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,1)
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1)
   else
   DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
              FieldbyName('GODS_ID').asString,
@@ -169,7 +169,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,1);
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1);
   Result := True;
   except
     on E:Exception do
@@ -284,9 +284,9 @@ var
 begin
    if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
       begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('CHANGE_DATE').AsString);
+        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('CHANGE_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('CHANGE_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('CHANGE_DATE').AsOldString);
+           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('CHANGE_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
         result := true;
       end
    else
@@ -300,9 +300,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from STO_CHANGEORDER where CHANGE_ID='''+FieldbyName('CHANGE_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+    rs.SQL.Text := 'select TIME_STAMP,COMM from STO_CHANGEORDER where CHANGE_ID='''+FieldbyName('CHANGE_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
     rs.Free;
   end;

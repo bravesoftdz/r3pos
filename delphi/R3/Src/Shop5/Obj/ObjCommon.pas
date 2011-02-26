@@ -10,7 +10,7 @@ function ParseSQL(iDbType:integer;SQL:string):string;
 function  GetTimeStamp(iDbType:Integer):string;
 function GetSysDateFormat(iDbType:integer):string;
 //检查date 是否在可修改区间内,库存有关的
-function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
+function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
 //检查date 是否在结账区间内,库存无关的
 function GetAccountRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
 //读取最近没有结账日期
@@ -227,17 +227,20 @@ begin
      Temp.Free;
   end;
 end;
-function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
+function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
 var Temp:TZQuery;
   B:string;
 begin
   Result := False;
   if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
+  if timestamp='' then timestamp := '9223372036854775800';
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
          'select max(CREA_DATE) from ('+
          'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'union all '+
+         'select max(PRINT_DATE) as CREA_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and TIME_STAMP>'+timestamp+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then

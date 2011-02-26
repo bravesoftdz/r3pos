@@ -83,9 +83,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from RCK_RECVORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and RECV_ID='''+FieldbyName('RECV_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from RCK_RECVORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and RECV_ID='''+FieldbyName('RECV_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
     rs.Free;
   end;

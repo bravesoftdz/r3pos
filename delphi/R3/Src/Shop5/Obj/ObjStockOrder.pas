@@ -1,7 +1,7 @@
 unit ObjStockOrder;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet;
+uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet,math;
 type
   TStockOrder=class(TZFactory)
   private
@@ -122,7 +122,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             FieldbyName('CALC_MONEY').asOldFloat,3);
+             FieldbyName('CALC_MONEY').asOldFloat-roundto(FieldbyName('CALC_MONEY').asOldFloat/(1+FieldbyName('TAX_RATE').asOldFloat)*FieldbyName('TAX_RATE').asOldFloat,-2),3);
 //  if not lock then
 //     WriteLogInfo(AGlobal,Parant.FieldbyName('CREA_USER').AsString,2,'400018','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'STK_STOCKDATA',usDeleted));
   Result := True;
@@ -148,7 +148,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             FieldbyName('CALC_MONEY').asFloat,1);
+             FieldbyName('CALC_MONEY').asFloat-roundto(FieldbyName('CALC_MONEY').asFloat/(1+FieldbyName('TAX_RATE').AsFloat)*FieldbyName('TAX_RATE').AsFloat,-2),1);
   Result := True;
   except
     on E:Exception do
@@ -197,10 +197,11 @@ begin
   inherited;
   lock := false;
   SelectSQL.Text :=
-      ' select b.GODS_NAME,b.GODS_CODE,j.TENANT_ID,j.SHOP_ID,j.STOCK_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,'+
+      ' select jb.*,b.GODS_NAME as GODS_NAME,b.GODS_CODE as GODS_CODE from ('+
+      ' select j.TENANT_ID,j.SHOP_ID,j.STOCK_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,'+
       ' j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.IS_PRESENT,j.APRICE,j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,'+
-      ' j.REMARK,j.ORG_PRICE*j.AMOUNT as RTL_MONEY from STK_STOCKDATA j left outer join VIW_GOODSINFO b '+
-      ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.STOCK_ID=:STOCK_ID order by SEQNO';
+      ' j.REMARK,j.ORG_PRICE*j.AMOUNT as RTL_MONEY,h.TAX_RATE from STK_STOCKDATA j,STK_STOCKORDER h where j.TENANT_ID=h.TENANT_ID and j.STOCK_ID=h.STOCK_ID and j.TENANT_ID=:TENANT_ID and j.STOCK_ID=:STOCK_ID) jb left outer join VIW_GOODSINFO b '+
+      ' on jb.TENANT_ID=b.TENANT_ID and jb.GODS_ID=b.GODS_ID order by jb.SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into STK_STOCKDATA(TENANT_ID,SHOP_ID,SEQNO,STOCK_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:STOCK_ID,:GODS_ID,:BATCH_NO,:LOCUS_NO,:BOM_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:AMOUNT,:ORG_PRICE,:IS_PRESENT,:APRICE,:AMONEY,:AGIO_RATE,:AGIO_MONEY,:CALC_AMOUNT,:CALC_MONEY,:REMARK)';
@@ -221,12 +222,22 @@ var SQL:string;
 begin
   if FieldbyName('FROM_ID').AsString <> '' then
      begin
-       SQL := 'update STK_INDENTDATA set FNSH_AMOUNT=stk.FNSH_AMOUNT from STK_INDENTDATA j,'+
-              '(select a.FROM_ID,b.GODS_ID,b.BATCH_NO,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.LOCUS_NO,b.BOM_ID,sum(b.CALC_AMOUNT) as FNSH_AMOUNT from STK_STOCKORDER a,STK_STOCKDATA b where a.TENANT_ID=b.TENANT_ID and a.STOCK_ID=b.STOCK_ID and a.FROM_ID=:FROM_ID '+
-              'group by a.FROM_ID,b.GODS_ID,b.BATCH_NO,b.PROPERTY_01,b.PROPERTY_02,b.UNIT_ID,b.LOCUS_NO,b.BOM_ID) stk '+
-              'where j.INDE_ID=:FROM_ID and j.TENANT_ID=:TENANT_ID and j.INDE_ID=stk.FROM_ID and j.GODS_ID=stk.GODS_ID and j.BATCH_NO=stk.BATCH_NO and '+
-              'j.LOCUS_NO=stk.LOCUS_NO and j.BOM_ID=stk.BOM_ID and j.PROPERTY_01=stk.PROPERTY_01 and j.PROPERTY_02=stk.PROPERTY_02 and j.UNIT_ID=stk.UNIT_ID';
-       AGlobal.ExecSQL(SQL,self); 
+     SQL :=
+      'UPDATE STK_INDENTDATA '+
+      'SET '+
+      '  FNSH_AMOUNT = ( '+
+      '    SELECT '+
+      '      sum( b.CALC_AMOUNT ) '+
+      '    FROM  '+
+      '      STK_STOCKORDER a ,'+
+      '      STK_STOCKDATA b '+
+      '    WHERE '+
+      '      a.TENANT_ID = b.TENANT_ID AND a.STOCK_ID = b.STOCK_ID AND a.TENANT_ID = :TENANT_ID AND a.STOCK_ID = :STOCK_ID '+
+      '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.LOCUS_NO = STK_INDENTDATA.LOCUS_NO AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
+      '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
+      '  ) '+
+      'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
+       AGlobal.ExecSQL(SQL,self);
      end;
 end;
 
@@ -240,13 +251,13 @@ begin
        try
          rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
          rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
-         rs.ParamByName('STOCK_ID').AsInteger := FieldbyName('STOCK_ID').AsOldInteger;
+         rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsOldString;
          AGlobal.Open(rs);
          if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的进货入库单不能修改...'); 
        finally
          rs.Free;
        end;
-       AGlobal.ExecSQL('delete from RCK_PAYABLE_INFO where STOCK_ID=:OLD_STOCK_ID and TENANT_ID=:OLD_TENANT_ID',self);
+       AGlobal.ExecSQL('delete from ACC_PAYABLE_INFO where STOCK_ID=:OLD_STOCK_ID and TENANT_ID=:OLD_TENANT_ID',self);
      end;
 //  if not lock then
 //     WriteLogInfo(AGlobal,FieldbyName('CREA_USER').AsString,2,'400018','删除【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'STK_STOCKORDER',usDeleted));
@@ -288,9 +299,9 @@ function TStockOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 begin
    if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
       begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('STOCK_DATE').AsString);
+        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('STOCK_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('STOCK_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('STOCK_DATE').AsOldString);
+           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('STOCK_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
         result := true;
       end
    else
@@ -303,9 +314,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+''' and TENANT_ID='''+FieldbyName('TENANT_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+''' and TENANT_ID='''+FieldbyName('TENANT_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
     rs.Free;
   end;
@@ -324,7 +335,7 @@ begin
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
                '(select TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
                'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE*100.0 as TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
-               ' left outer join VIW_CLIENTINFO b on jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+               ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_SHOP_INFO e on  je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+

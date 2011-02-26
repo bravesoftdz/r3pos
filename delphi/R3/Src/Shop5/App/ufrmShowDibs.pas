@@ -185,7 +185,7 @@ begin
   if Key in ['A','a'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
-       MainRecord.FieldByName('CASH_MNY').AsFloat := MainRecord.FieldByName('PAY_A').AsFloat;
+       MainRecord.FieldByName('CASH_MNY').AsFloat := GetFee(edtTakeFee.Text);
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
        ShowFee;
        edtTakeFee.Text := '';
@@ -218,7 +218,7 @@ begin
   if Key in ['E','e'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
-       if MainRecord.FieldByName('CUST_ID').AsString = '' then Raise Exception.Create('不是会员购买不能记账...');
+       if MainRecord.FieldByName('CLIENT_ID').AsString = '' then Raise Exception.Create('不是会员购买不能记账...');
        if ShopGlobal.offline then Raise Exception.Create('脱机操作不能记账...'); 
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_E').AsFloat := GetFee(edtTakeFee.Text);
@@ -354,7 +354,7 @@ begin
       edtPAY_J.Visible := true;
     end;
   end;
-  if n>5 then Raise Exception.Create('同时最多支持7种支付方式');
+  if n>10 then Raise Exception.Create('同时最多支持10种支付方式');
 end;
 var
   row:integer;

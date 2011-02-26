@@ -3,21 +3,22 @@ inherited frmCostCalc: TfrmCostCalc
   Top = 306
   BorderStyle = bsDialog
   Caption = #25104#26412#26680#31639
-  ClientHeight = 161
+  ClientHeight = 199
   ClientWidth = 349
   OldCreateOrder = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object Bevel1: TBevel [0]
-    Left = 16
-    Top = 12
+    Left = 14
+    Top = 52
     Width = 321
-    Height = 89
+    Height = 93
     Shape = bsFrame
   end
   object Label11: TLabel [1]
-    Left = 34
-    Top = 51
+    Left = 32
+    Top = 91
     Width = 72
     Height = 12
     Caption = #25191#34892#25104#26412#26680#31639
@@ -29,8 +30,8 @@ inherited frmCostCalc: TfrmCostCalc
     ParentFont = False
   end
   object RzProgressBar1: TRzProgressBar [2]
-    Left = 33
-    Top = 68
+    Left = 31
+    Top = 108
     Width = 280
     Height = 17
     BorderOuter = fsFlatRounded
@@ -41,17 +42,30 @@ inherited frmCostCalc: TfrmCostCalc
     TotalParts = 0
   end
   object Label1: TLabel [3]
-    Left = 33
-    Top = 27
-    Width = 222
+    Left = 31
+    Top = 67
+    Width = 198
     Height = 12
-    Caption = #27491#22312#25104#26412#26680#31639#38656#35201#36739#38271#30340#26102#38388','#35831#31245#20505'....'
+    Caption = #27491#22312#26680#31639#38656#35201#36739#38271#30340#26102#38388','#35831#31245#20505'....'
   end
-  object btnStart: TRzBitBtn [4]
-    Left = 147
-    Top = 117
+  object Label2: TLabel [4]
+    Left = 14
+    Top = 16
+    Width = 95
+    Height = 20
+    Caption = #25104#26412#26680#31639':'
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clRed
+    Font.Height = -20
+    Font.Name = #23435#20307
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object btnStart: TRzBitBtn [5]
+    Left = 139
+    Top = 157
     Height = 28
-    Caption = #24320#22987#35745#31639
+    Caption = #25191#34892
     Color = 4227327
     Font.Charset = GB2312_CHARSET
     Font.Color = clWhite

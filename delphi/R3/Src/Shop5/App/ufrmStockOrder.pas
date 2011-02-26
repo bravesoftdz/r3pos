@@ -296,6 +296,7 @@ begin
     cdsHeader.Post;
     Factor.AddBatch(cdsHeader,'TStockOrder');
     Factor.AddBatch(cdsDetail,'TStockData');
+
     Factor.CommitBatch;
     Saved := true;
   except

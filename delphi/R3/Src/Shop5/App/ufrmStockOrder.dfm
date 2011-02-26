@@ -1,6 +1,6 @@
 inherited frmStockOrder: TfrmStockOrder
-  Left = 187
-  Top = 24
+  Left = 210
+  Top = 189
   Width = 787
   Height = 542
   Caption = #36827#36135#21333
@@ -825,7 +825,7 @@ inherited frmStockOrder: TfrmStockOrder
         Name = 'CALC_AMOUNT'
         DataType = ftFloat
       end>
-    Left = 216
+    Left = 176
     Top = 264
   end
   object cdsHeader: TZQuery

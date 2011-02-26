@@ -318,7 +318,7 @@ begin
 
     if Define = 'CALC_FLAG' then
     begin
-      edtCALC_FLAG.ItemIndex := StrtoIntDef(value,2)-1;
+      edtCALC_FLAG.ItemIndex := StrtoIntDef(value,0);
     end;
 
     if Define = 'INPUT_MODE' then
@@ -411,7 +411,7 @@ begin
 
   SetValue('POSDIGHT', inttostr(edtPosDight.value));
   SetValue('POSCALCDIGHT', inttostr(edtPosCalcDight.ItemIndex-2));
-  SetValue('CALC_FLAG', inttostr(edtCALC_FLAG.ItemIndex+1));
+  SetValue('CALC_FLAG', inttostr(edtCALC_FLAG.ItemIndex));
   if edtCARRYRULE.ItemIndex = -1 then
      SetValue('CARRYRULE', inttostr(0))
   else

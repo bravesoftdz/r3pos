@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 727
-  Top = 211
+  Left = 453
+  Top = 212
   Width = 434
   Height = 323
   BorderIcons = [biSystemMenu]
@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 426
-    Height = 253
-    ActivePage = tabStock
+    Width = 418
+    Height = 242
+    ActivePage = tabBasic
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -80,6 +80,7 @@ inherited frmSysDefine: TfrmSysDefine
           Height = 20
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
+            #31227#21160#21152#26435#24179#22343
             #26085#31227#21160#21152#26435#24179#22343
             #26376#31227#21160#21152#26435#24179#22343)
           TabOrder = 1
@@ -116,7 +117,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 41
           Height = 20
           Properties.MaxValue = 28.000000000000000000
-          Properties.MinValue = 20.000000000000000000
+          Properties.MinValue = 26.000000000000000000
           TabOrder = 2
           Value = 28
         end
@@ -164,8 +165,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -302,8 +303,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -758,8 +759,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 426
+    Top = 242
+    Width = 418
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

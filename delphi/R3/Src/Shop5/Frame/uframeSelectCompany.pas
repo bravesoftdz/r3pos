@@ -59,6 +59,7 @@ type
     property CanMultSelect:boolean read FCanMultSelect write SetCanMultSelect;
   end;
 
+
 implementation
 
 uses uGlobal,uCtrlUtil;

@@ -1,6 +1,6 @@
 inherited frmDeptInfoList: TfrmDeptInfoList
   Left = 193
-  Top = 107
+  Top = 116
   Width = 735
   Height = 521
   Caption = #37096#38376#31649#29702
@@ -94,6 +94,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
                   Properties.OnChange = edtKeyPropertiesChange
                   TabOrder = 0
                   OnKeyDown = edtKeyKeyDown
+                  OnKeyPress = edtKeyKeyPress
                 end
                 object btnOk: TRzBitBtn
                   Left = 218
@@ -139,7 +140,6 @@ inherited frmDeptInfoList: TfrmDeptInfoList
               ReadOnly = True
               RowSelect = True
               TabOrder = 1
-              OnChange = rzTreeChange
               OnChanging = rzTreeChanging
             end
             object Panel3: TPanel

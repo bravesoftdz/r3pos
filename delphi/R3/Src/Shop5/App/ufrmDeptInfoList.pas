@@ -54,7 +54,6 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtKeyPropertiesChange(Sender: TObject);
-    procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure rzTreeChanging(Sender: TObject; Node: TTreeNode; var AllowChange: Boolean);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -69,71 +68,35 @@ type
     procedure Sort_PriorClick(Sender: TObject);
     procedure Sort_NextClick(Sender: TObject);
     procedure Sort_LastClick(Sender: TObject);
+    procedure edtKeyKeyPress(Sender: TObject; var Key: Char);
   private
-    locked, IsCompany : boolean;
+    // locked, IsCompany : boolean;
+    procedure SetRecNo;  //设置记录序号    
+    function  FindNode(ID: string): TTreeNode;
     procedure DeptTreeSort(SortType: string); //职务树型排序
+    function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
   public
+    procedure DoOnTreeChange(Sender: TObject; Node: TTreeNode);
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
     procedure CreateTree;
-    function  FindNode(ID: string): TTreeNode;
+    procedure Open;
   end;
 
  
 
 implementation
 
-uses uGlobal,ufrmDeptInfo,uTreeUtil,uShopGlobal, ufrmEhLibReport;
+uses uGlobal,ufrmDeptInfo,uTreeUtil,uShopGlobal, ufrmEhLibReport,
+  ObjCommon;
 
 {$R *.dfm}
 
 { TfrmDeptInfoList }
 
 procedure TfrmDeptInfoList.actFindExecute(Sender: TObject);
-var
-  vLen: integer;
-  str,SQL: String;
 begin
-  inherited;
-  try
-    if (rzTree.Selected <> nil) and (rzTree.Selected.Level > 0 ) then
-    begin
-      vLen:=Length(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString);
-      if vLen>0 then
-      begin
-        case Factor.iDbType of
-         0:   str:=' and substring(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
-         4,5: str:=' and substr(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
-        end;
-      end;
-    end;
-
-    if edtKey.Text<>'' then
-    begin
-      case Factor.iDbType of
-       0:   str:=' and (DEPT_ID like ''%''+:KEYVALUE+''%'' or DEPT_NAME like ''%''+:KEYVALUE+''%'' or DEPT_SPELL like ''%''+:KEYVALUE+''%'') ';
-       4,5: str:=' and (DEPT_ID like ''%''||:KEYVALUE||''%'' or DEPT_NAME like ''%''||:KEYVALUE||''%'' or DEPT_SPELL like ''%''||:KEYVALUE||''%'') ';
-      end;
-    end;
-
-    case Factor.iDbType of
-     0:   SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
-                'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
-     4,5: SQL:='Select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
-                'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by DEPT_ID';
-    end;
-    cdsBrowser.Close;
-    cdsBrowser.SQL.Text:=SQL;
-    //设置参数:
-    if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
-      cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    if cdsBrowser.Params.FindParam('LEVEL_ID')<>nil then
-      cdsBrowser.ParamByName('LEVEL_ID').AsString:=TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-    if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
-      cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
-    Factor.Open(cdsBrowser);
-  finally
-  end;
+  self.Open;
 end;
 
 procedure TfrmDeptInfoList.actExitExecute(Sender: TObject);
@@ -145,7 +108,6 @@ end;
 procedure TfrmDeptInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if not IsCompany then  raise Exception.Create('不是总店，不能新增职务!');
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
   with TfrmDeptInfo.Create(self) do
   begin
@@ -163,17 +125,16 @@ procedure TfrmDeptInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmDeptInfo.Create(self) do
     begin
       try
         OnSave := AddRecord;
         //要检查权限
-        if not IsCompany then
-          Open(cdsBrowser.FieldByName('DEPT_ID').AsString)
-        else
-          Edit(cdsBrowser.FieldByName('DEPT_ID').AsString);
+        // if not IsCompany then Open(cdsBrowser.FieldByName('DEPT_ID').AsString)
+        //else
+        Edit(cdsBrowser.FieldByName('DEPT_ID').AsString);
         ShowModal;
       finally
         free;
@@ -182,26 +143,26 @@ begin
 end;
 
 procedure TfrmDeptInfoList.actDeleteExecute(Sender: TObject);
-procedure UpdateToGlobal(str:string);
-var Temp:TZQuery;
-begin
-  Temp := Global.GetZQueryFromName('CA_DEPT_INFO');
-  Temp.Filtered :=false;
-  if Temp.Locate('DEPT_ID',str,[]) then
-  begin
-    Temp.Delete;
-    Temp.CommitUpdates;
-  end;
-end;
-var Params:TftParamList;
-    i:integer;
-    rzNode:TTreeNode;
+ procedure UpdateToGlobal(str:string);
+ var Temp:TZQuery;
+ begin
+   Temp := Global.GetZQueryFromName('CA_DEPT_INFO');
+   Temp.Filtered :=false;
+   if Temp.Locate('DEPT_ID',str,[]) then
+   begin
+     Temp.Delete;
+     Temp.CommitUpdates;
+   end;
+ end;
+var
+  i:integer;
+  rzNode:TTreeNode;
+  Params:TftParamList;
 begin
   inherited;
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
-  //if not IsCompany then raise Exception.Create('不是总店，不能删除职务!');
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -226,8 +187,7 @@ begin
   end;
 end;
 
-procedure TfrmDeptInfoList.edtKeyKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TfrmDeptInfoList.edtKeyKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   inherited;
   if Key=VK_DOWN then
@@ -252,32 +212,25 @@ begin
     end;
   finally
     locked:=False;
-  end;
-  }
+  end; }
 end;
 
-procedure TfrmDeptInfoList.rzTreeChange(Sender: TObject; Node: TTreeNode);
+procedure TfrmDeptInfoList.rzTreeChanging(Sender: TObject; Node: TTreeNode; var AllowChange: Boolean);
 begin
   inherited;
-  actFindExecute(nil);
-end;
-
-procedure TfrmDeptInfoList.rzTreeChanging(Sender: TObject; Node: TTreeNode;
-  var AllowChange: Boolean);
-begin
-  inherited;
+  {
   if locked then exit;
   locked := true;
   try
-   if edtKey.Text<>'' then edtKey.Text:='';
   finally
     locked := false;
   end;
+  }
+  if edtKey.Text<>'' then edtKey.Text:='';
 end;
 
 procedure TfrmDeptInfoList.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var ARect:TRect;
 begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
@@ -296,26 +249,25 @@ begin
 end;
 
 procedure TfrmDeptInfoList.DBGridEh1GetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
+  Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
 begin
   inherited;
   if Column.FieldName = 'SEQ_NO' then
-     Background := clBtnFace;
+    Background := clBtnFace;
 end;
 
 procedure TfrmDeptInfoList.FormShow(Sender: TObject);
 begin
   inherited;
-  actFindExecute(nil);
-  if edtKey.CanFocus then
-    edtKey.SetFocus;
+  //进入窗体显示数据：
+  if not cdsBrowser.Active then Open;
+  if edtKey.CanFocus then edtKey.SetFocus;
 end;
 
 procedure TfrmDeptInfoList.actInfoExecute(Sender: TObject);
 begin
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmDeptInfo.Create(self) do
     begin
       try
@@ -331,12 +283,22 @@ end;
 
 procedure TfrmDeptInfoList.AddRecord(AObj: TRecord_);
 var
+  i: integer;                          
+  CurID,CurName: string;
+  IsCreate: Boolean;
   str,cdsUPDEPT_ID,AObjUPDEPT_ID,DEPT_ID:string;
 begin
   if not cdsBrowser.Active  then exit;
   AObjUPDEPT_ID:=AObj.FieldByName('LEVEL_ID').AsString;
   if cdsBrowser.Locate('DEPT_ID',AObj.FieldByName('DEPT_ID').AsString,[]) then
   begin
+     //2011.02.26 Add 判断是否修改树节点名称:
+     if trim(AObj.FieldByName('DEPT_NAME').AsString)<> trim(cdsBrowser.FieldByName('DEPT_NAME').AsString) then
+     begin
+       CurID:=trim(AObj.FieldByName('DEPT_ID').AsString);
+       CurNAME:=trim(AObj.FieldByName('DEPT_NAME').AsString);
+     end;
+  
      cdsUPDEPT_ID:=cdsBrowser.FieldByName('LEVEL_ID').AsString;
      DEPT_ID:=cdsBrowser.FieldByName('DEPT_ID').AsString;
      cdsBrowser.Edit;
@@ -356,33 +318,51 @@ begin
     if rzTree.Items.Count=1 then
     begin
       CreateTree;
-       FindNode(DEPT_ID).Selected:=True;
-    end
-    else
+      IsCreate:=true;
+      FindNode(DEPT_ID).Selected:=True;
+    end else
     begin
       str:='';
       if not rzTree.TopItem.Selected then
         str:=TRecord_(rzTree.Selected.Data).FieldByName('DEPT_ID').AsString;
       CreateTree;
-      if str<>'' then
-        FindNode(str).Selected:=True;
+      IsCreate:=true;
+      if str<>'' then FindNode(str).Selected:=True;
     end;
   end;
-  if cdsBrowser.Locate('DEPT_ID',DEPT_ID,[]) then ;
+
+  //2011.02.26 Add  修改节点名称但树没有重新创建
+  if (not IsCreate) and (CurID<>'') and (CurName<>'') then
+  begin
+    for i:=0 to rzTree.Items.Count-1 do
+    begin
+      if trim(TRecord_(rzTree.Items[i].Data).FieldByName('DEPT_ID').AsString)=CurID then
+      begin
+        TRecord_(rzTree.Items[i].Data).FieldByName('DEPT_NAME').AsString:=CurNAME;
+        rzTree.Items[i].Text:=CurNAME;
+      end;
+    end;
+  end;
+  
+  cdsBrowser.Locate('DEPT_ID',DEPT_ID,[]);
 end;
 
 procedure TfrmDeptInfoList.InitGrid;
 var
   tmp: TZQuery;
+  GridCol: TColumnEh;  
 begin
-  DBGridEh1.FieldColumns['UPDEPT_ID'].PickList.Clear;
-  DBGridEh1.FieldColumns['UPDEPT_ID'].KeyList.Clear;
   tmp := Global.GetZQueryFromName('CA_DEPT_INFO');
+  if not tmp.Active then exit;
+  GridCol:=FindColumn(DBGridEh1,'UPDEPT_ID');
+  if GridCol=nil then exit;
+  GridCol.KeyList.Clear;
+  GridCol.PickList.Clear;
   tmp.First;
   while not tmp.Eof do
   begin
-    DBGridEh1.FieldColumns['UPDEPT_ID'].KeyList.Add(tmp.FieldByName('LEVEL_ID').asstring);
-    DBGridEh1.FieldColumns['UPDEPT_ID'].PickList.Add(tmp.FieldByName('DEPT_NAME').AsString);
+    GridCol.KeyList.Add(tmp.FieldByName('LEVEL_ID').asstring);
+    GridCol.PickList.Add(tmp.FieldByName('DEPT_NAME').AsString);
     tmp.Next;
   end;
 end;
@@ -392,7 +372,7 @@ begin
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
-  IsCompany:=true;
+  // IsCompany:=true;
   InitGrid;
   CreateTree;
 end;
@@ -400,7 +380,7 @@ end;
 procedure TfrmDeptInfoList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-  actEditExecute(nil);
+  actInfoExecute(nil);
 end;
 
 function TfrmDeptInfoList.FindNode(ID: string): TTreeNode;
@@ -424,6 +404,7 @@ var
   Obj:TRecord_;
   Root,P:TTreeNode;
 begin
+  RzTree.OnChange:=nil;
   rs := Global.GetZQueryFromName('CA_DEPT_INFO');
   rs.SortedFields:='LEVEL_ID';
   rs.SortType:=stAscending;
@@ -441,6 +422,7 @@ begin
     Root.Selected := True;
   finally
   end;
+  RzTree.OnChange:=DoOnTreeChange; 
 end;
 
 procedure TfrmDeptInfoList.cdsBrowserAfterScroll(DataSet: TDataSet);
@@ -455,6 +437,7 @@ end;
 procedure TfrmDeptInfoList.actPrintExecute(Sender: TObject);
 begin
   //if not ShopGlobal.GetChkRight('100014') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  SetRecNo;  //设置记录序号
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
 end;
@@ -462,6 +445,7 @@ end;
 procedure TfrmDeptInfoList.actPreviewExecute(Sender: TObject);
 begin
   //if not ShopGlobal.GetChkRight('100014') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  SetRecNo;  //设置记录序号
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -487,12 +471,14 @@ begin
     Params:=TftParamList.Create(nil);
     try
       Params.ParamByName('MoveKind').AsString:=SortType;
-      Params.ParamByName('OLD_TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-      Params.ParamByName('LEVEL_ID').asString:='_'+CurObj.fieldbyName('LEVEL_ID').AsString;
-      Params.ParamByName('OLD_LEVEL_ID').asString:=CurObj.fieldbyName('LEVEL_ID').AsString;
+      Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+      Params.ParamByName('LEVEL_ID').asString:=trim(CurObj.fieldbyName('LEVEL_ID').AsString);
       Factor.ExecProc('TDeptInfoSort',Params);
       if ShopGlobal.RefreshTable('Ca_DEPT_INFO') then
+      begin
         CreateTree;
+        InitGrid;
+      end;
     finally
       Params.Free;
     end;
@@ -521,6 +507,88 @@ procedure TfrmDeptInfoList.Sort_LastClick(Sender: TObject);
 begin
   inherited;
   DeptTreeSort('LAST');
+end;
+
+procedure TfrmDeptInfoList.Open;
+var
+  vLen: integer;
+  str,SQL,Cnd: String;
+begin
+  inherited;
+  Cnd:='';
+  try
+    if (rzTree.Selected <> nil) and (rzTree.Selected.Level > 0 ) then
+    begin
+      vLen:=Length(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString);
+      if vLen>0 then Cnd:=' and substring(LEVEL_ID,1,'+InttoStr(vLen)+')=:LEVEL_ID ';
+    end;
+
+    if edtKey.Text<>'' then
+      Cnd:=Cnd+GetLikeCnd(Factor.iDbType,['DEPT_ID','DEPT_NAME','DEPT_SPELL'],':KEYVALUE','and');
+
+    SQL:='Select 1 as SEQ_NO,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
+         'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Cnd+' order by DEPT_ID';
+    SQL:=ParseSQL(Factor.iDbType,SQL); //函数匹配转换
+
+    cdsBrowser.Close;
+    cdsBrowser.SQL.Text:=SQL;
+    if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
+      cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    if cdsBrowser.Params.FindParam('LEVEL_ID')<>nil then
+      cdsBrowser.ParamByName('LEVEL_ID').AsString:=TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
+      cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
+    Factor.Open(cdsBrowser);
+  finally
+  end;
+end;
+
+function TfrmDeptInfoList.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGrid.Columns.Count - 1 do
+  begin
+    if DBGrid.Columns[i].FieldName = FieldName then
+    begin
+      result := DBGrid.Columns[i];
+      Exit;
+    end;
+  end;
+end;
+
+procedure TfrmDeptInfoList.SetRecNo;
+begin
+  //设置数据字段对应序号，打印GridElh需要用到
+  if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
+  try
+    cdsBrowser.DisableControls;
+    cdsBrowser.First;
+    while not cdsBrowser.eof do
+    begin
+      if cdsBrowser.FieldByName('SEQ_NO').AsInteger<>cdsBrowser.RecNo then
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('SEQ_NO').AsString:=InttoStr(cdsBrowser.RecNo);
+        cdsBrowser.Post;
+      end;
+      cdsBrowser.Next;
+    end;
+  finally
+    cdsBrowser.EnableControls;
+  end;
+end;
+
+procedure TfrmDeptInfoList.DoOnTreeChange(Sender: TObject; Node: TTreeNode);
+begin
+  self.Open;
+end;
+
+procedure TfrmDeptInfoList.edtKeyKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if key=#13 then self.Open;
 end;
 
 end.

@@ -173,41 +173,47 @@ end;
 procedure TfrmPriceOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs: TZQuery;
+  AObj: TRecord_;
 begin
-  edtTable.Edit;
-  rs := TZQuery.Create(nil);
   try
-     rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE '+
-       ' where GODS_ID='''+GODS_ID+''' and TENANT_ID='+InttoStr(Global.TENANT_ID);
-       // ' and GODS_FLAG=2 or (GODS_FLAG=1 and PRICE_FLAG=2)';
-     Factor.Open(rs);
-     {== 关闭下面代码: 现已没区分Pub_GoodsInfo和Bas_GoodsInfo:
+    AObj:=TRecord_.Create;
+    AObj.ReadFromDataSet(edtTable);
+
+    rs := TZQuery.Create(nil);
+    rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE '+
+      ' where GODS_ID='''+GODS_ID+''' and TENANT_ID='+InttoStr(Global.TENANT_ID);  // ' and GODS_FLAG=2 or (GODS_FLAG=1 and PRICE_FLAG=2)';
+    Factor.Open(rs);
+    {== 关闭下面代码: 现已没区分Pub_GoodsInfo和Bas_GoodsInfo:
      if rs.IsEmpty then
      begin
        rs.Close;
        rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE where GODS_ID='''+GODS_ID+'''';
        Factor.Open(rs);
      end; }
-     edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
-     edtTable.FieldbyName('OUT_PRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
-     edtTable.FieldbyName('OUT_PRICE1').AsFloat := rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
-     edtTable.FieldbyName('OUT_PRICE2').AsFloat := rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
-     edtTable.FieldbyName('SMALL_UNITS').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
-     edtTable.FieldbyName('BIG_UNITS').AsString := rs.FieldbyName('BIG_UNITS').AsString;
-     edtTable.FieldbyName('CALC_UNITS').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+    if rs.Active then
+    begin
+      AObj.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+      AObj.FieldbyName('OUT_PRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+      AObj.FieldbyName('OUT_PRICE1').AsFloat := rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+      AObj.FieldbyName('OUT_PRICE2').AsFloat := rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+      AObj.FieldbyName('SMALL_UNITS').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
+      AObj.FieldbyName('BIG_UNITS').AsString := rs.FieldbyName('BIG_UNITS').AsString;
+      AObj.FieldbyName('CALC_UNITS').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+    end;
+    AObj.FieldbyName('ISINTEGRAL').AsInteger := 1;
+    AObj.FieldbyName('RATE_OFF').AsInteger := 0;
+    AObj.FieldbyName('BATCH_NO').asString := '#';
+    AObj.FieldbyName('UNIT_ID').asString := UNIT_ID;
+    AObj.FieldbyName('IS_PRESENT').AsInteger := 0;
+    edtTable.Edit;
+    AObj.WriteToDataSet(edtTable);
+    edtTable.Post;
   finally
-     rs.Free;
+    rs.Free;
   end;
-  edtTable.FieldbyName('ISINTEGRAL').AsInteger := 1;
-  edtTable.FieldbyName('RATE_OFF').AsInteger := 0;
-  edtTable.FieldbyName('BATCH_NO').asString := '#';
-  edtTable.FieldbyName('UNIT_ID').asString := UNIT_ID;
-  edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
 end;
 
 procedure TfrmPriceOrder.NewOrder;
-var
-  rs:TADODataSet;
 begin
   inherited;
   Open('');
@@ -297,7 +303,7 @@ begin
       cdsShopList.Post;
       cdsShopList.Next;
     end;
-    //打包提交
+    //AddBatch后提交
     Factor.AddBatch(cdsHeader,'TPriceOrder',nil);
     Factor.AddBatch(cdsDetail,'TPriceData',nil);
     Factor.AddBatch(cdsShopList,'TPriceShopList',nil);

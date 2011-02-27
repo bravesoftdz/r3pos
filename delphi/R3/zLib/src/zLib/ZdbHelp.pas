@@ -121,10 +121,12 @@ type
 
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;virtual;abstract;
-    
+
     //用户登录
     procedure GqqLogin(UserId:string;UserName:string);virtual;abstract;
-    
+    //锁定数据连接
+    procedure DBLock(Locked:boolean);virtual;abstract;
+
     property dbid:integer read Fdbid write Setdbid;
   end;
   TdbResolver=class(TCustomdbResolver)
@@ -184,6 +186,8 @@ type
 
     //用户登录
     procedure GqqLogin(UserId:string;UserName:string);override;
+    //锁定数据连接
+    procedure DBLock(Locked:boolean);override;
   end;
 
 implementation
@@ -267,6 +271,18 @@ end;
 
 function TdbHelp.iDbType: Integer;
 begin
+  if copy(ZConn.Protocol,1,6) = 'mssql' then
+     result := 0
+  else
+  if copy(ZConn.Protocol,1,6) = 'oracle' then
+     result := 1
+  else
+  if copy(ZConn.Protocol,1,6) = 'oracle-9i' then
+     result := 1
+  else
+   if copy(ZConn.Protocol,1,6) = 'ado' then
+     result := 4
+  else
   if copy(ZConn.Protocol,1,6) = 'sqlite' then
      result := 5;
 end;
@@ -279,12 +295,12 @@ begin
   vList := TStringList.Create;
   try
     vList.Delimiter := ';';
-    vList.DelimitedText := ConnStr;
-    ZConn.HostName := vList.Values['HostName'];
-    ZConn.Database := vList.Values['DatabaseName'];
-    if vList.Values['UID']<>'' then ZConn.User := vList.Values['UID'];
-    if vList.Values['Password']<>'' then ZConn.Password := vList.Values['Password'];
-    ZConn.Protocol := vList.Values['Provider'];
+    vList.DelimitedText := lowercase(ConnStr);
+    ZConn.HostName := vList.Values['hostname'];
+    ZConn.Database := vList.Values['databasename'];
+    if vList.Values['uid']<>'' then ZConn.User := vList.Values['uid'];
+    if vList.Values['password']<>'' then ZConn.Password := vList.Values['password'];
+    ZConn.Protocol := vList.Values['provider'];
   finally
     vList.Free;
   end;
@@ -711,6 +727,12 @@ begin
 end;
 
 procedure TdbResolver.GqqLogin(UserId, UserName: string);
+begin
+  inherited;
+
+end;
+
+procedure TdbResolver.DBLock(Locked: boolean);
 begin
   inherited;
 

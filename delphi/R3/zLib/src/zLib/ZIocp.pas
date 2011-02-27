@@ -96,7 +96,15 @@ type
     procedure SetLockThread(const Value: boolean);
     function GetRemoteHost: string;
   protected
-    WaitCount:integer;
+    RecvLock: TCriticalSection;
+    SendLock: TCriticalSection;
+    //对接收资源进行保护
+    procedure RecvEnter;
+    procedure RecvLeave;
+    //对发送资源进行保护
+    procedure SendEnter;
+    procedure SendLeave;
+
     function Send(const Data: IDataBlock; WaitForResult: Boolean): IDataBlock; stdcall;
   public
     constructor Create(ASocket: TSocket;ASocketDispatcher:TSocketDispatcher);
@@ -160,7 +168,7 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    
+
     //客户端Scoket队例
     procedure Lock;
     procedure UnLock;
@@ -360,7 +368,12 @@ begin
     else
        begin
          try
-           ClientSocket.StartListen;
+           ClientSocket.RecvEnter;
+           try
+             ClientSocket.StartListen;
+           finally
+             ClientSocket.RecvLeave;
+           end;
          except
            RemoveClient(ClientSocket);
          end;
@@ -373,6 +386,7 @@ begin
   if FSocket = INVALID_SOCKET then Exit;
   DataCache.Add(integer(ClientSocket),DataBlock);
   FWaitTime := DataCache.Wait;
+  CallWorker(0);
 end;
 
 procedure TSocketDispatcher.AddClient(ASocket: TServerClientSocket);
@@ -381,7 +395,7 @@ begin
   if FSocket = INVALID_SOCKET then Exit;
   Lock;
   try
-    WSAAsyncSelect(ASocket.FSocket, FHandle, WM_CLIENTSOCKET, FD_CLOSE);
+//    WSAAsyncSelect(ASocket.FSocket, FHandle, WM_CLIENTSOCKET, FD_CLOSE);
     SocketCache.Add(Pointer(ASocket));
     Session := TZSession.Create;
     Session.Port := inttostr(Port);
@@ -403,6 +417,7 @@ var
 begin
   if FSocket = INVALID_SOCKET then Exit;
   List := WorkerPool.LockList;
+  Lock;
   try
     Worker := nil;
     c := 0;
@@ -413,7 +428,7 @@ begin
              Worker := TSocketWorkerThread(List[i]);
              if (c > ThreadCacheSize) and (Worker<>nil) then
                 begin
-                  with TSocketWorkerThread(List[i]) do 
+                  with TSocketWorkerThread(List[i]) do
                     begin
                       Terminate;
                       SetEvent(FhEvent);
@@ -437,6 +452,7 @@ begin
   finally
     FWorkerCount := List.Count;
     WorkerPool.UnlockList;
+    UnLock;
   end;
 end;
 
@@ -779,11 +795,13 @@ end;
 
 procedure TServerClientSocket.AddBlock(DataBlock: IDataBlock);
 begin
-  InterlockedIncrement(WaitCount);
-  StartListen;
-  GZip.DataIn(DataBlock); 
-  SocketDispatcher.AddBlock(DataBlock,self);
-  SocketDispatcher.CallWorker(0);
+  if (FSocket = INVALID_SOCKET) then exit;
+  try
+    GZip.DataIn(DataBlock);
+    SocketDispatcher.AddBlock(DataBlock,self);
+  finally
+    StartListen;
+  end;
 end;
 
 procedure TServerClientSocket.Close;
@@ -791,11 +809,18 @@ var
   skt: TSocket;
 begin
   if (FSocket = INVALID_SOCKET) then exit;
-  skt := FSocket;
-  FSocket := INVALID_SOCKET;
-  CheckError(closesocket(skt), 'closesocket');
-  FRecvBuffer^.Buffer := nil;
-  FSendBuffer^.Buffer := nil;
+  RecvEnter;
+  try
+    skt := FSocket;
+    FSocket := INVALID_SOCKET;
+    CheckError(closesocket(skt), 'closesocket');
+    FRecvBuffer^.Buffer := nil;
+    FSendBuffer^.Buffer := nil;
+  finally
+    RecvLeave;
+  end;
+  SocketDispatcher.AddBlock(nil,self);
+
 end;
 
 function TServerClientSocket.Connected: boolean;
@@ -806,6 +831,8 @@ end;
 constructor TServerClientSocket.Create(ASocket: TSocket;ASocketDispatcher:TSocketDispatcher);
 var ISend: ISendDataBlock;
 begin
+  RecvLock := TCriticalSection.Create;
+  SendLock := TCriticalSection.Create;
   GZip := TZDataCompressor.Create;
   LockThread := false;
   inherited Create(nil);
@@ -820,13 +847,20 @@ begin
   new(FSendBuffer);
   ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
   FSocket := ASocket;
-  SocketDispatcher.AddClient(self); 
+  SocketDispatcher.AddClient(self);
 end;
 
 destructor TServerClientSocket.Destroy;
+var
+  skt: TSocket;
 begin
+  if (FSocket <> INVALID_SOCKET) then
+  begin
+    skt := FSocket;
+    FSocket := INVALID_SOCKET;
+    CheckError(closesocket(skt), 'closesocket');
+  end;
   if FhEvent<>0 then CloseHandle(FhEvent);
-  Close;
   FRecvBuffer^.Buffer := nil;
   FSendBuffer^.Buffer := nil;
   Dispose(FRecvBuffer);
@@ -907,20 +941,49 @@ begin
       end;
     end;
 end;
+procedure TServerClientSocket.RecvEnter;
+begin
+  RecvLock.Enter;
+end;
+
+procedure TServerClientSocket.RecvLeave;
+begin
+  RecvLock.Leave;
+end;
+
 function TServerClientSocket.Send(const Data: IDataBlock;
   WaitForResult: Boolean): IDataBlock;
 begin
-  InterlockedDecrement(WaitCount);
   if FSocket=INVALID_SOCKET then Exit;
+  GZip.DataOut(Data);
+  SendEnter;
+  try
+    while FSendBuffer^.IOMode <> IOIDLE do
+      begin
+        SendLeave;
+        try
+          WaitForSingleObject(FhEvent, 500);
+        finally
+          SendEnter;
+        end;
+      end;
+    FSendBuffer^.Buffer := nil;
+    ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
+    FSendBuffer^.IOMode := IOSendBytesReserved;
+    WriteBuffer(FSendBuffer,Data);
+  finally
+    SendLeave;
+  end;
+end;
 
-  GZip.DataOut(Data); 
-  while FSendBuffer^.IOMode <> IOIDLE do
-     WaitForSingleObject(FhEvent, 500);
-  FSendBuffer^.Buffer := nil;
-  ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
-  FSendBuffer^.IOMode := IOSendBytesReserved;
-  WriteBuffer(FSendBuffer,Data);
-  
+procedure TServerClientSocket.SendEnter;
+begin
+  SendLock.Enter;
+end;
+
+procedure TServerClientSocket.SendLeave;
+begin
+  SendLock.Leave;
 end;
 
 procedure TServerClientSocket.SetLastActivity(const Value: TDateTime);
@@ -948,20 +1011,23 @@ begin
 end;
 
 procedure TServerClientSocket.WorkRecv(IOData: PPER_IO_OPERATION_DATA;BytesReaded:integer);
-var Data:IDataBlock;
+var
+  Data:IDataBlock;
   Sig,StreamLen:integer;
   s:string;
 begin
+  RecvEnter;
+  try
       case IOData^.IOMode of
       IORecvBytesReserved:begin
-          if BytesReaded<>8 then raise ESocketConnectionError.CreateResfmt(@SInvalidDataPacket,[WaitCount]);
+          if BytesReaded<>8 then raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
           Sig := 0;
           StreamLen := 0;
           Move(IOData^.BytesReserved[0],Pointer(Sig),4);
           CheckSignature(Sig);
           Move(IOData^.BytesReserved[4],Pointer(StreamLen),4);
           if StreamLen>(1024*1024*20) then
-             raise ESocketConnectionError.CreateResfmt(@SInvalidDataPacket,[WaitCount]);
+             raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
           Data := TDataBlock.Create as IDataBlock;
           Data.Size := StreamLen;
           Data.Signature := Sig;
@@ -994,6 +1060,9 @@ begin
                 end;
         end;
       end;
+  finally
+    RecvLeave;
+  end;
 end;
 
 procedure TServerClientSocket.WorkSend(IOData: PPER_IO_OPERATION_DATA;
@@ -1002,30 +1071,35 @@ var
   Data:IDataBlock;
   s:string;
 begin
-  Data := IOData^.Buffer;
-  IOData^.StreamLen := IOData^.StreamLen - BytesReaded;
-  IOData^.Postion := Pointer(Integer(IOData^.Postion) + BytesReaded);
-  if IOData^.StreamLen > 0 then
-     begin
-        WriteBuffer(IOData,Data);
-     end
-  else
-  if IOData^.StreamLen = 0 then //发送完毕后
-     begin
-        IOData^.IOMode := IOIDLE;
-     end
-  else
-  if IOData^.StreamLen < 0 then
-     begin
-       case IOData^.IOMode of
-       1:s := 'IOMode=IORecvBytesReserved';
-       2:s := 'IOMode=IORecv';
-       3:s := 'IOMode=IOSendBytesReserved';
-       4:s := 'IOMode=IOSend';
+  SendEnter;
+  try
+    Data := IOData^.Buffer;
+    IOData^.StreamLen := IOData^.StreamLen - BytesReaded;
+    IOData^.Postion := Pointer(Integer(IOData^.Postion) + BytesReaded);
+    if IOData^.StreamLen > 0 then
+       begin
+          WriteBuffer(IOData,Data);
+       end
+    else
+    if IOData^.StreamLen = 0 then //发送完毕后
+       begin
+          IOData^.IOMode := IOIDLE;
+       end
+    else
+    if IOData^.StreamLen < 0 then
+       begin
+         case IOData^.IOMode of
+         1:s := 'IOMode=IORecvBytesReserved';
+         2:s := 'IOMode=IORecv';
+         3:s := 'IOMode=IOSendBytesReserved';
+         4:s := 'IOMode=IOSend';
+         end;
+         s := s+';StreamLen='+Inttostr(IOData^.StreamLen)+';BytesReaded='+inttostr(BytesReaded);
+         raise ESocketConnectionError.Create('无效数据包'+s);
        end;
-       s := s+';StreamLen='+Inttostr(IOData^.StreamLen)+';BytesReaded='+inttostr(BytesReaded);
-       raise ESocketConnectionError.Create('无效数据包'+s);
-     end;
+  finally
+    SendLeave;
+  end;
 end;
 
 procedure TServerClientSocket.WriteBuffer(IOData: PPER_IO_OPERATION_DATA;
@@ -1088,6 +1162,7 @@ procedure TSocketWorkerThread.Execute;
 var
   sdb:PZDataBlock;
   n,c:integer;
+  _Start:int64;
 begin
   ResetEvent(FhEvent);
   while not Terminated do
@@ -1099,6 +1174,7 @@ begin
         while (sdb<>nil) and not Terminated do
           begin
             InterlockedIncrement(ExecThreadCount);
+            _Start := GetTickCount;
             if ExecThreadCount + WaitDataBlockCount> MaxSyncRequestCount then MaxSyncRequestCount := ExecThreadCount + WaitDataBlockCount;
             try
               SocketDispatcher.LockClient(sdb.SessionId);
@@ -1178,7 +1254,7 @@ end;
 
 procedure TSocketDispatcher.WMClientClose(var Message: TMessage);
 begin
-
+  
 end;
 
 procedure TSocketDispatcher.CheckWorker;

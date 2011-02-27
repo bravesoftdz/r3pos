@@ -127,22 +127,23 @@ type
   EInterpreterError = class(Exception);
 
   TZToken=(
-                SKTOpenCommandText,
-                SKTOpenClassName,
-                SKTOpenCombination,
-                SKTUpdateBatchCommandText,
-                SKTUpdateBatchClassName,
-                SKTUpdateBatchCombination,
-                SKTBeginTrans,
-                SKTCommitTrans,
-                SKTRollbackTrans,
-                SKTGetiDbType,
-                SKTInTransaction,
-                SKTExecSQL,
-                SKTExecProc,
-                SKTParameter,     //设置参数
-                SKTLogin          //登录服务器
-               );
+            SKTOpenCommandText,
+            SKTOpenClassName,
+            SKTOpenCombination,
+            SKTUpdateBatchCommandText,
+            SKTUpdateBatchClassName,
+            SKTUpdateBatchCombination,
+            SKTBeginTrans,
+            SKTCommitTrans,
+            SKTRollbackTrans,
+            SKTGetiDbType,
+            SKTInTransaction,
+            SKTExecSQL,
+            SKTExecProc,
+            SKTParameter,     //设置参数
+            SKTLogin,         //登录服务器
+            SKTDBLock         //锁定数据库连接
+           );
 
   TZCustomDataBlockInterpreter = class
   private
@@ -731,63 +732,63 @@ var
 begin
   Enter;
   try
-  Result := nil;
-  if not CheckClientsocket(FSocket.SocketHandle)  then
-     raise ESocketConnectionError.CreateRes(@SSocketReadError);
-  TimeVal := nil;
-  FD_ZERO(FDSet);
-  FD_SET(FSocket.SocketHandle, FDSet);
-  if not WaitForInput then
-  begin
-    New(TimeVal);
-    TimeVal.tv_sec := 0;
-    TimeVal.tv_usec := 1;
-  end;
-  RetVal := select(0, @FDSet, nil, nil, TimeVal);
-  if Assigned(TimeVal) then
-    FreeMem(TimeVal);
-  if RetVal = SOCKET_ERROR then
-    raise ESocketConnectionError.Create(SysErrorMessage(WSAGetLastError));
-  if (RetVal = 0) then Exit;
-  RetLen := FSocket.ReceiveBuf(Sig, SizeOf(Sig));
-  if RetLen <> SizeOf(Sig) then
-    raise ESocketConnectionError.CreateRes(@SSocketReadError);
-  CheckSignature(Sig);
-  RetLen := FSocket.ReceiveBuf(StreamLen, SizeOf(StreamLen));
-  if RetLen = 0 then
-    raise ESocketConnectionError.CreateRes(@SSocketReadError);
-  if RetLen <> SizeOf(StreamLen) then
-    raise ESocketConnectionError.CreateRes(@SSocketReadError);
-  Result := TDataBlock.Create as IDataBlock;
-  Result.Size := StreamLen;
-  Result.Signature := Sig;
-  P := Result.Memory;
-  Inc(Integer(P), Result.BytesReserved);
-  _Start := GetTickCount;
-  while (StreamLen > 0) and FSocket.Connected do
-  begin
-    RetLen := FSocket.ReceiveBuf(P^, StreamLen);
-    case RetLen of
-    0:begin
-       if not CheckClientsocket(FSocket.SocketHandle)  then
-          raise ESocketConnectionError.CreateRes(@SSocketReadError);
-      end;
-    -1:begin
-         if ((GetTickCount-_Start)>30000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
-      end;
-    else
-      begin
-        _Start := GetTickCount;
-        Dec(StreamLen, RetLen);
-        Inc(Integer(P), RetLen);
+    Result := nil;
+    if not CheckClientsocket(FSocket.SocketHandle)  then
+       raise ESocketConnectionError.CreateRes(@SSocketReadError);
+    TimeVal := nil;
+    FD_ZERO(FDSet);
+    FD_SET(FSocket.SocketHandle, FDSet);
+    if not WaitForInput then
+    begin
+      New(TimeVal);
+      TimeVal.tv_sec := 0;
+      TimeVal.tv_usec := 1;
+    end;
+    RetVal := select(0, @FDSet, nil, nil, TimeVal);
+    if Assigned(TimeVal) then
+      FreeMem(TimeVal);
+    if RetVal = SOCKET_ERROR then
+      raise ESocketConnectionError.Create(SysErrorMessage(WSAGetLastError));
+    if (RetVal = 0) then Exit;
+    RetLen := FSocket.ReceiveBuf(Sig, SizeOf(Sig));
+    if RetLen <> SizeOf(Sig) then
+      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+    CheckSignature(Sig);
+    RetLen := FSocket.ReceiveBuf(StreamLen, SizeOf(StreamLen));
+    if RetLen = 0 then
+      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+    if RetLen <> SizeOf(StreamLen) then
+      raise ESocketConnectionError.CreateRes(@SSocketReadError);
+    Result := TDataBlock.Create as IDataBlock;
+    Result.Size := StreamLen;
+    Result.Signature := Sig;
+    P := Result.Memory;
+    Inc(Integer(P), Result.BytesReserved);
+    _Start := GetTickCount;
+    while (StreamLen > 0) and FSocket.Connected do
+    begin
+      RetLen := FSocket.ReceiveBuf(P^, StreamLen);
+      case RetLen of
+      0:begin
+         if not CheckClientsocket(FSocket.SocketHandle)  then
+            raise ESocketConnectionError.CreateRes(@SSocketReadError);
+        end;
+      -1:begin
+           if ((GetTickCount-_Start)>30000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
+        end;
+      else
+        begin
+          _Start := GetTickCount;
+          Dec(StreamLen, RetLen);
+          Inc(Integer(P), RetLen);
+        end;
       end;
     end;
-  end;
-  if StreamLen <> 0 then
-     raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
-  InterceptIncoming(Result);
+    if StreamLen <> 0 then
+       raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
+    InterceptIncoming(Result);
   finally
-     Leave;
+    Leave;
   end;
 end;
 

@@ -6,7 +6,7 @@
 unit ZConst;
 
 interface
-uses Messages;
+uses Windows,Messages;
 resourcestring
   SIdInvalidToken = '接受无效的Token:%d';
   SIdInvalidConnectionString = '无效连接字符串:%s';
@@ -61,6 +61,6 @@ var
 implementation
 
 initialization
-  StartServiceTickCount := 0;
+  StartServiceTickCount := GetTickCount;
   MainFormHandle := 0;
 end.

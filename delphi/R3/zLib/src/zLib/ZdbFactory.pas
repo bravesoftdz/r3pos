@@ -71,6 +71,8 @@ type
 
     //用户登录
     procedure GqqLogin(UserId:string;UserName:string);
+    //锁定数据连接 <当用到Seesion级操作时，指定一个SESSION对数据进行操作，用完必须解锁>
+    procedure DBLock(Locked:boolean);
 
     //连接模式 1 是本地连接  2 RSP通讯连接
     property ConnMode:integer read FConnMode write SetConnMode;
@@ -376,7 +378,12 @@ end;
 
 procedure TdbFactory.GqqLogin(UserId, UserName: string);
 begin
-  dbResolver.GqqLogin(UserId,UserName); 
+  dbResolver.GqqLogin(UserId,UserName);
+end;
+
+procedure TdbFactory.DBLock(Locked: boolean);
+begin
+  dbResolver.DBLock(Locked);
 end;
 
 end.

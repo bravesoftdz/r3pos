@@ -45,7 +45,9 @@ type
     FInterpreter:TZCustomDataBlockInterpreter;
     FSession: TZSession;
     FSessionId:Integer;
+    FdbLock: boolean;
     procedure SetSession(const Value: TZSession);
+    procedure SetdbLock(const Value: boolean);
   protected
     function CheckIdTransact:boolean;
     procedure PushCache;
@@ -84,6 +86,8 @@ type
     function  DoSKTLogin(Token,LocaleID: Integer;
       Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;stdcall;
 
+    function  DoSKTDBLock(Token,LocaleID: Integer;
+      Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;stdcall;
   public
     constructor Create(ASessionId:integer;AInterpreter:TZCustomDataBlockInterpreter);
     destructor Destroy; override;
@@ -94,6 +98,8 @@ type
       Flags: Word;var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;stdcall;
     property Session:TZSession read FSession write SetSession;
     property SessionId:Integer read FSessionId write FSessionId;
+
+    property dbLock:boolean read FdbLock write SetdbLock;
   end;
 
   TZSessions=class
@@ -203,7 +209,10 @@ uses EncDec;
 function TDoInvokeDispatch.CheckIdTransact: boolean;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
-  if not assigned(Session.dbResolver) and (Session.dbid>0) then Session.dbResolver := ConnCache.Get(Session.dbid);
+  if not assigned(Session.dbResolver) and (Session.dbid>0) then
+     begin
+       Session.dbResolver := ConnCache.Get(Session.dbid);
+     end;
   result := true;
 end;
 
@@ -213,6 +222,7 @@ begin
   inherited Create;
   Session := nil;
   FSessionId := ASessionId;
+  dbLock := false;
 end;
 
 destructor TDoInvokeDispatch.Destroy;
@@ -266,6 +276,19 @@ begin
      begin
        try
          Session.dbResolver.CommitTrans;
+       finally
+         PushCache;
+       end;
+     end;
+end;
+
+function TDoInvokeDispatch.DoSKTDBLock(Token, LocaleID: Integer;
+  Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult;
+begin
+  if CheckIdTransact then
+     begin
+       try
+         DBLock := OleVariant(PDispParams(@Params).rgvarg^[0]);
        finally
          PushCache;
        end;
@@ -710,11 +733,16 @@ procedure TDoInvokeDispatch.PushCache;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
   if not assigned(Session.dbResolver) then Exit;
-  if not Session.dbResolver.InTransaction then
+  if not Session.dbResolver.InTransaction and not dbLock then
      begin
        ConnCache.Push(Session.dbResolver);
        Session.dbResolver := nil;
      end;
+end;
+
+procedure TDoInvokeDispatch.SetdbLock(const Value: boolean);
+begin
+  FdbLock := Value;
 end;
 
 procedure TDoInvokeDispatch.SetSession(const Value: TZSession);
@@ -731,7 +759,7 @@ end;
 
 destructor TZSession.Destroy;
 begin
-
+  if Assigned(dbResolver) then freeandnil(fdbResolver);
   inherited;
 end;
 
@@ -964,9 +992,9 @@ begin
         if PZDataBlock(FList[i])^.SessionId = SessionID then
            begin
              FreeCache(i);
+             dec(WaitDataBlockCount);
            end;
       end;
-     dec(WaitDataBlockCount);
   finally
     Leave;
   end;
@@ -982,6 +1010,7 @@ begin
           FreeCache(i);
         end;
      FList.Free;
+     WaitDataBlockCount := 0;
      inherited;
   finally
      Leave;
@@ -1014,9 +1043,9 @@ begin
            begin
              result := PZDataBlock(FList[i])^.Data;
              FreeCache(i);
+             dec(WaitDataBlockCount);
            end;
       end;
-    dec(WaitDataBlockCount);
   finally
     Leave;
   end;

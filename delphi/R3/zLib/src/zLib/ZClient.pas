@@ -127,6 +127,9 @@ type
     //用户登录
     procedure GqqLogin(UserId:string;UserName:string);override;
 
+    //锁定数据连接
+    procedure DBLock(Locked:boolean);override;
+
     property Host: string read FHost write FHost;
     property Address: string read FAddress write FAddress;
     property Port:Integer read FPort write FPort;
@@ -729,7 +732,7 @@ begin
   vList := TStringList.Create;
   try
     vList.Delimiter := ';';
-    vList.DelimitedText := ConnStr;
+    vList.DelimitedText := lowercase(ConnStr);
     Host := vList.Values['hostname'];
     Port := StrtoIntDef(vList.Values['port'],1024);
     dbid := StrtoIntDef(vList.Values['dbid'],1);
@@ -1135,7 +1138,7 @@ begin
     DispParams.rgvarg[0].vt := varOleStr;
     UID := UserId;
     TVarData(DispParams.rgvarg[0]).VOleStr := PWideChar(UID);
-    
+
     DispParams.rgvarg[1].vt := varOleStr;
     UNM := UserName;
     TVarData(DispParams.rgvarg[1]).VOleStr := PWideChar(UNM);
@@ -1175,6 +1178,34 @@ begin
     if R = DISP_E_EXCEPTION then
        Raise Exception.Create(ExcepInfo.bstrDescription);
        
+  finally
+    if DispParams.rgdispidNamedArgs <> nil then
+      FreeMem(DispParams.rgdispidNamedArgs);
+    if DispParams.rgvarg <> nil then
+      FreeMem(DispParams.rgvarg);
+  end;
+end;
+
+procedure TZClient.DBLock(Locked: boolean);
+var
+  ExcepInfo: TExcepInfo;
+  DispParams: TDispParams;
+  R:LongWord;
+begin
+  CheckSocketConnected;
+
+  DispParams.cArgs := 1;
+  DispParams.rgdispidNamedArgs := nil;
+  DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
+  GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
+  try
+    DispParams.rgvarg[0].vt := varBoolean;
+    TVarData(DispParams.rgvarg[0]).VBoolean := Locked;
+
+    R := FInterpreter.CallInvoke(Ord(SKTDBLock),0,0,DispParams,nil, @ExcepInfo,nil);
+    if R = DISP_E_EXCEPTION then
+       Raise Exception.Create(ExcepInfo.bstrDescription);
   finally
     if DispParams.rgdispidNamedArgs <> nil then
       FreeMem(DispParams.rgdispidNamedArgs);

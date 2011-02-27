@@ -93,10 +93,10 @@ var
 begin
   if edtROLE_NAME.Text<>cdsTable.FieldByName('ROLE_NAME').AsString  then
   begin
+    tmp:=Global.GetZQueryFromName('CA_ROLE_INFO');
+    tmp.Filtered:=False;
     if dbState=dsEdit then
     begin
-      tmp:=Global.GetZQueryFromName('CA_ROLE_INFO');
-      tmp.Filtered:=False;
       tmp.First;
       while not tmp.Eof do
       begin
@@ -104,7 +104,7 @@ begin
            (trim(tmp.FieldByName('ROLE_ID').AsString)<>trim(cdsTable.FieldByName('DUTY_ID').AsString)) then
         begin
           if edtROLE_NAME.CanFocus then  edtROLE_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:（权限）角色名称已经存在!'),Pchar(Caption),MB_OK);
+          Raise Exception.Create(' 提示:（权限）角色名称已经存在! '); 
         end;
         tmp.Next;
       end;
@@ -112,15 +112,13 @@ begin
     
     if dbState=dsInsert then
     begin
-      tmp:=Global.GetZQueryFromName('CA_ROLE_INFO');
-      tmp.Filtered:=False;
       tmp.First;
       while not tmp.Eof do
       begin
         if trim(tmp.FieldByName('ROLE_NAME').AsString)=trim(edtROLE_NAME.Text) then
         begin
           if edtROLE_NAME.CanFocus then edtROLE_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:（权限）角色名称已经存在!'),Pchar(Caption),MB_OK);
+          Raise Exception.Create(' 提示:（权限）角色名称已经存在! '); 
         end;
         tmp.Next;
       end;
@@ -279,11 +277,9 @@ begin
     Aobj.FieldByName('ROLE_ID').AsString:=edtROLE_ID.Text;
 end;
 
-class function TfrmRoleInfo.EditDialog(Owner: TForm; id: string;
-  var _AObj: TRecord_): boolean;
+class function TfrmRoleInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;
 begin
   //新R3内ShopGlobal没有此方法:
-  //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能修改职务!');
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改角色的权限,请和管理员联系.');
   with TfrmRoleInfo.Create(Owner) do
   begin

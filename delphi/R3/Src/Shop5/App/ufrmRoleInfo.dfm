@@ -158,6 +158,7 @@ inherited frmRoleInfo: TfrmRoleInfo
             Top = 88
             Width = 140
             Height = 20
+            TabStop = False
             TabOrder = 2
           end
           object edtREMARK: TcxMemo

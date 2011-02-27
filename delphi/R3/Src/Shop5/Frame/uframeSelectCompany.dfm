@@ -20,13 +20,13 @@ inherited frameSelectCompany: TframeSelectCompany
         Caption = #38376#24215#21015#34920
         inherited RzPanel2: TRzPanel
           Width = 517
-          Height = 333
+          Height = 322
           object DBGridEh1: TDBGridEh
             Tag = -1
             Left = 5
             Top = 45
             Width = 507
-            Height = 283
+            Height = 272
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1

@@ -1,7 +1,6 @@
 unit uframeSelectCompany;
 
 interface
-                ]
                 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,

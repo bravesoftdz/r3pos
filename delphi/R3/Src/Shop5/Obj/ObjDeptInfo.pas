@@ -72,23 +72,16 @@ begin
   //初始化更新逻辑
   KeyFields:='DEPT_ID';
   //初始化查询
-  case iDbType of
-   0:   Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
-          ' From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
-   4,5: Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
-          ' From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
-  end;
-  selectSQL.Text:=Str;
+  Str:='select DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,SubStr(LEVEL_ID,1,Length(LEVEL_ID)-3) as UPDEPT_ID '+
+       ' From CA_DEPT_INFO Where TENANT_ID=:TENANT_ID and DEPT_ID=:DEPT_ID ';
+  SelectSQL.Text:=ParseSQL(iDbType,Str);
+
   Str :='insert into CA_DEPT_INFO (DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO,COMM,TIME_STAMP) '+
         ' values (:DEPT_ID,:DEPT_NAME,:LEVEL_ID,:DEPT_SPELL,:TENANT_ID,:TELEPHONE,:LINKMAN,:FAXES,:REMARK,:SEQ_NO,''00'','+GetTimeStamp(iDbType)+')';
-
-  IsSQLUpdate := true;
   InsertSQL.Add(Str);
 
-  Str :='update CA_DEPT_INFO set DEPT_ID=:DEPT_ID,DEPT_NAME=:DEPT_NAME,DEPT_SPELL=:DEPT_SPELL,'+
-        ' TELEPHONE=:TELEPHONE,LINKMAN=:LINKMAN,FAXES=:FAXES,REMARK=:REMARK,SEQ_NO=:SEQ_NO,'+
-        ' COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+
-        ' where TENANT_ID=:OLD_TENANT_ID and DEPT_ID=:OLD_DEPT_ID';
+  Str :='update CA_DEPT_INFO set DEPT_ID=:DEPT_ID,DEPT_NAME=:DEPT_NAME,DEPT_SPELL=:DEPT_SPELL,TELEPHONE=:TELEPHONE,LINKMAN=:LINKMAN,FAXES=:FAXES,REMARK=:REMARK,SEQ_NO=:SEQ_NO,'+
+        ' COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and DEPT_ID=:OLD_DEPT_ID';
   UpdateSQL.Add(Str);
 
   Str := 'update CA_DEPT_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and DEPT_ID=:OLD_DEPT_ID';
@@ -108,18 +101,20 @@ begin
     tmp:=TZQuery.Create(nil);
     try
       vLen:=InttoStr(Length(Params.ParamByName('LEVEL_ID').asString));
-      case AGlobal.iDbType of
-       0  : Str:=' and ((LEVEL_ID like :LEVEL_ID + ''%'') and (length(LEVEL_ID)>'+vLen+')) ';
-       4,5: Str:=' and ((LEVEL_ID like :LEVEL_ID ||''%'') and (length(LEVEL_ID)>'+vLen+')) ';
-      end;
+      Str:=GetLikeCnd(AGlobal.iDbType,'LEVEL_ID',':LEVEL_ID','','R');  // 返回: (LEVEL_ID like :LEVEL_ID+''%'')
+      Str:=' and ('+Str+' and (length(LEVEL_ID)>'+vLen+')) ';
+      str:='select Count(*) as ReSum From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Str;
+      str:=ParseSQL(AGlobal.iDbType, Str);
       tmp.Close;
-      tmp.SQL.Text:='select Count(*) as ReSum From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Str;
+      tmp.SQL.Text:=str;
       if Params<>nil then tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('部门'+Params.ParamByName('DEPT_NAME').asString+'有下级部门不能删除！');
-      tmp.Close;                             
+
+      tmp.Close;
       tmp.SQL.Text:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and DEPT_ID=:DEPT_ID ';
+      if Params<>nil then tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('部门'+Params.ParamByName('DEPT_NAME').asString+'有用户使用不能删除！');

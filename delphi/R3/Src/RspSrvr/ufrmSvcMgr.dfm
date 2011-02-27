@@ -1,6 +1,6 @@
 object frmSvcMgr: TfrmSvcMgr
-  Left = 395
-  Top = 473
+  Left = 402
+  Top = 341
   BorderStyle = bsDialog
   Caption = #26381#21153#31649#29702
   ClientHeight = 170
@@ -27,6 +27,7 @@ object frmSvcMgr: TfrmSvcMgr
     Top = 80
     Width = 23
     Height = 22
+    Enabled = False
     Glyph.Data = {
       76010000424D7601000000000000760000002800000020000000100000000100
       04000000000000010000130B0000130B00001000000000000000000000000000
@@ -48,6 +49,7 @@ object frmSvcMgr: TfrmSvcMgr
     Top = 112
     Width = 23
     Height = 22
+    Enabled = False
     Glyph.Data = {
       76010000424D7601000000000000760000002800000020000000100000000100
       04000000000000010000130B0000130B00001000000000000000000000000000
@@ -91,7 +93,7 @@ object frmSvcMgr: TfrmSvcMgr
     Top = 18
     Width = 168
     Height = 12
-    Caption = #26381#21153#21517#31216#65306'ADO Socket Service'
+    Caption = #26381#21153#21517#31216#65306'RSP Socket Service'
   end
   object Image1: TImage
     Left = 24

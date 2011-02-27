@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 593
-  Top = 266
+  Left = 211
+  Top = 100
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
@@ -369,7 +369,7 @@ object SocketForm: TSocketForm
       object GroupBox1: TGroupBox
         Left = 8
         Top = 13
-        Width = 481
+        Width = 479
         Height = 71
         Anchors = [akLeft, akTop, akRight]
         Caption = #32447#31243#27744
@@ -456,7 +456,7 @@ object SocketForm: TSocketForm
           Caption = #31561#24453#25351#20196#25968':'
         end
         object Label9: TLabel
-          Left = 282
+          Left = 308
           Top = 44
           Width = 78
           Height = 12
@@ -484,7 +484,7 @@ object SocketForm: TSocketForm
           Caption = #26368#22823#24182#21457#25968':'
         end
         object Label17: TLabel
-          Left = 282
+          Left = 308
           Top = 22
           Width = 78
           Height = 12
@@ -504,11 +504,11 @@ object SocketForm: TSocketForm
       Caption = '-'
     end
     object mnuMgr: TMenuItem
-      Caption = #26381#21153#31649#29702'(&M)'
+      Caption = #31649#29702#26381#21153'(&M)'
       OnClick = mnuMgrClick
     end
     object miProperties: TMenuItem
-      Caption = #20027#31243#24207'(&P)'
+      Caption = #25511#21046#20013#24515'(&P)'
       Default = True
       OnClick = miPropertiesClick
     end

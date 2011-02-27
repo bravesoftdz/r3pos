@@ -139,7 +139,7 @@ begin
     for r:= 0 to l.Count -1 do
       begin
         k:= l.Item[r] as ICatalogObject;
-        if k.Name = 'ADOScktSrvr' then
+        if k.Name = 'RSPScktSrvr' then
            Break
         else
            k := nil;
@@ -147,7 +147,7 @@ begin
     if k=nil then
        begin
          k:=l.Add as ICatalogObject;
-         k.Value['Name']:='ADOScktSrvr';
+         k.Value['Name']:='RSPScktSrvr';
          l.SaveChanges;
        end;
     if k<>nil then
@@ -161,23 +161,23 @@ end;
 
 procedure TfrmSvcMgr.SpeedButton1Click(Sender: TObject);
 begin
-  StartService('ADOScktSrvr');
+  StartService('RSPScktSrvr');
 end;
 
 procedure TfrmSvcMgr.SpeedButton2Click(Sender: TObject);
 begin
-  StopService('ADOScktSrvr');
+  StopService('RSPScktSrvr');
   CloseApplication;
 end;
 
 procedure TfrmSvcMgr.SpeedButton4Click(Sender: TObject);
 begin
-  QueryService('ADOScktSrvr');
+  QueryService('RSPScktSrvr');
 end;
 
 procedure TfrmSvcMgr.Timer1Timer(Sender: TObject);
 begin
-  QueryService('ADOScktSrvr');
+  QueryService('RSPScktSrvr');
 end;
 
 end.

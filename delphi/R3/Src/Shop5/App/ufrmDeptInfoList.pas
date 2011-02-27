@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ExtCtrls, ComCtrls, RzTreeVw, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, ActnList, Menus, ToolWin,
-  StdCtrls, RzLabel, RzTabs, RzPanel, DB, ADODB, zBase, RzButton,
+  StdCtrls, RzLabel, RzTabs, RzPanel, DB, zBase, RzButton,
   jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh, Buttons,
   DBGrids;
 

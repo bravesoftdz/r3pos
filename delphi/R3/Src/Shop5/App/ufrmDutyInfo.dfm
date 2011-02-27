@@ -153,6 +153,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Top = 88
             Width = 118
             Height = 20
+            TabStop = False
             TabOrder = 2
           end
           object edtUPDUTY_ID: TzrComboBoxList

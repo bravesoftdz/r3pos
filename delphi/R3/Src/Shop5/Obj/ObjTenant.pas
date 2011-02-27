@@ -26,7 +26,7 @@ begin
   0:shopid := 'convert(varchar,:TENANT_ID)+''10001''';
   1:shopid := 'to_char(:TENANT_ID)||''10001''';
   4:shopid := 'str(:TENANT_ID)||''10001''';
-  5:shopid := 'cast(:TENANT_ID as varchar)||'10001'';
+  5:shopid := 'cast(:TENANT_ID as varchar)||'10001''';
   end;
   Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
   ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
@@ -94,7 +94,7 @@ begin
   0:shopid := 'convert(varchar,:TENANT_ID)+''1001''';
   1:shopid := 'to_char(:TENANT_ID)||''1001''';
   4:shopid := 'str(:TENANT_ID)||''1001''';
-  5:shopid := 'cast(:TENANT_ID as varchar)||'1001'';
+  5:shopid := 'cast(:TENANT_ID as varchar)||'1001''';
   end;
   //为企业初始化职务
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+

@@ -28,16 +28,14 @@ begin
   SelectSQL.Text:='select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK From CA_ROLE_INFO '+
                   ' where TENANT_ID=:TENANT_ID and ROLE_ID=:ROLE_ID';
   //初始化更新逻辑
-  IsSQLUpdate := true;
-  Str :='insert into CA_ROLE_INFO (ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK,COMM,TIME_STAMP) '+
+  Str :='insert into CA_ROLE_INFO (ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK,COMM,TIME_STAMP)'+
         ' values (:ROLE_ID,:ROLE_NAME,:ROLE_SPELL,:TENANT_ID,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add(Str);
-  Str :='update CA_ROLE_INFO set ROLE_NAME=:ROLE_NAME,ROLE_SPELL=:ROLE_SPELL,TENANT_ID=:TENANT_ID,REMARK=:REMARK '+
-        ',COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+
+
+  Str :='update CA_ROLE_INFO set ROLE_ID=:ROLE_ID,ROLE_NAME=:ROLE_NAME,ROLE_SPELL=:ROLE_SPELL,TENANT_ID=:TENANT_ID,REMARK=:REMARK,COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where TENANT_ID=:OLD_TENANT_ID and ROLE_ID=:OLD_ROLE_ID';
   UpdateSQL.Add(Str);
-  Str := ' update CA_ROLE_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
-         ' where TENANT_ID=:OLD_TENANT_ID and ROLE_ID=:OLD_ROLE_ID';
+  Str := ' update CA_ROLE_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and ROLE_ID=:OLD_ROLE_ID';
   DeleteSQL.Add(Str);
 end;
 
@@ -45,23 +43,22 @@ end;
 
 function TRoleInfoDelete.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
-  Str: String;
+  Str,OperChar: String;
   tmp:TZQuery;
 begin
   Result:=False;
   try
     try
+      OperChar:=GetStrJoin(AGlobal.iDbType); //字符连接操作符: +、||
+      Str:=' and '','''+OperChar+'ROLE_IDS'+OperChar+''','' Like ''%,'''+OperChar+':ROLE_ID '+OperChar+''',%'' '; //返回: ' '',''+ROLE_IDS+'','' Like ''%,''+:ROLE_ID+'',%'' ';
+      Str:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Str;
       tmp:=TZQuery.Create(nil);
-      Str:='select count(*) as RESUM from CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') ';
-      case AGlobal.iDbType of
-       0:   Str:=Str+' and '',''+ ROLE_IDS +'','' like ''%,''+ :ROLE_ID +'',%''  ';
-       4,5: Str:=Str+' and '',''|| ROLE_IDS ||'','' like ''%,''|| :ROLE_ID ||'',%''  ';
-      end;
       tmp.SQL.Text:=Str;
       tmp.Params.AssignValues(Params);
       AGlobal.Open(tmp);
       if tmp.Fields[0].AsInteger>0 then
         raise Exception.Create('角色'+Params.ParamByName('ROLE_NAME').asString+'有用户使用不能删除！');
+
       Str:='update CA_ROLE_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
           ' where TENANT_ID=:TENANT_ID and ROLE_ID=:ROLE_ID';
       AGlobal.ExecSQL(Str,Params);

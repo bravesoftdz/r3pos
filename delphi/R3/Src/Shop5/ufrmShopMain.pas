@@ -176,10 +176,42 @@ type
     actfrmRoleInfoList: TAction;
     actfrmDeptInfoList: TAction;
     actfrmUsers: TAction;
-    actfrmGoodsSort: TAction;
     actfrmBrandInfo: TAction;
     actfrmFactoryInfo: TAction;
     actfrmStockOrderList: TAction;
+    RzGroup2: TRzGroup;
+    actfrmSalesOrderList: TAction;
+    actfrmChangeOrderList1: TAction;
+    actfrmChangeOrderList2: TAction;
+    actfrmGoodsSort: TAction;
+    actfrmGoodsInfoList: TAction;
+    actfrmCodeInfo3: TAction;
+    actfrmSortInfo: TAction;
+    actfrmImplInfo: TAction;
+    actfrmAreaInfo: TAction;
+    actfrmSaleStyle: TAction;
+    actfrmSettleCode: TAction;
+    actfrmShopGroup: TAction;
+    actfrmRecvOrderList: TAction;
+    actfrmPayOrderList: TAction;
+    actfrmClient: TAction;
+    actfrmSupplier: TAction;
+    actfrmSalRetuOrderList: TAction;
+    actfrmStkRetuOrderList: TAction;
+    actfrmLockScreen: TAction;
+    actfrmPosMain: TAction;
+    actfrmPriceGradeInfo: TAction;
+    actfrmSalIndentOrderList: TAction;
+    actfrmStkIndentOrderList: TAction;
+    actfrmInvoice: TAction;
+    actfrmCustomer: TAction;
+    actfrmCostCalc: TAction;
+    actfrmSysDefine: TAction;
+    actfrmDaysClose: TAction;
+    actfrmMonthClose: TAction;
+    actfrmCloseForDay: TAction;
+    actfrmPriceOrderList: TAction;
+    actfrmPrintOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -204,6 +236,37 @@ type
     procedure actfrmUsersExecute(Sender: TObject);
     procedure actfrmBrandInfoExecute(Sender: TObject);
     procedure actfrmStockOrderListExecute(Sender: TObject);
+    procedure actfrmSalesOrderListExecute(Sender: TObject);
+    procedure actfrmChangeOrderList1Execute(Sender: TObject);
+    procedure actfrmChangeOrderList2Execute(Sender: TObject);
+    procedure actfrmGoodsInfoListExecute(Sender: TObject);
+    procedure actfrmGoodsSortExecute(Sender: TObject);
+    procedure actfrmCodeInfo3Execute(Sender: TObject);
+    procedure actfrmSortInfoExecute(Sender: TObject);
+    procedure actfrmImplInfoExecute(Sender: TObject);
+    procedure actfrmAreaInfoExecute(Sender: TObject);
+    procedure actfrmSaleStyleExecute(Sender: TObject);
+    procedure actfrmSettleCodeExecute(Sender: TObject);
+    procedure actfrmShopGroupExecute(Sender: TObject);
+    procedure actfrmRecvOrderListExecute(Sender: TObject);
+    procedure actfrmPayOrderListExecute(Sender: TObject);
+    procedure actfrmClientExecute(Sender: TObject);
+    procedure actfrmSupplierExecute(Sender: TObject);
+    procedure actfrmSalRetuOrderListExecute(Sender: TObject);
+    procedure actfrmStkRetuOrderListExecute(Sender: TObject);
+    procedure actfrmPosMainExecute(Sender: TObject);
+    procedure actfrmPriceGradeInfoExecute(Sender: TObject);
+    procedure actfrmSalIndentOrderListExecute(Sender: TObject);
+    procedure actfrmStkIndentOrderListExecute(Sender: TObject);
+    procedure actfrmInvoiceExecute(Sender: TObject);
+    procedure actfrmCustomerExecute(Sender: TObject);
+    procedure actfrmCostCalcExecute(Sender: TObject);
+    procedure actfrmSysDefineExecute(Sender: TObject);
+    procedure actfrmDaysCloseExecute(Sender: TObject);
+    procedure actfrmMonthCloseExecute(Sender: TObject);
+    procedure actfrmCloseForDayExecute(Sender: TObject);
+    procedure actfrmPriceOrderListExecute(Sender: TObject);
+    procedure actfrmPrintOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -220,7 +283,7 @@ type
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
-    function ConnectToDb:boolean;
+    function  ConnectToDb:boolean;
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
@@ -247,7 +310,10 @@ var
 implementation
 uses
   uFnUtil,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
-  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList;
+  ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
+  ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
+  ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
+  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -476,34 +542,18 @@ begin
        Global.UserName := Params.UserName;
        Global.CloseAll;
        Global.SysDate := lDate;
-//       if Params.RemoteConnnect then //连不上远程服务器时，不同步数据
-//          TfrmSyncMain.Login(self)
-//       else
-//          Global.LoadBasic();
-//       ShopGlobal.LoadRight;
-{       if (Global.CompanyName = '初始登录') and (Global.UserId='admin') then
-          begin
-            AObj := TRecord_.Create;
-            try
-              if TfrmCompanyInfo.EditDialog(self,Global.CompanyID,AObj) then
-                 Global.CompanyName := AObj.FieldbyName('COMP_NAME').AsString;
-            finally
-              AObj.Free;
-            end;
-          end;
-       CheckRegister;
-       InitVersioin;
+       Global.LoadBasic();
+       ShopGlobal.LoadRight;
        CheckEnabled;
-       LoadMenu;
-       Factor.ExecProc('TGetXDictInfo');
-       MsgFactory.Load;
-       Timer1.OnTimer(nil);
+//       LoadMenu;
+//       Factor.ExecProc('TGetXDictInfo');
+//       MsgFactory.Load;
+//       Timer1.OnTimer(nil);
        if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and ShopGlobal.GetChkRight('500028')
        then
        begin
           PostMessage(Handle,WM_DESKTOP_REQUEST,500054,0);
-          //actfrmPosMainExecute(nil);
-       end;    }
+       end;   
      end
   else
      begin
@@ -531,7 +581,10 @@ begin
       frmShopMain.Show;
       frmShopMain.WindowState := wsMaximized;
     end;    
-  finally
+  except
+    Application.Terminate;
+    Exit;
+    Raise;
   end;
 end;
 
@@ -832,9 +885,10 @@ end;
 function TfrmShopMain.ConnectToDb:boolean;
 begin
   result := false;
-  if not FileExists(Global.InstallPath+'Data\R3.db') then
-     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
-  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
+//  if not FileExists(Global.InstallPath+'Data\R3.db') then
+//     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
+//  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
+  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
   Factor.Connect;
   if not UpdateDbVersion then Exit;
   ShopGlobal.offline := true;
@@ -960,7 +1014,7 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-//  TfrmGoodssort.AddDialog(
+  TfrmGoodsSort.ShowDialog(self,4);
 end;
 
 procedure TfrmShopMain.actfrmStockOrderListExecute(Sender: TObject);
@@ -980,8 +1034,574 @@ begin
      begin
        Form := TfrmStockOrderList.Create(self);
        AddFrom(Form);
+//       if ShopGlobal.GetChkRight('400020') then TfrmStockOrderList(Form).actNew.OnExecute(nil);
      end;
   Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSalesOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSalesOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalesOrderList.Create(self);
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('400020') then TfrmSalesOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmChangeOrderList1Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmChangeOrderList1');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmChangeOrderList.Create(self);
+       TfrmChangeOrderList(Form).CodeId := '1';
+       TfrmChangeOrderList(Form).Name := 'frmChangeOrderList1';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmChangeOrderList2Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmChangeOrderList2');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmChangeOrderList.Create(self);
+       TfrmChangeOrderList(Form).CodeId := '2';
+       TfrmChangeOrderList(Form).Name := 'frmChangeOrderList2';
+       AddFrom(Form);
+       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmGoodsInfoListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmGoodsInfoList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmGoodsInfoList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmGoodsSortExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmGoodsSortTree.ShowDialog(self,1);
+
+end;
+
+procedure TfrmShopMain.actfrmCodeInfo3Execute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCodeInfo.ShowDialog(self,3);
+end;
+
+procedure TfrmShopMain.actfrmSortInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmGoodsSort.ShowDialog(self,2);
+end;
+
+procedure TfrmShopMain.actfrmImplInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmGoodsSort.ShowDialog(self,5);
+end;
+
+procedure TfrmShopMain.actfrmAreaInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmGoodsSort.ShowDialog(self,6);
+end;
+
+procedure TfrmShopMain.actfrmSaleStyleExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCodeInfo.ShowDialog(self,2);
+end;
+
+procedure TfrmShopMain.actfrmSettleCodeExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCodeInfo.ShowDialog(self,6);
+end;
+
+procedure TfrmShopMain.actfrmShopGroupExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCodeInfo.ShowDialog(self,12);
+end;
+
+procedure TfrmShopMain.actfrmRecvOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRecvOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmRecvOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmPayOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPayOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmPayOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmClientExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmClient);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmClient.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSupplierExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSupplier);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSupplier.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSalRetuOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSalRetuOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalRetuOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStkRetuOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStkRetuOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStkRetuOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmPosMainExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPosMain);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmPosMain.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmPriceGradeInfoExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmPriceGradeInfo.ShowDialog(self);
+
+end;
+
+procedure TfrmShopMain.actfrmSalIndentOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSalIndentOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalIndentOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStkIndentOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStkIndentOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStkIndentOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmInvoiceExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmInvoice);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmInvoice.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmCustomerExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmCustomer);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmCustomer.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmCostCalcExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCostCalc.StartCalc(self);
+end;
+
+procedure TfrmShopMain.actfrmSysDefineExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  with TfrmSysDefine.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+end;
+
+procedure TfrmShopMain.actfrmDaysCloseExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCostCalc.StartDayReck(self);
+end;
+
+procedure TfrmShopMain.actfrmMonthCloseExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCostCalc.StartMonthReck(self);
+
+end;
+
+procedure TfrmShopMain.actfrmCloseForDayExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCostCalc.StartMonthReck(self);
+end;
+
+procedure TfrmShopMain.actfrmPriceOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPriceOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmPriceOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+
+end;
+
+procedure TfrmShopMain.actfrmPrintOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPriceOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmPriceOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
   Form.BringToFront;
 end;
 

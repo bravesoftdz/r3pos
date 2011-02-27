@@ -67,6 +67,7 @@ uses EncDec,ZLibExGZ,encddecd,CaTenantService,IniFiles;
 
 function TCaFactory.CheckNetwork: boolean;
 begin
+  result := false;exit;
   result := InternetCheckConnection(PChar(URL), 1, 0);
 end;
 

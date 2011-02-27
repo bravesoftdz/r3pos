@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxControls, cxContainer, cxEdit, cxCheckBox, RzButton,
   jpeg, ExtCtrls, StdCtrls, cxSpinEdit, IniFiles, cxButtonEdit,
-  zrComboBoxList, DB, ADODB, cxCalendar, ZAbstractRODataset, ZDataset,
+  zrComboBoxList, DB, cxCalendar, ZAbstractRODataset, ZDataset,
   Grids, DBGridEh, ZAbstractDataset;
 type
   TLoginParam=Record
@@ -47,7 +47,8 @@ type
     { Private declarations }
   public
     function Connect:boolean;
-    class function doLogin(pSysID:TGuid;Locked:boolean;Var LoginParam:TLoginParam;var lDate:TDate):Boolean;
+    class function doLogin(pSysID:TGuid;Locked:boolean;Var LoginParam:TLoginParam;var lDate:TDate):Boolean;overload;
+    class function doLogin(Var LoginParam:TLoginParam):Boolean;overload;
     property SysID:TGuid read FSysID write SetSysID;
     { Public declarations }
   end;
@@ -109,9 +110,8 @@ begin
      FLoginParam.UserName  := temp.FieldbyName('USER_NAME').asString;
      FLoginParam.ShopName := temp.FieldbyName('SHOP_NAME').asString;
      FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
-//     if not Factor.GqqLogin(FLoginParam.UserID,FLoginParam.UserName) and (Factor.LoginParam.ConnMode=2) then
-//        MessageBox(Handle,'登陆信息服务失败，系统将无法提供自动化信息服务。',Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-//}        
+     Factor.GqqLogin(FLoginParam.UserID,FLoginParam.ShopName+'('+FLoginParam.UserName+')');
+
      ModalResult := MROK;
   finally
      temp.Free;
@@ -122,7 +122,6 @@ end;
 class function TfrmLogin.doLogin(pSysID:TGuid;Locked:boolean;Var LoginParam:TLoginParam;var lDate:TDate): Boolean;
 var
     sn,cId,cName:String;
-    rs:TADODataSet;
     f:TIniFile;
     offline:boolean;
     _ok:boolean;
@@ -286,6 +285,38 @@ begin
   inherited;
   if ModalResult <> MROK then
      CanClose := cxbtnCancel.Enabled;
+end;
+
+class function TfrmLogin.doLogin(var LoginParam: TLoginParam): Boolean;
+var
+    sn,cId,cName:String;
+    f:TIniFile;
+    offline:boolean;
+    _ok:boolean;
+begin
+  result := false;
+  with TfrmLogin.Create(Application) do
+    begin
+      try
+        Label6.Visible := _ok;
+        cxBtnOk.Caption := '确认(&O)';
+        Caption := '用户认证';
+        cxbtnCancel.Caption := '取消(&C)';
+        edtOPER_DATE.Enabled := false;
+        edtOPER_DATE.Date := Global.SysDate;
+        cxcbSave.Visible := false;
+        cxcbSave.Checked := false;
+        if ShowModal=MROK then
+          begin
+            LoginParam := FLoginParam;
+            Result := True;
+          end
+        else
+           Result := False;
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

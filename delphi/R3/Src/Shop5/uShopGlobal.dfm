@@ -810,7 +810,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 584
-    Top = 376
+    Top = 288
     ParamData = <
       item
         DataType = ftUnknown
@@ -833,7 +833,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 584
-    Top = 432
+    Top = 352
     ParamData = <
       item
         DataType = ftUnknown
@@ -856,7 +856,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 584
-    Top = 488
+    Top = 416
     ParamData = <
       item
         DataType = ftUnknown

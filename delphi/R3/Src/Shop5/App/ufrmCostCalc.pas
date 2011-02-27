@@ -289,17 +289,22 @@ begin
   inherited;
   //读取参数
   Prepare;
-  if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账'); 
-  //数据准备
-  PrepareDataForRck;
-  //计算成本
-  case calc_flag of
-  0:Calc0;
-  1:Calc1;
-  2:Calc2;
+  if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
+  Factor.DBLock(true);
+  try
+    //数据准备
+    PrepareDataForRck;
+    //计算成本
+    case calc_flag of
+    0:Calc0;
+    1:Calc1;
+    2:Calc2;
+    end;
+    CalcMth;
+    ClseRck;
+  finally
+    Factor.DBLock(false);
   end;
-  CalcMth;
-  ClseRck;
   ModalResult := MROK;
 end;
 

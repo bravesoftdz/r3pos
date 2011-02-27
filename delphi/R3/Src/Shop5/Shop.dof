@@ -94,7 +94,7 @@ OutputDir=
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
-SearchPath=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component
+SearchPath=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Rz30Ctls70;Rz30DBCtls70;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;FR7;zsr;DirectX9_D7;DSPack_D7;ActiveXPacket;llPDFLibD7;asgd7;inetdb
 Conditionals=
 DebugSourceDirs=
@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=5
 MinorVer=0
 Release=0
-Build=1
+Build=3
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=5.0.0.1
+FileVersion=5.0.0.3
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -142,11 +142,13 @@ Item1=$(ZEOSDBO_BUILD)
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=4
-Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component
-Item1=build
-Item2=build;../../test/framework
-Item3=$(ZEOSDBO_BUILD)
+Count=6
+Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+Item2=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component
+Item3=build
+Item4=build;../../test/framework
+Item5=$(ZEOSDBO_BUILD)
 [HistoryLists\hlUnitOutputDirectory]
 Count=3
 Item0=D:\Delphi\R3\Src\Shop5\temp

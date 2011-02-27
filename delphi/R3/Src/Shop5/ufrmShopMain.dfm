@@ -1,8 +1,8 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 198
-  Top = 154
-  Width = 820
-  Height = 555
+  Left = 211
+  Top = 56
+  Width = 676
+  Height = 518
   Caption = ''
   Menu = nil
   Position = poDesigned
@@ -13,8 +13,8 @@ inherited frmShopMain: TfrmShopMain
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 493
-    Width = 804
+    Top = 456
+    Width = 660
     Height = 24
     Panels = <
       item
@@ -33,8 +33,8 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel5: TPanel [1]
     Left = 0
-    Top = 482
-    Width = 804
+    Top = 445
+    Width = 660
     Height = 0
     Align = alBottom
     BevelOuter = bvNone
@@ -43,7 +43,7 @@ inherited frmShopMain: TfrmShopMain
     object Image3: TImage
       Left = 0
       Top = 0
-      Width = 804
+      Width = 660
       Height = 0
       Align = alClient
       Picture.Data = {
@@ -442,7 +442,7 @@ inherited frmShopMain: TfrmShopMain
   object RzPanel1: TRzPanel [2]
     Left = 0
     Top = 0
-    Width = 804
+    Width = 660
     Height = 99
     Align = alTop
     BorderOuter = fsButtonDown
@@ -451,7 +451,7 @@ inherited frmShopMain: TfrmShopMain
     object Panel1: TPanel
       Left = 0
       Top = 2
-      Width = 804
+      Width = 660
       Height = 57
       Align = alTop
       AutoSize = True
@@ -460,16 +460,16 @@ inherited frmShopMain: TfrmShopMain
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 804
+        Width = 660
         Height = 57
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          804
+          660
           57)
         object lblUserInfo: TRzLabel
-          Left = 786
+          Left = 642
           Top = 13
           Width = 7
           Height = 12
@@ -3630,7 +3630,7 @@ inherited frmShopMain: TfrmShopMain
         object Image6: TImage
           Left = 378
           Top = 0
-          Width = 144
+          Width = 0
           Height = 57
           Align = alClient
           AutoSize = True
@@ -3690,7 +3690,7 @@ inherited frmShopMain: TfrmShopMain
           Transparent = True
         end
         object Panel2: TPanel
-          Left = 522
+          Left = 378
           Top = 0
           Width = 282
           Height = 57
@@ -4482,7 +4482,7 @@ inherited frmShopMain: TfrmShopMain
     object rzToolButton: TPanel
       Left = 0
       Top = 59
-      Width = 804
+      Width = 660
       Height = 40
       Align = alBottom
       BevelOuter = bvNone
@@ -4611,7 +4611,7 @@ inherited frmShopMain: TfrmShopMain
       object Image10: TImage
         Left = 194
         Top = 0
-        Width = 362
+        Width = 218
         Height = 40
         Align = alClient
         AutoSize = True
@@ -4656,7 +4656,7 @@ inherited frmShopMain: TfrmShopMain
         Stretch = True
       end
       object Panel3: TPanel
-        Left = 556
+        Left = 412
         Top = 0
         Width = 248
         Height = 40
@@ -5071,7 +5071,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 7
     Top = 99
     Width = 147
-    Height = 383
+    Height = 346
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -5170,7 +5170,7 @@ inherited frmShopMain: TfrmShopMain
     end
     object Panel9: TPanel
       Left = 0
-      Top = 364
+      Top = 327
       Width = 147
       Height = 19
       Align = alBottom
@@ -5216,7 +5216,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 30
       Width = 27
-      Height = 334
+      Height = 297
       Align = alLeft
       BackgroundColor = 14996141
       Color = clWhite
@@ -5274,7 +5274,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 27
       Top = 30
       Width = 120
-      Height = 334
+      Height = 297
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -5301,12 +5301,116 @@ inherited frmShopMain: TfrmShopMain
             Action = actfrmDeptInfoList
           end
           item
-            Action = actfrmStockOrderList
+            Action = actfrmGoodsInfoList
+          end
+          item
+            Action = actfrmGoodsSort
+          end
+          item
+            Action = actfrmCodeInfo3
+          end
+          item
+            Action = actfrmBrandInfo
+          end
+          item
+            Action = actfrmAreaInfo
+          end
+          item
+            Action = actfrmImplInfo
+          end
+          item
+            Action = actfrmSortInfo
+          end
+          item
+            Action = actfrmSaleStyle
+          end
+          item
+            Action = actfrmSettleCode
+          end
+          item
+            Action = actfrmShopGroup
+          end
+          item
+            Action = actfrmPriceGradeInfo
+          end
+          item
+            Action = actfrmClient
+          end
+          item
+            Action = actfrmSupplier
+          end
+          item
+            Action = actfrmCustomer
+          end
+          item
+            Action = actfrmSysDefine
           end>
         Opened = True
-        OpenedHeight = 148
+        OpenedHeight = 428
         UseGradients = True
         Caption = 'RzGroup1'
+        ParentColor = False
+      end
+      object RzGroup2: TRzGroup
+        Items = <
+          item
+            Action = actfrmStockOrderList
+          end
+          item
+            Action = actfrmStkRetuOrderList
+          end
+          item
+            Action = actfrmSalesOrderList
+          end
+          item
+            Action = actfrmSalRetuOrderList
+          end
+          item
+            Action = actfrmChangeOrderList1
+          end
+          item
+            Action = actfrmChangeOrderList2
+          end
+          item
+            Action = actfrmRecvOrderList
+          end
+          item
+            Action = actfrmPayOrderList
+          end
+          item
+            Action = actfrmPosMain
+          end
+          item
+            Action = actfrmSalIndentOrderList
+          end
+          item
+            Action = actfrmStkIndentOrderList
+          end
+          item
+            Action = actfrmInvoice
+          end
+          item
+            Action = actfrmCostCalc
+          end
+          item
+            Action = actfrmDaysClose
+          end
+          item
+            Action = actfrmMonthClose
+          end
+          item
+            Action = actfrmCloseForDay
+          end
+          item
+            Action = actfrmPrintOrderList
+          end
+          item
+            Action = actfrmPriceOrderList
+          end>
+        Opened = True
+        OpenedHeight = 388
+        UseGradients = True
+        Caption = 'RzGroup2'
         ParentColor = False
       end
     end
@@ -5834,7 +5938,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 0
     Top = 99
     Width = 7
-    Height = 383
+    Height = 346
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 5
@@ -5842,7 +5946,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 7
-      Height = 383
+      Height = 346
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -5872,10 +5976,10 @@ inherited frmShopMain: TfrmShopMain
     end
   end
   object Panel8: TPanel [6]
-    Left = 796
+    Left = 652
     Top = 99
     Width = 8
-    Height = 383
+    Height = 346
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 6
@@ -5883,7 +5987,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 8
-      Height = 383
+      Height = 346
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -5914,8 +6018,8 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel10: TPanel [7]
     Left = 0
-    Top = 482
-    Width = 804
+    Top = 445
+    Width = 660
     Height = 11
     Align = alBottom
     BevelOuter = bvNone
@@ -5973,7 +6077,7 @@ inherited frmShopMain: TfrmShopMain
     object Image13: TImage
       Left = 165
       Top = 0
-      Width = 622
+      Width = 478
       Height = 11
       Align = alClient
       AutoSize = True
@@ -6006,7 +6110,7 @@ inherited frmShopMain: TfrmShopMain
       Stretch = True
     end
     object Image15: TImage
-      Left = 787
+      Left = 643
       Top = 0
       Width = 17
       Height = 11
@@ -6045,7 +6149,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 154
     Top = 99
     Width = 11
-    Height = 383
+    Height = 346
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 8
@@ -6053,7 +6157,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 30
       Width = 11
-      Height = 353
+      Height = 316
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -6505,9 +6609,6 @@ inherited frmShopMain: TfrmShopMain
       Caption = #21592#24037#26723#26696
       OnExecute = actfrmUsersExecute
     end
-    object actfrmGoodsSort: TAction
-      Caption = #21830#21697#20998#31867
-    end
     object actfrmBrandInfo: TAction
       Caption = #21697#29260#26723#26696
       OnExecute = actfrmBrandInfoExecute
@@ -6518,6 +6619,133 @@ inherited frmShopMain: TfrmShopMain
     object actfrmStockOrderList: TAction
       Caption = #36827#36135#20837#24211
       OnExecute = actfrmStockOrderListExecute
+    end
+    object actfrmSalesOrderList: TAction
+      Caption = #38144#21806#20986#36135
+      OnExecute = actfrmSalesOrderListExecute
+    end
+    object actfrmChangeOrderList1: TAction
+      Caption = #25439#30410#21333
+      OnExecute = actfrmChangeOrderList1Execute
+    end
+    object actfrmChangeOrderList2: TAction
+      Caption = #39046#29992#21333
+      OnExecute = actfrmChangeOrderList2Execute
+    end
+    object actfrmGoodsSort: TAction
+      Caption = #36135#21697#20998#31867
+      OnExecute = actfrmGoodsSortExecute
+    end
+    object actfrmGoodsInfoList: TAction
+      Caption = #21830#21697#26723#26696
+      OnExecute = actfrmGoodsInfoListExecute
+    end
+    object actfrmCodeInfo3: TAction
+      Caption = #25910#25903#31185#30446
+      OnExecute = actfrmCodeInfo3Execute
+    end
+    object actfrmSortInfo: TAction
+      Caption = #21830#21697#31867#21035
+      OnExecute = actfrmSortInfoExecute
+    end
+    object actfrmImplInfo: TAction
+      Caption = #37325#28857#21697#29260
+      OnExecute = actfrmImplInfoExecute
+    end
+    object actfrmAreaInfo: TAction
+      Caption = #30465#20869#22806
+      OnExecute = actfrmAreaInfoExecute
+    end
+    object actfrmSaleStyle: TAction
+      Caption = #38144#21806#26041#24335
+      OnExecute = actfrmSaleStyleExecute
+    end
+    object actfrmSettleCode: TAction
+      Caption = #32467#31639#26041#24335
+      OnExecute = actfrmSettleCodeExecute
+    end
+    object actfrmShopGroup: TAction
+      Caption = #31649#29702#32676#32452
+      OnExecute = actfrmShopGroupExecute
+    end
+    object actfrmRecvOrderList: TAction
+      Caption = #25910#27454#21333
+      OnExecute = actfrmRecvOrderListExecute
+    end
+    object actfrmPayOrderList: TAction
+      Caption = #20184#27454#21333
+      OnExecute = actfrmPayOrderListExecute
+    end
+    object actfrmClient: TAction
+      Caption = #23458#25143#26723#26696
+      OnExecute = actfrmClientExecute
+    end
+    object actfrmSupplier: TAction
+      Caption = #20379#24212#21830#26723#26696
+      OnExecute = actfrmSupplierExecute
+    end
+    object actfrmSalRetuOrderList: TAction
+      Caption = #38144#21806#36864#36135
+      OnExecute = actfrmSalRetuOrderListExecute
+    end
+    object actfrmStkRetuOrderList: TAction
+      Caption = #37319#36141#36864#36135
+      OnExecute = actfrmStkRetuOrderListExecute
+    end
+    object actfrmLockScreen: TAction
+      Caption = #38145#23631
+    end
+    object actfrmPosMain: TAction
+      Caption = #25910#27454#26426
+      OnExecute = actfrmPosMainExecute
+    end
+    object actfrmPriceGradeInfo: TAction
+      Caption = #23458#25143#31561#32423
+      OnExecute = actfrmPriceGradeInfoExecute
+    end
+    object actfrmSalIndentOrderList: TAction
+      Caption = #38144#21806#35746#21333
+      OnExecute = actfrmSalIndentOrderListExecute
+    end
+    object actfrmStkIndentOrderList: TAction
+      Caption = #36827#36135#35746#21333
+      OnExecute = actfrmStkIndentOrderListExecute
+    end
+    object actfrmInvoice: TAction
+      Caption = #21457#31080#31649#29702
+      OnExecute = actfrmInvoiceExecute
+    end
+    object actfrmCustomer: TAction
+      Caption = #20250#21592#31649#29702
+      OnExecute = actfrmCustomerExecute
+    end
+    object actfrmCostCalc: TAction
+      Caption = #25104#26412#26680#31639
+      OnExecute = actfrmCostCalcExecute
+    end
+    object actfrmSysDefine: TAction
+      Caption = #31995#32479#35774#32622
+      OnExecute = actfrmSysDefineExecute
+    end
+    object actfrmDaysClose: TAction
+      Caption = #26085#32467#36134
+      OnExecute = actfrmDaysCloseExecute
+    end
+    object actfrmMonthClose: TAction
+      Caption = #26376#32467#36134
+      OnExecute = actfrmMonthCloseExecute
+    end
+    object actfrmCloseForDay: TAction
+      Caption = #20132#29677#32467#36134
+      OnExecute = actfrmCloseForDayExecute
+    end
+    object actfrmPriceOrderList: TAction
+      Caption = #21830#21697#20419#38144
+      OnExecute = actfrmPriceOrderListExecute
+    end
+    object actfrmPrintOrderList: TAction
+      Caption = #30424#28857#21333
+      OnExecute = actfrmPrintOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

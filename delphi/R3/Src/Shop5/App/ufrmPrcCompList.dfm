@@ -12,8 +12,8 @@ inherited frmPrcCompList: TfrmPrcCompList
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 525
-            Height = 300
+            Width = 517
+            Height = 289
             Align = alClient
             DataSource = ShopList
             Flat = True

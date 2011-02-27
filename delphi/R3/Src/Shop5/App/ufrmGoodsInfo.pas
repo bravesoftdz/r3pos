@@ -7,9 +7,9 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxButtonEdit, zrComboBoxList, cxMaskEdit, cxDropDownEdit, cxMemo,
   cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, DB,
-  DBClient, ADODB, cxCheckBox, zBase, ComCtrls, RzTreeVw, RzRadChk, Grids,
-  DBGridEh, cxListBox, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  cxSpinEdit, Buttons;
+  cxCheckBox, zBase, ComCtrls, RzTreeVw, RzRadChk, Grids, DBGridEh,
+  cxListBox, ZAbstractRODataset, ZAbstractDataset, ZDataset, cxSpinEdit,
+  Buttons;
 
 type
   TfrmGoodsInfo = class(TframeDialogForm)
@@ -37,7 +37,6 @@ type
     Label5: TLabel;
     edtBARCODE1: TcxTextEdit;
     TabSheet3: TRzTabSheet;
-    Label14: TLabel;
     Label9: TLabel;
     TabGoodPrice: TRzTabSheet;
     Label20: TLabel;
@@ -102,12 +101,13 @@ type
     edtUSING_BARTER: TGroupBox;
     RB_USING_BARTER: TRadioButton;
     RB_NotUSING_BARTER: TRadioButton;
-    Label47: TLabel;
     edtBARTER_INTEGRAL: TcxSpinEdit;
     RzPnl_Price: TRzPanel;
     PriceGrid: TDBGridEh;
     edtSORT_ID1: TcxButtonEdit;
     PRICEPrice_DS: TDataSource;
+    RB_USING_BARTER2: TRadioButton;
+    edtBARTER_INTEGRAL2: TcxSpinEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -124,7 +124,6 @@ type
     procedure edtSORT_ID8AddClick(Sender: TObject);
     procedure edtSMALLTO_CALCPropertiesChange(Sender: TObject);
     procedure edtNEW_OUTPRICEPropertiesChange(Sender: TObject);
-    procedure btnAppendClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtSORT_ID1_AddClick(Sender: TObject);
     procedure edtCALC_UNITSSaveValue(Sender: TObject);
@@ -166,7 +165,12 @@ type
     procedure edtMY_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
     procedure edtNEW_LOWPRICEKeyPress(Sender: TObject; var Key: Char);
     procedure edtMY_OUTPRICE2KeyPress(Sender: TObject; var Key: Char);
+    procedure PriceGridColumns2UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure PriceGridColumns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
+    FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
     FSortName: string;    //Append传入的SortName值
     UnitBarCode: string;  //计量单位条形码
@@ -176,6 +180,7 @@ type
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
 
+    function  IsChinese(str:string):Boolean;
     procedure EditKeyPress(Sender: TObject; var Key: Char);
     procedure AddSORT_IDClick(Sender: TObject; SortType: integer); //添加Add
     procedure CheckGoodsFieldIsEmpty; //判断商品非空属性是否为空；
@@ -219,7 +224,8 @@ implementation
 
 uses
   uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,uShopGlobal,
-  ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo;
+  ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
+  ufrmSupplierInfo;
 
   //ufrmGoodsSort, ufrmBrandInfo, ufrmColorInfo, ufrmClientInfo,ufrmSizeInfo ,
   //ufrmGoodsColorDialog,ufrmGoodsSizeDialog
@@ -287,10 +293,11 @@ var Tmp: TZQuery;
 begin
   Open(code);
   dbState := dsEdit;
+  FPriceChange:=False;
   Tmp:=Global.GetZQueryFromName('CA_TENANT');
   if Tmp.Locate('TENANT_ID',AObj.FieldByName('TENANT_ID').AsString,[]) then
   begin
-    if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then
+    if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
       EditPrice;
   end;
 end;
@@ -319,12 +326,11 @@ begin
 
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
   //进位法则
-  // CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
+  CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
 
-  //  rs := Global.GetADODataSetFromName('PUB_GOODSSORT');
-  //  CreateLevelTree(rs,rzTree,'333333','SORT_ID','SORT_NAME','LEVEL_ID');
-
-  // lblSizeGroup.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码')+'组';
+  //rs := Global.GetZQueryFromName('PUB_GOODSSORT');
+  //CreateLevelTree(rs,rzTree,'333333','SORT_ID','SORT_NAME','LEVEL_ID');
+  //lblSizeGroup.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码')+'组';
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -342,9 +348,8 @@ end;
 
 procedure TfrmGoodsInfo.Open(code: string);
 var
-  Params: TftParamList;
-  tmp:TADODataSet;
   CID:string;
+  Params: TftParamList;
 begin
   locked:=True;
   try
@@ -401,7 +406,7 @@ begin
 end;
 
 procedure TfrmGoodsInfo.Save;
- procedure UpdateToGlobal(AObj:TRecord_);
+   procedure UpdateToGlobal(AObj:TRecord_);
    var Temp:TZQuery;
    begin
       Temp := Global.GetZQueryFromName('PUB_GOODSINFO');
@@ -435,17 +440,17 @@ begin
   if dbState = dsInsert then
   begin
     AObj.FieldbyName('GODS_ID').AsString :=TSequence.NewId;  //GUID号
-    if trim(edtGODS_CODE.Text)='自动编号' then
+    if (trim(edtGODS_CODE.Text)='自动编号') or (trim(edtGODS_CODE.Text)='') or (IsChinese(trim(edtGODS_CODE.Text))) then
     begin
       edtGODS_CODE.Text:=TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
       AObj.FieldbyName('GODS_CODE').AsString :=edtGODS_CODE.Text;  //企业内码ID
     end else AObj.FieldbyName('GODS_CODE').AsString:=trim(edtGODS_CODE.Text);
   end;
 
-  if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') then
+  if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') or (IsChinese(trim(edtBARCODE1.Text))) then
   begin
-    BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6); 
-    edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#');          
+    BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+    edtBARCODE1.Text := GetBarCode(BARCODE_ID,'#','#');
   end;
 
   WriteToObject(AObj);  //表单的控件的Value写入Obj对象中:
@@ -556,7 +561,7 @@ begin
         finally
           locked := false;
         end;
-        edtGODS_CODE.Text := '自动编号..';
+        edtGODS_CODE.Text := '自动编号';
         edtBARCODE1.Text := '自编条码';
         if CLVersion='OHR'  then
         begin
@@ -598,9 +603,13 @@ begin
   else
     edtBARTER_INTEGRAL.Value:=null;
 
-  RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);
-  RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);
-  
+  //是否管制积分换购:
+  RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);     //启用积分兑换
+  RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);  //禁用
+  RB_USING_BARTER2.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=3);    //启用积分换购
+  if RB_USING_BARTER.Checked then edtBARTER_INTEGRAL.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
+  if RB_USING_BARTER2.Checked then edtBARTER_INTEGRAL2.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
+
   //商品分类：
   SORT_ID1_KeyValue:=trim(AObj.FieldbyName('SORT_ID1').AsString);
   edtSORT_ID1.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',SORT_ID1_KeyValue);
@@ -620,7 +629,9 @@ end;
 
 procedure TfrmGoodsInfo.WriteToObject(AObj: TRecord_);
 begin
+  edtPROFIT_RATE.Properties.ReadOnly:=true;
   uShopUtil.WriteToObject(AObj,self);
+  edtPROFIT_RATE.Properties.ReadOnly:=False;
   if StrtoFloatDef(edtNEW_OUTPRICE.Text,0)>0 then AObj.FieldByName('RTL_OUTPRICE').AsFloat:=StrtoFloat(edtNEW_OUTPRICE.Text);   //标准售价
   if StrtoFloatDef(edtNEW_LOWPRICE.Text,0)>0 then AObj.FieldByName('NEW_LOWPRICE').AsFloat:=StrtoFloat(edtNEW_LOWPRICE.Text);   //最低售价
   if StrtoFloatDef(edtMY_OUTPRICE.Text,0)>0  then AObj.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloat(edtMY_OUTPRICE.Text);    //本店售价
@@ -633,11 +644,18 @@ begin
   AObj.FieldbyName('USING_BATCH_NO').AsInteger := edtUSING_BATCH_NO.ItemIndex+1;    //启用批号
   RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);
   RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);
-  //是否管制积分换购
-  if RB_USING_BARTER.Checked then AObj.FieldbyName('USING_BARTER').AsInteger :=1
-  else AObj.FieldbyName('USING_BARTER').AsInteger :=2;         
+  //是否管制积分换购:
+  if RB_NotUSING_BARTER.Checked then
+    AObj.FieldbyName('USING_BARTER').AsInteger:=2
+  else if RB_USING_BARTER.Checked then
+    AObj.FieldbyName('USING_BARTER').AsInteger :=1
+  else AObj.FieldbyName('USING_BARTER').AsInteger :=3;
+  ////积分换购商品(换算关系):        
   if edtBARTER_INTEGRAL.Enabled then
-    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := edtBARTER_INTEGRAL.Value;  //启用积分换购商品
+    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL.Value
+  else if edtBARTER_INTEGRAL2.Enabled then
+    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL2.Value
+  else AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=0;
   AObj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
 
   //写入商品类别[edtSORT_ID1.KeyValue ..  edtSORT_ID8.KeyValue]
@@ -654,7 +672,6 @@ begin
 end;
 
 procedure TfrmGoodsInfo.FormShow(Sender: TObject);
-var tmp:TADODataSet;
 begin
   inherited;
   if dbState=dsBrowse then
@@ -691,7 +708,16 @@ begin
 end;
 
 function TfrmGoodsInfo.IsEdit(Aobj: TRecord_; cdsTable:  TZQuery): Boolean;
-var i:integer;
+  function CheckIsChange(cdsTable:  TZQuery; FieldName: string): Boolean;
+  var CurValue,OldValue: string;
+  begin
+    result:=false;
+    if not cdsTable.Active then Exit;
+    CurValue:=CdsTable.FieldByName(FieldName).Value;
+    OldValue:=CdsTable.FieldByName(FieldName).OldValue;
+    result:=(StrtoFloatDef(CurValue,0)<>StrtoFloatDef(OldValue,0));
+  end;
+var i:integer; CurObj:TRecord_;
 begin
   Result:=False;
   for i:=0 to cdsGoods.FieldCount-1 do
@@ -705,6 +731,26 @@ begin
   //判断条形码是否改变:
   if (UnitBarCode<>Trim(edtBARCODE1.Text)) or(SmallBarCode<>Trim(edtBARCODE2.Text)) or (BigBarCode<>Trim(edtBARCODE3.Text)) then
     Result:=True;
+  if not Result then
+    result:=(cdsGoods.UpdateStatus <> usUnmodified);
+  //判断[会员等级价格是否修改]
+  if (not Result) and (CdsMemberPrice.Active) and (TabGoodPrice.TabVisible) and (FPriceChange) then  //会员等级价有判断继续循环AsOldValue与AsValue
+  begin
+    if CdsMemberPrice.State=dsEdit then CdsMemberPrice.Post;
+    CdsMemberPrice.First;
+    while not CdsMemberPrice.Eof do
+    begin
+      result:=CheckIsChange(CdsMemberPrice, 'PROFIT_RATE');
+      if result then break;
+      result:=CheckIsChange(CdsMemberPrice, 'NEW_OUTPRICE');
+      if result then break;
+      result:=CheckIsChange(CdsMemberPrice, 'NEW_OUTPRICE1');
+      if result then break;
+      result:=CheckIsChange(CdsMemberPrice, 'NEW_OUTPRICE2');
+      if result then break;
+      CdsMemberPrice.Next;
+    end;
+  end;
 end;
 
 procedure TfrmGoodsInfo.IsBarCodeSame(Aobj: TRecord_);
@@ -918,7 +964,7 @@ begin
   inherited;
   AObj := TRecord_.Create;
   try
-    if TfrmClientInfo.AddDialog(self,AObj) then
+    if TfrmSupplierInfo.AddDialog(self,AObj) then
     begin
       edtSORT_ID3.KeyValue :=AObj.FieldbyName('CLIENT_ID').AsString;
       edtSORT_ID3.Text := AObj.FieldbyName('CLIENT_NAME').asString;
@@ -976,27 +1022,7 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.btnAppendClick(Sender: TObject);
-//var Aobj:TRecord_;
-//    rs:TADODataSet;
-begin
-  inherited;
-{  AObj := TRecord_.Create;
-  try
-    if TfrmGoodsSort.AddDialog(self,AObj) then
-       begin
-         rs := Global.GetADODataSetFromName('PUB_GOODSSORT');
-         CreateLevelTree(rs,rzTree,'333333','SORT_ID','SORT_NAME','LEVEL_ID');
-         SortId:= AObj.FieldbyName('SORT_ID').asString;
-         edtSORT_ID.DroppedDown := false;
-       end;
-  finally
-    AObj.Free;
-  end; }
-end;
-
-procedure TfrmGoodsInfo.FormCloseQuery(Sender: TObject;
-  var CanClose: Boolean);
+procedure TfrmGoodsInfo.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var i:integer;
 begin
   inherited;
@@ -1018,6 +1044,20 @@ begin
   except
     CanClose := false;
     Raise;
+  end;
+end;
+
+function TfrmGoodsInfo.IsChinese(str:string):Boolean;
+var i:integer;
+begin
+  Result:=False;
+  for i:=0 to length(str)-1 do
+  begin
+    if str[i] in LeadBytes then
+    begin
+      Result:=True;
+      Break;
+    end;
   end;
 end;
 
@@ -1066,19 +1106,6 @@ begin
 end;
 
 class function TfrmGoodsInfo.AddDialog(Owner: TForm; var _AObj: TRecord_; Default:string=''): boolean;
-function IsChinese(str:string):Boolean;
-var i:integer;
-begin
-  Result:=False;
-  for i:=0 to length(str)-1 do
-  begin
-    if str[i] in LeadBytes then
-    begin
-      Result:=True;
-      Break;
-    end;
-  end;
-end;
 begin
    if not ShopGlobal.GetChkRight('200036') then Raise Exception.Create('你没有新增商品的权限,请和管理员联系.');
    with TfrmGoodsInfo.Create(Owner) do
@@ -2079,9 +2106,10 @@ end;
 procedure TfrmGoodsInfo.RB_NotUSING_BARTERClick(Sender: TObject);
 begin
   inherited;
-  if RB_NotUSING_BARTER.Checked then
-    edtBARTER_INTEGRAL.Value:=0;
+  if not RB_USING_BARTER.Checked then edtBARTER_INTEGRAL.Value:=0;
+  if not RB_USING_BARTER2.Checked then edtBARTER_INTEGRAL2.Value:=0;
   edtBARTER_INTEGRAL.Enabled:=RB_USING_BARTER.Checked;
+  edtBARTER_INTEGRAL2.Enabled:=RB_USING_BARTER2.Checked;
 end;
 
 procedure TfrmGoodsInfo.edtSORT_ID1KeyPress(Sender: TObject;
@@ -2326,8 +2354,7 @@ begin
   EditKeyPress(Sender,Key);
 end;
 
-procedure TfrmGoodsInfo.edtMY_OUTPRICE2KeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmGoodsInfo.edtMY_OUTPRICE2KeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then
@@ -2337,6 +2364,24 @@ begin
     PriceGrid.Col:=2;
   end;
   EditKeyPress(Sender,Key);
+end;
+
+procedure TfrmGoodsInfo.PriceGridColumns2UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if self.PriceGrid.DataSource.DataSet.Active then
+    CALC_MenberProfitPrice(self.CdsMemberPrice,0);
+  FPriceChange:=true;
+end;
+
+procedure TfrmGoodsInfo.PriceGridColumns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if self.PriceGrid.DataSource.DataSet.Active then
+    CALC_MenberProfitPrice(self.CdsMemberPrice,1);
+  FPriceChange:=true;
 end;
 
 end.

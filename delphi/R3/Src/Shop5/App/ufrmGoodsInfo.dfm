@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 193
-  Top = 107
+  Left = 188
+  Top = 149
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 426
@@ -49,7 +49,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
@@ -58,114 +57,50 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
-      object TabSheet3: TRzTabSheet [0]
+      inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #21830#21697#21253#35013
-        object Label14: TLabel
-          Left = 114
-          Top = 125
-          Width = 6
-          Height = 12
-          Alignment = taRightJustify
-        end
-        object LblColorGroup: TLabel
-          Left = 36
-          Top = 15
-          Width = 36
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #39068#33394#32452
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-          Visible = False
-        end
-        object lblSizeGroup: TLabel
-          Left = 287
-          Top = 15
-          Width = 36
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #23610#30721#32452
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-          Visible = False
-        end
-        object GB_Small: TGroupBox
-          Left = 26
-          Top = 34
-          Width = 466
-          Height = 75
-          Caption = #23567#21253#35013
-          TabOrder = 2
-          object Label25: TLabel
-            Left = 25
-            Top = 23
-            Width = 48
+        inherited RzPanel2: TRzPanel
+          Width = 514
+          Height = 205
+          BorderColor = clWhite
+          BorderShadow = clWhite
+          Color = clWhite
+          FlatColor = clWhite
+          object LblColorGroup: TLabel
+            Left = 36
+            Top = 15
+            Width = 36
             Height = 12
             Alignment = taRightJustify
-            Caption = #21253#35013#21333#20301
+            Caption = #39068#33394#32452
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+            Visible = False
           end
-          object Label26: TLabel
-            Left = 250
-            Top = 23
-            Width = 48
+          object lblSizeGroup: TLabel
+            Left = 287
+            Top = 15
+            Width = 36
             Height = 12
             Alignment = taRightJustify
-            Caption = #25442#31639#31995#25968
+            Caption = #23610#30721#32452
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+            Visible = False
           end
-          object Label38: TLabel
-            Left = 25
-            Top = 47
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21253#35013#26465#30721
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label36: TLabel
-            Left = 237
-            Top = 48
-            Width = 61
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #26412#24215#21806#20215
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object edtSMALL_UNITS: TzrComboBoxList
-            Left = 80
-            Top = 19
-            Width = 120
+          object edtSORT_ID7: TzrComboBoxList
+            Left = 79
+            Top = 11
+            Width = 133
             Height = 20
             Properties.AutoSelect = False
             Properties.Buttons = <
@@ -173,135 +108,36 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            Properties.OnChange = edtSMALL_UNITSPropertiesChange
             TabOrder = 0
-            OnExit = edtSMALL_UNITSExit
+            Visible = False
             InGrid = False
             KeyValue = Null
-            FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
-            KeyField = 'UNIT_ID'
-            ListField = 'UNIT_NAME'
+            FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
+            KeyField = 'SORT_ID'
+            ListField = 'SORT_NAME'
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'UNIT_NAME'
+                FieldName = 'SORT_NAME'
                 Footers = <>
-                Title.Caption = #21333#20301#21517#31216
-                Width = 50
-              end
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_ID'
-                Footers = <>
-                Title.Caption = #20195#30721
-                Visible = False
-                Width = 50
+                Title.Caption = #39068#33394#32452
               end>
             DropWidth = 100
             DropHeight = 120
             ShowTitle = False
             AutoFitColWidth = True
-            OnAddClick = edtSMALL_UNITSAddClick
+            OnAddClick = edtSORT_ID7AddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = [zbNew, zbClear]
+            Buttons = [zbNew]
             DropListStyle = lsFixed
-            OnSaveValue = edtSMALL_UNITSSaveValue
+            OnSaveValue = edtSORT_ID7SaveValue
             MultiSelect = False
           end
-          object edtSMALLTO_CALC: TcxTextEdit
-            Left = 304
-            Top = 19
-            Width = 100
-            Height = 20
-            Properties.OnChange = edtSMALLTO_CALCPropertiesChange
-            TabOrder = 1
-            OnKeyPress = edtNEW_OUTPRICEKeyPress
-          end
-          object edtBARCODE2: TcxTextEdit
-            Left = 80
-            Top = 43
-            Width = 120
-            Height = 20
-            TabOrder = 2
-          end
-          object edtMY_OUTPRICE1: TcxTextEdit
-            Left = 304
-            Top = 44
-            Width = 100
-            Height = 20
-            TabOrder = 3
-            OnKeyPress = edtMY_OUTPRICE1KeyPress
-          end
-        end
-        object GB_Big: TGroupBox
-          Left = 26
-          Top = 116
-          Width = 466
-          Height = 77
-          Caption = #22823#21253#35013
-          TabOrder = 3
-          object Label1: TLabel
-            Left = 25
-            Top = 24
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21253#35013#21333#20301
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label2: TLabel
-            Left = 249
-            Top = 24
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #25442#31639#31995#25968
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label15: TLabel
-            Left = 25
-            Top = 48
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21253#35013#26465#30721
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object Label16: TLabel
-            Left = 236
-            Top = 47
-            Width = 61
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #26412#24215#21806#20215
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object edtBIG_UNITS: TzrComboBoxList
-            Left = 80
-            Top = 20
-            Width = 120
+          object edtSORT_ID8: TzrComboBoxList
+            Left = 330
+            Top = 11
+            Width = 138
             Height = 20
             Properties.AutoSelect = False
             Properties.Buttons = <
@@ -309,143 +145,307 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            Properties.OnChange = edtBIG_UNITSPropertiesChange
-            TabOrder = 0
-            OnExit = edtBIG_UNITSExit
+            TabOrder = 1
+            Visible = False
             InGrid = False
             KeyValue = Null
-            FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
-            KeyField = 'UNIT_ID'
-            ListField = 'UNIT_NAME'
+            FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
+            KeyField = 'SORT_ID'
+            ListField = 'SORT_NAME'
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'UNIT_NAME'
+                FieldName = 'SORT_NAME'
                 Footers = <>
-                Title.Caption = #21333#20301#21517#31216
-                Width = 50
-              end
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_ID'
-                Footers = <>
-                Title.Caption = #20195#30721
-                Visible = False
-                Width = 50
+                Title.Caption = #23610#30721#32452
               end>
             DropWidth = 100
             DropHeight = 120
             ShowTitle = False
             AutoFitColWidth = True
-            OnAddClick = edtBIG_UNITSAddClick
+            OnAddClick = edtSORT_ID8AddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = [zbNew, zbClear]
+            Buttons = [zbNew]
             DropListStyle = lsFixed
-            OnSaveValue = edtBIG_UNITSSaveValue
+            OnSaveValue = edtSORT_ID8SaveValue
             MultiSelect = False
           end
-          object edtBIGTO_CALC: TcxTextEdit
-            Left = 303
-            Top = 20
-            Width = 100
-            Height = 20
-            Properties.OnChange = edtBIGTO_CALCPropertiesChange
-            TabOrder = 1
-            OnKeyPress = edtNEW_OUTPRICEKeyPress
-          end
-          object edtBARCODE3: TcxTextEdit
-            Left = 80
-            Top = 44
-            Width = 120
-            Height = 20
+          object GB_Small: TGroupBox
+            Left = 26
+            Top = 34
+            Width = 466
+            Height = 75
+            Caption = #23567#21253#35013
             TabOrder = 2
+            object Label25: TLabel
+              Left = 25
+              Top = 23
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21253#35013#21333#20301
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label26: TLabel
+              Left = 250
+              Top = 23
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #25442#31639#31995#25968
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label38: TLabel
+              Left = 25
+              Top = 47
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21253#35013#26465#30721
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label36: TLabel
+              Left = 237
+              Top = 48
+              Width = 61
+              Height = 12
+              Alignment = taRightJustify
+              AutoSize = False
+              Caption = #26412#24215#21806#20215
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object edtSMALL_UNITS: TzrComboBoxList
+              Left = 80
+              Top = 19
+              Width = 120
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              Properties.OnChange = edtSMALL_UNITSPropertiesChange
+              TabOrder = 0
+              OnExit = edtSMALL_UNITSExit
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
+              KeyField = 'UNIT_ID'
+              ListField = 'UNIT_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'UNIT_NAME'
+                  Footers = <>
+                  Title.Caption = #21333#20301#21517#31216
+                  Width = 50
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'UNIT_ID'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Visible = False
+                  Width = 50
+                end>
+              DropWidth = 100
+              DropHeight = 120
+              ShowTitle = False
+              AutoFitColWidth = True
+              OnAddClick = edtSMALL_UNITSAddClick
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = [zbNew, zbClear]
+              DropListStyle = lsFixed
+              OnSaveValue = edtSMALL_UNITSSaveValue
+              MultiSelect = False
+            end
+            object edtSMALLTO_CALC: TcxTextEdit
+              Left = 304
+              Top = 19
+              Width = 100
+              Height = 20
+              Properties.OnChange = edtSMALLTO_CALCPropertiesChange
+              TabOrder = 1
+              OnKeyPress = edtNEW_OUTPRICEKeyPress
+            end
+            object edtBARCODE2: TcxTextEdit
+              Left = 80
+              Top = 43
+              Width = 120
+              Height = 20
+              TabOrder = 2
+            end
+            object edtMY_OUTPRICE1: TcxTextEdit
+              Left = 304
+              Top = 44
+              Width = 100
+              Height = 20
+              TabOrder = 3
+              OnKeyPress = edtMY_OUTPRICE1KeyPress
+            end
           end
-          object edtMY_OUTPRICE2: TcxTextEdit
-            Left = 303
-            Top = 44
-            Width = 100
-            Height = 20
+          object GB_Big: TGroupBox
+            Left = 26
+            Top = 116
+            Width = 466
+            Height = 77
+            Caption = #22823#21253#35013
             TabOrder = 3
-            OnKeyPress = edtMY_OUTPRICE2KeyPress
+            object Label1: TLabel
+              Left = 25
+              Top = 24
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21253#35013#21333#20301
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label2: TLabel
+              Left = 249
+              Top = 24
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #25442#31639#31995#25968
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label15: TLabel
+              Left = 25
+              Top = 48
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21253#35013#26465#30721
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label16: TLabel
+              Left = 236
+              Top = 47
+              Width = 61
+              Height = 12
+              Alignment = taRightJustify
+              AutoSize = False
+              Caption = #26412#24215#21806#20215
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object edtBIG_UNITS: TzrComboBoxList
+              Left = 80
+              Top = 20
+              Width = 120
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              Properties.OnChange = edtBIG_UNITSPropertiesChange
+              TabOrder = 0
+              OnExit = edtBIG_UNITSExit
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
+              KeyField = 'UNIT_ID'
+              ListField = 'UNIT_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'UNIT_NAME'
+                  Footers = <>
+                  Title.Caption = #21333#20301#21517#31216
+                  Width = 50
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'UNIT_ID'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Visible = False
+                  Width = 50
+                end>
+              DropWidth = 100
+              DropHeight = 120
+              ShowTitle = False
+              AutoFitColWidth = True
+              OnAddClick = edtBIG_UNITSAddClick
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = [zbNew, zbClear]
+              DropListStyle = lsFixed
+              OnSaveValue = edtBIG_UNITSSaveValue
+              MultiSelect = False
+            end
+            object edtBIGTO_CALC: TcxTextEdit
+              Left = 303
+              Top = 20
+              Width = 100
+              Height = 20
+              Properties.OnChange = edtBIGTO_CALCPropertiesChange
+              TabOrder = 1
+              OnKeyPress = edtNEW_OUTPRICEKeyPress
+            end
+            object edtBARCODE3: TcxTextEdit
+              Left = 80
+              Top = 44
+              Width = 120
+              Height = 20
+              TabOrder = 2
+            end
+            object edtMY_OUTPRICE2: TcxTextEdit
+              Left = 303
+              Top = 44
+              Width = 100
+              Height = 20
+              TabOrder = 3
+              OnKeyPress = edtMY_OUTPRICE2KeyPress
+            end
           end
-        end
-        object edtSORT_ID7: TzrComboBoxList
-          Left = 79
-          Top = 11
-          Width = 133
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 0
-          Visible = False
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #39068#33394#32452
-            end>
-          DropWidth = 100
-          DropHeight = 120
-          ShowTitle = False
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID7AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew]
-          DropListStyle = lsFixed
-          OnSaveValue = edtSORT_ID7SaveValue
-          MultiSelect = False
-        end
-        object edtSORT_ID8: TzrComboBoxList
-          Left = 330
-          Top = 11
-          Width = 138
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 1
-          Visible = False
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #23610#30721#32452
-            end>
-          DropWidth = 100
-          DropHeight = 120
-          ShowTitle = False
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID8AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew]
-          DropListStyle = lsFixed
-          OnSaveValue = edtSORT_ID8SaveValue
-          MultiSelect = False
         end
       end
-      object TabGoodPrice: TRzTabSheet [1]
+      object TabGoodPrice: TRzTabSheet
         Color = clWhite
         Caption = ' '#20250#21592#20215' '
         object RzPnl_Price: TRzPanel
@@ -539,160 +539,151 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           end
         end
       end
-      inherited TabSheet1: TRzTabSheet
+      object TabSheet3: TRzTabSheet
         Color = clWhite
         Caption = #21830#21697#36873#39033
-        inherited RzPanel2: TRzPanel
-          Width = 514
-          Height = 205
-          BorderColor = clWhite
-          BorderShadow = clWhite
-          Color = clWhite
-          FlatColor = clWhite
-          object Label20: TLabel
-            Left = 31
-            Top = 12
-            Width = 72
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #24211#23384#31649#29702#36873#39033
-          end
-          object Label27: TLabel
-            Left = 290
-            Top = 12
-            Width = 84
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #20250#21592#25240#25187#29575#36873#39033
-          end
-          object Label18: TLabel
-            Left = 31
-            Top = 75
-            Width = 72
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #25209#21495#31649#29702#36873#39033
-          end
-          object Label28: TLabel
-            Left = 290
-            Top = 75
-            Width = 72
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #20250#21592#31215#20998#36873#39033
-          end
-          object Label45: TLabel
-            Left = 33
-            Top = 136
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #31215#20998#25442#36141
-          end
-          object edtGODS_TYPE: TRadioGroup
-            Left = 30
-            Top = 25
-            Width = 200
-            Height = 40
-            Columns = 2
-            Items.Strings = (
-              #31649#29702#24211#23384
-              #19981#31649#24211#23384)
-            ParentShowHint = False
-            ShowHint = False
+        object Label20: TLabel
+          Left = 31
+          Top = 12
+          Width = 72
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #24211#23384#31649#29702#36873#39033
+        end
+        object Label27: TLabel
+          Left = 290
+          Top = 12
+          Width = 84
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #20250#21592#25240#25187#29575#36873#39033
+        end
+        object Label18: TLabel
+          Left = 31
+          Top = 75
+          Width = 72
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #25209#21495#31649#29702#36873#39033
+        end
+        object Label28: TLabel
+          Left = 290
+          Top = 75
+          Width = 72
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #20250#21592#31215#20998#36873#39033
+        end
+        object Label45: TLabel
+          Left = 33
+          Top = 136
+          Width = 48
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #31215#20998#25442#36141
+        end
+        object edtGODS_TYPE: TRadioGroup
+          Left = 30
+          Top = 25
+          Width = 200
+          Height = 40
+          Columns = 2
+          Items.Strings = (
+            #31649#29702#24211#23384
+            #19981#31649#24211#23384)
+          ParentShowHint = False
+          ShowHint = False
+          TabOrder = 0
+        end
+        object edtUSING_PRICE: TRadioGroup
+          Left = 288
+          Top = 25
+          Width = 200
+          Height = 40
+          Columns = 2
+          Items.Strings = (
+            #21551#29992
+            #31105#29992)
+          TabOrder = 1
+        end
+        object edtUSING_BATCH_NO: TRadioGroup
+          Left = 30
+          Top = 88
+          Width = 200
+          Height = 40
+          Columns = 2
+          Items.Strings = (
+            #21551#29992
+            #31105#29992)
+          TabOrder = 2
+        end
+        object edtHAS_INTEGRAL: TRadioGroup
+          Left = 288
+          Top = 88
+          Width = 200
+          Height = 40
+          Columns = 2
+          Items.Strings = (
+            #21487#31215#20998
+            #19981#31215#20998)
+          TabOrder = 3
+        end
+        object edtUSING_BARTER: TGroupBox
+          Left = 29
+          Top = 151
+          Width = 458
+          Height = 40
+          TabOrder = 4
+          object RB_USING_BARTER: TRadioButton
+            Left = 81
+            Top = 14
+            Width = 100
+            Height = 17
+            Caption = #21551#29992#20817#25442#31215#20998#65306
             TabOrder = 0
+            OnClick = RB_NotUSING_BARTERClick
           end
-          object edtUSING_PRICE: TRadioGroup
-            Left = 288
-            Top = 25
-            Width = 200
-            Height = 40
-            Columns = 2
-            Items.Strings = (
-              #21551#29992
-              #31105#29992)
+          object RB_NotUSING_BARTER: TRadioButton
+            Left = 8
+            Top = 14
+            Width = 48
+            Height = 17
+            Caption = #31105#29992
+            Checked = True
             TabOrder = 1
-            OnClick = edtUSING_PRICEClick
+            TabStop = True
+            OnClick = RB_NotUSING_BARTERClick
           end
-          object edtUSING_BATCH_NO: TRadioGroup
-            Left = 30
-            Top = 88
-            Width = 200
-            Height = 40
-            Columns = 2
-            Items.Strings = (
-              #21551#29992
-              #31105#29992)
+          object edtBARTER_INTEGRAL: TcxSpinEdit
+            Left = 181
+            Top = 12
+            Width = 64
+            Height = 20
+            Properties.ImmediatePost = True
+            Properties.MaxValue = 99999999.000000000000000000
+            Properties.ValueType = vtFloat
             TabOrder = 2
+            ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
           end
-          object edtHAS_INTEGRAL: TRadioGroup
-            Left = 288
-            Top = 88
-            Width = 200
-            Height = 40
-            Columns = 2
-            Items.Strings = (
-              #21487#31215#20998
-              #19981#31215#20998)
+          object RB_USING_BARTER2: TRadioButton
+            Left = 284
+            Top = 14
+            Width = 99
+            Height = 17
+            Caption = #21551#29992#25442#36141#31215#20998#65306
             TabOrder = 3
+            OnClick = RB_NotUSING_BARTERClick
           end
-          object edtUSING_BARTER: TGroupBox
-            Left = 30
-            Top = 151
-            Width = 458
-            Height = 40
+          object edtBARTER_INTEGRAL2: TcxSpinEdit
+            Left = 383
+            Top = 12
+            Width = 64
+            Height = 20
+            Properties.ImmediatePost = True
+            Properties.MaxValue = 99999999.000000000000000000
+            Properties.ValueType = vtFloat
             TabOrder = 4
-            object RB_USING_BARTER: TRadioButton
-              Left = 81
-              Top = 14
-              Width = 100
-              Height = 17
-              Caption = #21551#29992#20817#25442#31215#20998#65306
-              TabOrder = 0
-              OnClick = RB_NotUSING_BARTERClick
-            end
-            object RB_NotUSING_BARTER: TRadioButton
-              Left = 8
-              Top = 14
-              Width = 48
-              Height = 17
-              Caption = #31105#29992
-              Checked = True
-              TabOrder = 1
-              TabStop = True
-              OnClick = RB_NotUSING_BARTERClick
-            end
-            object edtBARTER_INTEGRAL: TcxSpinEdit
-              Left = 181
-              Top = 12
-              Width = 64
-              Height = 20
-              Properties.ImmediatePost = True
-              Properties.MaxValue = 99999999.000000000000000000
-              Properties.ValueType = vtFloat
-              TabOrder = 2
-              ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
-            end
-            object RB_USING_BARTER2: TRadioButton
-              Left = 284
-              Top = 14
-              Width = 99
-              Height = 17
-              Caption = #21551#29992#25442#36141#31215#20998#65306
-              TabOrder = 3
-              OnClick = RB_NotUSING_BARTERClick
-            end
-            object edtBARTER_INTEGRAL2: TcxSpinEdit
-              Left = 383
-              Top = 12
-              Width = 64
-              Height = 20
-              Properties.ImmediatePost = True
-              Properties.MaxValue = 99999999.000000000000000000
-              Properties.ValueType = vtFloat
-              TabOrder = 4
-              ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
-            end
+            ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
           end
         end
       end

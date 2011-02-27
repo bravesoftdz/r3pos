@@ -45,6 +45,8 @@ type
     actPrintBarCode: TAction;
     PrintDBGridEh1: TPrintDBGridEh;
     cdsBrowser: TZQuery;
+    AddSortTree: TPopupMenu;
+    N8: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -73,16 +75,17 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
-    procedure BitBtn1Click(Sender: TObject);
+    procedure N8Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure GetNo;
      procedure LoadTree;
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
+     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
   public
     { Public declarations }
     IsEnd,IsChain,IsCompany: boolean;
-    MaxId,TENANT_ID:string;
+    MaxId:string;  
     locked:boolean;
     rcAmt:integer;
     procedure AddRecord(AObj:TRecord_);
@@ -99,40 +102,66 @@ implementation
 
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil,
-  uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort;
+  uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort,
+  ufrmGoodssortTree, ObjCommon;
+   
 
 {$R *.dfm}
  
 procedure TfrmGoodsInfoList.AddRecord(AObj: TRecord_);
-var GODS_ID,SORT:string;
+var
+  GODS_ID,SORT:string;
+  EditObj: TRecord_;
 begin
-  if not cdsBrowser.Active then Exit;  
-  if cdsBrowser.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[])
-  then
+  SORT:='';
+  if not cdsBrowser.Active then Exit;
+  if cdsBrowser.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
   begin
-    GODS_ID:=cdsBrowser.FieldByName('GODS_ID').AsString;
-    cdsBrowser.Edit;
-    AObj.WriteToDataSet(cdsBrowser,false);
-    if cdsBrowser.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
-       cdsBrowser.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',cdsBrowser.FieldbyName('NEW_INPRICE').AsFloat*100/cdsBrowser.FieldbyName('NEW_OUTPRICE').AsFloat)
-    else
-       cdsBrowser.FieldByName('PROFIT_RATE').Value := null;
-    cdsBrowser.FieldByName('selflag').AsBoolean:=False;
-    cdsBrowser.Post;
+    try
+      EditObj:=TRecord_.Create;
+      EditObj.ReadFromDataSet(cdsBrowser);
+      GODS_ID:=EditObj.FieldByName('GODS_ID').AsString;
+      AObj.WriteToDataSet(cdsBrowser,false);
+      if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
+        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
+      else
+        EditObj.FieldByName('PROFIT_RATE').AsValue := null;
+      EditObj.FieldByName('selflag').AsString:='0';
+      cdsBrowser.Edit;
+      EditObj.WriteToDataSet(cdsBrowser);
+      if cdsBrowser.State<>dsEdit then cdsBrowser.Edit;
+      cdsBrowser.Post;
+    finally
+      EditObj.Free;
+    end;
   end else
   begin
     GODS_ID:=AObj.FieldByName('GODS_ID').AsString;
     cdsBrowser.Append;
     AObj.WriteToDataSet(cdsBrowser,false);
-    if cdsBrowser.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
-       cdsBrowser.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',cdsBrowser.FieldbyName('NEW_INPRICE').AsFloat*100/cdsBrowser.FieldbyName('NEW_OUTPRICE').AsFloat)
-    else
-       cdsBrowser.FieldByName('PROFIT_RATE').Value := null;
+    if not (cdsBrowser.State in [dsInsert,dsEdit]) then cdsBrowser.Edit;
     cdsBrowser.Post;
+    try
+      EditObj:=TRecord_.Create;
+      EditObj.ReadFromDataSet(cdsBrowser);
+      EditObj.FieldByName('RELATION_FLAG').AsString:='2'; //新增的商品: 自主经营
+      if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
+        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
+      else
+        EditObj.FieldByName('PROFIT_RATE').AsValue := null;
+      EditObj.WriteToDataSet(cdsBrowser);
+      if not (cdsBrowser.State in [dsInsert,dsEdit]) then cdsBrowser.Edit;
+      cdsBrowser.Post;
+    finally
+      EditObj.Free;
+    end;
   end;
+
   InitGrid;
-  SORT:=TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString;
-  LoadTree;
+  if rzTree.Selected<>nil then
+    SORT:=TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString;
+  //进入商品资料修改没有维护到分类，不需刷新Tree
+  // LoadTree;
   if SORT<>'' THEN FindNode(SORT).Selected:=True;
 end;
 
@@ -140,8 +169,7 @@ procedure TfrmGoodsInfoList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;
-begin
-
+begin                   
   if (trim(Lowercase(Column.FieldName))='selflag') and
      (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_ID').AsString)<>'0') then
     DBGridEh1.Canvas.Brush.Color:= clGray;
@@ -173,9 +201,10 @@ end;
 
 function TfrmGoodsInfoList.EncodeSQL(id: string;var Cnd:string): string;
 var
-  w,vCnd,GoodTab:string;
+  w,vCnd,GoodTab,OperChar:string;
 begin
   vCnd:='';
+  OperChar:=GetStrJoin(Factor.iDbType); //字符连接操作符
   GoodTab:=
     '(select J.TENANT_ID as TENANT_ID,RELATION_ID,J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end as NEW_INPRICE,'+
@@ -186,69 +215,50 @@ begin
     ' NEW_OUTPRICE, '+
     ' NEW_OUTPRICE1,'+
     ' NEW_OUTPRICE2,'+
-    ' NEW_LOWPRICE,'+
     ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,J.COMM as COMM,'+
-    ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,REMARK '+#13+
+    ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,USING_BATCH_NO,HAS_INTEGRAL,REMARK '+#13+ // 
     'from (select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
     ' union all '+
     ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
     ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID ) J '+
-    ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID )';
+    ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID)';
 
-  w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+  w := ' and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then w := w + ' and j.GODS_ID>=:MAXID';
 
   if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
   begin
-    case Factor.iDbType of
-     0:
-      begin
-        w :=w+' and b.LEVEL_ID like :LEVEL_ID +''%'' and b.RELATION_ID=:RELATION_ID ';
-        vCnd:=' and b.LEVEL_ID like :LEVEL_ID +''%'' and b.RELATION_ID=:RELATION_ID ';
-      end;
-     4,5:
-      begin
-        w :=w+' and b.LEVEL_ID like :LEVEL_ID || ''%'' and b.RELATION_ID=:RELATION_ID ';
-        vCnd:=' and b.LEVEL_ID like :LEVEL_ID || ''%'' and b.RELATION_ID=:RELATION_ID ';
-      end;
-    end;
+    w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' and b.RELATION_ID=:RELATION_ID ';
+    vCnd:=' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' and b.RELATION_ID=:RELATION_ID ';
   end;
+
   if trim(edtKey.Text)<>'' then
   begin
-    case Factor.iDbType of
-     0:
-      begin
-        w := w + ' and ((j.GODS_CODE like ''%''+:KEYVALUE +''%'') or (j.GODS_NAME like ''%''+:KEYVALUE +''%'') or (j.GODS_SPELL like ''%''+:KEYVALUE +''%'') or (BARCODE like ''%''+:KEYVALUE+''%''))';
-        vCnd:=vCnd+' and ((j.GODS_CODE like ''%''+:KEYVALUE +''%'') or (j.GODS_NAME like ''%''+:KEYVALUE +''%'') or (j.GODS_SPELL like ''%''+:KEYVALUE +''%'') or (BARCODE like ''%''+:KEYVALUE+''%''))';
-      end;
-    4,5:
-      begin
-        w := w + ' and ((j.GODS_CODE like ''%'' || :KEYVALUE || ''%'') or (j.GODS_NAME like ''%'' || :KEYVALUE || ''%'') or (j.GODS_SPELL like ''%'' || :KEYVALUE || ''%'') or (BARCODE like ''%'' || :KEYVALUE || ''%''))';
-        vCnd:=vCnd+' and ((j.GODS_CODE like ''%'' || :KEYVALUE || ''%'') or (j.GODS_NAME like ''%'' || :KEYVALUE || ''%'') or (j.GODS_SPELL like ''%'' || :KEYVALUE || ''%'') or (BARCODE like ''%'' || :KEYVALUE || ''%''))';
-      end;
-    end;
+    w := w+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','BARCODE'],':KEYVALUE','and');
+    vCnd:=vCnd+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','BARCODE'],':KEYVALUE','and');
   end;
+
   Cnd:=vCnd;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
-     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(cast(Round(l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) as varchar)+''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-     'select 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then l.NEW_INPRICE*100/l.NEW_OUTPRICE else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
-     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+     'select 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then (l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.00) else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600 rows only ';
   5:
-  result := 'select 0 as selflag,(case when RELATION_ID=0 then 2 else 1 end) as RELATION_Flag,case when l.NEW_OUTPRICE<>0 then Cast((l.NEW_INPRICE*100/l.NEW_OUTPRICE) as varchar(12)) || ''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
-     ' (select j.* from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+  result := 'select 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then Cast(Round((l.NEW_INPRICE*100)/(l.NEW_OUTPRICE*1.00),0) as integer) ||''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID  group by GODS_ID) r '+
-     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 100 ';   
+     ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600 ';   
   end;
 end;
 
@@ -267,8 +277,8 @@ var StrmData: TStream;
         ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
         ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
 
-      str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and '+
-           ' j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
+      str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b '+
+           ' where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
       tmpQry.Close;
       tmpQry.SQL.Text:=str;
       if tmpQry.Params.FindParam('TENANT_ID')<>nil then
@@ -299,49 +309,34 @@ begin
   try
     StrmData:=TMemoryStream.Create;
     rs.SQL.Text:=EncodeSQL(Id,Cnd);
-    if rs.Params.FindParam('TENANT_ID')<>nil then
-       rs.Params.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
-    if rs.Params.FindParam('SHOP_ID')<>nil then
-       rs.Params.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
-    if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then
-       rs.Params.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
-    if rs.Params.FindParam('MAXID')<>nil then
-       rs.Params.ParamByName('MAXID').AsString := MaxId;
-    if rs.Params.FindParam('KEYVALUE')<>nil then
-       rs.Params.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
-    if rs.Params.FindParam('SORT_ID')<>nil then
-       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
-    if rs.Params.FindParam('LEVEL_ID')<>nil then
-       rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-    if rs.Params.FindParam('RELATION_ID')<>nil then
-       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
-    if Id<>'' then
-    begin
-      Factor.Open(rs);
-      rs.Last;
-      rs.IndexFieldNames := 'GODS_CODE';
-      MaxId := rs.FieldbyName('GODS_ID').AsString;
-      rs.SaveToStream(StrmData);
-    end;
+    if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
+    if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then rs.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
+    if rs.Params.FindParam('MAXID')<>nil then rs.ParamByName('MAXID').AsString := MaxId;
+    if rs.Params.FindParam('KEYVALUE')<>nil then rs.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
+    if rs.Params.FindParam('SORT_ID')<>nil then rs.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+    if rs.Params.FindParam('LEVEL_ID')<>nil then rs.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if rs.Params.FindParam('RELATION_ID')<>nil then rs.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    Factor.Open(rs);
+    rs.Last;
+    MaxId := rs.FieldbyName('GODS_ID').AsString;
+    rs.IndexFieldNames := 'GODS_CODE';
+    rs.SaveToStream(StrmData);
     if Id='' then
     begin
       rcAmt:=GetReCount(Cnd);
-      //cdsBrowser.LoadFromStream(StrmData);
-      cdsBrowser.SQL.Text:=EncodeSQL(Id,Cnd);
+      {cdsBrowser.Close;
+      cdsBrowser.SQL.Text:=rs.SQL.Text;
       cdsBrowser.Params.AssignValues(rs.Params);
-      Factor.Open(cdsBrowser);
-      cdsBrowser.Last;
+      Factor.Open(cdsBrowser);}
+      cdsBrowser.LoadFromStream(StrmData);
       cdsBrowser.IndexFieldNames := 'GODS_CODE';
-      MaxId := cdsBrowser.FieldbyName('GODS_ID').AsString;
-      if cdsBrowser.RecordCount <100 then IsEnd := True else IsEnd := false;
     end else
-    begin
       cdsBrowser.AddFromStream(StrmData);
-      if rs.RecordCount <100 then IsEnd := True else IsEnd := false;
-    end;
-
+    if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
   finally
     cdsBrowser.EnableControls;
+    StrmData.Free;
     rs.Free;
   end;
 end;
@@ -370,41 +365,55 @@ end;
 procedure TfrmGoodsInfoList.InitGrid;
 var
   rs: TZQuery;
-  Obj  :TRecord_ ;
-  P,Root:TTreeNode; 
-begin                     
+  SetCol: TColumnEh;
+begin
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-  rs.First;
-  while not rs.Eof do
+  SetCol:=FindColumn(DBGridEh1,'CALC_UNITS');
+  if (SetCol<>nil) and (rs.Active) and (rs.RecordCount>0) then
   begin
-    DBGridEh1.FieldColumns['CALC_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-    DBGridEh1.FieldColumns['CALC_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-   {DBGridEh1.FieldColumns['SMALL_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-    DBGridEh1.FieldColumns['SMALL_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-    DBGridEh1.FieldColumns['BIG_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-    DBGridEh1.FieldColumns['BIG_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString); }
-    rs.Next;
-  end;
-
-  //供货商[生产厂家]
-  rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
-  rs.First;
-  while not rs.Eof do
-  begin
-    DBGridEh1.FieldColumns['SORT_ID3'].KeyList.Add(rs.FieldbyName('CLIENT_ID').AsString);
-    DBGridEh1.FieldColumns['SORT_ID3'].PickList.Add(rs.FieldbyName('CLIENT_NAME').AsString);
-    rs.Next;
-  end;  
-
-  //商品品牌
-  rs:=Global.GetZQueryFromName('PUB_BRAND_INFO');
-  if (rs.Active) and (not rs.IsEmpty) then
-  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
     rs.First;
     while not rs.Eof do
     begin
-      DBGridEh1.FieldColumns['SORT_ID4'].KeyList.Add(rs.FieldbyName('SORT_ID').AsString);
-      DBGridEh1.FieldColumns['SORT_ID4'].PickList.Add(rs.FieldbyName('SORT_NAME').AsString);
+      SetCol.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      SetCol.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+     {DBGridEh1.FieldColumns['SMALL_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      DBGridEh1.FieldColumns['SMALL_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      DBGridEh1.FieldColumns['BIG_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      DBGridEh1.FieldColumns['BIG_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString); }
+      rs.Next;
+    end;
+  end;
+  
+  //供货商[生产厂家]
+  rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  SetCol:=FindColumn(DBGridEh1,'SORT_ID3');
+  if (SetCol<>nil) and (rs.Active) and (rs.RecordCount>0) then
+  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SetCol.KeyList.Add(rs.FieldbyName('CLIENT_ID').AsString);
+      SetCol.PickList.Add(rs.FieldbyName('CLIENT_NAME').AsString);
+      rs.Next;
+    end;
+  end;
+  
+  //商品品牌
+  rs:=Global.GetZQueryFromName('PUB_BRAND_INFO');
+  SetCol:=FindColumn(DBGridEh1,'SORT_ID4');
+  if (SetCol<>nil) and (rs.Active) and (not rs.IsEmpty) then
+  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SetCol.KeyList.Add(rs.FieldbyName('SORT_ID').AsString);
+      SetCol.PickList.Add(rs.FieldbyName('SORT_NAME').AsString);
       rs.Next;
     end;
   end;
@@ -415,7 +424,6 @@ var
   tmp: TZQuery;
 begin
   inherited;
-  TENANT_ID:=IntToStr(Global.TENANT_ID);
   InitGrid;
   LoadTree;
   edtProperty1:=TZQuery.Create(nil);
@@ -444,7 +452,7 @@ begin
   //if rzTree.Selected=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
   CurObj:=TRecord_(rzTree.Selected.Data);
   if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
-  if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then // RELATION_FLAG=2 自主经营
+  if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then  // RELATION_FLAG=2 自主经营
   begin
     //Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
     sid := CurObj.FieldbyName('SORT_ID').AsString;
@@ -564,7 +572,7 @@ end;
 procedure TfrmGoodsInfoList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-  actEditExecute(nil);
+  actInfoExecute(nil);
 end;
 
 procedure TfrmGoodsInfoList.N1Click(Sender: TObject);
@@ -579,7 +587,7 @@ begin
     while not cdsBrowser.Eof do
     begin
       cdsBrowser.Edit;
-      cdsBrowser.FieldByName('selflag').AsBoolean:=True;
+      cdsBrowser.FieldByName('selflag').AsString:='1';
       cdsBrowser.Post;
       cdsBrowser.Next;
     end;
@@ -601,10 +609,10 @@ begin
     while not cdsBrowser.Eof do
     begin
       cdsBrowser.Edit;
-      if cdsBrowser.FieldByName('selflag').AsBoolean=True then
-         cdsBrowser.FieldByName('selflag').AsBoolean:=False
+      if trim(cdsBrowser.FieldByName('selflag').AsString)='1' then
+         cdsBrowser.FieldByName('selflag').AsString:='0'
       else
-         cdsBrowser.FieldByName('selflag').AsBoolean:=True;
+         cdsBrowser.FieldByName('selflag').AsString:='1';
       cdsBrowser.Post;
       cdsBrowser.Next;
     end;
@@ -626,7 +634,7 @@ begin
     while not cdsBrowser.Eof do
     begin
       cdsBrowser.Edit;
-      cdsBrowser.FieldByName('selflag').AsBoolean:=False;
+      cdsBrowser.FieldByName('selflag').AsString:='0';
       cdsBrowser.Post;
       cdsBrowser.Next;
     end;
@@ -830,7 +838,7 @@ var
   rs:TZQuery;
 begin
   result := false;
-  rs := Global.GetZQueryFromName('BAS_GOODSINFO');
+  rs := Global.GetZQueryFromName('PUB_BARCODE');
   if rs.Locate('GODS_ID',cdsBrowser.FieldbyName('GODS_ID').AsString,[]) then
   result := not (
        ((rs.FieldbyName('PROPERTY_01').AsString = '') or (rs.FieldbyName('PROPERTY_01').AsString = '#'))
@@ -890,8 +898,9 @@ begin
     N1Click(nil)
   else
   begin
-    cdsBrowser.IndexFieldNames := '';
-    cdsBrowser.IndexFieldNames := 'GODS_CODE';
+    //2011.02.26 Add TZQuery不支持的修改: IndexFieldNames
+    //cdsBrowser.IndexFieldNames := '';
+    //cdsBrowser.IndexFieldNames := 'GODS_CODE';
   end;
 end;
 
@@ -899,23 +908,37 @@ procedure TfrmGoodsInfoList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('200040') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
-    begin
-      try
-        Preview(PrintDBGridEh1);
-      finally
-        free;
-      end;
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
     end;
+  end;
+end;
+
+function TfrmGoodsInfoList.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGrid.Columns.Count - 1 do
+  begin
+    if DBGrid.Columns[i].FieldName = FieldName then
+    begin
+      result := DBGrid.Columns[i];
+      Exit;
+    end;
+  end; 
 end;
 
 procedure TfrmGoodsInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('200040') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
 end;
@@ -1002,11 +1025,19 @@ begin
   Open('');
 end;
 
-procedure TfrmGoodsInfoList.BitBtn1Click(Sender: TObject);
-var
-  CurObj: TRecord_;
+procedure TfrmGoodsInfoList.N8Click(Sender: TObject);
+var CurObj: TRecord_;
 begin
- 
+  inherited;
+  try
+    CurObj:=TRecord_.Create;
+    if TfrmGoodsSortTree.AddDialog(self,CurObj,1) then
+    begin
+      LoadTree;
+    end;
+  finally
+    CurObj.Free;
+  end;
 end;
 
 end.

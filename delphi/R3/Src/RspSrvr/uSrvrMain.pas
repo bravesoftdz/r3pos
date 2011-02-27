@@ -14,8 +14,8 @@ interface
 
 uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,Variants,
-  Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,
-  ActnList, DB,OleServer,ImgList,ZIocp,ZServer,ZPacket,ZWSock2,MidConst;
+  Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,ZConst,
+  ActnList, DB,OleServer,ImgList,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile;
 
 const
   WM_MIDASICON    = WM_USER + 1;
@@ -47,10 +47,6 @@ type
     ThreadUpDown: TUpDown;
     StatPage: TTabSheet;
     ConnectionList: TListView;
-    Connections1: TMenuItem;
-    miShowHostName: TMenuItem;
-    miDisconnect: TMenuItem;
-    N2: TMenuItem;
     TimeoutGroup: TGroupBox;
     Label7: TLabel;
     Timeout: TEdit;
@@ -64,20 +60,14 @@ type
     N3: TMenuItem;
     miExit: TMenuItem;
     UserStatus: TStatusBar;
-    XMLPacket1: TMenuItem;
     AllowXML: TAction;
     PortList: TListBox;
     Panel1: TPanel;
     ApplyButton: TButton;
     TabSheet1: TTabSheet;
     ImageList1: TImageList;
-    PopupMenu1: TPopupMenu;
     actRegistryService: TAction;
     actRemoveSerivce: TAction;
-    N4: TMenuItem;
-    N5: TMenuItem;
-    IP1: TMenuItem;
-    Timer1: TTimer;
     PopupMenu2: TPopupMenu;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
@@ -87,22 +77,33 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     actLogFileSaveAs: TAction;
-    N8: TMenuItem;
-    N9: TMenuItem;
-    N10: TMenuItem;
-    N11: TMenuItem;
-    N12: TMenuItem;
     actSetConfig: TAction;
     edtKeepAlive: TCheckBox;
-    N13: TMenuItem;
     actRefreshComponment: TAction;
-    N14: TMenuItem;
     mnuMgr: TMenuItem;
     TabSheet2: TTabSheet;
     Memo1: TMemo;
     ListView2: TListView;
     OpenDialog1: TOpenDialog;
     TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    GroupBox1: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    GroupBox2: TGroupBox;
+    Label5: TLabel;
+    Label6: TLabel;
+    GroupBox3: TGroupBox;
+    Label8: TLabel;
+    Label9: TLabel;
+    ListView1: TListView;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -149,12 +150,14 @@ type
     procedure SetSystemShutDown(const Value: boolean);
    protected
     procedure AddClient(Session : TZSession);
-    procedure RemoveClient(SThreadId : Pointer);
+    procedure UpdateClient(Session : TZSession);
+    procedure RemoveClient(Session : TZSession);
     procedure ClearModifications;
     procedure UIInitialize(var Message: TMessage); message UI_INITIALIZE;
     procedure WMMIDASIcon(var Message: TMessage); message WM_MIDASICON;
-    procedure WMUpdateStatus(var Message: TMessage); message WM_UPDATESTATUS;
     procedure WMQUERYENDSESSION(var msg:Tmessage);Message  WM_QUERYENDSESSION;
+    procedure WMLogFileUpdate(var msg:Tmessage);Message  WM_LOGFILE_UPDATE;
+    procedure WMSessionUpdate(var msg:Tmessage);Message  WM_SESSION_UPDATE;
     procedure AddIcon;
     procedure ReadSettings;
     procedure WndProc(var Message: TMessage); override;
@@ -186,7 +189,7 @@ var
 
 implementation
 
-uses IniFiles,ZLogFile,Registry,ScktCnst;
+uses IniFiles,Registry,ScktCnst;
 
 {$R *.dfm}
 
@@ -203,6 +206,7 @@ begin
   FCurItem := -1;
   FSortCol := -1;
   SystemShutDown := false;
+  MainFormHandle := Handle;
 end;
 
 procedure TSocketForm.WndProc(var Message: TMessage);
@@ -226,7 +230,23 @@ begin
     if Found then AddIcon;
     Refresh;
   end;
+  if Pages.ActivePageIndex = 5 then
+     begin
+       Label2.Caption := '当前线程数:'+inttostr(WorkThreadCount);
+       Label3.Caption := '运行线程数:'+inttostr(ExecThreadCount);
+       Label10.Caption := '最大线程数:'+inttostr(ExecThreadCount);
+       Label11.Caption := '执行能力值:'+inttostr((DataBlockCount-WaitDataBlockCount) div (GetTickCount-StartServiceTickCount))+'/微秒';
 
+       Label5.Caption := '缓冲连接数:'+inttostr(ConnCache.Count);
+       Label6.Caption := '锁定连接数:'+inttostr(ConnCache.DBCacheLockCount);
+
+       Label8.Caption := '等待指令数:'+inttostr(WaitDataBlockCount);
+       Label16.Caption := '最大并发数:'+inttostr(MaxSyncRequestCount);
+       Label13.Caption := '在线连接数:'+inttostr(Sessions.Count);
+       Label12.Caption := '最大连接数:'+inttostr(Sessions.MaxSessionCount);
+       Label17.Caption := '请求指令总数:'+inttostr(DataBlockCount);
+       Label9.Caption := '等待最大时长:'+inttostr(DataBlockMaxWaitTime)+'微秒';
+     end;
 end;
 
 procedure TSocketForm.CheckValues;
@@ -305,14 +325,16 @@ begin
   if FromService then
   begin
     miClose.Visible := False;
+    miExit.Visible := False;
     N1.Visible := False;
+    N3.Visible := False;
   end;
   mnuMgr.Visible := FromService;
   UpdateStatus;
   AddIcon;
   if IE4Installed then
-    FTaskMessage := RegisterWindowMessage('TaskbarCreated') else
-    UpdateTimer.Enabled := True;
+    FTaskMessage := RegisterWindowMessage('TaskbarCreated');
+  UpdateTimer.Enabled := True;
 end;
 
 procedure TSocketForm.FormCloseQuery(Sender: TObject;
@@ -366,7 +388,7 @@ end;
 
 procedure TSocketForm.ReadSettings;
 var
-  Reg: TRegINIFile;
+  F: TIniFile;
 
   procedure CreateItem(ID: Integer);
   var
@@ -387,13 +409,11 @@ var
   Sections: TStringList;
   i: Integer;
 begin
-  Reg := TRegINIFile.Create('');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sckt.cfg');
   try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    Reg.OpenKey(KEY_SOCKETSERVER, True);
     Sections := TStringList.Create;
     try
-      Reg.ReadSections(Sections);
+      F.ReadSections(Sections);
       if Sections.Count > 1 then
       begin
         for i := 0 to Sections.Count - 1 do
@@ -409,12 +429,11 @@ begin
       end else
         CreateItem(-1);
       ItemIndex := 0;
-      ShowHostAction.Checked := Reg.ReadBool(csSettings, ckShowHost, False);
     finally
       Sections.Free;
     end;
   finally
-    Reg.Free;
+    F.Free;
   end;
 end;
 
@@ -473,28 +492,25 @@ end;
 procedure TSocketForm.AddClient(Session : TZSession);
 var
   Item: TListItem;
-  S:TZSession;
 begin
   Item := ConnectionList.Items.Add;
   try
     Item.Caption := Session.Port;
     Item.SubItems.Add(Session.IPAddress);
-    Item.SubItems.Add(Session.Host);
+    Item.SubItems.Add(Session.UserName);
     Item.SubItems.Add(DateTimeToStr(now()));
-    Item.Data := Pointer(Session.SessionID);
+    Item.Data := Pointer(Session);
   except
     Item.Free;
   end;
-  UpdateStatus;
 end;
 
-procedure TSocketForm.RemoveClient(SThreadId : Pointer);
+procedure TSocketForm.RemoveClient(Session : TZSession);
 var
   Item: TListItem;
 begin
-  Item := ConnectionList.FindData(0,SThreadId, True, False);
-  if Assigned(Item) then Item.Free; 
-  UpdateStatus;
+  Item := ConnectionList.FindData(0,Pointer(Session), True, False);
+  if Assigned(Item) then Item.Free;
 end;
 
 procedure TSocketForm.miDisconnectClick(Sender: TObject);
@@ -513,9 +529,10 @@ begin
 end;
 
 procedure TSocketForm.miExitClick(Sender: TObject);
+var stop:boolean;
 begin
-  CheckValues;
-  ModalResult := mrOK;
+  FClosing := True;
+  Application.Terminate;
 end;
 
 procedure TSocketForm.ApplyActionExecute(Sender: TObject);
@@ -669,26 +686,9 @@ end;
 procedure TSocketForm.Timer1Timer(Sender: TObject);
 begin
   if SystemShutDown then Exit;
-  AddLogFile;
   if FormatDatetime('HH:NN',now())='23:00' then
      begin
      end;
-end;
-
-procedure TSocketForm.WMUpdateStatus(var Message: TMessage);
-var s:TZSession;
-begin
-  if SystemShutDown then Exit;
-  if Message.WParam = 0 then
-     begin
-       s := Sessions.FindPointer(Pointer(Message.LParam));
-       if s<>nil then
-          AddClient(s);
-     end;
-  if Message.WParam = 1 then
-     RemoveClient(Pointer(Message.LParam));
-  if Message.WParam = 2 then
-     UpdateStatus;
 end;
 
 function TSocketForm.GetSelectedSocket: Pointer;
@@ -712,8 +712,6 @@ var
 begin
   Application.OnException := nil;
   UpdateTimer.Enabled := False;
-  Timer1.Enabled := False;
-
   if not NT351 then
     Shell_NotifyIcon(NIM_DELETE, @FIconData);
 
@@ -738,6 +736,36 @@ procedure TSocketForm.mnuMgrClick(Sender: TObject);
 begin
   ShellExecute(handle,'open',pchar(ExtractFilePath(ParamStr(0))+'SvcMgr.exe'),nil,nil,0);
 end;
+procedure TSocketForm.WMLogFileUpdate(var msg: Tmessage);
+begin
+  AddLogFile;
+end;
+
+procedure TSocketForm.UpdateClient(Session: TZSession);
+var
+  Item: TListItem;
+begin
+  Item := ConnectionList.FindData(0,Pointer(Session), True, False);
+  if Item=nil then Exit;
+  Item.Caption := Session.Port;
+  Item.SubItems[0] := Session.IPAddress;
+  Item.SubItems[1] := Session.UserName;
+  Item.SubItems[2] := DateTimeToStr(now());
+end;
+
+procedure TSocketForm.WMSessionUpdate(var msg: Tmessage);
+var
+  Session:TZSession;
+begin
+  Session := TZSession(msg.WParam);
+  case msg.LParam of
+  0:AddClient(Session);
+  1:RemoveClient(Session);
+  2:ConnectionList.Clear;
+  3:UpdateClient(Session);
+  end;
+end;
+
 { TSocketService }
 
 procedure ServiceController(CtrlCode: DWord); stdcall;

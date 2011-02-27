@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 396
-  Top = 240
+  Left = 593
+  Top = 266
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
@@ -28,7 +28,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = StatPage
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -250,7 +250,7 @@ object SocketForm: TSocketForm
           end
           item
             AutoSize = True
-            Caption = #20027#26426#21517
+            Caption = #29992#25143
           end
           item
             AutoSize = True
@@ -277,6 +277,33 @@ object SocketForm: TSocketForm
     object TabSheet3: TTabSheet
       Caption = #25968#25454#24211
       ImageIndex = 4
+      object ListView1: TListView
+        Left = 0
+        Top = 0
+        Width = 511
+        Height = 300
+        Align = alClient
+        Columns = <
+          item
+            Caption = #36830#25509#21495
+          end
+          item
+            AutoSize = True
+            Caption = #20027#26426#21517#31216
+          end
+          item
+            AutoSize = True
+            Caption = #35828#26126
+          end>
+        HideSelection = False
+        MultiSelect = True
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnColumnClick = ConnectionListColumnClick
+        OnCompare = ConnectionListCompare
+      end
     end
     object TabSheet1: TTabSheet
       Caption = ' '#20219#21153
@@ -289,15 +316,15 @@ object SocketForm: TSocketForm
         Align = alClient
         Columns = <
           item
-            Caption = #31471#21475
+            Caption = #20219#21153#21495
           end
           item
             AutoSize = True
-            Caption = 'IP '#22320#22336
+            Caption = #20219#21153#21517#31216
           end
           item
             AutoSize = True
-            Caption = #20027#26426#21517
+            Caption = #35843#24230#26102#38388
           end
           item
             AutoSize = True
@@ -333,6 +360,138 @@ object SocketForm: TSocketForm
         TabOrder = 0
       end
     end
+    object TabSheet4: TTabSheet
+      Caption = #29366#24577
+      ImageIndex = 5
+      DesignSize = (
+        511
+        300)
+      object GroupBox1: TGroupBox
+        Left = 8
+        Top = 13
+        Width = 481
+        Height = 71
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #32447#31243#27744
+        Color = clBtnFace
+        ParentColor = False
+        TabOrder = 0
+        object Label2: TLabel
+          Left = 26
+          Top = 22
+          Width = 66
+          Height = 12
+          Caption = #24403#21069#32447#31243#25968':'
+        end
+        object Label3: TLabel
+          Left = 26
+          Top = 44
+          Width = 66
+          Height = 12
+          Caption = #36816#34892#32447#31243#25968':'
+        end
+        object Label10: TLabel
+          Left = 170
+          Top = 22
+          Width = 66
+          Height = 12
+          Caption = #26368#22823#32447#31243#25968':'
+        end
+        object Label11: TLabel
+          Left = 170
+          Top = 43
+          Width = 66
+          Height = 12
+          Caption = #25191#34892#33021#21147#20540':'
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 8
+        Top = 93
+        Width = 479
+        Height = 72
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #25968#25454#24211
+        Color = clBtnFace
+        ParentColor = False
+        TabOrder = 1
+        object Label5: TLabel
+          Left = 26
+          Top = 22
+          Width = 66
+          Height = 12
+          Caption = #32531#20914#36830#25509#25968':'
+        end
+        object Label6: TLabel
+          Left = 26
+          Top = 44
+          Width = 66
+          Height = 12
+          Caption = #38145#23450#36830#25509#25968':'
+        end
+        object Label15: TLabel
+          Left = 226
+          Top = 44
+          Width = 6
+          Height = 12
+          Alignment = taRightJustify
+          Caption = ':'
+        end
+      end
+      object GroupBox3: TGroupBox
+        Left = 8
+        Top = 176
+        Width = 479
+        Height = 71
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #23458#25143#31471
+        Color = clBtnFace
+        ParentColor = False
+        TabOrder = 2
+        object Label8: TLabel
+          Left = 25
+          Top = 22
+          Width = 66
+          Height = 12
+          Caption = #31561#24453#25351#20196#25968':'
+        end
+        object Label9: TLabel
+          Left = 282
+          Top = 44
+          Width = 78
+          Height = 12
+          Caption = #31561#24453#26368#22823#26102#38271':'
+        end
+        object Label12: TLabel
+          Left = 166
+          Top = 44
+          Width = 66
+          Height = 12
+          Caption = #26368#22823#36830#25509#25968':'
+        end
+        object Label13: TLabel
+          Left = 166
+          Top = 22
+          Width = 66
+          Height = 12
+          Caption = #24403#21069#36830#25509#25968':'
+        end
+        object Label16: TLabel
+          Left = 25
+          Top = 43
+          Width = 66
+          Height = 12
+          Caption = #26368#22823#24182#21457#25968':'
+        end
+        object Label17: TLabel
+          Left = 282
+          Top = 22
+          Width = 78
+          Height = 12
+          Caption = #35831#27714#25351#20196#24635#25968':'
+        end
+      end
+    end
   end
   object PopupMenu: TPopupMenu
     Left = 480
@@ -356,7 +515,6 @@ object SocketForm: TSocketForm
   end
   object UpdateTimer: TTimer
     Enabled = False
-    Interval = 2000
     OnTimer = UpdateTimerTimer
     Left = 464
     Top = 88
@@ -377,26 +535,8 @@ object SocketForm: TSocketForm
         Caption = '-'
       end
       object miExit: TMenuItem
-        Caption = #20851#38381'(&E)'
+        Caption = #36864#20986'(&E)'
         OnClick = miExitClick
-      end
-    end
-    object Connections1: TMenuItem
-      Caption = #36830#25509'(&C)'
-      object miShowHostName: TMenuItem
-        Action = ShowHostAction
-      end
-      object XMLPacket1: TMenuItem
-        Action = AllowXML
-      end
-      object IP1: TMenuItem
-        Caption = #33258#21160#21516#27493#26102#38388
-      end
-      object N2: TMenuItem
-        Caption = '-'
-      end
-      object miDisconnect: TMenuItem
-        Action = DisconnectAction
       end
     end
   end
@@ -596,44 +736,6 @@ object SocketForm: TSocketForm
       F1FFF00FFFFF0000FFFFFFFFFFFF000000000000000000000000000000000000
       000000000000}
   end
-  object PopupMenu1: TPopupMenu
-    Left = 128
-    Top = 80
-    object N11: TMenuItem
-      Caption = #23646#24615
-      Default = True
-    end
-    object N4: TMenuItem
-      Action = actRegistryService
-    end
-    object N12: TMenuItem
-      Action = actSetConfig
-    end
-    object N5: TMenuItem
-      Action = actRemoveSerivce
-    end
-    object N13: TMenuItem
-      Caption = #29983#25104#23458#25143#31471#37197#32622#25991#20214
-    end
-    object N14: TMenuItem
-      Action = actRefreshComponment
-    end
-    object N8: TMenuItem
-      Caption = '-'
-    end
-    object N9: TMenuItem
-      Caption = #28155#21152#24080#22871
-    end
-    object N10: TMenuItem
-      Caption = #21024#38500#24080#22871
-    end
-  end
-  object Timer1: TTimer
-    Interval = 2000
-    OnTimer = Timer1Timer
-    Left = 480
-    Top = 24
-  end
   object PopupMenu2: TPopupMenu
     Left = 128
     Top = 176
@@ -652,7 +754,7 @@ object SocketForm: TSocketForm
   end
   object OpenDialog1: TOpenDialog
     Filter = 'sdfsdfas|*.dll,*.ocx'
-    Left = 236
-    Top = 87
+    Left = 412
+    Top = 47
   end
 end

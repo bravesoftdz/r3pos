@@ -73,6 +73,8 @@ type
 
     property Handle: THandle read GetHandle;
     property Interpreter: TZCustomDataBlockInterpreter read GetInterpreter;
+  protected
+    procedure DoSKTParameter;
   public
     constructor Create;
     destructor Destroy; override;
@@ -122,6 +124,9 @@ type
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
 
+    //用户登录
+    procedure GqqLogin(UserId:string;UserName:string);override;
+
     property Host: string read FHost write FHost;
     property Address: string read FAddress write FAddress;
     property Port:Integer read FPort write FPort;
@@ -136,6 +141,7 @@ uses Forms,Registry;
 function TZClient.Connect:boolean;
 begin
   InternalOpen;
+  DoSKTParameter;
 end;
 
 function TZClient.Connected: Boolean;
@@ -454,7 +460,7 @@ end;
 
 function TZClient.BeginBatch: Boolean;
 begin
-  if FList.Count > 0 then Raise Exception.Create('正在组织数据包，无法开始新的数据包。'); 
+  if FList.Count > 0 then Raise Exception.Create('正在组织数据包，无法开始新的数据包。');
 end;
 
 procedure TZClient.BeginTrans(TimeOut: integer);
@@ -465,15 +471,24 @@ var
 begin
   CheckSocketConnected;
 
-  DispParams.cArgs := 0;
+  DispParams.cArgs := 1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
   DispParams.rgvarg := nil;
-
-  R := FInterpreter.CallInvoke(Ord(SKTBeginTrans),0,0,DispParams,nil, @ExcepInfo,nil);
-  if R = DISP_E_EXCEPTION then
-     Raise Exception.Create(ExcepInfo.bstrDescription);
-  LocalInTransaction := true;
+  GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
+  try
+    DispParams.rgvarg[0].vt := varInteger;
+    TVarData(DispParams.rgvarg[0]).VInteger := TimeOut;
+    R := FInterpreter.CallInvoke(Ord(SKTBeginTrans),0,0,DispParams,nil, @ExcepInfo,nil);
+    if R = DISP_E_EXCEPTION then
+       Raise Exception.Create(ExcepInfo.bstrDescription);
+    LocalInTransaction := true;
+  finally
+    if DispParams.rgdispidNamedArgs <> nil then
+      FreeMem(DispParams.rgdispidNamedArgs);
+    if DispParams.rgvarg <> nil then
+      FreeMem(DispParams.rgvarg);
+  end;
 end;
 
 function TZClient.CancelBatch: Boolean;
@@ -503,6 +518,7 @@ begin
   DispParams.cArgs := FList.Count*2+1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -544,6 +560,7 @@ begin
 
     for i:=0 to FList.Count -1 do
        TZQuery(TZFactory(FList[i]).DataSet).CommitUpdates;
+    CancelBatch;
     Result := true;
   finally
     if DispParams.rgdispidNamedArgs <> nil then
@@ -587,6 +604,7 @@ begin
   DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -622,9 +640,10 @@ begin
   if ObjectFactory<>nil then Raise Exception.Create('客户端不支持ObjectFactory对象.');
   CheckSocketConnected;
 
-  DispParams.cArgs := 1;
+  DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   GetMem(VarList, DispParams.cArgs * SizeOf(OleVariant));
@@ -674,6 +693,7 @@ begin
   DispParams.cArgs := 1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   GetMem(VarList, DispParams.cArgs * SizeOf(OleVariant));
@@ -730,7 +750,8 @@ begin
   DispParams.cArgs := 1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
-  
+  DispParams.rgvarg := nil;
+
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   GetMem(VarList, DispParams.cArgs * SizeOf(OleVariant));
   System.Initialize(VarList^, DispParams.cArgs);
@@ -776,6 +797,7 @@ begin
   DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -824,6 +846,7 @@ begin
   DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -870,7 +893,7 @@ begin
   Result := false;
   if FList.Count = 0 then Raise Exception.Create('没有组合数据包..');
   CheckSocketConnected;
-  
+
   //数据打包说明
   //1:组合个数
   //2:组合对象 * 个数
@@ -878,6 +901,7 @@ begin
   DispParams.cArgs := FList.Count*2+1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -918,6 +942,7 @@ begin
 
     for i:=0 to FList.Count -1 do
        TZQuery(TZFactory(FList[i]).DataSet).Data := V[i];
+    CancelBatch;
     Result := true;
   finally
     if DispParams.rgdispidNamedArgs <> nil then
@@ -968,6 +993,7 @@ begin
   DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -1025,6 +1051,7 @@ begin
   DispParams.cArgs := 2;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
 
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
@@ -1086,7 +1113,74 @@ begin
   if not Connected then
     begin
        Connect;
+       DoSKTParameter;
     end;
+end;
+
+procedure TZClient.GqqLogin(UserId, UserName: string);
+var
+  ExcepInfo: TExcepInfo;
+  DispParams: TDispParams;
+  UID,UNM:widestring;
+  R:LongWord;
+begin
+  CheckSocketConnected;
+
+  DispParams.cArgs := 2;
+  DispParams.rgdispidNamedArgs := nil;
+  DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
+  GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
+  try
+    DispParams.rgvarg[0].vt := varOleStr;
+    UID := UserId;
+    TVarData(DispParams.rgvarg[0]).VOleStr := PWideChar(UID);
+    
+    DispParams.rgvarg[1].vt := varOleStr;
+    UNM := UserName;
+    TVarData(DispParams.rgvarg[1]).VOleStr := PWideChar(UNM);
+
+    R := FInterpreter.CallInvoke(Ord(SKTLogin),0,0,DispParams,nil, @ExcepInfo,nil);
+    if R = DISP_E_EXCEPTION then
+       Raise Exception.Create(ExcepInfo.bstrDescription);
+    LocalInTransaction := true;
+  finally
+    if DispParams.rgdispidNamedArgs <> nil then
+      FreeMem(DispParams.rgdispidNamedArgs);
+    if DispParams.rgvarg <> nil then
+      FreeMem(DispParams.rgvarg);
+  end;
+end;
+
+procedure TZClient.DoSKTParameter;
+var
+  ExcepInfo: TExcepInfo;
+  DispParams: TDispParams;
+  R:LongWord;
+begin
+  CheckSocketConnected;
+
+  DispParams.cArgs := 1;
+  DispParams.rgdispidNamedArgs := nil;
+  DispParams.cNamedArgs := 0;
+  DispParams.rgvarg := nil;
+
+  GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
+  try
+    DispParams.rgvarg[0].vt := varInteger;
+    TVarData(DispParams.rgvarg[0]).VInteger := dbid;
+
+    R := FInterpreter.CallInvoke(Ord(SKTParameter),0,0,DispParams,nil, @ExcepInfo,nil);
+
+    if R = DISP_E_EXCEPTION then
+       Raise Exception.Create(ExcepInfo.bstrDescription);
+       
+  finally
+    if DispParams.rgdispidNamedArgs <> nil then
+      FreeMem(DispParams.rgdispidNamedArgs);
+    if DispParams.rgvarg <> nil then
+      FreeMem(DispParams.rgvarg);
+  end;
 end;
 
 { TDoInvokeClientDispatch }

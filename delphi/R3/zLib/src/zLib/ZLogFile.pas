@@ -4,19 +4,15 @@ interface
 uses
   VarUtils, Variants, Windows, Messages, Classes, SysUtils,ZConst,
   ZIntf;
-Const
-  WM_LOGFILE_UPDATE=WM_USER+20;
 type
 TZLogFilePool=class
   private
     FList:TStringList;
     FThreadLock:TRTLCriticalSection;
     FDefaultPath: string;
-    FHandle: THandle;
     procedure Enter;
     procedure Leave;
     procedure SetDefaultPath(const Value: string);
-    procedure SetHandle(const Value: THandle);
   public
     procedure Clear;
     procedure AddLogFile(InfoType: Integer;Information:WideString;InfoSource:Widestring='';Operation:Widestring='';InfoID:Integer=-1;ComputerName:WideString='');
@@ -24,7 +20,6 @@ TZLogFilePool=class
     constructor Create;
     destructor Destroy; override;
     property  DefaultPath:string read FDefaultPath write SetDefaultPath;
-    property MainFormHandle:THandle read FHandle write SetHandle;
   end;
 var LogFile:TZLogFilePool;
 implementation
@@ -35,8 +30,8 @@ procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:WideString;Info
 begin
    Enter;
    try
-     Flist.Add(formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
-     if MainFormHandle<>0 then PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
+     Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
+     if MainFormHandle>0 then PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
    finally
      Leave;
    end;
@@ -100,11 +95,6 @@ end;
 procedure TZLogFilePool.SetDefaultPath(const Value: string);
 begin
   FDefaultPath := Value;
-end;
-
-procedure TZLogFilePool.SetHandle(const Value: THandle);
-begin
-  FHandle := Value;
 end;
 
 initialization

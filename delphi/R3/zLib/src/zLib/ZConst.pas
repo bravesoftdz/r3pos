@@ -6,6 +6,7 @@
 unit ZConst;
 
 interface
+uses Messages;
 resourcestring
   SIdInvalidToken = '接受无效的Token:%d';
   SIdInvalidConnectionString = '无效连接字符串:%s';
@@ -43,6 +44,23 @@ resourcestring
 
   SIdSessionNotFound = '没找到连接Session';
   SIdSessionMaxCount = '最大许可用户数为%d,增加许可用户数请和供应商联系';
+
+const
+  //工作日志变动消息
+  WM_LOGFILE_UPDATE=WM_USER+20;
+  //工作线程变动消息
+  WM_WORK_THREAD_UPDATE=WM_USER+21;
+  //客户端对话变动消息
+  WM_SESSION_UPDATE=WM_USER+22;
+  //连接池变动消息
+  WM_DB_CACHE_UPDATE=WM_USER+23;
+  //主窗体
+var
+  MainFormHandle:THandle;
+  StartServiceTickCount:int64;
 implementation
 
+initialization
+  StartServiceTickCount := 0;
+  MainFormHandle := 0;
 end.

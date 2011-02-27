@@ -136,12 +136,11 @@ type
                 SKTBeginTrans,
                 SKTCommitTrans,
                 SKTRollbackTrans,
-                SKTGeTZbType,
+                SKTGetiDbType,
                 SKTInTransaction,
                 SKTExecSQL,
                 SKTExecProc,
                 SKTParameter,     //设置参数
-                SKTGetiDbType,    //读数据库类型
                 SKTLogin          //登录服务器
                );
 
@@ -1105,8 +1104,7 @@ begin
             DispParams.rgvarg[i] := TVariantArg(VarList[i]);
         end;
       end;
-      if ExpectResult then
-         V := ReadVariant(VarFlags, Data);
+      if ExpectResult then V := ReadVariant(VarFlags, Data);
       Data.Clear;
       RetVal := Disp.DoInvoke(Token, LocaleID, Flags, DispParams, @V, @ExcepInfo, nil);
       WriteVariant(RetVal, Data);
@@ -1348,6 +1346,7 @@ function TZCustomDataBlockInterpreter.ReadVariant(out Flags: TVarFlags;
 var
   I, VType: Integer;
   W: WideString;
+  S: String;
   TmpFlags: TVarFlags;
 begin
   VarClear(Result);
@@ -1374,6 +1373,13 @@ begin
       SetLength(W, I);
       Data.Read(W[1], I * 2);
       Result := W;
+    end;
+    varString:
+    begin
+      Data.Read(I, SizeOf(Integer));
+      SetLength(S, I);
+      Data.Read(S[1], I);
+      Result := S;
     end;
     varDispatch:
     begin
@@ -1475,6 +1481,7 @@ procedure TZCustomDataBlockInterpreter.WriteVariant(const Value: OleVariant;
 var
   I, VType: Integer;
   W: WideString;
+  S: string;
 begin
   VType := VarType(Value);
   if VType and varArray <> 0 then
@@ -1490,6 +1497,14 @@ begin
         Data.Write(VType, SizeOf(Integer));
         Data.Write(I,SizeOf(Integer));
         Data.Write(W[1], I * 2);
+      end;
+      varString:
+      begin
+        S := Value;
+        I := Length(S);
+        Data.Write(VType, SizeOf(Integer));
+        Data.Write(I,SizeOf(Integer));
+        Data.Write(S[1], I);
       end;
       varDispatch:
       begin

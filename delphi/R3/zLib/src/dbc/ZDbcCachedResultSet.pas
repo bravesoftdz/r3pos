@@ -107,6 +107,10 @@ type
     procedure RevertRecord;
     procedure MoveToInitialRow;
     procedure InitRow;
+
+    //zhangsenrong  2011-02-24 add
+    procedure WriteStream(Stream:TStream;Modified:boolean);
+    function ReadStream(Stream:TStream):integer;
   end;
 
   {** Implements cached ResultSet. }
@@ -251,6 +255,11 @@ type
     procedure CancelUpdates; virtual;
     procedure RevertRecord; virtual;
     procedure MoveToInitialRow; virtual;
+
+    //zhangsenrong  2011-02-24 add
+    procedure WriteStream(Stream:TStream;Modified:boolean);
+    function ReadStream(Stream:TStream):integer;
+
   end;
 
   {**
@@ -521,7 +530,9 @@ begin
       //FRowAccessor.RowBuffer := FSelectedRow;
       //改后的
       FRowAccessor.RowBuffer := FInitialRowsList[Index];
-    end;
+    end
+    else
+      FRowAccessor.RowBuffer := nil;
   end else
     FRowAccessor.RowBuffer := nil;
 end;
@@ -1971,6 +1982,392 @@ end;
 procedure TZAbstractCachedResultSet.SetStatement(Value: IZStatement);
 begin
   Statement := Value;
+end;
+
+function TZAbstractCachedResultSet.ReadStream(Stream: TStream):integer;
+procedure ReadBuffer;
+var
+  s1:string;
+  s2:widestring;
+  s3:TByteDynArray;
+  s4:IZBlob;
+  s5:boolean;
+  s7:Integer;
+  s10:Extended;
+  s11:TDatetime;
+  s12:SmallInt;
+  s13:Int64;
+  zIsNull:boolean;
+  i,w:integer;
+  sm:TMemoryStream;
+begin
+  for i:=1 to RowAccessor.ColumnCount do
+   begin
+    case RowAccessor.GetColumnType(i) of
+    stBoolean:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(s5,SizeOf(s5));
+           RowAccessor.SetBoolean(i,s5);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stShort,stByte:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(s12,SizeOf(s12));
+           RowAccessor.SetShort(i,s12);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stInteger:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(s7,SizeOf(s7));
+           RowAccessor.SetInt(i,s7);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stLong:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(s13,SizeOf(s13));
+           RowAccessor.SetLong(i,s13);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stFloat,stDouble,stBigDecimal:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(s10,SizeOf(s10));
+           RowAccessor.SetBigDecimal(i,s10);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stString:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(w,SizeOf(Integer));
+           setlength(s1,w);
+           Stream.Read(pchar(s1)^,w);
+           RowAccessor.SetString(i,s1);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stUnicodeString,stUnicodeStream:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.read(w,SizeOf(Integer));
+           setlength(s1,w*2);
+           Stream.read(pchar(s2)^,w*2);
+           RowAccessor.SetUnicodeString(i,s2);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stBytes:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.read(w,SizeOf(Integer));
+           if w<>0 then
+           begin
+             Setlength(s3,w);
+             Stream.read(s3[0],w);
+             RowAccessor.SetBytes(i,s3);
+           end else RowAccessor.SetNull(i);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stDate,stTime,stTimestamp:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.read(s11,SizeOf(s11));
+           RowAccessor.SetDate(i,s11);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    stAsciiStream,stBinaryStream:
+      begin
+        Stream.Read(zIsNull,SizeOf(zIsNull));
+        if not zIsNull then
+        begin
+           Stream.Read(w,SizeOf(w));
+           if w>0 then
+           begin
+             sm := TMemoryStream.Create;
+             try
+               sm.CopyFrom(Stream,w);
+               sm.Position := 0;
+               case RowAccessor.GetColumnType(i) of
+               stAsciiStream:RowAccessor.SetAsciiStream(i,sm);
+               stBinaryStream:RowAccessor.SetBinaryStream(i,sm);
+               end;
+             finally
+               sm.Free;
+             end;
+           end else RowAccessor.SetNull(i);
+        end
+        else
+           RowAccessor.SetNull(i);
+      end;
+    else
+      Raise Exception.Create('不支持的数据类型.');
+    end;
+   end;
+end;
+var
+  r,sRow:integer;
+  us,ous:TZRowUpdateType;
+  s:string;
+begin
+  result := 0;
+  sRow := RowNo;
+  try
+  //读数据行
+  while Stream.Position < Stream.Size do
+    begin
+      inc(result);
+      Stream.Read(r,SizeOf(r));
+      Stream.Read(us,SizeOf(us));
+      //分配一行
+      case us of
+      utUnmodified:
+        begin
+          InitRow;
+          ReadBuffer;
+        end;
+      utInserted:
+        begin
+          MoveToInsertRow;
+          ReadBuffer;
+          InsertRow;
+        end;
+      utModified:
+        begin
+          //读原值
+          InitRow;
+          ReadBuffer;
+          //读新值
+          PrepareRowForUpdates;
+          ReadBuffer;
+          UpdateRow;
+        end;
+      utDeleted:
+        begin
+          InitRow;
+          ReadBuffer;
+          DeleteRow;
+        end;
+      end;
+    end;
+  finally
+    RowNo := sRow;
+  end;
+end;
+
+procedure TZAbstractCachedResultSet.WriteStream(Stream: TStream;Modified:boolean);
+procedure WriteBuffer;
+var
+  s1:string;
+  s2:widestring;
+  s3:TByteDynArray;
+  s4:IZBlob;
+  s5:boolean;
+  s7:Integer;
+  s10:Extended;
+  s11:TDatetime;
+  s12:SmallInt;
+  s13:Int64;
+  zIsNull:boolean;
+  i,w:integer;
+begin
+  for i:=1 to RowAccessor.ColumnCount do
+     begin
+      case RowAccessor.GetColumnType(i) of
+      stBoolean:
+        begin
+          s5 := GetBoolean(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s5,SizeOf(s5));
+          end;
+        end;
+      stShort,stByte:
+        begin
+          s12 := GetShort(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s12,SizeOf(s12));
+          end;
+        end;
+      stInteger:
+        begin
+          s7 := GetInt(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s7,SizeOf(s7));
+          end;
+        end;
+      stLong:
+        begin
+          s13 := GetLong(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s13,SizeOf(s13));
+          end;
+        end;
+      stFloat,stDouble,stBigDecimal:
+        begin
+          s10 := GetBigDecimal(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s10,SizeOf(s10));
+          end;
+        end;
+      stString:
+        begin
+          s1 := GetString(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             w := length(s1);
+             Stream.Write(w,SizeOf(Integer));
+             Stream.Write(pchar(s1)^,w);
+          end;
+        end;
+      stUnicodeString,stUnicodeStream:
+        begin
+          s2 := GetUnicodeString(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             w := length(s2);
+             Stream.Write(w,SizeOf(Integer));
+             Stream.Write(pchar(s2)^,w*2);
+          end;
+        end;
+      stBytes:
+        begin
+          s3 := GetBytes(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             w := high(s3)-low(s3);
+             Stream.Write(w,SizeOf(Integer));
+             if w>0 then
+                Stream.Write(s3[0],w);
+          end;
+        end;
+      stDate,stTime,stTimestamp:
+        begin
+          s11 := GetDate(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             Stream.Write(s11,SizeOf(s11));
+          end;
+        end;
+      stAsciiStream, stBinaryStream:
+        begin
+          s4 := GetBlob(i);
+          zIsNull := WasNull;
+          Stream.Write(zIsNull,SizeOf(zIsNull));
+          if not zIsNull then
+          begin
+             w := s4.GetStream.Size;
+             Stream.Write(w,SizeOf(w));
+             if w>0 then
+                Stream.CopyFrom(s4.GetStream,w);
+          end;
+        end;
+      else
+        Raise Exception.Create('不支持的数据类型.');
+      end;
+     end;
+end;
+var
+  r:integer;
+  us:TZRowUpdateType;
+begin
+  for r:=1 to FRowsList.Count do
+    begin
+      if not MoveAbsolute(r) then continue;
+      us := utUnmodified;
+      if RowInserted then
+         us := utInserted
+      else
+      if RowUpdated then
+         us := utModified
+      else
+      if RowDeleted then
+         us := utDeleted;
+      if Modified and (us =utUnmodified) then Continue;
+      if us in [utDeleted] then
+         begin
+           MoveToInitialRow;
+           try
+             if not Assigned(RowAccessor.RowBuffer) or
+                (RowAccessor.RowBuffer^.UpdateType=utInserted)
+             then continue; //对刚新增的记录就被删除不处理。
+           finally
+              MoveToCurrentRow;
+           end;
+         end;
+      Stream.Write(r,SizeOf(r));
+      Stream.Write(us,SizeOf(us));
+      //打包修改前原值
+      if us=utModified then
+      begin
+        MoveToInitialRow;
+        try
+          WriteBuffer;
+        finally
+          MoveToCurrentRow;
+        end;
+      end;
+      //打包当前字段值
+      WriteBuffer;
+    end;
 end;
 
 end.

@@ -122,6 +122,9 @@ type
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;virtual;abstract;
     
+    //用户登录
+    procedure GqqLogin(UserId:string;UserName:string);virtual;abstract;
+    
     property dbid:integer read Fdbid write Setdbid;
   end;
   TdbResolver=class(TCustomdbResolver)
@@ -179,6 +182,8 @@ type
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
 
+    //用户登录
+    procedure GqqLogin(UserId:string;UserName:string);override;
   end;
 
 implementation
@@ -627,7 +632,7 @@ begin
           begin
             if ZClassName<>'' then
                begin
-                 ReadFromDataSet(DataSet);
+//                 ReadFromDataSet(DataSet);
                  BeforeCommitRecord(dbHelp);
                end;
           end;
@@ -703,6 +708,12 @@ function TdbResolver.UpdateBatch(DataSet: TDataSet;
   AClassName: String): Boolean;
 begin
   result := UpdateBatch(DataSet,AClassName,nil);
+end;
+
+procedure TdbResolver.GqqLogin(UserId, UserName: string);
+begin
+  inherited;
+
 end;
 
 { TZdbUpdate }

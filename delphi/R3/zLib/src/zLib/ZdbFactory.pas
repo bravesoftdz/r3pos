@@ -24,27 +24,27 @@ type
     destructor  Destroy;override;
 
     //设置连接参数 connmode=1 本地连接 2 Rsp服务连接
-    function  Initialize(Const ConnStr:WideString):boolean;stdcall;
+    function  Initialize(Const ConnStr:WideString):boolean;
     //读取连接串
-    function  GetConnectionString:WideString;stdcall;
+    function  GetConnectionString:WideString;
     //连接数据库
-    function  Connect:boolean;stdcall;
+    function  Connect:boolean;
     //检测通讯连接状态
-    function  Connected:boolean;stdcall;
+    function  Connected:boolean;
     //关闭数据库
-    function  DisConnect:boolean;stdcall;
+    function  DisConnect:boolean;
 
     //开始事务  超时设置 单位秒
-    procedure BeginTrans(TimeOut:integer=-1);stdcall;
+    procedure BeginTrans(TimeOut:integer=-1);
     //提交事务
-    procedure CommitTrans;stdcall;
+    procedure CommitTrans;
     //回滚事务
-    procedure RollbackTrans;stdcall;
+    procedure RollbackTrans;
     //是否已经在事务中 True 在事务中
-    function  InTransaction:boolean;stdcall;
+    function  InTransaction:boolean;
 
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function  iDbType:Integer;stdcall;
+    function  iDbType:Integer;
 
     //数据包组织
     function BeginBatch:Boolean;
@@ -54,20 +54,23 @@ type
     function CancelBatch:Boolean;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
-    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
-    function Open(DataSet:TDataSet):Boolean;overload;stdcall;
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; 
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; 
+    function Open(DataSet:TDataSet):Boolean;overload;
 
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; stdcall;
-    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; stdcall;
-    function UpdateBatch(DataSet:TDataSet):Boolean;overload;stdcall;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; 
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; 
+    function UpdateBatch(DataSet:TDataSet):Boolean;overload;
 
     //返回执行影响记录数
-    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;stdcall;
+    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;
 
     //执行远程方式，返回结果
-    function ExecProc(AClassName:String;Params:TftParamList=nil):String;stdcall;
+    function ExecProc(AClassName:String;Params:TftParamList=nil):String;
+
+    //用户登录
+    procedure GqqLogin(UserId:string;UserName:string);
 
     //连接模式 1 是本地连接  2 RSP通讯连接
     property ConnMode:integer read FConnMode write SetConnMode;
@@ -352,7 +355,7 @@ end;
 procedure TdbFactory.SetConnMode(const Value: integer);
 begin
   FConnMode := Value;
-  
+
 end;
 
 procedure TdbFactory.SetConnStr(const Value: string);
@@ -369,6 +372,11 @@ end;
 procedure TdbFactory.Leave;
 begin
   LeaveCriticalSection(FThreadLock);
+end;
+
+procedure TdbFactory.GqqLogin(UserId, UserName: string);
+begin
+  dbResolver.GqqLogin(UserId,UserName); 
 end;
 
 end.

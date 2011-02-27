@@ -4,7 +4,7 @@ interface
 uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, ExtCtrls,Forms, StdCtrls,
   ComCtrls, ScktComp, Registry,SyncObjs,ScktCnst,RTLConsts,MidConst,
-  DB, ZIntf, ZPacket,ZServer, OleServer,ZLogFile,ZWSock2;
+  DB, ZIntf, ZPacket,ZServer, OleServer,ZLogFile,ZWSock2,ZConst;
 
 const
   SHUTDOWN_FLAG = WM_USER + 3;
@@ -18,6 +18,7 @@ const
 
 
 type
+
   PPER_IO_OPERATION_DATA = ^PER_IO_OPERATION_DATA;
   PER_IO_OPERATION_DATA = packed record
     Overlapped: OVERLAPPED;
@@ -80,6 +81,7 @@ type
   private
     FhEvent: THandle;
     FInterpreter: TZDataBlockInterpreter;
+    GZip:IDataIntercept;
     SocketDispatcher:TSocketDispatcher;
     FRecvBuffer : PPER_IO_OPERATION_DATA;
     FSendBuffer : PPER_IO_OPERATION_DATA;
@@ -158,6 +160,7 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    
     //客户端Scoket队例
     procedure Lock;
     procedure UnLock;
@@ -198,9 +201,9 @@ type
   end;
 
 var
-  ThreadCount:integer;    //线程数
-  DictateCount:integer;   //指令数
-  MngThreadCount:integer; //管理线程
+  WorkThreadCount:integer;//线程数
+  MaxThreadCount:integer; //最大线程数
+  ExecThreadCount:integer;//工作中线程
 implementation
 uses IniFiles;
 type
@@ -268,8 +271,7 @@ begin
               continue;
            end;
            
-         if Cardinal(Overlapped) = SHUTDOWN_FLAG then
-            break;
+         if Cardinal(Overlapped) = SHUTDOWN_FLAG then break;
 
          if BytesTransd = 0  then
            begin
@@ -382,13 +384,12 @@ begin
     WSAAsyncSelect(ASocket.FSocket, FHandle, WM_CLIENTSOCKET, FD_CLOSE);
     SocketCache.Add(Pointer(ASocket));
     Session := TZSession.Create;
-    Sessions.Add(Session);
     Session.Port := inttostr(Port);
     Session.IPAddress := ASocket.RemoteAddress +':'+inttostr(ASocket.RemotePort);
     //  Session.Host := ASocket.RemoteHost;
     Session.SessionID := Integer(ASocket);
-    Session.Send := nil;
     ASocket.Session := Session;
+    Sessions.Add(Session);
   finally
     UnLock;
   end;
@@ -445,11 +446,29 @@ begin
 end;
 
 procedure TSocketDispatcher.CloseAcceptThread;
+var
+  i,j:integer;
 begin
-  while AcceptPool.Count > 0 do
+  for i:=0 to AcceptPool.Count -1 do
     begin
-       PostQueuedCompletionStatus(iocp, 0, 0, Pointer(SHUTDOWN_FLAG));
+      with TSocketDispatcherThread(AcceptPool[i]) do
+        begin
+          Terminate;
+        end;
     end;
+  for i:=0 to AcceptPool.Count -1 do
+    begin
+      for j:=0 to AcceptPool.Count -1 do
+      begin
+         PostQueuedCompletionStatus(iocp, 0, 0, Pointer(SHUTDOWN_FLAG));
+      end;
+      with TSocketDispatcherThread(AcceptPool[i]) do
+        begin
+          WaitFor;
+          free;
+        end;
+    end;
+
 end;
 
 constructor TSocketDispatcher.Create(AOwner: TComponent);
@@ -544,13 +563,18 @@ begin
   end;
 
   DataCache.Clear;
+  Lock;
+  try
+    for i:=SocketCache.Count -1 downto 0 do
+       begin
+         TObject(SocketCache[i]).Free;
+       end;
+    SocketCache.Clear;
+  finally
+    UnLock;
+  end;
 
-  List := SocketCache;
-  while List.Count > 0 do
-    TObject(List.Last).Free;
-
-  if FListenThread<>nil then
-     FListenThread.Terminate;
+  if FListenThread<>nil then FListenThread.Terminate;
   if FSocket <> INVALID_SOCKET then
   begin
     closesocket(FSocket);
@@ -608,12 +632,12 @@ var
   Section: string;
   F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'iocp.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sckt.cfg');
   try
     if PortNo = -1 then
     begin
-      Section := csSettings;
-      Port := F.ReadInteger(Section, ckPort, 1024);
+      Section := '1024';
+      Port := 1024;
     end else
     begin
       Section := IntToStr(PortNo);
@@ -699,10 +723,9 @@ var
   Section: string;
   F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'iocp.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sckt.cfg');
   try
     Section := IntToStr(Port);
-    F.WriteInteger(Section, 'ckPort', Port);
     F.WriteInteger(Section, 'ckThreadCacheSize', ThreadCacheSize);
     F.WriteInteger(Section, 'ckTimeout', Timeout);
     F.WriteBool(Section, 'ckKeepAlive', FKeepAlive);
@@ -728,7 +751,6 @@ end;
 
 destructor TSocketDispatcherThread.Destroy;
 begin
-  SocketDispatcher.AcceptPool.Remove(Pointer(self)); 
   inherited;
 end;
 
@@ -759,6 +781,7 @@ procedure TServerClientSocket.AddBlock(DataBlock: IDataBlock);
 begin
   InterlockedIncrement(WaitCount);
   StartListen;
+  GZip.DataIn(DataBlock); 
   SocketDispatcher.AddBlock(DataBlock,self);
   SocketDispatcher.CallWorker(0);
 end;
@@ -783,6 +806,7 @@ end;
 constructor TServerClientSocket.Create(ASocket: TSocket;ASocketDispatcher:TSocketDispatcher);
 var ISend: ISendDataBlock;
 begin
+  GZip := TZDataCompressor.Create;
   LockThread := false;
   inherited Create(nil);
   FhEvent := CreateEvent(nil, True, False, nil);
@@ -796,6 +820,7 @@ begin
   new(FSendBuffer);
   ZeroMemory(FSendBuffer,sizeof(PER_IO_OPERATION_DATA));
   FSocket := ASocket;
+  SocketDispatcher.AddClient(self); 
 end;
 
 destructor TServerClientSocket.Destroy;
@@ -808,6 +833,7 @@ begin
   Dispose(FSendBuffer);
   FInterpreter.DoInvokeDispatch := nil;
   FInterpreter.Free;
+  GZip := nil;
   inherited;
 end;
 
@@ -887,6 +913,7 @@ begin
   InterlockedDecrement(WaitCount);
   if FSocket=INVALID_SOCKET then Exit;
 
+  GZip.DataOut(Data); 
   while FSendBuffer^.IOMode <> IOIDLE do
      WaitForSingleObject(FhEvent, 500);
   FSendBuffer^.Buffer := nil;
@@ -1040,18 +1067,20 @@ end;
 constructor TSocketWorkerThread.Create(AOwner: TSocketDispatcher);
 begin
   inherited Create(false);
-  InterlockedIncrement(ThreadCount);
+  InterlockedIncrement(WorkThreadCount);
+  if WorkThreadCount>MaxThreadCount then MaxThreadCount := WorkThreadCount;
   FhEvent := CreateEvent(nil, True, False, nil);
   FreeOnTerminate := false;
   SocketDispatcher := AOwner;
   FWorking := false;
+  if MainFormHandle>0 then PostMessage(MainFormHandle,WM_WORK_THREAD_UPDATE,0,0);
 end;
 
 destructor TSocketWorkerThread.Destroy;
 begin
   if FhEvent<>0 then CloseHandle(FhEvent);
-  InterlockedDecrement(ThreadCount);
-  if Application.MainForm<>nil then PostMessage(Application.MainForm.Handle,WM_UPDATESTATUS,2,0);
+  InterlockedDecrement(WorkThreadCount);
+  if MainFormHandle>0 then PostMessage(MainFormHandle,WM_WORK_THREAD_UPDATE,0,0);
   inherited;
 end;
 
@@ -1069,9 +1098,10 @@ begin
       try
         while (sdb<>nil) and not Terminated do
           begin
-            InterlockedIncrement(DictateCount);
-            SocketDispatcher.LockClient(sdb.SessionId); 
+            InterlockedIncrement(ExecThreadCount);
+            if ExecThreadCount + WaitDataBlockCount> MaxSyncRequestCount then MaxSyncRequestCount := ExecThreadCount + WaitDataBlockCount;
             try
+              SocketDispatcher.LockClient(sdb.SessionId);
               try
                  if sdb^.Data = nil then //为空时，代表关闭SOCKET请求包
                     begin
@@ -1094,7 +1124,7 @@ begin
                  end;
               end;
             finally
-               InterlockedDecrement(DictateCount);
+               InterlockedDecrement(ExecThreadCount);
                SocketDispatcher.UnLockClient(sdb.SessionId);
                sdb.Data := nil;
                dispose(sdb);
@@ -1158,8 +1188,8 @@ begin
 end;
 
 initialization
-  ThreadCount := 0;
-  DictateCount := 0;
-  MngThreadCount := 0;
+  WorkThreadCount := 0;
+  MaxThreadCount := 0;
+  ExecThreadCount := 0;
 end.
 

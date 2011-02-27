@@ -355,7 +355,7 @@ begin
   Result := Temp^;
   LastWasNull := Result = nil;
   //zhangsenrong 2011-01-26
-  if Result<>nil then
+  if (Result<>nil) and not (TZColumnInfo(ColumnsInfo[ColumnIndex-1]).ColumnType in [stAsciiStream,stBinaryStream]) then
      begin
        s := UTF8ToAnsi(StrPas(Result));
        StrLCopy(Result,Pchar(s),length(s));
@@ -379,8 +379,8 @@ begin
   if Buffer <> nil then
     result := StrPas(Buffer)
   else Result := '';
-  //zhangsenrong 2011-01-26
-  result := UTF8toAnsi(result);
+  //zhangsenrong 2011-01-26 GetPChar已经转换过了
+  //result := UTF8toAnsi(result);
 end;
 
 {**

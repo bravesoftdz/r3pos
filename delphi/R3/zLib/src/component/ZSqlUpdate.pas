@@ -669,7 +669,8 @@ procedure TZUpdateSQL.CalculateDefaults(Sender: IZCachedResultSet;
   RowAccessor: TZRowAccessor);
 begin
  {BEGIN PATCH [1214009] TZUpdateSQL - implemented feature to Calculate default values}
- Sender.GetNativeResolver.CalculateDefaults(Sender, RowAccessor);
+ //zhangsr 2011-02-25更新不需要计算默认值
+ //Sender.GetNativeResolver.CalculateDefaults(Sender, RowAccessor);
  {END PATCH [1214009] TZUpdateSQL - implemented feature to Calculate default values}
 end;
 

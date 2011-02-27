@@ -291,7 +291,7 @@ function gsmBytes2String(pSrc:string):string;
 function gsmString2Bytes(pSrc:string):string;
 
 implementation
-uses IniFiles,Registry;
+uses encddecd,IniFiles,Registry;
 
 procedure StrToStrings(S: string; Sep: string; List: TStrings);
 var
@@ -1250,7 +1250,7 @@ var
   p7:TBcd;
   param:TParam;
 begin
-  ss := TStringStream.Create(str);
+  ss := TStringStream.Create(DecodeString(str));
   try
     ss.Position := 0;
     ss.Read(c,sizeof(c)); 
@@ -1401,7 +1401,7 @@ begin
            Raise Exception.Create('不支持的数据参数类型'); 
         end;
       end;
-    result := ss.DataString;
+    result := EncodeString(ss.DataString);
   finally
     ss.free;
   end;

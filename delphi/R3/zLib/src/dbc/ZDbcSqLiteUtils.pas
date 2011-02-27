@@ -178,6 +178,8 @@ begin
     Result := stTimestamp
   else if Pos('BLOB', TypeName) > 0 then
     Result := stBinaryStream
+  else if Pos('IMAGE', TypeName) > 0 then
+    Result := stBinaryStream
   else if Pos('CLOB', TypeName) > 0 then
     Result := stAsciiStream
   else if Pos('TEXT', TypeName) > 0 then

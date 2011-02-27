@@ -41,8 +41,10 @@ type
     isfirst:boolean;
     reck_flag:integer;
     reck_day:integer;
+    tempTableName:string;
     //核算前准备
     procedure Prepare;
+    procedure CreateTempTable;
     procedure PrepareDataForRck;
     //移动平均成本核算<按开单时的平均加计算>
     procedure Calc0;
@@ -134,7 +136,7 @@ begin
         'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
         'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-        'from TMP_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
+        'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
         'union all '+
         'select '+
         'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
@@ -346,7 +348,7 @@ begin
     begin
     //准备期初
     SQL :=
-          'insert into TMP_GOODS_DAYS('+
+          'insert into '+tempTableName+'('+
           'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
           'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST)'+
           'select '+
@@ -357,9 +359,9 @@ begin
 
     //计算成本
     SQL :=
-      'update TMP_GOODS_DAYS set '+
+      'update '+tempTableName+' set '+
       'COST_PRICE=(select case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0))/(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))*1.0),6) else 0 end '+
-      'from TMP_GOODS_DAYS A where A.TENANT_ID=TMP_GOODS_DAYS.TENANT_ID and A.GODS_ID=TMP_GOODS_DAYS.GODS_ID and A.BATCH_NO=TMP_GOODS_DAYS.BATCH_NO and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+') '+
+      'from '+tempTableName+' A where A.TENANT_ID='+tempTableName+'.TENANT_ID and A.GODS_ID='+tempTableName+'.GODS_ID and A.BATCH_NO='+tempTableName+'.BATCH_NO and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+') '+
       'where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',e)+'';
     Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
     end;
@@ -412,7 +414,7 @@ begin
           'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
           'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
           'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-          'from TMP_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i)+' '+
+          'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i)+' '+
           'union all '+
           'select '+
           'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
@@ -465,10 +467,10 @@ var
 begin
   myDate := cDate;
   if (calc_flag=2) then myDate := bDate;
-  SQL := 'delete from TMP_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  SQL := 'delete from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
   SQL :=
-    'insert into TMP_GOODS_DAYS('+
+    'insert into '+tempTableName+'('+
     'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
     'NEW_INPRICE,NEW_OUTPRICE,'+
     'ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+
@@ -501,7 +503,7 @@ begin
   Factor.ExecSQL(SQL);
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(CREA_DATE) from TMP_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    rs.SQL.Text := 'select max(CREA_DATE) from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
     if rs.Fields[0].asString<>'' then
        myDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
@@ -573,7 +575,7 @@ begin
         'CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,CHANGE3_CST,'+
         'CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,'+
         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST '+
-        'from TMP_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
+        'from '+tempTableName+' A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
         'union all '+
         'select '+
         'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
@@ -839,6 +841,82 @@ end;
 procedure TfrmCostCalc.SetuDate(const Value: TDate);
 begin
   FuDate := Value;
+end;
+
+procedure TfrmCostCalc.CreateTempTable;
+var
+  SQL:string;
+begin
+  case Factor.iDbType of
+  0:tempTableName := '#TMP_GOODS_DAYS';
+  1,4,5:begin tempTableName := 'TMP_GOODS_DAYS';exit;end;
+  end;
+
+  SQL :=
+  'if not exists (select * from sys.objects where object_id = OBJECT_ID(N''tempdb..#tmp'')) '+
+  'CREATE TABLE '+tempTableName+' ('+
+  '	TENANT_ID int NOT NULL ,'+
+  '	SHOP_ID varchar (11) NOT NULL ,'+
+  '	CREA_DATE int NOT NULL ,'+
+  '	GODS_ID varchar (36)  NOT NULL ,'+
+  '	BATCH_NO varchar (36) NOT NULL ,'+
+  '	NEW_INPRICE decimal(18, 3) NULL ,'+
+  '	NEW_OUTPRICE decimal(18, 3) NULL ,'+
+  '	ORG_AMT decimal(18, 3) NULL ,'+
+  '	ORG_MNY decimal(18, 3) NULL ,'+
+  '	ORG_RTL decimal(18, 3) NULL ,'+
+  '	ORG_CST decimal(18, 3) NULL ,'+
+  '	STOCK_AMT decimal(18, 3) NULL ,'+
+  '	STOCK_MNY decimal(18, 3) NULL ,'+
+  '	STOCK_TAX decimal(18, 3) NULL ,'+
+  '	STOCK_RTL decimal(18, 3) NULL ,'+
+  '	STOCK_AGO decimal(18, 3) NULL ,'+
+  '	STKRT_AMT decimal(18, 3) NULL ,'+
+  '	STKRT_MNY decimal(18, 3) NULL ,'+
+  '	STKRT_TAX decimal(18, 3) NULL ,'+
+  '	SALE_AMT decimal(18, 3) NULL ,'+
+  '	SALE_RTL decimal(18, 3) NULL ,'+
+  '	SALE_AGO decimal(18, 3) NULL ,'+
+  '	SALE_MNY decimal(18, 3) NULL ,'+
+  '	SALE_TAX decimal(18, 3) NULL ,'+
+  '	SALE_CST decimal(18, 3) NULL ,'+
+  '	COST_PRICE decimal(18, 6) NULL ,'+
+  '	SALE_PRF decimal(18, 3) NULL ,'+
+  '	SALRT_AMT decimal(18, 3) NULL ,'+
+  '	SALRT_MNY decimal(18, 3) NULL ,'+
+  '	SALRT_TAX decimal(18, 3) NULL ,'+
+  '	SALRT_CST decimal(18, 3) NULL ,'+
+  '	DBIN_AMT decimal(18, 3) NULL ,'+
+  '	DBIN_MNY decimal(18, 3) NULL ,'+
+  '	DBIN_RTL decimal(18, 3) NULL ,'+
+  '	DBIN_CST decimal(18, 3) NULL ,'+
+  '	DBOUT_AMT decimal(18, 3) NULL ,'+
+  '	DBOUT_MNY decimal(18, 3) NULL ,'+
+  '	DBOUT_RTL decimal(18, 3) NULL ,'+
+  '	DBOUT_CST decimal(18, 3) NULL ,'+
+  '	CHANGE1_AMT decimal(18, 3) NULL ,'+
+  '	CHANGE1_MNY decimal(18, 3) NULL ,'+
+  '	CHANGE1_RTL decimal(18, 3) NULL ,'+
+  '	CHANGE1_CST decimal(18, 3) NULL ,'+
+  '	CHANGE2_AMT decimal(18, 3) NULL ,'+
+  '	CHANGE2_MNY decimal(18, 3) NULL ,'+
+  '	CHANGE2_RTL decimal(18, 3) NULL ,'+
+  '	CHANGE2_CST decimal(18, 3) NULL ,'+
+  '	CHANGE3_AMT decimal(18, 3) NULL ,'+
+  '	CHANGE3_MNY decimal(18, 3) NULL ,'+
+  '	CHANGE3_RTL decimal(18, 3) NULL ,'+
+  '	CHANGE3_CST decimal(18, 3) NULL ,'+
+  '	CHANGE4_AMT decimal(18, 3) NULL ,'+
+  '	CHANGE4_MNY decimal(18, 3) NULL ,'+
+  '	CHANGE4_RTL decimal(18, 3) NULL ,'+
+  '	CHANGE4_CST decimal(18, 3) NULL ,'+
+  '	CHANGE5_AMT decimal(18, 3) NULL ,'+
+  '	CHANGE5_MNY decimal(18, 3) NULL ,'+
+  '	CHANGE5_RTL decimal(18, 3) NULL ,'+
+  '	CHANGE5_CST decimal(18, 3) NULL '+
+  ')';
+  Factor.ExecSQL(SQL); 
+  Factor.ExecSQL('truncate table '+tempTableName); 
 end;
 
 end.

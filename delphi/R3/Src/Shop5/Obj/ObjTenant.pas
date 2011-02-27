@@ -19,10 +19,14 @@ implementation
 
 function TTenant.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
-  Str: String;
+  Str,shopid,dutyid: String;
 begin
   Result := False;
-  
+  case AGlobal.iDbType of
+  5:shopid := 'cast(:TENANT_ID *10000+1 as varchar(11))';
+  else
+    shopid := ':TENANT_ID *10000+1';
+  end;
   Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
   ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
@@ -30,7 +34,7 @@ begin
   ' values(:TENANT_ID,''USING_DATE'','''+formatDatetime('YYYY-MM-DD',Date())+''',0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
   Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,SEQ_NO,LINKMAN,'+
-  'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values(cast(:TENANT_ID *10000+1 as varchar(11)),:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
+  'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values('+shopid+',:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
   '''1'',:TENANT_ID,:REGION_ID,1,:LINKMAN,:TELEPHONE,:ADDRESS,:POSTALCODE,:FAXES,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
 
@@ -74,7 +78,7 @@ begin
 
   //为每个门店初始化现金账户
   Str := 'insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,comm,time_stamp)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *10000+1 as varchar(11)),'''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+shopid+','''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
   //为企业初始化管理员
@@ -85,23 +89,28 @@ begin
   ' values(:TENANT_ID,''PASSWRD'',''79415A40'',0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
+  case AGlobal.iDbType of
+  5:dutyid := 'cast(:TENANT_ID *1000+1 as varchar(11))';
+  else
+    dutyid := ':TENANT_ID *1000+1';
+  end;
   //为企业初始化职务
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *1000+1 as varchar(10)),''老板'',''001'',''LB'',''企业经营者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+dutyid+',''老板'',''001'',''LB'',''企业经营者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *1000+2 as varchar(10)),''店长'',''001001'',''DZ'',''门店管理者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+dutyid+',''店长'',''001001'',''DZ'',''门店管理者'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *1000+3 as varchar(10)),''收银员'',''001001001'',''SYY'',''门店收银负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+dutyid+',''收银员'',''001001001'',''SYY'',''门店收银负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *1000+4 as varchar(10)),''导购员'',''001001002'',''DGY'',''门店业务负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+dutyid+',''导购员'',''001001002'',''DGY'',''门店业务负责人'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
 
   //为企业初始化部门
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,cast(:TENANT_ID *1000+1 as varchar(10)),''总店'',''001'',''ZD'',''后台仓库'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+dutyid+',''总店'',''001'',''ZD'',''后台仓库'',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
   //初始化会员等级
   Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+

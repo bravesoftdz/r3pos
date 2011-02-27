@@ -888,7 +888,8 @@ begin
 //  if not FileExists(Global.InstallPath+'Data\R3.db') then
 //     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
 //  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
-  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
+  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=zhangsr;hostname=zhangsr');
+//  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
   Factor.Connect;
   if not UpdateDbVersion then Exit;
   ShopGlobal.offline := true;

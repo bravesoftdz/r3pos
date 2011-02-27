@@ -230,6 +230,9 @@ insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values
 
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','零售商','TENANT_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
+--关系类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','未审','AUDIT_STATUS','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','已审','AUDIT_STATUS','00',strftime('%s','now','localtime')-1293840000);
 --企业资料
 CREATE TABLE [CA_TENANT](
     --企业代码 1000001
@@ -272,7 +275,7 @@ CREATE TABLE [CA_TENANT](
 	[REGION_ID] [varchar](10) NULL,
     --服务器编号
 	[SRVR_ID] [varchar](10) NULL,
-    --状态 0申请 1已审
+    --状态 1申请 2已审
 	[AUDIT_STATUS] [varchar](1) NOT NULL,
     --软件产品编号
 	[PROD_ID] [varchar](10) NULL,

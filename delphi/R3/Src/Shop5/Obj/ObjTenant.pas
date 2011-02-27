@@ -91,10 +91,10 @@ begin
   AGlobal.ExecSQL(Str,self);
 
   case AGlobal.iDbType of
-  0:shopid := 'convert(varchar,:TENANT_ID)+''1001''';
-  1:shopid := 'to_char(:TENANT_ID)||''1001''';
-  4:shopid := 'str(:TENANT_ID)||''1001''';
-  5:shopid := 'cast(:TENANT_ID as varchar)||''1001''';
+  0:dutyid := 'convert(varchar,:TENANT_ID)+''1001''';
+  1:dutyid := 'to_char(:TENANT_ID)||''1001''';
+  4:dutyid := 'str(:TENANT_ID)||''1001''';
+  5:dutyid := 'cast(:TENANT_ID as varchar)||''1001''';
   end;
   //为企业初始化职务
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+

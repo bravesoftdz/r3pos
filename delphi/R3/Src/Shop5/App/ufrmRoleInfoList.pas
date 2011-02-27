@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeToolForm, ExtCtrls, ComCtrls, RzTreeVw, Grids, DBGridEh,
+  Dialogs, uframeToolForm, ExtCtrls, ComCtrls, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, ActnList, Menus, ToolWin,
   StdCtrls, RzLabel, RzTabs, RzPanel, DB, ADODB, zBase, RzButton,
   jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh;
@@ -46,8 +46,6 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure edtKeyPropertiesChange(Sender: TObject);
-    procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
-    procedure rzTreeChanging(Sender: TObject; Node: TTreeNode; var AllowChange: Boolean);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
@@ -62,43 +60,25 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
+    procedure SetRecNo;
   public
-    locked, IsCompany : boolean;
+    procedure Open;
     procedure AddRecord(AObj:TRecord_);
-    { Public declarations }
   end;
 
  
 
 implementation
 
-uses uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport,uCtrlUtil,
-  ufrmRoleRights;
+uses
+  uGlobal,uTreeUtil,uShopGlobal,ufrmRoleInfo,ufrmEhLibReport,uCtrlUtil,
+  ufrmRoleRights, ObjCommon;
 
 {$R *.dfm}
 
 procedure TfrmRoleInfoList.actFindExecute(Sender: TObject);
-var
-  str:String;
 begin
-  inherited;  
-  if edtKey.Text<>'' then
-  begin
-    case Factor.iDbType of
-     0  : str:=' and (ROLE_ID like ''%''+ :KEYVALUE + ''%'' or ROLE_NAME like ''%''+ :KEYVALUE + ''%'' or ROLE_SPELL like ''%''+ :KEYVALUE + ''%'') ';
-     4,5: str:=' and (ROLE_ID like ''%''|| :KEYVALUE || ''%'' or ROLE_NAME like ''%''|| :KEYVALUE || ''%'' or ROLE_SPELL like ''%''|| :KEYVALUE || ''%'') ';
-    end;
-  end;
-  str:='Select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK  '+
-       ' From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
-  cdsBrowser.Close;
-  cdsBrowser.SQL.Text:=str;
-  //设置参数:
-  if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
-     cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-  if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
-     cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
-  Factor.Open(cdsBrowser);
+  self.Open;
 end;
 
 procedure TfrmRoleInfoList.actExitExecute(Sender: TObject);
@@ -128,17 +108,16 @@ procedure TfrmRoleInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmRoleInfo.Create(self) do
   begin
     try
      OnSave := AddRecord;
      //要检查权限
-     if not IsCompany then
-       Open(cdsBrowser.FieldByName('ROLE_ID').AsString)
-     else
-       Edit(cdsBrowser.FieldByName('ROLE_ID').AsString);
+     // if not IsCompany then Open(cdsBrowser.FieldByName('ROLE_ID').AsString)
+     //else
+     Edit(cdsBrowser.FieldByName('ROLE_ID').AsString);
      ShowModal;
     finally
      free;
@@ -163,17 +142,16 @@ var Params:TftParamList;
     rzNode:TTreeNode;
 begin
   inherited;
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
-  //if not IsCompany then raise Exception.Create('不是总店，不能删除职务!');
   //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
     Params:=TftParamList.Create(nil);
     try
-      Params.ParamByName('ROLE_ID').asString:=cdsBrowser.FieldByName('ROLE_ID').AsString;
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+      Params.ParamByName('ROLE_ID').asString:=cdsBrowser.FieldByName('ROLE_ID').AsString;  
       Factor.ExecProc('TRoleInfoDelete',Params);
     finally
       Params.Free;
@@ -194,8 +172,7 @@ begin
 end;
 
 procedure TfrmRoleInfoList.edtKeyPropertiesChange(Sender: TObject);
-var
-  FilterCnd: string;
+// var FilterCnd: string;
 begin
   inherited;
   //TZQueyr组件不支持本地模糊查询，Onchange在实时取数据太消耗资源，关闭掉
@@ -216,25 +193,6 @@ begin
   }
 end;
 
-procedure TfrmRoleInfoList.rzTreeChange(Sender: TObject; Node: TTreeNode);
-begin
-  inherited;
-  actFindExecute(nil);
-end;
-
-procedure TfrmRoleInfoList.rzTreeChanging(Sender: TObject; Node: TTreeNode;
-  var AllowChange: Boolean);
-begin
-  inherited;
-  if locked then exit;
-  locked := true;
-  try
-   if edtKey.Text<>'' then edtKey.Text:='';
-  finally
-    locked := false;
-  end;
-end;
-
 procedure TfrmRoleInfoList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
@@ -248,12 +206,11 @@ begin
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
   if Column.FieldName = 'SEQ_NO' then
-    begin
-      ARect := Rect;
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsBrowser.RecNo)),length(Inttostr(cdsBrowser.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-
+  begin
+    ARect := Rect;
+    DbGridEh1.canvas.FillRect(ARect);
+    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsBrowser.RecNo)),length(Inttostr(cdsBrowser.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
 end;
 
 procedure TfrmRoleInfoList.DBGridEh1GetCellParams(Sender: TObject;
@@ -268,15 +225,15 @@ end;
 procedure TfrmRoleInfoList.FormShow(Sender: TObject);
 begin
   inherited;
-  actFindExecute(nil);
+  self.Open;
   if edtKey.CanFocus then
     edtKey.SetFocus;
 end;
 
 procedure TfrmRoleInfoList.actInfoExecute(Sender: TObject);
 begin
-  if not cdsBrowser.Active then exit;
-  if cdsBrowser.IsEmpty then exit;
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmRoleInfo.Create(self) do
   begin
     try
@@ -316,7 +273,7 @@ begin
   inherited;
   //判断是否为公司总店
   //ShopGlobal.GetIsCompany(Global.UserID);
-  IsCompany:=true;
+  // IsCompany:=true;
   
   //暂关闭Gird表头排序
   //TDbGridEhSort.InitForm(self);
@@ -325,7 +282,7 @@ end;
 procedure TfrmRoleInfoList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-  actEditExecute(nil);
+  actInfoExecute(nil);
 end;
 
 procedure TfrmRoleInfoList.actRIGHTSExecute(Sender: TObject);
@@ -359,9 +316,10 @@ end;
 procedure TfrmRoleInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100014') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-
+  // if not ShopGlobal.GetChkRight('100014') then
+  //   Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  SetRecNo;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
 end;
@@ -369,6 +327,8 @@ end;
 procedure TfrmRoleInfoList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  SetRecNo;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -385,6 +345,48 @@ begin
   inherited;
   //暂关闭Gird表头排序
   //TDbGridEhSort.FreeForm(self);
+end;
+
+procedure TfrmRoleInfoList.Open;
+var
+  str:String;
+begin
+  inherited;
+  if edtKey.Text<>'' then
+    str:=GetLikeCnd(Factor.iDbType,['ROLE_ID','ROLE_NAME','ROLE_SPELL'],':KEYVALUE','and');
+    
+  str:='Select 1 as SEQ_NO,ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK From CA_ROLE_INFO '+
+       ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+str+' order by ROLE_ID ';
+  cdsBrowser.Close;
+  cdsBrowser.SQL.Text:=str;
+  //设置参数:
+  if cdsBrowser.Params.FindParam('TENANT_ID')<>nil then
+     cdsBrowser.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if cdsBrowser.Params.FindParam('KEYVALUE')<>nil then
+     cdsBrowser.ParamByName('KEYVALUE').AsString:=edtKey.Text;
+  Factor.Open(cdsBrowser);
+end;
+
+procedure TfrmRoleInfoList.SetRecNo;
+begin
+  //设置数据字段对应序号，打印GridElh需要用到
+  if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
+  try
+    cdsBrowser.DisableControls;
+    cdsBrowser.First;
+    while not cdsBrowser.eof do
+    begin
+      if cdsBrowser.FieldByName('SEQ_NO').AsInteger<>cdsBrowser.RecNo then
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('SEQ_NO').AsString:=InttoStr(cdsBrowser.RecNo);
+        cdsBrowser.Post;
+      end;
+      cdsBrowser.Next;
+    end;
+  finally
+    cdsBrowser.EnableControls;
+  end;
 end;
 
 end.

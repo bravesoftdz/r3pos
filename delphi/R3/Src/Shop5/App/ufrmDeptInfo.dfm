@@ -198,6 +198,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 74
             Width = 118
             Height = 20
+            TabStop = False
             TabOrder = 2
           end
           object edtUPDEPT_ID: TzrComboBoxList

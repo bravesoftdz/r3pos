@@ -944,6 +944,7 @@ inherited frmClientInfo: TfrmClientInfo
         DropHeight = 130
         ShowTitle = False
         AutoFitColWidth = True
+        OnAddClick = edtPRICE_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]

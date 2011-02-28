@@ -113,7 +113,7 @@ var
   frmClientInfo: TfrmClientInfo;
 
 implementation
-uses uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil,ufrmCodeInfo,uShopGlobal;//,ufrmREGION
+uses uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil,ufrmCodeInfo,uShopGlobal,ufrmPriceGradeInfo;//,ufrmREGION
 {$R *.dfm}
 
 procedure TfrmClientInfo.Append;
@@ -351,6 +351,7 @@ end;
 procedure TfrmClientInfo.FormShow(Sender: TObject);
 begin
   inherited;
+  RzPage.ActivePageIndex := 0;
   if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
 end;
 
@@ -580,9 +581,19 @@ begin
 end;
 
 procedure TfrmClientInfo.edtPRICE_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
 begin
   inherited;
-//
+ AObj := TRecord_.Create;
+  try
+    if TfrmPriceGradeInfo.AddDialog(self,AObj) then
+       begin
+         edtPRICE_ID.KeyValue := AObj.FieldbyName('PRICE_ID').asString;
+         edtPRICE_ID.Text := AObj.FieldbyName('PRICE_NAME').asString;
+       end;
+  finally
+    AObj.Free;
+  end;
 end;
 
 end.

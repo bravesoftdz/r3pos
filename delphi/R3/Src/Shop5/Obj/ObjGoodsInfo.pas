@@ -23,6 +23,11 @@ type
   {== 条码 ==}
   TPUB_BARCODE=class(TZFactory)
   public
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
 
@@ -184,22 +189,46 @@ end;
 
 { TPUB_BARCODE }
 
-procedure TPUB_BARCODE.InitClass;
+function TPUB_BARCODE.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
+begin
+  Str := 'update PUB_BARCODE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+    ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE_TYPE=:OLD_BARCODE_TYPE and BATCH_NO=:OLD_BATCH_NO ';
+  AGlobal.ExecSQL(Str);
+end;
+
+function TPUB_BARCODE.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str: string;
+begin
+  Str :='update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,UNIT_ID=:UNIT_ID,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' where TENANT_ID=:OLD_TENANT_ID and BARCODE_TYPE=:OLD_BARCODE_TYPE and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+    ' PROPERTY_02=:OLD_PROPERTY_02 and BATCH_NO=:OLD_BATCH_NO ';
+
+  if AGlobal.ExecSQL(Str, self)=0 then 
+  begin
+    Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
+      ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
+    AGlobal.ExecSQL(Str,self);
+  end;
+end;
+
+function TPUB_BARCODE.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
+end;
+
+procedure TPUB_BARCODE.InitClass;
+var Str: string;
 begin
   inherited;
   //条码不是核心资料，可直接物理删除
   SelectSQL.Text :='select ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from PUB_BARCODE '+
     ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and '+
     ' PROPERTY_02=''#'' order by BARCODE';
-  Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
-       ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
-  InsertSQL.Add(Str);
-  Str := 'update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,'
-    + ' UNIT_ID=:UNIT_ID,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)
-    + ' where TENANT_ID=:OLD_TENANT_ID and BARCODE=:OLD_BARCODE and GODS_ID=:OLD_GODS_ID';
-  UpdateSQL.Add(Str);
 end;
 
 { TGoodsPrice }
@@ -226,15 +255,16 @@ end;
 
 procedure TGoodsPrice.InitClass;
 var
-  Str: string;
+  OperChar, Str: string;
 begin
   inherited;
+  OperChar:=GetStrJoin(iDbType);
   SelectSQL.Text:=
     'select PROFIT_RATE,TENANT_ID,TENANT_ID as Flag,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
     ' from (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE Where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
     ' Left Join '+
     ' (select P.*,'+
-    '(case when G.NEW_OUTPRICE>0 then cast(cast(round((P.NEW_OUTPRICE*100)/(G.NEW_OUTPRICE*1.0),0) as integer) as varchar(10)) || ''%'' else null end) as PROFIT_RATE from PUB_GOODSPRICE P,PUB_GOODSINFO G '+
+    '(case when G.NEW_OUTPRICE>0 then cast(round((P.NEW_OUTPRICE*100)/(G.NEW_OUTPRICE*1.0),0) as integer) else null end) as PROFIT_RATE from PUB_GOODSPRICE P,PUB_GOODSINFO G '+
     ' where P.TENANT_ID=G.TENANT_ID and P.GODS_ID=G.GODS_ID and P.TENANT_ID=:TENANT_ID and P.SHOP_ID=:SHOP_ID and P.PRICE_ID<>''#'' and P.COMM not in (''02'',''12'') and P.GODS_ID=:GODS_ID) B '+
     ' On A.PRICE_ID=B.PRICE_ID '+
     ' order by A.PRICE_ID';

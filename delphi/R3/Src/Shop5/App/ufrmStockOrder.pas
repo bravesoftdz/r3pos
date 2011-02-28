@@ -87,6 +87,10 @@ type
     procedure ShowInfo;
     procedure ShowOweInfo;
     function  Calc:real;
+    //输入跟踪号
+    function GodsToLocusNo(id:string):boolean;override;
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
     procedure PriceToCalc(APrice:Real);override;
@@ -905,6 +909,60 @@ end;
 procedure TfrmStockOrder.PriceToCalc(APrice: Real);
 begin
   inherited;
+end;
+
+function TfrmStockOrder.GodsToLocusNo(id: string): boolean;
+var
+  rs,bs:TZQuery;
+  AObj:TRecord_;
+  pt:integer;
+  r:boolean;
+begin
+  if edtTable.FieldByName('GODS_ID').AsString = '' then
+     begin
+       result := true;
+       MessageBox(Handle,pchar('请输入商品后再输入跟踪号.'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  if id = '' then Raise Exception.Create('输入的批号无效'); 
+  result := false;
+  rs := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  try
+    if not bs.Locate('GODS_ID',edtTable.Fields[0].asString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+     AObj.ReadFromDataSet(edtTable,false);
+     pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
+
+     r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
+     if not r then
+     begin
+        inc(RowID);
+        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+        edtTable.Edit else InitRecord;
+        AObj.WriteToDataSet(edtTable);
+        edtTable.FieldbyName('LOCUS_NO').AsString := id;
+     end else Raise Exception.Create('当前物流跟踪号已经存在，不能重复输入,跟踪号为:'+id);
+     result := false;
+  finally
+    AObj.Free;
+    rs.Free;
+  end;
+end;
+
+function TfrmStockOrder.GodsToBatchNo(id: string): boolean;
+begin
+  result := false;
+  if edtTable.FieldByName('GODS_ID').AsString = '' then
+     begin
+       result := true;
+       MessageBox(Handle,pchar('请输入商品后再输入批号.'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  if id = '' then Raise Exception.Create('输入的批号无效');
+  edtTable.Edit;
+  edtTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+  result := true;
 end;
 
 end.

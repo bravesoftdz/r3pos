@@ -614,12 +614,14 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           EditButtons = <>
           FieldName = 'LOCUS_NO'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #29289#27969#36319#36394#21495
         end
         item
           EditButtons = <>
           FieldName = 'BATCH_NO'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #25209#21495
         end
         item

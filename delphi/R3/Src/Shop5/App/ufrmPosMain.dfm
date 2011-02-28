@@ -1025,12 +1025,12 @@ inherited frmPosMain: TfrmPosMain
       ParentFont = False
     end
     object h5: TLabel
-      Left = 451
-      Top = 8
-      Width = 84
+      Left = 364
+      Top = 28
+      Width = 72
       Height = 12
       Cursor = crHandPoint
-      Caption = #36864'  '#36135'  [F10] '
+      Caption = #36864#36135'  [F10] '
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
@@ -1138,7 +1138,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object Label20: TLabel
       Left = 364
-      Top = 28
+      Top = 47
       Width = 72
       Height = 12
       Cursor = crHandPoint
@@ -1249,12 +1249,12 @@ inherited frmPosMain: TfrmPosMain
       ParentFont = False
     end
     object Label28: TLabel
-      Left = 364
-      Top = 47
-      Width = 66
+      Left = 453
+      Top = 7
+      Width = 96
       Height = 12
       Cursor = crHandPoint
-      Caption = #36192#36865'  [F4] '
+      Caption = #36192#36865'/'#20817#25442'  [F4] '
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12

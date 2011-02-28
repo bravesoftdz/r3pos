@@ -233,8 +233,6 @@ type
     procedure ReturnGods;
     //调价
     procedure OpenDialogPrice;
-    //修改列
-    procedure GridToGods(Grid:string;id:string);
 
     procedure ShowHeader(flag:integer=0);
     procedure Calc;
@@ -1282,13 +1280,6 @@ begin
            DBGridEh1.Col := 1;
            Exit;
          end;
-      if InputFlag=7 then //导购员
-         begin
-           GridToGods('GUIDE_USER',s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           Exit;
-         end;
       if InputFlag=9 then //数量
          begin
            if s='' then Exit;
@@ -1384,6 +1375,17 @@ begin
            end;
          end;
     end;
+  if Key='-' then
+    begin
+      AObj := TRecord_.Create;
+      try
+         AObj.ReadFromDataSet(cdsTable);
+         DelRecord(AObj)
+      finally
+         AObj.Free;
+      end;
+      Key := #0;
+    end;
 end;
 
 procedure TfrmPosMain.AgioInfo(id: string);
@@ -1478,23 +1480,6 @@ begin
       cdsTable.EnableControls;
     end;
   end;
-end;
-
-procedure TfrmPosMain.GridToGods(Grid, id: string);
-var rs:TZQuery;
-begin
-  if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  if Grid='GUIDE_USER' then
-     begin
-       rs := Global.GeTZQueryFromName('CA_USERS');
-       if not rs.Locate('ACCOUNT',id,[]) then
-          begin
-            PostMessage(Handle,WM_DIALOG_PULL,FIND_GUIDE_DIALOG,0);
-            Exit;
-          end;
-       cdsTable.Edit;
-       cdsTable.FieldbyName('GUIDE_USER').AsString := rs.FieldbyName('USER_ID').asString;
-     end;
 end;
 
 procedure TfrmPosMain.PriceToGods(id: string);

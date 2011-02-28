@@ -294,6 +294,7 @@ begin
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
   Factor.DBLock(true);
   try
+    CreateTempTable;
     //数据准备
     PrepareDataForRck;
     //计算成本
@@ -853,7 +854,7 @@ begin
   end;
 
   SQL :=
-  'if not exists (select * from sys.objects where object_id = OBJECT_ID(N''tempdb..#tmp'')) '+
+  'if not exists (select * from sys.objects where object_id = OBJECT_ID(N''tempdb..'+tempTableName+''')) '+
   'CREATE TABLE '+tempTableName+' ('+
   '	TENANT_ID int NOT NULL ,'+
   '	SHOP_ID varchar (11) NOT NULL ,'+

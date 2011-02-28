@@ -73,7 +73,6 @@ type
     procedure fndGODS_IDAddClick(Sender: TObject);
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure edtCLIENT_IDAddClick(Sender: TObject);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure edtSALE_STYLEAddClick(Sender: TObject);
@@ -90,8 +89,6 @@ type
     procedure ReadHeader;
   protected
     procedure SetInputFlag(const Value: integer);override;
-    //ÐÞ¸ÄÁÐ
-    procedure GridToGods(Grid:string;id:string);override;
     function IsKeyPress:boolean;override;
   public
     { Public declarations }
@@ -854,26 +851,6 @@ end;
 procedure TfrmSalIndentOrder.SetInputFlag(const Value: integer);
 begin
   inherited;
-end;
-
-procedure TfrmSalIndentOrder.GridToGods(Grid, id: string);
-begin
-  inherited;
-end;
-
-procedure TfrmSalIndentOrder.FormKeyPress(Sender: TObject; var Key: Char);
-begin
-  if Key = '+' then
-     begin
-       if Assigned(TabSheet) then
-       begin
-         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,0);
-       end;
-       Key := #0;
-     end;
-  if not fndGODS_ID.Focused and not edtInput.Focused and not fndUNIT_ID.Focused and not DBGridEh1.Focused then inherited;
-
-
 end;
 
 function TfrmSalIndentOrder.IsKeyPress: boolean;

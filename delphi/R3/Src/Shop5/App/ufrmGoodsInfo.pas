@@ -775,7 +775,6 @@ procedure TfrmGoodsInfo.IsBarCodeSame(Aobj: TRecord_);
     Factor.Open(rs);
     if rs.Active then
       result:=(rs.RecordCount>0);
-    showmessage(BooltoStr(result));
   end;
 var
   tmp: TZQuery;

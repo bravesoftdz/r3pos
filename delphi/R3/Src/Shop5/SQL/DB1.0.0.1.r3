@@ -1025,6 +1025,10 @@ CREATE TABLE [SAL_INDENTORDER] (
 	[SALES_STYLE] [varchar] (21) NULL ,
         --客户
 	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --IC卡号
+	[IC_CARDNO] [varchar] (36) NULL ,
+        --商盟编码
+	[UNION_ID] [varchar] (36) NULL ,
         --预付款
 	[ADVA_MNY] [decimal](18, 3) NULL ,
         --订货数量

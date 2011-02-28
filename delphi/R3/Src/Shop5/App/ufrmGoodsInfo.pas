@@ -192,7 +192,7 @@ type
     procedure CALC_MenberProfitPrice(CdsMemberPrice: TZQuery; CALCType: integer; IsAll: Boolean=False);  //计算会员价折扣单价
   public
      AObj:TRecord_;
-     SORT_ID1,flag,ccid:string;
+     SORT_ID1,flag:string;
      Saved,IsCompany:Boolean;
      CarryRule,Deci:integer;
      locked:boolean;
@@ -294,6 +294,7 @@ begin
   Open(code);
   dbState := dsEdit;
   FPriceChange:=False;
+  CheckTabGoodPriceVisible; //判断会员价格是否显示
   Tmp:=Global.GetZQueryFromName('CA_TENANT');
   if Tmp.Locate('TENANT_ID',AObj.FieldByName('TENANT_ID').AsString,[]) then
   begin
@@ -754,174 +755,104 @@ begin
 end;
 
 procedure TfrmGoodsInfo.IsBarCodeSame(Aobj: TRecord_);
+  procedure ShowMsgBox(IsRaiseMsg: Boolean; Msg: string);
+  begin
+    if IsRaiseMsg then raise Exception.Create(Msg)
+    else MessageBox(handle,Pchar(Msg),Pchar(Caption),MB_OK);
+  end;
+  function ChechBarCodeExist(rs: TZQuery; BarCode,GODS_ID: string): Boolean;
+  var Str,Cnd: string;
+  begin
+    result:=False;
+    Cnd:='';
+    if trim(GODS_ID)<>'' then Cnd:=' and  GODS_ID<>'''+GODS_ID+''' ';
+    Str:='select A.BARCODE as BARCODE,A.GODS_ID as GODS_ID,B.GODS_NAME as GODS_NAME,B.GODS_CODE as GODS_CODE from '+
+      ' (select BARCODE,GODS_ID from PUB_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') and BARCODE='''+BarCode+''' '+Cnd+')A, '+
+      ' (select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+Cnd+') B  '+
+      ' where A.GODS_ID=B.GODS_ID ';
+    rs.Close;
+    rs.SQL.Text:=Str;
+    Factor.Open(rs);
+    if rs.Active then
+      result:=(rs.RecordCount>0);
+    showmessage(BooltoStr(result));
+  end;
 var
   tmp: TZQuery;
+  IsDUPBARCODE: Boolean; //不允许条码重复
 begin
   if (Trim(edtBARCODE1.Text)<>'') and (edtBARCODE1.Text=edtBARCODE2.Text) and (edtBARCODE2.Text=edtBARCODE3.Text) then
   begin
-     if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
-     raise Exception.Create('计量单位的条码、小包装条码和大包装条码不能一样!');
+    if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
+    raise Exception.Create('计量单位的条码、小包装条码和大包装条码不能一样!');
   end;
   if (Trim(edtBARCODE1.Text)<>'') and (edtBARCODE1.Text=edtBARCODE2.Text) then
   begin
-     if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
-     raise Exception.Create('计量单位的条码不能和小包装条码一样!');
+    if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
+    raise Exception.Create('计量单位的条码不能和小包装条码一样!');
   end;
   if (Trim(edtBARCODE2.Text)<>'') and (edtBARCODE2.Text=edtBARCODE3.Text) then
   begin
-     if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
-     raise Exception.Create('小包装的条码不能和大包装条码一样!');
+    if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
+    raise Exception.Create('小包装的条码不能和大包装条码一样!');
   end;
   if (Trim(edtBARCODE3.Text)<>'') and (edtBARCODE1.Text=edtBARCODE3.Text) then
   begin
-     if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
-     raise Exception.Create('大包装条码不能和计量单位的条码一样!');
+    if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
+    raise Exception.Create('大包装条码不能和计量单位的条码一样!');
   end;
-  if ShopGlobal.GetParameter('DUPBARCODE')<>'1' then
+
+  IsDUPBARCODE:=ShopGlobal.GetParameter('DUPBARCODE')<>'1'; //不允许条码重复
+  if dbState=dsInsert then
   begin
-    if dbState=dsInsert then
-    begin
-      try
-        //判断主单位的条形码
-        tmp:=TZQuery.Create(nil);
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B '+
-                      ' where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE1.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
-          raise Exception.Create('计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
-        end;
-        //判断小包装条形码
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B '+
-                      ' where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE2.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE2.CanFocus then edtBARCODE2.SetFocus;
-          raise Exception.Create('小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
-        end;
-        //判断大包装的条形码
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B '+
-                      ' where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE3.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
-          raise Exception.Create('大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
-        end;
-      finally
-        tmp.Free;
+    try
+      tmp:=TZQuery.Create(nil);
+      //判断主单位的条形码
+      if ChechBarCodeExist(tmp, edtBARCODE1.Text,'') then
+      begin
+        if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
       end;
-    end;
-    
-    if dbState=dsEdit then
-    begin
-      try
-        tmp:=TZQuery.Create(nil);
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B '+
-            ' where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBARCODE1.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
-          raise Exception.Create('计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
-        end;
-
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B '+
-            ' where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBARCODE2.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
-          raise Exception.Create('小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
-        end;
-
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBARCODE3.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
-          raise Exception.Create('大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
-        end;
-      finally
-        tmp.Free;
+      //判断小包装条形码
+      if ChechBarCodeExist(tmp, edtBARCODE2.Text,'') then
+      begin
+        if edtBARCODE2.CanFocus then edtBARCODE2.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
       end;
+      //判断大包装的条形码
+      if ChechBarCodeExist(tmp, edtBARCODE3.Text,'') then
+      begin
+        if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'重复!');
+      end;
+    finally
+      tmp.Free;
     end;
-  end
-  else if ShopGlobal.GetParameter('DUPBARCODE')='1' then
+  end else
+  if dbState=dsEdit then
   begin
-    if dbState=dsInsert then
-    begin
-      try
-        tmp:=TZQuery.Create(nil);
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE1.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
-          MessageBox(handle,Pchar('计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
-
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE2.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
-          MessageBox(handle,Pchar('小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
-
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.BARCODE='+QuotedStr(edtBARCODE3.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
-          MessageBox(handle,Pchar('大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
-      finally
-        tmp.Free;
+    try
+      tmp:=TZQuery.Create(nil);
+      //判断主单位的条形码
+      if ChechBarCodeExist(tmp, edtBARCODE1.Text,Aobj.FieldByName('GODS_ID').AsString) then
+      begin
+        if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
       end;
-    end;
-    if dbState=dsEdit then
-    begin
-      try
-        tmp:=TZQuery.Create(nil);
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBarCode1.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE1.CanFocus then  edtBARCODE1.SetFocus;
-          MessageBox(handle,Pchar('计量单位的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
 
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBarCode2.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
-          MessageBox(handle,Pchar('小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
-
-        tmp.Close;
-        tmp.SQL.Text:='select A.BARCODE BARCODE,A.GODS_ID GODS_ID,B.GODS_NAME GODS_NAME,B.GODS_CODE GODS_CODE from PUB_BARCODE A,(select GODS_ID,GODS_NAME,GODS_CODE FROM VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID='+QuotedStr(ccid)+') B  where (A.TENANT_ID=''----'' or A.TENANT_ID='+QuotedStr(ccid)+') and A.GODS_ID=B.GODS_ID and A.GODS_ID<>'+QuotedStr(Aobj.FieldByName('GODS_ID').AsString)+' and A.BARCODE='+QuotedStr(edtBarCode3.Text);
-        Factor.Open(tmp);
-        if tmp.RecordCount>0 then
-        begin
-          if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
-          MessageBox(handle,Pchar('大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!'),Pchar(Caption),MB_OK);
-        end;
-      finally
-        tmp.Free;
+      if ChechBarCodeExist(tmp, edtBARCODE2.Text,Aobj.FieldByName('GODS_ID').AsString) then
+      begin
+        if edtBARCODE2.CanFocus then  edtBARCODE2.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'小包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
       end;
+
+      if ChechBarCodeExist(tmp, edtBARCODE3.Text,Aobj.FieldByName('GODS_ID').AsString) then
+      begin
+        if edtBARCODE3.CanFocus then  edtBARCODE3.SetFocus;
+        ShowMsgBox(IsDUPBARCODE,'大包装的条码已经存在，和货号为'+tmp.FieldByName('GODS_CODE').AsString+',商品名称为'+tmp.FieldByName('GODS_NAME').AsString+'的商品重复!');
+      end;
+    finally
+      tmp.Free;
     end;
   end;
 end;
@@ -1211,38 +1142,16 @@ begin
   edtPROFIT_RATE.Properties.ReadOnly:=False;
 end;
 
-
-
 procedure TfrmGoodsInfo.WriteBarCode(str: string);
 begin
   BarCode.First;
   while not BarCode.Eof do
   begin
-    if trim(BarCode.fieldbyName('BARCODE_TYPE').AsString)='0' then  //计量单位条码
-    begin
-      BarCode.Edit;
-      BARCode.FieldByName('UNIT_ID').AsString:=edtCALC_UNITS.AsString;
-      BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode1.Text);
-      BarCode.Post;
-    end else
-    if trim(BarCode.fieldbyName('BARCODE_TYPE').AsString)='1' then  //小单位条码
-    begin
-      BarCode.Edit;
-      BARCode.FieldByName('UNIT_ID').AsString:=edtSMALL_UNITS.AsString;
-      BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode2.Text);
-      BarCode.Post;
-    end else
-    if trim(BarCode.fieldbyName('BARCODE_TYPE').AsString)='2' then  //大单位条码
-    begin
-      BarCode.Edit;
-      BARCode.FieldByName('UNIT_ID').AsString:=edtBIG_UNITS.AsString;
-      BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode3.Text);
-      BarCode.Post;
-    end;
-    BarCode.Next;
+    BarCode.Delete;
   end;
+
   //计量单位条码[不为空，且没定位到]
-  if (trim(edtBarCode1.Text)<>'') and (not BarCode.Locate('BARCODE_TYPE','0',[])) then
+  if trim(edtBarCode1.Text)<>''  then //计量单位
   begin
     BarCode.Append;
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
@@ -1256,9 +1165,9 @@ begin
     BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode1.Text);
     BarCode.Post;
   end;
+  
   //小单位条码 [单位和条码不为空，且没定位到]
-  if ((trim(edtSMALL_UNITS.Text)<>'') and (trim(edtBARCODE2.Text)<>'')) and
-      (not BarCode.Locate('BARCODE_TYPE','1',[])) then
+  if trim(edtSMALL_UNITS.Text)<>'' then
   begin
     BarCode.Append;
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
@@ -1272,9 +1181,8 @@ begin
     BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode2.Text);
     BarCode.Post;
   end;
-  //大单位条码 [单位和条码不为空，且没定位到]
-  if ((edtBIG_UNITS.Text<>'') and (Trim(edtBARCODE3.Text)<>'')) and
-      (not BarCode.Locate('BARCODE_TYPE','2',[])) then
+
+  if edtBIG_UNITS.Text<>'' then  //大单位条码
   begin
     BarCode.Append;
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
@@ -1951,16 +1859,12 @@ begin
 end;
 
 procedure TfrmGoodsInfo.ReadGoodsBarCode(CdsBarCode: TZQuery);
-  function GetUnitName(UnitID: string): string;
-  var rs: TZQuery; 
-  begin
-    result:='';
-    rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
-    if (rs<>nil) and (rs.Locate('UNIT_ID',trim(UnitID),[])) then  
-      result:=trim(rs.fieldbyName('UNIT_NAME').AsString);
-  end;
 begin
   if not CdsBarCode.Active then Exit;
+  edtBARCODE1.Text:='';
+  edtSMALL_UNITS.Text:='';
+  edtBIG_UNITS.Text:='';
+
   CdsBarCode.First;
   while not CdsBarCode.Eof do
   begin
@@ -1968,22 +1872,16 @@ begin
     begin
       UnitBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
       edtBARCODE1.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtCALC_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
-      edtCALC_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);
     end else
     if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='1' then
     begin
       SmallBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
       edtBARCODE2.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtSMALL_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
-      edtSMALL_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);
     end else
     if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='2' then
     begin
       BigBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
       edtBARCODE3.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtBIG_UNITS.KeyValue:=CdsBarCode.fieldbyName('UNIT_ID').AsString;
-      edtBIG_UNITS.Text:=GetUnitName(CdsBarCode.fieldbyName('UNIT_ID').AsString);      
     end;
     CdsBarCode.Next;
   end;

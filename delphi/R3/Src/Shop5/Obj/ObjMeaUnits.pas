@@ -1,7 +1,7 @@
 unit ObjMeaUnits;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes, AdoDb,ZIntf,ObjCommon,ZDataset;
+uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,ZDataset;
 type
   TMeaUnits=class(TZFactory)
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -72,7 +72,7 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and UNIT_ID<>:UNIT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and UNIT_ID<>:OLD_UNIT_ID and COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID ';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsString+'"单位名称不能重复设置');
   finally
@@ -88,14 +88,15 @@ begin
   SelectSQL.Text := 'select UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO from PUB_MEAUNITS where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID order by SEQ_NO';
   IsSQLUpdate := True;
   Str := 'insert into PUB_MEAUNITS(UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO,COMM,TIME_STAMP) '
-    + 'VALUES(:UNIT_ID,:UNIT_NAME,:UNIT_SPELL,:TENANT_ID,:SEQ_NO,''00'','+GetTimeStamp(5)+')';
+    + 'VALUES(:UNIT_ID,:UNIT_NAME,:UNIT_SPELL,:TENANT_ID,:SEQ_NO,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update PUB_MEAUNITS set UNIT_ID=:UNIT_ID,UNIT_NAME=:UNIT_NAME,UNIT_SPELL=:UNIT_SPELL,TENANT_ID=:TENANT_ID,SEQ_NO=:SEQ_NO,'
-    + 'COMM='+GetCommStr(5)+',TIME_STAMP='+GetTimeStamp(5)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
+    + 'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
   UpdateSQL.Text := Str;
-  Str := 'update PUB_MEAUNITS set COMM=''02'',TIME_STAMP='+GetTimeStamp(5)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
+  Str := 'update PUB_MEAUNITS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
   DeleteSQL.Text := Str;
 end;
+
 initialization
   RegisterClass(TMeaUnits);
 finalization

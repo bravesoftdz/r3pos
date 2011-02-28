@@ -17,30 +17,35 @@ implementation
 { TGoodsSort }
 
 function TGoodsSort.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var
-  rs:TZQuery;
+var Sort_Id:String;
+    rs:TZQuery;
 begin
-  {rs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  case FieldByName('SORT_TYPE').AsInteger of
+    1: Sort_Id := 'SORT_ID1';    // 分类
+    2: Sort_Id := 'SORT_ID2';    // 类别
+    3: Sort_Id := 'SORT_ID3';    // 厂家
+    4: Sort_Id := 'SORT_ID4';    // 品牌
+    5: Sort_Id := 'SORT_ID5';    // 重点(品牌)
+    6: Sort_Id := 'SORT_ID6';    // 省内外
+    7: Sort_Id := 'SORT_ID7';    // 颜色组
+    8: Sort_Id := 'SORT_ID8';    // 尺码组
+  end;
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where (CALC_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (SMALL_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (BIG_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') and COMM not in (''02'',''12'')';
-    AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
-    rs.Close;
-    rs.CommandText := 'select count(*) from BAS_GOODSINFO where (CALC_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (SMALL_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (BIG_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
     rs.Free;
-  end; }
+  end;
   result := true;
 end;
 
 function TGoodsSort.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var
-  rs:TZQuery;
+var Str:String;
+    rs:TZQuery;
 begin
   result := true;
   rs := TZQuery.Create(nil);
@@ -56,7 +61,7 @@ begin
              AGlobal.ExecSQL('delete from PUB_GOODSSORT where SORT_ID=:SORT_ID and TENANT_ID=:TENANT_ID ',self);
            end
         else
-           Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"单位名称不能重复设置');
+           Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"名称不能重复设置');
         rs.Next;
       end;
   finally
@@ -71,9 +76,9 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_GOODSSORT where  SORT_NAME=:SORT_NAME and SORT_ID<>:SORT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_ID<>:OLD_SORT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"单位名称不能重复设置');
+    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"名称不能重复设置');
   finally
     rs.Free;
   end;
@@ -92,8 +97,8 @@ begin
   Str :='insert into PUB_GOODSSORT (TENANT_ID,SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,COMM,TIME_STAMP) '+
   'values (:TENANT_ID,:SORT_ID,:LEVEL_ID,:SORT_NAME,:SORT_TYPE,:SORT_SPELL,:SEQ_NO,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str :='update PUB_GOODSSORT set TENANT_ID=:TENANT_ID,SORT_ID=:SORT_ID,LEVEL_ID=:LEVEL_ID,SORT_NAME=:SORT_NAME,SORT_TYPE=:SORT_TYPE,SORT_SPELL=:SORT_SPELL,'
-  +'SEQ_NO=:SEQ_NO,COMM='+GetCommStr(iDbType)+','+'TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID=:OLD_TENANT_ID';
+  Str :='update PUB_GOODSSORT set TENANT_ID=:TENANT_ID,SORT_ID=:SORT_ID,LEVEL_ID=:LEVEL_ID,SORT_NAME=:SORT_NAME,SORT_TYPE=:SORT_TYPE,SORT_SPELL=:SORT_SPELL,'+
+  'SEQ_NO=:SEQ_NO,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID=:OLD_TENANT_ID';
   UpdateSQL.Text :=  Str;
   Str := 'update PUB_GOODSSORT set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID=:OLD_TENANT_ID';
   DeleteSQL.Text := Str;

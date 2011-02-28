@@ -425,9 +425,19 @@ begin
     locked := false;
   end;
   dbState := dsInsert;
-  edtDelete.Enabled:=True;
-  edtSave.Enabled:=True;
-  edtCancel.Enabled:=True;
+  if InFlag = 1 then
+    begin
+      edtPriceGrade.Enabled := False;
+      edtDelete.Enabled:=False;
+      edtSave.Enabled:=true;
+      edtCancel.Enabled:=False;
+    end
+  else
+    begin
+      edtDelete.Enabled:=True;
+      edtSave.Enabled:=True;
+      edtCancel.Enabled:=True;
+    end;
   DBGridEh1.ReadOnly:=False;
 end;
 

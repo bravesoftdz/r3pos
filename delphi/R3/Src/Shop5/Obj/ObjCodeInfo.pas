@@ -18,16 +18,20 @@ implementation
 { TClientSort }
 
 function TClientSort.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var
-  rs:TZQuery;
+var Str:String;
+    rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
+  case FieldByName('CODE_TYPE').AsString of
+    '5':Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+    '9':Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+  end;
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where SORT_ID=:OLD_CODE_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := Str;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在供应商资料中使用不能删除.');
+       Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在企业资料中使用不能删除.');
   finally
     rs.Free;
   end;
@@ -41,9 +45,8 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_NAME=:CODE_NAME and CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
-    FieldbyName('CODE_ID').AsString := '';
     rs.First;
     while not rs.Eof do
       begin
@@ -53,10 +56,9 @@ begin
              AGlobal.ExecSQL('delete from PUB_CODE_INFO where CODE_ID=:CODE_ID and CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ',self);
            end
         else
-           Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"供应商类别不能重复设置');
+           Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"类别名称不能重复设置');
         rs.Next;
       end;
-    //if FieldbyName('CODE_ID').AsString='' then FieldbyName('CODE_ID').AsString := GetSequence(AGlobal,'ClientSort_ID','----','',6);
   finally
     rs.Free;
   end;
@@ -69,10 +71,10 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where CODE_TYPE=:CODE_TYPE and CODE_NAME=:CODE_NAME '+
-    'and CODE_ID<>:CODE_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where COMM not in (''02'',''12'') and CODE_TYPE=:CODE_TYPE '+
+    'and CODE_NAME=:CODE_NAME and CODE_ID<>:CODE_ID and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"客户类别不能重复设置');
+    if rs.Fields[0].AsInteger > 0 then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"类别名称不能重复设置');
   finally
     rs.Free;
   end;
@@ -88,15 +90,19 @@ begin
   Str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO,CODE_TYPE,COMM,TIME_STAMP) '
     + 'VALUES(:TENANT_ID,:CODE_ID,:CODE_NAME,:CODE_SPELL,:SEQ_NO,:CODE_TYPE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update PUB_CODE_INFO set CODE_ID=:CODE_ID,CODE_NAME=:CODE_NAME,CODE_SPELL=:CODE_SPELL,SEQ_NO=:SEQ_NO,COMM='
-  +GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where CODE_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID and CODE_TYPE=:OLD_CODE_TYPE';
+  Str := 'update PUB_CODE_INFO set CODE_ID=:CODE_ID,CODE_NAME=:CODE_NAME,CODE_SPELL=:CODE_SPELL,SEQ_NO=:SEQ_NO,COMM='+GetCommStr(iDbType)+
+  ',TIME_STAMP='+GetTimeStamp(iDbType)+' where CODE_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID and CODE_TYPE=:OLD_CODE_TYPE';
   UpdateSQL.Text := Str;
   Str := 'update PUB_CODE_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where CODE_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID and CODE_TYPE=:OLD_CODE_TYPE';
   DeleteSQL.Text := Str;
 end;
+
+
 initialization
   RegisterClass(TClientSort);
 finalization
   UnRegisterClass(TClientSort);
+
+  
 end.
 

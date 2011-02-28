@@ -241,7 +241,7 @@ begin
   Cnd:=vCnd;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(cast(Round(l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) as varchar)+''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+  result := 'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(cast(Round((l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) as varchar)+''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+

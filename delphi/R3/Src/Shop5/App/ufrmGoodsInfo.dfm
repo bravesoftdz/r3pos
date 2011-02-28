@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 188
-  Top = 149
+  Left = 193
+  Top = 109
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 426
@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
+      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 1
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -508,11 +510,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Width = 83
               end
               item
-                DisplayFormat = '#0.00%'
+                Alignment = taRightJustify
+                DisplayFormat = '#0%'
                 EditButtons = <>
                 FieldName = 'PROFIT_RATE'
                 Footers = <>
-                Title.Caption = #25240#25187#29575'(%)'
+                Title.Caption = #25240#25187#29575
                 Width = 62
               end
               item

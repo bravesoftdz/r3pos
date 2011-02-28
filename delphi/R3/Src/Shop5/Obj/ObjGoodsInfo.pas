@@ -97,7 +97,7 @@ begin
 
   //插入门店单价
   Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
-    ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
+                         ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
   AGlobal.ExecSQL(Str, self);
 end;
 
@@ -125,7 +125,7 @@ begin
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;    //企业ID
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;        //门店ID
     Params.ParamByName('GODS_ID').AsString:=FieldByName('GODS_ID').AsString;        //商品ID
-    Params.ParamByName('PRICE_METHOD').AsString:=FieldByName('PRICE_METHOD').AsString;     //定价方式
+    Params.ParamByName('PRICE_METHOD').AsString:='1';     //定价方式
     Params.ParamByName('ORG_OUTPRICE').AsFloat:=FieldByName('NEW_OUTPRICE').AsOldFloat;    //门店(原)计量售价
     Params.ParamByName('ORG_OUTPRICE1').AsFloat:=FieldByName('NEW_OUTPRICE1').AsOldFloat;  //门店(原)小包装售价
     Params.ParamByName('ORG_OUTPRICE2').AsFloat:=FieldByName('NEW_OUTPRICE2').AsOldFloat;  //门店(原)大包装售价

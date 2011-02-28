@@ -1,8 +1,8 @@
 inherited frmCodeInfo: TfrmCodeInfo
-  Left = 548
-  Top = 211
+  Left = 734
+  Top = 208
   ActiveControl = DBGridEh1
-  Caption = #23458#25143#20998#31867#31649#29702
+  Caption = ''
   ClientHeight = 347
   ClientWidth = 349
   OnActivate = FormActivate
@@ -20,7 +20,7 @@ inherited frmCodeInfo: TfrmCodeInfo
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #23458#25143#31867#21035
+        Caption = ''
         inherited RzPanel2: TRzPanel
           Width = 335
           Height = 267

@@ -69,7 +69,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             PopupMenu = PopupMenu1
             ReadOnly = True
             RowSelect = True
-            TabOrder = 0
+            TabOrder = 1
             OnChange = rzTreeChange
             OnDragOver = rzTreeDragOver
             OnEndDrag = rzTreeEndDrag
@@ -109,7 +109,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             Width = 122
             Height = 20
             Properties.OnChange = edtSORT_NAMEPropertiesChange
-            TabOrder = 1
+            TabOrder = 0
             OnExit = edtSORT_NAMEExit
           end
           object edtSORT_SPELL: TcxTextEdit
@@ -117,7 +117,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             Top = 63
             Width = 90
             Height = 20
-            Enabled = False
+            TabStop = False
             Properties.OnChange = edtSORT_SPELLPropertiesChange
             TabOrder = 2
           end

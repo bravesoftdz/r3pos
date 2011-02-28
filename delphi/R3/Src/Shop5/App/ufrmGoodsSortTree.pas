@@ -121,7 +121,7 @@ begin
       raise Exception.Create('分类名称'+TRecord_(rzTree.Items[i].Data).FieldbyName('SORT_NAME').AsString+'的拼音码不能为空！');
     end;
   end;
-  if rzTree.Selected.Level=4 then raise Exception.Create('货品分类级别不能超过5级...');
+  if rzTree.Selected.Level=4 then raise Exception.Create('分类级别不能超过5级...');
   ButtonChange2;
   AObj := TRecord_.Create;
   AObj.ReadField(cdsGoodSort);

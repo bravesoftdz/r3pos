@@ -239,6 +239,8 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').asString := edtSHOP_ID.AsString;
     Params.ParamByName('GODS_ID').asString := GODS_ID;
+    if AObj.FieldbyName('PRICE_ID').AsString='' then
+    Params.ParamByName('PRICE_ID').asString := '#' else
     Params.ParamByName('PRICE_ID').asString := AObj.FieldbyName('PRICE_ID').AsString;
     Params.ParamByName('UNIT_ID').asString := UNIT_ID;
     Factor.Open(rs,'TGetSalesPrice',Params);
@@ -278,6 +280,7 @@ begin
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('UNION_ID').asString := '#';
+  AObj.FieldbyName('PRICE_ID').asString := '#';
 //  AObj.FieldbyName('GLIDE_NO').asString := TSequence.GetSequence('GNO_SALES'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   oid := AObj.FieldbyName('SALES_ID').asString;
   gid := '..ÐÂÔö..';// AObj.FieldbyName('GLIDE_NO').asString;

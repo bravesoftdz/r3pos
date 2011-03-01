@@ -121,7 +121,16 @@ uses
   ObjPriceOrder in 'Obj\ObjPriceOrder.pas',
   ObjPrintOrder in 'Obj\ObjPrintOrder.pas',
   uframeSelectCompany in 'Frame\uframeSelectCompany.pas' {frameSelectCompany},
-  ufrmBatchPmdPrice in 'App\ufrmBatchPmdPrice.pas' {frmBatchPmdPrice};
+  ufrmBatchPmdPrice in 'App\ufrmBatchPmdPrice.pas' {frmBatchPmdPrice},
+  ufrmPosMenu in 'App\ufrmPosMenu.pas' {frmPosMenu},
+  ufrmCloseForDay in 'App\ufrmCloseForDay.pas' {frmCloseForDay},
+  ObjCloseForDay in 'Obj\ObjCloseForDay.pas',
+  ufrmCheckOrderList in 'App\ufrmCheckOrderList.pas' {frmCheckOrderList},
+  ufrmCheckOrder in 'App\ufrmCheckOrder.pas' {frmCheckOrder},
+  ufrmCheckAudit in 'App\ufrmCheckAudit.pas' {frmCheckAudit},
+  ufrmCheckTask in 'App\ufrmCheckTask.pas' {frmCheckTask},
+  ufrmCheckTaskDelete in 'App\ufrmCheckTaskDelete.pas' {frmCheckTaskDelete},
+  ufrmSelectCheckGoods in 'App\ufrmSelectCheckGoods.pas';
 
 {$R *.res}
 var

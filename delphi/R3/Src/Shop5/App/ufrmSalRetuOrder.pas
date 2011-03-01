@@ -234,6 +234,8 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').asString := edtSHOP_ID.AsString;
     Params.ParamByName('GODS_ID').asString := GODS_ID;
+    if AObj.FieldbyName('PRICE_ID').AsString='' then
+    Params.ParamByName('PRICE_ID').asString := '#' else
     Params.ParamByName('PRICE_ID').asString := AObj.FieldbyName('PRICE_ID').AsString;
     Params.ParamByName('UNIT_ID').asString := UNIT_ID;
     Factor.Open(rs,'TGetSalesPrice',Params);

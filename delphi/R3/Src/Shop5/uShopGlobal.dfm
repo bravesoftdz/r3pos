@@ -203,7 +203,9 @@ inherited ShopGlobal: TShopGlobal
       '       NEW_OUTPRICE1,'
       '       NEW_OUTPRICE2,'
       '       NEW_LOWPRICE,'
-      '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL'
+      
+        '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,USING_BATC' +
+        'H_NO,USING_LOCUS_NO'
       'from ('
       
         'select * from VIW_GOODSPRICE where POLICY_TYPE=2 and SHOP_ID=:SH' +
@@ -262,7 +264,7 @@ inherited ShopGlobal: TShopGlobal
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
         'LL,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RATE,PRICE_ID'
       ' from VIW_CLIENTINFO '
-      'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'1'#39
+      'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'2'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')
     Params = <
       item
@@ -857,6 +859,34 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 584
     Top = 416
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object ZQuery1: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
+        'Q_NO '
+      'union all'
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO wh' +
+        'ere CODE_TYPE=5 and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39 +
+        '12'#39')'
+      'order by SEQ_NO')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 584
+    Top = 232
     ParamData = <
       item
         DataType = ftUnknown

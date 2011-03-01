@@ -211,7 +211,8 @@ type
     actfrmMonthClose: TAction;
     actfrmCloseForDay: TAction;
     actfrmPriceOrderList: TAction;
-    actfrmPrintOrderList: TAction;
+    actfrmCheckOrderList: TAction;
+    actfrmIO: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -266,7 +267,7 @@ type
     procedure actfrmMonthCloseExecute(Sender: TObject);
     procedure actfrmCloseForDayExecute(Sender: TObject);
     procedure actfrmPriceOrderListExecute(Sender: TObject);
-    procedure actfrmPrintOrderListExecute(Sender: TObject);
+    procedure actfrmCheckOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -313,7 +314,8 @@ uses
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
-  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList;
+  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
+  ufrmCheckOrderList,ufrmCloseForDay;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -888,7 +890,7 @@ begin
 //  if not FileExists(Global.InstallPath+'Data\R3.db') then
 //     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
 //  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
-  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=zhangsr;hostname=zhangsr');
+  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
 //  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
   Factor.Connect;
   if not UpdateDbVersion then Exit;
@@ -1388,6 +1390,7 @@ begin
        Form := TfrmPosMain.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsNormal;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1560,7 +1563,7 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  TfrmCostCalc.StartMonthReck(self);
+  TfrmCloseForDay.ShowClDy(self);
 end;
 
 procedure TfrmShopMain.actfrmPriceOrderListExecute(Sender: TObject);
@@ -1585,7 +1588,7 @@ begin
 
 end;
 
-procedure TfrmShopMain.actfrmPrintOrderListExecute(Sender: TObject);
+procedure TfrmShopMain.actfrmCheckOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
@@ -1596,10 +1599,10 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmPriceOrderList);
+  Form := FindChildForm(TfrmCheckOrderList);
   if not Assigned(Form) then
      begin
-       Form := TfrmPriceOrderList.Create(self);
+       Form := TfrmCheckOrderList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

@@ -44,6 +44,7 @@ type
     PUB_MONTH_PAY_INFO: TZQuery;
     PUB_DEGREES_INFO: TZQuery;
     PUB_OCCUPATION_INFO: TZQuery;
+    ZQuery1: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;
@@ -137,7 +138,7 @@ end;
 
 procedure TShopGlobal.SetLimit(const Value: integer);
 begin
-  FLimit := Value;
+  FLimit := Value;       
 end;
 
 procedure TShopGlobal.Setokline(const Value: boolean);

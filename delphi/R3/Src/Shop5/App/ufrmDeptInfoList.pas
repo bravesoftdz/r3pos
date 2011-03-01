@@ -474,11 +474,9 @@ begin
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
       Params.ParamByName('LEVEL_ID').asString:=trim(CurObj.fieldbyName('LEVEL_ID').AsString);
       Factor.ExecProc('TDeptInfoSort',Params);
-      if ShopGlobal.RefreshTable('Ca_DEPT_INFO') then
-      begin
-        CreateTree;
-        InitGrid;
-      end;
+      ShopGlobal.RefreshTable('Ca_DEPT_INFO');
+      CreateTree;
+      InitGrid;
     finally
       Params.Free;
     end;

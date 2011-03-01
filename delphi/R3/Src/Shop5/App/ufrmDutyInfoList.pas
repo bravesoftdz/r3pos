@@ -484,11 +484,9 @@ begin
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;   
       Params.ParamByName('LEVEL_ID').asString:=CurObj.fieldbyName('LEVEL_ID').AsString;
       Factor.ExecProc('TDutyInfoSort',Params);
-      if ShopGlobal.RefreshTable('Ca_DUTY_INFO') then
-      begin
-        CreateTree; //重新创建Tree
-        InitGrid;   //刷新的Grid的上级职务        
-      end;
+      ShopGlobal.RefreshTable('Ca_DUTY_INFO');
+      CreateTree; //重新创建Tree
+      InitGrid;   //刷新的Grid的上级职务
     finally
       Params.Free;
     end;

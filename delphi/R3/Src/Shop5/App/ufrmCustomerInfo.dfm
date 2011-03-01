@@ -1413,8 +1413,8 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 25
         Width = 121
         Height = 20
-        Enabled = False
         TabOrder = 5
+        Visible = False
       end
       object cmbPRICE_ID: TzrComboBoxList
         Left = 113

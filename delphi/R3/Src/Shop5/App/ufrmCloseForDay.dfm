@@ -1,9 +1,9 @@
 inherited frmCloseForDay: TfrmCloseForDay
   Left = 585
-  Top = 236
+  Top = 233
   BorderStyle = bsNone
   Caption = #20132#29677#20851#36134
-  ClientHeight = 255
+  ClientHeight = 258
   ClientWidth = 435
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -15,32 +15,33 @@ inherited frmCloseForDay: TfrmCloseForDay
     Left = 0
     Top = 0
     Width = 435
-    Height = 255
+    Height = 258
     Align = alClient
-    BorderOuter = fsNone
+    BorderInner = fsGroove
+    BorderOuter = fsFlatRounded
     BorderColor = clTeal
     BorderWidth = 3
     Color = clDefault
     TabOrder = 0
     object RzPanel2: TRzPanel
-      Left = 3
-      Top = 193
-      Width = 429
-      Height = 59
+      Left = 7
+      Top = 197
+      Width = 421
+      Height = 54
       Align = alBottom
       BorderOuter = fsFlat
       Color = clDefault
       TabOrder = 0
       DesignSize = (
-        429
-        59)
+        421
+        54)
       object Btn_Close: TRzBitBtn
-        Left = 227
+        Left = 219
         Top = 16
-        Width = 67
+        Width = 87
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #21462#28040'(&C)'
+        Caption = #31245#21518#32467#36134'(&C)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -62,12 +63,12 @@ inherited frmCloseForDay: TfrmCloseForDay
         Spacing = 5
       end
       object Btn_Save: TRzBitBtn
-        Left = 139
+        Left = 111
         Top = 16
-        Width = 67
+        Width = 87
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #20851#36134'(&S)'
+        Caption = #31435#21363#32467#36134'(&S)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -90,9 +91,9 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
     end
     object RzPanel4: TRzPanel
-      Left = 3
-      Top = 3
-      Width = 429
+      Left = 7
+      Top = 7
+      Width = 421
       Height = 49
       Align = alTop
       BorderOuter = fsFlat
@@ -104,7 +105,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #20851#36134#26085#26399
+        Caption = #32467#36134#26085#26399
         Font.Charset = GB2312_CHARSET
         Font.Color = clWhite
         Font.Height = -12
@@ -160,9 +161,9 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
     end
     object RzPanel3: TRzPanel
-      Left = 3
-      Top = 52
-      Width = 429
+      Left = 7
+      Top = 56
+      Width = 421
       Height = 141
       Align = alClient
       BorderOuter = fsFlat

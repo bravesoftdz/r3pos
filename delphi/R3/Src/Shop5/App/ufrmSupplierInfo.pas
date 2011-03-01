@@ -158,34 +158,14 @@ procedure TfrmSupplierInfo.Save;
   procedure UpdateToGlobal(AObj:TRecord_);
   var Tmp:TZQuery;
   begin
-    Tmp := Global.GetZQueryFromName('PUB_CLIENTINFO');
+    Tmp := Global.GetZQueryFromName('PUB_CLIENTINFO ');
     Tmp.Filtered := false;
-    //if AObj.FieldByName('CLIENT_TYPE').AsString<>'3' then
-    //begin
     if (not Tmp.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[])) then
        Tmp.Append
     else
        Tmp.Edit;
     AObj.WriteToDataSet(Tmp,false);
     Tmp.Post;
-    //end;
-    {if AObj.FieldByName('CLIENT_TYPE').AsString<>'2' then
-    begin
-      Tmp := Global.GetZQueryFromName('BAS_CUSTOMER');
-      Tmp.Filtered :=false;
-      if not Tmp.Locate('CUST_ID',AObj.FieldbyName('CLIENT_ID').AsString,[]) then
-        Tmp.Append
-      else
-        Tmp.Edit;
-      Tmp.FieldByName('CUST_ID').AsString:=AObj.FieldbyName('CLIENT_ID').AsString;
-      Tmp.FieldByName('CUST_CODE').AsString:=AObj.FieldbyName('CLIENT_CODE').AsString;
-      Tmp.FieldByName('CUST_NAME').AsString:=AObj.FieldbyName('CLIENT_NAME').AsString;
-      Tmp.FieldByName('CUST_SPELL').AsString:=AObj.FieldbyName('CLIENT_SPELL').AsString;
-      Tmp.FieldByName('IC_CARDNO').AsString:=AObj.FieldbyName('CLIENT_CODE').AsString;
-      Tmp.FieldByName('LINKMAN').AsString:=AObj.FieldbyName('LINKMAN').AsString;
-      Tmp.FieldByName('ADDRESS').AsString:=AObj.FieldbyName('ADDRESS').AsString;
-      Tmp.Post;
-    end; }
   end;
 var tmp:TZQuery;
 j:integer;
@@ -219,39 +199,17 @@ begin
     if dbState in [dsEdit,dsInsert] then
     begin
       tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if (tmp.FieldByName('CLIENT_NAME').AsString=edtCLIENT_NAME.Text) and (tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString) then
+      if tmp.Locate('CLIENT_NAME',Trim(edtCLIENT_NAME.Text),[]) and (tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString) then
         begin
           if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
           MessageBox(handle,Pchar('提示:供应商名称已经存在!'),Pchar(Caption),MB_OK);
         end;
-        tmp.Next;
-      end;
     end;
-
-    {if dbState=dsInsert then
-    begin
-      tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('CLIENT_NAME').AsString=edtCLIENT_NAME.Text then
-        begin
-          if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:客户名称已经存在!'),Pchar(Caption),MB_OK);
-        end;
-        tmp.Next;
-      end;
-    end;}
   end;
+  
   if dbState=dsEdit then
   begin
     tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-    //tmp.Filtered:=False;
     if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) and (tmp.FieldByName('CLIENT_ID').AsString<>AObj.FieldByName('CLIENT_ID').AsString) then
     begin
       if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
@@ -261,7 +219,6 @@ begin
   if dbState=dsInsert then
   begin
     tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-    tmp.Filtered:=False;
     if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) then
     begin
       if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
@@ -340,7 +297,7 @@ end;
 procedure TfrmSupplierInfo.FormShow(Sender: TObject);
 begin
   inherited;
-
+  RzPage.ActivePageIndex := TabSheet1.TabIndex;
   if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
 end;
 

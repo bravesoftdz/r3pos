@@ -664,8 +664,8 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Top = 30
         Width = 121
         Height = 20
-        Enabled = False
-        TabOrder = 2
+        TabStop = False
+        TabOrder = 5
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 97
@@ -678,7 +678,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 3
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -721,7 +721,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 5
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -767,7 +767,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 4
+        TabOrder = 3
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371

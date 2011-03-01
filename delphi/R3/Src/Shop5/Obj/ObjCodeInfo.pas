@@ -23,8 +23,8 @@ var Str:String;
 begin
   rs := TZQuery.Create(nil);
   case FieldByName('CODE_TYPE').AsInteger of
-    5:Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
-    9:Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+    5:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+    9:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
   end;
   try
     rs.Close;

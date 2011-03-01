@@ -671,6 +671,17 @@ inherited frmStockOrder: TfrmStockOrder
     object N1: TMenuItem [2]
       Action = actPrintBarcode
     end
+    object N3: TMenuItem [11]
+      Caption = #25972#21333#36864#36135
+      OnClick = N3Click
+    end
+    object N4: TMenuItem [12]
+      Caption = #21333#31508#36864#36135
+      OnClick = N4Click
+    end
+    object N2: TMenuItem [13]
+      Caption = '-'
+    end
   end
   inherited edtTable: TZQuery
     FieldDefs = <

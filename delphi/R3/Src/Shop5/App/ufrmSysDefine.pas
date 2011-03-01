@@ -587,7 +587,7 @@ end;
 procedure TfrmSysDefine.FormCreate(Sender: TObject);
 begin
   inherited;
-  edtCALC_FLAG.ItemIndex := 1;
+  edtCALC_FLAG.ItemIndex := 0;
   edtRTL_INV_FLAG.ItemIndex := 0;
   edtIN_INV_FLAG.ItemIndex := 0;
   edtCARRYRULE.ItemIndex := 0;

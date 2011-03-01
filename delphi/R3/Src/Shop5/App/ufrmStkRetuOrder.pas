@@ -80,7 +80,9 @@ type
     InRate2:real;
     //增值税率
     InRate3:real;
+  protected
     procedure ReadHeader;
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -104,7 +106,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrder
   ;
 {$R *.dfm}
 
@@ -838,6 +840,78 @@ end;
 
 procedure TfrmStkRetuOrder.PriceToCalc(APrice: Real);
 begin
+  inherited;
+end;
+
+procedure TfrmStkRetuOrder.WMFillData(var Message: TMessage);
+var
+  frmStockOrder:TfrmStockOrder;
+  i:integer;
+begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmStockOrder := TfrmStockOrder(Message.WParam);
+  with TfrmStockOrder(frmStockOrder) do
+    begin
+      self.edtCLIENT_ID.KeyValue := edtCLIENT_ID.KeyValue;
+      self.edtCLIENT_ID.Text := edtCLIENT_ID.Text;
+      self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+      self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+      self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
+      self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
+      self.edtFROM_ID.Text := AObj.FieldbyName('STOCK_ID').AsString;
+      self.edtADVA_MNY.Text := edtADVA_MNY.Text;
+      self.edtREMARK.Text := edtREMARK.Text;
+      self.Locked := true;
+      try
+        self.edtINVOICE_FLAG.ItemIndex := edtINVOICE_FLAG.ItemIndex;
+        self.edtTAX_RATE.Value := edtTAX_RATE.Value;
+      finally
+        self.Locked := false;
+      end;
+      case Message.LParam of
+      0:self.ReadFrom(cdsDetail);
+      1:
+        begin
+          self.edtTable.DisableControls;
+          try
+          self.edtProperty.Close;
+          self.edtTable.Close;
+          self.edtProperty.CreateDataSet;
+          self.edtTable.CreateDataSet;
+          self.RowID := 0;
+          self.edtTable.Append;
+          for i:=0 to self.edtTable.Fields.Count -1 do
+            begin
+               if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
+                  self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
+            end;
+          inc(self.RowID);
+          self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
+          self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+          self.edtTable.Post;
+
+          edtProperty.Filtered := false;
+          edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+          edtProperty.Filtered := true;
+
+          edtProperty.First;
+          while not edtProperty.Eof do
+            begin
+              self.edtProperty.Append;
+              for i:=0 to self.edtProperty.Fields.Count -1 do
+                self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+              self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
+              self.edtProperty.Post;
+
+              edtProperty.Next;
+            end;
+          finally
+            self.edtTable.EnableControls;
+          end;
+        end;
+      end;
+
+    end;
   inherited;
 end;
 

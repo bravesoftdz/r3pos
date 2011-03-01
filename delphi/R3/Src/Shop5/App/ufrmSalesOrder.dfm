@@ -737,19 +737,26 @@ inherited frmSalesOrder: TfrmSalesOrder
       Top = 208
     end
   end
-  inherited PopupMenu1: TPopupMenu
-    object N1: TMenuItem
-      Caption = '-'
+  inherited actList: TActionList
+    object actCustomer: TAction
+      Caption = #36755#20837#20250#21592#21345#21495
+      ShortCut = 116
+      OnExecute = actCustomerExecute
     end
-    object N2: TMenuItem
+  end
+  inherited PopupMenu1: TPopupMenu
+    object N1: TMenuItem [5]
+      Action = actCustomer
+    end
+    object N2: TMenuItem [11]
       Caption = #25972#21333#36864#36135
       OnClick = N2Click
     end
-    object N3: TMenuItem
+    object N3: TMenuItem [12]
       Caption = #21333#31508#36864#36135
       OnClick = N3Click
     end
-    object N4: TMenuItem
+    object N4: TMenuItem [13]
       Caption = '-'
     end
   end

@@ -168,7 +168,7 @@ type
     procedure WMExecOrder(var Message: TMessage); message WM_EXEC_ORDER;
     procedure OpenDialogGoods;
     procedure OpenDialogProperty;
-    procedure OpenDialogCustomer(KeyString:string);
+    function OpenDialogCustomer(KeyString:string):boolean;
     procedure OpenDialogGuide;
     procedure AddFromDialog(AObj:TRecord_);
     procedure SetgRepeat(const Value: boolean);
@@ -233,12 +233,18 @@ type
     procedure ReturnGods;
     //调价
     procedure OpenDialogPrice;
+    //输入跟踪号
+    function GodsToLocusNo(id:string):boolean;
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;
 
     procedure ShowHeader(flag:integer=0);
     procedure Calc;
     procedure HangUp;
     procedure PickUp;
     procedure Check;
+
+    procedure PopupMenu;
 
     function EnCodeBarcode:string;
     procedure DoPrintTicket(cid,id:string;iFlag:integer=0;cash:real=0;dibs:real=0);
@@ -289,7 +295,7 @@ type
 implementation
 uses ufrmShopMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory,
-     ufrmHangUpFile, uframeListDialog, ufrmPosPrice,IniFiles;
+     ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay;
 {$R *.dfm}
 
 procedure TfrmPosMain.FormCreate(Sender: TObject);
@@ -602,6 +608,14 @@ begin
       lblInput.Caption := '输入数量';
       lblHint.Caption := '请直接输入当前商品的数量后按“回车”';
       rzHint.Caption := lblHint.Caption;
+    end;
+  10:begin
+      lblInput.Caption := '物流条码';
+      lblHint.Caption := '请输入物流跟踪号后按“回车”';
+    end;
+  11:begin
+      lblInput.Caption := '商品批号';
+      lblHint.Caption := '请输入商品批号后按“回车”';
     end;
   end;
   FInputFlag := Value;
@@ -1248,6 +1262,7 @@ begin
     begin
       if (dbState = dsBrowse) then NewOrder;
       s := trim(edtInput.Text);
+      try
       edtInput.Text := '';
       edtInput.SetFocus;
       Key := #0;
@@ -1298,6 +1313,20 @@ begin
       if InputFlag=8 then //颜色尺码
          begin
            PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           Exit;
+         end;
+      if InputFlag=10 then //物流跟踪号
+         begin
+           if s<>'' then if not GodsToLocusNo(s) then Exit;
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           Exit;
+         end;
+      if InputFlag=11 then //商品批号
+         begin
+           if s<>'' then if not GodsToBatchNo(s) then Exit;
            InputFlag := 0;
            DBGridEh1.Col := 1;
            Exit;
@@ -1374,9 +1403,15 @@ begin
              end;
            end;
          end;
+      except
+         edtInput.Text := s;
+         edtInput.SelectAll;
+         Raise;
+      end;
     end;
   if Key='-' then
     begin
+      if MessageBox(Handle,'请确认是否删除当前选中的商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
       AObj := TRecord_.Create;
       try
          AObj.ReadFromDataSet(cdsTable);
@@ -1516,38 +1551,80 @@ end;
 procedure TfrmPosMain.WriteInfo(id: string);
 var
   rs:TZQuery;
+  SObj:TRecord_;
 begin
   inherited;
   rs := TZQuery.Create(nil);
+  SObj := TRecord_.Create;
   try
-    rs.SQL.Text :=
-      'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-      'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'')';
-    Factor.Open(rs);
-    if rs.IsEmpty then
+    if id='' then
+    begin
+      if not OpenDialogCustomer('') then Exit;
+      rs.SQL.Text :=
+        'select j.*,c.UNION_NAME from ('+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+        '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+        ' union all '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ') c on j.UNION_ID=c.UNION_ID ';
+      Factor.Open(rs);
+    end
+    else
+    begin
+      rs.SQL.Text :=
+        'select j.*,c.UNION_NAME from ('+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
+        '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+        ' union all '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ') c on j.UNION_ID=c.UNION_ID ';
+      Factor.Open(rs);
+      if rs.IsEmpty then
+         begin
+          rs.Close;
+          rs.SQL.Text :=
+            'select j.*,c.UNION_NAME from ('+
+            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+            '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+            ' union all '+
+            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+            ') c on j.UNION_ID=c.UNION_ID ';
+          Factor.Open(rs);
+         end;
+    end;
+    if rs.IsEmpty then Raise Exception.Create('没有找到此会员资料.'); 
+    if rs.RecordCount = 1 then
+       SObj.ReadFromDataSet(rs)
+    else
+    if rs.RecordCount = 2 then
        begin
-        rs.Close;
-        rs.SQL.Text :=
-          'select A.CLIENT_ID,A.CLIENT_NAME,A.INTEGRAL,B.BALANCE,A.PRICE_ID from VIW_CUSTOMER A left outer jion PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-          'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.MOVE_TELE='''+id+''' and A.LICENSE_CODE='''+id+'''';
-        Factor.Open(rs);
-       end;
-    if rs.RecordCount<>1  then
-       begin
-         PostMessage(Handle,WM_DIALOG_PULL,FIND_CUSTOMER_DIALOG,1);
-         Exit;
+         rs.First;
+         while not rs.Eof do
+           begin
+             if rs.FieldByName('UNION_ID').AsString <> '#' then
+                begin
+                  SObj.ReadFromDataSet(rs);
+                  break; 
+                end;
+             rs.Next;
+           end;
        end
     else
-       begin
-         AObj.FieldbyName('CLIENT_ID').AsString := rs.Fields[0].AsString;
-         AObj.FieldbyName('CLIENT_ID_TEXT').AsString := rs.Fields[1].AsString;
-         AObj.FieldbyName('PRICE_ID').AsString := rs.Fields[4].AsString;
-         AObj.FieldbyName('BALANCE').AsFloat := rs.Fields[3].AsFloat;
-         AObj.FieldbyName('ACCU_INTEGRAL').AsFloat := rs.Fields[2].AsFloat;
-         CalcPrice;
-         ShowHeader;
-       end;
+       if not TframeListDialog.FindDialog(self,rs.SQL.Text,'IC_CARDNO=卡号,CLIENT_NAME=客户名称,UNION_NAME=商盟',SObj) then Exit;
+    AObj.FieldbyName('UNION_ID').AsString := SObj.FieldbyName('UNION_ID').AsString;
+    AObj.FieldbyName('IC_CARDNO').AsString := SObj.FieldbyName('IC_CARDNO').AsString;
+    AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CLIENT_ID').AsString;
+    AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CLIENT_NAME').AsString;
+    AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldbyName('PRICE_ID').AsString;
+    AObj.FieldbyName('BALANCE').AsFloat := SObj.FieldbyName('BALANCE').AsFloat;
+    AObj.FieldbyName('ACCU_INTEGRAL').AsFloat := SObj.FieldbyName('INTEGRAL').AsFloat;
+    CalcPrice;
+    ShowHeader;
   finally
+    SObj.Free;
     rs.Free;
   end;
 end;
@@ -1743,23 +1820,20 @@ begin
   if not cdsTable.IsEmpty then cdsTable.Delete; 
 end;
 
-procedure TfrmPosMain.OpenDialogCustomer(KeyString:string);
+function TfrmPosMain.OpenDialogCustomer(KeyString:string):boolean;
 begin
+  result := false;
   if dbState = dsBrowse then Exit;
-  InputFlag := 1;
   with TframeSelectCustomer.Create(self) do
     begin
       try
-        CustType := 1;
         edtSearch.Text := KeyString;
         Open('');
         if ShowModal=MROK then
            begin
              AObj.FieldbyName('CLIENT_ID').AsString := cdsList.FieldbyName('CLIENT_ID').AsString;
              AObj.FieldbyName('CLIENT_ID_TEXT').AsString := cdsList.FieldbyName('CLIENT_NAME').AsString;
-             CalcPrice;
-             ShowHeader(1);
-             InputFlag := 0;
+             result := true;
            end;
       finally
         free;
@@ -2037,15 +2111,25 @@ begin
        rzHelp.Top := RzPanel3.Top + RzPanel3.Height-rzHelp.Height+10;
      end;
 
+  if (Shift = []) and (Key = VK_F2) then
+     begin
+       PopupMenu;
+       Exit;
+     end;   
+
   if (Shift = []) and (Key = VK_F7) then
      begin
-       HangUp;
-       LoadFile('H');
+       InputFlag := 10;
+       if edtInput.CanFocus then edtInput.SetFocus;
+       //HangUp;
+      // LoadFile('H');
      end;
   if (Shift = []) and (Key = VK_F8) then
      begin
-       PickUp;
-       LoadFile('H');
+       InputFlag := 11;
+       if edtInput.CanFocus then edtInput.SetFocus;
+      // PickUp;
+      // LoadFile('H');
      end;
      
   if (Shift = []) and (Key = VK_F10) then
@@ -2511,21 +2595,21 @@ end;
 
 procedure TfrmPosMain.OpenDialogGuide;
 var
-  AObj:TRecord_;
+  SObj:TRecord_;
   SQL:string;
 begin
   if dbState = dsBrowse then Exit;
-  AObj := TRecord_.Create;
+  SObj := TRecord_.Create;
   try
     SQL := 'select 0 as A,USER_ID,USER_SPELL,USER_NAME,ACCOUNT from VIW_USERS where COMM not in (''02'',''12'') and TENANT_ID='+inttostr(Global.TENANT_ID);
-    if TframeListDialog.FindDialog(self,SQL,'ACCOUNT=帐号,USER_NAME=姓名,USER_SPELL=拼音码',AObj) then
+    if TframeListDialog.FindDialog(self,SQL,'ACCOUNT=帐号,USER_NAME=姓名,USER_SPELL=拼音码',SObj) then
        begin
-         AObj.FieldbyName('GUIDE_USER').AsString := AObj.FieldbyName('USER_ID').AsString;
-         AObj.FieldbyName('GUIDE_USER_TEXT').AsString := AObj.FieldbyName('USER_NAME').AsString;
+         AObj.FieldbyName('GUIDE_USER').AsString := SObj.FieldbyName('USER_ID').AsString;
+         AObj.FieldbyName('GUIDE_USER_TEXT').AsString := SObj.FieldbyName('USER_NAME').AsString;
          ShowHeader;
        end;
   finally
-    AObj.Free;
+    SObj.Free;
   end;
 
 end;
@@ -3039,7 +3123,7 @@ begin
   try
     rs.SQL.Text :=
       'select AMONEY,AMOUNT from ('+
-      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) j where AMOUNT<>0';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
     rs.ParamByName('GODS_ID').AsString := GODS_ID;
@@ -3057,6 +3141,108 @@ begin
        result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
   finally
     rs.Free;
+  end;
+end;
+
+function TfrmPosMain.GodsToBatchNo(id: string): boolean;
+var
+  rs,bs:TZQuery;
+  AObj:TRecord_;
+  r:boolean;
+  pt:integer;
+begin
+  if cdsTable.FieldByName('GODS_ID').AsString = '' then
+     begin
+       result := true;
+       MessageBox(Handle,pchar('请输入商品后再输入批号.'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  if id = '' then Raise Exception.Create('输入的批号无效'); 
+  result := false;
+  rs := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  try
+    rs.SQL.Text := 'select GODS_ID,LOCUS_NO,UNIT_ID,BATCH_NO,IS_PRESENT from VIW_STOCKDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID='''+cdsTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('无效的批号:'+id);
+    cdsTable.Edit;
+    cdsTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+    result := true;
+  finally
+    AObj.Free;
+    rs.Free;
+  end;
+end;
+
+function TfrmPosMain.GodsToLocusNo(id: string): boolean;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+  pt:integer;
+  r:boolean;
+begin
+  if id = '' then Raise Exception.Create('输入的物流跟踪号无效');
+  result := false;
+  rs := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  try
+    rs.SQL.Text :=
+      'select j.* from ('+
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
+    if rs.RecordCount > 1 then
+       begin
+         if TframeListDialog.FindDialog(self,rs.SQL.Text,'GODS_CODE=货号,GODS_NAME=商品名称,BATCH_NO=批号,BARCODE=条码',AObj) then
+            begin
+            end
+         else
+            Exit;
+       end
+    else
+       AObj.ReadFromDataSet(rs);
+     pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
+
+     r := cdsTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
+     if not r then
+     begin
+        inc(RowID);
+        cdsTable.Append;
+        cdsTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        cdsTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        cdsTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+        cdsTable.FieldByName('IS_PRESENT').asInteger := pt;
+        cdsTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+        cdsTable.FieldbyName('BATCH_NO').AsString := AObj.FieldbyName('BATCH_NO').AsString;
+        cdsTable.FieldbyName('LOCUS_NO').AsString := AObj.FieldbyName('LOCUS_NO').AsString;
+        cdsTable.FieldbyName('BOM_ID').Value := null;
+        cdsTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+        cdsTable.FieldbyName('PROPERTY_01').AsString := '#';
+        cdsTable.FieldbyName('PROPERTY_02').AsString := '#';
+        InitPrice(AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('UNIT_ID').AsString);
+     end else Raise Exception.Create('当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id);
+     WriteAmount(1,true);
+     result := false;
+  finally
+    AObj.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmPosMain.PopupMenu;
+begin
+  case TfrmPosMenu.ShowMenu(self) of
+  0:Exit;
+  1:case TfrmCloseForDay.ShowClDy(self) of
+    1:Close;
+    2:Close;
+    end;
+  2:self.WindowState := wsMinimized;
+  8:HangUp;
+  9:PickUp;
+  else
+    Raise Exception.Create('暂时不支持此项功能...'); 
   end;
 end;
 

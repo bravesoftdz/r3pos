@@ -43,6 +43,9 @@ type
     fndMY_AMOUNT: TcxTextEdit;
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -66,6 +69,8 @@ type
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
     { Private declarations }
     //½áËã½ð¶î
@@ -79,6 +84,7 @@ type
     procedure ReadHeader;
   public
     { Public declarations }
+    procedure CheckInvaid;override;
     procedure ShowInfo;
     procedure ShowOweInfo;
     function  Calc:real;
@@ -100,7 +106,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,ufrmShopMain
   ;
 {$R *.dfm}
 
@@ -884,6 +890,37 @@ end;
 
 procedure TfrmStkIndentOrder.PriceToCalc(APrice: Real);
 begin
+  inherited;
+end;
+
+procedure TfrmStkIndentOrder.CheckInvaid;
+begin
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+//  inherited;
+
+end;
+
+procedure TfrmStkIndentOrder.N3Click(Sender: TObject);
+var frmStockOrderList:TfrmStockOrderList;
+begin
+  inherited;
+  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
+  frmShopMain.actfrmStockOrderList.OnExecute(nil);
+  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
+  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  inherited;
+end;
+
+procedure TfrmStkIndentOrder.N4Click(Sender: TObject);
+var frmStockOrderList:TfrmStockOrderList;
+begin
+  inherited;
+  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
+  frmShopMain.actfrmStockOrderList.OnExecute(nil);
+  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
+  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
 end;
 

@@ -179,7 +179,7 @@ procedure TfrmSalesOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if ShopGlobal.GetChkRight('500028') and (rzPage.ActivePageIndex = 0) then actNew.OnExecute(nil);
+  if ShopGlobal.GetChkRight('500028') and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmSalesOrderList.actEditExecute(Sender: TObject);

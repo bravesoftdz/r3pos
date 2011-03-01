@@ -81,7 +81,7 @@ var rs: TZQuery;
 begin
   try
     rs := TZQuery.Create(nil);
-    rs.SQL.Text := 'select TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE,'+
+    rs.SQL.Text := 'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,'+
     'sum(PAY_A) as PAY_A,'+
     'sum(PAY_B) as PAY_B,'+
     'sum(PAY_C) as PAY_C,'+
@@ -95,10 +95,10 @@ begin
     ' from SAL_SALESORDER A'+
     ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE=:SALES_DATE '+
     ' group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
-    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
-    rs.FieldByName('CREA_USER').AsString := Global.UserID;
-    rs.FieldByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date);
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.ParamByName('CREA_USER').AsString := Global.UserID;
+    rs.ParamByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
     Factor.Open(rs);
     if rs.IsEmpty then
       begin
@@ -111,8 +111,8 @@ begin
 
     rs.Close;
     rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date)+
-    ' group by TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE';
+    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+
+    ' ';
     Factor.Open(rs);
     if rs.IsEmpty then
       Is_Print := False
@@ -122,8 +122,8 @@ begin
 
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date)+' and RECV_USER='+QuotedStr(Global.UserID)+
-    ' group by TENANT_ID,SHOP_ID,RECV_USER,RECV_DATE ';
+    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+
+    ' ';
     Factor.Open(rs);
     if rs.IsEmpty then
       Is_Print := False
@@ -335,35 +335,33 @@ begin
 end;
 
 procedure TfrmCloseForDay.Save;
-var Str:String;
-    rs,Tmp: TZQuery;
+var 
+    rs,sv: TZQuery;
+    AObj:TRecord_;
 begin
+    rs := TZQuery.Create(nil);
+    sv := TZQuery.Create(nil);
+    AObj := TRecord_.Create;
     try
-      rs := TZQuery.Create(nil);
-      Tmp := TZQuery.Create(nil);
-      Str := 'select SALES_DATE from SAL_SALESORDER A where SALES_TYPE=4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and '+
-      ' CREA_USER=:CREA_USER and SALES_DATE<=:SALES_DATE and not exists('+
-      'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
-      ') order by SALES_DATE ';
-      rs.SQL.Text := Str;
-      rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      rs.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-      rs.Params.ParamByName('CREA_USER').AsString := Global.UserID;
-      rs.Params.ParamByName('SALES_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Date));
-      Factor.Open(rs);
+      GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',Date())));
       if not rs.IsEmpty then
         begin
+          sv.Delta := rs.Delta;
           rs.First;
           while not rs.Eof do
             begin
-              GetEverydayAcc(Tmp,StrToInt(FormatDateTime('YYYYMMDD',Date)));
-              Factor.UpdateBatch(Tmp,'TCloseForDay');
+              sv.Append;
+              AObj.ReadFromDataSet(rs);
+              AObj.WriteToDataSet(sv,false);
+              sv.Post; 
               rs.Next;
             end;
+          Factor.UpdateBatch(sv,'TCloseForDay');
         end;
     finally
+      AObj.Free;
+      sv.Free;
       rs.Free;
-      Tmp.Free;
     end;
 
 end;
@@ -454,7 +452,8 @@ procedure TfrmCloseForDay.GetEverydayAcc(var Acc_Data: TZQuery;ThatDay:Integer);
 var Str:String;
 begin
   try
-    Str := 'select null as ROWS_ID,TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE,'+
+    Str :=
+    'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
     'sum(PAY_A) as PAY_A,'+
     'sum(PAY_B) as PAY_B,'+
     'sum(PAY_C) as PAY_C,'+
@@ -464,9 +463,9 @@ begin
     'sum(PAY_G) as PAY_G,'+
     'sum(PAY_H) as PAY_H,'+
     'sum(PAY_I) as PAY_I,'+
-    'sum(PAY_J) as PAY_J,null as CREA_DATE,null as CREA_USER,'+
+    'sum(PAY_J) as PAY_J '+
     ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE=:SALES_DATE '+
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE < =:SALES_DATE '+
     ' and not exists('+
     'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
     ') group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
@@ -477,7 +476,6 @@ begin
     Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
     Factor.Open(Acc_Data);
-    Acc_Data.FieldByName('ROWS_ID').AsString := TSequence.NewId;
   finally
   end;
 

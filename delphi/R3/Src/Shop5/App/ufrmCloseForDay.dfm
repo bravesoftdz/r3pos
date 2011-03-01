@@ -228,7 +228,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       object lblCASH: TLabel
         Left = 225
         Top = 89
-        Width = 90
+        Width = 93
         Height = 29
         Caption = #29616#37329#65306
         Font.Charset = GB2312_CHARSET

@@ -1,10 +1,10 @@
 inherited frmPosMain: TfrmPosMain
   Left = 155
-  Top = 144
+  Top = 140
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
-  ClientHeight = 566
+  ClientHeight = 570
   ClientWidth = 802
   Color = clBlack
   OldCreateOrder = True
@@ -17,7 +17,7 @@ inherited frmPosMain: TfrmPosMain
   TextHeight = 12
   object RzPanel3: TRzPanel [0]
     Left = 0
-    Top = 271
+    Top = 275
     Width = 802
     Height = 199
     Align = alBottom
@@ -711,7 +711,7 @@ inherited frmPosMain: TfrmPosMain
     Left = 0
     Top = 26
     Width = 802
-    Height = 245
+    Height = 249
     Align = alClient
     BorderOuter = fsFlat
     BorderSides = [sdLeft, sdTop, sdRight]
@@ -722,7 +722,7 @@ inherited frmPosMain: TfrmPosMain
       Left = 1
       Top = 1
       Width = 800
-      Height = 244
+      Height = 248
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       AutoFitColWidths = True
@@ -780,21 +780,21 @@ inherited frmPosMain: TfrmPosMain
           Footers = <>
           Title.Caption = #21830#21697#21517#31216
           Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
-          Width = 189
+          Width = 123
         end
         item
           EditButtons = <>
           FieldName = 'GODS_CODE'
           Footers = <>
           Title.Caption = #36135#21495
-          Width = 63
+          Width = 59
         end
         item
           EditButtons = <>
           FieldName = 'BARCODE'
           Footers = <>
           Title.Caption = #26465#30721
-          Width = 103
+          Width = 88
         end
         item
           Alignment = taCenter
@@ -802,7 +802,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'PROPERTY_01'
           Footers = <>
           Title.Caption = #23610#30721
-          Width = 35
+          Width = 31
         end
         item
           Alignment = taCenter
@@ -820,7 +820,7 @@ inherited frmPosMain: TfrmPosMain
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #25968#37327
-          Width = 46
+          Width = 31
         end
         item
           Alignment = taCenter
@@ -829,23 +829,23 @@ inherited frmPosMain: TfrmPosMain
           Footers = <>
           Title.Caption = #21333#20301
           Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
-          Width = 41
+          Width = 30
         end
         item
           EditButtons = <>
           FieldName = 'ORG_PRICE'
           Footers = <>
           Title.Caption = #21407#21333#20215
-          Width = 54
+          Width = 51
         end
         item
           Alignment = taRightJustify
-          DisplayFormat = '#0.0%'
+          DisplayFormat = '#0%'
           EditButtons = <>
           FieldName = 'AGIO_RATE'
           Footers = <>
           Title.Caption = #25240#25187#29575
-          Width = 51
+          Width = 47
         end
         item
           Alignment = taRightJustify
@@ -853,7 +853,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'APRICE'
           Footers = <>
           Title.Caption = #29616#21333#20215
-          Width = 52
+          Width = 51
         end
         item
           Alignment = taRightJustify
@@ -862,7 +862,21 @@ inherited frmPosMain: TfrmPosMain
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #37329#39069
-          Width = 67
+          Width = 61
+        end
+        item
+          EditButtons = <>
+          FieldName = 'BATCH_NO'
+          Footers = <>
+          Title.Caption = #25209#21495
+          Width = 82
+        end
+        item
+          EditButtons = <>
+          FieldName = 'LOCUS_NO'
+          Footers = <>
+          Title.Caption = #29289#27969#36319#36394#30721
+          Width = 88
         end>
     end
   end
@@ -921,7 +935,7 @@ inherited frmPosMain: TfrmPosMain
   end
   object RzPanel8: TRzPanel [3]
     Left = 0
-    Top = 540
+    Top = 544
     Width = 802
     Height = 26
     Align = alBottom
@@ -988,7 +1002,7 @@ inherited frmPosMain: TfrmPosMain
   end
   object rzHelp: TRzPanel [4]
     Left = 0
-    Top = 470
+    Top = 474
     Width = 802
     Height = 70
     Align = alBottom
@@ -1069,10 +1083,10 @@ inherited frmPosMain: TfrmPosMain
     object h9: TLabel
       Left = 137
       Top = 28
-      Width = 60
+      Width = 84
       Height = 12
       Cursor = crHandPoint
-      Caption = #25346#21333'  [F7]'
+      Caption = #29289#27969#36319#36394#30721'[F7]'
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
@@ -1083,10 +1097,10 @@ inherited frmPosMain: TfrmPosMain
     object h10: TLabel
       Left = 137
       Top = 47
-      Width = 60
+      Width = 84
       Height = 12
       Cursor = crHandPoint
-      Caption = #21462#21333'  [F8]'
+      Caption = #25209#21495#36755#20837'  [F8]'
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12

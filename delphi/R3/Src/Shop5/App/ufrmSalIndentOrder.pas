@@ -56,6 +56,7 @@ type
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
     edtSHOP_ID: TzrComboBoxList;
+    actCustomer: TAction;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -80,6 +81,7 @@ type
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
+    procedure actCustomerExecute(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -90,6 +92,7 @@ type
   protected
     procedure SetInputFlag(const Value: integer);override;
     function IsKeyPress:boolean;override;
+    function OpenDialogCustomer(KeyString: string): boolean;
   public
     { Public declarations }
     //结算金额
@@ -120,6 +123,8 @@ type
     //赠送
     procedure PresentToGods;
 
+    //检测数据合法性
+    procedure CheckInvaid;override;
     procedure ReadFrom(DataSet:TDataSet);override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure UnitToCalc(UNIT_ID:string);override;
@@ -134,10 +139,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo
-   //,uframeSelectCustomer,
-   //ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain
-   , ufrmShopMain;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
+   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmShopMain;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -780,21 +783,112 @@ begin
 
 end;
 
+function TfrmSalIndentOrder.OpenDialogCustomer(KeyString: string): boolean;
+begin
+  result := false;
+  if dbState = dsBrowse then Exit;
+  with TframeSelectCustomer.Create(self) do
+    begin
+      try
+        edtSearch.Text := KeyString;
+        Open('');
+        if ShowModal=MROK then
+           begin
+             edtCLIENT_ID.KeyValue := cdsList.FieldbyName('CLIENT_ID').AsString;
+             edtCLIENT_ID.Text := cdsList.FieldbyName('CLIENT_NAME').AsString;
+             edtCLIENT_ID.OnSaveValue(edtCLIENT_ID);
+             result := true;
+           end;
+      finally
+        free;
+      end;
+    end;
+end;
 procedure TfrmSalIndentOrder.WriteInfo(id: string);
 var
   rs:TZQuery;
+  SObj:TRecord_;
 begin
   inherited;
-{  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
+  SObj := TRecord_.Create;
   try
-    rs.CommandText := 'select CLIENT_ID,CLIENT_NAME from VIW_CUSTOMER where IC_CARDNO='''+id+'''';
-    Factor.Open(rs);
-    edtCLIENT_ID.KeyValue := rs.Fields[0].AsString;
-    edtCLIENT_ID.Text := rs.Fields[1].AsString;
-    edtCLIENT_ID.OnSaveValue(nil);
+    if id='' then
+    begin
+      if not OpenDialogCustomer('') then Exit;
+      rs.SQL.Text :=
+        'select j.*,c.UNION_NAME from ('+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+        '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+        ' union all '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ') c on j.UNION_ID=c.UNION_ID ';
+      Factor.Open(rs);
+    end
+    else
+    begin
+      rs.SQL.Text :=
+        'select j.*,c.UNION_NAME from ('+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
+        '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+        ' union all '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ') c on j.UNION_ID=c.UNION_ID ';
+      Factor.Open(rs);
+      if rs.IsEmpty then
+         begin
+          rs.Close;
+          rs.SQL.Text :=
+            'select j.*,c.UNION_NAME from ('+
+            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+            '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
+            ' union all '+
+            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+            ') c on j.UNION_ID=c.UNION_ID ';
+          Factor.Open(rs);
+         end;
+    end;
+    if rs.IsEmpty then Raise Exception.Create('没有找到此会员资料.'); 
+    if rs.RecordCount = 1 then
+       SObj.ReadFromDataSet(rs)
+    else
+    if rs.RecordCount = 2 then
+       begin
+         rs.First;
+         while not rs.Eof do
+           begin
+             if rs.FieldByName('UNION_ID').AsString <> '#' then
+                begin
+                  SObj.ReadFromDataSet(rs);
+                  break; 
+                end;
+             rs.Next;
+           end;
+       end
+    else
+       if not TframeListDialog.FindDialog(self,rs.SQL.Text,'IC_CARDNO=卡号,CLIENT_NAME=客户名称,UNION_NAME=商盟',SObj) then Exit;
+    AObj.FieldbyName('UNION_ID').AsString := SObj.FieldbyName('UNION_ID').AsString;
+    AObj.FieldbyName('IC_CARDNO').AsString := SObj.FieldbyName('IC_CARDNO').AsString;
+    AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CLIENT_ID').AsString;
+    AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CLIENT_NAME').AsString;
+    AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldbyName('PRICE_ID').AsString;
+    Locked := true;
+    try
+      edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',SObj.FieldbyName('INVOICE_FLAG').AsString);
+      if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
+      edtINVOICE_FLAGPropertiesChange(nil);
+      Calc;
+    finally
+      Locked := false;
+    end;
+    ShowOweInfo;
   finally
+    SObj.Free;
     rs.Free;
-  end; }
+  end;
 end;
 
 procedure TfrmSalIndentOrder.AgioToGods(id: string);
@@ -1002,135 +1096,54 @@ end;
 procedure TfrmSalIndentOrder.edtCLIENT_IDFindClick(Sender: TObject);
 begin
   inherited;
-{  if dbState = dsBrowse then Exit;
-  with TframeSelectCustomer.Create(self) do
-    begin
-      try
-        CustType := 0;
-        edtSearch.Text := '';
-        Open('');
-        if ShowModal=MROK then
-           begin
-             edtCLIENT_ID.KeyValue := cdsList.FieldbyName('CUST_ID').AsString;
-             edtCLIENT_ID.Text := cdsList.FieldbyName('CUST_NAME').AsString;
-             edtCLIENT_ID.OnSaveValue(edtCLIENT_ID);
-           end;
-      finally
-        free;
-      end;
-    end;
-}
+  if dbState = dsBrowse then Exit;
+  OpenDialogCustomer('');
+  
 end;
 
 procedure TfrmSalIndentOrder.N2Click(Sender: TObject);
-//var frmSalRetuOrderList:TfrmSalRetuOrderList;
+var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
-{  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
-  frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
-  frmSalRetuOrderList.Add;
-  if frmSalRetuOrderList.RzPage.ActivePageIndex = 0 then Raise Exception.Create('生成退货单出错了...');
-
-  with TfrmSalRetuOrder(frmSalRetuOrderList.CurOrder) do
-    begin
-      edtCLIENT_ID.KeyValue := self.edtCLIENT_ID.KeyValue;
-      edtCLIENT_ID.Text := self.edtCLIENT_ID.Text;
-      edtCOMP_ID.KeyValue := self.edtCOMP_ID.KeyValue;
-      edtCOMP_ID.Text := self.edtCOMP_ID.Text;
-      edtGUIDE_USER.KeyValue := self.edtGUIDE_USER.KeyValue;
-      edtGUIDE_USER.Text := self.edtGUIDE_USER.Text;
-      edtSETTLE_CODE.ItemIndex := self.edtSETTLE_CODE.ItemIndex;
-      edtTELEPHONE.Text := self.edtTELEPHONE.Text;
-      edtLINKMAN.Text := self.edtLINKMAN.Text;
-      edtSALE_STYLE.KeyValue := self.edtSALE_STYLE.KeyValue;
-      edtSALE_STYLE.Text := self.edtSALE_STYLE.Text;
-      edtSEND_ADDR.Text := self.edtSEND_ADDR.Text;
-      edtPLAN_DATE.Date := self.edtPLAN_DATE.Date;
-      edtREMARK.Text := self.edtREMARK.Text;
-      edtINVOICE_FLAG.ItemIndex := self.edtINVOICE_FLAG.ItemIndex;
-      edtTAX_RATE.Value := self.edtTAX_RATE.Value;
-      ReadFrom(self.cdsDetail);
-
-    end;
-    }
+  if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
+  frmShopMain.actfrmSalesOrderList.OnExecute(nil);
+  frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
+  PostMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  inherited;
 end;
 
 procedure TfrmSalIndentOrder.N3Click(Sender: TObject);
-//var frmSalRetuOrderList:TfrmSalRetuOrderList;
-//  i:integer;
-//  r:boolean;
+var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
-{  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
-  frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
-  frmSalRetuOrderList.Add;
-  if frmSalRetuOrderList.RzPage.ActivePageIndex = 0 then Raise Exception.Create('生成退货单出错了...');
-
-  with TfrmSalRetuOrder(frmSalRetuOrderList.CurOrder) do
-    begin
-      edtCLIENT_ID.KeyValue := self.edtCLIENT_ID.KeyValue;
-      edtCLIENT_ID.Text := self.edtCLIENT_ID.Text;
-      edtCOMP_ID.KeyValue := self.edtCOMP_ID.KeyValue;
-      edtCOMP_ID.Text := self.edtCOMP_ID.Text;
-      edtGUIDE_USER.KeyValue := self.edtGUIDE_USER.KeyValue;
-      edtGUIDE_USER.Text := self.edtGUIDE_USER.Text;
-      edtSETTLE_CODE.ItemIndex := self.edtSETTLE_CODE.ItemIndex;
-      edtTELEPHONE.Text := self.edtTELEPHONE.Text;
-      edtLINKMAN.Text := self.edtLINKMAN.Text;
-      edtSALE_STYLE.KeyValue := self.edtSALE_STYLE.KeyValue;
-      edtSALE_STYLE.Text := self.edtSALE_STYLE.Text;
-      edtSEND_ADDR.Text := self.edtSEND_ADDR.Text;
-      edtPLAN_DATE.Date := self.edtPLAN_DATE.Date;
-      edtREMARK.Text := self.edtREMARK.Text;
-      edtINVOICE_FLAG.ItemIndex := self.edtINVOICE_FLAG.ItemIndex;
-      edtTAX_RATE.Value := self.edtTAX_RATE.Value;
-      edtTable.DisableControls;
-      try
-      edtProperty.Close;
-      edtTable.Close;
-      edtProperty.CreateDataSet;
-      edtTable.CreateDataSet;
-      edtTable.Sort := '';
-      RowID := 0;
-      edtTable.Append;
-      for i:=0 to edtTable.Fields.Count -1 do
-        begin
-           if self.edtTable.FindField(edtTable.Fields[i].FieldName)<>nil then
-              edtTable.Fields[i].Value := self.edtTable.FieldbyName(edtTable.Fields[i].FieldName).Value;
-        end;
-      inc(RowID);
-      edtTable.FieldbyName('SEQNO').AsInteger := RowID;
-      edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
-      edtTable.Post;
-
-      self.edtProperty.Filtered := false;
-      self.edtProperty.Filter := 'SEQNO='+self.edtTable.FieldbyName('SEQNO').AsString;
-      self.edtProperty.Filtered := true;
-
-      self.edtProperty.First;
-      while not self.edtProperty.Eof do
-        begin
-          edtProperty.Append;
-          for i:=0 to edtProperty.Fields.Count -1 do
-            edtProperty.Fields[i].Value := self.edtProperty.FieldbyName(edtProperty.Fields[i].FieldName).Value;
-          edtProperty.FieldByName('SEQNO').AsInteger := edtTable.FieldbyName('SEQNO').AsInteger;
-          edtProperty.Post;
-          
-          self.edtProperty.Next;
-        end;
-        edtTable.Sort := 'SEQNO';
-      finally
-        edtTable.EnableControls;
-      end;
-    end;   }
+  if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
+  frmShopMain.actfrmSalesOrderList.OnExecute(nil);
+  frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
+  PostMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+  inherited;
 end;
 
 procedure TfrmSalIndentOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
+
+end;
+
+procedure TfrmSalIndentOrder.actCustomerExecute(Sender: TObject);
+begin
+  inherited;
+  if edtInput.CanFocus and Visible then edtInput.SetFocus;
+  InputFlag := 1;
+
+end;
+
+procedure TfrmSalIndentOrder.CheckInvaid;
+begin
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+  //inherited;
 
 end;
 

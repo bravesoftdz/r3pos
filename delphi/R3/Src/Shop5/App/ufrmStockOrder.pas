@@ -48,6 +48,9 @@ type
     fndMY_AMOUNT: TcxTextEdit;
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -71,6 +74,8 @@ type
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
     { Private declarations }
     //结算金额
@@ -81,7 +86,11 @@ type
     InRate2:real;
     //增值税率
     InRate3:real;
+  protected
     procedure ReadHeader;
+    function CheckInput:boolean;override;
+
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -109,7 +118,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmShopMain
   ;
 {$R *.dfm}
 
@@ -930,7 +939,8 @@ begin
   AObj := TRecord_.Create;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   try
-    if not bs.Locate('GODS_ID',edtTable.Fields[0].asString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+    if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+    if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用物流跟踪码...');
      AObj.ReadFromDataSet(edtTable,false);
      pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
 
@@ -951,6 +961,7 @@ begin
 end;
 
 function TfrmStockOrder.GodsToBatchNo(id: string): boolean;
+var bs:TZQuery;
 begin
   result := false;
   if edtTable.FieldByName('GODS_ID').AsString = '' then
@@ -960,9 +971,114 @@ begin
        Exit;
      end;
   if id = '' then Raise Exception.Create('输入的批号无效');
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+  if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
   edtTable.Edit;
-  edtTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+  edtTable.FieldbyName('BATCH_NO').asString := id;
   result := true;
+
+end;
+
+function TfrmStockOrder.CheckInput: boolean;
+begin
+  result := not (pos(inttostr(InputFlag),'124')>0);
+end;
+
+procedure TfrmStockOrder.WMFillData(var Message: TMessage);
+var
+  frmStkIndentOrder:TfrmStkIndentOrder;
+  i:integer;
+begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmStkIndentOrder := TfrmStkIndentOrder(Message.WParam);
+  with TfrmStkIndentOrder(frmStkIndentOrder) do
+    begin
+      self.edtCLIENT_ID.KeyValue := edtCLIENT_ID.KeyValue;
+      self.edtCLIENT_ID.Text := edtCLIENT_ID.Text;
+      self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+      self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+      self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
+      self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
+      self.edtFROM_ID.Text := AObj.FieldbyName('INDE_ID').AsString;
+      self.edtADVA_MNY.Text := edtADVA_MNY.Text;
+      self.edtREMARK.Text := edtREMARK.Text;
+      self.Locked := true;
+      try
+        self.edtINVOICE_FLAG.ItemIndex := edtINVOICE_FLAG.ItemIndex;
+        self.edtTAX_RATE.Value := edtTAX_RATE.Value;
+      finally
+        self.Locked := false;
+      end;
+      case Message.LParam of
+      0:self.ReadFrom(cdsDetail);
+      1:
+        begin
+          self.edtTable.DisableControls;
+          try
+          self.edtProperty.Close;
+          self.edtTable.Close;
+          self.edtProperty.CreateDataSet;
+          self.edtTable.CreateDataSet;
+          self.RowID := 0;
+          self.edtTable.Append;
+          for i:=0 to self.edtTable.Fields.Count -1 do
+            begin
+               if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
+                  self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
+            end;
+          inc(self.RowID);
+          self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
+          self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+          self.edtTable.Post;
+
+          edtProperty.Filtered := false;
+          edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+          edtProperty.Filtered := true;
+
+          edtProperty.First;
+          while not edtProperty.Eof do
+            begin
+              self.edtProperty.Append;
+              for i:=0 to self.edtProperty.Fields.Count -1 do
+                self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+              self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
+              self.edtProperty.Post;
+
+              edtProperty.Next;
+            end;
+          finally
+            self.edtTable.EnableControls;
+          end;
+        end;
+      end;
+
+    end;
+  inherited;
+end;
+
+procedure TfrmStockOrder.N3Click(Sender: TObject);
+var frmStkRetuOrderList:TfrmStkRetuOrderList;
+begin
+  inherited;
+  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
+  frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
+  PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  inherited;
+end;
+
+procedure TfrmStockOrder.N4Click(Sender: TObject);
+var frmStkRetuOrderList:TfrmStkRetuOrderList;
+begin
+  inherited;
+  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
+  frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
+  PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+  inherited;
 end;
 
 end.

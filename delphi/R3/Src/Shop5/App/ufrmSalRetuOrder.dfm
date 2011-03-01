@@ -113,7 +113,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 51
         Width = 48
         Height = 12
-        Caption = #35746#36135#21333#21495
+        Caption = #38144#21806#21333#21495
       end
       object Label22: TLabel [13]
         Left = 403
@@ -737,20 +737,16 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       Top = 208
     end
   end
+  inherited actList: TActionList
+    object actCustomer: TAction
+      Caption = #36755#20837#20250#21592#21345#21495
+      ShortCut = 116
+      OnExecute = actCustomerExecute
+    end
+  end
   inherited PopupMenu1: TPopupMenu
-    object N1: TMenuItem
-      Caption = '-'
-    end
-    object N2: TMenuItem
-      Caption = #25972#21333#36864#36135
-      OnClick = N2Click
-    end
-    object N3: TMenuItem
-      Caption = #21333#31508#36864#36135
-      OnClick = N3Click
-    end
-    object N4: TMenuItem
-      Caption = '-'
+    object N1: TMenuItem [5]
+      Action = actCustomer
     end
   end
   inherited edtTable: TZQuery

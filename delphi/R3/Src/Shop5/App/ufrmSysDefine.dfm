@@ -479,8 +479,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel3: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -654,8 +654,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end

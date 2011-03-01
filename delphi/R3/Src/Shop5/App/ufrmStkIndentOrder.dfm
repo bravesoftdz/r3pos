@@ -615,6 +615,17 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     object N1: TMenuItem [2]
       Action = actPrintBarcode
     end
+    object N2: TMenuItem [10]
+      Caption = '-'
+    end
+    object N3: TMenuItem [11]
+      Caption = #25972#21333#20837#24211
+      OnClick = N3Click
+    end
+    object N4: TMenuItem [12]
+      Caption = #21333#31508#20837#24211
+      OnClick = N4Click
+    end
   end
   inherited edtTable: TZQuery
     FieldDefs = <

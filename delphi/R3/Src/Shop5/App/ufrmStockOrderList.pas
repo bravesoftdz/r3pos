@@ -179,7 +179,7 @@ procedure TfrmStockOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if ShopGlobal.GetChkRight('400020') and (rzPage.ActivePageIndex = 0) then actNew.OnExecute(nil);
+  if ShopGlobal.GetChkRight('400020') and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmStockOrderList.actFindExecute(Sender: TObject);

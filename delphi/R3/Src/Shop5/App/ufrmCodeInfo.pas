@@ -206,7 +206,7 @@ begin
     Params := TftParamList.Create(nil);
     Params.ParamByName('CODE_TYPE').AsInteger := Code_type;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.Open(cdsCODE_INFO,'TClientSort',Params);
+    Factor.Open(cdsCODE_INFO,'TCodeInfo',Params);
   finally
     Params.Free;
   end;
@@ -241,7 +241,7 @@ begin
     cdsCODE_INFO.EnableControls;
   end;
   try
-    Factor.UpdateBatch(cdsCODE_INFO,'TClientSort');
+    Factor.UpdateBatch(cdsCODE_INFO,'TCodeInfo');
   except
     cdsCODE_INFO.Close;
     Open;

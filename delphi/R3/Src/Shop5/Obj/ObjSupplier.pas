@@ -34,14 +34,14 @@ begin
 end;
 
 function TSupplier.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var rs:TZQuery
+var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select CLIENT_ID,COMM from PUB_CLIENTINFO where CLIENT_NAME=:CLIENT_NAME and CLIENT_TYPE=:CLIENT_TYPE and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     rs.First;
-    while not rs.Eof then
+    while not rs.Eof do
       begin
         if Copy(rs.FieldbyName('COMM').AsString,2,1) = '2' then
           begin

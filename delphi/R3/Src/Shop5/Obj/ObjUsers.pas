@@ -10,26 +10,53 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 则可以新增当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;    
     procedure InitClass; override;
   end;
-  TUsersDelete=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
+  
 implementation
 
 { TUsers }
 
+function TUsers.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from STK_STOCKORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID ';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty then
+      Raise Exception.Create('此用户在入库单据中有使用,不能删除!');
+
+    rs.Close;
+    rs.SQL.Text := 'select * from SAL_SALESORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty then
+      Raise Exception.Create('此用户在销售单据中有使用,不能删除!');
+  finally
+    rs.Free;
+  end;
+end;
+
 function TUsers.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var Str:string;
-    rs:TZQuery;
+var rs:TZQuery;
 begin  
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID';
+    rs.SQL.Text := 'select USER_ID,ACCOUNT,COMM from CA_USERS where ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     AGlobal.Open(rs);
-    if not rs.IsEmpty then
-      Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
+    rs.First;
+    while not rs.Eof do
+      begin
+        if Copy(rs.FieldbyName('COMM').AsString,2,1) = '2' then
+          begin
+            FieldByName('USER_ID').AsString := rs.FieldByName('USER_ID').AsString;
+            AGlobal.ExecSQL('delete from CA_USERS where USER_ID=:USER_ID and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ',Self);
+          end
+        else
+          Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重取新的登录名...');
+      end;
   finally
     rs.Free;
   end;
@@ -37,23 +64,16 @@ begin
 end;
 
 function TUsers.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-var Str:string;
-    rs:TZQuery;
+var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT=:ACCOUNT and ACCOUNT<>:OLD_ACCOUNT ';
+    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT=:ACCOUNT and ACCOUNT<>:OLD_ACCOUNT and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
     if not rs.IsEmpty then Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
   finally
     rs.Free;
   end;
-  {if FieldByName('SHOP_ID').AsString<>FieldByName('SHOP_ID').AsOldString then
-  begin
-    Str:='update CA_COMPRIGHT set COMP_ID='+QuotedStr(FieldByName('COMP_ID').AsString)+' where COMP_ID='''+FieldByName('COMP_ID').AsOldString+''' '
-    +' and USER_ID='''+FieldByName('USER_ID').AsString+'''';
-    AGlobal.ExecSQL(Str);
-  end;}
   result := true;
 end;
 
@@ -80,51 +100,11 @@ begin
   DeleteSQL.Add( Str);
 end;
 
-{ TUsersDelete }
 
-function TUsersDelete.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
-var tmp:TZQuery;
-    Str:String;
-begin
-  Result:=False;
-  AGlobal.BeginTrans;
-  try
-    {tmp:=TZQuery.Create(nil);
-    try
-      tmp.Close;
-      //tmp.SQL.Add('select * from STK_STOCKORDER where GUIDE_USER='''+Params.ParamByName('USER_ID').asString+''' or OPER_USER='''+Params.ParamByName('USER_ID').asString+'''');
-      tmp.SQL.Text := 'select * from STK_STOCKORDER where GUIDE_USER = :USER_ID or OPER_USER = :USER_ID ';
-      if Params <> nil then
-        tmp.Params.AssignValues(Params);
-      AGlobal.Open(tmp);
-      if tmp.RecordCount>0 then Raise Exception.Create('此用户在进货单据中有使用,不能删除!');
-      tmp.Close;
-      tmp.SQL.Text := 'select * from SAL_SALESORDER where GUIDE_USER= :USER_ID or OPER_USER = :USER_ID';
-      if Params <> nil then
-        tmp.Params.AssignValues(Params);
-      AGlobal.Open(tmp);
-      if tmp.RecordCount>0 then Raise Exception.Create('此用户在销售单据中有使用,不能删除!');
-    finally
-      tmp.Free;
-    end;}
-    Str := 'update CA_USERS set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where USER_ID = :USER_ID and TENANT_ID=:TENANT_ID';
-    AGlobal.ExecSQL(Str,Params);
-    AGlobal.CommitTrans;
-    Result:=True;
-  except
-    on E:Exception do
-       begin
-         Msg := E.Message;
-         AGlobal.RollBackTrans;
-       end;
-  end;
-end;
 
 initialization
   RegisterClass(TUsers);
-  RegisterClass(TUsersDelete);
 finalization
   UnRegisterClass(TUsers);
-  UnRegisterClass(TUsersDelete);
+  
 end.

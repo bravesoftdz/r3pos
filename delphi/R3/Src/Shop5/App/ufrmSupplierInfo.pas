@@ -158,7 +158,7 @@ procedure TfrmSupplierInfo.Save;
   procedure UpdateToGlobal(AObj:TRecord_);
   var Tmp:TZQuery;
   begin
-    Tmp := Global.GetZQueryFromName('PUB_CLIENTINFO ');
+    Tmp := Global.GetZQueryFromName('PUB_CLIENTINFO');
     Tmp.Filtered := false;
     if (not Tmp.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[])) then
        Tmp.Append

@@ -70,6 +70,18 @@ CREATE TABLE [CA_DB_INFO](
 	[ADDRESS] [varchar](100) NOT NULL,
     --部署日期
 	[CREA_DATE] [varchar](10) NOT NULL,
+    --数据服务主机名
+	[HOST_NAME] [varchar](50) NOT NULL,
+    --数据服务登录用户
+	[USER_NAME] [varchar](20) NOT NULL,
+    --数据服务登录密码
+	[PASSWORD] [varchar](100) NOT NULL,
+    --数据库账套名称
+	[DATABASE_NAME] [varchar](100) NOT NULL,
+    --数据库类型
+	[DATABASE_TYPE] [varchar](36) NOT NULL,
+    --数据库服务端口<0为默认端口>
+  [DATABASE_PORT] int NULL,
     --服务状态
 	[DB_STATUS] [varchar](1) NOT NULL,
     --所属地区<取PUB_CODE_INFO 表 CODE_TYPE=8>
@@ -86,6 +98,14 @@ CREATE TABLE [CA_DB_INFO](
 );
 
 CREATE INDEX IX_CA_DB_INFO_TIME_STAMP ON CA_DB_INFO(TIME_STAMP);
+
+--数据库类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','SQLSERVER','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','ORACLE','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','SYBASE','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','ACCESS','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','DB2','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','SQLITE','DATABASE_TYPE','00',strftime('%s','now','localtime')-1293840000);
 
 --应用服务器跟数据关系表
 CREATE TABLE [CA_DB_TO_SRVR](

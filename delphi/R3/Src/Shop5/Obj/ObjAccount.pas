@@ -13,20 +13,47 @@ type
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  TAccountDelete=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
+
 implementation
 { TAccount }
 
 function TAccount.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
+    AGlobal.Open(rs);
+    if rs.FieldByName('BALANCE').AsFloat <> 0 then
+      Raise Exception.Create('此账户金额有变动,不能删除!');
+  finally
+    rs.Free;
+  end;
   result := true;
 end;
 
 function TAccount.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select ACCOUNT_ID,COMM from ACC_ACCOUNT_INFO where ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if Copy(rs.FieldbyName('COMM').AsString,2,1) = '2' then
+          Begin
+            FieldByName('ACCOUNT_ID').AsString := rs.FieldbyName('ACCOUNT_ID').AsString;
+            AGlobal.ExecSQL('delete from ACC_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID',Self);
+          end
+        else
+          Raise Exception.Create('此账户名已经存在,请重新输入..');
+      end;
+  finally
+    rs.Free;
+  end;
   Result:=True;
 end;
 
@@ -36,7 +63,7 @@ var  tmp:TZQuery;
 begin
   result := true;
   if CheckReck(AGlobal) and (FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat) then
-     Raise Exception.Create('已经存在结帐记录不能修改期初金额...');
+     Raise Exception.Create('已经存在结账记录不能修改期初金额...');
   {tmp:=TZQuery.Create(self);
   try
     tmp.Close;
@@ -64,19 +91,32 @@ begin
   end;}
 end;
 
+
 function TAccount.CheckReck(AGlobal: IdbHelp): boolean;
-var
-  rs:TZQuery;
+var rs:TZQuery;
 begin
   Result := False;
-  {rs :=TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select top 1 PRINT_ID from STO_PRINTORDER where COMP_ID='''+FieldbyName('COMP_ID').AsString+'''';
+    rs.SQL.Text := 'select * from ACC_RECVORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and ACCOUNT_ID=:ACCOUNT_ID';
     AGlobal.Open(rs);
-    result := not rs.IsEmpty; 
+    if not rs.IsEmpty then
+      Raise Exception.Create('此账户在收款单据中有使用,不能删除!');
+
+    rs.SQL.Text := 'select * from ACC_PAYORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and ACCOUNT_ID=:ACCOUNT_ID';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty then
+      Raise Exception.Create('此账户在付款单据中有使用,不能删除!');
+
+    rs.SQL.Text := 'select * from ACC_TRANSORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and IN_ACCOUNT_ID=:ACCOUNT_ID and OUT_ACCOUNT_ID=:ACCOUNT_ID';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty then
+      Raise Exception.Create('此账户在存取款单据中有使用,不能删除!');
+
   finally
     rs.Free;
-  end;}
+  end;
+  Result := True;
 end;
 
 procedure TAccount.InitClass;
@@ -94,45 +134,19 @@ begin
   'values(:TENANT_ID,:ACCOUNT_ID,:SHOP_ID,:ACCT_NAME,:ACCT_SPELL,:PAYM_ID,:ORG_MNY,:OUT_MNY,:IN_MNY,:BALANCE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
 
-  Str := 'update ACC_ACCOUNT_INFO set SHOP_ID=:SHOP_ID,ACCT_NAME=:ACCT_NAME,ACCT_SPELL=:ACCT_SPELL,PAYM_ID=:PAYM_ID,ORG_MNY=:ORG_MNY,'+
-  'OUT_MNY=:OUT_MNY,IN_MNY=:IN_MNY,BALANCE=:BALANCE,TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID';
+  Str := 'update ACC_ACCOUNT_INFO set ACCT_NAME=:ACCT_NAME,ACCT_SPELL=:ACCT_SPELL,PAYM_ID=:PAYM_ID,ORG_MNY=:ORG_MNY,'+
+  'OUT_MNY=:OUT_MNY,IN_MNY=:IN_MNY,BALANCE=:BALANCE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID and SHOP_ID=:OLD_SHOP_ID ';
   UpdateSQL.Text := Str;
 
-  Str := 'update ACC_ACCOUNT_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID';
+  Str := 'update ACC_ACCOUNT_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID and SHOP_ID=:OLD_SHOP_ID ';
   DeleteSQL.Text := Str;
-end;
-
-{ TAccountDelete }
-
-function TAccountDelete.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
-var tmp:TZQuery;
-begin
-  Result:=False;
-  tmp:=TZQuery.Create(nil);
-  tmp.Close;
-  tmp.SQL.Text:='select top 1 ACCOUNT_ID from RCK_PAYORDER where ACCOUNT_ID='+QuotedStr(Params.ParamByName('ACCOUNT_ID').asString);
-  AGlobal.Open(tmp);
-  if tmp.RecordCount>0 then Raise Exception.Create('此帐户已被使用，不能删除！');
-  AGlobal.BeginTrans;
-  try
-    AGlobal.ExecSQL('update RCK_ACCOUNT_INFO set  COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where ACCOUNT_ID='+QuotedStr(Params.ParamByName('ACCOUNT_ID').asString));
-    AGlobal.CommitTrans;
-    Result:=True;
-  except
-    on E:Exception do
-       begin
-         Msg := E.Message;
-         AGlobal.RollBackTrans;
-       end;
-  end;
-
 end;
 
 initialization
   RegisterClass(TAccount);
-  RegisterClass(TAccountDelete);
 finalization
   UnRegisterClass(TAccount);
-  UnRegisterClass(TAccountDelete);
+
 end.

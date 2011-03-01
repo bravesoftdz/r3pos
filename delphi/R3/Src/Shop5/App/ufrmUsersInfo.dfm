@@ -607,7 +607,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Color = clWhite
       TabOrder = 8
       object Btn_Save: TRzBitBtn
-        Left = 330
+        Left = 360
         Top = 5
         Width = 67
         Height = 26
@@ -634,7 +634,7 @@ inherited frmUsersInfo: TfrmUsersInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 437
+        Left = 450
         Top = 5
         Width = 67
         Height = 26

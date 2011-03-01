@@ -320,6 +320,7 @@ procedure TfrmUsersInfo.FormShow(Sender: TObject);
 begin
   inherited;
   if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
+  RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmUsersInfo.edt_USER_NAMEPropertiesChange(Sender: TObject);

@@ -93,7 +93,7 @@ begin
        'select count(*) as Resum from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and  CHANGE_DATE>:BillDate) as tmp';
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
      if Temp.Params.FindParam('SHOP_ID')<>nil then Temp.ParamByName('SHOP_ID').AsString:=SHOP_ID;
-     if Temp.Params.FindParam('BillDate')<>nil then Temp.ParamByName('BillDate').AsString:=formatDatetime('YYYY-MM-DD',date());
+     if Temp.Params.FindParam('BillDate')<>nil then Temp.ParamByName('BillDate').AsInteger:=StrToInt(formatDatetime('YYYYMMDD',date()));
      Factor.Open(Temp);
      if Temp.Fields[0].AsInteger>0 then
      begin
@@ -169,7 +169,7 @@ begin
     Aobj:=TRecord_.Create;
     Str:='select GODS_ID,PROPERTY_01,PROPERTY_02,AMOUNT from STO_STORAGE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and '+
          ' not Exists(select GODS_ID from PUB_GOODSINFO A where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+
-         ' A.COMM in (''02'',''12'')  and A.GODS_ID=STO_STORAGE.GODS_ID and STO_STORAGE.AMOUNT=0)  ';  //过滤掉已经删除商品并且库存为0商品
+         ' and A.COMM in (''02'',''12'')  and A.GODS_ID=STO_STORAGE.GODS_ID and STO_STORAGE.AMOUNT=0)  ';  //过滤掉已经删除商品并且库存为0商品
     rs:=TZQuery.Create(nil);
     rs.SQL.Text:=Str;
     Factor.Open(rs);

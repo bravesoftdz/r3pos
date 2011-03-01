@@ -59,7 +59,7 @@ inherited frmClient: TfrmClient
                 Top = 36
                 Width = 48
                 Height = 12
-                Caption = #20225#19994#20998#31867
+                Caption = #23458#25143#20998#31867
               end
               object edtKey: TcxTextEdit
                 Left = 80
@@ -366,8 +366,8 @@ inherited frmClient: TfrmClient
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
-        Width = 24
-        Caption = #23458#25143
+        Width = 48
+        Caption = #23458#25143#31649#29702
       end
     end
     inherited CoolBar1: TCoolBar

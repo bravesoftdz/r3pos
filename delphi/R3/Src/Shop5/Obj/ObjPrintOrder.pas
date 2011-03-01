@@ -3,7 +3,7 @@ unit ObjPrintOrder;
 interface
 
 uses
-  SysUtils,zBase,Classes, AdoDb,zIntf,ObjCommon,DB,zDataSet;
+  SysUtils,zBase,Classes, AdoDb,zIntf,ObjCommon,DB,zDataSet,math;
 
 type
   TPrintOrder=class(TZFactory)
@@ -204,16 +204,23 @@ end;
 procedure TPrintOrderGetPrior.InitClass;
 begin
   inherited;
-  SelectSQL.Text:= 'select top 1 CHECK_ID from STO_CHECKORDER where COMP_ID=:COMP_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc';
+  case iDbType of
+   0,3:SelectSQL.Text :='select top 1 CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc ';
+   4:SelectSQL.Text := 'select * from (select CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) tp fetch first 1 rows only';
+   5:SelectSQL.Text := 'select CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc DESC limit 1';
+  end;
 end;
-
 
 { TCheckOrderGetNext }
 
 procedure TPrintOrderGetNext.InitClass;
 begin
   inherited;
-  SelectSQL.Text := 'select top 1 CHECK_ID from STO_CHECKORDER where COMP_ID=:COMP_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+  case iDbType of
+   0,3:SelectSQL.Text :='select top 1 CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+   4:SelectSQL.Text := 'select * from (select CHECK_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
+   5:SelectSQL.Text := 'select CHECK_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+  end;
 end;
 
 
@@ -321,10 +328,10 @@ begin
                        rs.FieldbyName('PROPERTY_02').asString,
                        rs.FieldbyName('BATCH_NO').asString,
                        rs.FieldbyName('MDI_AMOUNT').asFloat,
-                       round(rs.FieldbyName('MDI_AMOUNT').asFloat*cb,2),3);
+                       roundto(rs.FieldbyName('MDI_AMOUNT').asFloat*cb,-2),3);
             //计算累计数量和累计金额:
             CHANGE_AMT:=CHANGE_AMT+rs.FieldbyName('MDI_AMOUNT').AsFloat;
-            CHANGE_MNY:=CHANGE_MNY+round(rs.FieldbyName('MDI_AMOUNT').AsFloat*cb,2);
+            CHANGE_MNY:=CHANGE_MNY+roundto(rs.FieldbyName('MDI_AMOUNT').AsFloat*cb,-2);
             rs.Next;
           end;
       end;             
@@ -438,7 +445,7 @@ begin
                      ts.FieldbyName('PROPERTY_02').asString,
                      ts.FieldbyName('BATCH_NO').asString,
                      ts.FieldbyName('CALC_AMOUNT').asFloat,
-                     round(ts.FieldbyName('CALC_AMOUNT').asFloat*ts.FieldbyName('COST_PRICE').asFloat,2),3);
+                     roundto(ts.FieldbyName('CALC_AMOUNT').asFloat*ts.FieldbyName('COST_PRICE').asFloat,-2),3);
           ts.Next;
         end;
       AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+

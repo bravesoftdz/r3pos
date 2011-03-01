@@ -240,9 +240,9 @@ procedure TPriceOrderGetNext.InitClass;
 begin
   inherited;
   case iDbType of
-  0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
-  4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
-  5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+   0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+   4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
+   5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
   end;
 end;
 

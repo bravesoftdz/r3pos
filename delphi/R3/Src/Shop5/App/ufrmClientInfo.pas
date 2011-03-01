@@ -351,7 +351,7 @@ end;
 procedure TfrmClientInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  RzPage.ActivePageIndex := 0;
+  RzPage.ActivePageIndex := TabSheet1.TabIndex;
   if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
 end;
 

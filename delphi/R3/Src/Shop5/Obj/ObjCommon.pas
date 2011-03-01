@@ -550,7 +550,7 @@ begin
   try
     rs.SQL.Text :=
       'select AMONEY,AMOUNT from ('+
-      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) j where AMOUNT<>0';
     rs.ParamByName('TENANT_ID').AsInteger := strtoint(TENANT_ID);
     rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
     rs.ParamByName('GODS_ID').AsString := GODS_ID;

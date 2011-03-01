@@ -62,15 +62,8 @@ implementation
 
 
 function TPriceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var
-  str: string;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then  Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  case iDbType of
-   1:       str:='delete SAL_PROM_SHOP where PROM_ID=:OLD_PROM_ID ';
-   0,3,4,5: str:='delete from SAL_PROM_SHOP where PROM_ID=:OLD_PROM_ID ';
-  end;
-  AGlobal.ExecSQL(str,self);
   result := true;
 end;
 
@@ -97,14 +90,14 @@ begin
   result:=false;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text:='select TIME_STAMP from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';;
+    rs.SQL.Text:='select TIME_STAMP,COMM from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';;
     if rs.Params.FindParam('TENANT_ID')<>nil then
       rs.ParamByName('TENANT_ID').AsInteger:=fieldbyName('TENANT_ID').AsInteger;
     if rs.Params.FindParam('PROM_ID')<>nil then
       rs.ParamByName('PROM_ID').AsString:=FieldbyName('PROM_ID').AsString;
     AGlobal.Open(rs);
     if rs.Active then
-      result:=(rs.Fields[0].AsString=s);
+      result:=(rs.Fields[0].AsString=s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
     rs.Free;
   end;
@@ -120,8 +113,8 @@ begin
     'select jc.*,c.PRICE_NAME as PRICE_ID_TEXT from ('+
     'select PROM_ID,GLIDE_NO,TENANT_ID,SHOP_ID,BEGIN_DATE,END_DATE,PRICE_ID,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
     ' from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID) jc '+
-    ' left outer join PUB_PRICEGRADE c on jc.PRICE_ID=c.PRICE_ID ) jd '+
-    ' left outer join VIW_USERS d on jd.CHK_USER=d.USER_ID';
+    ' left outer join PUB_PRICEGRADE c on jc.TENANT_ID=c.TENANT_ID and jc.PRICE_ID=c.PRICE_ID ) jd '+
+    ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID';
     
   str:='Insert Into SAL_PRICEORDER(PROM_ID,GLIDE_NO,TENANT_ID,SHOP_ID,BEGIN_DATE,END_DATE,PRICE_ID,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP)'+
     ' Values (:PROM_ID,:GLIDE_NO,:TENANT_ID,:SHOP_ID,:BEGIN_DATE,:END_DATE,:PRICE_ID,:CHK_DATE,:CHK_USER,:REMARK,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
@@ -221,9 +214,9 @@ begin
   UpdateSQL.Add(Str);
 
   case iDbType of
-   1: Str:='delete SAL_PROM_SHOP where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID and SHOP_ID=:OLD_SHOP_ID ';
+   1: Str:='delete SAL_PROM_SHOP where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
    else
-      Str:='delete from SAL_PROM_SHOP where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID and SHOP_ID=:OLD_SHOP_ID ';
+      Str:='delete from SAL_PROM_SHOP where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
   end;
   DeleteSQL.Add(Str);     
 end;
@@ -234,7 +227,11 @@ end;
 procedure TPriceOrderGetPrior.InitClass;
 begin
   inherited;
-  SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc';
+  case iDbType of
+  0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc';
+  4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc DESC limit 1';
+  end;
 end;
 
 { TPriceOrderGetNext }
@@ -242,7 +239,11 @@ end;
 procedure TPriceOrderGetNext.InitClass;
 begin
   inherited;
-  SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+  case iDbType of
+  0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+  4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+  end;
 end;
 
 { TPriceOrderAudit }

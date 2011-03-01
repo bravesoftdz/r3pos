@@ -8,6 +8,7 @@ uses
 type
   TPrintOrder=class(TZFactory)
   public
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -79,7 +80,7 @@ begin
   if ReRun=0 then  //没有更新到记录;
   begin
     Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-      ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'','''',:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_AMOUNT,:CHK_AMOUNT,2)';
+      ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_AMOUNT,:CHK_AMOUNT,2)';
     AGlobal.ExecSQL(str, self);
   end;
   result := true;
@@ -115,7 +116,15 @@ end;
 { TCheckOrder }
 
 function TPrintOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin    
+var
+  str: string;
+begin
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  case iDbType of
+   1:       str:='delete SAL_PROM_SHOP where TENANT_ID=:TENANT_ID and PROM_ID=:OLD_PROM_ID ';
+   0,3,4,5: str:='delete from SAL_PROM_SHOP where TENANT_ID=:TENANT_ID and PROM_ID=:OLD_PROM_ID ';
+  end;
+  AGlobal.ExecSQL(str,self);
   result := true;
 end;
 
@@ -133,6 +142,7 @@ end;
 
 function TPrintOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   result := BeforeDeleteRecord(AGlobal);
   result := BeforeInsertRecord(AGlobal);
   
@@ -152,6 +162,20 @@ begin
       
 end;
 
+function TPrintOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from STO_PRINTORDER where SHOP_ID='''+FieldbyName('SHOP_ID').AsString+''' and PRINT_DATE='+FieldbyName('PRINT_DATE').AsString+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+  finally
+    rs.Free;
+  end;
+end;
+
 procedure TPrintOrder.InitClass;
 var
   Str: string;
@@ -161,8 +185,8 @@ begin
     'select jc.*,c.USER_NAME as CREA_USER_TEXT,d.USER_NAME as CHK_USER_TEXT from ('+
     ' select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE,COMM from STO_PRINTORDER '+
     ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE) jc '+
-    ' left outer join VIW_USERS c on jc.CREA_USER=c.USER_ID '+
-    ' left outer join VIW_USERS d on jc.CHK_USER=d.USER_ID ';
+    ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID '+
+    ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jc.CHK_USER=d.USER_ID ';
     
   str:='insert into STO_PRINTORDER(TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,COMM,TIME_STAMP)'+
        ' values (:TENANT_ID,:SHOP_ID,:PRINT_DATE,:CHECK_STATUS,:CHECK_TYPE,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
@@ -237,8 +261,8 @@ begin
       'select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID,A.GODS_ID as GODS_ID,B.CALC_UNITS as UNIT_ID,A.PROPERTY_01 as PROPERTY_01,'+
       'A.PROPERTY_02 as PROPERTY_02,A.BATCH_NO as BATCH_NO, '+
       '(case when CHECK_STATUS=''1'' then case when '+Params.ParambyName('AUDIT_FLAG').asString+
-                    '=0 then -ifnull(A.RCK_AMOUNT,0) else 0 end else ifnull(A.CHK_AMOUNT,0)-ifnull(A.RCK_AMOUNT,0) end) as MDI_AMOUNT,'+
-      ' ifnull(A.CHK_AMOUNT,0) as CHK_AMOUNT,ifnull(A.RCK_AMOUNT,0) as RCK_AMOUNT '+
+                    '=0 then ifnull(A.RCK_AMOUNT,0) else 0 end else ifnull(A.RCK_AMOUNT,0)-ifnull(A.CHK_AMOUNT,0) end) as MDI_AMOUNT,'+
+      ' ifnull(A.CHK_AMOUNT,0) as CHK_AMOUNT,ifnull(A.RCK_AMOUNT,0) as RCK_AMOUNT,B.NEW_OUTPRICE '+
       ' from STO_PRINTDATA A,VIW_GOODSINFO B '+
       ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
       ' A.TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and '+
@@ -250,15 +274,15 @@ begin
 
     AGlobal.BeginTrans;
     try
-      id := NewId('');
+      id := NewId(Params.ParambyName('SHOP_ID').asString);
       User:=trim(Params.ParambyName('CHK_USER').asString);
       CurDate:=trim(FormatDatetime('YYYY-MM-DD',Date()));
       CurTime:=trim(FormatDatetime('YYYY-MM-DD HH:MM:SS',Now()));
-      gid := GetSequence(AGlobal,'GNO_9_'+Params.ParambyName('SHOP_ID').asString,Params.ParambyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+      gid := GetSequence(AGlobal,'GNO_3_'+Params.ParambyName('SHOP_ID').asString,Params.ParambyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
       if not rs.IsEmpty then
       begin
         AGlobal.ExecSQL('insert into STO_CHANGEORDER(CHANGE_ID,GLIDE_NO,TENANT_ID,SHOP_ID,CHANGE_DATE,CHANGE_TYPE,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-                        'select '''+id+''','''+gid+''',TENANT_ID,SHOP_ID,PRINT_DATE,''1'',''1'','''+User+''',''盘点'','''+User+''','''+CurTime+''','+'cast(PRINT_DATE as varchar(10)) as PRINT_DATE,'''+CurTime+''','''+User+''',''00'','+GetTimeStamp(AGlobal.iDbType)+' '+
+                        'select '''+id+''','''+gid+''',TENANT_ID,SHOP_ID,PRINT_DATE,''2'',''1'','''+User+''',''盘点损益'','''+User+''','''+CurDate+''',PRINT_DATE,'''+CurTime+''','''+User+''',''00'','+GetTimeStamp(AGlobal.iDbType)+' '+
                         'from STO_PRINTORDER where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
                         ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='''+Params.ParambyName('PRINT_DATE').asString+''' ');
 
@@ -268,9 +292,8 @@ begin
           begin
             cb := GetCostPrice(AGlobal,rs.FieldbyName('TENANT_ID').AsString,rs.FieldbyName('SHOP_ID').AsString,
                                        rs.FieldbyName('GODS_ID').AsString,
-                                       rs.FieldbyName('PROPERTY_01').AsString,rs.FieldbyName('PROPERTY_02').AsString,
                                        rs.FieldbyName('BATCH_NO').AsString);
-            AGlobal.ExecSQL('insert into STO_CHANGEDATA(TENANT_ID,SHOP_ID,SEQNO,CHANGE_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,COST_PRICE,IS_PRESENT,CALC_AMOUNT,REMARK) '+
+            AGlobal.ExecSQL('insert into STO_CHANGEDATA(TENANT_ID,SHOP_ID,SEQNO,CHANGE_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,COST_PRICE,APRICE,AMONEY,CALC_MONEY,IS_PRESENT,CALC_AMOUNT,REMARK) '+
                             'values('+
                             ''''+Params.ParambyName('TENANT_ID').asString+''','+
                             ''''+Params.ParambyName('SHOP_ID').asString+''','+inttostr(rs.RecNo+1)+','''+id+''','+
@@ -279,15 +302,18 @@ begin
                             ''''+rs.FieldbyName('PROPERTY_01').AsString+''','+
                             ''''+rs.FieldbyName('PROPERTY_02').AsString+''','+
                             ''''+rs.FieldbyName('UNIT_ID').AsString+''','+
-                            ''''+rs.FieldbyName('MDI_AMOUNT').AsString+''','+
+                            ''+floattostr(rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
                             ''''+formatfloat('#0.000000',cb)+''','+
+                            ''''+formatfloat('#0.000',rs.FieldbyName('NEW_OUTPRICE').AsFloat)+''','+
+                            ''''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+''','+
+                            ''''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+''','+
                             '0,'+   //是否是赠品[盘点单没字段，默认为:0]
-                            ''''+rs.FieldbyName('MDI_AMOUNT').AsString+''','+
-                            '''盘点:'+rs.FieldbyName('RCK_AMOUNT').AsString+'->'+rs.FieldbyName('CHK_AMOUNT').AsString+''''+
+                            ''+floattostr(rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
+                            '''盘点损益:'+rs.FieldbyName('RCK_AMOUNT').AsString+'->'+rs.FieldbyName('CHK_AMOUNT').AsString+''''+
                             ')'
                            );
 
-            IncStorage(AGlobal,
+            DecStorage(AGlobal,
                        rs.FieldbyName('TENANT_ID').asString,
                        rs.FieldbyName('SHOP_ID').asString,
                        rs.FieldbyName('GODS_ID').asString,
@@ -295,34 +321,34 @@ begin
                        rs.FieldbyName('PROPERTY_02').asString,
                        rs.FieldbyName('BATCH_NO').asString,
                        rs.FieldbyName('MDI_AMOUNT').asFloat,
-                       rs.FieldbyName('MDI_AMOUNT').asFloat*cb,3);
+                       round(rs.FieldbyName('MDI_AMOUNT').asFloat*cb,2),3);
             //计算累计数量和累计金额:
-            CHANGE_AMT:=CHANGE_AMT+StrtoFloatDef(rs.FieldbyName('MDI_AMOUNT').AsString,0);
-            CHANGE_MNY:=CHANGE_MNY+StrtoFloatDef(rs.FieldbyName('MDI_AMOUNT').AsString,0)*cb;
+            CHANGE_AMT:=CHANGE_AMT+rs.FieldbyName('MDI_AMOUNT').AsFloat;
+            CHANGE_MNY:=CHANGE_MNY+round(rs.FieldbyName('MDI_AMOUNT').AsFloat*cb,2);
             rs.Next;
           end;
       end;             
 
       //更新调整单明细汇总数据
       AGlobal.ExecSQL('update STO_CHANGEORDER set CHANGE_AMT='+FloattoStr(CHANGE_AMT)+',CHANGE_MNY='+FloattoStr(CHANGE_MNY)+' '+
-                      ' where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and CHANGE_ID='''+id+''' ');
+                      ' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and CHANGE_ID='''+id+''' ');
 
-      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''3'',CHK_USER='''+User+''',CHK_DATE='''+CurDate+''' where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
-                           ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='''+Params.ParambyName('PRINT_DATE').asString+''' and CHECK_STATUS<>''3''');
+      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''3'',CHK_USER='''+User+''',CHK_DATE='''+CurDate+''' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                           ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS<>''3''');
       if r=0 then Raise Exception.Create('没找到待审核的盘点单，是否由另一用户审核完毕？');
       if not IsZero(AGlobal,Params) then
       begin
         ts.Close;
         ts.SQL.Text :=
-            'select jp2.*,SIZE_NAME from ('+
-            'select jp1.*,COLOR_NAME from ('+
+            'select jp2.*,p2.SIZE_NAME as COLOR_NAME from ('+
+            'select jp1.*,p1.COLOR_NAME as SIZE_NAME from ('+
             'select b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
             'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.BATCH_NO from STO_STORAGE A,STO_CHANGEDATA B '+
             'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO '+
-            ' and A.AMOUNT<0 and B.CHANGE_ID='''+id+''' and B.TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and B.SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''''+
+            ' and A.AMOUNT<0 and B.CHANGE_ID='''+id+''' and B.TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' '+
             ') j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
-            ') jp1 left outer join (select SORT_ID,SORT_NAME as COLOR_NAME from PUB_GOODSSORT where SORT_TYPE=7) p1 on jp1.SORT_ID7=p1.SORT_ID '+
-            ') jp2 left outer join (select SORT_ID,SORT_NAME as SIZE_NAME from PUB_GOODSSORT where SORT_TYPE=8) p2 on jp2.SORT_ID8=p2.SORT_ID ';
+            ') jp1 left outer join VIW_SIZE_INFO p1 on jp1.TENANT_ID=p1.TENANT_ID and jp1.SORT_ID7=p1.SIZE_ID '+
+            ') jp2 left outer join VIW_COLOR_INFO p2 on jp2.TENANT_ID=p2.TENANT_ID and jp2.SORT_ID8=p2.COLOR_ID ';
         AGlobal.Open(ts);
         w := 0;
         s := '';
@@ -332,7 +358,6 @@ begin
             inc(w);
             if s<>'' then s := s + #10;
             s := s +'('+ts.FieldbyName('GODS_CODE').AsString+')'+ts.FieldbyName('GODS_NAME').AsString;
-            //if ts.FieldbyName('IS_PRESENT').AsString='1' then s := s + '(赠品)';
             if ts.FieldbyName('SIZE_NAME').AsString <> '' then
                s := s+ '  尺码:'+ts.FieldbyName('SIZE_NAME').AsString+'';
             if ts.FieldbyName('COLOR_NAME').AsString <> '' then
@@ -388,11 +413,7 @@ begin
   rs := TZQuery.Create(nil);
   ts := TZQuery.Create(nil);
   try
-    ts.Close;
-    ts.SQL.Text :='select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
-    ts.Params.AssignValues(Params); 
-    AGlobal.Open(ts);
-    if ts.Fields[0].AsString>Params.ParambyName('PRINT_DATE').asString then Raise Exception.Create('已经结帐不能弃审...');
+    GetReckOning(AGlobal,Params.ParambyName('TENANT_ID').asString,Params.ParambyName('SHOP_ID').asString,Params.ParambyName('PRINT_DATE').asString,'');
 
     rs.Close;
     rs.SQL.Text := 'select COMM,CHANGE_ID,TENANT_ID,SHOP_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and FROM_ID=:PRINT_DATE and CHANGE_CODE=''1'' ';
@@ -403,13 +424,13 @@ begin
     try
       Change_ID:=trim(rs.fieldbyName('CHANGE_ID').AsString);
       ts.Close;
-      ts.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,IS_PRESENT,CALC_AMOUNT,COST_PRICE from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+''' ';
+      ts.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,IS_PRESENT,CALC_AMOUNT,COST_PRICE from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+''' ';
       ts.Params.AssignValues(Params); 
       AGlobal.Open(ts);
       ts.First;
       while not ts.Eof do
         begin
-          DecStorage(AGlobal,
+          IncStorage(AGlobal,
                      ts.FieldbyName('TENANT_ID').asString,
                      ts.FieldbyName('SHOP_ID').asString,
                      ts.FieldbyName('GODS_ID').asString,
@@ -417,30 +438,30 @@ begin
                      ts.FieldbyName('PROPERTY_02').asString,
                      ts.FieldbyName('BATCH_NO').asString,
                      ts.FieldbyName('CALC_AMOUNT').asFloat,
-                     ts.FieldbyName('CALC_AMOUNT').asFloat*ts.FieldbyName('COST_PRICE').asFloat,3);
+                     round(ts.FieldbyName('CALC_AMOUNT').asFloat*ts.FieldbyName('COST_PRICE').asFloat,2),3);
           ts.Next;
         end;
-      AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
-                      ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
-      AGlobal.ExecSQL('delete from STO_CHANGEORDER where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
-                      ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
-      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''2'',CHK_USER=null,CHK_DATE=null where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
-                         ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='''+Params.ParambyName('PRINT_DATE').asString+''' and CHECK_STATUS=''3''');
+      AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                      ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
+      AGlobal.ExecSQL('delete from STO_CHANGEORDER where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                      ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
+      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''2'',CHK_USER=null,CHK_DATE=null where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                         ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS=''3''');
       if r=0 then Raise Exception.Create('没找到已审核的盘点单，是否由另一用户审核完毕？');
       
       if not IsZero(AGlobal,Params) then
       begin
         ts.Close;
         ts.SQL.Text :=
-            'select jp2.*,SIZE_NAME from ('+
-            'select jp1.*,COLOR_NAME from ('+
+            'select jp2.*,p2.SIZE_NAME as COLOR_NAME from ('+
+            'select jp1.*,p1.COLOR_NAME as SIZE_NAME from ('+
             'select b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
             'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.BATCH_NO from STO_STORAGE A,STO_CHANGEDATA B '+
-            'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO and '+
-            ' A.AMOUNT<0 and B.CHANGE_ID='''+Change_ID+''' and B.TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and B.SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''''+
+            'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO '+
+            ' and A.AMOUNT<0 and B.CHANGE_ID='''+Change_ID+''' and B.TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' '+
             ') j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
-            ') jp1 left outer join (select SORT_ID,SORT_NAME as COLOR_NAME from PUB_GOODSSORT where SORT_TYPE=7) p1 on jp1.SORT_ID7=p1.SORT_ID '+
-            ') jp2 left outer join (select SORT_ID,SORT_NAME as SIZE_NAME from PUB_GOODSSORT where SORT_TYPE=8) p2 on jp2.SORT_ID8=p2.SORT_ID ';
+            ') jp1 left outer join VIW_SIZE_INFO p1 on jp1.TENANT_ID=p1.TENANT_ID and jp1.SORT_ID7=p1.SIZE_ID '+
+            ') jp2 left outer join VIW_COLOR_INFO p2 on jp2.TENANT_ID=p2.TENANT_ID and jp2.SORT_ID8=p2.COLOR_ID ';
         AGlobal.Open(ts);
         w := 0;
         s := '';

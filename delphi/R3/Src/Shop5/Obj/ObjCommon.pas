@@ -29,7 +29,7 @@ function GetSequence(AGlobal:IdbHelp;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Int
 //flag 1 进货单，2 销售单 3 其他单
 procedure IncStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO: String;amt,mny: Real;flag:integer);
 procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:String; amt,mny:Real;flag:integer);
-function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:string): Real;
+function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
 
 function NewId(id:string): string;
 //写日志
@@ -541,17 +541,36 @@ begin
            AGlobal.ExecSQL(Str);
         end;
 end;
-function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, PROPERTY_02,BATCH_NO:string): Real;
-var Temp:TZQuery;
+function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
+var
+  rs:TZQuery;
+  bs:TZQuery;
 begin
-   Temp := TZQuery.Create(nil);
-   try
-      Temp.SQL.Text := 'select COST_PRICE from STO_STORAGE where SHOP_ID='''+SHOP_ID+''' and TENANT_ID='+TENANT_ID+' and GODS_ID='''+GODS_ID+''' and PROPERTY_01='''+PROPERTY_01+''' and PROPERTY_02='''+PROPERTY_02+''' and BATCH_NO='''+BATCH_NO+''' ';
-      AGlobal.Open(Temp);
-      Result := Temp.Fields[0].AsFloat;
-   finally
-      Temp.Free;
-   end;
+  rs:=TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select AMONEY,AMOUNT from ('+
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+    rs.ParamByName('TENANT_ID').AsInteger := strtoint(TENANT_ID);
+    rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+    rs.ParamByName('GODS_ID').AsString := GODS_ID;
+    rs.ParamByName('BATCH_NO').AsString := BATCH_NO;
+    AGlobal.Open(rs);
+    if rs.IsEmpty then
+       begin
+         rs.Close;
+         rs.SQL.Text := 'select NEW_INPRICE from VIW_GOODSPRICEEXT where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID';
+         rs.ParamByName('TENANT_ID').AsInteger := strtoint(TENANT_ID);
+         rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+         rs.ParamByName('GODS_ID').AsString := GODS_ID;
+         AGlobal.Open(rs);
+         result := rs.Fields[0].AsFloat; 
+       end
+    else
+       result := rs.Fields[0].AsFloat/rs.Fields[1].AsFloat;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure WriteLogInfo(AGlobal: IdbHelp;userid:string;LogType:integer;ModId:string;LogName:string;LogInfo:string);

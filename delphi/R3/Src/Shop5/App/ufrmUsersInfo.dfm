@@ -681,7 +681,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 37
       Width = 121
       Height = 20
-      Enabled = False
+      TabStop = False
       TabOrder = 2
     end
     object edtSHOP_ID: TzrComboBoxList

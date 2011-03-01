@@ -288,7 +288,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'CHK_USEE'
+                  FieldName = 'CHK_USER_TEXT'
                   Footers = <>
                   Title.Caption = #23457#26680#20154
                   Width = 52

@@ -86,13 +86,14 @@ begin
     w := w +' and CHECK_ID>'''+id+'''';
 
   str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+'';
-  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT from ('+str+')jb '+
-       ' left outer join VIW_USERS b on jb.CREA_USER=b.USER_ID ';
+  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
+       ' left outer join VIW_USERS b on b.TENANT_ID=:TENANT_ID and jb.CREA_USER=b.USER_ID '+
+       ' left outer join VIW_USERS c on c.TENANT_ID=:TENANT_ID and jb.CHK_USER=c.USER_ID ';
   case Factor.iDbType of
-   0,3: result:='select top 600 * from ('+str+') order by PRINT_DATE  ';
+   0,3: result:='select top 600 * from ('+str+') as tmp order by PRINT_DATE  ';
    1: result:=' ';
    4: result:='select top 600 tp.* from ('+str+' order by PRINT_DATE) tp fetch first 600 rows only ';
-   5: result:='select * from ('+str+') order by PRINT_DATE limit 600 ';
+   5: result:='select * from ('+str+') as tmp order by PRINT_DATE limit 600 ';
   end;
 end;
 

@@ -19,10 +19,8 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 113
       Width = 518
       Height = 206
-      ActivePage = TabSheet2
       Color = clWhite
       ParentColor = False
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -173,7 +171,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtACCOUNT: TcxTextEdit
             Left = 96
@@ -195,7 +193,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 2
+            TabOrder = 3
           end
           object edtACCU_INTEGRAL: TcxTextEdit
             Left = 372
@@ -810,8 +808,8 @@ inherited frmClientInfo: TfrmClientInfo
         Top = 26
         Width = 121
         Height = 20
-        Enabled = False
-        TabOrder = 2
+        TabStop = False
+        TabOrder = 6
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 98
@@ -867,7 +865,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -913,7 +911,7 @@ inherited frmClientInfo: TfrmClientInfo
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtPRICE_ID: TzrComboBoxList
         Left = 97
@@ -926,7 +924,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'PRICE_NAME;PRICE_SPELL'

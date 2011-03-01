@@ -191,7 +191,7 @@ procedure TfrmClientInfo.Save;
     Tmp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
     Tmp.FieldByName('TAX_RATE').AsString := '0';
     Tmp.Post;
-   end;
+  end;
 var tmp:TZQuery;
 j:integer;
 begin

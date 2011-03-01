@@ -454,6 +454,7 @@ procedure TfrmCustomerInfo.FormShow(Sender: TObject);
 begin
   inherited;
   cmbCUST_CODE.SelectAll;
+  RzPage.ActivePageIndex := 0;
   if cmbCUST_CODE.CanFocus then cmbCUST_CODE.SetFocus;
 end;
 

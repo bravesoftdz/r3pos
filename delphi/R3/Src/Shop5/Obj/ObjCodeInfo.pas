@@ -3,7 +3,7 @@ unit ObjCodeInfo;
 interface
 uses Dialogs,SysUtils,zBase,Classes,ZIntf,ObjCommon,ZDataset;
 type
-  TClientSort=class(TZFactory)
+  TCodeInfo=class(TZFactory)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -15,30 +15,30 @@ type
   end;
 implementation
 
-{ TClientSort }
+{ TCodeInfo }
 
-function TClientSort.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+function TCodeInfo.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
     rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
-  case FieldByName('CODE_TYPE').AsString of
-    '5':Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
-    '9':Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+  case FieldByName('CODE_TYPE').AsInteger of
+    5:Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+    9:Str='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
   end;
   try
     rs.Close;
     rs.SQL.Text := Str;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在企业资料中使用不能删除.');
+       Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在相关资料中使用不能删除.');
   finally
     rs.Free;
   end;
   result := true;
 end;
 
-function TClientSort.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function TCodeInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
 begin
@@ -64,7 +64,7 @@ begin
   end;
 end;
 
-function TClientSort.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+function TCodeInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
 begin
@@ -80,7 +80,7 @@ begin
   end;
 end;
 
-procedure TClientSort.InitClass;
+procedure TCodeInfo.InitClass;
 var
   Str: string;
 begin
@@ -99,9 +99,9 @@ end;
 
 
 initialization
-  RegisterClass(TClientSort);
+  RegisterClass(TCodeInfo);
 finalization
-  UnRegisterClass(TClientSort);
+  UnRegisterClass(TCodeInfo);
 
   
 end.

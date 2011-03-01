@@ -34,8 +34,11 @@ type
   {== 商品单价 ==}
   TGoodsPrice=class(TZFactory)
   public
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;  
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
 
@@ -89,10 +92,10 @@ begin
   result := true;
   Str:='Insert Into PUB_GOODSINFO(GODS_ID,TENANT_ID,GODS_CODE,GODS_NAME,GODS_SPELL,GODS_TYPE,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,'+
     'SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,BARCODE,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,'+
-    'NEW_LOWPRICE,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_BARTER,BARTER_INTEGRAL,REMARK,COMM,TIME_STAMP)'+
+    'NEW_LOWPRICE,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,USING_BARTER,BARTER_INTEGRAL,REMARK,COMM,TIME_STAMP)'+
     ' Values (:GODS_ID,:TENANT_ID,:GODS_CODE,:GODS_NAME,:GODS_SPELL,:GODS_TYPE,:SORT_ID1,:SORT_ID2,:SORT_ID3,:SORT_ID4,'+
     ':SORT_ID5,:SORT_ID6,:SORT_ID7,:SORT_ID8,:BARCODE,:CALC_UNITS,:SMALL_UNITS,:BIG_UNITS,:SMALLTO_CALC,:BIGTO_CALC,:NEW_INPRICE,'+
-    ':RTL_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_BARTER,:BARTER_INTEGRAL,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
+    ':RTL_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_LOCUS_NO,:USING_BARTER,:BARTER_INTEGRAL,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
   AGlobal.ExecSQL(Str, self);
 
   //插入门店单价
@@ -109,11 +112,16 @@ begin
   Str:=
     'Update PUB_GOODSINFO Set GODS_CODE=:GODS_CODE,GODS_NAME=:GODS_NAME,GODS_SPELL=:GODS_SPELL,GODS_TYPE=:GODS_TYPE,SORT_ID1=:SORT_ID1,'+
     'SORT_ID2=:SORT_ID2,SORT_ID3=:SORT_ID3,SORT_ID4=:SORT_ID4,SORT_ID5=:SORT_ID5,SORT_ID6=:SORT_ID6,SORT_ID7=:SORT_ID7,SORT_ID8=:SORT_ID8,'+
-    'BARCODE=:BARCODE,USING_PRICE=:USING_PRICE,HAS_INTEGRAL=:HAS_INTEGRAL,USING_BATCH_NO=:USING_BATCH_NO,USING_BARTER=:USING_BARTER,BARTER_INTEGRAL=:BARTER_INTEGRAL,REMARK=:REMARK,'+
+    'BARCODE=:BARCODE,USING_PRICE=:USING_PRICE,HAS_INTEGRAL=:HAS_INTEGRAL,USING_BATCH_NO=:USING_BATCH_NO,USING_BARTER=:USING_BARTER,'+
+    'BARTER_INTEGRAL=:BARTER_INTEGRAL,REMARK=:REMARK,USING_LOCUS_NO=:USING_LOCUS_NO,'+
     'CALC_UNITS=:CALC_UNITS,SMALL_UNITS=:SMALL_UNITS,BIG_UNITS=:BIG_UNITS,SMALLTO_CALC=:SMALLTO_CALC,BIGTO_CALC=:BIGTO_CALC,'+
     'NEW_INPRICE=:NEW_INPRICE,NEW_OUTPRICE=:RTL_OUTPRICE,NEW_LOWPRICE=:NEW_LOWPRICE,'+
     'COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
     ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+  AGlobal.ExecSQL(Str,self);
+  Str:='update PUB_GOODSPRICE set NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE,NEW_OUTPRICE2=:NEW_OUTPRICE2,'+
+    ' COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID and PRICE_ID=''#'' '; 
   AGlobal.ExecSQL(Str,self);
 
   //修改价格日志：
@@ -121,6 +129,7 @@ begin
      (FieldByName('NEW_OUTPRICE1').AsFloat<>FieldByName('NEW_OUTPRICE1').AsOldFloat) or
      (FieldByName('NEW_OUTPRICE2').AsFloat<>FieldByName('NEW_OUTPRICE2').AsOldFloat) then
   begin
+    Params.ParamByName('ROWS_ID').AsString:=NewId(''); //日志日期
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date()); //日志日期
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;    //企业ID
     Params.ParamByName('SHOP_ID').AsString:=FieldByName('SHOP_ID').AsString;        //门店ID
@@ -173,7 +182,7 @@ begin
       ' NEW_OUTPRICE2, '+
       ' NEW_LOWPRICE,'+
       ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,'+
-      ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,REMARK,'+
+      ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,REMARK,'+
       ' case when NEW_OUTPRICE<>0 then (case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end)*100.0/(NEW_OUTPRICE*1.0) else null end as PROFIT_RATE '+
       'from (select * from VIW_GOODSPRICE where POLICY_TYPE=2  and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID '+
       ' union all '+
@@ -233,24 +242,36 @@ end;
 
 { TGoodsPrice }
 
-function TGoodsPrice.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+function TGoodsPrice.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var
+  str: string;
+begin
+  result:=false;
+  str:='update PUB_GOODSPRICE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+       ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and GODS_ID=:OLD_GODS_ID and PRICE_ID=:OLD_PRICE_ID ';
+  result:=AGlobal.ExecSQL(Str,self)>0;
+end;
+
+function TGoodsPrice.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
 begin
-  if trim(FieldbyName('Flag').AsString)<>'' then //原有记录执行更新语句
-  begin
-    Str:='update PUB_GOODSPRICE set TENANT_ID=:TENANT_ID,PRICE_ID=:PRICE_ID,SHOP_ID=:SHOP_ID,GODS_ID=:GODS_ID,PRICE_METHOD=:PRICE_METHOD,'+
-      ' NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE1,NEW_OUTPRICE2=:NEW_OUTPRICE2,'+
-      ' COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-      ' where TENANT_ID=:OLD_TENANT_ID and COMM not in (''02'',''12'') and GODS_ID=:OLD_GODS_ID and '+
-      ' SHOP_ID=:OLD_SHOP_ID and PRICE_ID=:OLD_PRICE_ID ';
-    AGlobal.ExecSQL(Str,self);
-  end else
+  Str:='update PUB_GOODSPRICE set TENANT_ID=:TENANT_ID,PRICE_ID=:PRICE_ID,SHOP_ID=:SHOP_ID,GODS_ID=:GODS_ID,PRICE_METHOD=:PRICE_METHOD,'+
+    ' NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE1,NEW_OUTPRICE2=:NEW_OUTPRICE2,'+
+    ' COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and GODS_ID=:OLD_GODS_ID and PRICE_ID=:OLD_PRICE_ID ';
+  if AGlobal.ExecSQL(Str,self)=0 then
   begin
     Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
       ' Values (:TENANT_ID,:PRICE_ID,:SHOP_ID,:GODS_ID,:PRICE_METHOD,:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
     AGlobal.ExecSQL(Str,self);
   end;
+end;
+
+function TGoodsPrice.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
 end;
 
 procedure TGoodsPrice.InitClass;
@@ -260,7 +281,7 @@ begin
   inherited;
   OperChar:=GetStrJoin(iDbType);
   SelectSQL.Text:=
-    'select PROFIT_RATE,TENANT_ID,TENANT_ID as Flag,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
+    'select PROFIT_RATE,TENANT_ID,A.PRICE_ID as PRICE_ID,A.PRICE_NAME as PRICE_NAME,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2 '+
     ' from (select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE Where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
     ' Left Join '+
     ' (select P.*,'+

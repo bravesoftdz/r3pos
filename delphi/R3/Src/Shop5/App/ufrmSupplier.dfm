@@ -55,11 +55,11 @@ inherited frmSupplier: TfrmSupplier
                 Caption = '  '#26597#35810#20851#20581#23383
               end
               object Label40: TLabel
-                Left = 26
+                Left = 16
                 Top = 36
-                Width = 48
+                Width = 60
                 Height = 12
-                Caption = #20225#19994#20998#31867
+                Caption = #20379#24212#21830#20998#31867
               end
               object edtKey: TcxTextEdit
                 Left = 80
@@ -359,8 +359,8 @@ inherited frmSupplier: TfrmSupplier
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
-        Width = 36
-        Caption = #20379#24212#21830
+        Width = 60
+        Caption = #20379#24212#21830#31649#29702
       end
     end
     inherited CoolBar1: TCoolBar

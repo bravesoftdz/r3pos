@@ -184,7 +184,7 @@ begin
   with TfrmAccountInfo.Create(self) do
     begin
       try
-        OnSave := AddRecord;
+        //OnSave := AddRecord;
         //要检查权限
         Open(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
         ShowModal;

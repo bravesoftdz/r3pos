@@ -242,15 +242,15 @@ inherited frmAccount: TfrmAccount
   inherited RzPanel4: TRzPanel
     Width = 698
     inherited Image1: TImage
-      Left = 479
-      Width = 210
+      Left = 484
+      Width = 205
     end
     inherited Image14: TImage
       Left = 689
     end
     inherited Image3: TImage
-      Left = 479
-      Width = 210
+      Left = 484
+      Width = 205
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -259,18 +259,18 @@ inherited frmAccount: TfrmAccount
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 303
+      Width = 308
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 303
+          MinHeight = 308
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 303
+        Width = 308
         ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton1: TToolButton
@@ -296,23 +296,23 @@ inherited frmAccount: TfrmAccount
         object ToolButton5: TToolButton
           Left = 172
           Top = 0
-          Width = 2
+          Width = 7
           Caption = 'ToolButton5'
           ImageIndex = 4
           Style = tbsSeparator
         end
         object ToolButton6: TToolButton
-          Left = 174
+          Left = 179
           Top = 0
           Action = actPrint
         end
         object ToolButton7: TToolButton
-          Left = 217
+          Left = 222
           Top = 0
           Action = actPreview
         end
         object ToolButton8: TToolButton
-          Left = 260
+          Left = 265
           Top = 0
           Action = actExit
         end

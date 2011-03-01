@@ -19,6 +19,8 @@ const
   WM_INIT_RECORD=WM_USER+4;
   WM_NEXT_RECORD=WM_USER+5;
   WM_PRIOR_RECORD=WM_USER+6;
+  //填充数据
+  WM_FILL_DATA=WM_USER+7;
   //尺码，颜色编辑框
   PROPERTY_DIALOG=1;
   //批号、有效期输入框
@@ -54,9 +56,18 @@ type
     actCopyToNew: TMenuItem;
     munInsertRow: TMenuItem;
     munAppendRow: TMenuItem;
-    munDivRow: TMenuItem;
+    munDivRow0: TMenuItem;
     edtTable: TZQuery;
     edtProperty: TZQuery;
+    munDivRow1: TMenuItem;
+    actLocusNo: TAction;
+    actBatchNo: TAction;
+    actUnitConvert: TAction;
+    actIsPressent: TAction;
+    mnuBatchNo: TMenuItem;
+    mnuLocusNo: TMenuItem;
+    munUnitConvert: TMenuItem;
+    mnuIsPressent: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -101,6 +112,11 @@ type
     procedure actCopyToNewClick(Sender: TObject);
     procedure munInsertRowClick(Sender: TObject);
     procedure munAppendRowClick(Sender: TObject);
+    procedure actLocusNoExecute(Sender: TObject);
+    procedure actBatchNoExecute(Sender: TObject);
+    procedure actUnitConvertExecute(Sender: TObject);
+    procedure actIsPressentExecute(Sender: TObject);
+    procedure actIntegralExecute(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -190,6 +206,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
 
+    function CheckInput:boolean;virtual;
     //输入会员号
     procedure WriteInfo(id:string);virtual;
     //整单折扣
@@ -198,13 +215,18 @@ type
     procedure AgioToGods(id:string);virtual;
     //修改单价
     procedure PriceToGods(id:string);virtual;
-    //修改列
-    procedure GridToGods(Grid:string;id:string);virtual;
+    //输入跟踪号
+    function GodsToLocusNo(id:string):boolean;virtual;
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;virtual;
+    //输入数量
+    procedure GodsToAmount(id:string);virtual;
 
     //清除无效数据
     procedure ClearInvaid;virtual;
     //检测数据合法性
     procedure CheckInvaid;virtual;
+    
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);virtual;
     procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string;pt:boolean=false);virtual;
     procedure DelRecord(AObj:TRecord_);virtual;
@@ -233,6 +255,7 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    
     //单据状态
     property dbState:TDataSetState read FdbState write SetdbState;
     //是否允许重复货品
@@ -254,7 +277,7 @@ type
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods;
+uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods, uframeListDialog;
 {$R *.dfm}
 
 { TframeOrderFrom }
@@ -702,14 +725,14 @@ begin
       rs := Global.GetZQueryFromName('PUB_GOODSINFO');
       if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
       begin
-        AObj.ReadField(edtTable); 
+        AObj.ReadField(edtTable);
         AObj.ReadFromDataSet(rs,false);
         AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
         AObj.FieldbyName('IS_PRESENT').AsString := '0';
         AObj.FieldbyName('LOCUS_NO').AsString := '';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
         pt := false;
-        
+
         if CheckRepeat(AObj,pt) then
            begin
              fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
@@ -755,7 +778,7 @@ end;
 
 procedure TframeOrderForm.DelRecord(AObj: TRecord_);
 begin
-  edtTable.Delete;
+  if not edtTable.IsEmpty then edtTable.Delete;
 end;
 
 procedure TframeOrderForm.EraseRecord;
@@ -1355,10 +1378,10 @@ begin
       edtInput.SelectAll;
       edtInput.SetFocus;
       Key := #0;
-
+      try
       if InputFlag=1 then //会员卡号
          begin
-           if s<>'' then WriteInfo(s);
+           WriteInfo(s);
            InputFlag := 0;
            DBGridEh1.Col := 1;
            edtInput.Text := '';
@@ -1397,6 +1420,30 @@ begin
          end;
       if InputFlag=6 then //赠品
          begin
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=7 then //物流跟踪号
+         begin
+           if s<>'' then if not GodsToLocusNo(s) then Exit;
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=8 then //商品批号
+         begin
+           if s<>'' then if not GodsToBatchNo(s) then Exit;
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           edtInput.Text := '';
+           Exit;
+         end;
+      if InputFlag=9 then //数量输入
+         begin
+           if s<>'' then GodsToAmount(s);
            InputFlag := 0;
            DBGridEh1.Col := 1;
            edtInput.Text := '';
@@ -1480,7 +1527,23 @@ begin
               edtInput.Text := '';
            end;
          end;
+      except
+         edtInput.SelectAll;
+         Raise;
+      end;
     end;
+
+    if Key='-' then
+      begin
+        AObj := TRecord_.Create;
+        try
+           AObj.ReadFromDataSet(edtTable);
+           DelRecord(AObj)
+        finally
+           AObj.Free;
+        end;
+        Key := #0;
+      end;
   finally
     edtInput.SetFocus;
   end;
@@ -1936,8 +1999,27 @@ begin
 end;
 
 procedure TframeOrderForm.CheckInvaid;
+var
+  bs:TZQuery;
+  r:integer;
 begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  r := edtTable.RecNo;
+  edtTable.DisableControls;
+  try
+    edtTable.First;
+    while not edtTable.eof do
+      begin
+        if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
+        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
+        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FieldbyName('LOCUS_NO').AsString='') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品物流跟踪号。');
+        edtTable.Next;
+      end;
+    if r>0 then edtTable.RecNo := r;
+  finally
+    edtTable.EnableControls;
+  end;
 end;
 
 procedure TframeOrderForm.SaveOrder;
@@ -2142,10 +2224,12 @@ begin
   if dbState = dsBrowse then Exit;
   if edtTable.FieldbyName('GODS_ID').AsString='' then Exit;
   if edtTable.FindField('IS_PRESENT')=nil then Exit;
-  if edtTable.FieldbyName('IS_PRESENT').AsInteger = 0 then
-     PresentToCalc(1)
+  case edtTable.FieldbyName('IS_PRESENT').AsInteger of
+  0:PresentToCalc(1)
+//  1:PresentToCalc(2)
   else
      PresentToCalc(0);
+  end;
 end;
 
 procedure TframeOrderForm.ConvertUnit;
@@ -2238,7 +2322,68 @@ procedure TframeOrderForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-  if (ssCtrl in Shift) and (ssShift in Shift) and (Key in [ord('D'),ord('d')]) then
+  if (Shift=[]) and (Key = VK_F2) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 0;
+       Exit;
+     end;
+  if (Shift=[]) and (Key = VK_F5) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 1;
+       Exit;
+     end;
+  if (Shift=[]) and (Key = VK_F6) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 2;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F11) then
+     begin
+       ConvertUnit;
+       InputFlag := 0;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F12) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 3;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F4) then
+     begin
+       ConvertPresent;
+       InputFlag := 0;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F3) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 9;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F7) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 7;
+       Exit;
+     end;
+
+  if (Shift=[]) and (Key = VK_F8) then
+     begin
+       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       InputFlag := 8;
+       Exit;
+     end;
+
+  if (ssCtrl in Shift) and (Key in [ord('D'),ord('d')]) then
      begin
        if Assigned(TabSheet) then
        begin
@@ -2259,21 +2404,21 @@ begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,4);
        end;
      end;
-  if (Shift = []) and (Key = VK_PRIOR) then
+  if (ssCtrl in Shift) and (Key = VK_PRIOR) then
      begin
        if Assigned(TabSheet) then
        begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,5);
        end;
      end;
-  if (Shift = []) and (Key = VK_NEXT) then
+  if (ssCtrl in Shift) and (Key = VK_NEXT) then
      begin
        if Assigned(TabSheet) then
        begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,6);
        end;
      end;
-  if (Shift = []) and (Key = VK_F5) then
+  if (ssCtrl in Shift) and (Key = VK_F5) then
      begin
        if Assigned(TabSheet) then
        begin
@@ -2281,6 +2426,13 @@ begin
        end;
      end;
   if (ssCtrl in Shift) and (Key in [ord('P'),ord('p')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,3);
+       end;
+     end;
+  if (ssCtrl in Shift) and (ssShift in Shift) and (Key in [ord('P'),ord('p')]) then
      begin
        if Assigned(TabSheet) then
        begin
@@ -2299,18 +2451,19 @@ end;
 
 procedure TframeOrderForm.WriteInfo(id: string);
 begin
-
+  InputFlag := 0;
 end;
 
 procedure TframeOrderForm.edtInputKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-  if (Shift = []) and(Key = VK_TAB) then
+  if (Shift = []) and(Key = VK_TAB) and (InputFlag=0) then
      begin
        if InputMode = 0 then InputMode := 1 else InputMode := 0;
        InputFlag := InputFlag;
        Key := 0;
+       Exit;
      end;
   try
   if trim(edtInput.Text)='' then
@@ -2334,8 +2487,17 @@ begin
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'UNIT_ID' then
                InputFlag := 5
             else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'AMOUNT' then
+               InputFlag := 9
+            else
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'IS_PRESENT' then
                InputFlag := 6
+            else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
+               InputFlag := 7
+            else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'BATCH_NO' then
+               InputFlag := 8
             else
                InputFlag := 0;
           end;
@@ -2353,22 +2515,23 @@ begin
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'AGIO_RATE' then
                InputFlag := 4
             else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'AMOUNT' then
+               InputFlag := 9
+            else
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'UNIT_ID' then
                InputFlag := 5
             else
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'IS_PRESENT' then
                InputFlag := 6
             else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
+               InputFlag := 7
+            else
+            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'BATCH_NO' then
+               InputFlag := 8
+            else
                InputFlag := 0;
           end;
-     end;
-  if (Key = VK_SHIFT) and (InputFlag=5) then
-     begin
-       ConvertUnit;
-     end;
-  if (Key = VK_SHIFT) and (InputFlag=6) then
-     begin
-       ConvertPresent;
      end;
 
   if Key=VK_DOWN then
@@ -2376,6 +2539,14 @@ begin
        edtTable.Next;
        if edtTable.Eof then PostMessage(Handle,WM_INIT_RECORD,0,0);
        if edtInput.CanFocus then edtInput.SetFocus;
+     end;
+  if (Key = VK_TAB) and (InputFlag=5) then
+     begin
+       ConvertUnit;
+     end;
+  if (Key = VK_TAB) and (InputFlag=6) then
+     begin
+       ConvertPresent;
      end;
   if Key=VK_UP then
      edtTable.Prior;
@@ -2397,6 +2568,7 @@ end;
 
 procedure TframeOrderForm.SetInputFlag(const Value: integer);
 begin
+  FInputFlag := Value;
   case Value of
   0:begin
       case InputMode of
@@ -2409,6 +2581,7 @@ begin
          lblHint.Caption := '切换成“条码”输入按 tab 健';
         end;
       end;
+      Exit;
     end;
   1:begin
       lblInput.Caption := '会员卡号';
@@ -2428,14 +2601,26 @@ begin
     end;
   5:begin
       lblInput.Caption := '单位切换';
-      lblHint.Caption := '请按Shift健进行单位切换 完毕后按“回车”';
+      lblHint.Caption := '请按 tab 健进行单位转换';
     end;
   6:begin
-      lblInput.Caption := '是否赠品';
-      lblHint.Caption := '请按Shift健进行赠品切换 完毕后按“回车”';
+      lblInput.Caption := '赠品/兑换';
+      lblHint.Caption := '请按 tab 健进行"正常/赠品/兑换"转换';
+    end;
+  7:begin
+      lblInput.Caption := '物流条码';
+      lblHint.Caption := '请输入物流跟踪号后按“回车”';
+    end;
+  8:begin
+      lblInput.Caption := '商品批号';
+      lblHint.Caption := '请输入商品批号后按“回车”';
+    end;
+  9:begin
+      lblInput.Caption := '数量输入';
+      lblHint.Caption := '请输入商品批号后按“回车”';
     end;
   end;
-  FInputFlag := Value;
+  if not CheckInput then InputFlag := 0;
 end;
 
 procedure TframeOrderForm.AgioInfo(id: string);
@@ -2493,7 +2678,7 @@ begin
   try
     StrToFloat(s);
   except
-    Raise Exception.Create('输入的单价无效，请正确输入'); 
+    Raise Exception.Create('输入的单价无效，请正确输入');
   end;
   Field := edtTable.FindField('APRICE');
   if Field=nil then Exit;
@@ -2519,14 +2704,6 @@ begin
       w := w.Parent;
     end;
   end;
-end;
-
-procedure TframeOrderForm.GridToGods(Grid, id: string);
-begin
-  if Grid='APRICE' then
-     PriceToGods(id);
-  if Grid='AGIO_RATE' then
-     AgioToGods(id);
 end;
 
 procedure TframeOrderForm.edtInputExit(Sender: TObject);
@@ -2911,7 +3088,7 @@ begin
   try
     rs.SQL.Text :=
       'select AMONEY,AMOUNT from ('+
-      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) where AMOUNT<>0';
+      'select sum(AMONEY) as AMONEY,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID and BATCH_NO=:BATCH_NO ) j where AMOUNT<>0';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
     rs.ParamByName('GODS_ID').AsString := GODS_ID;
@@ -2930,6 +3107,149 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TframeOrderForm.GodsToBatchNo(id: string):boolean;
+var
+  rs,bs:TZQuery;
+  AObj:TRecord_;
+  r:boolean;
+  pt:integer;
+begin
+  if edtTable.FieldByName('GODS_ID').AsString = '' then
+     begin
+       result := true;
+       MessageBox(Handle,pchar('请输入商品后再输入批号.'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  if id = '' then Raise Exception.Create('输入的批号无效'); 
+  result := false;
+  rs := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  try
+    rs.SQL.Text := 'select GODS_ID,LOCUS_NO,UNIT_ID,BATCH_NO,IS_PRESENT from VIW_STOCKDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID='''+edtTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('无效的批号:'+id);
+    edtTable.Edit;
+    edtTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+    result := true;
+  finally
+    AObj.Free;
+    rs.Free;
+  end;
+end;
+
+function TframeOrderForm.GodsToLocusNo(id: string):boolean;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+  pt:integer;
+  r:boolean;
+begin
+  if id = '' then Raise Exception.Create('输入的物流跟踪号无效');
+  result := false;
+  rs := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  try
+    rs.SQL.Text :=
+      'select j.* from ('+
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
+    if rs.RecordCount > 1 then
+       begin
+         if TframeListDialog.FindDialog(self,rs.SQL.Text,'GODS_CODE=货号,GODS_NAME=商品名称,BATCH_NO=批号,BARCODE=条码',AObj) then
+            begin
+            end
+         else
+            Exit;
+       end
+    else
+       AObj.ReadFromDataSet(rs);
+     pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
+
+     r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
+     if not r then
+     begin
+        inc(RowID);
+        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+        edtTable.Edit else InitRecord;
+        edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
+        edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+        edtTable.FieldbyName('BATCH_NO').AsString := AObj.FieldbyName('BATCH_NO').AsString;
+        edtTable.FieldbyName('LOCUS_NO').AsString := AObj.FieldbyName('LOCUS_NO').AsString;
+        edtTable.FieldbyName('BOM_ID').Value := null;
+        edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+        InitPrice(AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('UNIT_ID').AsString);
+     end else Raise Exception.Create('当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id);
+     WriteAmount(AObj.FieldbyName('GODS_ID').AsString,'#','#',1,true);
+     result := false;
+  finally
+    AObj.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TframeOrderForm.GodsToAmount(id: string);
+var
+  Field:TField;
+  s:string;
+begin
+  if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  s := trim(id);
+  try
+    StrToFloat(s);
+  except
+    Raise Exception.Create('输入的单价无效，请正确输入');
+  end;
+  Field := edtTable.FindField('AMOUNT');
+  if Field=nil then Exit;
+  edtTable.Edit;
+  Field.AsFloat := StrToFloat(s);
+  AmountToCalc(Field.AsFloat);
+end;
+
+function TframeOrderForm.CheckInput: boolean;
+begin
+  result := true;
+end;
+
+procedure TframeOrderForm.actLocusNoExecute(Sender: TObject);
+begin
+  inherited;
+  if edtInput.CanFocus and Visible then edtInput.SetFocus;
+  InputFlag := 7;
+end;
+
+procedure TframeOrderForm.actBatchNoExecute(Sender: TObject);
+begin
+  inherited;
+  if edtInput.CanFocus and Visible then edtInput.SetFocus;
+  InputFlag := 8;
+
+end;
+
+procedure TframeOrderForm.actUnitConvertExecute(Sender: TObject);
+begin
+  inherited;
+  ConvertUnit;
+end;
+
+procedure TframeOrderForm.actIsPressentExecute(Sender: TObject);
+begin
+  inherited;
+  PresentToCalc(1);
+end;
+
+procedure TframeOrderForm.actIntegralExecute(Sender: TObject);
+begin
+  inherited;
+  PresentToCalc(2);
+
 end;
 
 end.

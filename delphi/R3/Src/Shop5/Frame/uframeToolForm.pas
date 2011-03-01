@@ -54,11 +54,6 @@ procedure TframeToolForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-//  if (Shift = []) and (Key = VK_PRINT) then
-//     begin
-//       actPrint.OnExecute(actPrint);
-//     end;
-  if (ssCtrl in Shift) and (ssShift in Shift) and (Key in [ord('D'),ord('d')]) then
      begin
        if actDelete.Enabled and Assigned(actDelete.OnExecute) then
           actDelete.OnExecute(actDelete);
@@ -73,7 +68,7 @@ begin
        if actAudit.Enabled and Assigned(actAudit.OnExecute) then
           actAudit.OnExecute(actAudit);
      end;
-  if (Shift = []) and (Key = VK_F5) then
+  if (ssCtrl in Shift) and (Key = VK_F5) then
      begin
        if actFind.Enabled and Assigned(actFind.OnExecute) then
           actFind.OnExecute(actFind);

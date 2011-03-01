@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 417
-  Top = 124
+  Left = 348
+  Top = 163
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
@@ -301,7 +301,7 @@ inherited frameOrderForm: TframeOrderForm
     end
     object RzPanel3: TRzPanel
       Left = 5
-      Top = 294
+      Top = 315
       Width = 621
       Height = 53
       Align = alBottom
@@ -314,7 +314,7 @@ inherited frameOrderForm: TframeOrderForm
       Left = 5
       Top = 125
       Width = 621
-      Height = 169
+      Height = 190
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = dsTable
@@ -529,13 +529,13 @@ inherited frameOrderForm: TframeOrderForm
     end
     object rzHelp: TRzPanel
       Left = 5
-      Top = 347
+      Top = 368
       Width = 621
-      Height = 53
+      Height = 32
       Align = alBottom
       BorderOuter = fsFlat
       BorderSides = [sdBottom]
-      Color = clWhite
+      Color = clBlack
       TabOrder = 6
       Visible = False
     end
@@ -558,6 +558,26 @@ inherited frameOrderForm: TframeOrderForm
   inherited actList: TActionList
     Left = 216
     Top = 136
+    object actLocusNo: TAction
+      Caption = #36755#20837#29289#27969#36319#36394#21495
+      ShortCut = 118
+      OnExecute = actLocusNoExecute
+    end
+    object actBatchNo: TAction
+      Caption = #36755#20837#25209#21495
+      ShortCut = 119
+      OnExecute = actBatchNoExecute
+    end
+    object actUnitConvert: TAction
+      Caption = #21333#20301#20999#25442
+      ShortCut = 122
+      OnExecute = actUnitConvertExecute
+    end
+    object actIsPressent: TAction
+      Caption = #20999#25442'('#38144#21806'/'#36192#36865')'
+      ShortCut = 115
+      OnExecute = actIsPressentExecute
+    end
   end
   object dsTable: TDataSource
     DataSet = edtTable
@@ -586,7 +606,22 @@ inherited frameOrderForm: TframeOrderForm
       ShortCut = 16430
       OnClick = mnuDeleteGodsClick
     end
-    object munDivRow: TMenuItem
+    object munDivRow1: TMenuItem
+      Caption = '-'
+    end
+    object munUnitConvert: TMenuItem
+      Action = actUnitConvert
+    end
+    object mnuBatchNo: TMenuItem
+      Action = actBatchNo
+    end
+    object mnuLocusNo: TMenuItem
+      Action = actLocusNo
+    end
+    object mnuIsPressent: TMenuItem
+      Action = actIsPressent
+    end
+    object munDivRow0: TMenuItem
       Caption = '-'
     end
     object mnuGodsProperty: TMenuItem

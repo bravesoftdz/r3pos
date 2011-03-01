@@ -488,11 +488,11 @@ end;
 procedure TframeOrderToolForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if (Shift = []) and (Key = VK_PRIOR) then
+  if (ssCtrl in Shift) and (Key = VK_PRIOR) then
      begin
        PostMessage(Handle,WM_EXEC_ORDER,0,5);
      end;
-  if (Shift = []) and (Key = VK_NEXT) then
+  if (ssCtrl in Shift) and (Key = VK_NEXT) then
      begin
        PostMessage(Handle,WM_EXEC_ORDER,0,6);
      end;

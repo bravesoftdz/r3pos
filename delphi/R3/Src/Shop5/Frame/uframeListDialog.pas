@@ -45,6 +45,7 @@ type
     procedure cdsListFilterRecord(DataSet: TDataSet; var Accept: Boolean);
     procedure edtSearchPropertiesChange(Sender: TObject);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     FMultiSelect: boolean;
@@ -383,9 +384,10 @@ begin
   inherited;
   if trim(edtSearch.Text)='' then Exit;
   Accept:=False;
-  if (pos(trim(edtSearch.Text),DataSet[DBGridEh1.Columns[1].FieldName])>0) or (pos(uppercase(trim(edtSearch.Text)),DataSet[DBGridEh1.Columns[1].FieldName])>0)
-          or (pos(trim(edtSearch.Text),DataSet[DBGridEh1.Columns[2].FieldName])>0) or (pos(uppercase(trim(edtSearch.Text)),DataSet[DBGridEh1.Columns[2].FieldName])>0)
-          or (pos(trim(edtSearch.Text),DataSet[DBGridEh1.Columns[3].FieldName])>0) or (pos(uppercase(trim(edtSearch.Text)),DataSet[DBGridEh1.Columns[3].FieldName])>0) then
+  if (       (pos(uppercase(trim(edtSearch.Text)),uppercase(DataSet.FieldbyName(DBGridEh1.Columns[1].FieldName).asString))>0)
+          or (pos(uppercase(trim(edtSearch.Text)),uppercase(DataSet.FieldbyName(DBGridEh1.Columns[2].FieldName).asString))>0)
+          or (pos(uppercase(trim(edtSearch.Text)),uppercase(DataSet.FieldbyName(DBGridEh1.Columns[3].FieldName).asString))>0)
+      ) then
      Accept:=True
   else
     Accept:=False;
@@ -394,7 +396,7 @@ end;
 procedure TframeListDialog.edtSearchPropertiesChange(Sender: TObject);
 begin
   inherited;
-  cdsList.Filtered:=False;  
+  cdsList.Filtered:=False;
   cdsList.Filtered:=True;
 end;
 
@@ -403,6 +405,13 @@ begin
   inherited;
   if Column.FieldName='A' then
     N1Click(nil);
+end;
+
+procedure TframeListDialog.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  cdsList.Filtered:=False;
+  cdsList.Filtered:=True;
 end;
 
 end.

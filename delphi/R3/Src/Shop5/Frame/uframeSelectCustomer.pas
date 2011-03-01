@@ -161,14 +161,17 @@ begin
   result :=
            'select jp.*,p.PRICE_NAME from ( '+
            'select jc.*,c.SHOP_NAME from ( '+
-           'select 0 as A,TENANT_ID,SHOP_ID,PRICE_ID,CLIENT_ID,CLIENT_SPELL,IC_CARDNO,CLIENT_CODE,CLIENT_NAME,SND_DATE,ADDRESS,TELEPHONE2,LICENSE_CODE from VIW_CUSTOMER jc'+w+
-           'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID) jp '+
+           'select 0 as A,TENANT_ID,SHOP_ID,PRICE_ID,CLIENT_ID,CLIENT_SPELL,IC_CARDNO,CLIENT_CODE,CLIENT_NAME,ADDRESS,TELEPHONE2,LICENSE_CODE from VIW_CUSTOMER '+w+
+           ') jc left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID) jp '+
            'left outer join PUB_PRICEGRADE p on jp.TENANT_ID=p.TENANT_ID and jp.PRICE_ID=p.PRICE_ID ';
   case Factor.iDbType of
-  0:result := 'select top 600 * from ('+result+') jp order by CLIENT_ID';
+  0:result := 'select top 600 * from ('+result+') j order by CLIENT_ID';
+  1:result :=
+       'select * from ('+
+       'select * from ('+result+') order by CLIENT_ID) t where rownum<=600';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by CLIENT_ID) tp fetch first 600  rows only';
+       'select * from ('+result+') order by CLIENT_ID) t fetch first 600  rows only';
   5:result := 'select * from ('+result+') order by CLIENT_ID limit 600';
   else
     result := 'select * from ('+result+') order by CLIENT_ID';
@@ -361,7 +364,7 @@ end;
 procedure TframeSelectCustomer.FormKeyPress(Sender: TObject;
   var Key: Char);
 begin
-  if not edtSearch.Focused then
+  if not edtSearch.Focused or (Key=#27) then
      begin
        inherited;
      end;

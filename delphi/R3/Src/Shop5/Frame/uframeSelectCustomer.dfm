@@ -1,7 +1,7 @@
 inherited frameSelectCustomer: TframeSelectCustomer
-  Left = 243
-  Top = 202
-  ActiveControl = DBGridEh1
+  Left = 250
+  Top = 197
+  ActiveControl = edtSearch
   Caption = #26597#25214#23458#25143'...'
   ClientHeight = 398
   OnCreate = FormCreate
@@ -136,14 +136,6 @@ inherited frameSelectCustomer: TframeSelectCustomer
                   Title.Caption = #20837#20250#38376#24215
                   Title.Color = clWhite
                   Width = 77
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'SND_DATE'
-                  Footers = <>
-                  Title.Caption = #20837#20250#26085#26399
-                  Title.Color = clWhite
-                  Width = 76
                 end>
             end
             object fndPanel: TPanel

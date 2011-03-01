@@ -1,6 +1,6 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 181
-  Top = 181
+  Left = 295
+  Top = 185
   Width = 805
   Height = 534
   Caption = #20250#21592#26723#26696#31649#29702
@@ -10,31 +10,31 @@ inherited frmCustomer: TfrmCustomer
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 789
-    Height = 466
+    Width = 797
+    Height = 477
     inherited RzPanel2: TRzPanel
-      Width = 779
-      Height = 456
+      Width = 787
+      Height = 467
       inherited RzPage: TRzPageControl
-        Width = 773
-        Height = 450
+        Width = 781
+        Height = 461
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20250#21592#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 771
-            Height = 423
+            Width = 779
+            Height = 434
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 761
+              Width = 769
               Height = 108
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                761
+                769
                 108)
               object Label1: TLabel
                 Left = 19
@@ -338,8 +338,8 @@ inherited frmCustomer: TfrmCustomer
             object RzPanel1: TRzPanel
               Left = 5
               Top = 113
-              Width = 761
-              Height = 305
+              Width = 769
+              Height = 316
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -347,8 +347,8 @@ inherited frmCustomer: TfrmCustomer
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 751
-                Height = 276
+                Width = 759
+                Height = 287
                 Align = alClient
                 DataSource = Ds_Customer
                 Flat = True
@@ -526,8 +526,8 @@ inherited frmCustomer: TfrmCustomer
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 281
-                Width = 751
+                Top = 292
+                Width = 759
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -553,17 +553,17 @@ inherited frmCustomer: TfrmCustomer
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 789
+    Width = 797
     inherited Image1: TImage
-      Left = 626
-      Width = 154
+      Left = 622
+      Width = 166
     end
     inherited Image14: TImage
-      Left = 780
+      Left = 788
     end
     inherited Image3: TImage
-      Left = 626
-      Width = 154
+      Left = 622
+      Width = 166
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -572,18 +572,18 @@ inherited frmCustomer: TfrmCustomer
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 450
+      Width = 446
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 450
+          MinHeight = 446
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 450
+        Width = 446
         ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
@@ -633,23 +633,23 @@ inherited frmCustomer: TfrmCustomer
           OnClick = ToolButton3Click
         end
         object ToolButton5: TToolButton
-          Left = 278
+          Left = 274
           Top = 0
           Action = actRenew
           Visible = False
         end
         object But_Print: TToolButton
-          Left = 321
+          Left = 317
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 364
+          Left = 360
           Top = 0
           Action = actPreview
         end
         object But_Exit: TToolButton
-          Left = 407
+          Left = 403
           Top = 0
           Action = actExit
         end

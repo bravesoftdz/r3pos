@@ -115,12 +115,12 @@ type
   public
     { Public declarations }
     IsEnd: boolean;
-    MaxId,sqlstring,sqllvid:string;
+    MaxId,sqlstring:string;
     rcAmt:integer;
     procedure InitGrid;
     procedure AddRecord(AObj:TRecord_);
     procedure Open(id:string);
-    function EncodeSQL(id:string;var lvid1:string;var Str1:string):string;
+    function EncodeSQL(id:string;var Str1:string):string;
     procedure GetNo;
     function ShowExecute(AOwner:TForm;Params:String):Boolean;override;
   end;
@@ -367,11 +367,6 @@ end;
 procedure TfrmCustomer.FormCreate(Sender: TObject);
 begin
   inherited;
-  {ccid:=ShopGlobal.GetCOMP_ID(Global.UserID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid               //本用户所属门店没有上级门店 并且 当前登录门店不在用户所属门店中时
-  else
-    ccid:=Global.CompanyID; }
   InitGrid;
   fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   cmbPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
@@ -381,102 +376,97 @@ end;
 
 procedure TfrmCustomer.Open(id: string);
 var rs,tmp:TZQuery;
-    Str,lvid:string;
+    Str:string;
+    sm:TMemoryStream;
 begin
   if not Visible then Exit;
-  Cds_Customer.Close;
-  Cds_Customer.SQL.Text := EncodeSQL(id,lvid,Str);
-  Factor.Open(Cds_Customer);
-  rcAmt := Cds_Customer.RecordCount;
-  Cds_Customer.IndexFieldNames := 'CUST_CODE';
-
-  if Cds_Customer.RecordCount < 100 then
-    IsEnd := True
-  else
-    IsEnd := False;
-
-
-  {if Id='' then Cds_Customer.close;
-  rs := TZQuery.Create(nil);
+  if Id='' then Cds_Customer.close;
+  sm := TMemoryStream.Create;
+  tmp := TZQuery.Create(nil);
   Cds_Customer.DisableControls;
   try
-    rs.SQL.Text := EncodeSQL(Id,lvid,Str);
-    Factor.Open(rs);
-    rs.Last;
-    //MaxId := rs.FieldbyName('CUST_ID').AsString;
-    if Id='' then
-    begin
-       tmp:=TZQuery.Create(nil);
-       try
-         tmp.Close;
-         tmp.SQL.Text:='select count(*) From PUB_CUSTOMER A Where COMM NOT IN(''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str;
-         Factor.Open(tmp);
-         rcAmt := tmp.Fields[0].AsInteger;
-       finally
-         tmp.Free;
-       end;
-       Cds_Customer := rs;
-       Cds_Customer.IndexFieldNames := 'CUST_CODE';
-    end;
+    tmp.SQL.Text := EncodeSQL(id,Str);
+    Factor.Open(tmp);
+    tmp.Last;
+    MaxId := tmp.FieldByName('CUST_ID').AsString;
+    if id = '' then
+      begin
+        rs := TZQuery.Create(nil);
+        try
+          rs.SQL.Text := Str;
+          Factor.Open(rs);
+          rcAmt := rs.Fields[0].AsInteger;
+        finally
+          rs.Free;
+        end;
+        tmp.SaveToStream(sm);
+        Cds_Customer.LoadFromStream(sm);
+      end
     else
-       Cds_Customer.AppendData(rs.Data,true);
-    if rs.RecordCount <100 then IsEnd := True else IsEnd := false;
+      begin
+        tmp.SaveToStream(sm);
+        Cds_Customer.AddFromStream(sm);
+      end;
+    if tmp.RecordCount < 600 then IsEnd := True else IsEnd := False;
   finally
-    Cds_Customer.EnableControls;
     rs.Free;
-  end;}
+    tmp.Free;
+    Cds_Customer.EnableControls;
+    sm.Free;
+  end;
+  
 end;
 
-function TfrmCustomer.EncodeSQL(id: string;var lvid1:string;var Str1:string): string;
-var
-  str,lvid:string;
+function TfrmCustomer.EncodeSQL(id: string;var Str1:string): string;
+var Str_Where,Str_Sql:string;
 begin
   if Trim(edtKey.Text)<>'' then
      begin
-       str:=' and (A.MOVE_TELE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.CUST_NAME LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
+       Str_Where:=' and (A.MOVE_TELE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.CUST_NAME LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
        ' or A.CUST_CODE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.CUST_SPELL LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
        ' or A.IC_CARDNO LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.REMARK LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+')';
      end;
   if id<>'' then
-     begin
-//       if str<>'' then str := str + ' and ';
-       str := str + ' and A.CUST_ID>'''+id+'''';
-     end;
+    Str_Where := Str_Where + ' and A.CUST_ID>'''+id+'''';
+
   //  对会员生日日期进行条件查询
   if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     str:=str+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     str:=str+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
+     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     str:=str+' and substring(A.BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(A.BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(A.BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
-     str:=str+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
-     str:=str+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date));
+     Str_Where:=Str_Where+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
-     str:=str+' and A.SND_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date))+' and A.SND_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and A.SND_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date))+' and A.SND_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
 
   if cmbSHOP_ID.AsString<>'' then
-     str:=str+' and A.SHOP_ID='+QuotedStr(cmbSHOP_ID.AsString);
+     Str_Where:=Str_Where+' and A.SHOP_ID='+QuotedStr(cmbSHOP_ID.AsString);
   if cmbPRICE_ID.AsString<>'' then
-     str:=str+' and A.PRICE_ID='+QuotedStr(cmbPRICE_ID.AsString);
+     Str_Where:=Str_Where+' and A.PRICE_ID='+QuotedStr(cmbPRICE_ID.AsString);
   if fndSORT_ID.AsString<>'' then
-     str:=str+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+     Str_Where:=Str_Where+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
   if trim(fndINTEGRAL.Text)<>'' then
-    str:=str+' and A.INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
-  Str1:=Str;
-  sqlstring:='';
-  sqllvid:='';
-  sqlstring:=str;
-  sqllvid:=lvid;
-  {Result:='Select top 100 convert(bit,0) selflag,A.*,B.BALANCE,C.COMP_NAME From BAS_CUSTOMER A left outer join RCK_IC_INFO B on B.IC_CARDNO=A.IC_CARDNO  '+
-  ' left outer join CA_COMPANY C on A.COMP_ID=C.COMP_ID '+
-  ' Where A.COMM NOT IN(''02'',''12'') and A.COMP_ID IN (select COMP_ID from CA_COMPANY where LEVEL_ID like '''+lvid+'%'' and COMM<>''02'' and COMM<>''12'')'+str+' order by A.CUST_ID';}
+     Str_Where:=Str_Where+' and A.INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
 
-  Result := 'select 1 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,'+
+  Str_Sql := ' 1 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,'+
   'A.SORT_ID,A.PRICE_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
-  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str+' order by A.SHOP_ID,A.CUST_CODE limit 0,100';
+  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';
+
+  Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
+  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';;
+
+  case Factor.iDbType of
+    0:Result := 'select top 600 '+Str_Sql;
+    5:Result := 'select '+Str_Sql+' limit 600';
+  else
+    Result := 'select '+ Str_Sql;
+  end;
 end;
 
 procedure TfrmCustomer.Cds_CustomerAfterScroll(DataSet: TDataSet);

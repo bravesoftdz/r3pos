@@ -145,6 +145,8 @@ begin
       EditObj:=TRecord_.Create;
       EditObj.ReadFromDataSet(cdsBrowser);
       EditObj.FieldByName('RELATION_FLAG').AsString:='2'; //新增的商品: 自主经营
+      EditObj.FieldByName('RELATION_ID').AsString:='0';   //新增的商品: 自主经营
+      EditObj.FieldByName('selflag').AsString:='0';       //标记位
       if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
         EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
       else
@@ -479,7 +481,7 @@ begin
   with TfrmGoodsInfo.Create(self) do
     begin
       try
-        OnSave := AddRecord;
+        //OnSave := AddRecord;
         Open(cdsBrowser.FieldByName('GODS_ID').AsString);
         ShowModal;
       finally
@@ -960,7 +962,7 @@ begin
     if trim(cdsBrowser.FieldByName('RELATION_ID').AsString)<>'0' then //非自主经营的不能选择删除
     begin
       cdsBrowser.Edit;
-      cdsBrowser.FieldByName('selflag').AsBoolean:=False;
+      cdsBrowser.FieldByName('selflag').AsString:='0';
       cdsBrowser.Post;
     end;
   end;

@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 2
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -517,6 +515,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Footers = <>
                 Title.Caption = #25240#25187#29575
                 Width = 62
+                OnUpdateData = PriceGridColumns2UpdateData
               end
               item
                 EditButtons = <>
@@ -524,6 +523,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Footers = <>
                 Title.Caption = #35745#37327#21333#20301#21806#20215
                 Width = 86
+                OnUpdateData = PriceGridColumns3UpdateData
               end
               item
                 EditButtons = <>
@@ -545,17 +545,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object TabSheet3: TRzTabSheet
         Color = clWhite
         Caption = #21830#21697#36873#39033
-        object Label20: TLabel
-          Left = 31
-          Top = 12
-          Width = 72
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #24211#23384#31649#29702#36873#39033
-        end
         object Label27: TLabel
-          Left = 290
-          Top = 12
+          Left = 273
+          Top = 53
           Width = 84
           Height = 12
           Alignment = taRightJustify
@@ -563,33 +555,60 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label18: TLabel
           Left = 31
-          Top = 75
+          Top = 55
           Width = 72
           Height = 12
           Alignment = taRightJustify
           Caption = #25209#21495#31649#29702#36873#39033
         end
-        object Label28: TLabel
-          Left = 290
-          Top = 75
-          Width = 72
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #20250#21592#31215#20998#36873#39033
-        end
         object Label45: TLabel
-          Left = 33
-          Top = 136
+          Left = 31
+          Top = 154
           Width = 48
           Height = 12
           Alignment = taRightJustify
           Caption = #31215#20998#25442#36141
         end
+        object Label20: TLabel
+          Left = 31
+          Top = 5
+          Width = 72
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #24211#23384#31649#29702#36873#39033
+        end
+        object Label14: TLabel
+          Left = 32
+          Top = 104
+          Width = 84
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #29289#27969#36319#36394#21495#31649#21046
+        end
+        object Label21: TLabel
+          Left = 275
+          Top = 104
+          Width = 72
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #20250#21592#31215#20998#36873#39033
+        end
+        object edtHAS_INTEGRAL: TRadioGroup
+          Left = 273
+          Top = 115
+          Width = 210
+          Height = 34
+          Columns = 2
+          Items.Strings = (
+            #21487#31215#20998
+            #19981#31215#20998)
+          TabOrder = 3
+        end
         object edtGODS_TYPE: TRadioGroup
           Left = 30
-          Top = 25
-          Width = 200
-          Height = 40
+          Top = 16
+          Width = 210
+          Height = 34
           Columns = 2
           Items.Strings = (
             #31649#29702#24211#23384
@@ -599,10 +618,10 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           TabOrder = 0
         end
         object edtUSING_PRICE: TRadioGroup
-          Left = 288
-          Top = 25
-          Width = 200
-          Height = 40
+          Left = 272
+          Top = 66
+          Width = 210
+          Height = 34
           Columns = 2
           Items.Strings = (
             #21551#29992
@@ -611,44 +630,33 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtUSING_BATCH_NO: TRadioGroup
           Left = 30
-          Top = 88
-          Width = 200
-          Height = 40
+          Top = 66
+          Width = 210
+          Height = 34
           Columns = 2
           Items.Strings = (
             #21551#29992
             #31105#29992)
           TabOrder = 2
         end
-        object edtHAS_INTEGRAL: TRadioGroup
-          Left = 288
-          Top = 88
-          Width = 200
-          Height = 40
-          Columns = 2
-          Items.Strings = (
-            #21487#31215#20998
-            #19981#31215#20998)
-          TabOrder = 3
-        end
         object edtUSING_BARTER: TGroupBox
           Left = 29
-          Top = 151
+          Top = 166
           Width = 458
-          Height = 40
+          Height = 36
           TabOrder = 4
           object RB_USING_BARTER: TRadioButton
             Left = 81
-            Top = 14
+            Top = 13
             Width = 100
             Height = 17
-            Caption = #21551#29992#20817#25442#31215#20998#65306
+            Caption = #21551#29992#31215#20998#20817#25442#65306
             TabOrder = 0
             OnClick = RB_NotUSING_BARTERClick
           end
           object RB_NotUSING_BARTER: TRadioButton
             Left = 8
-            Top = 14
+            Top = 13
             Width = 48
             Height = 17
             Caption = #31105#29992
@@ -659,7 +667,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           end
           object edtBARTER_INTEGRAL: TcxSpinEdit
             Left = 181
-            Top = 12
+            Top = 11
             Width = 64
             Height = 20
             Properties.ImmediatePost = True
@@ -670,16 +678,16 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           end
           object RB_USING_BARTER2: TRadioButton
             Left = 284
-            Top = 14
+            Top = 13
             Width = 99
             Height = 17
-            Caption = #21551#29992#25442#36141#31215#20998#65306
+            Caption = #21551#29992#31215#20998#25442#36141#65306
             TabOrder = 3
             OnClick = RB_NotUSING_BARTERClick
           end
           object edtBARTER_INTEGRAL2: TcxSpinEdit
             Left = 383
-            Top = 12
+            Top = 11
             Width = 64
             Height = 20
             Properties.ImmediatePost = True
@@ -688,6 +696,17 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             TabOrder = 4
             ImeName = #19975#33021#20116#31508'EXE'#22806#25346#29256
           end
+        end
+        object edtUSING_LOCUS_NO: TRadioGroup
+          Left = 30
+          Top = 115
+          Width = 210
+          Height = 34
+          Columns = 2
+          Items.Strings = (
+            #21551#29992
+            #31105#29992)
+          TabOrder = 5
         end
       end
       object tabProperty: TRzTabSheet

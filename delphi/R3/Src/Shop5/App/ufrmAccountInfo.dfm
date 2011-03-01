@@ -79,6 +79,7 @@ inherited frmAccountInfo: TfrmAccountInfo
             Top = 28
             Width = 118
             Height = 20
+            Properties.ReadOnly = False
             Properties.OnChange = edtOUT_MNYPropertiesChange
             TabOrder = 0
           end
@@ -289,7 +290,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         Properties.OnChange = edtORG_MNYPropertiesChange
-        TabOrder = 3
+        TabOrder = 2
         OnExit = edtORG_MNYExit
       end
       object edtACCT_SPELL: TcxTextEdit
@@ -297,8 +298,8 @@ inherited frmAccountInfo: TfrmAccountInfo
         Top = 24
         Width = 118
         Height = 20
-        Enabled = False
-        TabOrder = 2
+        TabStop = False
+        TabOrder = 3
       end
       object edtPAYM_ID: TzrComboBoxList
         Left = 101

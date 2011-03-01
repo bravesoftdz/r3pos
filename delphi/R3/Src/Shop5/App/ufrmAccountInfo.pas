@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton,
-  cxMaskEdit, cxDropDownEdit,zBase, DB, DBClient,ADODB, cxButtonEdit,
+  cxMaskEdit, cxDropDownEdit,zBase, DB, cxButtonEdit,
   zrComboBoxList, RzLabel, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type

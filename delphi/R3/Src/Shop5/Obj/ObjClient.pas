@@ -1,7 +1,7 @@
 unit ObjClient;
 
 interface
-uses Dialogs,SysUtils,zBase,Classes,ZIntf,ObjCommon,ZDataset;
+uses Windows,Dialogs,SysUtils,zBase,Classes,ZIntf,ObjCommon,ZDataset;
 
 type
   TClient=class(TZFactory)
@@ -20,12 +20,33 @@ implementation
 
 function TClient.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str: String;
+    rs:TZQuery;
 begin
   Result := False;
-  Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-  ' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
-  AGlobal.ExecSQL(Str,Self);
-  Result := True;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CLIENT_ID';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty then
+      Raise Exception.Create('此客户在销售单据中有使用,不能删除!');
+
+    rs.SQL.Text := 'select UNION_ID,IC_CARDNO,INTEGRAL,BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+    AGlobal.Open(rs);
+    if rs.RecordCount > 0 then
+      if (rs.FieldByName('INTEGRAL').AsFloat > 0) or (rs.FieldByName('BALANCE').AsFloat > 0) then
+        begin
+          //MessageDlg()
+        end
+      else
+        begin
+          Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+          ' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          AGlobal.ExecSQL(Str,Self);
+        end;
+  finally
+    rs.Free;
+  end;
+
 end;
 
 function TClient.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -36,7 +57,7 @@ begin
   try
     Temp.Close;
     try
-      Temp.SQL.Text := 'select * from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+      Temp.SQL.Text := 'select  from PUB_IC_INFO where COMM not in (''02'',''12'') and IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
       AGlobal.Open(Temp);
       if Temp.RecordCount > 0 then
         Raise Exception.Create('此卡号已经存在，不能重复！');
@@ -95,8 +116,7 @@ begin
 end;
 
 procedure TClient.InitClass;
-var
-  Str: string;
+var Str: string;
 begin
   inherited;
   KeyFields := 'CLIENT_ID;TENANT_ID';
@@ -116,12 +136,11 @@ begin
   ':FAXES,:HOMEPAGE,:EMAIL,:QQ,:MSN,:BANK_ID,:ACCOUNT,:INVOICE_FLAG,:REMARK,:TAX_RATE,:PRICE_ID,:SHOP_ID,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
 
-  Str := 'update PUB_CLIENTINFO set TENANT_ID=:TENANT_ID,CLIENT_ID=:CLIENT_ID,CLIENT_TYPE=:CLIENT_TYPE,CLIENT_CODE=:CLIENT_CODE,'+
-  'LICENSE_CODE=:LICENSE_CODE,CLIENT_NAME=:CLIENT_NAME,CLIENT_SPELL=:CLIENT_SPELL,SORT_ID=:SORT_ID,REGION_ID=:REGION_ID,'+
-  'SETTLE_CODE=:SETTLE_CODE,ADDRESS=:ADDRESS,POSTALCODE=:POSTALCODE,LINKMAN=:LINKMAN,TELEPHONE3=:TELEPHONE3,TELEPHONE1=:TELEPHONE1,'+
-  'TELEPHONE2=:TELEPHONE2,FAXES=:FAXES,HOMEPAGE=:HOMEPAGE,EMAIL=:EMAIL,QQ=:QQ,MSN=:MSN,BANK_ID=:BANK_ID,ACCOUNT=:ACCOUNT,'+
-  'INVOICE_FLAG=:INVOICE_FLAG,REMARK=:REMARK,TAX_RATE=:TAX_RATE,PRICE_ID=:PRICE_ID,SHOP_ID=:SHOP_ID,COMM=' + GetCommStr(iDbType)+
-  ',TIME_STAMP='+GetTimeStamp(iDbType)+ ' where TENANT_ID=:OLD_TENANT_ID and CLIENT_ID=:OLD_CLIENT_ID ';
+  Str := 'update PUB_CLIENTINFO set CLIENT_CODE=:CLIENT_CODE,LICENSE_CODE=:LICENSE_CODE,CLIENT_NAME=:CLIENT_NAME,CLIENT_SPELL=:CLIENT_SPELL,'+
+  'SORT_ID=:SORT_ID,REGION_ID=:REGION_ID,SETTLE_CODE=:SETTLE_CODE,ADDRESS=:ADDRESS,POSTALCODE=:POSTALCODE,LINKMAN=:LINKMAN,TELEPHONE3=:TELEPHONE3,'+
+  'TELEPHONE1=:TELEPHONE1,TELEPHONE2=:TELEPHONE2,FAXES=:FAXES,HOMEPAGE=:HOMEPAGE,EMAIL=:EMAIL,QQ=:QQ,MSN=:MSN,BANK_ID=:BANK_ID,ACCOUNT=:ACCOUNT,'+
+  'INVOICE_FLAG=:INVOICE_FLAG,REMARK=:REMARK,TAX_RATE=:TAX_RATE,PRICE_ID=:PRICE_ID,SHOP_ID=:SHOP_ID,COMM='+GetCommStr(iDbType)+
+  ',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and CLIENT_ID=:OLD_CLIENT_ID ';
   UpdateSQL.Text := Str;
 
   Str := 'update PUB_CLIENTINFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and CLIENT_ID=:OLD_CLIENT_ID ';

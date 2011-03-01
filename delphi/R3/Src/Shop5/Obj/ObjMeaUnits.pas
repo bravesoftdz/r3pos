@@ -28,11 +28,6 @@ begin
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
-    {rs.Close;
-    rs.CommandText := 'select count(*) from BAS_GOODSINFO where (CALC_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (SMALL_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') or (BIG_UNITS='''+FieldbyName('UNIT_ID').AsOldString+''') and COMM not in (''02'',''12'')';
-    AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.'); }
   finally
     rs.Free;
   end;
@@ -90,8 +85,8 @@ begin
   Str := 'insert into PUB_MEAUNITS(UNIT_ID,UNIT_NAME,UNIT_SPELL,TENANT_ID,SEQ_NO,COMM,TIME_STAMP) '
     + 'VALUES(:UNIT_ID,:UNIT_NAME,:UNIT_SPELL,:TENANT_ID,:SEQ_NO,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update PUB_MEAUNITS set UNIT_ID=:UNIT_ID,UNIT_NAME=:UNIT_NAME,UNIT_SPELL=:UNIT_SPELL,TENANT_ID=:TENANT_ID,SEQ_NO=:SEQ_NO,'
-    + 'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
+  Str := 'update PUB_MEAUNITS set UNIT_ID=:UNIT_ID,UNIT_NAME=:UNIT_NAME,UNIT_SPELL=:UNIT_SPELL,TENANT_ID=:TENANT_ID,SEQ_NO=:SEQ_NO,' +
+  'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
   UpdateSQL.Text := Str;
   Str := 'update PUB_MEAUNITS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where UNIT_ID=:OLD_UNIT_ID and TENANT_ID = :OLD_TENANT_ID';
   DeleteSQL.Text := Str;

@@ -64,7 +64,6 @@ implementation
 function TPriceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then  Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  AGlobal.ExecSQL('delete from SAL_PROM_SHOP where TENANT_ID=:TENANT_ID and PROM_ID=:OLD_PROM_ID ', self);
   result := true;
 end;
 

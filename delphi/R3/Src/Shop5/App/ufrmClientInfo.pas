@@ -170,7 +170,7 @@ begin
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
     edtPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Aobj.FieldByName('PRICE_ID').AsString);
-    edtSHOP_ID.KeyValue := Aobj.FieldByName('PRICE_ID').AsString;
+    edtPRICE_ID.KeyValue := Aobj.FieldByName('PRICE_ID').AsString;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -237,22 +237,6 @@ begin
             end;
         end;
     end;
-
-    {if dbState=dsInsert then
-    begin
-      tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('CLIENT_NAME').AsString=edtCLIENT_NAME.Text then
-        begin
-          if edtCLIENT_NAME.CanFocus then edtCLIENT_NAME.SetFocus;
-          MessageBox(handle,Pchar('提示:客户名称已经存在!'),Pchar(Caption),MB_OK);
-        end;
-        tmp.Next;
-      end;
-    end;}
 
   if dbState=dsEdit then
   begin

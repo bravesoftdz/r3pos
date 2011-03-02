@@ -58,12 +58,14 @@ type
   end;
 
 implementation
-uses ufrmAccountInfo, uGlobal,uTreeUtil,uShopGlobal,ufrmFastReport,ufrmEhLibReport;
+uses ufrmAccountInfo, uGlobal,uTreeUtil,uShopGlobal,ufrmFastReport,ufrmEhLibReport,
+  ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmAccount.actNewExecute(Sender: TObject);
 begin
   inherited;
+  if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Exit;
   with TfrmAccountInfo.Create(self) do
   begin
     try
@@ -168,7 +170,6 @@ begin
       try
         OnSave := AddRecord;
         //要检查权限
-        //Open(cdsBrowser.FieldByName('COMP_ID').AsString);
         Edit(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
         ShowModal;
       finally
@@ -184,7 +185,6 @@ begin
   with TfrmAccountInfo.Create(self) do
     begin
       try
-        //OnSave := AddRecord;
         //要检查权限
         Open(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
         ShowModal;
@@ -216,28 +216,17 @@ procedure TfrmAccount.actDeleteExecute(Sender: TObject);
     Temp := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
     Temp.Filtered :=false;
     if Temp.Locate('ACCOUNT_ID',str,[]) then
-    begin
       Temp.Delete;
-      //Temp.UpdateBatch(arAll);
-    end;
   end;
-var Params:TftParamList;
-    i:integer;
 begin
   inherited;
   if (not cdsBrowser.Active) and (cdsBrowser.IsEmpty) then exit;
-  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
-  if i=6 then
+  //if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
   begin
-    Params:=TftParamList.Create(nil);
-    try
-      Params.ParamByName('ACCOUNT_ID').asString:=cdsBrowser.FieldByName('ACCOUNT_ID').AsString;
-      Factor.ExecProc('TAccountDelete',Params);
-    finally
-      Params.Free;
-    end;
     UpdateToGlobal(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
     cdsBrowser.Delete;
+    Factor.UpdateBatch(cdsBrowser,'TAccount');
   end;
 end;
 

@@ -451,7 +451,7 @@ begin
   if trim(fndINTEGRAL.Text)<>'' then
      Str_Where:=Str_Where+' and A.INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
 
-  Str_Sql := ' 0 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,'+
+  Str_Sql := ' 0 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,B.UNION_ID,'+
   'A.SORT_ID,A.PRICE_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
   'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';
 

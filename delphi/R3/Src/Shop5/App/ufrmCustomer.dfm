@@ -1,6 +1,6 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 295
-  Top = 185
+  Left = 338
+  Top = 159
   Width = 805
   Height = 534
   Caption = #20250#21592#26723#26696#31649#29702

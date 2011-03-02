@@ -267,6 +267,16 @@ begin
     if cmbPRICE_ID.CanFocus then cmbPRICE_ID.SetFocus;
     raise Exception.Create('会员等级不能为空！');
   end;
+  if Trim(cmbMOVE_TELE.Text)='' then
+  begin
+    if cmbMOVE_TELE.CanFocus then cmbMOVE_TELE.SetFocus;
+    raise Exception.Create('移动电话不能为空！');
+  end;
+  if Trim(cmbBIRTHDAY.Text)='' then
+  begin
+    if cmbBIRTHDAY.CanFocus then cmbBIRTHDAY.SetFocus;
+    raise Exception.Create('会员生日不能为空！');
+  end;
 
   //会员检测开始
  if dbState = dsInsert then

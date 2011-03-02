@@ -376,6 +376,7 @@ inherited frmAccount: TfrmAccount
   end
   object cdsBrowser: TZQuery
     FieldDefs = <>
+    AfterScroll = cdsBrowserAfterScroll
     CachedUpdates = True
     Params = <>
     Left = 193

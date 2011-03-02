@@ -1093,10 +1093,10 @@ begin
     if not rs.IsEmpty then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',bs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
          else
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',bs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
          else
             fndMY_AMOUNT.Text := rs.FieldbyName('AMOUNT').AsString;
        end

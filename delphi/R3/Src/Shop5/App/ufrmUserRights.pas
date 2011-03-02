@@ -240,12 +240,12 @@ procedure TfrmUserRights.DbGridEh1DrawColumnCell(Sender: TObject;
 var ARect:TRect;
 begin
   inherited;
-  if Column.FieldName = 'SEQ_NO' then
+{  if Column.FieldName = 'SEQ_NO' then
   begin
     ARect := Rect;
     DbGridEh1.canvas.FillRect(ARect);
     DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(DbGridEh1.DataSource.DataSet.RecNo)),length(Inttostr(DbGridEh1.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-  end;
+  end; }
 end;
 
 procedure TfrmUserRights.SaveRight;

@@ -63,7 +63,7 @@ type
     procedure CalcRecordCount;   //计算记录
     procedure SetRecordCount(ReSum: Integer);    //
     procedure GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean=False);
-    procedure Cacl_AMount(Kind: integer);
+    procedure Calc(Kind: integer);
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
   public
     { Public declarations }
@@ -326,7 +326,7 @@ begin
     //2011.02.22关闭　盘点不需要原用多个单位计算
     //   AMountToCalc(r);
     //:输入 实盘 计算 盈亏;
-    Cacl_AMount(1);
+    Calc(1);
   end;
 end;
 
@@ -349,7 +349,7 @@ begin
   //2011.02.22关闭　盘点不需要原用多个单位计算
   // PresentToCalc(r);
   //:输入 实盘 计算 盈亏;
-  Cacl_AMount(1);   
+  Calc(1);   
 end;
 
 procedure TfrmCheckOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
@@ -372,7 +372,7 @@ begin
   //2011.02.22关闭　盘点不需要原用计算方法
   // AMoneyToCalc(r);
   //:输入 实盘 计算 盈亏;
-  Cacl_AMount(2);
+  Calc(2);
 end;
 
 procedure TfrmCheckOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
@@ -718,7 +718,7 @@ begin
 end;
 
 //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
-procedure TfrmCheckOrder.Cacl_AMount(Kind: integer);
+procedure TfrmCheckOrder.Calc(Kind: integer);
 var Aobj: TRecord_;
 begin
   if (not edtTable.Active) and (edtTable.IsEmpty) then exit;

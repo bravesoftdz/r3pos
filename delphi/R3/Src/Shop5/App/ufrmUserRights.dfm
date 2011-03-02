@@ -134,6 +134,7 @@ inherited frmUserRights: TfrmUserRights
               Width = 355
               Height = 241
               Align = alClient
+              AllowedOperations = [alopUpdateEh]
               DataSource = RoleDs
               Flat = True
               FooterColor = clWindow
@@ -142,7 +143,7 @@ inherited frmUserRights: TfrmUserRights
               FooterFont.Height = -12
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
-              FrozenCols = 1
+              FrozenCols = 2
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
               RowHeight = 20
@@ -177,19 +178,11 @@ inherited frmUserRights: TfrmUserRights
                   Width = 36
                 end
                 item
-                  Color = clBtnFace
-                  EditButtons = <>
-                  FieldName = 'SEQ_NO'
-                  Footers = <>
-                  Title.Caption = #24207#21495
-                  Width = 31
-                end
-                item
                   EditButtons = <>
                   FieldName = 'ROLE_NAME'
                   Footers = <>
                   Title.Caption = #35282#33394#21517#31216
-                  Width = 109
+                  Width = 83
                 end
                 item
                   EditButtons = <>

@@ -774,6 +774,7 @@ inherited frmStockOrder: TfrmStockOrder
         DataType = ftString
         Size = 100
       end>
+    AfterScroll = edtTableAfterScroll
   end
   inherited edtProperty: TZQuery
     FieldDefs = <

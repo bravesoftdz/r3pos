@@ -271,7 +271,7 @@ begin
   WriteTo(Aobj);
 
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
-    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CLIENT_CODE',Global.SHOP_ID,'',8));
+    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;

@@ -105,9 +105,9 @@ begin
       Temp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
       AGlobal.Open(Temp);
 
-      if Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString
+      if (Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString)
        and
-       Copy(Temp.FieldbyName('COMM').AsString,2,1) <> '2'
+       (Copy(Temp.FieldbyName('COMM').AsString,2,1)<>'2')
        then
        Raise Exception.Create('此客户卡号已经存在,不能重复!');
 

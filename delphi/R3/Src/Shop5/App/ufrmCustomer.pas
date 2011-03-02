@@ -168,16 +168,13 @@ begin
   if i=6 then
   begin
     tmpGlobal := Global.GetZQueryFromName('PUB_CUSTOMER');
-    //tmpGlobal.Filtered :=false;
     Cds_Customer.DisableControls;
     try
-      //Cds_Customer.MergeChangeLog;
       Cds_Customer.Filtered := false;
       Cds_Customer.Filter := 'selFlag=1';
       Cds_Customer.Filtered := true;
       if Cds_Customer.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
       n:=0;
-      //tmpGlobal.UpdateBatch(arAll);
       Cds_Customer.First;
       while not Cds_Customer.Eof do
       begin

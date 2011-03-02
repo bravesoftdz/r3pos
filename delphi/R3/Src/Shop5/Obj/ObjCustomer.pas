@@ -164,7 +164,7 @@ begin
 
         if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CLIENT_ID').AsString)
            and
-           (copy(Tmp.FieldbyName('COMM').AsString,2,1)<>'2'
+           (copy(Tmp.FieldbyName('COMM').AsString,2,1)<>'2')
         then Raise Exception.Create('此会员卡号已经存在,不能重复!');
 
         if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CLIENT_ID').AsString) then

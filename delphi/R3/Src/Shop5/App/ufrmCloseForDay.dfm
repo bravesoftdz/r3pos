@@ -3,7 +3,7 @@ inherited frmCloseForDay: TfrmCloseForDay
   Top = 233
   BorderStyle = bsNone
   Caption = #20132#29677#20851#36134
-  ClientHeight = 271
+  ClientHeight = 258
   ClientWidth = 435
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -15,7 +15,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     Left = 0
     Top = 0
     Width = 435
-    Height = 271
+    Height = 258
     Align = alClient
     BorderInner = fsGroove
     BorderOuter = fsFlatRounded
@@ -25,7 +25,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 7
-      Top = 210
+      Top = 197
       Width = 421
       Height = 54
       Align = alBottom
@@ -164,7 +164,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       Left = 7
       Top = 56
       Width = 421
-      Height = 154
+      Height = 141
       Align = alClient
       BorderOuter = fsFlat
       Color = clDefault
@@ -228,9 +228,9 @@ inherited frmCloseForDay: TfrmCloseForDay
       object lblCASH: TLabel
         Left = 225
         Top = 68
-        Width = 105
+        Width = 95
         Height = 20
-        Caption = #24403#26085#29616#37329#65306
+        Caption = #24403#26085#29616#37329':'
         Font.Charset = GB2312_CHARSET
         Font.Color = clRed
         Font.Height = -20
@@ -328,9 +328,9 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object Bevel1: TBevel
         Left = 208
-        Top = 13
+        Top = 10
         Width = 1
-        Height = 132
+        Height = 124
       end
       object Label1: TLabel
         Left = 227
@@ -360,12 +360,12 @@ inherited frmCloseForDay: TfrmCloseForDay
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label3: TLabel
+      object labMNY: TLabel
         Left = 225
         Top = 108
-        Width = 105
+        Width = 95
         Height = 20
-        Caption = #24215#20869#20313#39069#65306
+        Caption = #24215#20869#20313#39069':'
         Font.Charset = GB2312_CHARSET
         Font.Color = clRed
         Font.Height = -20

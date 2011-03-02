@@ -46,7 +46,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     edtPAY_MNY: TcxTextEdit;
-    Label3: TLabel;
+    labMNY: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -78,7 +78,9 @@ uses uGlobal,uShopGlobal,uDsUtil,Math,uDevFactory;
 { TfrmCloseForDay }
 
 procedure TfrmCloseForDay.Open;
-var rs: TZQuery;
+var
+  rs: TZQuery;
+  Str:string;
 begin
   try
     rs := TZQuery.Create(nil);
@@ -101,13 +103,7 @@ begin
     rs.ParamByName('CREA_USER').AsString := Global.UserID;
     rs.ParamByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
     Factor.Open(rs);
-    if rs.IsEmpty then
-      begin
-        Is_Print := False;
-        MessageDlg('当天没有销售数据！',mtInformation,mbOKCancel,0);
-      end
-    else
-      Is_Print := True;
+    if rs.IsEmpty then Is_Print := False else Is_Print := True;
     MainRecord.ReadFromDataSet(rs);
 
     rs.Close;
@@ -133,6 +129,23 @@ begin
     edtRECV_MNY.Text := rs.Fields[0].AsString;
 
     ShowFee;
+    rs.Close;
+    Str :=
+    'select isnull(j1.BALANCE,0)+isnull(j2.PAY_A,0) from '+
+    '(select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A'') j1 left outer join '+
+    '(select sum(PAY_A) as PAY_A '+
+    ' from SAL_SALESORDER A'+
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE <=:SALES_DATE '+
+    ' and not exists('+
+    ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE)'+
+    ') j2 ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
+    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.FieldByName('CREA_USER').AsString := Global.UserID;
+    rs.FieldByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
+    Factor.Open(rs);
+    labMNY.Caption := '店内金额:'+rs.Fields[0].AsString;
     lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
@@ -322,8 +335,8 @@ begin
     end;
   if row > 5 then
     begin
-      Height := Height+(row-5)*22;
-      Bevel1.Height := Bevel1.Height+(row-5)*22;
+      Height := Height+(row-5)*25;
+      Bevel1.Height := Bevel1.Height+(row-5)*25;
     end;
 end;
 
@@ -373,10 +386,8 @@ begin
   
   Save;
   if Is_Print then
-    if MessageDlg('是否打印小票！',mtInformation,mbYesNoCancel,0) = mrYes then
-      begin
-        PrintTickt;
-      end;
+    if MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK)=6 then
+      PrintTickt;
   ModalResult := mrOk;
 end;
 
@@ -452,7 +463,7 @@ end;
 procedure TfrmCloseForDay.GetEverydayAcc(var Acc_Data: TZQuery;ThatDay:Integer);
 var Str:String;
 begin
-  try
+
     Str :=
     'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
     'sum(PAY_A) as PAY_A,'+
@@ -466,7 +477,7 @@ begin
     'sum(PAY_I) as PAY_I,'+
     'sum(PAY_J) as PAY_J '+
     ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE < =:SALES_DATE '+
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE <=:SALES_DATE '+
     ' and not exists('+
     'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
     ') group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
@@ -477,8 +488,6 @@ begin
     Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
     Factor.Open(Acc_Data);
-  finally
-  end;
 
 end;
 

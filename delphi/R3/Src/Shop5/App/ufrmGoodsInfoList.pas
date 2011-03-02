@@ -129,8 +129,8 @@ begin
       EditObj.FieldByName('selflag').AsString:='0';
       cdsBrowser.Edit;
       EditObj.WriteToDataSet(cdsBrowser);
-      if cdsBrowser.State<>dsEdit then cdsBrowser.Edit;
-      cdsBrowser.Post;
+      if cdsBrowser.State=dsEdit then
+        cdsBrowser.Post;
     finally
       EditObj.Free;
     end;
@@ -518,8 +518,8 @@ begin
   inherited;
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
-  cdsBrowser.Edit;
-  cdsBrowser.Post;
+  if cdsBrowser.State=dsEdit then
+    cdsBrowser.Post;
   //if not ShopGlobal.GetChkRight('200038') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
 
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);

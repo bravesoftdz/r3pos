@@ -24,6 +24,9 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select * from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CLIENT_ID ';
+    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if not rs.IsEmpty then
       Raise Exception.Create('此供应商在入库单据中有使用,不能删除!');
@@ -38,20 +41,14 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select CLIENT_ID,COMM from PUB_CLIENTINFO where CLIENT_NAME=:CLIENT_NAME and CLIENT_TYPE=:CLIENT_TYPE and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select CLIENT_ID,COMM from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_NAME=:CLIENT_NAME and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.ParamByName('CLIENT_NAME').AsString := FieldbyName('CLIENT_NAME').AsOldString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        if Copy(rs.FieldbyName('COMM').AsString,2,1) = '2' then
-          begin
-            FieldByName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
-            AGlobal.ExecSQL('delete from PUB_CLIENTINFO where CLIENT_ID=:CLIENT and TENANT_ID=:TENANT_ID',Self);
-          end
-        else
-          Raise Exception.Create('"'+FieldbyName('CLIENT_NAME').AsString+'"供应商名称不能重复设置');
-        rs.Next;
-      end;
+    if rs.RecordCount > 0 then
+      Raise Exception.Create('"'+FieldbyName('CLIENT_NAME').AsString+'"供应商名称不能重复设置');
+
   finally
     rs.Free;
   end;
@@ -63,7 +60,11 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where CLIENT_NAME=:CLIENT_NAME and CLIENT_TYPE=:CLIENT_TYPE and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where CLIENT_NAME=:CLIENT_NAME and CLIENT_ID<>:OLD_CLIENT_ID and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.ParamByName('CLIENT_NAME').AsString := FieldbyName('CLIENT_NAME').AsOldString;
+    rs.ParamByName('OLD_CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
       if rs.Fields[0].AsInteger > 0 then
         raise Exception.Create('"'+FieldbyName('CLIENT_NAME').AsString+'"供应商名称不能重复设置');

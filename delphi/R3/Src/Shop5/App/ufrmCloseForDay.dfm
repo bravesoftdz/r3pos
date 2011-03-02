@@ -3,7 +3,7 @@ inherited frmCloseForDay: TfrmCloseForDay
   Top = 233
   BorderStyle = bsNone
   Caption = #20132#29677#20851#36134
-  ClientHeight = 258
+  ClientHeight = 271
   ClientWidth = 435
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -15,7 +15,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     Left = 0
     Top = 0
     Width = 435
-    Height = 258
+    Height = 271
     Align = alClient
     BorderInner = fsGroove
     BorderOuter = fsFlatRounded
@@ -25,7 +25,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 7
-      Top = 197
+      Top = 210
       Width = 421
       Height = 54
       Align = alBottom
@@ -164,7 +164,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       Left = 7
       Top = 56
       Width = 421
-      Height = 141
+      Height = 154
       Align = alClient
       BorderOuter = fsFlat
       Color = clDefault
@@ -227,13 +227,13 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object lblCASH: TLabel
         Left = 225
-        Top = 89
-        Width = 93
-        Height = 29
-        Caption = #29616#37329#65306
+        Top = 68
+        Width = 105
+        Height = 20
+        Caption = #24403#26085#29616#37329#65306
         Font.Charset = GB2312_CHARSET
         Font.Color = clRed
-        Font.Height = -29
+        Font.Height = -20
         Font.Name = #40657#20307
         Font.Style = [fsBold]
         ParentFont = False
@@ -327,14 +327,14 @@ inherited frmCloseForDay: TfrmCloseForDay
         Visible = False
       end
       object Bevel1: TBevel
-        Left = 207
+        Left = 208
         Top = 13
-        Width = 2
-        Height = 116
+        Width = 1
+        Height = 132
       end
       object Label1: TLabel
         Left = 227
-        Top = 55
+        Top = 32
         Width = 52
         Height = 12
         Alignment = taRightJustify
@@ -348,7 +348,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object Label2: TLabel
         Left = 227
-        Top = 32
+        Top = 9
         Width = 52
         Height = 12
         Alignment = taRightJustify
@@ -357,6 +357,19 @@ inherited frmCloseForDay: TfrmCloseForDay
         Font.Color = clWhite
         Font.Height = -12
         Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label3: TLabel
+        Left = 225
+        Top = 108
+        Width = 105
+        Height = 20
+        Caption = #24215#20869#20313#39069#65306
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -20
+        Font.Name = #40657#20307
         Font.Style = [fsBold]
         ParentFont = False
       end
@@ -527,7 +540,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       object edtRECV_MNY: TcxTextEdit
         Tag = 1
         Left = 285
-        Top = 51
+        Top = 28
         Width = 104
         Height = 20
         Enabled = False
@@ -543,7 +556,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       object edtPAY_MNY: TcxTextEdit
         Tag = 1
         Left = 285
-        Top = 28
+        Top = 5
         Width = 104
         Height = 20
         Enabled = False

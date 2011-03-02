@@ -46,6 +46,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     edtPAY_MNY: TcxTextEdit;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -132,7 +133,7 @@ begin
     edtRECV_MNY.Text := rs.Fields[0].AsString;
 
     ShowFee;
-    lblCASH.Caption :=lblCASH.Caption+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
+    lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
   end;

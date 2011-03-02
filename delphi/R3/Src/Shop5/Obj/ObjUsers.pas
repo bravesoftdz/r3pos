@@ -64,9 +64,9 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT from CA_USERS where ACCOUNT=:ACCOUNT and ACCOUNT<>:OLD_ACCOUNT and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select ACCOUNT from CA_USERS where COMM not in (''12'',''02'') and ACCOUNT=:ACCOUNT and USER_ID<>:OLD_USER_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('ACCOUNT').AsString := FieldByName('ACCOUNT').AsString;
-    rs.ParamByName('OLD_ACCOUNT').AsString := FieldByName('ACCOUNT').AsOldString;
+    rs.ParamByName('OLD_USER_ID').AsString := FieldByName('USER_ID').AsString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     AGlobal.Open(rs);

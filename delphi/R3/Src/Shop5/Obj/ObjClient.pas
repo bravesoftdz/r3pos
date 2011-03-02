@@ -105,7 +105,7 @@ begin
       Temp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
       AGlobal.Open(Temp);
 
-      if 
+      if Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString
        and
        Copy(Temp.FieldbyName('COMM').AsString,2,1) <> '2'
        then

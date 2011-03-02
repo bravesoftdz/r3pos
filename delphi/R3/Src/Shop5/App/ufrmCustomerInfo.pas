@@ -357,7 +357,7 @@ begin
       Aobj.FieldByName('IC_TYPE').AsString := '0';
     end;
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='×Ô¶¯±àºÅ..') then
-     AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CLIENT_CODE',Global.SHOP_ID,'',8));
+     AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);

@@ -410,7 +410,7 @@ inherited frmCustomer: TfrmCustomer
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #20250#21592#21495
-                    Width = 74
+                    Width = 90
                   end
                   item
                     EditButtons = <>

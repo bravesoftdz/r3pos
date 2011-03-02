@@ -201,9 +201,9 @@ procedure TPrintOrderGetPrior.InitClass;
 begin
   inherited;
   case iDbType of
-   0,3:SelectSQL.Text :='select top 1 CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc ';
-   4:SelectSQL.Text := 'select * from (select CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) tp fetch first 1 rows only';
-   5:SelectSQL.Text := 'select CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc DESC limit 1';
+   0,3:SelectSQL.Text :='select top 1 PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc ';
+   4:SelectSQL.Text := 'select * from (select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc) tp fetch first 1 rows only';
+   5:SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc DESC limit 1';
   end;
 end;
 
@@ -213,9 +213,9 @@ procedure TPrintOrderGetNext.InitClass;
 begin
   inherited;
   case iDbType of
-   0,3:SelectSQL.Text :='select top 1 CHECK_ID from STO_CHECKORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
-   4:SelectSQL.Text := 'select * from (select CHECK_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
-   5:SelectSQL.Text := 'select CHECK_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and OPER_USER=:OPER_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+   0,3:SelectSQL.Text :='select top 1 PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE';
+   4:SelectSQL.Text := 'select * from (select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE) tp fetch first 1 rows only';
+   5:SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE limit 1';
   end;
 end;
 
@@ -374,7 +374,7 @@ begin
           Raise Exception.Create(s+#10+'--商品库存不足,请核对是否输入正确？');
       end;
       //2010.02.24 SQLITE数据库没有日志表
-      //WriteLogInfo(AGlobal,Params.ParambyName('CHK_USER').AsString,2,'600020','审核【盘点日期'+Params.ParambyName('PRINT_ID').asString+'】','生成损益单【单号'+gid+'】');
+      // WriteLogInfo(AGlobal,Params.ParambyName('CHK_USER').AsString,2,'600020','审核【盘点日期'+Params.ParambyName('PRINT_ID').asString+'】','生成损益单【单号'+gid+'】');
       AGlobal.CommitTrans;
       MSG := '审核的盘点单完毕...';
       result := true;

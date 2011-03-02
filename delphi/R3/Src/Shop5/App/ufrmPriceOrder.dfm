@@ -90,12 +90,12 @@ inherited frmPriceOrder: TfrmPriceOrder
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 5
       end
-      object btnOk: TRzBitBtn
-        Left = 552
+      object Btn_AddShop: TRzBitBtn
+        Left = 542
         Top = 45
         Width = 80
         Height = 26
-        Caption = #20419#38144#38376#24215
+        Caption = #28155#21152#38376#24215
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -113,11 +113,11 @@ inherited frmPriceOrder: TfrmPriceOrder
         TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
-        OnClick = btnOkClick
+        OnClick = Btn_AddShopClick
         NumGlyphs = 2
         Spacing = 5
       end
-      object RzBitBtn1: TRzBitBtn
+      object Btn_BatchPrice: TRzBitBtn
         Left = 461
         Top = 45
         Width = 80
@@ -140,7 +140,34 @@ inherited frmPriceOrder: TfrmPriceOrder
         TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
-        OnClick = RzBitBtn1Click
+        OnClick = Btn_BatchPriceClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object Btn_View: TRzBitBtn
+        Left = 623
+        Top = 45
+        Width = 80
+        Height = 26
+        Caption = #26597#30475#38376#24215
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 9
+        TabStop = False
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = Btn_ViewClick
         NumGlyphs = 2
         Spacing = 5
       end

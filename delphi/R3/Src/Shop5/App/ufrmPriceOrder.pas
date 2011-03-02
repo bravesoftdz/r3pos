@@ -26,26 +26,29 @@ type
     edtEND_TIME: TcxTimeEdit;
     RzLabel1: TRzLabel;
     edtPRICE_ID: TcxComboBox;
-    btnOk: TRzBitBtn;
-    RzBitBtn1: TRzBitBtn;
+    Btn_AddShop: TRzBitBtn;
+    Btn_BatchPrice: TRzBitBtn;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     cdsShopList: TZQuery;
+    Btn_View: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure actImportFromPrintExecute(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure btnOkClick(Sender: TObject);
-    procedure RzBitBtn1Click(Sender: TObject);
+    procedure Btn_AddShopClick(Sender: TObject);
+    procedure Btn_BatchPriceClick(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1Columns10UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure Btn_ViewClick(Sender: TObject);
   private
     { Private declarations }
     w:integer;
-    function CheckInput:boolean;override;    
+    function CheckInput:boolean;override;
     function  GetColIdx(ColName: string): integer;
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);
+    procedure SetdbState(const Value: TDataSetState); override;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -275,7 +278,9 @@ begin
   if edtBEGIN_DATE.EditValue = null then Raise Exception.Create('促销日期不能为空');
   if edtEND_DATE.EditValue = null then Raise Exception.Create('有效日期不能为空');
   ClearInvaid;
-  if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
+  if edtTable.IsEmpty then Raise Exception.Create('     不能保存一张空单据...     ');
+  if cdsShopList.IsEmpty then Raise Exception.Create('    不能保存没有促销门店的单据，请重新选择促销门店...    ');
+
   CheckInvaid;
   WriteToObject(AObj,self);
   AObj.FieldbyName('BEGIN_DATE').AsString := formatdatetime('YYYY-MM-DD',edtBEGIN_DATE.Date)+' '+edtBEGIN_TIME.TEXT;
@@ -512,14 +517,14 @@ begin
 
 end;
 
-procedure TfrmPriceOrder.btnOkClick(Sender: TObject);
+procedure TfrmPriceOrder.Btn_AddShopClick(Sender: TObject);
 begin
   inherited;
   //if dbState <> dsBrowse then Raise Exception.Create('请先保存促销单后，再发布生效门店...');
   TfrmPrcCompList.PrcCompList(self,cdsShopList,oid,self.dbState);
 end;
 
-procedure TfrmPriceOrder.RzBitBtn1Click(Sender: TObject);
+procedure TfrmPriceOrder.Btn_BatchPriceClick(Sender: TObject);
 begin
   inherited;
   TfrmBatchPmdPrice.BatchPrice(edtTable);
@@ -641,6 +646,19 @@ end;
 function TfrmPriceOrder.CheckInput: boolean;
 begin
   result:=not (pos(inttostr(InputFlag),'1')>0);
+end;
+
+procedure TfrmPriceOrder.Btn_ViewClick(Sender: TObject);
+begin
+  inherited;
+  TfrmPrcCompList.PrcCompList(self,cdsShopList,oid,dsBrowse);
+end;
+
+procedure TfrmPriceOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+  Btn_BatchPrice.Enabled:=(dbState<>dsBrowse);
+  Btn_AddShop.Enabled:=(dbState<>dsBrowse);
 end;
 
 end.

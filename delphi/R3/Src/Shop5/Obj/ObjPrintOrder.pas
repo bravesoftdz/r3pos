@@ -16,7 +16,6 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
-    // function AfterUpdateBatch(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
 
@@ -40,6 +39,10 @@ type
     procedure InitClass;override;
   end;
 
+  {=============================================================================
+   审核: 以为出库减库存
+   ============================================================================}
+
   TPrintOrderAudit=class(TZProcFactory)
   private
     function IsZero(AGlobal:IdbHelp;Params:TftParamList):boolean;
@@ -47,6 +50,7 @@ type
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
 
+  {}
   TPrintOrderUnAudit=class(TZProcFactory)
   private
     function IsZero(AGlobal:IdbHelp;Params:TftParamList):boolean;
@@ -80,7 +84,7 @@ begin
   if ReRun=0 then  //没有更新到记录;
   begin
     Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-      ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_AMOUNT,:CHK_AMOUNT,2)';
+         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_AMOUNT,:CHK_AMOUNT,2)';
     AGlobal.ExecSQL(str, self);
   end;
   result := true;
@@ -116,15 +120,8 @@ end;
 { TCheckOrder }
 
 function TPrintOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var
-  str: string;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  case iDbType of
-   1:       str:='delete SAL_PROM_SHOP where TENANT_ID=:TENANT_ID and PROM_ID=:OLD_PROM_ID ';
-   0,3,4,5: str:='delete from SAL_PROM_SHOP where TENANT_ID=:TENANT_ID and PROM_ID=:OLD_PROM_ID ';
-  end;
-  AGlobal.ExecSQL(str,self);
   result := true;
 end;
 
@@ -144,8 +141,7 @@ function TPrintOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   result := BeforeDeleteRecord(AGlobal);
-  result := BeforeInsertRecord(AGlobal);
-  
+  result := BeforeInsertRecord(AGlobal);   
 end;
 
 function TPrintOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -183,10 +179,10 @@ begin
   inherited;
   SelectSQL.Text:=
     'select jc.*,c.USER_NAME as CREA_USER_TEXT,d.USER_NAME as CHK_USER_TEXT from ('+
-    ' select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE,COMM from STO_PRINTORDER '+
+    ' select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE,COMM,TIME_STAMP from STO_PRINTORDER '+
     ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE) jc '+
     ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID '+
-    ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jc.CHK_USER=d.USER_ID ';
+    ' left outer join VIW_USERS d on jc.TENANT_ID=d.TENANT_ID and jc.CHK_USER=d.USER_ID ';
     
   str:='insert into STO_PRINTORDER(TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,COMM,TIME_STAMP)'+
        ' values (:TENANT_ID,:SHOP_ID,:PRINT_DATE,:CHECK_STATUS,:CHECK_TYPE,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
@@ -347,9 +343,9 @@ begin
       begin
         ts.Close;
         ts.SQL.Text :=
-            'select jp2.*,p2.SIZE_NAME as COLOR_NAME from ('+
-            'select jp1.*,p1.COLOR_NAME as SIZE_NAME from ('+
-            'select b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
+            'select jp2.*,p2.COLOR_NAME as COLOR_NAME from ('+
+            'select jp1.*,p1.SIZE_NAME as SIZE_NAME from ('+
+            'select j.TENANT_ID as TENANT_ID,b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
             'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.BATCH_NO from STO_STORAGE A,STO_CHANGEDATA B '+
             'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO '+
             ' and A.AMOUNT<0 and B.CHANGE_ID='''+id+''' and B.TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' '+
@@ -425,14 +421,14 @@ begin
     rs.Close;
     rs.SQL.Text := 'select COMM,CHANGE_ID,TENANT_ID,SHOP_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and FROM_ID=:PRINT_DATE and CHANGE_CODE=''1'' ';
     rs.Params.AssignValues(Params);
-    AGlobal.Open(rs);     
+    AGlobal.Open(rs);
     if copy(rs.FieldByName('COMM').AsString,1,2)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
     AGlobal.BeginTrans;
     try
       Change_ID:=trim(rs.fieldbyName('CHANGE_ID').AsString);
       ts.Close;
       ts.SQL.Text := 'select TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,IS_PRESENT,CALC_AMOUNT,COST_PRICE from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+''' ';
-      ts.Params.AssignValues(Params); 
+      ts.Params.AssignValues(Params);
       AGlobal.Open(ts);
       ts.First;
       while not ts.Eof do
@@ -460,9 +456,9 @@ begin
       begin
         ts.Close;
         ts.SQL.Text :=
-            'select jp2.*,p2.SIZE_NAME as COLOR_NAME from ('+
-            'select jp1.*,p1.COLOR_NAME as SIZE_NAME from ('+
-            'select b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
+            'select jp2.*,p2.COLOR_NAME as COLOR_NAME from ('+
+            'select jp1.*,p1.SIZE_NAME as SIZE_NAME from ('+
+            'select J.TENANT_ID,b.GODS_CODE,b.GODS_NAME,B.SORT_ID7,B.SORT_ID8,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO  from ('+
             'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.BATCH_NO from STO_STORAGE A,STO_CHANGEDATA B '+
             'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO '+
             ' and A.AMOUNT<0 and B.CHANGE_ID='''+Change_ID+''' and B.TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' '+

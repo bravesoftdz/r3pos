@@ -1,6 +1,6 @@
 inherited frmCheckOrder: TfrmCheckOrder
-  Left = 201
-  Top = 117
+  Left = 301
+  Top = 246
   Width = 774
   Caption = #30424#28857#21333
   PixelsPerInch = 96
@@ -146,13 +146,13 @@ inherited frmCheckOrder: TfrmCheckOrder
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'COMP_NAME'
+            FieldName = 'SHOP_NAME'
             Footers = <>
             Title.Caption = #21517#31216
           end
           item
             EditButtons = <>
-            FieldName = 'COMP_ID'
+            FieldName = 'SHOP_ID'
             Footers = <>
             Title.Caption = #20195#30721
             Width = 20
@@ -170,7 +170,7 @@ inherited frmCheckOrder: TfrmCheckOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 323
+      Top = 344
       Width = 756
       Height = 35
       TabOrder = 2
@@ -252,7 +252,7 @@ inherited frmCheckOrder: TfrmCheckOrder
     inherited DBGridEh1: TDBGridEh
       Top = 119
       Width = 756
-      Height = 204
+      Height = 225
       TabOrder = 3
       UseMultiTitle = False
       Columns = <
@@ -321,7 +321,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           EditButtons = <>
           FieldName = 'PAL_AMOUNT'
           Footers = <>
-          Title.Caption = #25439#30410#25968#37327
+          Title.Caption = #30424#28857#25439#30410
           Width = 62
           OnUpdateData = DBGridEh1Columns6UpdateData
         end

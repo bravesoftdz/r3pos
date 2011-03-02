@@ -50,10 +50,9 @@ type
     procedure edtCREA_USERAddClick(Sender: TObject);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
-    procedure Lbl_LinkCheckGoodDblClick(Sender: TObject);
     procedure edtTableAfterPost(DataSet: TDataSet);
-    procedure Lbl_LinkCheckGoodMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
+    procedure Lbl_LinkCheckGoodDblClick(Sender: TObject);
+    procedure Lbl_LinkCheckGoodMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure Lbl_LinkCheckGoodMouseLeave(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
   private
@@ -76,7 +75,7 @@ type
     procedure CancelOrder;override;
     procedure AuditOrder;override;
     procedure Open(id:string);override;
-    property IsCalcRecordCount: Boolean read FIsCalcRecordCount write SetIsCalcRecordCount;
+    property  IsCalcRecordCount: Boolean read FIsCalcRecordCount write SetIsCalcRecordCount;
   end;
 
   //calc_
@@ -139,6 +138,7 @@ procedure TfrmCheckOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   isZero := true;
+  gRepeat := false;  //判断允许重复
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   dbState := dsBrowse;
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
@@ -151,13 +151,14 @@ begin
 end;
 
 procedure TfrmCheckOrder.NewOrder;
-var rs:TZQuery;
+var
+  rs:TZQuery;
 begin
   inherited;
-  Open('');
+  Open(FormatDatetime('YYYYMMDD',Date()));
   dbState := dsInsert;
   cid := '';
-  AObj.FieldbyName('PRINT_DATE').asString :=FormatDatetime('YYYYMMDD',Date());  // TSequence.NewId();
+  //AObj.FieldbyName('PRINT_DATE').asString :=FormatDatetime('YYYYMMDD',Date());  // TSequence.NewId();
   //AObj.FieldbyName('GLIDE_NO').asString := '..新增..';//TSequence.GetSequence('GNO_CHECK'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   // oid := AObj.FieldbyName('PRINT_DATE').asString;   //单据GUID号
   gid := AObj.FieldbyName('PRINT_DATE').asString;
@@ -167,7 +168,7 @@ begin
   InitRecord;
   if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
   TabSheet.Caption := '..新增..';
-  rs := TZQuery.Create(nil);
+  {rs := TZQuery.Create(nil);
   try
     rs.Close;
     rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2 ';
@@ -183,6 +184,7 @@ begin
   finally
     rs.Free;
   end;
+  }
 end;
 
 procedure TfrmCheckOrder.Open(id: string);
@@ -232,7 +234,7 @@ procedure TfrmCheckOrder.SaveOrder;
   begin
     rs := TZQuery.Create(nil);
     try
-      rs.SQL.Text:='select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and CHECK_STATUS<2 ';
+      rs.SQL.Text:='select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and CHECK_STATUS<3 ';
       if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
       if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=trim(edtSHOP_ID.AsString);
       if rs.Params.FindParam('PRINT_DATE')<>nil then rs.ParamByName('PRINT_DATE').AsString:=formatDatetime('YYYYMMDD',edtCREA_DATE.Date);
@@ -259,8 +261,8 @@ begin
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
-  AObj.FieldbyName('PRINT_DATE').AsString := formatdatetime('YYYYMMDD',Date());
-  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD',Date())+' '+formatdatetime('HH:NN:SS',now());
+  //AObj.FieldbyName('PRINT_DATE').AsString := formatdatetime('YYYYMMDD',Date());
+  //AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD',Date())+' '+formatdatetime('HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := edtCREA_USER.AsString;
   cid := edtSHOP_ID.AsString;
   Factor.BeginBatch;
@@ -408,9 +410,10 @@ var
   op:integer;
 begin
   inherited;
-  if not cdsHeader.Active then Raise Exception.Create('不能审核空单据');
+  if not cdsHeader.Active then Raise Exception.Create('  不能审核空单据！ ');
   PRINT_DATE:=trim(cdsHeader.FieldByName('PRINT_DATE').AsString);
-  if PRINT_DATE = '' then Raise Exception.Create('不能审核空单据');
+  if PRINT_DATE = '' then Raise Exception.Create(' 不能审核空单据！ ');
+  if (not IsAudit) and (cdsDetail.IsEmpty) then Raise Exception.Create(' 不能审核（没有录入盘点数量商品的）空单据！ ');
   if dbState <> dsBrowse then SaveOrder;
   op := 0;
   if IsAudit then
@@ -452,6 +455,24 @@ begin
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
     IsAudit := not IsAudit;
+    if IsAudit then
+       begin
+         edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+         edtCHK_USER_TEXT.Text := Global.UserName;
+         AObj.FieldByName('CHK_DATE').AsString :=FormatDatetime('YYYY-MM-DD',Global.SysDate);
+         AObj.FieldByName('CHK_USER').AsString :=Global.UserID;
+       end
+    else
+       begin
+         edtCHK_DATE.Text := '';
+         edtCHK_USER_TEXT.Text := '';
+         AObj.FieldByName('CHK_DATE').AsString := '';
+         AObj.FieldByName('CHK_USER').AsString := '';
+       end;
+    cdsHeader.Edit;
+    cdsHeader.FieldByName('CHK_DATE').AsString := AObj.FieldByName('CHK_DATE').AsString;
+    cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
+    cdsHeader.Post;
   except
     on E:Exception do
        begin
@@ -481,7 +502,7 @@ begin
      if MessageBox(Handle,'已经有数据了是否清空并导入新的数据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   rs := TRecordList.Create;
   try
-    if TfrmCheckTree.ShowExecute(Global.GetADODataSetFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME','LEVEL_ID','33333333',rs) then
+    if TfrmCheckTree.ShowExecute(Global.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME','LEVEL_ID','33333333',rs) then
     begin
       s := '';
       for i:=0 to rs.Count -1 do
@@ -738,6 +759,10 @@ begin
         edtTable.FieldbyName('BARCODE').AsString:=rs.FieldbyName('BARCODE').AsString;
       edtTable.FieldbyName('NEW_INPRICE').AsFloat := rs.FieldbyName('NEW_INPRICE').AsFloat;
       edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+      if (PrintQry.Active) and (PrintQry.Locate('GODS_ID',GODS_ID,[])) then
+        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat
+      else
+        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;
       edtTable.Post;
     end;
   finally
@@ -746,7 +771,7 @@ begin
 end;
 
 procedure TfrmCheckOrder.Lbl_LinkCheckGoodDblClick(Sender: TObject);
-var Print_ID,GODE_ID: string; CurObj: TRecord_;
+var Print_ID,GODE_ID,BatchNo: string; CurObj: TRecord_;
 begin
   if not cdsHeader.Active then exit;
   if trim(LblCount.Caption)='0' then Raise Exception.Create('  没有未录入的的商品！  '); 
@@ -789,20 +814,24 @@ begin
         begin
           CurObj.ReadFromDataSet(CdsList);
           GODE_ID:=trim(CurObj.fieldbyName('GODS_ID').AsString);
-          if not edtTable.Locate('GODS_ID',GODE_ID,[]) then
-          begin
+          BatchNo:=trim(CurObj.fieldbyName('BATCH_NO').AsString);
+          if not edtTable.Locate('GODS_ID;BATCH_NO',VarArrayOf([GODE_ID,BatchNo]),[]) then
+          begin                                  
+            inc(RowId);
             edtTable.Append;
+            edtTable.FieldByName('SEQNO').AsInteger:=RowId;
             edtTable.FieldByName('GODS_ID').AsString:=CurObj.FieldByName('GODS_ID').AsString;
-            edtTable.FieldByName('GODS_CODE').AsString:=CurObj.FieldByName('GODS_CODE').AsString; 
+            edtTable.FieldByName('GODS_CODE').AsString:=CurObj.FieldByName('GODS_CODE').AsString;
             edtTable.FieldByName('GODS_NAME').AsString:=CurObj.FieldByName('GODS_NAME').AsString; 
             edtTable.FieldByName('BARCODE').AsString:=CurObj.FieldByName('BARCODE').AsString;
             edtTable.FieldByName('UNIT_ID').AsString:=CurObj.FieldByName('UNIT_ID').AsString;
             edtTable.FieldByName('IS_PRESENT').AsString:='0';
-            edtTable.FieldByName('LOCUS_NO').AsString:='#';
+            //edtTable.FieldByName('LOCUS_NO').AsString:='';
             edtTable.FieldByName('BATCH_NO').AsString:='#';
             edtTable.FieldByName('NEW_INPRICE').AsString:=CurObj.FieldByName('NEW_INPRICE').AsString;
             edtTable.FieldByName('NEW_OUTPRICE').AsString:=CurObj.FieldByName('NEW_OUTPRICE').AsString;
             edtTable.FieldByName('RCK_AMOUNT').AsString:=CurObj.FieldByName('AMOUNT').AsString;
+            edtTable.Post;
             CdsList.Next;
           end;
         end;
@@ -818,7 +847,7 @@ procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQ
 begin
   if IsQry and (PrintQry.Active) then PrintQry.Close
   else if (not IsQry) and (PrintQry.Active) then Exit;
-  PrintQry.SQL.Text:='select GODS_ID from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
+  PrintQry.SQL.Text:='select GODS_ID,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
   if PrintQry.Params.FindParam('TENANT_ID')<>nil then PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
   if PrintQry.Params.FindParam('SHOP_ID')<>nil then PrintQry.ParamByName('SHOP_ID').AsString:=SHOP_ID;
   if PrintQry.Params.FindParam('PRINT_DATE')<>nil then PrintQry.ParamByName('PRINT_DATE').AsString:=PRINT_ID;
@@ -842,14 +871,14 @@ begin
     while not edtTable.Eof do
     begin
       CurID:=trim(edtTable.fieldbyName('GODS_ID').AsString);
-      if PrintQry.Locate('GODS_ID',CurID,[]) then Inc(ReSum);       
+      if PrintQry.Locate('GODS_ID',CurID,[]) then Inc(ReSum);
       edtTable.Next;
     end;
     SetRecordCount(PrintQry.RecordCount-ReSum);
   finally
     edtTable.GotoBookmark(myBookMark);
     edtTable.FreeBookMark(myBookMark);
-    edtTable.EnableControls;                    
+    edtTable.EnableControls;
   end;
 end;
 
@@ -895,7 +924,10 @@ end;
 
 procedure TfrmCheckOrder.SetRecordCount(ReSum: Integer);
 begin
-  LblCount.Caption:=inttostr(ReSum);
+  if ReSum>0 then
+    LblCount.Caption:=inttostr(ReSum)
+  else
+    LblCount.Caption:='0';
   LblMm.Visible:=(ReSum>0);  
   Lbl_LinkCheckGood.Enabled:=(ReSum>0);
   if ReSum<=0 then  

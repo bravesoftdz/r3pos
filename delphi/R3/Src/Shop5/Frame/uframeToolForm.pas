@@ -54,14 +54,25 @@ procedure TframeToolForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
+  if (ssCtrl in Shift) and (Key in [ord('D'),ord('d')]) then
      begin
        if actDelete.Enabled and Assigned(actDelete.OnExecute) then
           actDelete.OnExecute(actDelete);
      end;
-  if (ssCtrl in Shift) and (Key = VK_INSERT) then
+  if (ssCtrl in Shift) and (Key in [ord('I'),ord('i')]) then
      begin
        if actNew.Enabled and Assigned(actNew.OnExecute) then
           actNew.OnExecute(actNew);
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('S'),ord('s')]) then
+     begin
+       if actSave.Enabled and Assigned(actSave.OnExecute) then
+          actSave.OnExecute(actSave);
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('Z'),ord('z')]) then
+     begin
+       if actCancel.Enabled and Assigned(actCancel.OnExecute) then
+          actCancel.OnExecute(actCancel);
      end;
   if (ssCtrl in Shift) and (Key = VK_END) then
      begin

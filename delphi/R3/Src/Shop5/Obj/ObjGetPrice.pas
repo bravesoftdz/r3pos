@@ -50,7 +50,8 @@ begin
                vList.CommaText := rs.FieldbyName('AGIO_SORTS').AsString;
                ss.Close;
                ss.SQL.Text :=
-                 'select SORT_ID,LEVEL_ID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID order by length(LEVEL_ID) desc';
+                 ParseSQL(AGlobal.iDbType,
+                 'select SORT_ID,LEVEL_ID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID order by length(LEVEL_ID) desc');
                ss.ParambyName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').asInteger;
                ss.ParambyName('RELATION_ID').asInteger := DataSet.FieldbyName('RELATION_ID').AsInteger;
                AGlobal.Open(ss);
@@ -80,7 +81,7 @@ begin
              ss.ParambyName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').asInteger;
              ss.ParambyName('SHOP_ID').AsString := Params.ParambyName('SHOP_ID').AsString;
              ss.ParambyName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
-             ss.ParambyName('GODS_ID').AsString := DataSet.FieldbyName('GODS_ID').AsString;
+             ss.ParambyName('GODS_ID').AsString := Params.ParambyName('GODS_ID').AsString;
              AGlobal.Open(ss);
              if ss.IsEmpty then result := price else
                 begin
@@ -155,13 +156,13 @@ begin
     ps.Close;
     ps.SQL.Text :=
       'select * from VIW_PROM_PRICE where GODS_ID=:GODS_ID and PRICE_ID in (''#'',:PRICE_ID ) and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
-    rs.Params.AssignValues(Params); 
+    ps.Params.AssignValues(Params); 
     AGlobal.Open(ps);
     //多种促销手段时，取最低价原则
     ps.First;
     while not ps.Eof do
        begin
-         MyPrice := ps.FieldbyName('OUT_PRICE'+uFlag).asFloat;
+         MyPrice := ps.FieldbyName('NEW_OUTPRICE'+uFlag).asFloat;
          case ps.FieldbyName('RATE_OFF').AsInteger of
          1:MyPrice := CalcPrice(MyPrice,rs);
          2:MyPrice := FnNumber.ConvertToFight(StrtoFloat(formatfloat('#0.000',MyPrice*ps.FieldbyName('AGIO_RATE').AsFloat/100)),Params.ParambyName('CarryRule').asInteger,Params.ParambyName('Deci').asInteger);

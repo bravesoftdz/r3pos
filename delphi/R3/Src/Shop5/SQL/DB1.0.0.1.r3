@@ -1597,7 +1597,7 @@ CREATE TABLE [ACC_IOROORDER] (
         --收支项目
 	[ITEM_ID] [varchar] (36) NOT NULL ,
         --收支部门
-	[DEPT_ID] int NULL ,
+	[DEPT_ID] [varchar] (10) NULL ,
         --收支日期
 	[IORO_TYPE] [varchar] (1) NOT NULL ,
         --收支日期

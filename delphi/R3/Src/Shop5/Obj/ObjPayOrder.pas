@@ -50,7 +50,7 @@ function TPayOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
      begin
-     if FieldbyName('GLIDE_NO').AsString='' then
+     if (FieldbyName('GLIDE_NO').AsString='') or (Pos('ÐÂ',FieldbyName('GLIDE_NO').AsString)>0) then
         FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_4_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
   result := true;

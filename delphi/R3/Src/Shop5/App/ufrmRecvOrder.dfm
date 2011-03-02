@@ -1,7 +1,7 @@
 inherited frmRecvOrder: TfrmRecvOrder
   Left = 191
   Top = 76
-  ActiveControl = edtACCOUNT_ID
+  ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465
   ClientWidth = 656
@@ -744,7 +744,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         AutoFitColWidth = False
         ShowButton = True
         LocateStyle = lsDark
-        Buttons = [zbNew, zbFind]
+        Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtCLIENT_IDSaveValue
         MultiSelect = False

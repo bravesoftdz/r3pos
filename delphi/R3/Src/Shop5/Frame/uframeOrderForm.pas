@@ -315,6 +315,7 @@ end;
 
 constructor TframeOrderForm.Create(AOwner: TComponent);
 begin
+  gRepeat := true;
   CanAppend := false;
   isZero := false;
   inherited;
@@ -331,7 +332,6 @@ begin
   edtProperty.CreateDataSet;
   InitRecord;
   InitGrid;
-  gRepeat := true;
   FList := TStringList.Create;
   // 散装条码定义
   BulkiFlag := ShopGlobal.GetParameter('BUIK_FLAG');
@@ -1611,7 +1611,7 @@ begin
     pt := false;
     if c>0 then
       begin
-        if not gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+        if gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
            result := false else result := true;
       end;
   finally
@@ -2389,11 +2389,25 @@ begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,1);
        end;
      end;
-  if (ssCtrl in Shift) and (Key = VK_INSERT) then
+  if (ssCtrl in Shift) and (Key in [ord('I'),ord('i')]) then
      begin
        if Assigned(TabSheet) then
        begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,2);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('S'),ord('s')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,0);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('Z'),ord('z')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,7);
        end;
      end;
   if (ssCtrl in Shift) and (Key = VK_END) then

@@ -130,7 +130,8 @@ uses
   ufrmCheckAudit in 'App\ufrmCheckAudit.pas' {frmCheckAudit},
   ufrmCheckTask in 'App\ufrmCheckTask.pas' {frmCheckTask},
   ufrmCheckTaskDelete in 'App\ufrmCheckTaskDelete.pas' {frmCheckTaskDelete},
-  ufrmSelectCheckGoods in 'App\ufrmSelectCheckGoods.pas';
+  ufrmSelectCheckGoods in 'App\ufrmSelectCheckGoods.pas',
+  ObjIoroOrder in 'Obj\ObjIoroOrder.pas';
 
 {$R *.res}
 var

@@ -164,6 +164,7 @@ begin
   edtITEM_ID.DataSet.Locate('CODE_ID','2',[]); 
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
+  if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
 end;
 
 procedure TfrmPayOrder.CancelOrder;

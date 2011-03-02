@@ -758,12 +758,18 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select * from VIW_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and CO' +
-        'MM not in ('#39'02'#39','#39'12'#39')')
+        'select * from VIW_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and (P' +
+        'AYM_ID<>'#39'A'#39'  or SHOP_ID=:SHOP_ID) and COMM not in ('#39'02'#39','#39'12'#39') or' +
+        'der by PAYM_ID')
     Params = <
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
     Left = 456
@@ -772,6 +778,11 @@ inherited ShopGlobal: TShopGlobal
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
   end

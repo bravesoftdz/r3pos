@@ -1,7 +1,7 @@
 inherited frmPayOrder: TfrmPayOrder
   Left = 189
   Top = 214
-  ActiveControl = edtACCOUNT_ID
+  ActiveControl = edtCLIENT_ID
   Caption = #20184#27454#21333
   ClientHeight = 465
   ClientWidth = 656
@@ -746,7 +746,7 @@ inherited frmPayOrder: TfrmPayOrder
         AutoFitColWidth = False
         ShowButton = True
         LocateStyle = lsDark
-        Buttons = [zbNew, zbFind]
+        Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtCLIENT_IDSaveValue
         MultiSelect = False

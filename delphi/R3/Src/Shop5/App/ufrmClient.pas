@@ -109,13 +109,37 @@ i:integer;
 begin
   inherited;
   if (not Cds_Client.Active) and (Cds_Client.IsEmpty) then exit;
-  //if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if Cds_Client.State in [dsInsert,dsEdit] then Cds_Client.Post;
+  if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
-    Cds_Client.Delete;
-    Factor.UpdateBatch(Cds_Client,'TClient');
-    UpdateToGlobal(Cds_Client.FieldByName('CLIENT_ID').AsString);
+    Cds_Client.DisableControls;
+    try
+      Cds_Client.Filtered := false;
+      Cds_Client.Filter := 'selFlag=1';
+      Cds_Client.Filtered := true;
+      if Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
+      Cds_Client.First;
+      while not Cds_Client.Eof do
+      begin
+        if Cds_Client.FieldByName('selflag').AsString = '1' then
+        begin
+          UpdateToGlobal(Cds_Client.FieldByName('CLIENT_ID').AsString);
+          Cds_Client.Delete;
+        end
+        else Cds_Client.Next;
+      end;
+      try
+        Factor.UpdateBatch(Cds_Client,'TClient');
+      except
+        Cds_Client.CancelUpdates;
+        Raise;
+      end;
+    finally
+      Cds_Client.Filtered := false;
+      Cds_Client.EnableControls;
+    end;
   end;
 end;
 
@@ -143,7 +167,7 @@ begin
     end;
 
   Cds_Client.Close;
-  Cds_Client.SQL.Text := Str_Wh+' order by A.CLIENT_CODE';
+  Cds_Client.SQL.Text := Str_Wh+' order by A.CLIENT_CODE Asc';
   Factor.Open(Cds_Client);
 end;
 
@@ -229,7 +253,7 @@ begin
   begin
      Cds_Client.Append;
      AObj.WriteToDataSet(Cds_Client,false);
-     Cds_Client.FieldByName('selflag').AsBoolean:=False;
+     Cds_Client.FieldByName('selflag').AsString:='0';
      Cds_Client.Post;
   end;
   InitGrid;
@@ -378,7 +402,7 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      Cds_Client.FieldByName('selflag').AsBoolean:=True;
+      Cds_Client.FieldByName('selflag').AsString:='1';
       Cds_Client.Post;
       Cds_Client.Next;
     end;
@@ -399,7 +423,7 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      Cds_Client.FieldByName('selflag').AsBoolean:=False;
+      Cds_Client.FieldByName('selflag').AsString:='0';
       Cds_Client.Post;
       Cds_Client.Next;
     end;
@@ -420,10 +444,10 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      if Cds_Client.FieldByName('selflag').AsBoolean=True then
-         Cds_Client.FieldByName('selflag').AsBoolean:=False
+      if Cds_Client.FieldByName('selflag').AsString='1' then
+         Cds_Client.FieldByName('selflag').AsString:='0'
       else
-         Cds_Client.FieldByName('selflag').AsBoolean:=True;
+         Cds_Client.FieldByName('selflag').AsString:='1';
       Cds_Client.Post;
       Cds_Client.Next;
     end;

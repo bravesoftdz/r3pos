@@ -185,9 +185,9 @@ begin
   if Column.Tag =-1 then Exit;
   if not Grid.ReadOnly and Locked then Exit;
   case Column.Title.SortMarker of
-    smNoneEh: Column.Title.SortMarker := smDownEh;
+    smNoneEh: Column.Title.SortMarker := smUpEh;
     smDownEh: Column.Title.SortMarker := smUpEh;
-    smUpEh: Column.Title.SortMarker := smNoneEh;
+    smUpEh: Column.Title.SortMarker := smDownEh;
   end;
   DoSortMarketChanged(Column);
 end;

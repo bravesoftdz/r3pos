@@ -331,7 +331,7 @@ begin
   edtProperty.CreateDataSet;
   InitRecord;
   InitGrid;
-  gRepeat := false;
+  gRepeat := true;
   FList := TStringList.Create;
   // 散装条码定义
   BulkiFlag := ShopGlobal.GetParameter('BUIK_FLAG');
@@ -1582,7 +1582,6 @@ var
   r,c:integer;
 begin
   result := false;
-  if gRepeat then Exit;
   r := edtTable.FieldbyName('SEQNO').AsInteger;
   edtTable.DisableControls;
   try
@@ -1612,7 +1611,7 @@ begin
     pt := false;
     if c>0 then
       begin
-        if MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+        if not gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
            result := false else result := true;
       end;
   finally

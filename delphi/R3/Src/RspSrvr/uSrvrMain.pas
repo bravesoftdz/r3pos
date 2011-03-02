@@ -234,8 +234,11 @@ begin
      begin
        Label2.Caption := '当前线程数:'+inttostr(WorkThreadCount);
        Label3.Caption := '运行线程数:'+inttostr(ExecThreadCount);
-       Label10.Caption := '最大线程数:'+inttostr(ExecThreadCount);
-       Label11.Caption := '执行能力值:'+inttostr((DataBlockCount-WaitDataBlockCount) div (GetTickCount-StartServiceTickCount))+'/微秒';
+       Label10.Caption := '最大线程数:'+inttostr(MaxThreadCount);
+       if (GetTickCount-StartServiceTickCount)>0 then
+          Label11.Caption := '执行效率值:'+inttostr(round((DataBlockCount-WaitDataBlockCount) / (GetTickCount-StartServiceTickCount)*(1000*60)))+'/分'
+       else
+          Label11.Caption := '执行效率值:无';
 
        Label5.Caption := '缓冲连接数:'+inttostr(ConnCache.Count);
        Label6.Caption := '锁定连接数:'+inttostr(ConnCache.DBCacheLockCount);

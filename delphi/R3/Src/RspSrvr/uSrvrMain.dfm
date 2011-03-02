@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 211
-  Top = 100
+  Left = 636
+  Top = 128
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120

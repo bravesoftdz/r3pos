@@ -31,6 +31,10 @@ FnNumber=Class
   public
     //浮点型向大写中文金额转换
     Class function SmallTOBig(small: real): string;
+    //进位算法
+    //value 输入值
+    //deci 保留小数位
+    //CarryRule 进位规则
     Class function ConvertToFight(value: Currency; CarryRule,deci: Integer): real;
   end;
 FnString=Class

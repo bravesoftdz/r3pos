@@ -95,6 +95,7 @@ begin
     except
       result := true;
       CurVersion := '';
+      raise;
     end;
   finally
     rs.Free;

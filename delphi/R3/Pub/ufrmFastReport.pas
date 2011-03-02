@@ -145,7 +145,6 @@ var SaveIndex:Integer=-1;
 procedure TfrmFastReport.DoFormer;
 var
   s:string;
-  Temp :TZQuery;
   sm:TFileStream;
   r:integer;
 begin
@@ -153,32 +152,17 @@ begin
   if s='' then Exit;
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
   sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s,fmOpenRead);
-  Temp := TZQuery.Create(nil);
   try
-     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
-     Temp.ParamByName('frfFileName').AsString := frReport.Name;
-     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Factor.Open(Temp);
-     Temp.Edit;
-     Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Temp.FieldByName('frfFileName').AsString := frReport.Name;
-     Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
-     Temp.FieldByName('COMM').AsString := '00';
-     Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
-     sm.Position := 0;
-     if r<0 then Exit;
-     if r=0 then s := '' else s := inttostr(r);
-     TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
-     Temp.Post;
-     Factor.UpdateBatch(Temp);
      sm.Position := 0;
      frReport.LoadFromStream(sm);
      if r<=0 then
-        frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf');
+        frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
+     else
+        frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
      SaveIndex := r;
+     GlobalIndex := r;
   finally
      sm.Free;
-     Temp.Free;
   end;
 end;
 function TfrmFastReport.PrintReport(CommandText: string;
@@ -297,9 +281,11 @@ begin
   if frReport=nil then Exit;
   Desgn := true;
   try
-  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf') and (SaveIndex<=0) then
+  if SaveIndex<0 then SaveIndex := GlobalIndex;
+  if SaveIndex<=0 then s := '' else s := inttostr(SaveIndex);
+  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') then
      begin
-       frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf') ;
+       frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') ;
      end
   else
   begin
@@ -591,60 +577,39 @@ begin
 end;
 
 procedure TfrmFastReport.OpenFile(frReport: TfrReport;Index:Integer=-1);
-var Temp :TZQuery;
-    sm:TStream;
-    s:string;
-    Field:TField;
+var
+  Temp :TZQuery;
+  sm:TMemoryStream;
+  s:string;
 begin
   if Index<=0 then s := '' else s:=Inttostr(Index);
-  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf') and (Index<=0) then
-     begin
-       frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf') ;
-       exit;
-     end;
-  Temp := TZQuery.Create(nil);
-  sm := TMemoryStream.Create;
-  try
-     Temp.SQL.Text := 'select * from SYS_FASTFILE where TENANT_ID=:TENANT_ID and frfFileName=:frfFileName';
-     Temp.ParamByName('frfFileName').AsString := frReport.Name;
-     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Factor.Open(Temp);
-     if Temp.IsEmpty and frReport.StoreInDFM then
-        begin
-           frReport.SaveToStream(sm);
-           Temp.Append;
-           Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-           Temp.FieldByName('frfFileName').AsString := frReport.Name;
-           Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
-           Temp.FieldByName('COMM').AsString := '00';
-           Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
-           sm.Position := 0;
-           TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
-           Temp.Post;
-           Factor.UpdateBatch(Temp);
-        end
-     else
-        begin
-           if (Index=-1) then
-              begin
-                Field := Temp.FindField('frfDefault');
-                if (Field<>nil) and (Field.AsInteger >0) then
-                   s := Inttostr(Field.AsInteger)
-                else
-                   s := '';
-              end;
-           if not Temp.FieldByName('frfBlob'+s).IsNull then
-           begin
-           TBlobField(Temp.FieldByName('frfBlob'+s)).SaveToStream(sm);
-           sm.Position := 0;
-           frReport.LoadFromStream(sm);
-           end;
-        end;
-  finally
-     Temp.Free;
-     sm.Free;
-     SaveIndex := GlobalIndex;
-     GlobalIndex := -1;
+  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') then
+  begin
+     frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') ;
+  end
+  else
+  begin
+    temp := TZQuery.Create(nil);
+    sm := TMemoryStream.Create;
+    try
+       Temp.SQL.Text := 'select * from SYS_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+       Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+       Temp.ParamByName('frfFileName').AsString := frReport.Name;
+       Factor.Open(Temp);
+       if not Temp.IsEmpty then
+       begin
+         if SaveIndex<=0 then
+            TBlobField(Temp.FieldByName('frfBlob')).SaveToStream(sm)
+         else
+            TBlobField(Temp.FieldByName('frfBlob'+inttostr(SaveIndex))).SaveToStream(sm);
+         sm.Position := 0;
+         frReport.LoadFromStream(sm);
+       end;
+       frReport.FileName := '';
+    finally
+       Temp.Free;
+       sm.Free;
+    end;
   end;
 end;
 
@@ -762,7 +727,7 @@ begin
   if SaveAs then
      begin
       SaveDialog1.DefaultExt := '*.frf';
-      SaveDialog1.Filter := '报表模版|*.frf';
+      SaveDialog1.Filter := '报表格式|*.frf';
       if SaveDialog1.Execute then
          begin
            if FileExists(SaveDialog1.FileName) then
@@ -778,35 +743,9 @@ begin
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
   if r<0 then Exit;
   if r=0 then s := '' else s := inttostr(r);
-  Temp := TZQuery.Create(nil);
-  sm := TMemoryStream.Create;
-  try
-     Temp.SQL.Text := 'select * from REP_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
-     Temp.ParamByName('frfFileName').AsString := frReport.Name;
-     Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Factor.Open(Temp);
-     sm.Clear;
-     frReport.SaveToStream(sm);
-     Temp.Edit;
-     Temp.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Temp.FieldByName('frfFileName').AsString := frReport.Name;
-     Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
-     Temp.FieldByName('COMM').AsString := '00';
-     Temp.FieldByName('TIME_STAMP').AsInteger := round((now()-40542.0)*86400);
-     sm.Position := 0;
-     TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
-     Temp.Post;
-     Factor.UpdateBatch(Temp);
-     if r=0 then
-     begin
-       ForceDirectories(ExtractFilePath(ParamStr(0))+'frf\');
-       frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf');
-     end;
-     SaveIndex := r;
-  finally
-     sm.Free;
-     Temp.Free;
-  end;
+  ForceDirectories(ExtractFilePath(ParamStr(0))+'frf\');
+  frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf');
+  SaveIndex := r;
   Saved := True;
 end;
 
@@ -815,9 +754,9 @@ begin
   inherited;
   Desgn := true;
   try
-  DoFormer;
-  frReport.PrepareReport;
-  frReport.ShowPreparedReport;
+    DoFormer;
+    frReport.PrepareReport;
+    frReport.ShowPreparedReport;
   finally
     Desgn := false;
   end;

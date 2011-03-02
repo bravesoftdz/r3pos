@@ -184,11 +184,11 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
       Params.ParamByName('SHOP_ID').AsString:= CurOrder.cid;
-      Params.ParamByName('OPER_USER').asString := Global.UserID;
+      Params.ParamByName('CREA_USER').asString := Global.UserID;
       if (CurOrder.gid = '') or (CurOrder.gid='..新增..') then
-        Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
+        Params.ParamByName('PRINT_DATE').asString :=FormatDatetime('YYYYMMDD', Date()) 
       else
-        Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
+        Params.ParamByName('PRINT_DATE').asString := CurOrder.gid;
 
       Factor.Open(Temp,'TPrintOrderGetPrior',Params);
       if Temp.Fields[0].asString<>'' then
@@ -216,11 +216,12 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
-      Params.ParamByName('OPER_USER').asString := Global.UserID;
+      Params.ParamByName('CREA_USER').asString := Global.UserID;
+
       if CurOrder.gid = '' then
-         Params.ParamByName('GLIDE_NO').asString := '00000000000000'
+         Params.ParamByName('PRINT_DATE').asString := FormatDatetime('YYYYMMDD', Date())
       else
-         Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
+         Params.ParamByName('PRINT_DATE').asString := CurOrder.gid;
 
       Factor.Open(Temp,'TPrintOrderGetNext',Params);
       if Temp.Fields[0].asString<>'' then
@@ -258,10 +259,11 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if (MessageBox(Handle,'删除当前单据成功,是否继续新增盘点单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       {if (MessageBox(Handle,'删除当前单据成功,是否继续新增盘点单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
-          if rzPage.PageCount>2 then CurOrder.Close;
+       }
+       if rzPage.PageCount>2 then CurOrder.Close;
      end;
 end;
 

@@ -236,7 +236,7 @@ begin
   Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
   Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
-    AObj.FieldbyName('CLIENT_CODE').AsString :=TSequence.GetSequence('CLIENT_CODE',IntToStr(Global.TENANT_ID),'',6);
+    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
   cdsTable.Edit;

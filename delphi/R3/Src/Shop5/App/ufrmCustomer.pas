@@ -162,6 +162,7 @@ var i,n:integer;
 begin
   inherited;
   if (Not Cds_Customer.Active) or (Cds_Customer.RecordCount = 0) then Exit;
+  if Cds_Customer.State in [dsEdit,dsInsert] then Cds_Customer.Post;
   if not ShopGlobal.GetChkRight('300009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
@@ -180,9 +181,9 @@ begin
       Cds_Customer.First;
       while not Cds_Customer.Eof do
       begin
-        if Cds_Customer.FieldByName('selflag').AsBoolean then
+        if Cds_Customer.FieldByName('selflag').AsString = '1' then
         begin
-          if tmpGlobal.Locate('CUST_ID',Cds_Customer.FieldByName('CUST_ID').AsString,[]) then
+          if tmpGlobal.Locate('CLIENT_ID',Cds_Customer.FieldByName('CUST_ID').AsString,[]) then
             tmpGlobal.Delete;
           Cds_Customer.Delete;
           inc(n);
@@ -245,7 +246,7 @@ begin
   begin
      Cds_Customer.Append;
      AObj.WriteToDataSet(Cds_Customer,false);
-     Cds_Customer.FieldByName('selflag').AsBoolean:=False;
+     Cds_Customer.FieldByName('selflag').AsString:='0';
      Cds_Customer.Post;
      rcAmt:=rcAmt+1;
   end;
@@ -334,8 +335,8 @@ begin
   tmp.First;
   while not tmp.Eof do
   begin
-    DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Add(tmp.Fields[0].asstring);
-    DBGridEh1.FieldColumns['PRICE_ID'].PickList.Add(tmp.Fields[1].asstring);
+    DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Add(tmp.Fields[1].asstring);
+    DBGridEh1.FieldColumns['PRICE_ID'].PickList.Add(tmp.Fields[2].asstring);
     tmp.Next;
   end;
 
@@ -409,7 +410,6 @@ begin
       end;
     if tmp.RecordCount < 600 then IsEnd := True else IsEnd := False;
   finally
-    rs.Free;
     tmp.Free;
     Cds_Customer.EnableControls;
     sm.Free;
@@ -454,12 +454,12 @@ begin
   if trim(fndINTEGRAL.Text)<>'' then
      Str_Where:=Str_Where+' and A.INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
 
-  Str_Sql := ' 1 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,'+
+  Str_Sql := ' 0 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,'+
   'A.SORT_ID,A.PRICE_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
   'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';
 
   Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
-  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';;
+  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where;
 
   case Factor.iDbType of
     0:Result := 'select top 600 '+Str_Sql;
@@ -554,7 +554,7 @@ begin
     while not Cds_Customer.Eof do
     begin
       Cds_Customer.Edit;
-      Cds_Customer.FieldByName('selflag').AsBoolean:=True;
+      Cds_Customer.FieldByName('selflag').AsString:='1';
       Cds_Customer.Post;
       Cds_Customer.Next;
     end;
@@ -576,10 +576,10 @@ begin
     while not Cds_Customer.Eof do
     begin
       Cds_Customer.Edit;
-      if Cds_Customer.FieldByName('selflag').AsBoolean=True then
-         Cds_Customer.FieldByName('selflag').AsBoolean:=False
+      if Cds_Customer.FieldByName('selflag').AsString='0' then
+         Cds_Customer.FieldByName('selflag').AsString:='1'
       else
-         Cds_Customer.FieldByName('selflag').AsBoolean:=True;
+         Cds_Customer.FieldByName('selflag').AsString:='0';
       Cds_Customer.Post;
       Cds_Customer.Next;
     end;
@@ -601,7 +601,7 @@ begin
     while not Cds_Customer.Eof do
     begin
       Cds_Customer.Edit;
-      Cds_Customer.FieldByName('selflag').AsBoolean:=False;
+      Cds_Customer.FieldByName('selflag').AsString:='0';
       Cds_Customer.Post;
       Cds_Customer.Next;
     end;

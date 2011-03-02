@@ -386,6 +386,12 @@ inherited frmCustomer: TfrmCustomer
                     EditButtons = <>
                     FieldName = 'selflag'
                     Footers = <>
+                    KeyList.Strings = (
+                      '1'
+                      '0')
+                    PickList.Strings = (
+                      '0'
+                      '1')
                     Tag = -1
                     Title.Caption = #36873#25321
                     Width = 26

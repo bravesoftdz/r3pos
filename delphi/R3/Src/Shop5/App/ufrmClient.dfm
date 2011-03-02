@@ -207,7 +207,7 @@ inherited frmClient: TfrmClient
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23458#25143#32534#21495
-                    Width = 76
+                    Width = 90
                   end
                   item
                     EditButtons = <>

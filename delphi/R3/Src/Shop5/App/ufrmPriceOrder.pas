@@ -38,9 +38,12 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1Columns10UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     w:integer;
+    function CheckInput:boolean;override;    
     function  GetColIdx(ColName: string): integer;
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);
   public
@@ -119,20 +122,30 @@ var
 begin
   inherited;
   dbState := dsBrowse;
-  rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text:='select PRICE_ID as CODE_ID,PRICE_NAME as CODE_NAME from PUB_PRICEGRADE order by PRICE_ID';
-    Factor.Open(rs);
-    rs.First;
-    while not rs.Eof do
+    edtPRICE_ID.Properties.Items.Clear;
+    rs:=Global.GetZQueryFromName('PUB_PRICEGRADE'); 
+    if rs.Active then
+    begin
+      AObj := TRecord_.Create;
+      AObj.ReadFromDataSet(rs);
+      AObj.FieldByName('PRICE_ID').AsString:='#';
+      AObj.FieldByName('PRICE_NAME').AsString:='所有客户';
+      AObj.FieldByName('PRICE_ID').FieldName := 'CODE_ID';
+      AObj.FieldByName('PRICE_NAME').FieldName := 'CODE_NAME'; 
+      edtPRICE_ID.Properties.Items.AddObject(AObj.FieldbyName('CODE_NAME').AsString,AObj);
+      rs.First;
+      while not rs.Eof do
       begin
         AObj := TRecord_.Create;
         AObj.ReadFromDataSet(rs);
-        edtPRICE_ID.Properties.Items.AddObject(rs.FieldbyName('CODE_NAME').AsString,AObj);
+        AObj.FieldByName('PRICE_ID').FieldName := 'CODE_ID';
+        AObj.FieldByName('PRICE_NAME').FieldName := 'CODE_NAME';
+        edtPRICE_ID.Properties.Items.AddObject(AObj.FieldbyName('CODE_NAME').AsString,AObj);
         rs.Next;
       end;
+    end;
   finally
-    rs.Free;
   end;
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   Column := FindColumn('CALC_UNITS');
@@ -173,47 +186,41 @@ end;
 procedure TfrmPriceOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs: TZQuery;
-  AObj: TRecord_;
 begin
+  edtTable.Edit;
+  rs := TZQuery.Create(nil);
   try
-    AObj:=TRecord_.Create;
-    AObj.ReadFromDataSet(edtTable);
-
-    rs := TZQuery.Create(nil);
-    rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE '+
-      ' where GODS_ID='''+GODS_ID+''' and TENANT_ID='+InttoStr(Global.TENANT_ID);  // ' and GODS_FLAG=2 or (GODS_FLAG=1 and PRICE_FLAG=2)';
-    Factor.Open(rs);
-    {== 关闭下面代码: 现已没区分Pub_GoodsInfo和Bas_GoodsInfo:
+     rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE '+
+       ' where GODS_ID='''+GODS_ID+''' and TENANT_ID='+InttoStr(Global.TENANT_ID);
+       // ' and GODS_FLAG=2 or (GODS_FLAG=1 and PRICE_FLAG=2)';
+     Factor.Open(rs);
+     {== 关闭下面代码: 现已没区分Pub_GoodsInfo和Bas_GoodsInfo:
      if rs.IsEmpty then
      begin
        rs.Close;
        rs.SQL.Text:='select NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SMALL_UNITS,CALC_UNITS,BIG_UNITS from VIW_GOODSPRICE where GODS_ID='''+GODS_ID+'''';
        Factor.Open(rs);
      end; }
-    if rs.Active then
-    begin
-      AObj.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
-      AObj.FieldbyName('OUT_PRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
-      AObj.FieldbyName('OUT_PRICE1').AsFloat := rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
-      AObj.FieldbyName('OUT_PRICE2').AsFloat := rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
-      AObj.FieldbyName('SMALL_UNITS').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
-      AObj.FieldbyName('BIG_UNITS').AsString := rs.FieldbyName('BIG_UNITS').AsString;
-      AObj.FieldbyName('CALC_UNITS').AsString := rs.FieldbyName('CALC_UNITS').AsString;
-    end;
-    AObj.FieldbyName('ISINTEGRAL').AsInteger := 1;
-    AObj.FieldbyName('RATE_OFF').AsInteger := 0;
-    AObj.FieldbyName('BATCH_NO').asString := '#';
-    AObj.FieldbyName('UNIT_ID').asString := UNIT_ID;
-    AObj.FieldbyName('IS_PRESENT').AsInteger := 0;
-    edtTable.Edit;
-    AObj.WriteToDataSet(edtTable);
-    edtTable.Post;
+     edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+     edtTable.FieldbyName('OUT_PRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+     edtTable.FieldbyName('OUT_PRICE1').AsFloat := rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+     edtTable.FieldbyName('OUT_PRICE2').AsFloat := rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+     edtTable.FieldbyName('SMALL_UNITS').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
+     edtTable.FieldbyName('BIG_UNITS').AsString := rs.FieldbyName('BIG_UNITS').AsString;
+     edtTable.FieldbyName('CALC_UNITS').AsString := rs.FieldbyName('CALC_UNITS').AsString;
   finally
-    rs.Free;
+     rs.Free;
   end;
+  edtTable.FieldbyName('ISINTEGRAL').AsInteger := 1;
+  edtTable.FieldbyName('RATE_OFF').AsInteger := 0;
+  edtTable.FieldbyName('BATCH_NO').asString := '#';
+  edtTable.FieldbyName('UNIT_ID').asString := UNIT_ID;
+  edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
 end;
 
 procedure TfrmPriceOrder.NewOrder;
+var
+  rs:TADODataSet;
 begin
   inherited;
   Open('');
@@ -303,7 +310,7 @@ begin
       cdsShopList.Post;
       cdsShopList.Next;
     end;
-    //AddBatch后提交
+    //打包提交
     Factor.AddBatch(cdsHeader,'TPriceOrder',nil);
     Factor.AddBatch(cdsDetail,'TPriceData',nil);
     Factor.AddBatch(cdsShopList,'TPriceShopList',nil);
@@ -527,7 +534,8 @@ begin
      (DBGridEh1.DataSource.DataSet.FieldByName('RATE_OFF').AsInteger<>2) then
   begin
     Key:=#0;
-    if (DBGridEh1.DataSource.DataSet.State in [dsInsert,dsEdit]) then DBGridEh1.DataSource.DataSet.Edit;
+    if not (DBGridEh1.DataSource.DataSet.State in [dsInsert,dsEdit]) then
+      DBGridEh1.DataSource.DataSet.Edit;
     DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsString:='';
   end;
   inherited;
@@ -577,6 +585,62 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+{
+var
+  ColIdx: integer;
+begin
+  ColIdx:=GetColIdx('RATE_OFF');
+  if (DBGridEh1.Col=ColIdx) and (DBGridEh1.DataSource.DataSet.Active) and
+     (DBGridEh1.DataSource.DataSet.FieldByName('RATE_OFF').AsInteger=2) then
+  begin
+    if DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat=0 then
+    begin
+      if not (DBGridEh1.DataSource.DataSet.State in [dsInsert,dsEdit]) then
+        DBGridEh1.DataSource.DataSet.Edit;
+      DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat:=100;
+      DBGridEh1.DataSource.DataSet.Post;
+    end;
+  end;
+}
+
+procedure TfrmPriceOrder.DBGridEh1Columns10UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  IsEdit: Boolean;
+begin
+  if (DBGridEh1.DataSource.DataSet.Active) and (Value='2') then
+  begin
+    if DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat=0 then
+    begin
+      IsEdit:=(DBGridEh1.DataSource.DataSet.State=dsEdit);
+      if not (DBGridEh1.DataSource.DataSet.State in [dsInsert,dsEdit]) then
+        DBGridEh1.DataSource.DataSet.Edit;
+      DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat:=100;
+      DBGridEh1.DataSource.DataSet.Post;
+      if (IsEdit) and (DBGridEh1.DataSource.DataSet.State<>dsEdit) then
+        DBGridEh1.DataSource.DataSet.Edit;
+    end;
+  end else
+  if (DBGridEh1.DataSource.DataSet.Active) and (Value<>'2') then
+  begin
+    if DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat<>0 then
+    begin
+      IsEdit:=(DBGridEh1.DataSource.DataSet.State=dsEdit);
+      if not (DBGridEh1.DataSource.DataSet.State in [dsInsert,dsEdit]) then
+        DBGridEh1.DataSource.DataSet.Edit;
+      DBGridEh1.DataSource.DataSet.FieldByName('AGIO_RATE').AsFloat:=0;
+      DBGridEh1.DataSource.DataSet.Post;
+      if (IsEdit) and (DBGridEh1.DataSource.DataSet.State<>dsEdit) then
+        DBGridEh1.DataSource.DataSet.Edit;
+    end;
+  end;
+end;
+
+function TfrmPriceOrder.CheckInput: boolean;
+begin
+  result:=not (pos(inttostr(InputFlag),'1')>0);
 end;
 
 end.

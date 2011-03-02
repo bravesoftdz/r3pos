@@ -184,7 +184,7 @@ inherited frmPriceOrder: TfrmPriceOrder
     inherited DBGridEh1: TDBGridEh
       Top = 122
       Width = 821
-      Height = 310
+      Height = 331
       TabOrder = 3
       Columns = <
         item
@@ -218,7 +218,7 @@ inherited frmPriceOrder: TfrmPriceOrder
           FieldName = 'NEW_OUTPRICE'
           Footers = <>
           Title.Caption = #24403#21069#21806#20215
-          Width = 59
+          Width = 58
         end
         item
           EditButtons = <>
@@ -276,6 +276,7 @@ inherited frmPriceOrder: TfrmPriceOrder
           Footers = <>
           Title.Caption = #20250#21592'|'#20419#38144
           Width = 56
+          OnUpdateData = DBGridEh1Columns10UpdateData
         end
         item
           DisplayFormat = '#0.00%'
@@ -316,7 +317,7 @@ inherited frmPriceOrder: TfrmPriceOrder
       Width = 821
     end
     inherited rzHelp: TRzPanel
-      Top = 432
+      Top = 453
       Width = 821
     end
     inherited fndUNIT_ID: TcxComboBox

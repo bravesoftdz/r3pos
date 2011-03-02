@@ -111,14 +111,39 @@ i:integer;
 begin
   inherited;
   if (not Cds_Client.Active) or (Cds_Client.IsEmpty) then exit;
-  //if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if Cds_Client.State in [dsInsert,dsEdit] then Cds_Client.Post;
+  if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
-    Cds_Client.Delete;
-    Factor.UpdateBatch(Cds_Client,'TSupplier');
-    UpdateToGlobal(Cds_Client.FieldByName('CLIENT_ID').AsString);
+    Cds_Client.DisableControls;
+    try
+      Cds_Client.Filtered := false;
+      Cds_Client.Filter := 'selFlag=1';
+      Cds_Client.Filtered := true;
+      if Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
+      Cds_Client.First;
+      while not Cds_Client.Eof do
+      begin
+        if Cds_Client.FieldByName('selflag').AsString = '1' then
+        begin
+          UpdateToGlobal(Cds_Client.FieldByName('CLIENT_ID').AsString);
+          Cds_Client.Delete;
+        end
+        else Cds_Client.Next;
+      end;
+      try
+        Factor.UpdateBatch(Cds_Client,'TSupplier');
+      except
+        Cds_Client.CancelUpdates;
+        Raise;
+      end;
+    finally
+      Cds_Client.Filtered := false;
+      Cds_Client.EnableControls;
+    end;
   end;
+
 end;
 
 procedure TfrmSupplier.actFindExecute(Sender: TObject);
@@ -230,7 +255,7 @@ begin
   begin
      Cds_Client.Append;
      AObj.WriteToDataSet(Cds_Client,false);
-     Cds_Client.FieldByName('selflag').AsBoolean:=False;
+     Cds_Client.FieldByName('selflag').AsString:='0';
      Cds_Client.Post;
   end;
   InitGrid;
@@ -274,7 +299,7 @@ begin
 end;
 
 procedure TfrmSupplier.InitGrid;
-var tmp:TZQuery;
+var tmp,rs:TZQuery;
 begin
   DBGridEh1.FieldColumns['SORT_ID'].KeyList.Clear;
   DBGridEh1.FieldColumns['SORT_ID'].PickList.Clear;
@@ -296,6 +321,20 @@ begin
     DBGridEh1.FieldColumns['REGION_ID'].KeyList.Add(tmp.Fields[0].asstring);
     DBGridEh1.FieldColumns['REGION_ID'].PickList.Add(tmp.Fields[1].asstring);
     tmp.Next;
+  end;
+  try
+    rs := TZQuery.Create(nil);
+    rs.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6';
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Add(rs.Fields[0].asstring);
+        DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Add(rs.Fields[1].AsString);
+        rs.Next;
+      end;
+  finally
+    rs.Free;
   end;
 end;
 
@@ -363,7 +402,7 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      Cds_Client.FieldByName('selflag').AsBoolean:=True;
+      Cds_Client.FieldByName('selflag').AsString:='1';
       Cds_Client.Post;
       Cds_Client.Next;
     end;
@@ -384,7 +423,7 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      Cds_Client.FieldByName('selflag').AsBoolean:=False;
+      Cds_Client.FieldByName('selflag').AsString:='0';
       Cds_Client.Post;
       Cds_Client.Next;
     end;
@@ -405,10 +444,10 @@ begin
     while not Cds_Client.Eof do
     begin
       Cds_Client.Edit;
-      if Cds_Client.FieldByName('selflag').AsBoolean=True then
-         Cds_Client.FieldByName('selflag').AsBoolean:=False
+      if Cds_Client.FieldByName('selflag').AsString='1' then
+         Cds_Client.FieldByName('selflag').AsString:='0'
       else
-         Cds_Client.FieldByName('selflag').AsBoolean:=True;
+         Cds_Client.FieldByName('selflag').AsString:='1';
       Cds_Client.Post;
       Cds_Client.Next;
     end;

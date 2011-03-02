@@ -184,6 +184,12 @@ inherited frmSupplier: TfrmSupplier
                     EditButtons = <>
                     FieldName = 'selflag'
                     Footers = <>
+                    KeyList.Strings = (
+                      '1'
+                      '0')
+                    PickList.Strings = (
+                      '0'
+                      '1')
                     Title.Caption = #36873#25321
                     Width = 24
                   end
@@ -247,12 +253,6 @@ inherited frmSupplier: TfrmSupplier
                     EditButtons = <>
                     FieldName = 'SETTLE_CODE'
                     Footers = <>
-                    KeyList.Strings = (
-                      '0'
-                      '1')
-                    PickList.Strings = (
-                      #25353#27425
-                      #25353#26376)
                     ReadOnly = True
                     Title.Caption = #32467#31639#26041#24335
                     Width = 55

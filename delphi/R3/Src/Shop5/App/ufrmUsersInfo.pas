@@ -285,6 +285,8 @@ begin
   begin
     AObj.FieldbyName('USER_ID').AsString := TSequence.NewId;
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Aobj.FieldByName('ROLE_IDS').AsString := '#';
+    Aobj.FieldByName('ROLE_IDS_TEXT').AsString := '#';
   end;
   if dbState=dsInsert then
     cdsTable.Append
@@ -320,7 +322,7 @@ procedure TfrmUsersInfo.FormShow(Sender: TObject);
 begin
   inherited;
   if edtACCOUNT.CanFocus then edtACCOUNT.SetFocus;
-  RzPage.ActivePageIndex := TabSheet1.ImageIndex;
+  RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmUsersInfo.edt_USER_NAMEPropertiesChange(Sender: TObject);

@@ -564,14 +564,14 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 117
             Width = 355
             Height = 20
-            TabOrder = 4
+            TabOrder = 8
           end
           object edtEMAIL: TcxTextEdit
             Left = 340
             Top = 92
             Width = 121
             Height = 20
-            TabOrder = 8
+            TabOrder = 7
           end
           object edtQQ: TcxTextEdit
             Left = 340
@@ -579,7 +579,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 5
+            TabOrder = 4
           end
           object edtMSN: TcxTextEdit
             Left = 340
@@ -587,14 +587,14 @@ inherited frmUsersInfo: TfrmUsersInfo
             Width = 121
             Height = 20
             Properties.OnChange = edt_USER_NAMEPropertiesChange
-            TabOrder = 6
+            TabOrder = 5
           end
           object edtMM: TcxTextEdit
             Left = 340
             Top = 67
             Width = 121
             Height = 20
-            TabOrder = 7
+            TabOrder = 6
           end
         end
       end
@@ -682,7 +682,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Width = 121
       Height = 20
       TabStop = False
-      TabOrder = 2
+      TabOrder = 4
     end
     object edtSHOP_ID: TzrComboBoxList
       Left = 346
@@ -738,7 +738,7 @@ inherited frmUsersInfo: TfrmUsersInfo
           Default = True
         end>
       Properties.ReadOnly = True
-      TabOrder = 4
+      TabOrder = 3
       InGrid = False
       KeyValue = Null
       FilterFields = 'DUTY_NAME;DUTY_ID;DUTY_SPELL'
@@ -773,7 +773,7 @@ inherited frmUsersInfo: TfrmUsersInfo
         #22899
         #30007
         #20445#23494)
-      TabOrder = 3
+      TabOrder = 2
     end
     object edtDEPT_ID: TzrComboBoxList
       Left = 346

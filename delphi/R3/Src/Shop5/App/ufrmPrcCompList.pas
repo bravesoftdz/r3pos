@@ -30,7 +30,7 @@ type
     procedure AddNewShopInfo(CdsList: TDataSet; Aobj: TRecord_);
   public
     procedure Open(id:string);
-    class function PrcCompList(Owner:TForm; CdsShopList: TDataSet; id:string; dbState:TDataSetState):boolean;
+    class function PrcCompList(Owner:TForm; CdsShopList: TDataSet; id:string; BillState:TDataSetState):boolean;
     property oid:string read Foid write Setoid;
   end;
 
@@ -55,13 +55,13 @@ begin
 end;
 
 class function TfrmPrcCompList.PrcCompList(Owner:TForm; CdsShopList: TDataSet;
-  id:string; dbState:TDataSetState): boolean;
+  id:string; BillState:TDataSetState): boolean;
 begin
   with TfrmPrcCompList.Create(Owner) do
     begin
       try
-        BtnDel.Enabled:=(dbState<>dsBrowse);
-        BtnOk.Enabled:=(dbState<>dsBrowse);
+        BtnDel.Visible:=(BillState<>dsBrowse);
+        BtnOk.Visible:=(BillState<>dsBrowse);
         CdsList:=CdsShopList;
         ShopList.DataSet:=CdsList;
         //Open(id);
@@ -189,7 +189,7 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('500015') then Raise Exception.Create('只有拥有促销单编辑权限才能删除门店,请和管理员联系.');
   if cdsList.IsEmpty then Exit;
-  if MessageBox(Handle,pchar('是否删除'+cdsList.FieldbyName('SHOP_NAME').AsString),'友情提示...',MB_OK+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,pchar('是否删除'+cdsList.FieldbyName('SHOP_NAME').AsString),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsList.Delete;  
 end;
 

@@ -72,7 +72,7 @@ var
   frmUsers: TfrmUsers;
 
 implementation
-uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmUserRights,ufrmFastReport,
+uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,
 {$R *.dfm}
 
 procedure TfrmUsers.actFindExecute(Sender: TObject);
@@ -103,24 +103,16 @@ procedure TfrmUsers.actDeleteExecute(Sender: TObject);
     end;
   end;
 var i:integer;
-    Params:TftParamList;
 begin
   inherited;
   if (Not Cds_Users.Active) or (Cds_Users.RecordCount = 0) then Exit;
-  {if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');}
+  if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
-    Params:=TftParamList.Create(nil);
-    try
-      Params.ParamByName('USER_ID').asString:=Cds_Users.FieldByName('USER_ID').AsString;
-      Params.ParamByName('TENANT_ID').asString:=Cds_Users.FieldByName('TENANT_ID').AsString;
-      Factor.ExecProc('TUsersDelete',Params);
-    finally
-      Params.Free;
-    end;
-    UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
     Cds_Users.Delete;
+    Factor.UpdateBatch(Cds_Users,'TUsers');
+    UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
   end;
 end;
 
@@ -287,19 +279,22 @@ end;
 procedure TfrmUsers.actRightsExecute(Sender: TObject);
 var str:string;
 begin
-  {inherited;
+  inherited;
   if not Cds_Users.Active then exit;
   if Cds_Users.IsEmpty then exit;
   if not ShopGlobal.GetChkRight('100020') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   with TfrmUserRights.Create(self) do
   begin
     try
-      Open(Cds_Users.FieldByName('USER_ID').AsString,Cds_Users.FieldByName('USER_NAME').AsString,Cds_Users.FieldByName('COMP_ID').AsString,Cds_Users.FieldByName('ACCOUNT').AsString,Cds_Users.FieldByName('DUTY_IDS').AsString);
+      Open(Cds_Users.FieldByName('USER_ID').AsString,
+      Cds_Users.FieldByName('USER_NAME').AsString,
+      Cds_Users.FieldByName('ACCOUNT').AsString,
+      Cds_Users.FieldByName('ROLE_IDS').AsString);
       ShowModal;
     finally
       free;
     end;
-  end;}
+  end;
 end;
 procedure TfrmUsers.Cds_UsersAfterScroll(DataSet: TDataSet);
 var str:string;

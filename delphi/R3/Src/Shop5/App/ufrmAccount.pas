@@ -222,6 +222,7 @@ begin
   inherited;
   if (not cdsBrowser.Active) and (cdsBrowser.IsEmpty) then exit;
   //if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if cdsBrowser.FieldByName('PAYM_ID').AsString = 'A' then Raise Exception.Create('现金账户不允许删除');
   if MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
   begin
     UpdateToGlobal(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);

@@ -27,6 +27,7 @@ type
     procedure SetcDate(const Value: TDate);
     function  GetSHOP_ID: string;
     procedure SetSHOP_ID(const Value: string);
+    function  CheckExistsIsPrintBill: Boolean;
   public
     { Public declarations }
     procedure dt_Reck(id:string;mdate:TDate);
@@ -61,6 +62,7 @@ begin
      Factor.Open(Temp);
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
 
+       
      //判断今天否有盘点:
      Temp.Close;                                                
      Temp.SQL.Text:='select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
@@ -190,7 +192,7 @@ begin
           PROPERTY_02:=AObj.fieldbyName('PROPERTY_02').AsString;            
           //生成结帐数据
           Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','''+CurDate+''',''#'',''#'','''','''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,1)';
+               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','''+CurDate+''',''#'',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,1)';
           Factor.ExecSQL(Str);
           rs.Next;
         end;
@@ -222,6 +224,24 @@ end;
 procedure TfrmCheckTask.SetSHOP_ID(const Value: string);
 begin
   FSHOP_ID := Value;
+end;
+
+function TfrmCheckTask.CheckExistsIsPrintBill: Boolean;
+var
+  Rs: TZQuery;
+begin
+  result:=False;
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
+    if Rs.Params.FindParam('TENANT_ID')<>nil then Rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    if Rs.Params.FindParam('SHOP_ID')<>nil then Rs.ParamByName('SHOP_ID').AsString:=self.SHOP_ID;
+    if Rs.Params.FindParam('PRINT_DATE')<>nil then Rs.ParamByName('PRINT_DATE').AsString:=FormatDatetime('YYYYMMDD',date());
+    Factor.Open(Rs);
+    result:=(not Rs.IsEmpty);
+  finally
+    Rs.Free;
+  end;
 end;
 
 end.

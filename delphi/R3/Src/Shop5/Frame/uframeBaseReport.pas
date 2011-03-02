@@ -5,14 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, ToolWin, ComCtrls, StdCtrls,
-  RzLabel, RzTabs, ExtCtrls, RzPanel, RzButton, DB, ADODB, RzBckgnd,
-  CheckLst, RzLstBox, RzChkLst, RzCmboBx, Mask, RzEdit, Grids, DBGridEh,
-  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  PrnDbgeh,DBGridEhImpExp,inifiles, jpeg;
+  RzLabel, RzTabs, ExtCtrls, RzPanel, RzButton, DB, RzBckgnd, CheckLst,
+  RzLstBox, RzChkLst, RzCmboBx, Mask, RzEdit, Grids, DBGridEh, cxControls,
+  cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
+  DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
+  ZDataset;
 
 type
   TframeBaseReport = class(TframeToolForm)
-    adoReport1: TADODataSet;
     dsadoReport1: TDataSource;
     ToolButton1: TToolButton;
     ToolButton3: TToolButton;
@@ -43,13 +43,13 @@ type
     ToolButton2: TToolButton;
     Label27: TLabel;
     actFindNext: TAction;
+    adoReport1: TZQuery;
     procedure ActCloseExecute(Sender: TObject);
     procedure actColumnVisibleExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-      State: TGridDrawState);
+      const Rect: TRect; DataCol: Integer; Column: TColumnEh;  State: TGridDrawState);
     procedure rzShowColumnsChange(Sender: TObject; Index: Integer;
       NewState: TCheckBoxState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;

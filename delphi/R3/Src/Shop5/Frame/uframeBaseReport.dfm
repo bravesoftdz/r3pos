@@ -1,6 +1,6 @@
 inherited frameBaseReport: TframeBaseReport
-  Left = 149
-  Top = 0
+  Left = 191
+  Top = 110
   Width = 848
   Height = 586
   Caption = #25253#34920#22522#31867
@@ -9,26 +9,26 @@ inherited frameBaseReport: TframeBaseReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 832
-    Height = 518
+    Width = 840
+    Height = 529
     inherited RzPanel2: TRzPanel
-      Width = 822
-      Height = 508
+      Width = 830
+      Height = 519
       inherited RzPage: TRzPageControl
-        Width = 617
-        Height = 502
+        Width = 625
+        Height = 513
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 615
-            Height = 475
+            Width = 623
+            Height = 486
             BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
-              Width = 605
-              Height = 465
+              Width = 613
+              Height = 476
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -36,7 +36,7 @@ inherited frameBaseReport: TframeBaseReport
               object w1: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 605
+                Width = 613
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -47,8 +47,8 @@ inherited frameBaseReport: TframeBaseReport
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 605
-                Height = 384
+                Width = 613
+                Height = 395
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -56,8 +56,8 @@ inherited frameBaseReport: TframeBaseReport
                 object DBGridEh1: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 601
-                  Height = 380
+                  Width = 609
+                  Height = 391
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -106,10 +106,10 @@ inherited frameBaseReport: TframeBaseReport
         end
       end
       object PanelColumnS: TPanel
-        Left = 620
+        Left = 628
         Top = 3
         Width = 199
-        Height = 502
+        Height = 513
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -495,31 +495,31 @@ inherited frameBaseReport: TframeBaseReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 832
+    Width = 840
     inherited Image1: TImage
-      Left = 510
-      Width = 313
+      Left = 506
+      Width = 325
     end
     inherited Image14: TImage
-      Left = 823
+      Left = 831
     end
     inherited Image3: TImage
-      Left = 510
-      Width = 313
+      Left = 506
+      Width = 325
     end
     inherited CoolBar1: TCoolBar
-      Width = 334
+      Width = 330
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 334
+          MinHeight = 330
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 334
+        Width = 330
         ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton1: TToolButton
@@ -552,17 +552,17 @@ inherited frameBaseReport: TframeBaseReport
           Style = tbsDropDown
         end
         object ToolButton9: TToolButton
-          Left = 197
+          Left = 193
           Top = 0
           Action = actPrint
         end
         object ToolButton10: TToolButton
-          Left = 240
+          Left = 236
           Top = 0
           Action = actPreview
         end
         object ToolButton8: TToolButton
-          Left = 283
+          Left = 279
           Top = 0
           Width = 8
           Caption = 'ToolButton8'
@@ -570,7 +570,7 @@ inherited frameBaseReport: TframeBaseReport
           Style = tbsSeparator
         end
         object ToolButton4: TToolButton
-          Left = 291
+          Left = 287
           Top = 0
           Action = actExit
         end
@@ -614,11 +614,6 @@ inherited frameBaseReport: TframeBaseReport
       Caption = #26597#25214#19979#19968#20010
     end
   end
-  object adoReport1: TADODataSet
-    Parameters = <>
-    Left = 169
-    Top = 297
-  end
   object dsadoReport1: TDataSource
     DataSet = adoReport1
     Left = 169
@@ -649,5 +644,12 @@ inherited frameBaseReport: TframeBaseReport
     Filter = 'Excel '#25991#20214'|*.xls'
     Left = 341
     Top = 212
+  end
+  object adoReport1: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 168
+    Top = 300
   end
 end

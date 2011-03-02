@@ -75,7 +75,7 @@ begin
 
       Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
       'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,''#'',:CLIENT_CODE,:CREA_DATE,:CREA_USER,'+
-      ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,'''','''',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+      ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
       AGlobal.ExecSQL(Str,Self);
       Result := True;
     finally
@@ -128,7 +128,7 @@ begin
           begin
             Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
             'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,''#'',:CLIENT_CODE,:CREA_DATE,:CREA_USER,'+
-            ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,'''','''',''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+            ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
             AGlobal.ExecSQL(Str,Self);
           end;
 

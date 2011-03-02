@@ -72,19 +72,18 @@ begin
   Result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CLIENT_ID';
-    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
+    rs.SQL.Text := 'select * from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CUST_ID';
+    rs.ParamByName('CUST_ID').AsString := FieldbyName('CUST_ID').AsOldString;
     rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if not rs.IsEmpty then
       Raise Exception.Create('此会员存在消费记录,不能删除!');
 
-    rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and SHOP_ID=:SHOP_ID and IC_CARDNO=:IC_CARDNO'+
-    ' and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
-    rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
+    rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and CLIENT_ID=:CUST_ID and IC_CARDNO=:IC_CARDNO'+
+    ' and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
-    rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
+    rs.ParamByName('CUST_ID').AsString := FieldbyName('CUST_ID').AsOldString;
     rs.ParamByName('IC_CARDNO').AsString := FieldbyName('CUST_CODE').AsOldString;
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
@@ -93,7 +92,7 @@ begin
       else
         begin
           Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-          ' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          ' where CLIENT_ID=:OLD_CUST_ID and TENANT_ID=:OLD_TENANT_ID ';
           AGlobal.ExecSQL(Str,Self);
         end;
   finally
@@ -110,13 +109,25 @@ begin
      try
        Tmp := TZQuery.Create(nil);
        Tmp.Close;
-       Tmp.SQL.Text := 'Select * From PUB_IC_INFO Where COMM NOT IN(''02'',''12'') and IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+       Tmp.SQL.Text := 'Select * From PUB_IC_INFO Where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
        Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('CUST_CODE').AsString;
        Tmp.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
        Tmp.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsString;
        AGlobal.Open(Tmp);
-       if Tmp.RecordCount > 0 then
-          Raise Exception.Create('此会员卡号已经存在，不能重复！');
+       Tmp.First;
+       while not Tmp.Eof do
+        begin
+          if Copy(Tmp.FieldByName('COMM').AsString,2,1) = '2' then
+            begin
+              FieldByName('CUST_ID').AsString := Tmp.FieldbyName('CLIENT_ID').AsString;
+              AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self);
+              AGlobal.ExecSQL('delete from PUB_CUSTOMER where TENANT_ID=:TENANT_ID and CUST_ID=:CUST_ID ',Self);
+            end
+          else
+            Raise Exception.Create('此会员卡号已经存在,不能重复!');
+          Tmp.Next;
+        end;
+
        Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
        'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
        ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,0,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';

@@ -71,11 +71,7 @@ begin
       while not Temp.Eof do
         begin
           if Copy(Temp.FieldByName('COMM').AsString,2,1) = '2' then
-            begin
-              FieldByName('CLIENT_ID').AsString := Temp.FieldbyName('CLIENT_ID').AsString;
-              AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:CLIENT_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self);
-              AGlobal.ExecSQL('delete from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID ',Self);
-            end
+            AGlobal.ExecSQL('delete from PUB_IC_INFO where CLIENT_ID='+Temp.FieldbyName('CLIENT_ID').AsString+' and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self)
           else
             Raise Exception.Create('此客户卡号已经存在,不能重复!');
           Temp.Next;
@@ -114,7 +110,7 @@ begin
       Temp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
       AGlobal.Open(Temp);
       if Temp.Fields[0].AsInteger > 0 then
-        Raise Exception.Create('此客户卡号已经存在，不能重复！');
+        Raise Exception.Create('此客户卡号已经存在,不能重复!');
       if FieldByName('CLIENT_CODE').AsString <> FieldByName('CLIENT_CODE').AsOldString then
         begin
           Str := 'update PUB_IC_INFO set IC_CARDNO=:CLIENT_CODE,INTEGRAL=:INTEGRAL,BALANCE=:BALANCE,RULE_INTEGRAL=:RULE_INTEGRAL,ACCU_INTEGRAL=:ACCU_INTEGRAL,TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+

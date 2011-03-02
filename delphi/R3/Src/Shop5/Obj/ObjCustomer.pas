@@ -118,11 +118,7 @@ begin
        while not Tmp.Eof do
         begin
           if Copy(Tmp.FieldByName('COMM').AsString,2,1) = '2' then
-            begin
-              FieldByName('CUST_ID').AsString := Tmp.FieldbyName('CLIENT_ID').AsString;
-              AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self);
-              AGlobal.ExecSQL('delete from PUB_CUSTOMER where TENANT_ID=:TENANT_ID and CUST_ID=:CUST_ID ',Self);
-            end
+            AGlobal.ExecSQL('delete from PUB_IC_INFO where CLIENT_ID='+Tmp.FieldbyName('CLIENT_ID').AsString+' and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self)
           else
             Raise Exception.Create('此会员卡号已经存在,不能重复!');
           Tmp.Next;

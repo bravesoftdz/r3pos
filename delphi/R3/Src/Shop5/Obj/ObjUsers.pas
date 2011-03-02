@@ -24,17 +24,17 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from STK_STOCKORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID ';
+    rs.SQL.Text := 'select count(*) from STK_STOCKORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID ';
     rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
     AGlobal.Open(rs);
-    if not rs.IsEmpty then
+    if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create('此用户在入库单据中有使用,不能删除!');
 
     rs.Close;
-    rs.SQL.Text := 'select * from SAL_SALESORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID';
+    rs.SQL.Text := 'select count(*) from SAL_SALESORDER where GUIDE_USER=:USER_ID or CREA_USER=:USER_ID';
     rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
     AGlobal.Open(rs);
-    if not rs.IsEmpty then
+    if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create('此用户在销售单据中有使用,不能删除!');
   finally
     rs.Free;
@@ -46,12 +46,12 @@ var rs:TZQuery;
 begin  
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select USER_ID,ACCOUNT,COMM from CA_USERS where COMM not in (''02'',''12'') and  ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.SQL.Text := 'select count(*) from CA_USERS where COMM not in (''02'',''12'') and  ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('ACCOUNT').AsString := FieldByName('ACCOUNT').AsString;
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
-    if rs.RecordCount > 0 then
+    if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重取新的登录名...');
   finally
     rs.Free;
@@ -64,13 +64,13 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT from CA_USERS where COMM not in (''12'',''02'') and ACCOUNT=:ACCOUNT and USER_ID<>:OLD_USER_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from CA_USERS where COMM not in (''12'',''02'') and ACCOUNT=:ACCOUNT and USER_ID<>:OLD_USER_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('ACCOUNT').AsString := FieldByName('ACCOUNT').AsString;
-    rs.ParamByName('OLD_USER_ID').AsString := FieldByName('USER_ID').AsString;
+    rs.ParamByName('OLD_USER_ID').AsString := FieldByName('USER_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     AGlobal.Open(rs);
-    if not rs.IsEmpty then Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
+    if rs.Fields[0].AsInteger > 0 then Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重新修改新的登录名...');
   finally
     rs.Free;
   end;

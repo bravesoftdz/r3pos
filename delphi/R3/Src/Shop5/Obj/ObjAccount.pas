@@ -43,8 +43,8 @@ begin
   Result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ACCOUNT_ID,COMM from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
-    rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
+    rs.SQL.Text := 'select count(*) from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('ACCT_NAME').AsString := FieldByName('ACCT_NAME').AsString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
@@ -62,7 +62,7 @@ begin
   Result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
+    rs.SQL.Text := 'select OUT_MNY,IN_MNY from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;

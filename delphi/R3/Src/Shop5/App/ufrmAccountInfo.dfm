@@ -339,7 +339,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         ShowButton = True
         LocateStyle = lsDark
         Filter = 'CODE_ID,CODE_NAME,CODE_SPELL'
-        Buttons = [zbNew, zbClear, zbFind]
+        Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
       end

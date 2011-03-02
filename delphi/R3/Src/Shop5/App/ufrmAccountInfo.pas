@@ -138,6 +138,9 @@ begin
   inherited;
   //edtCOMP_ID.DataSet:=Global.GetADODataSetFromName('CA_COMPANY');
   edtPAYM_ID.DataSet := Global.GetZQueryFromName('PUB_PAYMENT');
+  edtPAYM_ID.DataSet.Filtered := False;
+  edtPAYM_ID.DataSet.Filter := 'CODE_ID <> ''A''';
+  edtPAYM_ID.DataSet.Filtered := True;
   AObj := TRecord_.Create;
 end;
 

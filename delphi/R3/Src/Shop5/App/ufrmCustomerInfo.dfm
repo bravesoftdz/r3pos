@@ -139,7 +139,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 520
       Height = 212
+      ActivePage = TabSheet6
       Align = alBottom
+      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -1413,8 +1415,8 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 25
         Width = 121
         Height = 20
+        TabStop = False
         TabOrder = 5
-        Visible = False
       end
       object cmbPRICE_ID: TzrComboBoxList
         Left = 113

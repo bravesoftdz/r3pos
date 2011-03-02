@@ -149,7 +149,7 @@ var
 
 implementation
 uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,
-  Math;
+  Math, ufrmBasic;
 
 {$R *.dfm}
 
@@ -169,6 +169,8 @@ begin
   cmbSEX.ItemIndex := 0;
   cmbSHOP_ID.KeyValue := Global.SHOP_ID;
   cmbSHOP_ID.Text := Global.SHOP_NAME;
+  edtREGION_ID.KeyValue := '#';
+  edtREGION_ID.Text := 'нч';
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='нч';
   rs:=Global.GetZQueryFromName('PUB_PRICEGRADE');
@@ -297,7 +299,10 @@ begin
   tmp1:=TZQuery.Create(nil);
   try
     tmp1.Close;
-    tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(cmbACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 0,1';
+    case Factor.iDbType of
+      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(cmbACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
+      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(cmbACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
+    end;
     Factor.Open(tmp1);
     if (not tmp1.IsEmpty) and (cmbPRICE_ID.AsString<>tmp1.FieldByName('PRICE_ID').AsString) then
     begin
@@ -505,7 +510,7 @@ begin
   if Trim(cmbACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
   if Trim(cmbRULE_INTEGRAL.Text)='' then AObj.FieldByName('RULE_INTEGRAL').AsString:='0';
   AObj.FieldByName('SEX').AsInteger:=cmbSEX.ItemIndex;
-  //AObj.FieldByName('INTRODUCER').AsString:=cmbINTRODUCER.AsString;
+  if Trim(edtREGION_ID.Text)='' then AObj.FieldByName('REGION_ID').AsString := '#'; 
 end;
 
 class function TfrmCustomerInfo.AddDialog(Owner: TForm;

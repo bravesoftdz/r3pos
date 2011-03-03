@@ -84,7 +84,6 @@ begin
     'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and IC_CARDNO=:IC_CARDNO'+
     ' and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
-    rs.ParamByName('CUST_ID').AsString := FieldbyName('CUST_ID').AsOldString;
     rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
     rs.ParamByName('IC_CARDNO').AsString := FieldbyName('CUST_CODE').AsOldString;
     AGlobal.Open(rs);
@@ -162,12 +161,12 @@ begin
         Tmp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
         AGlobal.Open(Tmp);
 
-        if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CLIENT_ID').AsString)
+        if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CUST_ID').AsString)
            and
            (copy(Tmp.FieldbyName('COMM').AsString,2,1)<>'2')
         then Raise Exception.Create('此会员卡号已经存在,不能重复!');
 
-        if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CLIENT_ID').AsString) then
+        if (Tmp.FieldbyName('CLIENT_ID').AsString <> FieldbyName('CUST_ID').AsString) then
            begin
              Str := 'delete from PUB_IC_INFO where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
              AGlobal.ExecSQL(Str,self);
@@ -182,7 +181,7 @@ begin
         if r = 0 then
           begin
             Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
-            'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
+            'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
             ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,0,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
             AGlobal.ExecSQL(Str,Self);
           end;

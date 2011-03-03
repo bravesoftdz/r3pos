@@ -104,6 +104,7 @@ type
 
     procedure PostUpdates;
     procedure CancelUpdates;
+    procedure CommitUpdates;
     procedure RevertRecord;
     procedure MoveToInitialRow;
     procedure InitRow;
@@ -253,6 +254,7 @@ type
 
     procedure PostUpdates; virtual;
     procedure CancelUpdates; virtual;
+    procedure CommitUpdates;virtual;
     procedure RevertRecord; virtual;
     procedure MoveToInitialRow; virtual;
 
@@ -2368,6 +2370,19 @@ begin
       //打包当前字段值
       WriteBuffer;
     end;
+end;
+
+procedure TZAbstractCachedResultSet.CommitUpdates;
+begin
+  CheckClosed;
+  if FInitialRowsList.Count > 0 then
+  begin
+    while FInitialRowsList.Count > 0 do
+    begin
+      FInitialRowsList.Delete(0);
+      FCurrentRowsList.Delete(0);
+    end;
+  end;
 end;
 
 end.

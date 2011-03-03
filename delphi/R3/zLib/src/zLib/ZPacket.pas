@@ -771,7 +771,10 @@ begin
       case RetLen of
       0:begin
          if not CheckClientsocket(FSocket.SocketHandle)  then
-            raise ESocketConnectionError.CreateRes(@SSocketReadError);
+            begin
+              FSocket.Close;
+              raise ESocketConnectionError.CreateRes(@SSocketReadError);
+            end;
         end;
       -1:begin
            if ((GetTickCount-_Start)>30000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
@@ -814,7 +817,10 @@ begin
          0:
             begin
                if not CheckClientsocket(FSocket.SocketHandle)  then
-                  raise ESocketConnectionError.CreateRes(@SSocketReadError);
+                  begin
+                    FSocket.Close;
+                    raise ESocketConnectionError.CreateRes(@SSocketReadError);
+                  end;
             end;
          -1:
             begin
@@ -829,6 +835,8 @@ begin
             end;
          end;
        end;
+    if Amount <> 0 then
+       raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
   finally
      Leave;
   end;
@@ -964,22 +972,19 @@ var
     Size: integer;
   Time: TTimeVal;
 begin
-  Result := true;
-  try
-    Fillchar(Time, SizeOf(TTimeVal), 0);
-    { clear the set }
-    Fd_Zero(FdSet);
-    { add in the socket to test }
-    Fd_Set(S, FdSet);
-    { poll the socket }
-    Chk := Select(0, @FdSet, nil, nil, @Time);
+  Result := false;
+  Fillchar(Time, SizeOf(TTimeVal), 0);
+  { clear the set }
+  Fd_Zero(FdSet);
+  { add in the socket to test }
+  Fd_Set(S, FdSet);
+  { poll the socket }
+  Chk := Select(0, @FdSet, nil, nil, @Time);
 
-    if Chk > 0 then begin
-      Chk := IoCtlSocket(FdSet.Fd_Array[0], FIONREAD, Size);
-      if Chk < 0 then Result := False else if Size = 0 then Result := False else Result := true;
-    end else if Chk = 0 then Result := true else Result := False;
-  except
-  end;
+  if Chk > 0 then begin
+    Chk := IoCtlSocket(FdSet.Fd_Array[0], FIONREAD, Size);
+    if Chk < 0 then Result := False else if Size = 0 then Result := False else Result := true;
+  end else if Chk = 0 then Result := true else Result := False;
 end;
 
 function TZSocketTransport.GetSocketHandle: THandle;

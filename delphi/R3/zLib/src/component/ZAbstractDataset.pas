@@ -607,9 +607,13 @@ end;
 procedure TZAbstractDataset.CommitUpdates;
 begin
   CheckBrowseMode;
+  if State in [dsEdit, dsInsert] then Post;
 
   if CachedResultSet <> nil then
-    CachedResultSet.CancelUpdates;
+    CachedResultSet.CommitUpdates;
+
+  if not (State in [dsInactive]) then
+    RereadRows;
 end;
 
 {**

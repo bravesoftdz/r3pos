@@ -358,6 +358,14 @@ inherited frmCheckOrder: TfrmCheckOrder
           ReadOnly = True
           Title.Caption = #38144#21806#37329#39069
           Width = 62
+        end
+        item
+          EditButtons = <>
+          FieldName = 'BATCH_NO'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #25209#21495
+          Width = 105
         end>
     end
     inherited fndGODS_ID: TzrComboBoxList

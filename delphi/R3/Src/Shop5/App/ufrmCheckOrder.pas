@@ -62,6 +62,9 @@ type
     procedure UnitToCalc(UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
   public
+    //检测数据合法性
+    procedure CheckInvaid;override;
+    function CheckInput:boolean;override;
     { Public declarations }
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
 
@@ -1051,6 +1054,34 @@ begin
   edtTable.Edit;
   edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
   InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
+end;
+
+procedure TfrmCheckOrder.CheckInvaid;
+var
+  bs:TZQuery;
+  r:integer;
+begin
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  r := edtTable.RecNo;
+  edtTable.DisableControls;
+  try
+    edtTable.First;
+    while not edtTable.eof do
+      begin
+        if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
+        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
+        edtTable.Next;
+      end;
+    if r>0 then edtTable.RecNo := r;
+  finally
+    edtTable.EnableControls;
+  end;
+end;
+
+function TfrmCheckOrder.CheckInput: boolean;
+begin
+  result := pos(inttostr(InputFlag),'09')>0;
 end;
 
 end.

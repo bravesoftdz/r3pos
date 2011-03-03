@@ -1,12 +1,14 @@
 inherited frmCheckOrder: TfrmCheckOrder
-  Left = 301
-  Top = 246
+  Left = 359
+  Top = 224
   Width = 774
+  Height = 468
   Caption = #30424#28857#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
     Width = 758
+    Height = 430
     inherited RzPanel2: TRzPanel
       Width = 748
       Height = 81
@@ -170,7 +172,7 @@ inherited frmCheckOrder: TfrmCheckOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 333
+      Top = 334
       Width = 748
       Height = 35
       TabOrder = 2
@@ -201,7 +203,7 @@ inherited frmCheckOrder: TfrmCheckOrder
         Font.Name = #23435#20307
         Font.Style = [fsBold]
         ParentFont = False
-        OnDblClick = Lbl_LinkCheckGoodDblClick
+        OnClick = Lbl_LinkCheckGoodClick
         OnMouseMove = Lbl_LinkCheckGoodMouseMove
         OnMouseLeave = Lbl_LinkCheckGoodMouseLeave
       end
@@ -224,7 +226,7 @@ inherited frmCheckOrder: TfrmCheckOrder
         Width = 72
         Height = 12
         Cursor = crHandPoint
-        Caption = #65288#21452#20987#26597#30475#65289
+        Caption = #65288#28857#20987#26597#30475#65289
         Font.Charset = GB2312_CHARSET
         Font.Color = clNavy
         Font.Height = -12
@@ -252,7 +254,7 @@ inherited frmCheckOrder: TfrmCheckOrder
     inherited DBGridEh1: TDBGridEh
       Top = 119
       Width = 748
-      Height = 214
+      Height = 215
       TabOrder = 3
       UseMultiTitle = False
       Columns = <
@@ -309,29 +311,29 @@ inherited frmCheckOrder: TfrmCheckOrder
         item
           ButtonStyle = cbsNone
           EditButtons = <>
-          FieldName = 'CHK_AMOUNT'
+          FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #23454#30424#25968#37327
           Width = 60
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
-          OnUpdateData = DBGridEh1Columns4UpdateData
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>
           FieldName = 'PAL_AMOUNT'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #30424#28857#25439#30410
           Width = 62
-          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>
           FieldName = 'NEW_INPRICE'
           Footers = <>
+          ReadOnly = True
           Title.Caption = #25104#26412#20215
           Width = 53
-          OnUpdateData = DBGridEh1Columns7UpdateData
         end
         item
           EditButtons = <>
@@ -369,9 +371,11 @@ inherited frmCheckOrder: TfrmCheckOrder
       Width = 748
     end
     inherited stbHint: TRzPanel
+      Top = 401
       Width = 748
     end
     inherited rzHelp: TRzPanel
+      Top = 369
       Width = 748
     end
   end
@@ -450,11 +454,19 @@ inherited frmCheckOrder: TfrmCheckOrder
         Size = 36
       end
       item
-        Name = 'CHK_AMOUNT'
+        Name = 'RCK_AMOUNT'
         DataType = ftFloat
       end
       item
-        Name = 'RCK_AMOUNT'
+        Name = 'RCK_CALC_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
         DataType = ftFloat
       end
       item
@@ -479,9 +491,79 @@ inherited frmCheckOrder: TfrmCheckOrder
       end>
     AfterPost = edtTableAfterPost
     AfterDelete = edtTableAfterDelete
-    Top = 208
+    Top = 240
   end
   inherited edtProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'RCK_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'RCK_CALC_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
+      end>
     Top = 280
     object edtPropertyAMOUNT: TBCDField
       FieldName = 'AMOUNT'

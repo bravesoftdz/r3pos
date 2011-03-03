@@ -54,6 +54,7 @@ begin
     Str:='update CA_USERS set ROLE_IDS=:ROLE_IDS,ROLE_NAMES=:ROLE_NAMES,COMM=''01'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
          ' where TENANT_ID=:TENANT_ID and USER_ID=:USER_ID ';
     AGlobal.ExecSQL(Str,Params);
+    result := true;
   except
     on E:Exception do
     begin

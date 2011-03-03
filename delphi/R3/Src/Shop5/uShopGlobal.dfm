@@ -189,7 +189,8 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select J.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
-        'ME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
+        'ME,J.UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO' +
+        '_CALC,'
       
         '       case when C.NEW_INPRICE is null then J.NEW_INPRICE else C' +
         '.NEW_INPRICE end as NEW_INPRICE,'

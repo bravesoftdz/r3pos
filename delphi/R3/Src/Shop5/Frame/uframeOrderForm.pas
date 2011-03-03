@@ -303,7 +303,7 @@ begin
         edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
         edtTable.FieldByName('IS_PRESENT').asInteger := pt;
         if UNIT_ID='' then
-           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('CALC_UNITS').AsString
+           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
         else
            edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
         edtTable.FieldbyName('BATCH_NO').AsString := '#';
@@ -727,7 +727,7 @@ begin
       begin
         AObj.ReadField(edtTable);
         AObj.ReadFromDataSet(rs,false);
-        AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+        AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
         AObj.FieldbyName('IS_PRESENT').AsString := '0';
         AObj.FieldbyName('LOCUS_NO').AsString := '';
         AObj.FieldbyName('BATCH_NO').AsString := '#';
@@ -872,7 +872,7 @@ begin
          begin
             //看看货号是否存在
             rs.Close;
-            rs.SQL.Text := 'select GODS_ID,CALC_UNITS as UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+            rs.SQL.Text := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
             rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             rs.ParamByName('GODS_CODE').AsString := Barcode;
             Factor.Open(rs);

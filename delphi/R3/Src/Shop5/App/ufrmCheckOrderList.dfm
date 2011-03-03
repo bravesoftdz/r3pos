@@ -8,26 +8,26 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 883
-    Height = 514
+    Width = 875
+    Height = 503
     inherited RzPanel2: TRzPanel
-      Width = 873
-      Height = 504
+      Width = 865
+      Height = 493
       inherited RzPage: TRzPageControl
-        Width = 867
-        Height = 498
+        Width = 859
+        Height = 487
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 865
-            Height = 471
+            Width = 857
+            Height = 460
             inherited RzPanel1: TRzPanel
-              Width = 855
-              Height = 87
+              Width = 847
+              Height = 91
               object RzLabel2: TRzLabel
                 Left = 57
-                Top = 23
+                Top = 3
                 Width = 24
                 Height = 12
                 Alignment = taRightJustify
@@ -35,7 +35,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               end
               object RzLabel3: TRzLabel
                 Left = 200
-                Top = 23
+                Top = 3
                 Width = 12
                 Height = 12
                 Caption = #33267
@@ -71,22 +71,14 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               end
               object Label40: TLabel
                 Left = 33
-                Top = 3
+                Top = 23
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#21517#31216
               end
-              object RzLabel1: TRzLabel
-                Left = 199
-                Top = 43
-                Width = 48
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #30424#28857#26041#24335
-              end
               object D1: TcxDateEdit
                 Left = 89
-                Top = 19
+                Top = -1
                 Width = 104
                 Height = 20
                 Properties.DateButtons = [btnToday]
@@ -94,7 +86,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               end
               object D2: TcxDateEdit
                 Left = 216
-                Top = 19
+                Top = -1
                 Width = 109
                 Height = 20
                 Properties.DateButtons = [btnToday]
@@ -109,7 +101,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 480
-                Top = 47
+                Top = 52
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -136,9 +128,9 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               end
               object fndSTATUS: TcxRadioGroup
                 Left = 360
-                Top = 10
+                Top = -6
                 Width = 105
-                Height = 64
+                Height = 85
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -151,12 +143,12 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                     Caption = #24050#23457#26680
                   end>
                 TabOrder = 4
-                Caption = #29366#24577
+                Caption = ''
               end
               object fndCHECK_EMPL: TzrComboBoxList
                 Left = 89
                 Top = 39
-                Width = 104
+                Width = 152
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -197,8 +189,8 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 89
-                Top = -1
-                Width = 130
+                Top = 19
+                Width = 236
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -226,7 +218,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                     Title.Caption = #20195#30721
                     Width = 20
                   end>
-                DropWidth = 185
+                DropWidth = 236
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
@@ -236,18 +228,11 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object edtCHECK_TYPE: TcxComboBox
-                Left = 249
-                Top = 39
-                Width = 76
-                Height = 20
-                TabOrder = 7
-              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 92
-              Width = 855
-              Height = 374
+              Top = 96
+              Width = 847
+              Height = 359
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = actInfoExecute
               Columns = <
@@ -314,17 +299,17 @@ inherited frmCheckOrderList: TfrmCheckOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 883
+    Width = 875
     inherited Image1: TImage
-      Left = 737
-      Width = 137
+      Left = 741
+      Width = 125
     end
     inherited Image14: TImage
-      Left = 874
+      Left = 866
     end
     inherited Image3: TImage
-      Left = 737
-      Width = 137
+      Left = 741
+      Width = 125
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -333,20 +318,20 @@ inherited frmCheckOrderList: TfrmCheckOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton11: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end

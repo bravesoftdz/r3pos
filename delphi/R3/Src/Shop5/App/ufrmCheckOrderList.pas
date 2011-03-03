@@ -27,8 +27,6 @@ type
     RzLabel6: TRzLabel;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
-    RzLabel1: TRzLabel;
-    edtCHECK_TYPE: TcxComboBox;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -78,9 +76,6 @@ begin
     w := w +' and CHECK_STATUS=2 '
   else if fndSTATUS.ItemIndex=2 then
     w := w +' and CHECK_STATUS=1 ';
-
-  if edtCHECK_TYPE.ItemIndex<>-1 then
-    w := w +' and CHECK_TYPE='+TRecord_(edtCHECK_TYPE.Properties.Items.Objects[edtCHECK_TYPE.ItemIndex]).fieldbyName('CODE_ID').AsString;
 
   if id<>'' then
     w := w +' and CHECK_ID>'''+id+'''';

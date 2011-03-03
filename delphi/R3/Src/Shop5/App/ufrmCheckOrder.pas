@@ -35,14 +35,6 @@ type
     LblCount: TLabel;
     LblMm: TLabel;
     procedure FormCreate(Sender: TObject);
-    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns7UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns6UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns4EditButtonClick(Sender: TObject;
       var Handled: Boolean);
     procedure edtCREA_USERSaveValue(Sender: TObject);
@@ -51,10 +43,12 @@ type
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure edtTableAfterPost(DataSet: TDataSet);
-    procedure Lbl_LinkCheckGoodDblClick(Sender: TObject);
     procedure Lbl_LinkCheckGoodMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure Lbl_LinkCheckGoodMouseLeave(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
+    procedure DBGridEh1Columns6UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure Lbl_LinkCheckGoodClick(Sender: TObject);
   private
     { Private declarations }
     w:integer;
@@ -65,8 +59,12 @@ type
     procedure GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean=False);
     procedure Calc(Kind: integer);
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
+    procedure UnitToCalc(UNIT_ID:string);override;
+    procedure AmountToCalc(Amount:Real);override;
   public
     { Public declarations }
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
+
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -294,105 +292,6 @@ begin
   open(oid);
   dbState := dsBrowse;
   Saved := true;
-end;
-
-procedure TfrmCheckOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:Real;
-begin
-  if edtTable.FieldbyName('GODS_ID').AsString = '' then
-     begin
-       Text := '';
-       Value := null;
-       FocusNextColumn;
-       Exit;
-     end;
-  if PropertyEnabled then
-     begin
-       Text := TColumnEh(Sender).Field.AsString;
-       Value := TColumnEh(Sender).Field.asFloat;
-     end
-  else
-  begin
-    try
-      if Text='' then r := 0 else r := StrtoFloat(Text);
-      if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
-    except
-      Text := TColumnEh(Sender).Field.AsString;
-      Value := TColumnEh(Sender).Field.asFloat;
-      Raise Exception.Create('输入无效数值型');
-    end;
-    TColumnEh(Sender).Field.asFloat := r;
-    //2011.02.22关闭　盘点不需要原用多个单位计算
-    //   AMountToCalc(r);
-    //:输入 实盘 计算 盈亏;
-    Calc(1);
-  end;
-end;
-
-procedure TfrmCheckOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:integer;
-begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoInt(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
-  except
-    Text := '';
-    Value := null;
-    Raise Exception.Create('输入无效数值'+Text);
-  end;
-  TColumnEh(Sender).Field.asFloat := r;
-  //2011.02.22关闭　盘点不需要原用多个单位计算
-  // PresentToCalc(r);
-  //:输入 实盘 计算 盈亏;
-  Calc(1);   
-end;
-
-procedure TfrmCheckOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:real;
-begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
-  except
-    Text := '';
-    Value := null;
-    Raise Exception.Create('输入无效数值型');
-  end;
-  TColumnEh(Sender).Field.asFloat := r;
-
-  //2011.02.22关闭　盘点不需要原用计算方法
-  // AMoneyToCalc(r);
-  //:输入 实盘 计算 盈亏;
-  Calc(2);
-end;
-
-procedure TfrmCheckOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:real;
-begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
-  except
-    Text := '';
-    Value := null;
-    Raise Exception.Create('输入无效数值型');
-  end;
-  TColumnEh(Sender).Field.asFloat := r;
-  //2011.02.22关闭　盘点不需要原用多个单位计算
-  // PriceToCalc(r);
 end;
 
 procedure TfrmCheckOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
@@ -723,13 +622,16 @@ var Aobj: TRecord_;
 begin
   if (not edtTable.Active) and (edtTable.IsEmpty) then exit;
   if trim(edtTable.FieldByName('GODS_ID').AsString)='' then exit;
+  edtTable.Edit;
   try
     Aobj:=TRecord_.Create;
     Aobj.ReadFromDataSet(edtTable);
     if Kind=1 then //输入 实盘 计算 盈亏;
-      Aobj.FieldByName('PAL_AMOUNT').AsFloat:=Aobj.FieldByName('RCK_AMOUNT').AsFloat-Aobj.FieldByName('CHK_AMOUNT').AsFloat
+       begin
+         Aobj.FieldByName('PAL_AMOUNT').AsFloat:=Aobj.FieldByName('RCK_AMOUNT').AsFloat-Aobj.FieldByName('AMOUNT').AsFloat;
+       end
     else if Kind=2 then //输入 盈亏 计算 实盘
-      Aobj.FieldByName('CHK_AMOUNT').AsFloat:=Aobj.FieldByName('RCK_AMOUNT').AsFloat-Aobj.FieldByName('PAL_AMOUNT').AsFloat;
+      Aobj.FieldByName('AMOUNT').AsFloat:=Aobj.FieldByName('RCK_AMOUNT').AsFloat-Aobj.FieldByName('PAL_AMOUNT').AsFloat;
     Aobj.FieldByName('PAL_INAMONEY').AsFloat:=Aobj.FieldbyName('NEW_INPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat;
     Aobj.FieldByName('PAL_OUTAMONEY').AsFloat:=Aobj.FieldbyName('NEW_OUTPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat;
     Aobj.WriteToDataSet(edtTable);
@@ -742,105 +644,41 @@ procedure TfrmCheckOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs: TZQuery;
   PRINT_DATE: string;
+  SourceScale:real;
 begin
-  try
     PRINT_DATE:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
     if PRINT_DATE='' then PRINT_DATE:=FormatDatetime('YYYYMMDD',Date());
-    rs := TZQuery.Create(nil);
-    rs.SQL.Text:='select BARCODE,NEW_INPRICE,NEW_OUTPRICE from VIW_GOODSPRICE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID ';   //
-    if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
-    if rs.Params.FindParam('GODS_ID')<>nil then rs.ParamByName('GODS_ID').AsString:=GODS_ID;
-    Factor.Open(rs);
-    if (rs.Active) and (rs.RecordCount>0)  then
-    begin
-      edtTable.Edit;
-      if trim(edtTable.FieldbyName('BARCODE').AsString)='' then
-        edtTable.FieldbyName('BARCODE').AsString:=rs.FieldbyName('BARCODE').AsString;
-      edtTable.FieldbyName('NEW_INPRICE').AsFloat := rs.FieldbyName('NEW_INPRICE').AsFloat;
-      edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat;
-      if (PrintQry.Active) and (PrintQry.Locate('GODS_ID',GODS_ID,[])) then
-        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat
+    rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if not rs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('在经营商品中没有找到"'+GODS_ID+'"'); 
+    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+       begin
+        SourceScale := 1;
+       end
+    else
+    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+       begin
+        SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+       end
+    else
+    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+       begin
+        SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+       end
+    else
+       begin
+        SourceScale := 1;
+       end;
+    edtTable.Edit;
+    edtTable.FieldbyName('NEW_INPRICE').AsFloat := rs.FieldbyName('NEW_INPRICE').AsFloat*SourceScale;
+    edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat*SourceScale;
+    if (PrintQry.Active) and (PrintQry.Locate('GODS_ID',GODS_ID,[])) then
+      begin
+        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat/SourceScale;
+        edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat;
+      end
       else
         edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;
-      edtTable.Post;
-    end;
-  finally
-    rs.Free;
-  end;
-end;
-
-procedure TfrmCheckOrder.Lbl_LinkCheckGoodDblClick(Sender: TObject);
-var Print_ID,GODE_ID,BatchNo: string; CurObj: TRecord_;
-begin
-  if not cdsHeader.Active then exit;
-  if trim(LblCount.Caption)='0' then Raise Exception.Create('  没有未录入的的商品！  '); 
-  Print_ID:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
-  if Print_ID='' then Exit;
-  with TfrmSelectCheckGoods.Create(self) do
-  begin
-    try
-      CurObj:=TRecord_.Create;
-      MultiSelect := true;
-      InitGrid(Print_ID);
-      if self.dbState = dsBrowse then
-      begin
-        MultiSelect:=False;
-        chkMultSelect.Checked:=False;
-        chkMultSelect.Enabled:=false;
-        btnOk.Visible:=false;
-        RzBitBtn2.Caption:='返回';
-      end;
-      if ShowModal=MROK then
-      begin
-        cdsList.Filtered:=False;
-        cdsList.Filter:='A=1';
-        cdsList.Filtered:=true;
-        cdsList.First;
-        try
-          edtTable.DisableControls;
-          edtTable.First;
-          while not edtTable.Eof do
-          begin
-            if edtTable.FieldByName('GODS_ID').AsString='' then
-              edtTable.Delete;
-            edtTable.Next;
-          end;
-        finally
-          edtTable.EnableControls;
-        end;
-
-        while not cdsList.Eof do
-        begin
-          CurObj.ReadFromDataSet(CdsList);
-          GODE_ID:=trim(CurObj.fieldbyName('GODS_ID').AsString);
-          BatchNo:=trim(CurObj.fieldbyName('BATCH_NO').AsString);
-          if not edtTable.Locate('GODS_ID;BATCH_NO',VarArrayOf([GODE_ID,BatchNo]),[]) then
-          begin                                  
-            inc(RowId);
-            edtTable.Append;
-            edtTable.FieldByName('SEQNO').AsInteger:=RowId;
-            edtTable.FieldByName('GODS_ID').AsString:=CurObj.FieldByName('GODS_ID').AsString;
-            edtTable.FieldByName('GODS_CODE').AsString:=CurObj.FieldByName('GODS_CODE').AsString;
-            edtTable.FieldByName('GODS_NAME').AsString:=CurObj.FieldByName('GODS_NAME').AsString; 
-            edtTable.FieldByName('BARCODE').AsString:=CurObj.FieldByName('BARCODE').AsString;
-            edtTable.FieldByName('UNIT_ID').AsString:=CurObj.FieldByName('UNIT_ID').AsString;
-            edtTable.FieldByName('IS_PRESENT').AsString:='0';
-            //edtTable.FieldByName('LOCUS_NO').AsString:='';
-            edtTable.FieldByName('BATCH_NO').AsString:='#';
-            edtTable.FieldByName('NEW_INPRICE').AsString:=CurObj.FieldByName('NEW_INPRICE').AsString;
-            edtTable.FieldByName('NEW_OUTPRICE').AsString:=CurObj.FieldByName('NEW_OUTPRICE').AsString;
-            edtTable.FieldByName('RCK_AMOUNT').AsString:=CurObj.FieldByName('AMOUNT').AsString;
-            edtTable.Post;
-            CdsList.Next;
-          end;
-        end;
-      end;
-    finally
-      CurObj.Free;
-      Free;       
-    end;
-  end;
+    edtTable.Post;
 end;
 
 procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean);
@@ -934,6 +772,285 @@ begin
     Lbl_LinkCheckGood.Font.Color:=clGrayText
   else
     Lbl_LinkCheckGood.Font.Color:=clWindowText;
+end;
+
+procedure TfrmCheckOrder.AmountToCalc(Amount: Real);
+var
+  rs:TZQuery;
+  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Real;
+  Field:TField;
+begin
+  if Locked then Exit;
+  Locked := true;
+  try
+      if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+      rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+         begin
+          SourceScale := 1;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+         end
+      else
+         begin
+          SourceScale := 1;
+         end;
+      Field := edtTable.FindField('CALC_AMOUNT');
+      if Field<>nil then
+         begin
+            Field.AsFloat := AMount * SourceScale;
+         end;
+      edtProperty.Filtered := false;
+      edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+      edtProperty.Filtered := true;
+      try
+        edtProperty.First;
+        while not edtProperty.Eof do
+          begin
+            edtProperty.Edit;
+            edtProperty.FieldByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+            edtProperty.FieldByName('UNIT_ID').AsString := edtTable.FieldByName('UNIT_ID').AsString;
+            edtProperty.FieldByName('IS_PRESENT').AsString := edtTable.FieldByName('IS_PRESENT').AsString;
+            edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
+            edtProperty.FieldByName('BOM_ID').AsString := edtTable.FieldByName('BOM_ID').AsString;
+            edtProperty.FieldByName('LOCUS_NO').AsString := edtTable.FieldByName('LOCUS_NO').AsString;
+            edtProperty.FieldByName('CALC_AMOUNT').AsFloat := edtProperty.FieldByName('AMOUNT').AsFloat * SourceScale;
+            edtProperty.Post;
+            edtProperty.Next;
+          end;
+      finally
+        edtProperty.Filtered := false;
+      end;
+      Calc(1);
+      edtTable.Post;
+      edtTable.Edit;
+  finally
+      Locked := false
+  end;
+end;
+
+procedure TfrmCheckOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Real;
+begin
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+  if PropertyEnabled then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+     end
+  else
+  begin
+    try
+      if Text='' then r := 0 else r := StrtoFloat(Text);
+      if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
+    except
+      Text := TColumnEh(Sender).Field.AsString;
+      Value := TColumnEh(Sender).Field.asFloat;
+      Raise Exception.Create('输入无效数值型');
+    end;
+    TColumnEh(Sender).Field.asFloat := r;
+    AMountToCalc(r);
+    //2011.02.22关闭　盘点不需要原用多个单位计算
+    //   AMountToCalc(r);
+    //:输入 实盘 计算 盈亏;
+    Calc(1);
+  end;
+end;
+
+procedure TfrmCheckOrder.Lbl_LinkCheckGoodClick(Sender: TObject);
+var Print_ID,GODE_ID,BatchNo: string; CurObj: TRecord_;
+begin
+  if not cdsHeader.Active then exit;
+  if trim(LblCount.Caption)='0' then Raise Exception.Create('  没有未录入的的商品！  '); 
+  Print_ID:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
+  if Print_ID='' then Exit;
+  with TfrmSelectCheckGoods.Create(self) do
+  begin
+    try
+      CurObj:=TRecord_.Create;
+      MultiSelect := true;
+      InitGrid(Print_ID);
+      if self.dbState = dsBrowse then
+      begin
+        MultiSelect:=False;
+        chkMultSelect.Checked:=False;
+        chkMultSelect.Enabled:=false;
+        btnOk.Visible:=false;
+        RzBitBtn2.Caption:='返回';
+      end;
+      if ShowModal=MROK then
+      begin
+        cdsList.Filtered:=False;
+        cdsList.Filter:='A=1';
+        cdsList.Filtered:=true;
+        cdsList.First;
+        try
+          edtTable.DisableControls;
+          edtTable.First;
+          while not edtTable.Eof do
+          begin
+            if edtTable.FieldByName('GODS_ID').AsString='' then
+              edtTable.Delete;
+            edtTable.Next;
+          end;
+        finally
+          edtTable.EnableControls;
+        end;
+
+        while not cdsList.Eof do
+        begin
+          CurObj.ReadFromDataSet(CdsList);
+          GODE_ID:=trim(CurObj.fieldbyName('GODS_ID').AsString);
+          BatchNo:=trim(CurObj.fieldbyName('BATCH_NO').AsString);
+          if not edtTable.Locate('GODS_ID;BATCH_NO',VarArrayOf([GODE_ID,BatchNo]),[]) then
+          begin                                  
+            inc(RowId);
+            edtTable.Append;
+            edtTable.FieldByName('SEQNO').AsInteger:=RowId;
+            edtTable.FieldByName('GODS_ID').AsString:=CurObj.FieldByName('GODS_ID').AsString;
+            edtTable.FieldByName('GODS_CODE').AsString:=CurObj.FieldByName('GODS_CODE').AsString;
+            edtTable.FieldByName('GODS_NAME').AsString:=CurObj.FieldByName('GODS_NAME').AsString; 
+            edtTable.FieldByName('BARCODE').AsString:= EnCodeBarcode;
+            edtTable.FieldByName('UNIT_ID').AsString:=CurObj.FieldByName('UNIT_ID').AsString;
+            edtTable.FieldByName('IS_PRESENT').AsString:='0';
+            //edtTable.FieldByName('LOCUS_NO').AsString:='';
+            edtTable.FieldByName('BATCH_NO').AsString:='#';
+            edtTable.FieldByName('NEW_INPRICE').AsString:=CurObj.FieldByName('NEW_INPRICE').AsString;
+            edtTable.FieldByName('NEW_OUTPRICE').AsString:=CurObj.FieldByName('NEW_OUTPRICE').AsString;
+            edtTable.FieldByName('RCK_AMOUNT').AsString:=CurObj.FieldByName('AMOUNT').AsString;
+            edtTable.Post;
+            CdsList.Next;
+          end;
+        end;
+      end;
+    finally
+      CurObj.Free;
+      Free;       
+    end;
+  end;
+end;
+
+procedure TfrmCheckOrder.UnitToCalc(UNIT_ID: string);
+var AMount,SourceScale:Real;
+    Field:TField;
+    rs:TZQuery;
+    u:integer;
+begin
+  if Locked then Exit;
+  if UNIT_ID=edtTable.FieldbyName('UNIT_ID').AsString  then Exit;
+  Locked := True;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  try
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+      Field := edtTable.FindField('CALC_AMOUNT');
+      if Field=nil then Exit;
+      AMount := Field.asFloat;
+      if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+      edtTable.FieldByName('UNIT_ID').AsString := UNIT_ID;
+      edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+         begin
+          SourceScale := 1;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+         end
+      else
+         begin
+          SourceScale := 1;
+         end;
+      Field := edtTable.FindField('AMOUNT');
+      if Field<>nil then
+         begin
+            Field.AsFloat := AMount / SourceScale;
+         end;
+      edtTable.FieldbyName('RCK_AMOUNT').asFloat := edtTable.FieldbyName('RCK_CALC_AMOUNT').asFloat / SourceScale;
+      edtProperty.Filtered := false;
+      edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+      edtProperty.Filtered := true;
+      try
+        edtProperty.First;
+        while not edtProperty.Eof do
+          begin
+            edtProperty.Edit;
+            edtProperty.FieldByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+            edtProperty.FieldByName('IS_PRESENT').AsString := edtTable.FieldByName('IS_PRESENT').AsString;
+            edtProperty.FieldByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
+            edtProperty.FieldByName('UNIT_ID').AsString := UNIT_ID;
+            edtProperty.FieldByName('RCK_AMOUNT').AsFloat := edtProperty.FieldByName('RCK_CALC_AMOUNT').AsFloat / SourceScale;
+            edtProperty.FieldByName('AMOUNT').AsFloat := edtProperty.FieldByName('CALC_AMOUNT').AsFloat / SourceScale;
+            edtProperty.Post;
+            edtProperty.Next;
+          end;
+      finally
+        edtProperty.Filtered := false;
+      end;
+      InitPrice(edtTable.FieldByName('GODS_ID').asString,UNIT_ID);
+      Locked := false;
+      Calc(1);
+  finally
+     Locked := false;
+  end;
+end;
+
+procedure TfrmCheckOrder.AddRecord(AObj: TRecord_; UNIT_ID: string;
+  Located, IsPresent: boolean);
+var
+  Pt:integer;
+  r:boolean;
+begin
+  if IsPresent then pt := 1 else pt := 0;
+  if Located then
+     begin
+        if not gRepeat then
+            begin
+              r := edtTable.Locate('GODS_ID;BATCH_NO;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,'#',pt,null,null]),[]);
+              if r then
+                 begin
+                   if edtTable.FieldbyName('UNIT_ID').asString<>UNIT_ID then
+                      UnitToCalc(UNIT_ID);
+                   Exit;
+                 end;
+            end;
+        inc(RowID);
+        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+        edtTable.Edit else InitRecord;
+        edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
+        if UNIT_ID='' then
+           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
+        else
+           edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
+        edtTable.FieldbyName('BATCH_NO').AsString := '#';
+     end;
+  edtTable.Edit;
+  edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+  InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
 end;
 
 end.

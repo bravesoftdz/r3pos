@@ -76,7 +76,7 @@ end;
 function TPrintData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var str: string; ReRun: Integer;
 begin
-  str:='update STO_PRINTDATA set CHK_AMOUNT=:CHK_AMOUNT,CHECK_STATUS=''2'' '+
+  str:='update STO_PRINTDATA set CHK_AMOUNT=:CALC_AMOUNT,CHECK_STATUS=''2'' '+
     ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and GODS_ID=:GODS_ID and '+
     ' PROPERTY_01=:PROPERTY_01 and PROPERTY_02=:PROPERTY_02 and BATCH_NO=:BATCH_NO ';
   ReRun:=AGlobal.ExecSQL(str,self);
@@ -84,7 +84,7 @@ begin
   if ReRun=0 then  //没有更新到记录;
   begin
     Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_AMOUNT,:CHK_AMOUNT,2)';
+         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_CALC_AMOUNT,:CALC_AMOUNT,2)';
     AGlobal.ExecSQL(str, self);
   end;
   result := true;
@@ -102,17 +102,19 @@ begin
   SelectSQL.Text:=
     ParseSQL(iDbType,
     'select j.ROWS_ID as ROWS_ID,j.TENANT_ID as TENANT_ID,j.SHOP_ID as SHOP_ID,j.PRINT_DATE as PRINT_DATE,j.GODS_ID as GODS_ID,j.PROPERTY_01 as PROPERTY_01,'+
-    'j.PROPERTY_02 as PROPERTY_02,j.BATCH_NO as BATCH_NO,j.LOCUS_NO as LOCUS_NO,j.BOM_ID as BOM_ID,B.CALC_UNITS as UNIT_ID,0 as IS_PRESENT,0 as SEQNO,'+
-    'j.RCK_AMOUNT as RCK_AMOUNT,'+  //账面库存量
-    'j.CHK_AMOUNT as CHK_AMOUNT,'+  //盘点库存量
-    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0)) as PAL_AMOUNT,'+  //盈亏数量
+    'j.PROPERTY_02 as PROPERTY_02,j.BATCH_NO as BATCH_NO,j.LOCUS_NO as LOCUS_NO,j.BOM_ID as BOM_ID,B.UNIT_ID,0 as IS_PRESENT,0 as SEQNO,'+
+    'j.RCK_AMOUNT/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+  //账面库存量
+    'j.RCK_AMOUNT as RCK_CALC_AMOUNT,'+  //账面库存量
+    'j.CHK_AMOUNT/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as AMOUNT,'+  //盘点库存量
+    'j.CHK_AMOUNT as CALC_AMOUNT,'+  //盘点库存量
+    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PAL_AMOUNT,'+  //盈亏数量
     ' b.GODS_NAME as GODS_NAME,b.GODS_CODE as GODS_CODE,'+
-    ' b.NEW_INPRICE as NEW_INPRICE,'+
-    ' b.NEW_OUTPRICE as NEW_OUTPRICE,'+
+    ' b.NEW_INPRICE/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
+    ' b.NEW_OUTPRICE/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_INPRICE,0) as PAL_INAMONEY,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_OUTPRICE,0) as PAL_OUTAMONEY  '+
     ' from STO_PRINTDATA j '+
-    ' left join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+    ' left outer join VIW_GOODSPRICEEXT b on j.TENANT_ID=b.TENANT_ID and j.SHOP_ID=b.SHOP_ID and j.GODS_ID=b.GODS_ID '+
     ' where j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.PRINT_DATE=:PRINT_DATE and CHECK_STATUS=2 '+
     ' order by b.GODS_CODE');
 end;

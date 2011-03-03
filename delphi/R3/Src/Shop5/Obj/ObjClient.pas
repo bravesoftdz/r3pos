@@ -31,7 +31,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-      Raise Exception.Create('此客户在销售单据中有使用,不能删除!');
+      Raise Exception.Create('客户"'+FieldbyName('CLIENT_NAME').AsString+'"在销售单据中有使用,不能删除!');
 
     rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and IC_CARDNO=:IC_CARDNO'+
     ' and TENANT_ID=:TENANT_ID ';
@@ -41,7 +41,7 @@ begin
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
       if rs.FieldByName('BALANCE').AsFloat > 0 then
-        Raise Exception.Create('此客户卡中还有余额,不能删除!')
+        Raise Exception.Create('客户卡"'+FieldbyName('CLIENT_ID').AsString+'"中还有余额,不能删除!')
       else
         begin
           Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
@@ -71,11 +71,11 @@ begin
         if Copy(Temp.FieldByName('COMM').AsString,2,1) = '2' then
           AGlobal.ExecSQL('delete from PUB_IC_INFO where IC_CARDNO=:CLIENT_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ',Self)
         else
-          Raise Exception.Create('此客户卡号已经存在,不能重复!');
+          Raise Exception.Create('客户卡号已经存在,不能重复!');
 
       Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
-      'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,''#'',:CLIENT_CODE,:CREA_DATE,:CREA_USER,'+
-      ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+       'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
+       ':IC_INFO,''0'',''0'',0,0,0,0,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
       AGlobal.ExecSQL(Str,Self);
       Result := True;
     finally
@@ -104,33 +104,32 @@ begin
       Temp.ParamByName('OLD_TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
       Temp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
       AGlobal.Open(Temp);
+      if not Temp.IsEmpty then
+        if (Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString)
+         and
+         (Copy(Temp.FieldbyName('COMM').AsString,2,1)<>'2')
+         then
+         Raise Exception.Create('此客户卡号已经存在,不能重复!');
 
-      if (Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString)
-       and
-       (Copy(Temp.FieldbyName('COMM').AsString,2,1)<>'2')
-       then
-       Raise Exception.Create('此客户卡号已经存在,不能重复!');
-
-       if Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString then
+      if not Temp.IsEmpty and (Temp.FieldByName('CLIENT_ID').AsString <> FieldByName('CLIENT_ID').AsString) then
         begin
-          Str := 'delete from PUB_IC_INFO where IC_CARDNO=:OLD_CLIENT_NO and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
-          AGlobal.ExecSQL(Str,Self);
+          Str := 'delete from PUB_IC_INFO where IC_CARDNO=:CLIENT_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+          AGlobal.ExecSQL(Str,self);
           n := 0;
-        end
-       else
-        begin
-          Str := 'update PUB_IC_INFO set IC_CARDNO=:CLIENT_CODE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-          ' where IC_CARDNO=:OLD_CLIENT_NO and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
-          n := AGlobal.ExecSQL(Str,Self);
         end;
 
-        if n = 0 then
-          begin
-            Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
+      Str := 'update PUB_IC_INFO set CLIENT_ID=:CLIENT_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,'+
+          'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
+          GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO=:OLD_CLIENT_CODE and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+      n := AGlobal.ExecSQL(Str,Self);
+
+      if n = 0 then
+        begin
+          Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
             'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,''#'',:CLIENT_CODE,:CREA_DATE,:CREA_USER,'+
-            ':IC_INFO,''0'',''0'',:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
-            AGlobal.ExecSQL(Str,Self);
-          end;
+            ':IC_INFO,:IC_STATUS,:IC_TYPE,:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,:PASSWRD,:USING_DATE,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+          AGlobal.ExecSQL(Str,Self);
+        end;
 
       Result := True;
     finally
@@ -151,12 +150,12 @@ begin
   inherited;
   KeyFields := 'CLIENT_ID;TENANT_ID';
 
-  SelectSQL.Text := 'select A.TENANT_ID,A.CLIENT_ID,A.CLIENT_TYPE,A.CLIENT_CODE,A.LICENSE_CODE,A.CLIENT_NAME,A.CLIENT_SPELL,A.SORT_ID,'+
-  'A.REGION_ID,A.SETTLE_CODE,A.ADDRESS,A.POSTALCODE,A.LINKMAN,A.TELEPHONE3,A.TELEPHONE1,A.TELEPHONE2,A.FAXES,A.HOMEPAGE,A.EMAIL,A.QQ,'+
-  'A.MSN,A.BANK_ID,A.ACCOUNT,A.INVOICE_FLAG,A.REMARK,A.TAX_RATE,A.PRICE_ID,A.SHOP_ID,B.UNION_ID,B.IC_CARDNO,B.CREA_DATE,B.CREA_USER,B.IC_INFO,B.IC_STATUS,B.IC_TYPE,'+
-  'B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,B.PASSWRD,B.USING_DATE '+
-  ' from PUB_CLIENTINFO A left join PUB_IC_INFO B on A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID'+
-  ' where A.COMM not in (''02'',''12'') and A.CLIENT_ID=:CLIENT_ID and A.TENANT_ID=:TENANT_ID and B.UNION_ID=:UNION_ID order by A.CLIENT_ID';
+  SelectSQL.Text :='select A.*,B.UNION_ID,B.IC_CARDNO,B.CREA_DATE,B.CREA_USER,B.IC_INFO,B.IC_STATUS,B.IC_TYPE,B.ACCU_INTEGRAL,'+
+  'B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,B.PASSWRD,B.USING_DATE from (select TENANT_ID,CLIENT_ID,''#'' as UNION_ID,CLIENT_TYPE,'+
+  'CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,SORT_ID,REGION_ID,SETTLE_CODE,ADDRESS,POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,'+
+  'TELEPHONE2,FAXES,HOMEPAGE,EMAIL,QQ,MSN,BANK_ID,ACCOUNT,INVOICE_FLAG,REMARK,TAX_RATE,PRICE_ID,SHOP_ID from PUB_CLIENTINFO '+
+  'where COMM not in (''02'',''12'') and CLIENT_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID) A left join PUB_IC_INFO B '+
+  'on A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and B.UNION_ID=A.UNION_ID order by A.CLIENT_CODE';
   IsSQLUpdate := True;
 
   Str := 'insert into PUB_CLIENTINFO(TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,SORT_ID,'+

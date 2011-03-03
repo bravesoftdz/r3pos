@@ -29,7 +29,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-      Raise Exception.Create('此供应商在入库单据中有使用,不能删除!');
+      Raise Exception.Create('供应商"'+FieldbyName('CLIENT_NAME').AsString+'"在入库单据中有使用,不能删除!');
   finally
     rs.Free;
   end;
@@ -60,7 +60,8 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where CLIENT_NAME=:CLIENT_NAME and CLIENT_ID<>:OLD_CLIENT_ID and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_CLIENTINFO where COMM not in (''12'',''02'') and CLIENT_NAME=:CLIENT_NAME '+
+    'and CLIENT_ID<>:OLD_CLIENT_ID and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('CLIENT_NAME').AsString := FieldbyName('CLIENT_NAME').AsString;
     rs.ParamByName('OLD_CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
     rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;

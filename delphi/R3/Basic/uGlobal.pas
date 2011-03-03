@@ -475,6 +475,7 @@ begin
        Factor.Open(Result);
      end;
   if Result.Filtered then Result.Filtered := false;
+  Result.CommitUpdates;
 end;
 
 procedure TGlobal.SetTENANT_ID(const Value: integer);

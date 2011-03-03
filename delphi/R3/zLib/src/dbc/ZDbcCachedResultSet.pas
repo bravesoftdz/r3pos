@@ -2373,12 +2373,17 @@ begin
 end;
 
 procedure TZAbstractCachedResultSet.CommitUpdates;
+var
+  InitialRow, CurrentRow: PZRowBuffer;
 begin
   CheckClosed;
   if FInitialRowsList.Count > 0 then
   begin
     while FInitialRowsList.Count > 0 do
     begin
+      InitialRow := PZRowBuffer(FInitialRowsList[0]);
+      CurrentRow := PZRowBuffer(FCurrentRowsList[0]);
+      CurrentRow.UpdateType := utUnmodified;
       FInitialRowsList.Delete(0);
       FCurrentRowsList.Delete(0);
     end;

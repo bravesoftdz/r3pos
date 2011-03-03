@@ -149,14 +149,6 @@ begin
 end;
 
 procedure TfrmCustomer.actDeleteExecute(Sender: TObject);
-  procedure UpdateToGlobal(Str:string);
-   var Temp:TZQuery;
-   begin
-      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
-      Temp.Filtered := false;
-      if not Temp.Locate('CLIENT_ID',Str,[]) then
-        Temp.Delete;
-   end;
 var i,n:integer;
     tmpGlobal:TZQuery;
 begin
@@ -164,12 +156,14 @@ begin
   if (Not Cds_Customer.Active) or (Cds_Customer.RecordCount = 0) then Exit;
   if Cds_Customer.State in [dsEdit,dsInsert] then Cds_Customer.Post;
   if not ShopGlobal.GetChkRight('300009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
-  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
+  i:=MessageBox(Handle,Pchar('确定要删除选中记录吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i=6 then
   begin
     tmpGlobal := Global.GetZQueryFromName('PUB_CUSTOMER');
     Cds_Customer.DisableControls;
     try
+      Cds_Customer.CommitUpdates;
+      tmpGlobal.CommitUpdates;
       Cds_Customer.Filtered := false;
       Cds_Customer.Filter := 'selFlag=1';
       Cds_Customer.Filtered := true;
@@ -181,11 +175,14 @@ begin
         if Cds_Customer.FieldByName('selflag').AsString = '1' then
         begin
           if tmpGlobal.Locate('CLIENT_ID',Cds_Customer.FieldByName('CUST_ID').AsString,[]) then
-            tmpGlobal.Delete;
+             begin
+              tmpGlobal.Delete;
+             end;
           Cds_Customer.Delete;
           inc(n);
         end
-        else Cds_Customer.Next;
+        else
+          Cds_Customer.Next;
       end;
       try
         Factor.UpdateBatch(Cds_Customer,'TCustomer');
@@ -215,8 +212,6 @@ begin
   inherited;
   if (not Cds_Customer.Active) or (Cds_Customer.IsEmpty) then exit;
   if not ShopGlobal.GetChkRight('300008') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
-  //Tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-  //if Tmp.Locate('SHOP_ID',Cds_Customer.FieldByName('SHOP_ID').AsString,[]) then
     with TfrmCustomerInfo.Create(self) do
       begin
         try
@@ -245,7 +240,7 @@ begin
      AObj.WriteToDataSet(Cds_Customer,false);
      Cds_Customer.FieldByName('selflag').AsString:='0';
      Cds_Customer.Post;
-     rcAmt:=rcAmt+1;
+     inc(rcAmt);
   end;
   InitGrid;
   //if Cds_Customer.Locate('CUST_ID',AObj.FieldByName('CUST_ID').AsString,[]) then;
@@ -419,50 +414,54 @@ var Str_Where,Str_Sql:string;
 begin
   if Trim(edtKey.Text)<>'' then
      begin
-       Str_Where:=' and (A.MOVE_TELE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.CUST_NAME LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
-       ' or A.CUST_CODE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.CUST_SPELL LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
-       ' or A.IC_CARDNO LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or A.REMARK LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+')';
+       Str_Where:=' and (MOVE_TELE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or CUST_NAME LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
+       ' or CUST_CODE LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+' or CUST_SPELL LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+
+       ' or ID_NUMBER LIKE '+QuotedStr('%'+Trim(edtKey.Text)+'%')+')';
      end;
   if id<>'' then
-    Str_Where := Str_Where + ' and A.CUST_ID>'''+id+'''';
+    Str_Where := Str_Where + ' and CUST_ID>'''+id+'''';
 
   //  对会员生日日期进行条件查询
   if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
+     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and substring(A.BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(A.BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
 
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
-     Str_Where:=Str_Where+' and A.SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date));
+     Str_Where:=Str_Where+' and SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and A.SND_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date))+' and A.SND_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and SND_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date))+' and SND_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
 
   if cmbSHOP_ID.AsString<>'' then
-     Str_Where:=Str_Where+' and A.SHOP_ID='+QuotedStr(cmbSHOP_ID.AsString);
+     Str_Where:=Str_Where+' and SHOP_ID='+QuotedStr(cmbSHOP_ID.AsString);
   if cmbPRICE_ID.AsString<>'' then
-     Str_Where:=Str_Where+' and A.PRICE_ID='+QuotedStr(cmbPRICE_ID.AsString);
+     Str_Where:=Str_Where+' and PRICE_ID='+QuotedStr(cmbPRICE_ID.AsString);
   if fndSORT_ID.AsString<>'' then
-     Str_Where:=Str_Where+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+     Str_Where:=Str_Where+' and SORT_ID='+QuotedStr(fndSORT_ID.AsString);
   if trim(fndINTEGRAL.Text)<>'' then
-     Str_Where:=Str_Where+' and A.INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
+     Str_Where:=Str_Where+' and INTEGRAL>='+inttostr(StrtoIntDef(trim(fndINTEGRAL.Text),0));
 
-  Str_Sql := ' 0 selflag,A.CUST_ID,A.TENANT_ID,A.SHOP_ID,A.CUST_CODE,A.CUST_NAME,A.SEX,A.MOVE_TELE,A.BIRTHDAY,A.FAMI_ADDR,B.IC_CARDNO,B.UNION_ID,'+
-  'A.SORT_ID,A.PRICE_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
-  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where+' order by A.SHOP_ID,A.CUST_CODE ';
+  Str_Sql :=
+  'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from ('+
+  'select 0 selflag,CUST_ID,TENANT_ID,SHOP_ID,CUST_CODE,CUST_NAME,SEX,MOVE_TELE,BIRTHDAY,FAMI_ADDR,'+
+  'SORT_ID,PRICE_ID,''#'' as UNION_ID from PUB_CUSTOMER where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Str_Where+') '+
+  'A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.UNION_ID=B.UNION_ID ';
 
-  Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
-  'where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and B.UNION_ID=''#'' '+Str_Where;
+  Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Str_Where;
 
   case Factor.iDbType of
-    0:Result := 'select top 600 '+Str_Sql;
-    5:Result := 'select '+Str_Sql+' limit 600';
+  0:result := 'select top 600 * from ('+Str_Sql+') jp order by CUST_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+Str_Sql+') order by CUST_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+Str_Sql+') order by CUST_ID limit 600';
   else
-    Result := 'select '+ Str_Sql;
+    result := 'select * from ('+Str_Sql+') order by CUST_ID';
   end;
 end;
 

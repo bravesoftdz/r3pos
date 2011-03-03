@@ -38,7 +38,7 @@ inherited frmTransOrder: TfrmTransOrder
       BorderColor = clWhite
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 291
+        Left = 310
         Top = 11
         Width = 67
         Height = 26
@@ -65,7 +65,7 @@ inherited frmTransOrder: TfrmTransOrder
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 384
+        Left = 401
         Top = 11
         Width = 67
         Height = 26
@@ -153,12 +153,26 @@ inherited frmTransOrder: TfrmTransOrder
         Alignment = taRightJustify
         Caption = #35828#26126
       end
-      object Label1: TLabel
-        Left = 202
+      object labOUT: TLabel
+        Left = 194
         Top = 67
-        Width = 63
+        Width = 33
         Height = 12
-        Caption = 'dfgjdsif:'
+        Caption = #20313#39069':'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+        Transparent = True
+      end
+      object labIN: TLabel
+        Left = 194
+        Top = 92
+        Width = 33
+        Height = 12
+        Caption = #20313#39069':'
         Font.Charset = GB2312_CHARSET
         Font.Color = clRed
         Font.Height = -12

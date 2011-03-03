@@ -139,9 +139,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 520
       Height = 212
-      ActivePage = TabSheet6
       Align = alBottom
-      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -170,12 +168,12 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           end
           object RzLabel20: TRzLabel
             Left = 240
-            Top = 57
+            Top = 103
             Width = 100
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #32047#35745#31215#20998
+            Caption = #21487#29992#20313#39069
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -275,7 +273,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           end
           object RzLabel17: TRzLabel
             Left = 240
-            Top = 104
+            Top = 58
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -312,15 +310,15 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             TabOrder = 1
             OnKeyPress = cmbID_NUMBERKeyPress
           end
-          object cmbACCU_INTEGRAL: TcxTextEdit
+          object cmbBALANCE: TcxTextEdit
             Left = 347
-            Top = 53
+            Top = 99
             Width = 121
             Height = 20
             Enabled = False
             Properties.OnChange = edtCUST_NAMEPropertiesChange
             TabOrder = 6
-            OnKeyPress = cmbACCU_INTEGRALKeyPress
+            OnKeyPress = cmbBALANCEKeyPress
           end
           object cmbRULE_INTEGRAL: TcxTextEdit
             Left = 347
@@ -369,7 +367,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           end
           object cmbINTEGRAL: TcxTextEdit
             Left = 347
-            Top = 99
+            Top = 53
             Width = 121
             Height = 20
             Enabled = False

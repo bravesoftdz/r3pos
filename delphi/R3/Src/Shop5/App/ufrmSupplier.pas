@@ -103,7 +103,6 @@ procedure TfrmSupplier.actDeleteExecute(Sender: TObject);
       if Temp.Locate('CLIENT_ID',str,[]) then
       begin
         Temp.Delete;
-        //temp.UpdateBatch(arAll);
       end;
     end;
 var
@@ -116,6 +115,7 @@ begin
   i:=MessageBox(Handle,Pchar('ÊÇ·ñÒªÉ¾³ýÂð?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
+    Cds_Client.CommitUpdates;
     Cds_Client.DisableControls;
     try
       Cds_Client.Filtered := false;
@@ -135,6 +135,7 @@ begin
       try
         Factor.UpdateBatch(Cds_Client,'TSupplier');
       except
+        Cds_Client.CancelUpdates;
         Cds_Client.CancelUpdates;
         Raise;
       end;

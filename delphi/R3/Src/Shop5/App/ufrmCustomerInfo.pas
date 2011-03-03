@@ -41,7 +41,7 @@ type
     RzLabel18: TRzLabel;
     cmbID_NUMBER: TcxTextEdit;
     RzLabel20: TRzLabel;
-    cmbACCU_INTEGRAL: TcxTextEdit;
+    cmbBALANCE: TcxTextEdit;
     RzLabel21: TRzLabel;
     cmbRULE_INTEGRAL: TcxTextEdit;
     RzLabel24: TRzLabel;
@@ -123,7 +123,7 @@ type
     procedure cmbID_NUMBERKeyPress(Sender: TObject; var Key: Char);
     procedure cmbOFFI_TELEKeyPress(Sender: TObject; var Key: Char);
     procedure cmbRULE_INTEGRALKeyPress(Sender: TObject; var Key: Char);
-    procedure cmbACCU_INTEGRALKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbBALANCEKeyPress(Sender: TObject; var Key: Char);
     procedure cmbINTEGRALKeyPress(Sender: TObject; var Key: Char);
     procedure cmbMOVE_TELEKeyPress(Sender: TObject; var Key: Char);
     procedure edtSORT_IDAddClick(Sender: TObject);
@@ -298,20 +298,12 @@ begin
           Raise Exception.Create('此会员号已经存在，不能重复！');
       end;
   end;
-  if dbState=dsEdit then
-  begin
-    if StrToFloatDef(trim(cmbINTEGRAL.Text),0)>StrToFloatDef(trim(cmbACCU_INTEGRAL.Text),0) then
-    begin
-      cmbINTEGRAL.SetFocus;
-      Raise Exception.Create('可用积分不能大于累积积分！');
-    end;
-  end;
   tmp1:=TZQuery.Create(nil);
   try
     tmp1.Close;
     case Factor.iDbType of
-      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(cmbACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
-      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(cmbACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
+      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
+      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
     end;
     Factor.Open(tmp1);
     if (not tmp1.IsEmpty) and (cmbPRICE_ID.AsString<>tmp1.FieldByName('PRICE_ID').AsString) then
@@ -321,11 +313,6 @@ begin
     end;
   finally
     tmp1.Close;
-  end;
-  if dbState=dsInsert then
-  begin
-    if StrToFloatDef(trim(cmbINTEGRAL.Text),0)<>0 then
-       cmbACCU_INTEGRAL.Text:=trim(cmbINTEGRAL.Text);
   end;
   if cmbCUST_NAME.Text<>cdsTable.FieldByName('CUST_NAME').AsString  then
   begin
@@ -356,11 +343,14 @@ begin
   WriteTo(Aobj);
   if not IsEdit(Aobj,cdsTable) then exit;
   if dbState = dsInsert then
+     begin
+       AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId;
+       Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     end;
+  if (Aobj.FieldByName('IC_CARDNO').AsString='') then
     begin
-      AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId;
       Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
       Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
-      Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Aobj.FieldByName('IC_INFO').AsString := '企业卡';
       Aobj.FieldByName('UNION_ID').AsString := '#';
       Aobj.FieldByName('IC_STATUS').AsString := '0';
@@ -517,7 +507,7 @@ procedure TfrmCustomerInfo.WriteTo(AObj: TRecord_);
 begin
   WriteToObject(Aobj,self);
   if Trim(cmbINTEGRAL.Text)='' then AObj.FieldByName('INTEGRAL').AsString:='0';
-  if Trim(cmbACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
+  if Trim(edtACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
   if Trim(cmbRULE_INTEGRAL.Text)='' then AObj.FieldByName('RULE_INTEGRAL').AsString:='0';
   AObj.FieldByName('SEX').AsInteger:=cmbSEX.ItemIndex;
   if Trim(edtREGION_ID.Text)='' then AObj.FieldByName('REGION_ID').AsString := '#'; 
@@ -668,7 +658,7 @@ begin
   if Key>=#160 then Key:= #0;
 end;
 
-procedure TfrmCustomerInfo.cmbACCU_INTEGRALKeyPress(Sender: TObject;
+procedure TfrmCustomerInfo.cmbBALANCEKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;

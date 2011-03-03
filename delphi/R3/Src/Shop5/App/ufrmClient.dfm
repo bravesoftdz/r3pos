@@ -260,12 +260,6 @@ inherited frmClient: TfrmClient
                     EditButtons = <>
                     FieldName = 'SETTLE_CODE'
                     Footers = <>
-                    KeyList.Strings = (
-                      '0'
-                      '1')
-                    PickList.Strings = (
-                      #25353#27425
-                      #25353#26376)
                     ReadOnly = True
                     Title.Caption = #32467#31639#26041#24335
                     Width = 55

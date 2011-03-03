@@ -409,16 +409,7 @@ inherited frmCustomer: TfrmCustomer
                     FieldName = 'CUST_CODE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #20250#21592#21495
-                    Width = 100
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'IC_CARDNO'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #20648#20540#21345#21495
-                    Visible = False
+                    Title.Caption = #20250#21592#21345#21495
                     Width = 100
                   end
                   item
@@ -529,6 +520,11 @@ inherited frmCustomer: TfrmCustomer
                     ReadOnly = True
                     Title.Caption = #22320#22336
                     Width = 279
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CUST_ID'
+                    Footers = <>
                   end>
               end
               object stbPanel: TPanel
@@ -805,10 +801,12 @@ inherited frmCustomer: TfrmCustomer
     Top = 256
   end
   object Cds_Customer: TZQuery
+    SortedFields = 'CUST_CODE'
     FieldDefs = <>
     AfterScroll = Cds_CustomerAfterScroll
     CachedUpdates = True
     Params = <>
+    IndexFieldNames = 'CUST_CODE Asc'
     Left = 166
     Top = 352
   end

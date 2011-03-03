@@ -104,37 +104,46 @@ procedure TfrmClient.actDeleteExecute(Sender: TObject);
         Temp.Delete;
       end;
     end;
-var
-i:integer;
+var i:integer;
+  TemGlobal:TZQuery;
 begin
   inherited;
   if (not Cds_Client.Active) and (Cds_Client.IsEmpty) then exit;
   if Cds_Client.State in [dsInsert,dsEdit] then Cds_Client.Post;
   if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
-  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
+  i:=MessageBox(Handle,Pchar('确定要删除选中记录吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i=6 then
   begin
+    TemGlobal := Global.GetZQueryFromName('PUB_CUSTOMER');
     Cds_Client.DisableControls;
     try
+      TemGlobal.CommitUpdates;
+      Cds_Client.CommitUpdates;
       Cds_Client.Filtered := false;
-      Cds_Client.Filter := 'selFlag=1';
+      Cds_Client.Filter := 'selFlag=''1''';
       Cds_Client.Filtered := true;
-      if Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
+      if  Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
       Cds_Client.First;
       while not Cds_Client.Eof do
       begin
         if Cds_Client.FieldByName('selflag').AsString = '1' then
         begin
-          UpdateToGlobal(Cds_Client.FieldByName('CLIENT_ID').AsString);
+          if TemGlobal.Locate('CLIENT_ID',Cds_Client.FieldbyName('CLIENT_ID').AsString,[]) then
+            begin
+              TemGlobal.Delete;
+            end;
           Cds_Client.Delete;
         end
-        else Cds_Client.Next;
+        else
+          Cds_Client.Next;
       end;
+
       try
         Factor.UpdateBatch(Cds_Client,'TClient');
       except
+        TemGlobal.CancelUpdates;
         Cds_Client.CancelUpdates;
-        Raise;
+         Raise;
       end;
     finally
       Cds_Client.Filtered := false;
@@ -144,30 +153,29 @@ begin
 end;
 
 procedure TfrmClient.actFindExecute(Sender: TObject);
-var
-   Str_Wh:String;
+var Str_Where,StrText:String;
 begin
   inherited;
-  Str_Wh := 'select 0 as selflag,A.TENANT_ID,A.CLIENT_ID,A.CLIENT_TYPE,A.CLIENT_CODE,A.LICENSE_CODE,A.CLIENT_NAME,A.CLIENT_SPELL,A.SORT_ID,'+
-  'A.REGION_ID,A.SETTLE_CODE,A.ADDRESS,A.POSTALCODE,A.LINKMAN,A.TELEPHONE3,A.TELEPHONE1,A.TELEPHONE2,A.FAXES,A.HOMEPAGE,A.EMAIL,A.QQ,'+
-  'A.MSN,A.BANK_ID,A.ACCOUNT,B.IC_CARDNO,A.INVOICE_FLAG,A.REMARK,A.TAX_RATE,A.PRICE_ID,B.UNION_ID,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,'+
-  'A.SHOP_ID from PUB_CLIENTINFO A left join PUB_IC_INFO B on A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID'+
-  ' where A.COMM not in (''02'',''12'') and A.CLIENT_TYPE=''2'' and UNION_ID=''#'' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
-
   sqlstring:='';
   if edtKey.Text<>'' then
     begin
-      sqlstring:=' and (A.CLIENT_NAME LIKE ''%'+trim(edtKey.Text)+'%'' or A.CLIENT_SPELL LIKE ''%'+trim(edtKey.Text)+'%'' or A.CLIENT_CODE LIKE ''%'+trim(edtKey.Text)+'%'' )';
-      Str_Wh:=Str_Wh+sqlstring;
+      sqlstring:=' and (CLIENT_NAME LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_SPELL LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_CODE LIKE ''%'+trim(edtKey.Text)+'%'' )';
+      Str_Where:=Str_Where+sqlstring;
     end;
   if fndSORT_ID.AsString<>'' then
     begin
-      sqlstring:=sqlstring+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
-      Str_Wh:=Str_Wh+' and A.SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+      sqlstring:=sqlstring+' and SORT_ID='+QuotedStr(fndSORT_ID.AsString);
+      Str_Where:=Str_Where+' and SORT_ID='+QuotedStr(fndSORT_ID.AsString);
     end;
 
+  StrText := 'select A.*,B.UNION_ID,B.IC_CARDNO,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from ('+
+  'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,SORT_ID,REGION_ID,SETTLE_CODE,'+
+  'ADDRESS,POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,TELEPHONE2,FAXES,HOMEPAGE,EMAIL,QQ,MSN,BANK_ID,ACCOUNT,INVOICE_FLAG,REMARK,TAX_RATE,'+
+  'PRICE_ID,SHOP_ID,''#'' as UNION_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and TENANT_ID='+IntToStr(Global.TENANT_ID)
+  +Str_Where+') A left join PUB_IC_INFO B on A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.UNION_ID=B.UNION_ID order by A.CLIENT_CODE ';
+
   Cds_Client.Close;
-  Cds_Client.SQL.Text := Str_Wh+' order by A.CLIENT_CODE Asc';
+  Cds_Client.SQL.Text := StrText;
   Factor.Open(Cds_Client);
 end;
 
@@ -248,6 +256,7 @@ begin
      Cds_Client.Edit;
      AObj.WriteToDataSet(Cds_Client,false);
      Cds_Client.Post;
+     //Cds_Client.CommitUpdates;
   end
   else
   begin
@@ -255,9 +264,9 @@ begin
      AObj.WriteToDataSet(Cds_Client,false);
      Cds_Client.FieldByName('selflag').AsString:='0';
      Cds_Client.Post;
+     //Cds_Client.CommitUpdates;
   end;
   InitGrid;
-  if Cds_Client.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[]) then;
 end;
 
 procedure TfrmClient.edtKeyKeyDown(Sender: TObject; var Key: Word;
@@ -302,7 +311,7 @@ begin
 end;
 
 procedure TfrmClient.InitGrid;
-var tmp:TZQuery;
+var tmp,temp:TZQuery;
 begin
   DBGridEh1.FieldColumns['SORT_ID'].KeyList.Clear;
   DBGridEh1.FieldColumns['SORT_ID'].PickList.Clear;
@@ -335,6 +344,23 @@ begin
     DBGridEh1.FieldColumns['PRICE_ID'].KeyList.Add(tmp.Fields[1].asstring);
     DBGridEh1.FieldColumns['PRICE_ID'].PickList.Add(tmp.Fields[2].asstring);
     tmp.Next;
+  end;
+
+  try
+    DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Clear;
+    DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Clear;
+    temp := TZQuery.Create(nil);
+    temp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
+    Factor.Open(temp);
+    temp.First;
+    while not temp.Eof do
+      begin
+        DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Add(temp.Fields[0].AsString);
+        DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Add(temp.Fields[1].AsString);
+        temp.Next;
+      end;
+  finally
+    temp.Free;
   end;
 end;
 

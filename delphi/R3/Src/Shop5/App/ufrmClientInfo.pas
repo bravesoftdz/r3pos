@@ -397,7 +397,7 @@ begin
       break;
     end;
   end;
-
+  result := result or TZQuery(cdsTable).Changed;
 end;
 
 class function TfrmClientInfo.AddDialog(Owner: TForm;

@@ -35,8 +35,9 @@ type
     edtTRANS_MNY: TcxTextEdit;
     Label7: TLabel;
     edtREMARK: TcxTextEdit;
-    Label1: TLabel;
+    labOUT: TLabel;
     edtTRANS_USER: TzrComboBoxList;
+    labIN: TLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -259,15 +260,25 @@ end;
 
 procedure TfrmTransOrder.edtOUT_ACCOUNT_IDPropertiesChange(
   Sender: TObject);
+var tem: TZQuery;
 begin
   inherited;
+  tem := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  if tem.Locate('ACCOUNT_ID',tem.FieldByName('ACCOUNT_ID').AsString,[]) then
+    labOUT.Caption := labOUT.Caption+tem.FieldByName('BANLANCE').AsString;
+
   if locked then Exit;
   btnOk.Enabled := True;
 end;
 
 procedure TfrmTransOrder.edtIN_ACCOUNT_IDPropertiesChange(Sender: TObject);
+var tem:TZQuery;
 begin
   inherited;
+  tem := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  if tem.Locate('ACCOUNT_ID',tem.FieldByName('ACCOUNT_ID').AsString,[]) then
+    labIN.Caption := labIN.Caption+tem.FieldByName('BANLANCE').AsString;
+    
   if locked then Exit;
   btnOk.Enabled := True;
 end;

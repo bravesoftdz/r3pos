@@ -29,7 +29,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
 
     AGlobal.Open(rs);
-    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('OUT_MNY').AsFloat <> 0) then
+    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) then
       Raise Exception.Create('此账户金额有变动,不能删除!');
   finally
     rs.Free;

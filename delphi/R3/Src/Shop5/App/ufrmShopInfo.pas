@@ -197,8 +197,7 @@ begin
             Raise  Exception.Create('门店名称已经存在,不能重复!');
     end;
   WriteTo(AObj);
-  if AObj.FieldByName('SEQ_NO').AsString = '' then
-     AObj.FieldByName('SEQ_NO').AsString := AObj.FieldByName('SHOP_ID').AsString;
+
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
   cdsTable.Edit;

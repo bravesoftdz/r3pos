@@ -115,7 +115,7 @@ constructor TCaFactory.Create;
 var
   f:TIniFile;
 begin
-  f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
+  f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     URL := f.ReadString('CaFactory','url','http://www.rspcn.com/rsp/services/CaTenantService?wsdl'); 
   finally

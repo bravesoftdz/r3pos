@@ -558,7 +558,7 @@ CREATE TABLE [CA_SHOP_INFO](
     --所属区域
 	[REGION_ID] [varchar](10) NULL,
     --门店类型(原管理群组 对应PUB_CODE_INFO)
-	[SHOP_TYPE] [varchar](21) NULL,
+	[SHOP_TYPE] [varchar](36) NULL,
     --排序号
   [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步

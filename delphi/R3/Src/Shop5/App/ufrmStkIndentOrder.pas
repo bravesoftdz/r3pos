@@ -82,6 +82,7 @@ type
     //增值税率
     InRate3:real;
     procedure ReadHeader;
+    function CheckInput:boolean;override;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -922,6 +923,11 @@ begin
   PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
+end;
+
+function TfrmStkIndentOrder.CheckInput: boolean;
+begin
+  result := not (pos(inttostr(InputFlag),'124')>0);
 end;
 
 end.

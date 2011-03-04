@@ -22,7 +22,6 @@ type
     btnCancel: TRzBitBtn;
     Label5: TLabel;
     edtUSING_DATE: TcxDateEdit;
-    edtZERO_OUT: TcxCheckBox;
     Label13: TLabel;
     Label14: TLabel;
     BirthDayLb: TLabel;
@@ -58,7 +57,6 @@ type
     Label17: TLabel;
     GroupBox2: TGroupBox;
     Label24: TLabel;
-    chkCheckAudit: TCheckBox;
     TabSheet2: TTabSheet;
     Label21: TLabel;
     Label8: TLabel;
@@ -104,6 +102,14 @@ type
     edtInLevel1: TcxRadioButton;
     edtInLevel2: TcxRadioButton;
     cdsTable: TZQuery;
+    TabSheet4: TTabSheet;
+    edtZERO_OUT: TcxCheckBox;
+    Bevel6: TBevel;
+    edtDB_AUTO_OK: TcxCheckBox;
+    chkCheckAudit: TcxCheckBox;
+    edtSTO_AUTO_CHK: TcxCheckBox;
+    edtSTK_AUTO_CHK: TcxCheckBox;
+    edtSAL_AUTO_CHK: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -236,6 +242,34 @@ begin
         IsStorage.Checked := False
       else if Value = '1' then
         IsStorage.Checked := True;
+    end;
+    if Define = 'SAL_AUTO_CHK' then
+    begin
+      if Value = '0' then
+        edtSAL_AUTO_CHK.Checked := False
+      else if Value = '1' then
+        edtSAL_AUTO_CHK.Checked := True;
+    end;
+    if Define = 'STK_AUTO_CHK' then
+    begin
+      if Value = '0' then
+        edtSTK_AUTO_CHK.Checked := False
+      else if Value = '1' then
+        edtSTK_AUTO_CHK.Checked := True;
+    end;
+    if Define = 'STO_AUTO_CHK' then
+    begin
+      if Value = '0' then
+        edtSTO_AUTO_CHK.Checked := False
+      else if Value = '1' then
+        edtSTO_AUTO_CHK.Checked := True;
+    end;
+    if Define = 'DB_AUTO_OK' then
+    begin
+      if Value = '0' then
+        edtDB_AUTO_OK.Checked := False
+      else if Value = '1' then
+        edtDB_AUTO_OK.Checked := True;
     end;
     if Define = 'DUPBARCODE' then
     begin
@@ -397,6 +431,26 @@ begin
     SetValue('STORAGE', '1')
   else
     SetValue('STORAGE', '0');
+
+  if edtSTK_AUTO_CHK.Checked then
+    SetValue('STK_AUTO_CHK', '1')
+  else
+    SetValue('STK_AUTO_CHK', '0');
+
+  if edtSAL_AUTO_CHK.Checked then
+    SetValue('SAL_AUTO_CHK', '1')
+  else
+    SetValue('SAL_AUTO_CHK', '0');
+
+  if edtSTO_AUTO_CHK.Checked then
+    SetValue('STO_AUTO_CHK', '1')
+  else
+    SetValue('STO_AUTO_CHK', '0');
+
+  if edtDB_AUTO_OK.Checked then
+    SetValue('DB_AUTO_OK', '1')
+  else
+    SetValue('DB_AUTO_OK', '0');
 
   if chkSaveSalesPrint.Checked then
     SetValue('SAVE_SALES_PRINT', '1')
@@ -598,6 +652,11 @@ begin
   edtPosCalcDight.ItemIndex := 0;
   edtINPUT_MODE.ItemIndex := 0;
   edtGUIDE_USER.Checked := true;
+
+  edtDB_AUTO_OK.Checked := true;
+  edtSTO_AUTO_CHK.Checked := true;
+  edtSTK_AUTO_CHK.Checked := true;
+  edtSAL_AUTO_CHK.Checked := true;
 end;
 
 end.

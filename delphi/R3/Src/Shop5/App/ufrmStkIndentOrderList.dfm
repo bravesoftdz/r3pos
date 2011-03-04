@@ -287,6 +287,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   Width = 85
                 end
                 item
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'STOCK_DATE'
                   Footers = <>

@@ -15,11 +15,11 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = tabBasic
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
-      Caption = #22522#30784#21442#25968
+      Caption = #24120#35268#36873#39033
       object Bevel1: TBevel
         Left = 0
         Top = 0
@@ -42,40 +42,23 @@ inherited frmSysDefine: TfrmSysDefine
         Height = 20
         TabOrder = 0
       end
-      object edtZERO_OUT: TcxCheckBox
-        Left = 222
-        Top = 9
-        Width = 153
-        Height = 21
-        Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
-        TabOrder = 1
-      end
       object GroupBox2: TGroupBox
         Left = 18
         Top = 36
         Width = 196
         Height = 77
         Caption = #25104#26412#26680#31639
-        TabOrder = 2
+        TabOrder = 1
         object Label24: TLabel
           Left = 10
-          Top = 24
+          Top = 32
           Width = 48
           Height = 12
           Caption = #25104#26412#31867#22411
         end
-        object chkCheckAudit: TCheckBox
-          Left = 11
-          Top = 48
-          Width = 134
-          Height = 17
-          Caption = #26376#26410#26159#21542#24378#21046#30424#28857
-          TabOrder = 0
-        end
         object edtCALC_FLAG: TcxComboBox
           Left = 63
-          Top = 20
+          Top = 28
           Width = 114
           Height = 20
           Properties.DropDownListStyle = lsFixedList
@@ -83,7 +66,7 @@ inherited frmSysDefine: TfrmSysDefine
             #31227#21160#21152#26435#24179#22343
             #26085#31227#21160#21152#26435#24179#22343
             #26376#31227#21160#21152#26435#24179#22343)
-          TabOrder = 1
+          TabOrder = 0
         end
       end
       object GroupBox5: TGroupBox
@@ -92,7 +75,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 196
         Height = 81
         Caption = #26376#32467#36873#39033
-        TabOrder = 3
+        TabOrder = 2
         object edtRECK_OPTION1: TcxRadioButton
           Left = 16
           Top = 21
@@ -128,7 +111,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 169
         Height = 77
         Caption = #36755#20837#36873#39033
-        TabOrder = 4
+        TabOrder = 3
         object Label18: TLabel
           Left = 12
           Top = 24
@@ -160,7 +143,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
     end
     object tabStock: TTabSheet
-      Caption = #20107#21153#25552#37266
+      Caption = #26234#33021#25552#37266
       ImageIndex = 1
       object Bevel2: TBevel
         Left = 0
@@ -647,6 +630,15 @@ inherited frmSysDefine: TfrmSysDefine
           TabOrder = 1
         end
       end
+      object edtSAL_AUTO_CHK: TcxCheckBox
+        Left = 200
+        Top = 182
+        Width = 192
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #26159#21542#33258#21160#23457#26680#20837#24211#31867#30456#20851#21333#25454
+        TabOrder = 8
+      end
     end
     object TabSheet3: TTabSheet
       Caption = #36827#36135#21442#25968
@@ -724,7 +716,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object chkSaveStockPrint: TcxCheckBox
         Left = 14
-        Top = 160
+        Top = 176
         Width = 163
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -754,6 +746,63 @@ inherited frmSysDefine: TfrmSysDefine
           Caption = #36827#36135#26102#21462#26368#26032#36827#20215
           TabOrder = 1
         end
+      end
+      object edtSTK_AUTO_CHK: TcxCheckBox
+        Left = 14
+        Top = 151
+        Width = 267
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #26159#21542#33258#21160#23457#26680#20837#24211#31867#30456#20851#21333#25454
+        TabOrder = 4
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = #24211#23384#31649#29702
+      ImageIndex = 5
+      object Bevel6: TBevel
+        Left = 0
+        Top = 0
+        Width = 410
+        Height = 215
+        Align = alClient
+        Shape = bsFrame
+      end
+      object edtZERO_OUT: TcxCheckBox
+        Left = 14
+        Top = 17
+        Width = 153
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
+        TabOrder = 0
+      end
+      object edtDB_AUTO_OK: TcxCheckBox
+        Left = 14
+        Top = 73
+        Width = 171
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #35843#25320#26102#26159#21542#31435#21363#21040#36135#30830#35748
+        TabOrder = 1
+      end
+      object chkCheckAudit: TcxCheckBox
+        Left = 14
+        Top = 44
+        Width = 171
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #26376#26410#26159#21542#24378#21046#30424#28857
+        TabOrder = 2
+      end
+      object edtSTO_AUTO_CHK: TcxCheckBox
+        Left = 14
+        Top = 106
+        Width = 267
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #26159#21542#33258#21160#23457#26680#24211#23384#31649#29702#30456#20851#21333#25454
+        TabOrder = 3
       end
     end
   end
@@ -791,12 +840,12 @@ inherited frmSysDefine: TfrmSysDefine
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 296
-    Top = 184
+    Left = 168
+    Top = 48
   end
   inherited actList: TActionList
-    Left = 264
-    Top = 184
+    Left = 136
+    Top = 48
     object acComfir: TAction
       Caption = #30830#23450'(&O)'
       OnExecute = acComfirExecute
@@ -810,7 +859,7 @@ inherited frmSysDefine: TfrmSysDefine
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 232
-    Top = 183
+    Left = 104
+    Top = 47
   end
 end

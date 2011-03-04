@@ -314,7 +314,7 @@ procedure TfrmInstall.FormCreate(Sender: TObject);
 var F:TIniFile;
 begin
   inherited;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     Caption := '欢迎使用'+ F.ReadString('soft','name','好店铺')+'系列产品';
     Label10.Caption :=  F.ReadString('home','url','www.okonly.net');

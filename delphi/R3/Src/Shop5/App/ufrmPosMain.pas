@@ -311,7 +311,7 @@ begin
   SaveAObj := TRecord_.Create;
   Width := 800;
   Height := 600;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+F.ReadString('soft','name','好店铺')+'"';
     if F.ReadString('home','url','')<>'' then
@@ -324,7 +324,7 @@ begin
   finally
     F.Free;
   end;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\sft.'+Global.UserID);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'temp\sft.'+Global.UserID);
   try
     rzHelp.Visible := F.ReadBool('收款机界面','Help',true);
     if rzHelp.Visible then
@@ -1070,7 +1070,7 @@ end;
 procedure TfrmPosMain.FormDestroy(Sender: TObject);
 var F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\sft.'+Global.UserID);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'temp\sft.'+Global.UserID);
   try
     F.WriteBool('收款机界面','Help',rzHelp.Visible);
   finally

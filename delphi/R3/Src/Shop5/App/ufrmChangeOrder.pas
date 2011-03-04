@@ -58,6 +58,7 @@ type
     procedure ShowInfo;
   public
     { Public declarations }
+    function CheckInput:boolean;override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
     procedure UnitToCalc(UNIT_ID:string);override;
@@ -603,6 +604,11 @@ begin
        edtTable.FieldbyName('COST_APRICE').AsString :=formatFloat('#0.000',edtTable.FieldbyName('COST_MONEY').AsFloat/edtTable.FieldbyName('AMOUNT').AsFloat);
      end;
 
+end;
+
+function TfrmChangeOrder.CheckInput: boolean;
+begin
+  result := pos(inttostr(InputFlag),'0789')>0;
 end;
 
 end.

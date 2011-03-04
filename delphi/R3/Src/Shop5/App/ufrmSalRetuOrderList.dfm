@@ -290,6 +290,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                   Width = 78
                 end
                 item
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'SALES_DATE'
                   Footers = <>

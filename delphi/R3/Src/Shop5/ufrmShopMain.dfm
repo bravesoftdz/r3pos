@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = -73
-  Top = 169
+  Left = 194
+  Top = 176
   Width = 773
   Height = 543
   Caption = ''
@@ -5406,9 +5406,12 @@ inherited frmShopMain: TfrmShopMain
           end
           item
             Action = actfrmPriceOrderList
+          end
+          item
+            Action = actfrmDbOrderList
           end>
         Opened = True
-        OpenedHeight = 388
+        OpenedHeight = 408
         UseGradients = True
         Caption = 'RzGroup2'
         ParentColor = False
@@ -6749,6 +6752,10 @@ inherited frmShopMain: TfrmShopMain
     end
     object actfrmIO: TAction
       Caption = #23384#21462#27454#21333
+    end
+    object actfrmDbOrderList: TAction
+      Caption = #35843#25320#21333
+      OnExecute = actfrmDbOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

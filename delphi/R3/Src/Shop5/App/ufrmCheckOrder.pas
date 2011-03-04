@@ -1081,7 +1081,7 @@ end;
 
 function TfrmCheckOrder.CheckInput: boolean;
 begin
-  result := pos(inttostr(InputFlag),'09')>0;
+  result := pos(inttostr(InputFlag),'089')>0;
 end;
 
 end.

@@ -83,6 +83,7 @@ type
   protected
     procedure ReadHeader;
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
+    function CheckInput:boolean;override;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -913,6 +914,11 @@ begin
 
     end;
   inherited;
+end;
+
+function TfrmStkRetuOrder.CheckInput: boolean;
+begin
+  result := not (pos(inttostr(InputFlag),'124')>0);
 end;
 
 end.

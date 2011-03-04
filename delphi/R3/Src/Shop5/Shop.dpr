@@ -82,7 +82,7 @@ uses
   Des in '..\..\Pub\des.pas',
   ufrmSalIndentOrder in 'App\ufrmSalIndentOrder.pas' {frmSalIndentOrder},
   ufrmSalIndentOrderList in 'App\ufrmSalIndentOrderList.pas' {frmSalIndentOrderList},
-  ObjSalesOrder in 'Obj\ObjSalesOrder.pas',
+  ObjDbOrder in 'Obj\ObjDbOrder.pas',
   ObjStockOrder in 'Obj\ObjStockOrder.pas',
   ufrmStkIndentOrder in 'App\ufrmStkIndentOrder.pas' {frmStkIndentOrder},
   ufrmStkIndentOrderList in 'App\ufrmStkIndentOrderList.pas' {frmStkIndentOrderList},
@@ -99,8 +99,8 @@ uses
   ObjPRICEGRADEInfo in 'Obj\ObjPriceGradeInfo.pas',
   ObjRoleRights in 'Obj\ObjRoleRights.pas',
   ObjUserRights in 'Obj\ObjUserRights.pas',
-  ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},
-  ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList},
+  ufrmDbOrder in 'App\ufrmDbOrder.pas' {frmDbOrder},
+  ufrmDbOrderList in 'App\ufrmDbOrderList.pas' {frmDbOrderList},
   ObjSalIndentOrder in 'Obj\ObjSalIndentOrder.pas',
   ufrmStockOrder in 'App\ufrmStockOrder.pas' {frmStockOrder},
   ufrmStockOrderList in 'App\ufrmStockOrderList.pas' {frmStockOrderList},
@@ -131,7 +131,10 @@ uses
   ufrmCheckTask in 'App\ufrmCheckTask.pas' {frmCheckTask},
   ufrmCheckTaskDelete in 'App\ufrmCheckTaskDelete.pas' {frmCheckTaskDelete},
   ufrmSelectCheckGoods in 'App\ufrmSelectCheckGoods.pas',
-  ObjIoroOrder in 'Obj\ObjIoroOrder.pas';
+  ObjIoroOrder in 'Obj\ObjIoroOrder.pas',
+  ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},
+  ObjSalesOrder in 'Obj\ObjSalesOrder.pas',
+  ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList};
 
 {$R *.res}
 var

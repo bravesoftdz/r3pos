@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=5
 MinorVer=0
 Release=0
-Build=6
+Build=7
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=5.0.0.6
+FileVersion=5.0.0.7
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -134,37 +134,9 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[HistoryLists\hlDebugSourcePath]
-Count=2
-Item0=build
-Item1=$(ZEOSDBO_BUILD)
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=6
-Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Item2=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\component
-Item3=build
-Item4=build;../../test/framework
-Item5=$(ZEOSDBO_BUILD)
 [HistoryLists\hlUnitOutputDirectory]
-Count=3
-Item0=D:\Delphi\R3\Src\Shop5\temp
-Item1=build
-Item2=$(ZEOSDBO_BUILD)
-[HistoryLists\hlOutputDirectorry]
-Count=2
-Item0=build
-Item1=$(ZEOSDBO_BUILD)
-[HistoryLists\hlBPLOutput]
-Count=3
-Item0=D:\Delphi\R3\zLib\packages\delphi7
-Item1=build
-Item2=$(ZEOSDBO_BUILD)
-[HistoryLists\hlDCPOutput]
-Count=3
-Item0=D:\Delphi\R3\Src\Shop5\temp
-Item1=build
-Item2=$(ZEOSDBO_BUILD)
+Count=1
+Item0=C:\Program Files\Developer Express Inc\ExpressEditors Library 4\Delphi 7\Lib

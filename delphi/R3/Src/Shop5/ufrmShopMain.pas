@@ -213,6 +213,7 @@ type
     actfrmPriceOrderList: TAction;
     actfrmCheckOrderList: TAction;
     actfrmIO: TAction;
+    actfrmDbOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -268,6 +269,7 @@ type
     procedure actfrmCloseForDayExecute(Sender: TObject);
     procedure actfrmPriceOrderListExecute(Sender: TObject);
     procedure actfrmCheckOrderListExecute(Sender: TObject);
+    procedure actfrmDbOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -315,7 +317,7 @@ uses
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay;
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -335,6 +337,7 @@ procedure TfrmShopMain.FormCreate(Sender: TObject);
 var F:TextFile;
 begin
   inherited;
+  ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   SystemShutdown := false;
   Loging :=false;
   frmInstall := TfrmInstall.Create(self);
@@ -460,7 +463,7 @@ begin
   if frmInstall=nil then Exit;
   if ShopGlobal.offline then Exit;
   frmLogo := TfrmLogo.Create(self);
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     frmLogo.Show;
     frmInstall.SysId := 'okly';
@@ -708,7 +711,7 @@ procedure TfrmShopMain.LoadFrame;
 var F:TIniFile;
 begin
   inherited;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\web.cfg');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     Caption := F.ReadString('soft','name','零售终端管理系统(R3)')+' 版本:'+RzVersionInfo.FileVersion;
     Application.Title := F.ReadString('soft','name','零售终端管理系统(R3)');
@@ -716,8 +719,8 @@ begin
   finally
     F.Free;
   end;
-  if FileExists(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg') then
-    Image4.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg');
+//  if FileExists(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg') then
+//    Image4.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg');
 
 //  Label4.Caption := '版本:'+RzVersionInfo.FileVersion;
 end;
@@ -1603,6 +1606,27 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmCheckOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDbOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmDbOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDbOrderList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

@@ -114,7 +114,9 @@ begin
 end;
 
 function TDbData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var Str:string;
+var
+  Str:string;
+  r:integer;
 begin
   try
   if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
@@ -125,6 +127,21 @@ begin
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
              roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,2),3);
+  if FieldbyName('PLAN_DATE').AsOldString <> '' then
+     begin
+       Str := 'delete from STK_STOCKDATA where TENANT_ID:=OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+       r := AGlobal.ExecSQL(Str,self);
+       if r=1 then
+       DecStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('CLIENT_ID').asOldString,
+                  FieldbyName('GODS_ID').asOldString,
+                  FieldbyName('PROPERTY_01').asOldString,
+                  FieldbyName('PROPERTY_02').asOldString,
+                  FieldbyName('BATCH_NO').asOldString,
+                  FieldbyName('CALC_AMOUNT').asOldFloat,
+                  roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,-2),3)
+       else
+         Raise Exception.Create('删除多笔到货确认单');
+     end;
 //  if not lock then
 //     WriteLogInfo(AGlobal,Parant.FieldbyName('CREA_USER').AsString,2,'500026','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'SAL_SALESDATA',usDeleted));
   Result := True;
@@ -147,6 +164,7 @@ begin
   FieldByName('HAS_INTEGRAL').AsInteger := 0;
   FieldByName('IS_PRESENT').AsInteger := 0;
   FieldByName('BARTER_INTEGRAL').AsInteger := 0;
+  
 //改由开单前台最当最新进价
 //  FieldbyName('COST_PRICE').AsFloat := GetCostPrice(AGlobal,FieldbyName('TENANT_ID').AsString,FieldbyName('SHOP_ID').AsString,FieldbyName('GODS_ID').AsString,FieldbyName('PROPERTY_01').AsString,FieldbyName('PROPERTY_02').AsString,FieldbyName('BATCH_NO').AsString);
   DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
@@ -163,13 +181,13 @@ begin
        Str := 'insert into STK_STOCKDATA(TENANT_ID,SHOP_ID,SEQNO,STOCK_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) '
             + 'VALUES(:TENANT_ID,:CLIENT_ID,:SEQNO,:SALES_ID,:GODS_ID,:BATCH_NO,:LOCUS_NO,:BOM_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:AMOUNT,:ORG_PRICE,:IS_PRESENT,:COST_PRICE,round(:CALC_AMOUNT*:COST_PRICE,2),0,0,:CALC_AMOUNT,round(:CALC_AMOUNT*:COST_PRICE,2),:REMARK)';
        AGlobal.ExecSQL(Str,self); 
-       IncStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+       IncStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('CLIENT_ID').asString,
                   FieldbyName('GODS_ID').asString,
                   FieldbyName('PROPERTY_01').asString,
                   FieldbyName('PROPERTY_02').asString,
                   FieldbyName('BATCH_NO').asString,
                   FieldbyName('CALC_AMOUNT').asFloat,
-                  roundto(FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat,-2),2);
+                  roundto(FieldbyName('COST_PRICE').asFloat*FieldbyName('CALC_AMOUNT').asFloat,-2),1);
      end;
   Result := True;
   except
@@ -360,7 +378,7 @@ begin
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+
                'select jb.*,b.SHOP_NAME as CLIENT_ID_TEXT from '+
-               '(select TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,'+
+               '(select TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,CLIENT_ID,PLAN_DATE,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,'+
                'ADVA_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,IC_CARDNO,UNION_ID,COMM,CREA_DATE,CREA_USER,'+
                'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
                ' left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.SHOP_ID ) jc '+
@@ -418,22 +436,36 @@ function TDbOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+    rs:TZQuery;
 begin
+  AGlobal.BeginTrans;
   try
-    Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''' where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select PLAN_DATE from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and SALES_TYPE=2';
+      AGlobal.Open(rs);
+      if rs.Fields[0].AsString = '' then Raise Exception.Create('没有到货确认不能审核');  
+    finally
+      rs.Free;
+    end;
+    Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    Str := 'update STK_STOCKORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
+    n := AGlobal.ExecSQL(Str);
     Result := true;
+    AGlobal.CommitTrans;
     Msg := '审核单据成功';
   except
     on E:Exception do
       begin
         Result := false;
         Msg := '审核错误'+E.Message;
+        AGlobal.RollbackTrans;
       end;
   end;
 end;
@@ -445,6 +477,7 @@ function TDbOrderUnAudit.Execute(AGlobal: IdbHelp;
 var Str:string;
     n:Integer;
 begin
+   AGlobal.BeginTrans; 
    try
     Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
@@ -453,6 +486,10 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+
+    Str := 'update STK_STOCKORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
+    n := AGlobal.ExecSQL(Str);
+    AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;
   except
@@ -460,6 +497,7 @@ begin
        begin
          Result := False;
          Msg := '反审核错误:'+E.Message;
+         AGlobal.RollbackTrans;
        end;
   end;
 end;

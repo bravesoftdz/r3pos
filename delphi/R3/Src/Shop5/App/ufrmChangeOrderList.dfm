@@ -247,6 +247,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   Width = 28
                 end
                 item
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'CHANGE_DATE'
                   Footers = <>

@@ -238,6 +238,13 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               Columns = <
                 item
                   EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Width = 32
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'PRINT_DATE'
                   Footers = <>
                   Title.Caption = #30424#28857#21333#21495
@@ -251,6 +258,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                   Width = 71
                 end
                 item
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>

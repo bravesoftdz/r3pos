@@ -104,21 +104,21 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 53
             Width = 120
             Height = 20
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtTELEPHONE: TcxTextEdit
             Left = 106
             Top = 29
             Width = 120
             Height = 20
-            TabOrder = 2
+            TabOrder = 1
           end
           object edtADDRESS: TcxTextEdit
             Left = 106
             Top = 77
             Width = 370
             Height = 20
-            TabOrder = 4
+            TabOrder = 5
           end
           object edtREMARK: TcxMemo
             Left = 106
@@ -132,7 +132,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 53
             Width = 120
             Height = 20
-            TabOrder = 5
+            TabOrder = 4
           end
           object edtREGION_ID: TzrComboBoxList
             Left = 356
@@ -145,7 +145,7 @@ inherited frmShopInfo: TfrmShopInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 1
+            TabOrder = 3
             InGrid = False
             KeyValue = Null
             FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'

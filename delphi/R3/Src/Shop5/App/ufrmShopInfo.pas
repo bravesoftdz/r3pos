@@ -87,6 +87,7 @@ begin
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   edtREGION_ID.KeyValue:='#';
   edtREGION_ID.Text:='无区域';
+  edtSHOP_TYPE.Text := '无';
   if Visible and edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
 end;
 
@@ -341,7 +342,7 @@ procedure TfrmShopInfo.WriteTo(AObj: TRecord_);
 begin
   WriteToObject(AObj,self);
   Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.Text;
-  //Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelId;
+  Aobj.FieldByName('SEQ_NO').AsInteger:=StrToInt(copy(AObj.FieldByName('SHOP_ID').AsString,8,4));
 end;
 
 procedure TfrmShopInfo.FormShow(Sender: TObject);
@@ -373,7 +374,8 @@ var rs:TZQuery;
 begin
   try
     rs := TZQuery.Create(nil);
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12''';
+    rs.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' union all '+
+    'select ''#'' as CODE_ID,''无'' as CODE_NAME,''W'' as CODE_SPELL';
     Factor.Open(rs);
     if not rs.IsEmpty then ClearCbxPickList(edtSHOP_TYPE);
     rs.First;

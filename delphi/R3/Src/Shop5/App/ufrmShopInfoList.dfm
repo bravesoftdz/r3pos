@@ -179,21 +179,21 @@ inherited frmShopInfoList: TfrmShopInfoList
                     FieldName = 'SHOP_ID'
                     Footers = <>
                     Title.Caption = #38376#24215#20195#30721
-                    Width = 100
+                    Width = 90
                   end
                   item
                     EditButtons = <>
                     FieldName = 'SHOP_NAME'
                     Footers = <>
                     Title.Caption = #38376#24215#21517#31216
-                    Width = 125
+                    Width = 120
                   end
                   item
                     EditButtons = <>
                     FieldName = 'SHOP_SPELL'
                     Footers = <>
                     Title.Caption = #25340#38899#30721
-                    Width = 78
+                    Width = 80
                   end
                   item
                     EditButtons = <>
@@ -240,19 +240,19 @@ inherited frmShopInfoList: TfrmShopInfoList
                     Width = 86
                   end
                   item
-                    EditButtons = <>
-                    FieldName = 'ADDRESS'
-                    Footers = <>
-                    Title.Caption = #22320#22336
-                    Width = 215
-                  end
-                  item
                     Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'POSTALCODE'
                     Footers = <>
                     Title.Caption = #37038#32534
                     Width = 55
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ADDRESS'
+                    Footers = <>
+                    Title.Caption = #22320#22336
+                    Width = 215
                   end
                   item
                     EditButtons = <>

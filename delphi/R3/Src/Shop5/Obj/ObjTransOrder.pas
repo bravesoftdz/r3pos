@@ -37,14 +37,14 @@ begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
      begin
        if FieldbyName('GLIDE_NO').AsString='' then
-          FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_5_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),9);
+          FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
      
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+IN_MNY,BALANCE=:TRANS_MNY+BALANCE,TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID and SHOP_ID=:SHOP_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+OUT_MNY,BALANCE=BALANCE-:TRANS_MNY,TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID and SHOP_ID=:SHOP_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 

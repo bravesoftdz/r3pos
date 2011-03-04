@@ -1,7 +1,7 @@
 unit ObjShop;
 
 interface
-uses Windows,Dialogs,SysUtils,ZBase,Classes,ZIntf,AdoDb,ObjCommon,ZDataset;
+uses uDsUtil,Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,ZDataset;
 type
   TShop=class(TZFactory)
   public
@@ -12,10 +12,6 @@ type
     procedure InitClass; override;
   end;
 
-  TIntoShop=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
 implementation
 
 { TShop }
@@ -30,21 +26,26 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsOldInteger;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
-    if rs.FieldByName('BALANCE').AsInteger > 0 then
-      Raise Exception.Create('此门店的现金账户上有余额,不能删除!');
+    if rs.FieldByName('BALANCE').AsFloat > 0 then
+      Raise Exception.Create('此门店的现金账户上有余额,不能删除!')
     else
       begin
-        Str := 'delete from ACC_ACCOUNT_INFO where SHOP_ID=:OLD_SHOP_ID and TENANT_ID=:TENANT_ID';
+        Str := 'delete from ACC_ACCOUNT_INFO where SHOP_ID=:OLD_SHOP_ID and TENANT_ID=:TENANT_ID and PAYM_ID=''A'' ';
         AGlobal.ExecSQL(Str,Self);
       end;
   finally
+    rs.Free;
   end;
-
+  
 end;
 
 function TShop.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var Str: String;
 begin
- //
+  //为新建门店初始化现金账户
+  Str := 'insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,:SHOP_ID,'''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  AGlobal.ExecSQL(Str,Self);
 end;
 
 function TShop.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -71,53 +72,11 @@ begin
   DeleteSQL.Text := Str;
 end;
 
-{ TIntoShop }
 
-function TIntoShop.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
-//var SHOP_ID1,SHOP_ID2,LEVEL_ID,Str:string;//SHOP_ID1 原来总店ID,SHOP_ID2 要装换成总店的门店ID
-begin
-  {Result:=False;
-  AGlobal.BeginTrans;
-  try
-    SHOP_ID1:=Params.ParamByName('SHOP_ID1').asString;
-    SHOP_ID2:=Params.ParamByName('SHOP_ID2').asString;
-    LEVEL_ID:=Params.ParamByName('LEVEL_ID').asString;
-    Str:='update CA_SHOP_INFO set UPCOMP_ID=NULL,LEVEL_ID='''+SHOP_ID2+''',SHOP_TYPE=1 '
-    + ',COMM=''01'','
-    + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where SHOP_ID='''+SHOP_ID2+'''';
-    AGlobal.ExecSQL(Str,Self); //修改要转换成总店的门店的UPCOMP_ID和LEVEL_ID
-    Str:='update CA_COMPANY set LEVEL_ID='''+SHOP_ID2+'''+substring(LEVEL_ID,len('''+LEVEL_ID+''')+1,50)  '
-    + ',COMM=''01'','
-    + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where LEVEL_ID like '''+LEVEL_ID+'%''';
-    AGlobal.ExecSQL(Str,Self);//修改“要转换成总店的门店”的下级门店的LEVEL_ID
-    Str:='update CA_COMPANY set UPCOMP_ID='''+SHOP_ID2+''',LEVEL_ID='''+SHOP_ID2+'''+LEVEL_ID,COMP_TYPE=2 '
-    + ',COMM=''01'','
-    + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+ ' where COMP_ID='''+SHOP_ID1+'''';
-    AGlobal.ExecSQL(Str,Self);//修改原总店的UPCOMP_ID和LEVEL_ID
-    Str:='update CA_COMPANY set UPCOMP_ID='''+SHOP_ID2+''',LEVEL_ID='''+SHOP_ID2+'''+substring(LEVEL_ID,4,50) '
-    + ',COMM=''01'','
-    + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where UPCOMP_ID='''+SHOP_ID1+'''';
-    AGlobal.ExecSQL(Str,Self);//修改原总店的第一级下级门店的UPCOMP_ID和LEVEL_ID
-    Str:='update CA_COMPANY set LEVEL_ID='''+SHOP_ID2+'''+substring(LEVEL_ID,4,50) '
-    + ',COMM=''01'','
-    + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where LEVEL_ID like '''+SHOP_ID1+'%''';
-    AGlobal.ExecSQL(Str,Self);//修改原总店的下级门店的LEVEL_ID
-    AGlobal.CommitTrans;
-    Result:=True;
-  except
-    on E:Exception do
-       begin
-         Msg := E.Message;
-         AGlobal.RollbackTrans;
-       end;
-  end;}
-end;
 
 initialization
   RegisterClass(TShop);
-  RegisterClass(TIntoShop);
 finalization
   UnRegisterClass(TShop);
-  UnRegisterClass(TIntoShop);
+
 end.

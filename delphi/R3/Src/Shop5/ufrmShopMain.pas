@@ -8,8 +8,7 @@ uses
   RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, ZConnection, DB,
-  ZAbstractRODataset, OleCtrls, SHDocVw;
+  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -168,8 +167,6 @@ type
     RzBmpButton3: TRzBmpButton;
     lblLogin: TLabel;
     ImageList2: TImageList;
-    ZConnection1: TZConnection;
-    ZReadOnlyQuery1: TZReadOnlyQuery;
     actfrmMeaUnits: TAction;
     actfrmDutyInfoList: TAction;
     RzGroup1: TRzGroup;
@@ -321,7 +318,7 @@ uses
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm;
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,EncDec;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -1676,7 +1673,7 @@ begin
        AddFrom(Form);
      end;
   try
-    Open(GetDoLogin('http://test.xinshangmeng.com/'));
+    TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
     Form.Show;
     Form.BringToFront;
   except

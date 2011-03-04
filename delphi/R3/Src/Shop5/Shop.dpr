@@ -9,6 +9,7 @@ uses
   udmIcon in '..\..\BASIC\udmIcon.pas' {dmIcon: TDataModule},
   uResOpr in '..\..\PUB\uResOpr.pas',
   GIFImage in '..\..\PUB\GIFIMAGE.PAS',
+  ufrmBasic in '..\..\Basic\ufrmBasic.pas' {frmBasic},
   uShopGlobal in 'uShopGlobal.pas' {ShopGlobal: TDataModule},
   uframeMDForm in 'Frame\uframeMDForm.pas' {frameMDForm},
   uframeDialogForm in 'Frame\uframeDialogForm.pas' {frameDialogForm},
@@ -137,7 +138,6 @@ uses
   ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog},
   ufrmShopInfo in 'App\ufrmShopInfo.pas' {frmShopInfo},
   ufrmShopInfoList in 'App\ufrmShopInfoList.pas' {frmShopInfoList},
-  ufrmBasic in '..\..\Basic\ufrmBasic.pas' {frmBasic},
   ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm};
 
 {$R *.res}

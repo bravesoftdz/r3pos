@@ -1,6 +1,6 @@
 inherited frmLogin: TfrmLogin
-  Left = 324
-  Top = 184
+  Left = 325
+  Top = 185
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#38470
   ClientHeight = 263

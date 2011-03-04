@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 194
-  Top = 176
+  Left = 163
+  Top = 276
   Width = 773
   Height = 543
   Caption = ''
@@ -6282,19 +6282,6 @@ inherited frmShopMain: TfrmShopMain
       OnClick = Image19Click
     end
   end
-  inherited IEBrowser: TWebBrowser
-    Left = 165
-    Top = 99
-    Width = 584
-    Height = 371
-    TabOrder = 9
-    ControlData = {
-      4C000000021F0000810F00000000000000000000000000000000000000000000
-      000000004C000000000000000000000001000000E0D057007335CF11AE690800
-      2B2E126208000000000000004C0000000114020000000000C000000000000046
-      8000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000100000000000000000000000000000000000000}
-  end
   inherited mmMenu: TMainMenu
     Left = 368
     object N2: TMenuItem
@@ -9881,15 +9868,5 @@ inherited frmShopMain: TfrmShopMain
       F8003F800000FE00FF800000FFFFFF800000FE00FF800000FFFFFF800000FF83
       FF800000FFFFFF800000FFE7FF80000000000000000000000000000000000000
       000000000000}
-  end
-  object ZConnection1: TZConnection
-    Left = 480
-    Top = 344
-  end
-  object ZReadOnlyQuery1: TZReadOnlyQuery
-    FieldDefs = <>
-    Params = <>
-    Left = 600
-    Top = 240
   end
 end

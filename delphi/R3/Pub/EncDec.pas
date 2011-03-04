@@ -13,6 +13,8 @@ type
 function EncStr(AStr,ENC_KEY:string):string;
 function DecStr(AStr,ENC_KEY:string):string;
 
+function md5Encode(s:string):string;
+
 //MD5
 function HashMD5(Stream: TStream; Count: integer = 0): TMessageDigest128; overload;
 function HashMD5(const S: string): TMessageDigest128; overload;
@@ -25,6 +27,10 @@ implementation
 uses
   Math;
 
+function md5Encode(s:string):string;
+begin
+  result := DigestToStr(HashMD5(s));
+end;
 function HexToInt(AHex:string):integer;
 var
   i, j: integer;

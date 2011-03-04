@@ -1,7 +1,7 @@
 unit ObjShop;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes,ZIntf,AdoDb,ObjCommon,ZDataset;
+uses Windows,Dialogs,SysUtils,ZBase,Classes,ZIntf,AdoDb,ObjCommon,ZDataset;
 type
   TShop=class(TZFactory)
   public
@@ -21,8 +21,25 @@ implementation
 { TShop }
 
 function TShop.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
+    Str:String;
 begin
-//
+  try
+    rs := TZQuery.Create(nil);
+    rs.SQL.Text := 'select IN_MNY,OUT_MNY,BALANCE from ACC_ACCOUNT_INFO where COMM not in (''12'',''02'') and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A''';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsOldInteger;
+    rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.FieldByName('BALANCE').AsInteger > 0 then
+      Raise Exception.Create('此门店的现金账户上有余额,不能删除!');
+    else
+      begin
+        Str := 'delete from ACC_ACCOUNT_INFO where SHOP_ID=:OLD_SHOP_ID and TENANT_ID=:TENANT_ID';
+        AGlobal.ExecSQL(Str,Self);
+      end;
+  finally
+  end;
+
 end;
 
 function TShop.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;

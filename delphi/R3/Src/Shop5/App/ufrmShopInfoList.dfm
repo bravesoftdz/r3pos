@@ -1,8 +1,8 @@
 inherited frmShopInfoList: TfrmShopInfoList
-  Left = 436
-  Top = 179
-  Width = 735
-  Height = 487
+  Left = 318
+  Top = 174
+  Width = 901
+  Height = 516
   Caption = #38376#24215#26723#26696#31649#29702
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -10,36 +10,31 @@ inherited frmShopInfoList: TfrmShopInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 727
-    Height = 423
+    Width = 893
+    Height = 459
     inherited RzPanel2: TRzPanel
-      Width = 717
-      Height = 413
+      Width = 883
+      Height = 449
       inherited RzPage: TRzPageControl
-        Width = 711
-        Height = 407
+        Width = 877
+        Height = 443
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38376#24215#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 709
-            Height = 380
-            object Splitter1: TSplitter
-              Left = 181
-              Top = 41
-              Height = 334
-            end
+            Width = 875
+            Height = 416
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 699
+              Width = 865
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                699
+                865
                 36)
               object Panel1: TPanel
                 Left = 0
@@ -61,7 +56,7 @@ inherited frmShopInfoList: TfrmShopInfoList
               object Panel2: TPanel
                 Left = 111
                 Top = 0
-                Width = 588
+                Width = 754
                 Height = 30
                 Alignment = taLeftJustify
                 Anchors = [akLeft, akTop, akRight, akBottom]
@@ -125,36 +120,19 @@ inherited frmShopInfoList: TfrmShopInfoList
                 end
               end
             end
-            object rzTree: TRzTreeView
+            object Panel3: TPanel
               Left = 5
               Top = 41
-              Width = 176
-              Height = 334
-              SelectionPen.Color = clBtnShadow
-              Align = alLeft
-              FrameStyle = fsGroove
-              FrameVisible = True
-              HideSelection = False
-              Indent = 19
-              ReadOnly = True
-              RowSelect = True
-              TabOrder = 1
-              OnChange = rzTreeChange
-              OnChanging = rzTreeChanging
-            end
-            object Panel3: TPanel
-              Left = 184
-              Top = 41
-              Width = 520
-              Height = 334
+              Width = 865
+              Height = 370
               Align = alClient
               Caption = 'Panel3'
-              TabOrder = 2
+              TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 518
-                Height = 313
+                Width = 863
+                Height = 349
                 Align = alClient
                 DataSource = dsBrowser
                 Flat = True
@@ -198,50 +176,42 @@ inherited frmShopInfoList: TfrmShopInfoList
                   item
                     Alignment = taRightJustify
                     EditButtons = <>
-                    FieldName = 'COMP_ID'
+                    FieldName = 'SHOP_ID'
                     Footers = <>
                     Title.Caption = #38376#24215#20195#30721
-                    Width = 60
+                    Width = 100
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'COMP_NAME'
+                    FieldName = 'SHOP_NAME'
                     Footers = <>
                     Title.Caption = #38376#24215#21517#31216
                     Width = 125
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'COMP_SPELL'
+                    FieldName = 'SHOP_SPELL'
                     Footers = <>
                     Title.Caption = #25340#38899#30721
                     Width = 78
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'COMP_TYPE'
+                    FieldName = 'SHOP_TYPE'
                     Footers = <>
-                    KeyList.Strings = (
-                      '1'
-                      '2'
-                      '3')
-                    PickList.Strings = (
-                      #32463#38144#21830
-                      #30452#33829#24215
-                      #21152#30431#24215
-                      #9)
-                    Title.Caption = #38376#24215#31867#22411
+                    Title.Caption = #31649#29702#32676#32452
+                    Width = 70
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'UPCOMP_ID'
+                    FieldName = 'LICENSE_CODE'
                     Footers = <>
-                    Title.Caption = #38582#23646#32463#38144#21830
-                    Width = 83
+                    Title.Caption = #32463#33829#35768#21487#35777
+                    Width = 100
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'GROUP_NAME'
+                    FieldName = 'REGION_ID'
                     Footers = <>
                     Title.Caption = #22320#21306
                     Width = 114
@@ -294,8 +264,8 @@ inherited frmShopInfoList: TfrmShopInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 314
-                Width = 518
+                Top = 350
+                Width = 863
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -321,17 +291,17 @@ inherited frmShopInfoList: TfrmShopInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 727
+    Width = 893
     inherited Image1: TImage
       Left = 484
-      Width = 234
+      Width = 400
     end
     inherited Image14: TImage
-      Left = 718
+      Left = 884
     end
     inherited Image3: TImage
       Left = 484
-      Width = 234
+      Width = 400
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -432,12 +402,9 @@ inherited frmShopInfoList: TfrmShopInfoList
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end
-    object actIntoShop: TAction
-      Caption = #36716#25442#25104#24635#24215
-      OnExecute = actIntoShopExecute
-    end
   end
   object dsBrowser: TDataSource
+    DataSet = cdsBrowser
     Left = 137
     Top = 280
   end
@@ -445,7 +412,7 @@ inherited frmShopInfoList: TfrmShopInfoList
     Left = 312
     Top = 171
     object N1: TMenuItem
-      Action = actIntoShop
+      Caption = #36716#25442#25104#24635#24215
     end
   end
   object PrintDBGridEh1: TPrintDBGridEh
@@ -470,7 +437,9 @@ inherited frmShopInfoList: TfrmShopInfoList
     Top = 256
   end
   object cdsBrowser: TZQuery
+    FieldDefs = <>
     AfterScroll = cdsBrowserAfterScroll
+    CachedUpdates = True
     Params = <>
     Left = 49
     Top = 207

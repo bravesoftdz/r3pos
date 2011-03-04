@@ -82,7 +82,7 @@ procedure TfrmShopInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  edtSHOP_ID.Text := TSequence.GetMaxID('',Factor,'SHOP_ID','CA_SHOP_INFO','000');
+  edtSHOP_ID.Text := TSequence.GetMaxID(inttostr(Global.TENANT_ID),Factor,'SHOP_ID','CA_SHOP_INFO','0000','TENANT_ID='+inttostr(Global.TENANT_ID));
   edtSHOP_TYPE.ItemIndex := -1;
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   edtREGION_ID.KeyValue:='#';

@@ -589,7 +589,10 @@ begin
     DoBeforeApplyUpdates; {bangfauzan addition}
 
     if CachedResultSet <> nil then
-      CachedResultSet.PostUpdates;
+       begin
+         CachedResultSet.PostUpdates;
+         if not Connection.InTransaction then CachedResultSet.CommitUpdates;
+       end;
 
     if not (State in [dsInactive]) then
       Resync([]);

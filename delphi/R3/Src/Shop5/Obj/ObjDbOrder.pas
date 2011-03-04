@@ -129,7 +129,7 @@ begin
              roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,2),3);
   if FieldbyName('PLAN_DATE').AsOldString <> '' then
      begin
-       Str := 'delete from STK_STOCKDATA where TENANT_ID:=OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+       Str := 'delete from STK_STOCKDATA where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
        r := AGlobal.ExecSQL(Str,self);
        if r=1 then
        DecStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('CLIENT_ID').asOldString,
@@ -279,7 +279,7 @@ begin
   end;
   if FieldbyName('PLAN_DATE').AsOldString <> '' then
   begin
-    Str := 'delete from STK_STOCKORDER where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID and STOCK_TYPE=2';
+    Str := 'delete from STK_STOCKORDER where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and STOCK_TYPE=2';
     AGlobal.ExecSQL(Str,self);
   end;
 //  if not lock then

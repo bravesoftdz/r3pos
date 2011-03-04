@@ -456,7 +456,9 @@ begin
   if VarIsNull(FNewValue) or VarIsClear(FNewValue) then
      Result := 0
   else
-     Result := FNewValue;
+     begin
+       Result := FNewValue;
+     end;
 end;
 
 function TField_.GetAsFloat: Real;

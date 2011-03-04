@@ -134,7 +134,8 @@ uses
   ObjIoroOrder in 'Obj\ObjIoroOrder.pas',
   ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},
   ObjSalesOrder in 'Obj\ObjSalesOrder.pas',
-  ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList};
+  ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList},
+  ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog};
 
 {$R *.res}
 var

@@ -574,7 +574,7 @@ inherited frameOrderForm: TframeOrderForm
       OnExecute = actUnitConvertExecute
     end
     object actIsPressent: TAction
-      Caption = #20999#25442'('#38144#21806'/'#36192#36865')'
+      Caption = #20999#25442'('#26159#21542#36192#21697')'
       ShortCut = 115
       OnExecute = actIsPressentExecute
     end

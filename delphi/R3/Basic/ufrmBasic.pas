@@ -131,7 +131,7 @@ begin
          begin
            TcxDateEdit(Components[i]).Properties.OnValidate := DoDatePropertiesValidate;
            //TcxDateEdit(Components[i]).Properties.DateButtons := [btnToday];
-           TcxDateEdit(Components[i]).Properties.DateOnError := deToday;
+           //TcxDateEdit(Components[i]).Properties.DateOnError := deToday;
          end;
       if Components[i] is TDBGridEh then
          begin
@@ -430,7 +430,7 @@ procedure TfrmBasic.SaveInterfaceToFile;
 var i,j:integer;
   F:TIniFile;
 begin
-  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\interface.ini');
+  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'iface.ini');
   try
   for i:=0 to ComponentCount -1 do
     begin
@@ -485,8 +485,8 @@ procedure TfrmBasic.LoadInterfaceFromFile;
 var i,j:integer;
   F:TIniFile;
 begin
-  if not FileExists(ExtractFilePath(ParamStr(0))+'frame\interface.ini') then Exit;
-  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'frame\interface.ini');
+  if not FileExists(ExtractFilePath(ParamStr(0))+'iface.ini') then Exit;
+  F:=TIniFile.Create(ExtractFilePath(ParamStr(0))+'iface.ini');
   try
   for i:=0 to ComponentCount -1 do
     begin

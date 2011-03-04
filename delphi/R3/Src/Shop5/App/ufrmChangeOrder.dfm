@@ -3,7 +3,7 @@ inherited frmChangeOrder: TfrmChangeOrder
   Top = 207
   Width = 788
   Height = 529
-  Caption = '调整单'
+  Caption = #35843#25972#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
@@ -18,42 +18,42 @@ inherited frmChangeOrder: TfrmChangeOrder
         Top = 9
         Width = 48
         Height = 12
-        Caption = '开单日期'
+        Caption = #24320#21333#26085#26399
       end
       object Label13: TLabel [1]
         Left = 569
         Top = 32
         Width = 48
         Height = 12
-        Caption = '调整类型'
+        Caption = #35843#25972#31867#22411
       end
       object Label1: TLabel [2]
         Left = 390
         Top = 32
         Width = 48
         Height = 12
-        Caption = '责 任 人'
+        Caption = #36131' '#20219' '#20154
       end
       object Label2: TLabel [3]
         Left = 195
         Top = 55
         Width = 48
         Height = 12
-        Caption = '备    注'
+        Caption = #22791'    '#27880
       end
       object Label40: TLabel [4]
         Left = 194
         Top = 9
         Width = 48
         Height = 12
-        Caption = '门店名称'
+        Caption = #38376#24215#21517#31216
       end
       object Label4: TLabel [5]
         Left = 194
         Top = 32
         Width = 48
         Height = 12
-        Caption = '所属部门'
+        Caption = #25152#23646#37096#38376
       end
       inherited RzPanel4: TRzPanel
         Height = 67
@@ -98,13 +98,13 @@ inherited frmChangeOrder: TfrmChangeOrder
             EditButtons = <>
             FieldName = 'ACCOUNT'
             Footers = <>
-            Title.Caption = '帐号'
+            Title.Caption = #24080#21495
           end
           item
             EditButtons = <>
             FieldName = 'USER_NAME'
             Footers = <>
-            Title.Caption = '姓名'
+            Title.Caption = #22995#21517
             Width = 130
           end>
         DropWidth = 180
@@ -151,13 +151,13 @@ inherited frmChangeOrder: TfrmChangeOrder
             EditButtons = <>
             FieldName = 'SHOP_NAME'
             Footers = <>
-            Title.Caption = '名称'
+            Title.Caption = #21517#31216
           end
           item
             EditButtons = <>
             FieldName = 'SEQ_NO'
             Footers = <>
-            Title.Caption = '序号'
+            Title.Caption = #24207#21495
             Width = 20
           end>
         DropWidth = 185
@@ -193,7 +193,7 @@ inherited frmChangeOrder: TfrmChangeOrder
             EditButtons = <>
             FieldName = 'DEPT_NAME'
             Footers = <>
-            Title.Caption = '名称'
+            Title.Caption = #21517#31216
           end>
         DropWidth = 185
         DropHeight = 180
@@ -217,25 +217,25 @@ inherited frmChangeOrder: TfrmChangeOrder
         Top = 9
         Width = 48
         Height = 12
-        Caption = '审核日期'
+        Caption = #23457#26680#26085#26399
       end
       object Label9: TLabel
         Left = 177
         Top = 10
         Width = 48
         Height = 12
-        Caption = '审核用户'
+        Caption = #23457#26680#29992#25143
       end
       object Label3: TLabel
         Left = 543
         Top = 10
         Width = 52
         Height = 12
-        Caption = '最新库存'
+        Caption = #26368#26032#24211#23384
         Font.Charset = GB2312_CHARSET
         Font.Color = clMaroon
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = [fsBold]
         ParentFont = False
       end
@@ -265,7 +265,7 @@ inherited frmChangeOrder: TfrmChangeOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clMaroon
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 2
       end
@@ -280,15 +280,15 @@ inherited frmChangeOrder: TfrmChangeOrder
           EditButtons = <>
           FieldName = 'SEQNO'
           Footers = <>
-          Title.Caption = '序号'
+          Title.Caption = #24207#21495
           Width = 31
         end
         item
           EditButtons = <>
           FieldName = 'GODS_NAME'
           Footers = <>
-          Title.Caption = '商品名称'
-          Title.Hint = '支持 "货号、商品名称、拼音码" 查询'
+          Title.Caption = #21830#21697#21517#31216
+          Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
           Width = 151
           Control = fndGODS_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
@@ -297,14 +297,14 @@ inherited frmChangeOrder: TfrmChangeOrder
           EditButtons = <>
           FieldName = 'GODS_CODE'
           Footers = <>
-          Title.Caption = '货号'
+          Title.Caption = #36135#21495
           Width = 69
         end
         item
           EditButtons = <>
           FieldName = 'BARCODE'
           Footers = <>
-          Title.Caption = '条码'
+          Title.Caption = #26465#30721
           Width = 83
         end
         item
@@ -313,8 +313,8 @@ inherited frmChangeOrder: TfrmChangeOrder
           EditButtons = <>
           FieldName = 'UNIT_ID'
           Footers = <>
-          Title.Caption = '单位'
-          Title.Hint = '按 "空格键(SPACE)" 进行单位转换'
+          Title.Caption = #21333#20301
+          Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
           Width = 41
         end
         item
@@ -323,7 +323,7 @@ inherited frmChangeOrder: TfrmChangeOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = '数量'
+          Title.Caption = #25968#37327
           Width = 58
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
           OnUpdateData = DBGridEh1Columns4UpdateData
@@ -334,7 +334,7 @@ inherited frmChangeOrder: TfrmChangeOrder
           FieldName = 'COST_APRICE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '成本价'
+          Title.Caption = #25104#26412#20215
           Width = 58
         end
         item
@@ -344,7 +344,7 @@ inherited frmChangeOrder: TfrmChangeOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = '进货成本'
+          Title.Caption = #36827#36135#25104#26412
           Width = 67
         end
         item
@@ -352,7 +352,7 @@ inherited frmChangeOrder: TfrmChangeOrder
           FieldName = 'APRICE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '零售价'
+          Title.Caption = #38646#21806#20215
           Width = 59
         end
         item
@@ -361,15 +361,23 @@ inherited frmChangeOrder: TfrmChangeOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = '销售额'
+          Title.Caption = #38144#21806#39069
           Width = 71
+        end
+        item
+          EditButtons = <>
+          FieldName = 'IS_PRESENT'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #36192#21697
+          Width = 33
         end
         item
           EditButtons = <>
           FieldName = 'LOCUS_NO'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '物流跟踪号'
+          Title.Caption = #29289#27969#36319#36394#21495
           Width = 82
         end
         item
@@ -377,14 +385,14 @@ inherited frmChangeOrder: TfrmChangeOrder
           FieldName = 'BATCH_NO'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '批号'
+          Title.Caption = #25209#21495
           Width = 96
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
-          Title.Caption = '备注'
+          Title.Caption = #22791#27880
           Width = 163
         end>
     end
@@ -411,92 +419,7 @@ inherited frmChangeOrder: TfrmChangeOrder
     Top = 208
   end
   inherited edtTable: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BARCODE'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'APRICE'
-        DataType = ftFloat
-      end
-      item
-        Name = 'COST_PRICE'
-        DataType = ftFloat
-      end
-      item
-        Name = 'COST_APRICE'
-        DataType = ftFloat
-      end
-      item
-        Name = 'COST_MONEY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'AMONEY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'CALC_AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'CALC_MONEY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'REMARK'
-        DataType = ftString
-        Size = 100
-      end>
+    FieldDefs = <>
     AfterScroll = edtTableAfterScroll
   end
   inherited edtProperty: TZQuery

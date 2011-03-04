@@ -254,6 +254,7 @@ type
 
     procedure PostUpdates; virtual;
     procedure CancelUpdates; virtual;
+    //zhangsenrong 2011-03-04 add
     procedure CommitUpdates;virtual;
     procedure RevertRecord; virtual;
     procedure MoveToInitialRow; virtual;
@@ -543,14 +544,18 @@ end;
   Posts all saved updates to the server.
 }
 procedure TZAbstractCachedResultSet.PostUpdates;
+var i:integer;
 begin
   CheckClosed;
   if FInitialRowsList.Count > 0 then
   begin
-    while FInitialRowsList.Count > 0 do
+    for i:=0 to FInitialRowsList.Count-1 do
+//    while FInitialRowsList.Count > 0 do
     begin
-      OldRowAccessor.RowBuffer := PZRowBuffer(FInitialRowsList[0]);
-      NewRowAccessor.RowBuffer := PZRowBuffer(FCurrentRowsList[0]);
+//      OldRowAccessor.RowBuffer := PZRowBuffer(FInitialRowsList[0]);
+//      NewRowAccessor.RowBuffer := PZRowBuffer(FCurrentRowsList[0]);
+      OldRowAccessor.RowBuffer := PZRowBuffer(FInitialRowsList[i]);
+      NewRowAccessor.RowBuffer := PZRowBuffer(FCurrentRowsList[i]);
 
       { Updates default field values. }
       if NewRowAccessor.RowBuffer.UpdateType = utInserted then
@@ -559,7 +564,9 @@ begin
       { Posts row updates and processes the exceptions. }
       PostRowUpdates(OldRowAccessor, NewRowAccessor);
 
+      // zhangsenrong 2011-03-04 delete  保存时不能立即清空缓冲区，可能存在事务没提交时
       { If post was Ok - update the row update type. }
+      {
       if NewRowAccessor.RowBuffer.UpdateType <> utDeleted then
       begin
         NewRowAccessor.RowBuffer.UpdateType := utUnmodified;
@@ -569,9 +576,10 @@ begin
       end;
 
       { Removes cached rows. }
-      OldRowAccessor.Dispose;
-      FInitialRowsList.Delete(0);
-      FCurrentRowsList.Delete(0);
+      //OldRowAccessor.Dispose;
+      //FInitialRowsList.Delete(0);
+      //FCurrentRowsList.Delete(0);
+      //+++++++++++++++++
     end;
   end;
 end;
@@ -2383,7 +2391,17 @@ begin
     begin
       InitialRow := PZRowBuffer(FInitialRowsList[0]);
       CurrentRow := PZRowBuffer(FCurrentRowsList[0]);
-      CurrentRow.UpdateType := utUnmodified;
+
+      { If post was Ok - update the row update type. }
+      if CurrentRow.UpdateType <> utDeleted then
+      begin
+        CurrentRow.UpdateType := utUnmodified;
+        if (FSelectedRow <> nil)
+          and (FSelectedRow.Index = CurrentRow.Index) then
+          FSelectedRow.UpdateType := utUnmodified;
+      end;
+
+      FRowAccessor.DisposeBuffer(InitialRow);
       FInitialRowsList.Delete(0);
       FCurrentRowsList.Delete(0);
     end;

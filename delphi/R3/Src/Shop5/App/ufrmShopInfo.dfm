@@ -399,14 +399,6 @@ inherited frmShopInfo: TfrmShopInfo
         Properties.OnChange = edtSHOP_NAMEPropertiesChange
         TabOrder = 1
       end
-      object edtSHOP_TYPE: TcxComboBox
-        Left = 106
-        Top = 54
-        Width = 120
-        Height = 20
-        Properties.DropDownListStyle = lsFixedList
-        TabOrder = 2
-      end
       object edtSHOP_SPELL: TcxTextEdit
         Left = 356
         Top = 29
@@ -422,6 +414,42 @@ inherited frmShopInfo: TfrmShopInfo
         Height = 20
         TabOrder = 3
       end
+      object edtSHOP_TYPE: TzrComboBoxList
+        Left = 106
+        Top = 54
+        Width = 120
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 2
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'CODE_ID,CODE_NAME,CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAEM'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CODE_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+            Width = 100
+          end>
+        DropWidth = 122
+        DropHeight = 130
+        ShowTitle = True
+        AutoFitColWidth = True
+        OnAddClick = edtSHOP_TYPEAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew, zbClear]
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -432,16 +460,18 @@ inherited frmShopInfo: TfrmShopInfo
     Left = 48
     Top = 293
   end
-  object drpCompany: TADODataSet
-    Parameters = <>
-    Left = 86
-    Top = 293
-  end
   object cdsTable: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 17
     Top = 295
+  end
+  object cdsSHOPTYPE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 80
+    Top = 296
   end
 end

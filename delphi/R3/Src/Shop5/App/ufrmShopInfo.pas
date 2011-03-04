@@ -5,10 +5,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, ZBase, DB,
-  DBClient, RzButton, RzCmboBx, Mask, RzEdit, cxMaskEdit, cxDropDownEdit,
-  cxMemo, cxCalendar, cxButtonEdit,ADODB, zrComboBoxList,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, ZBase, DB, cxMemo,
+  ZAbstractDataset, ZDataset, RzButton, cxMaskEdit, cxButtonEdit, zrComboBoxList,
+  RzCmboBx, Mask, RzEdit, cxDropDownEdit,cxCalendar,ZAbstractRODataset;
 
 type
   TfrmShopInfo = class(TframeDialogForm)
@@ -26,7 +25,6 @@ type
     edtREMARK: TcxMemo;
     Label20: TLabel;
     edtPOSTALCODE: TcxTextEdit;
-    drpCompany: TADODataSet;
     RzPanel1: TRzPanel;
     Label1: TLabel;
     edtSHOP_ID: TcxTextEdit;
@@ -35,7 +33,6 @@ type
     edtSHOP_NAME: TcxTextEdit;
     Label5: TLabel;
     Label8: TLabel;
-    edtSHOP_TYPE: TcxComboBox;
     Label7: TLabel;
     Label6: TLabel;
     edtSHOP_SPELL: TcxTextEdit;
@@ -45,6 +42,8 @@ type
     edtLICENSE_CODE: TcxTextEdit;
     Label2: TLabel;
     Label9: TLabel;
+    edtSHOP_TYPE: TzrComboBoxList;
+    cdsSHOPTYPE: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -52,6 +51,7 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormShow(Sender: TObject);
+    procedure edtSHOP_TYPEAddClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -71,7 +71,7 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断门店资料是否有修改
   end;
 implementation
-uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal,ufrmShopMain,
+uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal,ufrmShopMain,ufrmCodeInfo,
   ufrmBasic;
 {$R *.dfm}
 
@@ -83,10 +83,10 @@ begin
   Open('');
   dbState := dsInsert;
   edtSHOP_ID.Text := TSequence.GetMaxID(inttostr(Global.TENANT_ID),Factor,'SHOP_ID','CA_SHOP_INFO','0000','TENANT_ID='+inttostr(Global.TENANT_ID));
-  edtSHOP_TYPE.ItemIndex := -1;
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   edtREGION_ID.KeyValue:='#';
   edtREGION_ID.Text:='无区域';
+  edtSHOP_TYPE.KeyValue := '#';
   edtSHOP_TYPE.Text := '无';
   if Visible and edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
 end;
@@ -135,6 +135,16 @@ begin
         edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
         edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
       end;
+    if Aobj.FieldByName('SHOP_TYPE').AsString = '#' then
+      begin
+        edtSHOP_TYPE.Text:='无';
+        edtSHOP_TYPE.KeyValue := Aobj.FieldByName('SHOP_TYPE').AsString;
+      end
+    else
+      begin
+        edtSHOP_TYPE.Text:=TdsFind.GetNameByID(cdsSHOPTYPE,'CODE_ID','CODE_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
+        edtSHOP_TYPE.KeyValue := Aobj.FieldByName('SHOP_TYPE').AsString;
+      end;
 
     dbState := dsBrowse;
   finally
@@ -177,10 +187,7 @@ begin
     if edtLICENSE_CODE.CanFocus then edtLICENSE_CODE.SetFocus;
     raise Exception.Create('经营许可证不能为空!');
   end;
-  {tmp:=TZQuery.Create(nil);
-  tmp.Close;
-  tmp.SQL.Text:='select SHOP_ID,SHOP_NAME from CA_SHOP_INFO where COMM not in(''02'',''12'')';
-  Factor.Open(tmp);}
+
   tmp := Global.GetZQueryFromName('CA_SHOP_INFO');
   if dbState=dsInsert then
   begin
@@ -368,25 +375,25 @@ begin
 end;
 
 procedure TfrmShopInfo.InitType;
-var rs:TZQuery;
-    Aobj_:TRecord_;
 begin
-  try
-    rs := TZQuery.Create(nil);
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' union all '+
-    'select ''#'' as CODE_ID,''无'' as CODE_NAME,''W'' as CODE_SPELL';
-    Factor.Open(rs);
-    if not rs.IsEmpty then ClearCbxPickList(edtSHOP_TYPE);
-    rs.First;
-    while not rs.Eof do
+    cdsSHOPTYPE.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' ';
+    Factor.Open(cdsSHOPTYPE);
+    edtSHOP_TYPE.DataSet := cdsSHOPTYPE;
+end;
+
+procedure TfrmShopInfo.edtSHOP_TYPEAddClick(Sender: TObject);
+var Aobj_:TRecord_;
+begin
+  inherited;
+  Try
+    Aobj_ := TRecord_.Create;
+    if TfrmCodeInfo.AddDialog(Self,Aobj_,12) then
       begin
-        Aobj_ := TRecord_.Create;
-        Aobj_.ReadFromDataSet(rs);
-        edtSHOP_TYPE.Properties.Items.AddObject(rs.FieldByName('CODE_NAME').AsString,Aobj_);
-        rs.Next;
+        edtSHOP_TYPE.KeyValue := Aobj_.FieldbyName('CODE_ID').AsString;
+        edtSHOP_TYPE.Text := Aobj_.FieldbyName('CODE_NAME').AsString;
       end;
   finally
-    rs.Free;
+    Aobj_.Free;
   end;
 end;
 

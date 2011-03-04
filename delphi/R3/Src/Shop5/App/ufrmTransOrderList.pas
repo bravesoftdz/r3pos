@@ -69,8 +69,6 @@ type
     function PrintSQL2(tenantid,id:string):string;
   end;
 
-var
-  frmTransOrderList: TfrmTransOrderList;
 
 implementation
 uses uCtrlUtil,uFnUtil,uGlobal,uShopGlobal,uShopUtil,ufrmBasic,ufrmTransOrder,

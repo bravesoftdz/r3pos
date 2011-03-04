@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
-  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, DBClient, ZBase, ADODB,
+  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase,
   FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh;
 
 type
@@ -68,8 +68,6 @@ type
     function  PrintSQL:string;    
   end;
 
-var
-  frmUsers: TfrmUsers;
 
 implementation
 uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,

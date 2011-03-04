@@ -26,18 +26,9 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           Height = 358
           BorderColor = clWhite
           Color = clWhite
-          object Label18: TLabel
-            Left = 146
-            Top = 12
-            Width = 80
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #31561#32423#20195#30721
-          end
           object Label1: TLabel
             Left = 146
-            Top = 31
+            Top = 16
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -46,7 +37,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label2: TLabel
             Left = 365
-            Top = 31
+            Top = 16
             Width = 60
             Height = 12
             Alignment = taRightJustify
@@ -55,7 +46,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label3: TLabel
             Left = 146
-            Top = 52
+            Top = 41
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -64,7 +55,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label4: TLabel
             Left = 146
-            Top = 72
+            Top = 66
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -77,23 +68,9 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Font.Style = []
             ParentFont = False
           end
-          object Label10: TLabel
-            Left = 357
-            Top = 11
-            Width = 6
-            Height = 12
-            Alignment = taRightJustify
-            Caption = '*'
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clRed
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
           object Label11: TLabel
             Left = 357
-            Top = 31
+            Top = 16
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -107,7 +84,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label13: TLabel
             Left = 357
-            Top = 51
+            Top = 40
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -121,7 +98,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label15: TLabel
             Left = 357
-            Top = 72
+            Top = 66
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -135,7 +112,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label21: TLabel
             Left = 365
-            Top = 72
+            Top = 66
             Width = 60
             Height = 12
             Alignment = taRightJustify
@@ -144,7 +121,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label22: TLabel
             Left = 525
-            Top = 72
+            Top = 66
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -158,7 +135,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object Label23: TLabel
             Left = 513
-            Top = 72
+            Top = 66
             Width = 6
             Height = 12
             Caption = '%'
@@ -177,59 +154,50 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Indent = 19
             ReadOnly = True
             RowSelect = True
-            TabOrder = 0
+            TabOrder = 4
             OnChange = rzTreeChange
             OnChanging = rzTreeChanging
           end
-          object edtPRICE_ID: TcxTextEdit
-            Tag = 1
-            Left = 236
-            Top = 7
-            Width = 121
-            Height = 20
-            Enabled = False
-            TabOrder = 1
-          end
           object edtPRICE_NAME: TcxTextEdit
             Left = 236
-            Top = 27
+            Top = 12
             Width = 121
             Height = 20
             Properties.OnChange = edtPRICE_NAMEPropertiesChange
-            TabOrder = 2
+            TabOrder = 0
           end
           object edtPRICE_SPELL: TcxTextEdit
             Left = 435
-            Top = 27
+            Top = 12
             Width = 90
             Height = 20
-            Enabled = False
+            TabStop = False
             Properties.OnChange = edtPRICE_SPELLPropertiesChange
-            TabOrder = 3
+            TabOrder = 5
           end
           object edtINTEGRAL: TcxTextEdit
             Left = 236
-            Top = 48
+            Top = 37
             Width = 121
             Height = 20
             Properties.OnChange = edtINTEGRALPropertiesChange
-            TabOrder = 4
+            TabOrder = 1
           end
           object edtAGIO_TYPE: TcxComboBox
             Left = 236
-            Top = 68
+            Top = 62
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtAGIO_TYPEPropertiesChange
-            TabOrder = 6
+            TabOrder = 2
           end
           object GroupBox1: TGroupBox
             Left = 178
             Top = 87
             Width = 385
             Height = 204
-            TabOrder = 7
+            TabOrder = 6
             object Notebook1: TNotebook
               Left = 2
               Top = 8
@@ -427,12 +395,12 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
           end
           object edtMINIMUM_PERCENT: TcxSpinEdit
             Left = 435
-            Top = 68
+            Top = 62
             Width = 75
             Height = 20
             Properties.ValueType = vtFloat
             Properties.OnChange = edtMINIMUM_PERCENTPropertiesChange
-            TabOrder = 5
+            TabOrder = 3
             Value = 100.000000000000000000
           end
           object GroupBox2: TGroupBox
@@ -441,7 +409,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Width = 384
             Height = 60
             Caption = #20250#21592#31215#20998#35268#21017#23450#20041
-            TabOrder = 8
+            TabOrder = 7
             object Label5: TLabel
               Left = 8
               Top = 18

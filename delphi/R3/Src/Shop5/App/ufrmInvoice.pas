@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
-  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, DBClient, ZBase, ADODB,
+  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase,
   FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   cxDropDownEdit, cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList,
   PrnDbgeh;
@@ -70,8 +70,6 @@ type
     procedure AddRecord(AObj:TRecord_);
   end;
 
-var
-  frmInvoice: TfrmInvoice;
 
 implementation
 uses ufrmUsersInfo,ufrmInvoiceInfo,ufrmBasic, uframeDialogForm, uGlobal,

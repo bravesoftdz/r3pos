@@ -99,8 +99,6 @@ type
     class function EditDialog(Owner:TForm;id:string;var AObj1:TRecord_):boolean;
   end;
 
-var
-  frmSupplierInfo: TfrmSupplierInfo;
 
 implementation
 uses uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil,ufrmCodeInfo,uShopGlobal;//,ufrmREGION

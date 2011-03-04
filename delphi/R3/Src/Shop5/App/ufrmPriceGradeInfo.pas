@@ -12,8 +12,6 @@ uses
 type
   TfrmPriceGradeInfo = class(TframeDialogForm)
     rzTree: TRzTreeView;
-    Label18: TLabel;
-    edtPRICE_ID: TcxTextEdit;
     Label1: TLabel;
     edtPRICE_NAME: TcxTextEdit;
     Label2: TLabel;
@@ -26,7 +24,6 @@ type
     edtCancel: TRzBitBtn;
     edtDelete: TRzBitBtn;
     edtExit: TRzBitBtn;
-    Label10: TLabel;
     Label11: TLabel;
     Label13: TLabel;
     Label15: TLabel;

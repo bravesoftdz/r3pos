@@ -1,8 +1,8 @@
 inherited frmInvoiceInfo: TfrmInvoiceInfo
-  Left = 493
-  Top = 274
+  Left = 483
+  Top = 240
   Caption = #21457#31080#20449#24687
-  ClientHeight = 322
+  ClientHeight = 324
   ClientWidth = 504
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -12,7 +12,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 504
-    Height = 322
+    Height = 324
     BorderColor = clWhite
     Color = clWhite
     object labINVH_NO: TRzLabel [0]
@@ -196,9 +196,9 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       ParentFont = False
     end
     inherited RzPage: TRzPageControl
-      Top = 112
+      Top = 102
       Width = 494
-      Height = 173
+      Height = 177
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
@@ -208,7 +208,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
         Color = clWhite
         inherited RzPanel2: TRzPanel
           Width = 490
-          Height = 146
+          Height = 150
           BorderColor = clWhite
           Color = clWhite
           object lab_REMARK: TRzLabel
@@ -329,15 +329,14 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 285
+      Top = 279
       Width = 494
-      Height = 32
       BorderColor = clWhite
       Color = clWhite
       TabOrder = 7
       object Btn_Save: TRzBitBtn
         Left = 340
-        Top = 5
+        Top = 10
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
@@ -364,7 +363,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       end
       object Btn_Close: TRzBitBtn
         Left = 426
-        Top = 5
+        Top = 10
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]

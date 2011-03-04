@@ -92,7 +92,7 @@ inherited frmShopInfoList: TfrmShopInfoList
                   OnKeyDown = edtKeyKeyDown
                 end
                 object btnOk: TRzBitBtn
-                  Left = 218
+                  Left = 219
                   Top = 3
                   Width = 67
                   Height = 24

@@ -51,9 +51,9 @@ TDevFactory=class
     Class procedure ShowATotal(Value:Real); //总计
     Class procedure ShowDibs(Value:Real);   //找零
     //打印函数
-    Class procedure BeginPrint;
-    Class procedure WritePrint(s:string);
-    Class procedure EndPrint;
+    procedure BeginPrint;
+    procedure WritePrint(s:string);
+    procedure EndPrint;
 
     function ReadDefine(Define:string;Def:string=''):string;
 
@@ -89,11 +89,12 @@ implementation
 uses IniFiles,EncDec,Forms;
 { TDevFactory }
 
-class procedure TDevFactory.BeginPrint;
+procedure TDevFactory.BeginPrint;
 begin
-  if DevFactory.LPT<1 then Raise Exception.Create('没有安装小票打印机不能打小票');
-  AssignFile(DevFactory.F,'LPT'+inttostr(DevFactory.LPT));
-  rewrite(DevFactory.F);
+//  if LPT<1 then Raise Exception.Create('没有安装小票打印机不能打小票');
+//  AssignFile(DevFactory.F,'LPT'+inttostr(DevFactory.LPT));
+  AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt');
+  rewrite(F);
 end;
 
 procedure TDevFactory.Clear;
@@ -122,9 +123,9 @@ begin
   inherited;
 end;
 
-class procedure TDevFactory.EndPrint;
+procedure TDevFactory.EndPrint;
 begin
-
+  CloseFile(F);
 end;
 
 procedure TDevFactory.InitComm;
@@ -323,9 +324,9 @@ begin
   DevFactory.SetLEDNumber(Value);
 end;
 
-class procedure TDevFactory.WritePrint(s: string);
+procedure TDevFactory.WritePrint(s: string);
 begin
-
+  Writeln(F,s);
 end;
 
 initialization

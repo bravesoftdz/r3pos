@@ -4,7 +4,6 @@ uses
   Windows,
   SysUtils,
   uGlobal in '..\..\BASIC\uGlobal.pas' {Global: TDataModule},
-  ufrmBasic in '..\..\BASIC\ufrmBasic.pas' {frmBasic},
   ufrmMain in '..\..\BASIC\ufrmMain.pas' {frmMain},
   ufrmDesk in '..\..\BASIC\ufrmDesk.pas' {frmDesk},
   udmIcon in '..\..\BASIC\udmIcon.pas' {dmIcon: TDataModule},
@@ -135,7 +134,11 @@ uses
   ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},
   ObjSalesOrder in 'Obj\ObjSalesOrder.pas',
   ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList},
-  ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog};
+  ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog},
+  ufrmShopInfo in 'App\ufrmShopInfo.pas' {frmShopInfo},
+  ufrmShopInfoList in 'App\ufrmShopInfoList.pas' {frmShopInfoList},
+  ufrmBasic in '..\..\Basic\ufrmBasic.pas' {frmBasic},
+  ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm};
 
 {$R *.res}
 var

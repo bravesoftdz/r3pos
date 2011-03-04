@@ -9,7 +9,7 @@ uses
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, ZConnection, DB,
-  ZAbstractRODataset;
+  ZAbstractRODataset, OleCtrls, SHDocVw;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -214,6 +214,8 @@ type
     actfrmCheckOrderList: TAction;
     actfrmIO: TAction;
     actfrmDbOrderList: TAction;
+    actfrmShopInfoList: TAction;
+    actfrmXsmBrowser: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -270,6 +272,8 @@ type
     procedure actfrmPriceOrderListExecute(Sender: TObject);
     procedure actfrmCheckOrderListExecute(Sender: TObject);
     procedure actfrmDbOrderListExecute(Sender: TObject);
+    procedure actfrmShopInfoListExecute(Sender: TObject);
+    procedure actfrmXsmBrowserExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -317,7 +321,7 @@ uses
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList;
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -1631,6 +1635,54 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmShopInfoListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmShopInfoList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmShopInfoList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmXsmBrowserExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmIEWebForm);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmIEWebForm.Create(self);
+       AddFrom(Form);
+     end;
+  try
+    Open(GetDoLogin('http://test.xinshangmeng.com/'));
+    Form.Show;
+    Form.BringToFront;
+  except
+    Form.Free;
+    Raise;
+  end;
 end;
 
 end.

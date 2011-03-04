@@ -39,7 +39,7 @@ inherited frmShopMain: TfrmShopMain
     Align = alBottom
     BevelOuter = bvNone
     Color = 12684131
-    TabOrder = 1
+    TabOrder = 0
     object Image3: TImage
       Left = 0
       Top = 0
@@ -447,7 +447,7 @@ inherited frmShopMain: TfrmShopMain
     Align = alTop
     BorderOuter = fsButtonDown
     BorderSides = [sdTop]
-    TabOrder = 2
+    TabOrder = 1
     object Panel1: TPanel
       Left = 0
       Top = 2
@@ -5076,7 +5076,7 @@ inherited frmShopMain: TfrmShopMain
     BorderOuter = fsNone
     BorderSides = [sdLeft]
     Color = clWhite
-    TabOrder = 3
+    TabOrder = 2
     object Image14: TImage
       Left = 0
       Top = 0
@@ -5409,9 +5409,12 @@ inherited frmShopMain: TfrmShopMain
           end
           item
             Action = actfrmDbOrderList
+          end
+          item
+            Action = actfrmXsmBrowser
           end>
         Opened = True
-        OpenedHeight = 408
+        OpenedHeight = 428
         UseGradients = True
         Caption = 'RzGroup2'
         ParentColor = False
@@ -5934,7 +5937,7 @@ inherited frmShopMain: TfrmShopMain
     Font.Name = #23435#20307
     Font.Style = []
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 3
     Visible = False
   end
   object Panel7: TPanel [5]
@@ -5944,7 +5947,7 @@ inherited frmShopMain: TfrmShopMain
     Height = 371
     Align = alLeft
     BevelOuter = bvNone
-    TabOrder = 5
+    TabOrder = 4
     object Image11: TImage
       Left = 0
       Top = 0
@@ -5985,7 +5988,7 @@ inherited frmShopMain: TfrmShopMain
     Height = 371
     Align = alRight
     BevelOuter = bvNone
-    TabOrder = 6
+    TabOrder = 5
     object Image12: TImage
       Left = 0
       Top = 0
@@ -6027,7 +6030,7 @@ inherited frmShopMain: TfrmShopMain
     Align = alBottom
     BevelOuter = bvNone
     Caption = 'Panel10'
-    TabOrder = 7
+    TabOrder = 6
     object Image2: TImage
       Left = 0
       Top = 0
@@ -6155,7 +6158,7 @@ inherited frmShopMain: TfrmShopMain
     Height = 371
     Align = alLeft
     BevelOuter = bvNone
-    TabOrder = 8
+    TabOrder = 7
     object Image16: TImage
       Left = 0
       Top = 30
@@ -6278,6 +6281,19 @@ inherited frmShopMain: TfrmShopMain
         0000000000000000000000000000000000000000000000010000}
       OnClick = Image19Click
     end
+  end
+  inherited IEBrowser: TWebBrowser
+    Left = 165
+    Top = 99
+    Width = 584
+    Height = 371
+    TabOrder = 9
+    ControlData = {
+      4C000000021F0000810F00000000000000000000000000000000000000000000
+      000000004C000000000000000000000001000000E0D057007335CF11AE690800
+      2B2E126208000000000000004C0000000114020000000000C000000000000046
+      8000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000100000000000000000000000000000000000000}
   end
   inherited mmMenu: TMainMenu
     Left = 368
@@ -6756,6 +6772,14 @@ inherited frmShopMain: TfrmShopMain
     object actfrmDbOrderList: TAction
       Caption = #35843#25320#21333
       OnExecute = actfrmDbOrderListExecute
+    end
+    object actfrmShopInfoList: TAction
+      Caption = #38376#24215#26723#26696
+      OnExecute = actfrmShopInfoListExecute
+    end
+    object actfrmXsmBrowser: TAction
+      Caption = #26032#21830#30431
+      OnExecute = actfrmXsmBrowserExecute
     end
   end
   inherited PopupMenu: TPopupMenu

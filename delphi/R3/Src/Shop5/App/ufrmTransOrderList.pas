@@ -252,8 +252,13 @@ begin
   if not ShopGlobal.GetChkRight('700016') then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
-      cdsList.Delete;
-      Factor.UpdateBatch(cdsList,'TTransOrder');
+      try
+        cdsList.Delete;
+        Factor.UpdateBatch(cdsList,'TTransOrder');
+      except
+        cdsList.CancelUpdates;
+        Raise;
+      end;
     end;
 end;
 

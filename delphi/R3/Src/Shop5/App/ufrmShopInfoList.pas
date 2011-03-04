@@ -170,7 +170,9 @@ begin
     try
       temp := TZQuery.Create(nil);
       temp.Close;
-      temp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12''';
+      temp.SQL.Text := 'select * from(select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' '+
+                       'union all '+
+                       'select ''#'' as CODE_ID,''нч'' as CODE_NAME,''W'' as CODE_SPELL) A';
       Factor.Open(temp);
       Column := FindColumn('SHOP_TYPE');
       if Column <> nil then

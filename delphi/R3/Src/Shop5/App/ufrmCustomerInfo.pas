@@ -144,8 +144,6 @@ type
     class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
   end;
 
-var
-  frmCustomerInfo: TfrmCustomerInfo;
 
 implementation
 uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,
@@ -170,7 +168,7 @@ begin
   cmbSHOP_ID.KeyValue := Global.SHOP_ID;
   cmbSHOP_ID.Text := Global.SHOP_NAME;
   edtREGION_ID.KeyValue := '#';
-  edtREGION_ID.Text := '无';
+  edtREGION_ID.Text := '无区域';
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='无';
   rs:=Global.GetZQueryFromName('PUB_PRICEGRADE');
@@ -203,6 +201,16 @@ begin
     ReadFromObject(Aobj,Self);
     cmbSHOP_ID.KeyValue := Aobj.FieldbyName('SHOP_ID').AsString;
     cmbSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldbyName('SHOP_ID').AsString);
+    if Aobj.FieldByName('REGION_ID').AsString = '#' then
+      begin
+        edtREGION_ID.KeyValue := '#';
+        edtREGION_ID.Text := '无区域';
+      end
+    else
+      begin
+        edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
+        edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+      end;
     cmbPRICE_ID.KeyValue := Aobj.FieldByName('PRICE_ID').AsString;
     cmbPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Aobj.FieldByName('PRICE_ID').AsString);
     edtSORT_ID.KeyValue := Aobj.FieldbyName('SORT_ID').AsString;

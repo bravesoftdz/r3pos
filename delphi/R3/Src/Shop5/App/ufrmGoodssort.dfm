@@ -98,7 +98,7 @@ inherited frmGoodssort: TfrmGoodssort
       BorderColor = clWhite
       Color = clWhite
       object btnSave: TRzBitBtn
-        Left = 93
+        Left = 176
         Top = 13
         Width = 67
         Height = 26
@@ -176,7 +176,7 @@ inherited frmGoodssort: TfrmGoodssort
         Spacing = 5
       end
       object btnDelete: TRzBitBtn
-        Left = 176
+        Left = 93
         Top = 13
         Width = 67
         Height = 26

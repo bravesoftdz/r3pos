@@ -110,9 +110,14 @@ begin
   i:=MessageBox(Handle,Pchar('ÊÇ·ñÒªÉ¾³ýÂð?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
-    Factor.UpdateBatch(Cds_Users,'TUsers');
-    Cds_Users.Delete;
-    UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
+    try
+      Cds_Users.Delete;
+      Factor.UpdateBatch(Cds_Users,'TUsers');
+      UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
+    Except
+      Cds_Users.CancelUpdates;
+      Raise;
+    end;
   end;
 end;
 

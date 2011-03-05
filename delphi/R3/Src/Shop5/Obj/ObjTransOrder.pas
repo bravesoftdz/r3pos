@@ -6,6 +6,7 @@ uses Dialogs,SysUtils,zBase,Classes,DB,ZIntf,ZDataset,ObjCommon;
 type
   TTransOrder = class(TZFactory)
   public
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
     procedure InitClass; override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -27,8 +28,18 @@ implementation
 { TTransOrder }
 
 function TTransOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var Str:String;
 begin
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:OLD_TRANS_MNY-ifnull(IN_MNY,0),BALANCE=:OLD_TRANS_MNY-ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_IN_ACCOUNT_ID  ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:OLD_TRANS_MNY-ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)+:OLD_TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_OUT_ACCOUNT_ID ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+
+  result := true;
 end;
 
 function TTransOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -36,16 +47,16 @@ var Str:String;
 begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
      begin
-       if FieldbyName('GLIDE_NO').AsString='' then
-          FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+       if (FieldbyName('GLIDE_NO').AsString='') or (Pos('新',FieldbyName('GLIDE_NO').AsString)>0) then
+         FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
      
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID and SHOP_ID=:SHOP_ID ';
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID and SHOP_ID=:SHOP_ID ';
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
   result := true;
@@ -53,7 +64,23 @@ end;
 
 function TTransOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeDeleteRecord(AGlobal);
+end;
 
+function TTransOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_TRANSORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and TRANS_ID='''+FieldbyName('TRANS_ID').AsString+'''';
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TTransOrder.InitClass;
@@ -62,8 +89,17 @@ begin
   inherited;
   KeyFields := 'TENANT_ID;TRANS_ID';
 
-  Str := 'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
-  'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TRANS_ID=:TRANS_ID';
+  Str :=
+  'select jd.*,d.USER_NAME as TRANS_USER_TEXT from ('+
+  'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT,c.BALANCE as OUT_BALANCE from ('+
+  'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
+  'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from ('+
+  'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
+  'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and TRANS_ID=:TRANS_ID ) ja '+
+  'left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
+  'left outer join VIW_ACCOUNT_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.IN_ACCOUNT_ID=b.ACCOUNT_ID) jc '+
+  'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.OUT_ACCOUNT_ID=c.ACCOUNT_ID) jd '+
+  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID';
   SelectSQL.Text := Str;
   IsSQLUpdate := True;
 
@@ -74,10 +110,10 @@ begin
 
   Str := 'update ACC_TRANSORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,TRANS_ID=:TRANS_ID,GLIDE_NO=:GLIDE_NO,IN_ACCOUNT_ID=:IN_ACCOUNT_ID,'+
   'OUT_ACCOUNT_ID=:OUT_ACCOUNT_ID,TRANS_DATE=:TRANS_DATE,TRANS_USER=:TRANS_USER,TRANS_MNY=:TRANS_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
-  'REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and TRANS_ID=:OLD_TRANS_ID ';
+  'REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:OLD_TENANT_ID and TRANS_ID=:OLD_TRANS_ID ';
   UpdateSQL.Text := Str;
-  Str := 'update ACC_TRANSORDER set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and TRANS_ID=:OLD_TRANS_ID ';
+  Str := 'delete from ACC_TRANSORDER where TENANT_ID=:OLD_TENANT_ID and TRANS_ID=:OLD_TRANS_ID ';
   DeleteSQL.Text := Str;
 end;
 

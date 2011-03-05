@@ -20,6 +20,7 @@ TDevFactory=class
     FFooter: string;
     FTicketPrintName: integer;
     FTitle: string;
+    FWidth: integer;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -37,10 +38,11 @@ TDevFactory=class
     procedure SetFooter(const Value: string);
     procedure SetTicketPrintName(const Value: integer);
     procedure SetTitle(const Value: string);
+    procedure SetWidth(const Value: integer);
   protected
+    
   public
     F:TextFile;
-
     constructor Create;
     destructor Destroy; override;
     procedure InitComm;
@@ -54,6 +56,8 @@ TDevFactory=class
     procedure BeginPrint;
     procedure WritePrint(s:string);
     procedure EndPrint;
+
+    function EncodeDivStr:string;
 
     function ReadDefine(Define:string;Def:string=''):string;
 
@@ -82,6 +86,9 @@ TDevFactory=class
     // 小票票题
     property Title:string read FTitle write SetTitle;
 
+    //
+    property Width:integer read FWidth write SetWidth;
+
 end;
 var
   DevFactory:TDevFactory;
@@ -90,10 +97,12 @@ uses IniFiles,EncDec,Forms;
 { TDevFactory }
 
 procedure TDevFactory.BeginPrint;
+var Fstr: String;
 begin
 //  if LPT<1 then Raise Exception.Create('没有安装小票打印机不能打小票');
 //  AssignFile(DevFactory.F,'LPT'+inttostr(DevFactory.LPT));
-  AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt');
+  Fstr := ExtractFilePath(ParamStr(0))+'debug\prt.txt';
+  AssignFile(F,Fstr);
   rewrite(F);
 end;
 
@@ -121,6 +130,13 @@ begin
   FComm.StopComm;
   FComm.Free;
   inherited;
+end;
+
+function TDevFactory.EncodeDivStr: string;
+var
+  i:integer;
+begin
+  for i:=1 to Width do result := result + '-';
 end;
 
 procedure TDevFactory.EndPrint;
@@ -298,6 +314,11 @@ end;
 procedure TDevFactory.SetTitle(const Value: string);
 begin
   FTitle := Value;
+end;
+
+procedure TDevFactory.SetWidth(const Value: integer);
+begin
+  FWidth := Value;
 end;
 
 class procedure TDevFactory.ShowAMoney(Value: Real);

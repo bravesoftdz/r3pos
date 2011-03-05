@@ -138,7 +138,14 @@ uses
   ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog},
   ufrmShopInfo in 'App\ufrmShopInfo.pas' {frmShopInfo},
   ufrmShopInfoList in 'App\ufrmShopInfoList.pas' {frmShopInfoList},
-  ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm};
+  ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm},
+  ufrmAccount in 'App\ufrmAccount.pas' {frmAccount},
+  ufrmAccountInfo in 'App\ufrmAccountInfo.pas' {frmAccountInfo},
+  ObjAccount in 'Obj\ObjAccount.pas',
+  ufrmTransOrder in 'App\ufrmTransOrder.pas' {frmTransOrder},
+  ufrmTransOrderList in 'App\ufrmTransOrderList.pas' {frmTransOrderList},
+  ObjTransOrder in 'Obj\ObjTransOrder.pas',
+  ufrmDevFactory in 'App\ufrmDevFactory.pas' {frmDevFactory};
 
 {$R *.res}
 var

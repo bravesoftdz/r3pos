@@ -8,7 +8,8 @@ uses
   RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw;
+  cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
+  DB, ZAbstractRODataset, ZAbstractDataset;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -209,10 +210,16 @@ type
     actfrmCloseForDay: TAction;
     actfrmPriceOrderList: TAction;
     actfrmCheckOrderList: TAction;
-    actfrmIO: TAction;
+    actfrmTransOrderList: TAction;
     actfrmDbOrderList: TAction;
     actfrmShopInfoList: TAction;
     actfrmXsmBrowser: TAction;
+    actfrmAccount: TAction;
+    actfrmIoroOrderList1: TAction;
+    actfrmIoroOrderList2: TAction;
+    actfrmDevFactory: TAction;
+    actfrmIntfSetup: TAction;
+    CA_MODULE: TZQuery;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -271,6 +278,11 @@ type
     procedure actfrmDbOrderListExecute(Sender: TObject);
     procedure actfrmShopInfoListExecute(Sender: TObject);
     procedure actfrmXsmBrowserExecute(Sender: TObject);
+    procedure actfrmAccountExecute(Sender: TObject);
+    procedure actfrmTransOrderListExecute(Sender: TObject);
+    procedure actfrmDevFactoryExecute(Sender: TObject);
+    procedure CA_MODULEFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
   private
     { Private declarations }
     FList:TList;
@@ -318,7 +330,7 @@ uses
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,EncDec;
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -779,56 +791,74 @@ begin
          end;
     end;
 end;
+procedure CreatePageMenu;
+var tab:TRzTabCollectionItem;
+begin
+  RzTab.Tabs.Clear;
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
+    begin
+      if CA_MODULE.FieldbyName('LEVEL').AsInteger =1 then
+      begin
+        tab := RzTab.Tabs.Add;
+        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1));
+        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1)+'1');
+      end;
+      CA_MODULE.Next;
+    end;
+end;
 var
   rs:TZQuery;
   g:TrzGroup;
   b:TrzGroupItem;
   i,r:integer;
 begin
+  if not CA_MODULE.Active then
+     begin
+       CA_MODULE.Close;
+       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
+       Factor.Open(CA_MODULE);
+     end;
   for i:=RzGroupBar1.GroupCount -1 downto 0 do
     begin
       RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
     end;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL from CA_MODULE where len(LEVEL_ID)<=6 and COMM not in (''02'',''12'') and MENU_GROUP='''+trim(RzTab.Tabs[RzTab.TabIndex].Caption)+''' order by LEVEL_ID';
-    Factor.Open(rs); 
-    rs.First;
-    while not rs.Eof do
-      begin
-        if rs.FieldbyName('LEVEL').AsInteger =1 then
+  rs := CA_MODULE;
+  rs.Filtered := false;
+  rs.Filtered := true;
+  rs.First;
+  while not rs.Eof do
+    begin
+      if rs.FieldbyName('LEVEL').AsInteger =2 then
+         begin
+           g := TrzGroup.Create(RzGroupBar1);
+           g.Caption := rs.FieldbyName('MODU_NAME').AsString;
+           g.CaptionColor := $00E4D2AD;
+           g.CaptionHeight := 25;
+           g.DividerVisible := true;
+           RzGroupBar1.AddGroup(g);
+           inc(r);
+           if r>3 then g.Close;
+         end
+      else
+      if rs.FieldbyName('LEVEL').AsInteger =3 then
+         begin
+           if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
            begin
-             g := TrzGroup.Create(RzGroupBar1);
-             g.Caption := rs.FieldbyName('MODU_NAME').AsString;
-             g.CaptionColor := $00E4D2AD;
-             g.CaptionHeight := 25;
-             g.DividerVisible := true;
-             RzGroupBar1.AddGroup(g);
-             inc(r);
-             if r>3 then g.Close;
-           end
-        else
-           begin
-             if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
-             begin
-               b := g.Items.Add;
-               b.Caption := rs.FieldbyName('MODU_NAME').AsString;
-               b.Action := FindAction(rs.FieldbyName('ACTION_NAME').AsString);
-               TAction(b.Action).Caption := rs.FieldbyName('MODU_NAME').AsString;
-               b.ImageIndex := 0;
-             end;
+             b := g.Items.Add;
+             b.Caption := rs.FieldbyName('MODU_NAME').AsString;
+             b.Action := FindAction(rs.FieldbyName('ACTION_NAME').AsString);
+             TAction(b.Action).Caption := rs.FieldbyName('MODU_NAME').AsString;
+             b.ImageIndex := 0;
            end;
-        rs.Next;
-      end;
-    for i:=RzGroupBar1.GroupCount -1 downto 0 do
-      begin
-        if RzGroupBar1.Groups[i].Items.Count =0 then
-           RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
-      end;
-  finally
-    rs.Free;
-  end;
-  
+         end;
+      rs.Next;
+    end;
+  for i:=RzGroupBar1.GroupCount -1 downto 0 do
+    begin
+      if RzGroupBar1.Groups[i].Items.Count =0 then
+         RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
+    end;
 end;
 
 procedure TfrmShopMain.RzBmpButton8Click(Sender: TObject);
@@ -841,7 +871,7 @@ procedure TfrmShopMain.RzTabChange(Sender: TObject);
 begin
   inherited;
   if rzLeft.Width = 28 then rzLeft.Width := 147;
-//  LoadMenu;
+  LoadMenu;
 end;
 
 procedure TfrmShopMain.Image19Click(Sender: TObject);
@@ -1680,6 +1710,68 @@ begin
     Form.Free;
     Raise;
   end;
+end;
+
+procedure TfrmShopMain.actfrmAccountExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmAccount);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmAccount.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmTransOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmTransOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmTransOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDevFactoryExecute(Sender: TObject);
+begin
+  inherited;
+  with TfrmDevFactory.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+end;
+
+procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  inherited;
+  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].);
 end;
 
 end.

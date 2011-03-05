@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 163
-  Top = 276
+  Left = 302
+  Top = 182
   Width = 773
   Height = 543
   Caption = ''
@@ -5345,7 +5345,7 @@ inherited frmShopMain: TfrmShopMain
           item
             Action = actfrmSysDefine
           end>
-        Opened = False
+        Opened = True
         OpenedHeight = 428
         UseGradients = True
         Caption = 'RzGroup1'
@@ -6753,8 +6753,9 @@ inherited frmShopMain: TfrmShopMain
       Caption = #30424#28857#21333
       OnExecute = actfrmCheckOrderListExecute
     end
-    object actfrmIO: TAction
+    object actfrmTransOrderList: TAction
       Caption = #23384#21462#27454#21333
+      OnExecute = actfrmTransOrderListExecute
     end
     object actfrmDbOrderList: TAction
       Caption = #35843#25320#21333
@@ -6767,6 +6768,23 @@ inherited frmShopMain: TfrmShopMain
     object actfrmXsmBrowser: TAction
       Caption = #26032#21830#30431
       OnExecute = actfrmXsmBrowserExecute
+    end
+    object actfrmAccount: TAction
+      Caption = #38134#34892#36134#25143
+      OnExecute = actfrmAccountExecute
+    end
+    object actfrmIoroOrderList1: TAction
+      Caption = #20854#20182#25910#20837
+    end
+    object actfrmIoroOrderList2: TAction
+      Caption = #20854#20182#25903#20986
+    end
+    object actfrmDevFactory: TAction
+      Caption = #35774#22791#21442#25968
+      OnExecute = actfrmDevFactoryExecute
+    end
+    object actfrmIntfSetup: TAction
+      Caption = #25509#21475#35774#32622
     end
   end
   inherited PopupMenu: TPopupMenu
@@ -9868,5 +9886,13 @@ inherited frmShopMain: TfrmShopMain
       F8003F800000FE00FF800000FFFFFF800000FE00FF800000FFFFFF800000FF83
       FF800000FFFFFF800000FFE7FF80000000000000000000000000000000000000
       000000000000}
+  end
+  object CA_MODULE: TZQuery
+    FieldDefs = <>
+    OnFilterRecord = CA_MODULEFilterRecord
+    CachedUpdates = True
+    Params = <>
+    Left = 424
+    Top = 304
   end
 end

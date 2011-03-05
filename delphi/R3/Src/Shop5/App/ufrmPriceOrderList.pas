@@ -4,12 +4,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeOrderToolForm, DB, ADODB, ActnList, Menus, ComCtrls,
-  ToolWin, StdCtrls, RzLabel, Grids, DBGridEh, ExtCtrls, RzTabs, RzPanel,
-  DBClient, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, cxCalendar, cxButtonEdit, zrComboBoxList, RzButton,
-  cxRadioGroup, ZBase, jpeg, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset;
+  Dialogs, uframeOrderToolForm, DB, ActnList, Menus, ComCtrls, ToolWin,
+  StdCtrls, RzLabel, Grids, DBGridEh, ExtCtrls, RzTabs, RzPanel, cxCalendar, 
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
+  cxButtonEdit, zrComboBoxList, RzButton, cxRadioGroup, ZBase, jpeg,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmPriceOrderList = class(TframeOrderToolForm)
@@ -178,7 +177,7 @@ end;
 
 procedure TfrmPriceOrderList.actNextExecute(Sender: TObject);
 var
-  Temp:TADODataSet;
+  Temp:TZQuery;
   Params:TftParamList;
 begin
   inherited;
@@ -187,12 +186,12 @@ begin
         Params := TftParamList.Create(nil);
         try
           Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-          Params.ParamByName('OPER_USER').asString := Global.UserID;
+          Params.ParamByName('CREA_USER').asString := Global.UserID;
           if CurOrder.gid = '' then
              Params.ParamByName('GLIDE_NO').asString := '00000000000000'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TADODataSet.Create(nil);
+          Temp := TZQuery.Create(nil);
           try
              Factor.Open(Temp,'TPriceOrderGetNext',Params);
              if Temp.Fields[0].asString<>'' then
@@ -320,6 +319,8 @@ begin
   rs:=ShopGlobal.GetZQueryFromName('PUB_PRICEGRADE');
   if (rs<>nil) and (rs.Active) then
   begin
+    CurCol.KeyList.Add('#');
+    CurCol.PickList.Add('所有客户');
     rs.First;
     while not rs.Eof do
     begin

@@ -21,7 +21,7 @@ inherited frmRoleInfo: TfrmRoleInfo
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #32844#21153#26723#26696
+        Caption = #35282#33394#26723#26696
         inherited RzPanel2: TRzPanel
           Width = 389
           Height = 238

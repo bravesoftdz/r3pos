@@ -85,7 +85,7 @@ type
   public
     { Public declarations }
     IsEnd,IsChain,IsCompany: boolean;
-    MaxId:string;  
+    MaxId:string;
     locked:boolean;
     rcAmt:integer;
     procedure AddRecord(AObj:TRecord_);
@@ -518,8 +518,7 @@ begin
   inherited;
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
-  if cdsBrowser.State=dsEdit then
-    cdsBrowser.Post;
+  if cdsBrowser.State=dsEdit then cdsBrowser.Post;
   //if not ShopGlobal.GetChkRight('200038') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
 
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
@@ -527,6 +526,7 @@ begin
   begin
     tmpGlobal := Global.GetZQueryFromName('PUB_GOODSINFO');
     tmpGlobal.Filtered :=false;
+    cdsBrowser.CommitUpdates;
     cdsBrowser.DisableControls;
     try
       cdsBrowser.Filtered := false;
@@ -546,8 +546,7 @@ begin
               tmpGlobal.Delete;
             inc(n);
             cdsBrowser.Delete;
-          end
-          else cdsBrowser.Next;
+          end else cdsBrowser.Next;
         end;
         //提交数据保存
         try

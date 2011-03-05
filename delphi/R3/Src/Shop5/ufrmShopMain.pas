@@ -165,7 +165,6 @@ type
     Image18: TImage;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
-    RzBmpButton3: TRzBmpButton;
     lblLogin: TLabel;
     ImageList2: TImageList;
     actfrmMeaUnits: TAction;

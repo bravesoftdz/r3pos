@@ -907,4 +907,33 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
+  object PUB_SETTLE_CODE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select '#39'#'#39' as SORT_ID,'#39#26080#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as SE' +
+        'Q_NO from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
+      'union all'
+      'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO '
+      
+        'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and COD' +
+        'E_TYPE='#39'12'#39
+      'order  by  4')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 584
+    Top = 168
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
 end

@@ -45,6 +45,7 @@ type
     PUB_DEGREES_INFO: TZQuery;
     PUB_OCCUPATION_INFO: TZQuery;
     PUB_SHOP_TYPE: TZQuery;
+    PUB_SETTLE_CODE: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

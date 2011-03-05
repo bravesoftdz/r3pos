@@ -266,7 +266,7 @@ end;
  -------------------------------------------------------------------------------}
 procedure TfrmRoleRights.SaveRight;
   function GetRightValue(rs: TDataSet; MODU_ID: string): integer;
-  var LevelID,CurID: string;
+  var LevelID,CurID: string; vLen: integer;
   begin
     result:=0;
     if not rs.Active then Exit;
@@ -274,18 +274,19 @@ procedure TfrmRoleRights.SaveRight;
     begin
       //定位模块ID，根据模块的LEVEL_ID搜索其具体功能权限CHK值
       LevelID:=trim(rs.fieldbyName('LEVEL_ID').AsString);
+      vLen:=length(LevelID);
       rs.First;
       while not rs.Eof do
       begin
         CurID:=trim(rs.fieldbyName('LEVEL_ID').AsString);
-        if (LevelID<>CurID)and(Pos(LevelID,CurID)>0) then
+        if (vLen<length(CurID)) and (LevelID=Copy(CurID,1,vLen)) then
           result:=result+rs.fieldbyName('CheckFlag').AsInteger;
         rs.Next;
       end;
     end;
   end;
 var
-  c,ID:string;
+  c,ID:string; 
   i,j, vCheck,SEQUNo:integer;
 begin
   if ModiRight then

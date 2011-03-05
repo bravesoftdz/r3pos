@@ -111,17 +111,26 @@ begin
   if id <> '' then
     StrWhere := StrWhere + ' and TRANS_ID>'+QuotedStr(id);
 
-  StrSql := ' TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
-            'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and '+StrWhere;
+  StrSql :=
+  'select jd.*,d.USER_NAME as TRANS_USER_TEXT from ('+
+  'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT,c.BALANCE as OUT_BALANCE from ('+
+  'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
+  'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from ('+
+  'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
+  'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and '+StrWhere+' ) ja '+
+  'left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
+  'left outer join VIW_ACCOUNT_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.IN_ACCOUNT_ID=b.ACCOUNT_ID) jc '+
+  'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.OUT_ACCOUNT_ID=c.ACCOUNT_ID) jd '+
+  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID';
 
   case Factor.iDbType of
-    0: Result := 'select top 600 '+StrSql+' order by TRANS_ID';
-    4:result :=
-       'select * from (select '+strSql+' order by TRANS_ID) tp fetch first 600 rows only';
-    5: Result := 'select '+StrSql+' order by TRANS_ID limit 600';
+    0: result:= 'select * from ('+StrSql+') je order by SHOP_ID';
+    4: result:='select * from ('+StrSql+') je order by SHOP_ID  ';
+    5: result:= 'select * from ('+StrSql+') order by SHOP_ID ';
   else
-    Result := 'select '+StrSql+' order by TRANS_ID ';
+    result := 'select * from ('+StrSql+') order by SHOP_ID';
   end;
+
 end;
 
 function TfrmTransOrderList.FindColumn(FieldName: string): TColumnEh;
@@ -163,7 +172,11 @@ var rs:TZQuery;
 begin
   InitGridPickList(DBGridEh1);
 
-  rs := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  try
+  //rs := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  rs := TZQuery.Create(nil);
+  rs.SQL.Text := 'select * from VIW_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and (PAYM_ID<>''A''  or SHOP_ID='+Global.SHOP_ID+') and COMM not in (''02'',''12'') order by PAYM_ID';
+  Factor.Open(rs);
   Column := FindColumn('IN_ACCOUNT_ID');
   if Column <> nil then
     begin
@@ -187,6 +200,9 @@ begin
           rs.Next;
         end;
     end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmTransOrderList.Open2(Id: string);

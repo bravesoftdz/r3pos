@@ -94,6 +94,8 @@ begin
     Factor.Open(cdsHeader,'TTransOrder',Params);
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,Self);
+    if AObj.FieldbyName('GLIDE_NO').AsString<>'' then
+      lblCaption.Caption := 'µ•∫≈:'+AObj.FieldbyName('GLIDE_NO').AsString;
 
     labOUT.Caption := '”‡∂Ó:'+AObj.FieldbyName('OUT_BALANCE').AsString;
     labIN.Caption := '”‡∂Ó:'+AObj.FieldbyName('IN_BALANCE').AsString;
@@ -152,6 +154,7 @@ procedure TfrmTransOrder.Edit(id: string);
 begin
   Open(id);
   dbState := dsEdit;
+  
   btnOk.Enabled:=False;
 end;
 

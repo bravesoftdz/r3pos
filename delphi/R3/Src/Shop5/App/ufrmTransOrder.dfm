@@ -232,7 +232,7 @@ inherited frmTransOrder: TfrmTransOrder
         end
         object Image1: TImage
           Left = 79
-          Top = 39
+          Top = 40
           Width = 51
           Height = 43
           AutoSize = True
@@ -509,7 +509,6 @@ inherited frmTransOrder: TfrmTransOrder
         MultiSelect = False
       end
       object edtOUT_ACCOUNT_ID: TzrComboBoxList
-        Tag = -1
         Left = 78
         Top = 63
         Width = 115
@@ -552,7 +551,6 @@ inherited frmTransOrder: TfrmTransOrder
         MultiSelect = False
       end
       object edtIN_ACCOUNT_ID: TzrComboBoxList
-        Tag = -1
         Left = 78
         Top = 87
         Width = 115
@@ -617,7 +615,6 @@ inherited frmTransOrder: TfrmTransOrder
         TabOrder = 6
       end
       object edtTRANS_USER: TzrComboBoxList
-        Tag = -1
         Left = 78
         Top = 111
         Width = 115

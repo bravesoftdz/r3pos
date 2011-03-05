@@ -110,6 +110,8 @@ type
     edtUSING_LOCUS_NO: TRadioGroup;
     Label14: TLabel;
     Label21: TLabel;
+    edtDefault1: TcxCheckBox;
+    edtDefault2: TcxCheckBox;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -171,6 +173,8 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure PriceGridColumns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure edtDefault1Click(Sender: TObject);
+    procedure edtDefault2Click(Sender: TObject);
   private
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
@@ -600,7 +604,7 @@ var
 begin
   uShopUtil.ReadFromObject(AObj,self);
   if AObj.FieldByName('NEW_OUTPRICE').AsFloat<>0 then
-    edtPROFIT_RATE.Text:=formatFloat('#0.0',AObj.FieldByName('NEW_INPRICE').AsFloat*100/AObj.FieldByName('NEW_OUTPRICE').AsFloat)
+    edtPROFIT_RATE.Text:=formatFloat('#0',AObj.FieldByName('NEW_INPRICE').AsFloat*100/AObj.FieldByName('NEW_OUTPRICE').AsFloat)
   else
     edtPROFIT_RATE.Text:= '';
   edtUSING_PRICE.ItemIndex := AObj.FieldbyName('USING_PRICE').AsInteger-1;
@@ -636,6 +640,10 @@ begin
   edtMY_OUTPRICE.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE').AsFloat);    //门店售价
   edtMY_OUTPRICE1.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE1').AsFloat);  //包装1门店售价
   edtMY_OUTPRICE2.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE2').AsFloat);  //包装2门店售价
+
+  //默认单位读取
+  edtDefault1.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('SMALL_UNITS').AsString);
+  edtDefault2.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('BIG_UNITS').AsString);
 end;
 
 procedure TfrmGoodsInfo.WriteToObject(AObj: TRecord_);
@@ -680,6 +688,11 @@ begin
   AObj.FieldByName('SORT_ID8').AsString:=edtSORT_ID8.KeyValue;
   //写入条形码:            
   AObj.FieldByName('BARCODE').AsString:=edtBARCODE1.Text;
+
+  //默认单位写入:
+  if edtDefault1.Checked then AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('SMALL_UNITS').AsString
+  else if edtDefault2.Checked  then AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('BIG_UNITS').AsString
+  else AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('CALC_UNITS').AsString;
 end;
 
 procedure TfrmGoodsInfo.FormShow(Sender: TObject);
@@ -1801,6 +1814,29 @@ begin
     if edtBIGTO_CALC.CanFocus then   edtBIGTO_CALC.SetFocus;
     raise Exception.Create('大包装单位的换算系数不能小于等于0!');
   end;
+
+  //2011.03.03 Add 检查设定为管理单位：单位ID和换算关系不能为空
+  if (edtDefault1.Checked) and (trim(edtSMALL_UNITS.AsString)='') then
+  begin
+    if edtSMALL_UNITS.CanFocus then edtSMALL_UNITS.SetFocus;
+    Raise Exception.Create(' 小包装单位设为默认单位不能为空  '); 
+  end;
+  if (edtDefault1.Checked) and (StrToFloatDef(edtSMALLTO_CALC.Text,0)<=0) then
+  begin
+    if edtSMALLTO_CALC.CanFocus then edtSMALLTO_CALC.SetFocus;
+    raise Exception.Create('小包装单位的换算系数不能小于等于0!');
+  end;
+  //2011.03.03 Add 检查设定为管理单位：单位ID和换算关系不能为空
+  if (edtDefault2.Checked) and (trim(edtBIG_UNITS.AsString)='') then
+  begin
+    if edtBIG_UNITS.CanFocus then edtBIG_UNITS.SetFocus;
+    Raise Exception.Create(' 大包装单位设为默认单位不能为空  '); 
+  end;
+  if (edtDefault2.Checked) and (StrToFloatDef(edtBIGTO_CALC.Text,0)<=0) then
+  begin
+    if edtBIGTO_CALC.CanFocus then edtBIGTO_CALC.SetFocus;
+    raise Exception.Create('大包装单位的换算系数不能小于等于0!');
+  end;
 end;
 
 procedure TfrmGoodsInfo.edtSORT_ID2SaveValue(Sender: TObject);
@@ -2302,6 +2338,18 @@ begin
   inherited;
   if PriceGrid.DataSource.DataSet.Active then
     CALC_MenberProfitPrice(self.CdsMemberPrice,1);
+end;
+
+procedure TfrmGoodsInfo.edtDefault1Click(Sender: TObject);
+begin
+  inherited;
+  edtDefault2.Checked:=(true) and (edtDefault1.Checked);
+end;
+
+procedure TfrmGoodsInfo.edtDefault2Click(Sender: TObject);
+begin
+  inherited;
+  edtDefault1.Checked:=(true) and (edtDefault2.Checked);
 end;
 
 end.

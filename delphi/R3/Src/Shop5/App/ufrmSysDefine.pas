@@ -503,7 +503,7 @@ var
   IsTrue:Boolean;
 begin
   inherited;
-  //btnOk.Enabled := IsTrue; 
+  //btnOk.Enabled := IsTrue;
   ObjRecord := TZFactory.create;
   try
     ObjRecord.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

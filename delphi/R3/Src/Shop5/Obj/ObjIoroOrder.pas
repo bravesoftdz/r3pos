@@ -172,12 +172,10 @@ begin
     'from ACC_IORODATA A,ACC_IOROORDER B where A.TENANT_ID=B.TENANT_ID and A.IORO_ID=B.IORO_ID and A.TENANT_ID=:TENANT_ID and A.IORO_ID=:IORO_ID order by A.SEQNO';
 
   IsSQLUpdate := True;
-  Str := 'insert into ACC_IORODATA(COMP_ID,VOUC_ID,SEQNO,ITEM_ID,REMARK,IN_MNY,OUT_MNY,COMM,TIME_STAMP) '
-    + 'VALUES(:COMP_ID,:VOUC_ID,:SEQNO,:ITEM_ID,:REMARK,:IN_MNY,:OUT_MNY,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into ACC_IORODATA(TENANT_ID,SHOP_ID,IORO_ID,SEQNO,ACCOUNT_ID,IORO_INFO,IORO_MNY) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:IORO_ID,:SEQNO,:ACCOUNT_ID,:IORO_INFO,:IORO_MNY)';
   InsertSQL.Text := Str;
-  Str := 'update ACC_IORODATA set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,IORO_ID=:IORO_ID,SEQNO=:SEQNO,ACCOUNT_ID=:ACCOUNT_ID,IORO_INFO=:IORO_INFO,IORO_MNY=:IORO_MNY,'
-    + 'COMM=' + GetCommStr(iDbType) + ','
-    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+  Str := 'update ACC_IORODATA set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,IORO_ID=:IORO_ID,SEQNO=:SEQNO,ACCOUNT_ID=:ACCOUNT_ID,IORO_INFO=:IORO_INFO,IORO_MNY=:IORO_MNY '
     + 'where TENANT_ID=:OLD_TENANT_ID and IORO_ID=:OLD_IORO_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := Str;
   Str := 'delete from ACC_IORODATA where TENANT_ID=:OLD_TENANT_ID and IORO_ID=:OLD_IORO_ID and SEQNO=:OLD_SEQNO';
@@ -193,7 +191,7 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
-    Str := 'update RCK_VOUCHERORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where COMP_ID='''+Params.FindParam('COMP_ID').asString +''' and VOUC_ID='''+Params.FindParam('VOUC_ID').asString+''' and CHK_DATE IS NULL';
+    Str := 'update ACC_IOROORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
@@ -220,7 +218,7 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
-    Str := 'update RCK_VOUCHERORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where COMP_ID='''+Params.FindParam('COMP_ID').asString +''' and VOUC_ID='''+Params.FindParam('VOUC_ID').asString+''' and CHK_DATE IS NOT NULL';
+    Str := 'update ACC_IOROORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到审核单据，是否被另一用户删除或反审核。')

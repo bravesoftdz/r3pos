@@ -295,11 +295,8 @@ begin
     //对应位进行 and 预算，返回是否有权限
     result:=(CHK_Value and (1 shl (SEQUNo-1)))<>0;
   finally
-    if Filter<>'' then
-    begin
-      CA_RIGHTS.Filtered:=False;
-      CA_RIGHTS.Filter:='';
-    end;
+    CdsRight.Filtered:=False;
+    CdsRight.Filter:='';
   end;
 end;
 

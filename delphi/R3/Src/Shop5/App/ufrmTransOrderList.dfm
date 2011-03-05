@@ -445,7 +445,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #21046#21333#26102#38388
-                    Width = 120
+                    Width = 132
                   end>
               end
             end

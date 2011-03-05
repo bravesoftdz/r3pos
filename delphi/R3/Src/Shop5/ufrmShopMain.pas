@@ -219,6 +219,7 @@ type
     actfrmDevFactory: TAction;
     actfrmIntfSetup: TAction;
     CA_MODULE: TZQuery;
+    actfrmStorageInfo: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -646,7 +647,7 @@ begin
   for i:=0 to actList.ActionCount -1 do
     begin
       if TAction(actList.Actions[i]).Tag > 0 then
-      TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag));
+         TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
     end;
 end;
 
@@ -800,7 +801,7 @@ begin
       if CA_MODULE.FieldbyName('LEVEL').AsInteger =1 then
       begin
         tab := RzTab.Tabs.Add;
-        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1));
+        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))-1;
         tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1)+'1');
       end;
       CA_MODULE.Next;
@@ -1772,7 +1773,7 @@ procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].ImageIndex);
+  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].ImageIndex+1);
 end;
 
 end.

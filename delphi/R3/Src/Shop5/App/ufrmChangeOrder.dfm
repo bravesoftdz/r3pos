@@ -419,7 +419,6 @@ inherited frmChangeOrder: TfrmChangeOrder
     Top = 208
   end
   inherited edtTable: TZQuery
-    FieldDefs = <>
     AfterScroll = edtTableAfterScroll
   end
   inherited edtProperty: TZQuery

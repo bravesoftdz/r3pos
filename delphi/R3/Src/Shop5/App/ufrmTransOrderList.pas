@@ -39,6 +39,8 @@ type
     cdsList: TZQuery;
     Dsc_1: TDataSource;
     frReport1: TfrReport;
+    Label40: TLabel;
+    fndSHOP_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -114,7 +116,8 @@ begin
 
   case Factor.iDbType of
     0: Result := 'select top 600 '+StrSql+' order by TRANS_ID';
-    //4: Result := '';
+    4:result :=
+       'select * from (select '+strSql+' order by TRANS_ID) tp fetch first 600 rows only';
     5: Result := 'select '+StrSql+' order by TRANS_ID limit 600';
   else
     Result := 'select '+StrSql+' order by TRANS_ID ';
@@ -143,6 +146,10 @@ begin
   TRANS_DATE1.Date := FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01',Date));
   TRANS_DATE2.Date := FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD',Date));
 
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
+  fndSHOP_ID.KeyValue := Global.SHOP_ID;
+  fndSHOP_ID.Text := Global.SHOP_NAME;
+  
   fndIN_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndOUT_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndTRANS_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
@@ -195,7 +202,7 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id,Str);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',TRANS_DATE1.Date));
     rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',TRANS_DATE2.Date));
     Factor.Open(rs);

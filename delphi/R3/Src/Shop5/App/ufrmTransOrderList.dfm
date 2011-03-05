@@ -3,32 +3,32 @@ inherited frmTransOrderList: TfrmTransOrderList
   Top = 151
   Width = 906
   Height = 587
-  Caption = #23384#21462#27454#31649#29702
+  Caption = #23384#21462#27454#21333
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 898
-    Height = 530
+    Width = 890
+    Height = 519
     inherited RzPanel2: TRzPanel
-      Width = 888
-      Height = 520
+      Width = 880
+      Height = 509
       inherited RzPage: TRzPageControl
-        Width = 882
-        Height = 514
+        Width = 874
+        Height = 503
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23384#21462#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 880
-            Height = 487
+            Width = 872
+            Height = 476
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 870
-              Height = 132
+              Width = 862
+              Height = 117
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -51,24 +51,31 @@ inherited frmTransOrderList: TfrmTransOrderList
               end
               object LabIN_ACCOUNT_ID: TLabel
                 Left = 27
-                Top = 34
+                Top = 53
                 Width = 48
                 Height = 12
-                Caption = #36716#20837#36134#21495
+                Caption = #23384#27454#36134#21495
               end
               object LabOUT_ACCOUNT_ID: TLabel
                 Left = 27
-                Top = 57
+                Top = 74
                 Width = 48
                 Height = 12
-                Caption = #36716#20986#36134#21495
+                Caption = #21462#27454#36134#21495
               end
               object LabTRANS_USER: TLabel
                 Left = 38
-                Top = 80
+                Top = 95
                 Width = 36
                 Height = 12
                 Caption = #36127#36131#20154
+              end
+              object Label40: TLabel
+                Left = 26
+                Top = 31
+                Width = 48
+                Height = 12
+                Caption = #23384#21462#38376#24215
               end
               object TRANS_DATE1: TcxDateEdit
                 Left = 80
@@ -89,7 +96,7 @@ inherited frmTransOrderList: TfrmTransOrderList
               object fndIN_ACCOUNT_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 30
+                Top = 49
                 Width = 217
                 Height = 20
                 Properties.AutoSelect = False
@@ -131,7 +138,7 @@ inherited frmTransOrderList: TfrmTransOrderList
               object fndOUT_ACCOUNT_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 53
+                Top = 70
                 Width = 217
                 Height = 20
                 Properties.AutoSelect = False
@@ -173,8 +180,8 @@ inherited frmTransOrderList: TfrmTransOrderList
               object fndTRANS_USER: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 76
-                Width = 217
+                Top = 91
+                Width = 89
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -213,8 +220,8 @@ inherited frmTransOrderList: TfrmTransOrderList
                 MultiSelect = False
               end
               object fndQuery: TRzBitBtn
-                Left = 230
-                Top = 99
+                Left = 437
+                Top = 79
                 Width = 67
                 Height = 28
                 Action = actFind
@@ -240,10 +247,10 @@ inherited frmTransOrderList: TfrmTransOrderList
                 Spacing = 5
               end
               object fndOrderStatus: TcxRadioGroup
-                Left = 305
-                Top = 15
+                Left = 321
+                Top = 22
                 Width = 105
-                Height = 81
+                Height = 88
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -258,12 +265,54 @@ inherited frmTransOrderList: TfrmTransOrderList
                 TabOrder = 6
                 Caption = ''
               end
+              object fndSHOP_ID: TzrComboBoxList
+                Tag = -1
+                Left = 80
+                Top = 28
+                Width = 217
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 7
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                KeyField = 'SHOP_ID'
+                ListField = 'SHOP_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SEQ_NO'
+                    Footers = <>
+                    Title.Caption = #24207#21495
+                    Width = 20
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = []
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object RzPanel6: TRzPanel
               Left = 5
-              Top = 137
-              Width = 870
-              Height = 345
+              Top = 122
+              Width = 862
+              Height = 349
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -271,8 +320,8 @@ inherited frmTransOrderList: TfrmTransOrderList
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 870
-                Height = 345
+                Width = 862
+                Height = 349
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Dsc_1
@@ -320,10 +369,18 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'TRANS_DATE'
+                    Footers = <>
+                    Title.Alignment = taCenter
+                    Title.Caption = #36716#36134#26085#26399
+                    Width = 80
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'IN_ACCOUNT_ID'
                     Footers = <>
                     Title.Alignment = taCenter
-                    Title.Caption = #36716#20837#36134#21495
+                    Title.Caption = #23384#27454#36134#21495
                     Width = 100
                   end
                   item
@@ -331,7 +388,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                     FieldName = 'OUT_ACCOUNT_ID'
                     Footers = <>
                     Title.Alignment = taCenter
-                    Title.Caption = #36716#20986#36134#21495
+                    Title.Caption = #21462#27454#36134#21495
                     Width = 100
                   end
                   item
@@ -344,15 +401,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'TRANS_DATE'
-                    Footers = <>
-                    Title.Alignment = taCenter
-                    Title.Caption = #36716#36134#26085#26399
-                    Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'TRANS_USER'
+                    FieldName = 'TRANS_USER_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #36127#36131#20154
@@ -368,7 +417,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CHK_USER'
+                    FieldName = 'CHK_USER_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #23457#26680#20154
@@ -384,7 +433,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CREA_USER'
+                    FieldName = 'CREA_USER_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #21046#21333#20154
@@ -406,22 +455,21 @@ inherited frmTransOrderList: TfrmTransOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 898
+    Width = 890
     inherited Image1: TImage
       Left = 530
-      Width = 359
+      Width = 351
     end
     inherited Image14: TImage
-      Left = 889
+      Left = 881
     end
     inherited Image3: TImage
       Left = 530
-      Width = 359
+      Width = 351
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
-        Width = 120
-        Caption = #24403#21069#20301#32622'->'#23384#21462#27454#31649#29702
+        Caption = #24403#21069#20301#32622'->'#23384#21462#27454#21333
       end
     end
     inherited CoolBar1: TCoolBar
@@ -522,10 +570,12 @@ inherited frmTransOrderList: TfrmTransOrderList
     end
   end
   object cdsList: TZQuery
+    SortedFields = 'GLIDE_NO'
     FieldDefs = <>
     AfterScroll = cdsListAfterScroll
     CachedUpdates = True
     Params = <>
+    IndexFieldNames = 'GLIDE_NO Asc'
     Left = 470
     Top = 84
   end

@@ -1,6 +1,7 @@
 inherited frmTransOrder: TfrmTransOrder
   Left = 606
   Top = 185
+  ActiveControl = edtOUT_ACCOUNT_ID
   Caption = #23384#21462#27454#21333
   ClientHeight = 305
   ClientWidth = 493
@@ -38,8 +39,8 @@ inherited frmTransOrder: TfrmTransOrder
       BorderColor = clWhite
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 310
-        Top = 11
+        Left = 286
+        Top = 3
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
@@ -65,8 +66,8 @@ inherited frmTransOrder: TfrmTransOrder
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 401
-        Top = 11
+        Left = 377
+        Top = 3
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
@@ -121,14 +122,14 @@ inherited frmTransOrder: TfrmTransOrder
         Top = 67
         Width = 48
         Height = 12
-        Caption = #36716#20986#36134#21495
+        Caption = #21462#27454#36134#25143
       end
       object LabIN_ACCOUNT_ID: TLabel
         Left = 24
         Top = 91
         Width = 48
         Height = 12
-        Caption = #36716#20837#36134#21495
+        Caption = #23384#27454#36134#25143
       end
       object Label17: TLabel
         Left = 36
@@ -138,12 +139,18 @@ inherited frmTransOrder: TfrmTransOrder
         Caption = #36127#36131#20154
       end
       object Label4: TLabel
-        Left = 24
-        Top = 141
-        Width = 48
+        Left = 45
+        Top = 140
+        Width = 26
         Height = 12
         Alignment = taRightJustify
-        Caption = #23384#21462#37329#39069
+        Caption = #37329#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clNavy
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label7: TLabel
         Left = 48
@@ -154,7 +161,7 @@ inherited frmTransOrder: TfrmTransOrder
         Caption = #35828#26126
       end
       object labOUT: TLabel
-        Left = 194
+        Left = 196
         Top = 67
         Width = 33
         Height = 12
@@ -168,8 +175,8 @@ inherited frmTransOrder: TfrmTransOrder
         Transparent = True
       end
       object labIN: TLabel
-        Left = 194
-        Top = 92
+        Left = 196
+        Top = 91
         Width = 33
         Height = 12
         Caption = #20313#39069':'
@@ -199,7 +206,7 @@ inherited frmTransOrder: TfrmTransOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 1
+        TabOrder = 7
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -471,7 +478,7 @@ inherited frmTransOrder: TfrmTransOrder
           end>
         Properties.ReadOnly = False
         Properties.OnChange = edtSHOP_IDPropertiesChange
-        TabOrder = 2
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -513,8 +520,7 @@ inherited frmTransOrder: TfrmTransOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        Properties.OnChange = edtOUT_ACCOUNT_IDPropertiesChange
-        TabOrder = 3
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -542,6 +548,7 @@ inherited frmTransOrder: TfrmTransOrder
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
+        OnSaveValue = edtOUT_ACCOUNT_IDSaveValue
         MultiSelect = False
       end
       object edtIN_ACCOUNT_ID: TzrComboBoxList
@@ -556,8 +563,7 @@ inherited frmTransOrder: TfrmTransOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        Properties.OnChange = edtIN_ACCOUNT_IDPropertiesChange
-        TabOrder = 4
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -585,6 +591,7 @@ inherited frmTransOrder: TfrmTransOrder
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
+        OnSaveValue = edtIN_ACCOUNT_IDSaveValue
         MultiSelect = False
       end
       object edtTRANS_MNY: TcxTextEdit
@@ -592,7 +599,13 @@ inherited frmTransOrder: TfrmTransOrder
         Top = 137
         Width = 115
         Height = 20
+        ParentFont = False
         Properties.OnChange = edtTRANS_MNYPropertiesChange
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
         TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
@@ -616,7 +629,7 @@ inherited frmTransOrder: TfrmTransOrder
           end>
         Properties.ReadOnly = False
         Properties.OnChange = edtTRANS_USERPropertiesChange
-        TabOrder = 7
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'USER_ID;USER_NAME;USER_SPELL'

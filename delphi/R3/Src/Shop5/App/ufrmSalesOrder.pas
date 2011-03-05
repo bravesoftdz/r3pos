@@ -281,7 +281,6 @@ begin
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('UNION_ID').asString := '#';
   AObj.FieldbyName('PRICE_ID').asString := '#';
-//  AObj.FieldbyName('GLIDE_NO').asString := TSequence.GetSequence('GNO_SALES'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   oid := AObj.FieldbyName('SALES_ID').asString;
   gid := '..ÐÂÔö..';// AObj.FieldbyName('GLIDE_NO').asString;
   edtSALES_DATE.Date := Global.SysDate;

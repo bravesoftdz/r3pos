@@ -1896,7 +1896,7 @@ begin
   Open('');
   dbState := dsInsert;
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
-  AObj.FieldbyName('GLIDE_NO').asString := '..新增..';//TSequence.GetSequence('GNO_SALES'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
+  AObj.FieldbyName('GLIDE_NO').asString := '..新增..';
   oid := AObj.FieldbyName('SALES_ID').asString;
   gid := AObj.FieldbyName('GLIDE_NO').asString;
   AObj.FieldbyName('SALES_DATE').asInteger := strtoint(formatDatetime('YYYYMMDD',Global.SysDate));

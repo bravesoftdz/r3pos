@@ -46,11 +46,11 @@ type
     procedure cdsDetailBeforeEdit(DataSet: TDataSet);
     procedure edtTRANS_DATEPropertiesChange(Sender: TObject);
     procedure edtSHOP_IDPropertiesChange(Sender: TObject);
-    procedure edtOUT_ACCOUNT_IDPropertiesChange(Sender: TObject);
-    procedure edtIN_ACCOUNT_IDPropertiesChange(Sender: TObject);
     procedure edtTRANS_USERPropertiesChange(Sender: TObject);
     procedure edtTRANS_MNYPropertiesChange(Sender: TObject);
     procedure edtREMARKPropertiesChange(Sender: TObject);
+    procedure edtOUT_ACCOUNT_IDSaveValue(Sender: TObject);
+    procedure edtIN_ACCOUNT_IDSaveValue(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -72,7 +72,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, ufrmBasic;//ufrmFindReveAbleList,ufrmAccountInfo,ufrmItemInfo,ufrmRecvAbleInfo,
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, ufrmBasic;
   
 {$R *.dfm}
 
@@ -94,14 +94,18 @@ begin
     Factor.Open(cdsHeader,'TTransOrder',Params);
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,Self);
-    edtIN_ACCOUNT_ID.KeyValue := AObj.FieldByName('IN_ACCOUNT_ID').AsString;
-    edtIN_ACCOUNT_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('ACC_ACCOUNT_INFO'),'ACCOUNT_ID','ACCT_NAME',AObj.FieldByName('IN_ACCOUNT_ID').AsString);
-    edtOUT_ACCOUNT_ID.KeyValue := AObj.FieldByName('OUT_ACCOUNT_ID').AsString;
-    edtOUT_ACCOUNT_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('ACC_ACCOUNT_INFO'),'ACCOUNT_ID','ACCT_NAME',AObj.FieldByName('OUT_ACCOUNT_ID').AsString);
-    edtSHOP_ID.KeyValue := AObj.FieldByName('SHOP_ID').AsString;
-    edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',AObj.FieldByName('SHOP_ID').AsString);
-    edtTRANS_USER.KeyValue := AObj.FieldByName('TRANS_USER').AsString;
-    edtTRANS_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',AObj.FieldByName('TRANS_USER').AsString);
+
+    labOUT.Caption := '余额:'+AObj.FieldbyName('OUT_BALANCE').AsString;
+    labIN.Caption := '余额:'+AObj.FieldbyName('IN_BALANCE').AsString;
+    
+//    edtIN_ACCOUNT_ID.KeyValue := AObj.FieldByName('IN_ACCOUNT_ID').AsString;
+//    edtIN_ACCOUNT_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('ACC_ACCOUNT_INFO'),'ACCOUNT_ID','ACCT_NAME',AObj.FieldByName('IN_ACCOUNT_ID').AsString);
+//    edtOUT_ACCOUNT_ID.KeyValue := AObj.FieldByName('OUT_ACCOUNT_ID').AsString;
+//    edtOUT_ACCOUNT_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('ACC_ACCOUNT_INFO'),'ACCOUNT_ID','ACCT_NAME',AObj.FieldByName('OUT_ACCOUNT_ID').AsString);
+//    edtSHOP_ID.KeyValue := AObj.FieldByName('SHOP_ID').AsString;
+//    edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',AObj.FieldByName('SHOP_ID').AsString);
+//    edtTRANS_USER.KeyValue := AObj.FieldByName('TRANS_USER').AsString;
+//    edtTRANS_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',AObj.FieldByName('TRANS_USER').AsString);
     isAudit := (AObj.FieldByName('CHK_DATE').AsString <> '');
     dbState := dsBrowse;
     locked := False;
@@ -139,6 +143,8 @@ begin
   edtSHOP_ID.Text := Global.SHOP_NAME;
   AObj.FieldByName('TRANS_ID').AsString := TSequence.NewId;
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  edtOUT_ACCOUNT_ID.KeyValue := edtOUT_ACCOUNT_ID.DataSet.FieldByName('ACCOUNT_ID').AsString;
+  edtOUT_ACCOUNT_ID.Text := edtOUT_ACCOUNT_ID.DataSet.FieldByName('ACCT_NAME').AsString;
   dbState := dsInsert;
 end;
 
@@ -155,7 +161,8 @@ begin
   if edtIN_ACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择转入账号');
   if edtOUT_ACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择转出账号');
   if edtIN_ACCOUNT_ID.AsString = edtOUT_ACCOUNT_ID.AsString then Raise Exception.Create('“转入账号”和“转出账号”不能相同');
-  if Trim(edtTRANS_MNY.Text) = '' then Raise Exception.Create('请选择负责人');
+  if edtTRANS_USER.AsString = '' then Raise Exception.Create('请选择负责人');
+  if Trim(edtTRANS_MNY.Text) = '' then Raise Exception.Create('请输入金额');
 
   WriteToObject(AObj,Self);
   
@@ -258,31 +265,6 @@ begin
   btnOk.Enabled := True;
 end;
 
-procedure TfrmTransOrder.edtOUT_ACCOUNT_IDPropertiesChange(
-  Sender: TObject);
-var tem: TZQuery;
-begin
-  inherited;
-  tem := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  if tem.Locate('ACCOUNT_ID',tem.FieldByName('ACCOUNT_ID').AsString,[]) then
-    labOUT.Caption := labOUT.Caption+tem.FieldByName('BANLANCE').AsString;
-
-  if locked then Exit;
-  btnOk.Enabled := True;
-end;
-
-procedure TfrmTransOrder.edtIN_ACCOUNT_IDPropertiesChange(Sender: TObject);
-var tem:TZQuery;
-begin
-  inherited;
-  tem := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  if tem.Locate('ACCOUNT_ID',tem.FieldByName('ACCOUNT_ID').AsString,[]) then
-    labIN.Caption := labIN.Caption+tem.FieldByName('BANLANCE').AsString;
-    
-  if locked then Exit;
-  btnOk.Enabled := True;
-end;
-
 procedure TfrmTransOrder.edtTRANS_USERPropertiesChange(Sender: TObject);
 begin
   inherited;
@@ -301,6 +283,38 @@ procedure TfrmTransOrder.edtREMARKPropertiesChange(Sender: TObject);
 begin
   inherited;
   if locked then Exit;
+  btnOk.Enabled := True;
+end;
+
+procedure TfrmTransOrder.edtOUT_ACCOUNT_IDSaveValue(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and ACCOUNT_ID='''+edtOUT_ACCOUNT_ID.AsString+'''';
+    Factor.Open(rs);
+    labOUT.Caption := '余额:'+rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
+  btnOk.Enabled := True;
+end;
+
+procedure TfrmTransOrder.edtIN_ACCOUNT_IDSaveValue(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and ACCOUNT_ID='''+edtIN_ACCOUNT_ID.AsString+'''';
+    Factor.Open(rs);
+    labOUT.Caption := '余额:'+rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
   btnOk.Enabled := True;
 end;
 

@@ -222,7 +222,6 @@ begin
   edtSHOP_ID.Text := Global.SHOP_NAME;
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('CHANGE_ID').asString := TSequence.NewId();
-//  AObj.FieldbyName('GLIDE_NO').asString := TSequence.GetSequence('GNO_CHANGE'+CodeId+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   oid := AObj.FieldbyName('CHANGE_ID').asString;
   gid := '..ÐÂÔö..';//AObj.FieldbyName('GLIDE_NO').asString;
   edtCHANGE_DATE.Date := Global.SysDate;

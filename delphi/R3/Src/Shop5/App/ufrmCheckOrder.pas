@@ -160,7 +160,7 @@ begin
   dbState := dsInsert;
   cid := '';
   //AObj.FieldbyName('PRINT_DATE').asString :=FormatDatetime('YYYYMMDD',Date());  // TSequence.NewId();
-  //AObj.FieldbyName('GLIDE_NO').asString := '..新增..';//TSequence.GetSequence('GNO_CHECK'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
+  //AObj.FieldbyName('GLIDE_NO').asString := '..新增..';
   // oid := AObj.FieldbyName('PRINT_DATE').asString;   //单据GUID号
   gid := AObj.FieldbyName('PRINT_DATE').asString;
   edtCREA_DATE.Date := Date();

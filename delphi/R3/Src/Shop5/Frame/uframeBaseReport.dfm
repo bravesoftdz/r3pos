@@ -1,34 +1,34 @@
 inherited frameBaseReport: TframeBaseReport
-  Left = 191
-  Top = 110
-  Width = 848
-  Height = 586
+  Left = 199
+  Top = 106
+  Width = 798
+  Height = 568
   Caption = #25253#34920#22522#31867
   OnCreate = FormCreate
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 840
-    Height = 529
+    Width = 790
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 830
-      Height = 519
+      Width = 780
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 625
-        Height = 513
+        Width = 575
+        Height = 495
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 623
-            Height = 486
+            Width = 573
+            Height = 468
             BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
-              Width = 613
-              Height = 476
+              Width = 563
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -36,7 +36,7 @@ inherited frameBaseReport: TframeBaseReport
               object w1: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 613
+                Width = 563
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -47,8 +47,8 @@ inherited frameBaseReport: TframeBaseReport
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 613
-                Height = 395
+                Width = 563
+                Height = 377
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -56,8 +56,8 @@ inherited frameBaseReport: TframeBaseReport
                 object DBGridEh1: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 609
-                  Height = 391
+                  Width = 559
+                  Height = 373
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -106,10 +106,10 @@ inherited frameBaseReport: TframeBaseReport
         end
       end
       object PanelColumnS: TPanel
-        Left = 628
+        Left = 578
         Top = 3
         Width = 199
-        Height = 513
+        Height = 495
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -117,7 +117,7 @@ inherited frameBaseReport: TframeBaseReport
           Left = 0
           Top = 0
           Width = 199
-          Height = 463
+          Height = 445
           Align = alTop
           Anchors = [akLeft, akTop, akRight, akBottom]
           BevelInner = bvLowered
@@ -125,7 +125,7 @@ inherited frameBaseReport: TframeBaseReport
           TabOrder = 0
           DesignSize = (
             195
-            459)
+            441)
           object Image5: TImage
             Left = 2
             Top = 84
@@ -448,7 +448,7 @@ inherited frameBaseReport: TframeBaseReport
             Left = 2
             Top = 109
             Width = 191
-            Height = 348
+            Height = 330
             Align = alClient
             BevelOuter = bvNone
             BorderWidth = 2
@@ -458,7 +458,7 @@ inherited frameBaseReport: TframeBaseReport
               Left = 2
               Top = 2
               Width = 187
-              Height = 344
+              Height = 326
               OnChange = rzShowColumnsChange
               Align = alClient
               FrameVisible = True
@@ -495,17 +495,17 @@ inherited frameBaseReport: TframeBaseReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 840
+    Width = 790
     inherited Image1: TImage
       Left = 506
-      Width = 325
+      Width = 275
     end
     inherited Image14: TImage
-      Left = 831
+      Left = 781
     end
     inherited Image3: TImage
       Left = 506
-      Width = 325
+      Width = 275
     end
     inherited CoolBar1: TCoolBar
       Width = 330
@@ -638,6 +638,14 @@ inherited frameBaseReport: TframeBaseReport
     Units = MM
     Left = 144
     Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
+      5C66733136200D0A5C706172207D0D0A00}
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'xls'

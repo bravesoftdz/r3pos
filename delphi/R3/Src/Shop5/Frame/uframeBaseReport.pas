@@ -9,7 +9,8 @@ uses
   RzLstBox, RzChkLst, RzCmboBx, Mask, RzEdit, Grids, DBGridEh, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset;
+  ZDataset, zrComboBoxList, ZBase, cxCalendar;
+
 
 type
   TframeBaseReport = class(TframeToolForm)
@@ -66,12 +67,40 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     function GetDBGridEh: TDBGridEh;virtual;
-    procedure LoadFormat;override;
+    {=======  2011.03.02 Add TDBGridEh\TzrComboBoxList相关选项目  =======}
+    //添加Grid的列Column.KeyList,PickList;
+    procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
+    //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
+    procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
+    //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
+    procedure AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);
 
+    {=======  2011.03.03 Add 商品统计单位换算关系   =======}
+    //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
+    //参数: AliasTabName: 传入表的别名;  AliasFileName: 传入字段别名;
+    function GetUnitID(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位UNIT_ID
+    function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
+
+    {=======  2011.03.05 Add 生成查询条件  =======}
+    //返回日期查询条件参数说明:
+    // (1)、JoinOper:查询条件操作逻辑[and|or|空]; (2)、FieldName:字段名;    (3)、查询字段比较关系符: RelChar[>、=、<、>=、<=];
+    // (4)、CxDate:查询条件值或时间控件;          (5)、时间格式:FormatStr;  (6)、字段类型[1: 数量型、2: 字符型、3: 日期型:作为组合查询条件参考]
+    function GetCxDate(JoinOper,FieldName,RelChar:String; CxDate: TDate; FormatStr: string='YYYYMMDD'; FieldType: integer=1):string;overload;
+    function GetCxDate(JoinOper,FieldName,RelChar:String; CxDate: TcxDateEdit; FormatStr: string='YYYYMMDD'; FieldType: integer=1):string;overload;
+    function GetCxDate(JoinOper,FieldName:String; InBegDate, InEndDate: TcxDateEdit; FormatStr: string='YYYYMMDD'; IsTime: Boolean=False;FieldType: integer=1):string;overload;
+    //根据统计条件关联查询数据（参数以上的返回字段）
+    function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
+    //返回的商品指标的查询的查询条件:
+    function  GetGoodSortTypeCnd(GoodSortItems: TcxComboBox; SortType: string; AliasTabName: string; JoinOper: string=''): string;
+
+    //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
+    function  FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
+
+    procedure LoadFormat;override;
     procedure PrintBefore;virtual;
-    function GetRowType:integer;virtual;
+    function  GetRowType:integer;virtual;
     procedure RefreshColumn;
-    function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
+    function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
     property DBGridEh: TDBGridEh read GetDBGridEh;
@@ -301,16 +330,17 @@ var i:integer;
   Column:TColumnEh;
 begin
   inherited;
+  //设置颜色组、尺码组列是否显示
   for i:=0 to self.ComponentCount -1 do
+  begin
+    if self.Components[i] is TDBGridEh then
     begin
-      if self.Components[i] is TDBGridEh then
-         begin
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-           Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
-           if Column<>nil then Column.Visible := (CLVersion='FIG');
-         end;
+      Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
+      if Column<>nil then Column.Visible := (CLVersion='FIG');
+      Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
+      if Column<>nil then Column.Visible := (CLVersion='FIG');
     end;
+  end;
   if Width <= 1024 then PanelColumnS.Visible := false;
   RzPageChange(nil);
 end;
@@ -362,6 +392,277 @@ procedure TframeBaseReport.actFilterExecute(Sender: TObject);
 begin
   inherited;
   //
+end;
+
+function TframeBaseReport.FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;
+ function GetSpaceStr(vLen: integer): string;
+ begin
+   result:=Copy('                                                                                                      ',1,vLen);
+ end;
+const Srcwidth=120;   //1个字节=6px，默认以800象素宽度设计  120
+var
+  Str,CurStr,SpactStr: string;
+  i,j,Idx,vLen,CurLen: integer;
+begin
+  result:='';
+  str:='';
+  CurStr:='';
+  SpactStr:=Copy('                                                                                                      ',1,SplitCount);
+  Idx:=0;
+  for i:=0 to TitlStr.Count-1 do
+  begin
+    CurStr:='';
+    if Idx>TitlStr.Count-1 then Break;
+    for j:=0 to Cols-1 do
+    begin
+      if Idx>TitlStr.Count-1 then Break;
+      if j=0 then
+      begin
+        CurStr:=TitlStr.Strings[Idx]+SpactStr;
+        Inc(Idx);
+      end else
+      if j>0 then
+      begin
+        CurStr:=CurStr+TitlStr.Strings[Idx]+SpactStr;
+        Inc(Idx);
+      end;
+    end;
+    if CurStr<>'' then
+    begin
+      if Str='' then Str:=trim(CurStr)
+      else Str:=Str+#13+trim(CurStr);
+    end;
+  end;
+  result:=Str;
+end;
+
+procedure TframeBaseReport.AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);
+begin
+  case ItemsIdx of
+   3:
+    begin
+      SortTypeList.KeyField:='CLIENT_ID';
+      SortTypeList.ListField:='CLIENT_NAME';
+      SortTypeList.Filter:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
+    end;
+   else
+    begin
+      SortTypeList.KeyField:='SORT_ID';
+      SortTypeList.ListField:='SORT_NAME';
+      SortTypeList.Filter:='SORT_ID;SORT_NAME;SORT_SPELL';
+    end;
+  end;
+  SortTypeList.Columns[0].FieldName:=SortTypeList.ListField;
+  case ItemsIdx of
+   //1: fndP1_STAT_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');    //分类[大类][在供应链中]
+   2: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');    //类别[烟草:一类烟、二类烟、三类烟]
+   3: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');   //主供应商
+   4: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_BRAND_INFO');   //品牌
+   5: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_IMPT_INFO');    //重点品牌
+   6: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_AREA_INFO');    //省内外
+   7: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');  //颜色
+   8: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');   //尺码
+  end;
+end;
+
+procedure TframeBaseReport.AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
+var
+  Rs: TZQuery;
+  CurObj: TRecord_;
+  i,InValue: integer;
+begin
+  try
+    InValue:=StrtoIntDef(SetFlag,0);
+    Rs:=Global.GetZQueryFromName('PUB_PARAMS');
+    Rs.Filtered:=False;
+    Rs.Filter:=' TYPE_CODE=''SORT_TYPE'' ';
+    Rs.Filtered:=true;
+    GoodSortList.Properties.Items.Clear;
+    if not Rs.Active then Exit;
+    for i:=1 to 8 do
+    begin
+      if (InValue and (1 shl (i-1)))=0 then continue;
+      Rs.First;
+      while not Rs.Eof do
+      begin
+        if trim(Rs.FieldByName('CODE_ID').AsString)<>InttoStr(i) then
+        begin
+          CurObj:=TRecord_.Create;
+          CurObj.ReadFromDataSet(Rs);
+          GoodSortList.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+        end else
+          break;
+        Rs.Next;
+      end;
+    end;
+  finally
+    Rs.Filtered:=False;
+    Rs.Filter:='';  
+  end;
+end;
+
+//商品指标[SQL的查询条件]
+function TframeBaseReport.GetGoodSortTypeCnd(GoodSortItems: TcxComboBox; SortType: string; AliasTabName: string; JoinOper: string=''): string;
+var
+  SortIdx: integer;
+  AliasName: string;
+begin
+  result:='';
+  AliasName:='';
+  if AliasTabName<>'' then AliasName:=AliasTabName+'.';   
+  if GoodSortItems.ItemIndex<>-1 then
+  begin
+    SortIdx:=StrtoInt(TRecord_(GoodSortItems.Properties.Items.Objects[GoodSortItems.ItemIndex]).fieldbyName('CODE_ID').asString);
+    result:=JoinOper+'('+AliasName+'.SORT_ID'+InttoStr(SortIdx)+'='+QuotedStr(SortType)+')';
+  end;
+end;
+
+
+procedure TframeBaseReport.AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
+var SetCol: TColumnEh;
+begin
+  if (not rs.Active) or (rs.IsEmpty) then Exit;
+  SetCol:=FindColumn(Grid,trim(ColName));
+  if SetCol<>nil then
+  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SetCol.KeyList.Add(rs.FieldbyName(KeyID).AsString);
+      SetCol.PickList.Add(rs.FieldbyName(ListName).AsString);
+      rs.Next;
+    end;
+  end;
+end;
+
+{===返回GoodInfo的统计[CalUNIT_ID][TabName表名，AliasFileName 字段别名]===}
+function TframeBaseReport.GetUnitID(CalcIdx: Integer; AliasTabName, AliasFileName: string): string;
+var
+  AliasTab: string;
+begin
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  case CalcIdx of
+   0: result:='(case when isnull('+AliasTab+'UNIT_ID,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'UNIT_ID end) ';  //若[默认单位]为空则 取 [计量单位]
+   1: result:=' '+AliasTab+'CALC_UNITS ';   //[计量单位]  不能为空
+   2: result:='(case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'SMALL_UNITS end) ';  //小包装单位
+   3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'BIG_UNITS end) ';      //大包装单位
+  end;
+  if AliasFileName<>'' then
+    result:=result+' as '+AliasFileName+' '
+  else
+    result:=result+' as UNIT_ID '
+end;
+
+{===返回GoodInfo的统计换算关系[CalUNIT_ID][TabName表名，AliasFileName 字段别名]===}
+function TframeBaseReport.GetUnitTO_CALC(CalcIdx: Integer; AliasTabName, AliasFileName: string): string;
+var
+  str,AliasTab,SmallCalc,BigCalc: string;
+begin
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
+  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
+
+  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
+       ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
+       ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
+       ' else 1.0 end ';
+
+  case CalcIdx of
+   0: result:=str;       //默认单位
+   1: result:=' 1.0 ';   //计量单位
+   2: result:=SmallCalc; //小包装单位
+   3: result:=BigCalc;   //大包装单位
+  end;
+  if AliasFileName<>'' then
+    result:=result+' as '+AliasFileName+' ';
+end;
+
+function TframeBaseReport.GetUnitIDCnd(CalcIdx: integer;AliasTabName: string): string;
+var
+  AliasTab: string;
+begin
+  result:='';
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  case CalcIdx of
+   0: result:='((case when isnull('+AliasTab+'UNIT_ID,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'UNIT_ID end)='+AliasTab+'BARCODE_UNIT_ID) ';  //若[默认单位]为空则 取 [计量单位]
+   1: result:='('+AliasTab+'CALC_UNITS='+AliasTab+'.BARCODE_UNIT_ID) ';   //[计量单位]  不能为空
+   2: result:='((case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'SMALL_UNITS end)='+AliasTab+'BARCODE_UNIT_ID) ';  //小包装单位
+   3: result:='((case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'BIG_UNITS end)='+AliasTab+'BARCODE_UNIT_ID) ';      //大包装单位
+  end;
+end;      
+
+function TframeBaseReport.GetCxDate(JoinOper, FieldName, RelChar: String;
+  CxDate: TDate;FormatStr: string; FieldType: integer): string;
+var
+  Cnd,CurDate: string;
+begin
+  result:='';
+  if trim(RelChar)='' then Exit;
+  CurDate:=Formatdatetime(FormatStr,CxDate);
+  if CurDate='' then Exit;
+  case FieldType of
+   1: Cnd:='('+FieldName+RelChar+CurDate+')';
+   2: Cnd:='('+FieldName+RelChar+''''+CurDate+''')';
+   3: Cnd:='('+FieldName+RelChar+''''+CurDate+''')';
+  end;
+  if trim(JoinOper)<>'' then
+    Cnd:=JoinOper+' '+Cnd;
+  result:=Cnd;
+end;
+
+function TframeBaseReport.GetCxDate(JoinOper, FieldName, RelChar: String; CxDate: TcxDateEdit;
+  FormatStr: string; FieldType: integer): string;
+begin
+  result:='';
+  if (trim(CxDate.Text)='') or (DatetoStr(CxDate.Date)='0000-0-0') then exit; //时间值为空则退出
+  GetCxDate(JoinOper,FieldName,RelChar,CxDate.Date,FormatStr,FieldType);
+end;
+
+function TframeBaseReport.GetCxDate(JoinOper, FieldName: String; InBegDate,InEndDate: TcxDateEdit;
+  FormatStr: string; IsTime: Boolean; FieldType: integer): string;
+var
+  Str, vBegDate, vEndDate, FmStr: String;
+begin
+  result:='';
+  vBegDate:='';
+  vEndDate:='';
+  if trim(FieldName)='' then Exit;
+  if (trim(InBegDate.Text)='') or (DatetoStr(InBegDate.Date)='0000-0-0') then
+    vBegDate:=Formatdatetime(FormatStr,InBegDate.Date);
+  if (trim(InEndDate.Text)='') or (DatetoStr(InEndDate.Date)='0000-0-0') then
+    vEndDate:=Formatdatetime(FormatStr,InEndDate.Date);
+
+  if vBegDate > vEndDate then //自动调整日期前后大小
+  begin
+    Str:=vBegDate;
+    vBegDate:=vEndDate;
+    vEndDate:=Str;
+  end;
+  //是否:日期+时间
+  if (IsTime) and (vBegDate<>'') then vBegDate:=vBegDate+' 00:00:00';
+  if (IsTime) and (vEndDate<>'') then vEndDate:=vEndDate+' 23:59:59';
+  //根据查询类型进行设置查询值:
+  if (FieldType=2) or (FieldType=3) then
+  begin
+    if vBegDate<>'' then vBegDate:=''''+vBegDate+'''';
+    if vEndDate<>'' then vEndDate:=''''+vEndDate+'''';
+  end;
+
+  if (vBegDate<>'') and (vEndDate<>'') then     //起始日期、结束日期均不为空
+    Str:='('+FieldName+'>='+vBegDate+' and '+FieldName+'<='+vEndDate+')'
+  else if (vBegDate<>'') and (vEndDate='') then  //起始日期不为空、结束日期为空
+    Str:='('+FieldName+'>='+vBegDate+')'
+  else if (vBegDate='') and (vEndDate<>'') then  //起始日期为空、结束日期不为空
+    Str:='('+FieldName+'<='''+vEndDate+''')';
+  //判断是否需加条件连接符[and | or]
+  if (trim(Str)<>'') and (trim(JoinOper)<>'') then
+    Str:=' and '+Str;
+  result:=str;
 end;
 
 end.

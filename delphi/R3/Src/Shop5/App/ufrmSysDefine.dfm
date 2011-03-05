@@ -13,8 +13,8 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
+    Width = 426
+    Height = 253
     ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -808,8 +808,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 426
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

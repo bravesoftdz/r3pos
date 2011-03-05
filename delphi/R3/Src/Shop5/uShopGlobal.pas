@@ -44,7 +44,7 @@ type
     PUB_MONTH_PAY_INFO: TZQuery;
     PUB_DEGREES_INFO: TZQuery;
     PUB_OCCUPATION_INFO: TZQuery;
-    ZQuery1: TZQuery;
+    PUB_SHOP_TYPE: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

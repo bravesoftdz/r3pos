@@ -563,7 +563,7 @@ begin
        Global.LoadBasic();
        ShopGlobal.LoadRight;
        CheckEnabled;
-//       LoadMenu;
+       LoadMenu;
 //       Factor.ExecProc('TGetXDictInfo');
 //       MsgFactory.Load;
 //       Timer1.OnTimer(nil);
@@ -806,6 +806,7 @@ begin
       end;
       CA_MODULE.Next;
     end;
+  if RzTab.Tabs.Count >0 then RzTab.TabIndex := 0;
 end;
 var
   rs:TZQuery;
@@ -818,6 +819,7 @@ begin
        CA_MODULE.Close;
        CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
        Factor.Open(CA_MODULE);
+       CreatePageMenu;
      end;
   for i:=RzGroupBar1.GroupCount -1 downto 0 do
     begin
@@ -838,7 +840,7 @@ begin
            g.DividerVisible := true;
            RzGroupBar1.AddGroup(g);
            inc(r);
-           if r>3 then g.Close;
+           // if r>3 then g.Close;
          end
       else
       if rs.FieldbyName('LEVEL').AsInteger =3 then
@@ -1771,7 +1773,7 @@ procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
   inherited;
-  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].);
+  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].ImageIndex);
 end;
 
 end.

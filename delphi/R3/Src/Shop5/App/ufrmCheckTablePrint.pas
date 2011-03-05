@@ -1,0 +1,357 @@
+unit ufrmCheckTablePrint;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, uFrameBaseReport, DB, ActnList, Menus, ComCtrls, ToolWin,
+  StdCtrls, RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, RzLstBox,
+  RzChkLst, RzCmboBx, RzBckgnd, RzButton, Mask, RzEdit, cxControls,
+  cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
+  cxCalendar, cxButtonEdit, cxCheckBox, zBase, zrComboBoxList, jpeg,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+
+type
+  TfrmCheckTablePrint = class(TframeBaseReport)
+    Label3: TLabel;
+    fndP1_COMP_TYPE: TcxComboBox;
+    Label6: TLabel;
+    btnOk: TRzBitBtn;
+    Label8: TLabel;
+    fndP1_UNIT_ID: TcxComboBox;
+    fndP1_SORT_ID: TcxButtonEdit;
+    fndP1_SHOP_ID: TzrComboBoxList;
+    Label19: TLabel;
+    fndP1_TYPE_ID: TcxComboBox;
+    fndP1_STAT_ID: TzrComboBoxList;
+    fndP1_SHOW_ZERO: TcxCheckBox;
+    Label4: TLabel;
+    fndP1_PRINT_DATE: TzrComboBoxList;
+    procedure FormCreate(Sender: TObject);
+    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);    
+    procedure fndSORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1TitleClick(Column: TColumnEh);
+    procedure fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
+    procedure actFindExecute(Sender: TObject);
+  private
+    sid1,//商品分类ID1;
+    srid1,//商品分类REGLATION_ID; 关系ID
+    sid2: string;
+    cdsPrintDate: TZQuery;
+    LastPrintDateShopID: string; //最后一次打开cdsPrintDate的SHOP_ID
+        
+    procedure GetPrintDataList;  //盘点日期下拉选择Items
+    function  GetUnitIDIdx: integer;
+    //盘点对照表
+    function  GetGoodPrintSQL: string;
+  public
+    procedure RzPage1Open;  //取查询数据
+    procedure PrintBefore;override;
+    function  GetRowType:integer;override;
+    property  UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
+  end;
+
+implementation
+
+uses
+  uShopGlobal, uShopUtil, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort,
+  ObjCommon;
+
+{$R *.dfm}
+
+procedure TfrmCheckTablePrint.FormCreate(Sender: TObject);
+ procedure SetGridColItems(SetCol:TColumnEh; rs:TZQuery);
+ begin
+   if (SetCol<>nil) and (rs.Active) then
+   begin
+     SetCol.KeyList.Add('#');
+     SetCol.PickList.Add('无');
+     SetCol.KeyList.Add('T');
+     SetCol.PickList.Add('小计');
+     rs.First;
+     while not rs.Eof do
+     begin
+       SetCol.KeyList.Add(rs.fieldbyName('SORT_ID').asString);
+       SetCol.PickList.Add(rs.fieldbyName('SORT_NAME').asString);
+       rs.Next;
+     end;
+   end;
+ end;
+var
+  i: integer;
+  rs: TZQuery;
+  SetCol: TColumnEh;
+begin
+  inherited;   
+  LastPrintDateShopID:='';
+  cdsPrintDate:=TZQuery.Create(self);
+  fndP1_PRINT_DATE.DataSet:=cdsPrintDate;
+  InitGridPickList(DBGridEh1);
+  //添加统计单位Items;
+  rs:=Global.GetZQueryFromName('PUB_MEAUNITS'); //计量单位
+  AddDBGridEhColumnItems(DBGridEh1,rs,'UNIT_ID','UNIT_ID','UNIT_NAME');
+
+  //设置DBGird尺码列
+  rs:=Global.GetZQueryFromName('PUB_SIZE_GROUP');
+  SetCol:=FindColumn(self.DBGridEh1, 'PROPERTY_01');
+  SetGridColItems(SetCol,rs);
+  //设置DBGird颜色列
+  rs:=Global.GetZQueryFromName('PUB_COLOR_GROUP');
+  SetCol:=FindColumn(self.DBGridEh1, 'PROPERTY_02');
+  SetGridColItems(SetCol,rs);
+
+  //门店List:
+  fndP1_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
+  fndP1_SHOP_ID.Text := Global.SHOP_NAME;
+
+  //没有门店类型: fndP1_COMP_TYPE.ItemIndex := 3;
+  //添加商品指标Items:
+  AddGoodSortTypeItems(fndP1_TYPE_ID);
+
+  //添加商品某一个指标的下拉List
+  AddGoodSortTypeItemsList(fndP1_STAT_ID,2);
+  fndP1_TYPE_ID.ItemIndex := 0;
+
+  //计量单位:
+  fndP1_UNIT_ID.ItemIndex := 0; //默认单位
+  fndP1_SHOW_ZERO.Checked := true;
+
+  GetPrintDataList;  //盘点日期下拉选择Items
+  if cdsPrintDate.Active then
+  begin
+    fndP1_PRINT_DATE.KeyValue := fndP1_PRINT_DATE.DataSet.FieldbyName('PRINT_DATE').asString;
+    fndP1_PRINT_DATE.Text := fndP1_PRINT_DATE.DataSet.FieldbyName('PRINT_DATE').asString;
+  end;
+  
+  rzPage.ActivePageIndex := 0;
+  RefreshColumn;
+end;
+
+function TfrmCheckTablePrint.GetRowType: integer;
+begin
+{  if DBGridEh.DataSource.DataSet.FieldbyName('grp0').AsInteger=1 then
+  result := 1
+  else
+  if DBGridEh.DataSource.DataSet.FieldbyName('grp2').AsInteger=1 then
+  result := 2
+  else
+  result := 0;
+ }
+end;
+
+procedure TfrmCheckTablePrint.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
+var ID: string;
+begin
+  inherited;
+  fndP1_STAT_ID.KeyValue := null;
+  fndP1_STAT_ID.Text := '';
+  //设置对应字段:
+  if fndP1_TyPE_ID.ItemIndex<>-1 then
+  begin
+    ID:=TRecord_(fndP1_TyPE_ID.Properties.Items.Objects[fndP1_TyPE_ID.ItemIndex]).fieldbyName('CODE_ID').AsString;
+    if ID<>'' then
+      AddGoodSortTypeItemsList(fndP1_STAT_ID,StrToInt(ID));
+  end;
+end;
+
+function TfrmCheckTablePrint.GetGoodPrintSQL: string;
+var
+  SortTypeIdx: integer;
+  strSql,strWhere,GoodTab,CalcFields,UnitField: string;
+begin
+  //门店名称
+  if trim(fndP1_SHOP_ID.AsString)='' then Raise Exception.Create('  请选择门店名称！  ');
+  strWhere := ' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+
+  //盘点日期
+  if fndP1_PRINT_DATE.AsString = '' then Raise Exception.Create('请选择盘点日期...');
+  strWhere := strWhere + ' and A.PRINT_DATE='+fndP1_PRINT_DATE.AsString+' ';  
+
+  //商品分类[供应链] (以前过滤为了优化查询性能，加不加结果一样)
+  strWhere := strWhere+' and (B.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.SHOP_ID='''+Global.SHOP_ID+''')';  //过滤企业ID和门店
+  if trim(fndP1_SORT_ID.Text)<>'' then
+  begin
+    GoodTab:='VIW_BARCODEPRICE_SORTEXT';  
+    strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
+  end else
+    GoodTab:='VIW_GOODSPRICE_BARCODEEXT'; 
+
+  //商品属性:
+  if fndP1_STAT_ID.AsString<>'' then
+    strWhere := strWhere + GetGoodSortTypeCnd(fndP1_TYPE_ID,fndP1_STAT_ID.AsString,'B',' and ');
+  
+  //零库存
+  if not fndP1_SHOW_ZERO.Checked then
+    strWhere := strWhere + ' and (A.CHK_AMOUNT <> 0 or A.RCK_AMOUNT<>0)';
+
+  //统计条件关联单位:
+    strWhere := strWhere + ' and '+ GetUnitIDCnd(UnitIDIdx,'B');
+
+  //当前统计单位:
+  UnitField:=GetUnitID(UnitIDIdx,'B');
+  CalcFields:='('+GetUnitTO_CALC(UnitIDIdx,'B')+')'; //[统计单位Index,查询表别名,字段别名]
+  strSql:=
+    'select A.GODS_ID as GODS_ID '+   //--货品内码
+    ','+UnitField+ // UNIT_ID统计单位
+    ',B.BARCODE as BARCODE'+        //[查询单位的]条形码
+    ',GODS_NAME,GODS_CODE'+         //--货品名称、货品编码
+    ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+ //--批号、物流码
+    'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +                    //--颜色码、尺码组
+    ',(RCK_AMOUNT/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
+    ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
+    ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
+    ',isnull(B.NEW_INPRICE,0) as NEW_INPRICE '+      //--成本价
+    ',isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE '+    //--零售价  
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_INPRICE,0))/'+CalcFields+' end) as PAL_INAMONEY ' +    //--损益成本金额
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_OUTPRICE,0))/'+CalcFields+' end) as PAL_OUTAMONEY ' +  //--损益销售金额
+    ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
+    'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
+    ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
+  result:=ParseSQL(Factor.iDbType, strSql);
+end;
+
+procedure TfrmCheckTablePrint.PrintBefore;
+var s:string; TitlList: TStringList;
+begin
+  inherited;
+  s:='';
+  PrintDBGridEh1.Title.Clear;
+  PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
+  try
+    TitlList:=TStringList.Create;
+    if fndP1_PRINT_DATE.AsString <> '' then TitlList.Add(' 盘点日期：'+fndP1_PRINT_DATE.AsString);
+    if fndP1_SHOP_ID.AsString <> '' then TitlList.Add('门店名称：'+fndP1_SHOP_ID.Text);
+    if trim(fndP1_SORT_ID.Text) <> '' then TitlList.Add('商品分类：'+fndP1_SORT_ID.Text);
+    if trim(fndP1_STAT_ID.AsString) <> '' then TitlList.Add(fndP1_TYPE_ID.Text+'：'+fndP1_STAT_ID.Text);
+    if fndP1_UNIT_ID.ItemIndex >= 0 then TitlList.Add('显示单位：'+fndP1_UNIT_ID.Text);
+    s:=FormatTitel(TitlList,2,10);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[whr]', s]);
+  finally
+    TitlList.Free;
+  end;
+end;
+
+procedure TfrmCheckTablePrint.fndSORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+var
+  rs:TRecord_;
+begin
+  inherited;
+  rs := TRecord_.Create;
+  try
+    if TfrmSelectGoodSort.FindDialog(self,rs) then
+    begin
+      sid1 := rs.FieldbyName('LEVEL_ID').AsString;
+      srid1 := rs.FieldbyName('RELATION_ID').AsString;
+      fndP1_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmCheckTablePrint.fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  sid1 := '';
+  srid1 := '';
+  fndP1_SORT_ID.Text := '';
+end;
+
+procedure TfrmCheckTablePrint.DBGridEh1TitleClick(Column: TColumnEh);
+begin
+  inherited;
+{
+  if (Column.FieldName = 'PROPERTY_01') or (Column.FieldName = 'PROPERTY_02')
+  then Exit;
+  if adoReport1.IsEmpty then Exit;
+  if Column.Title.SortMarker= smNoneEh then
+     Column.Title.SortMarker := smUpEh
+  else
+  if Column.Title.SortMarker= smUpEh then
+     Column.Title.SortMarker := smDownEh
+  else
+     Column.Title.SortMarker := smNoneEh;
+  case Column.Title.SortMarker of
+  smNoneEh:adoReport1.Sort := '';
+  smDownEh:
+    if (Column.FieldName = 'BATCH_NO')
+      or
+       (Column.FieldName = 'LOCUS_NO')
+    then
+      adoReport1.Sort :='grp0 DESC,'+Column.FieldName+',gods_id,grp1,grp2 DESC'
+    else
+      adoReport1.Sort :='grp0 DESC,'+Column.FieldName+'_order,gods_id,grp1,grp2 DESC';
+  smUpEh:
+    if (Column.FieldName = 'BATCH_NO')
+      or
+       (Column.FieldName = 'LOCUS_NO')
+    then
+      adoReport1.Sort :='grp0 DESC,'+Column.FieldName+' DESC,gods_id,grp1,grp2 DESC'
+    else
+      adoReport1.Sort :='grp0 DESC,'+Column.FieldName+'_order DESC,gods_id,grp1,grp2 DESC';
+  end;
+  }
+end;
+
+procedure TfrmCheckTablePrint.GetPrintDataList;
+begin
+  if (trim(fndP1_SHOP_ID.AsString)<>'') and (trim(LastPrintDateShopID)<>trim(fndP1_SHOP_ID.AsString)) then
+  begin
+    LastPrintDateShopID:=trim(fndP1_SHOP_ID.AsString);
+    cdsPrintDate.Close;
+    cdsPrintDate.SQL.Text := 'select PRINT_DATE,CHECK_STATUS from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID order by PRINT_DATE desc';
+    if cdsPrintDate.Params.FindParam('TENANT_ID')<> nil then
+      cdsPrintDate.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    if cdsPrintDate.Params.FindParam('SHOP_ID')<> nil then
+      cdsPrintDate.ParamByName('SHOP_ID').AsString:=fndP1_SHOP_ID.AsString;
+    Factor.Open(cdsPrintDate);
+  end;
+end;
+
+procedure TfrmCheckTablePrint.fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
+begin
+  inherited;
+  GetPrintDataList;
+end;
+ 
+
+procedure TfrmCheckTablePrint.RzPage1Open;
+begin
+  try
+    if adoReport1.Active then adoReport1.Close;
+    adoReport1.SQL.Text:=GetGoodPrintSQL;
+    Factor.Open(adoReport1);
+  finally
+  end;
+end;
+
+function TfrmCheckTablePrint.GetUnitIDIdx: integer;
+begin
+  result:=0;
+  if RzPage.ActivePage=TabSheet1 then //盘点打印
+  begin
+    if fndP1_UNIT_ID.ItemIndex<>-1 then
+      result:=fndP1_UNIT_ID.ItemIndex;
+  end;
+end;
+
+procedure TfrmCheckTablePrint.actFindExecute(Sender: TObject);
+begin
+  inherited;
+  case rzPage.ActivePageIndex of
+   0: //第一分页
+    begin
+      self.RzPage1Open;//查询盘点
+    end;
+   1:
+    begin
+
+    end;
+  end;
+end;
+
+end.
+ 

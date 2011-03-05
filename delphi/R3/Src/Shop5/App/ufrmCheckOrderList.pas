@@ -57,7 +57,7 @@ implementation
 
 uses
   ufrmCheckOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal,
-  ufrmCheckTask;
+  ufrmCheckTask, ufrmCheckTablePrint;
 
  {$R *.dfm}
 
@@ -308,7 +308,8 @@ end;
 procedure TfrmCheckOrderList.actPrintExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('600039') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
-  inherited;
+  //调用打印报表
+  
 
 end;
 

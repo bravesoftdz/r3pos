@@ -545,19 +545,19 @@ var Str_Table: String;
 begin
   case Code_type of
     1: Str_Table := 'PUB_PAYMENT';
-    2: Str_Table := '';
-    3: Str_Table := '';
+    2: Str_Table := 'PUB_SALE_STYLE';
+    3: Str_Table := 'ACC_ITEM_INFO';
     5: Str_Table := 'PUB_CLIENTSORT';
-    6: Str_Table := '';
+    6: Str_Table := 'PUB_SETTLE_CODE';
     7: Str_Table := 'PUB_BANK_INFO';
     8: Str_Table := 'PUB_REGION_INFO';
     11: Str_Table := 'PUB_IDNTYPE_INFO';
-    12: Str_Table := '';
-    13: Str_Table := '';
-    14: Str_Table := '';
-    15: Str_Table := '';
+    12: Str_Table := 'PUB_SHOP_TYPE';
+    13: Str_Table := 'PUB_MONTH_PAY_INFO';
+    14: Str_Table := 'PUB_DEGREES_INFO';
+    15: Str_Table := 'PUB_OCCUPATION_INFO';
   end;
-  Global.RefreshTable(Str_Table);
+  if Str_Table<>'' then Global.RefreshTable(Str_Table);
 end;
 
 end.

@@ -43,7 +43,6 @@ type
     Label2: TLabel;
     Label9: TLabel;
     edtSHOP_TYPE: TzrComboBoxList;
-    cdsSHOPTYPE: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -58,7 +57,6 @@ type
     { Public declarations }
     AObj:TRecord_;
     Saved:boolean;
-    procedure InitType;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -71,14 +69,13 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断门店资料是否有修改
   end;
 implementation
-uses uShopUtil,uDsUtil,uFnUtil, uGlobal,uXDictFactory, uShopGlobal,ufrmShopMain,ufrmCodeInfo,
+uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmShopMain,ufrmCodeInfo,
   ufrmBasic;
 {$R *.dfm}
 
 { TfrmCompanyInfo }
 
 procedure TfrmShopInfo.Append;
-//var rs:TADODataSet;
 begin
   Open('');
   dbState := dsInsert;
@@ -101,7 +98,7 @@ end;
 procedure TfrmShopInfo.FormCreate(Sender: TObject);
 begin
   inherited;
-  InitType;
+  edtSHOP_TYPE.DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   AObj := TRecord_.Create;
 end;
@@ -142,7 +139,7 @@ begin
       end
     else
       begin
-        edtSHOP_TYPE.Text:=TdsFind.GetNameByID(cdsSHOPTYPE,'CODE_ID','CODE_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
+        edtSHOP_TYPE.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SHOP_TYPE'),'SORT_ID','SORT_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
         edtSHOP_TYPE.KeyValue := Aobj.FieldByName('SHOP_TYPE').AsString;
       end;
 
@@ -188,23 +185,31 @@ begin
     raise Exception.Create('经营许可证不能为空!');
   end;
 
-  tmp := Global.GetZQueryFromName('CA_SHOP_INFO');
-  if dbState=dsInsert then
-  begin
-      if tmp.Locate('SHOP_NAME',trim(edtSHOP_NAME.Text),[]) then
-      begin
-        if edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
-        raise  Exception.Create('门店名称已经存在，不能重复！');
-      end;
-  end;
-  if dbState=dsEdit then
+  try
+    tmp := TZQuery.Create(nil);
+    tmp.SQL.Text := 'select SHOP_ID,SHOP_NAME,SHOP_SPELL,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    ' and COMM not in (''02'',''12'') ';
+    Factor.Open(tmp);
+    if dbState=dsInsert then
     begin
-      if tmp.Locate('SHOP_NAME',tmp.FieldByName('SHOP_NAME').AsString,[]) then
-          if tmp.FieldByName('SHOP_ID').AsString <> Trim(edtSHOP_ID.Text) then
-            Raise  Exception.Create('门店名称已经存在,不能重复!');
+        if tmp.Locate('SHOP_NAME',trim(edtSHOP_NAME.Text),[]) then
+        begin
+          if edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
+          raise  Exception.Create('门店名称已经存在，不能重复！');
+        end;
     end;
+    if dbState=dsEdit then
+      begin
+        if tmp.Locate('SHOP_NAME',AObj.FieldByName('SHOP_NAME').AsString,[]) then
+            if tmp.FieldByName('SHOP_ID').AsString <> AObj.FieldByName('SHOP_ID').AsString then
+              Raise  Exception.Create('门店名称已经存在,不能重复!');
+      end;
+  finally
+    tmp.Free;
+  end;
   WriteTo(AObj);
-
+  if Trim(edtREGION_ID.Text) = '' then
+    AObj.FieldByName('REGION_ID').AsString := '#'; 
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;
   cdsTable.Edit;
@@ -372,13 +377,6 @@ begin
         free;
       end;
     end;
-end;
-
-procedure TfrmShopInfo.InitType;
-begin
-    cdsSHOPTYPE.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' ';
-    Factor.Open(cdsSHOPTYPE);
-    edtSHOP_TYPE.DataSet := cdsSHOPTYPE;
 end;
 
 procedure TfrmShopInfo.edtSHOP_TYPEAddClick(Sender: TObject);

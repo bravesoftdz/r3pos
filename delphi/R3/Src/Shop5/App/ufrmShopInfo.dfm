@@ -428,13 +428,13 @@ inherited frmShopInfo: TfrmShopInfo
         TabOrder = 2
         InGrid = False
         KeyValue = Null
-        FilterFields = 'CODE_ID,CODE_NAME,CODE_SPELL'
-        KeyField = 'CODE_ID'
-        ListField = 'CODE_NAEM'
+        FilterFields = 'SORT_ID,SORT_NAME,SORT_SPELL'
+        KeyField = 'SORT_ID'
+        ListField = 'SORT_NAME'
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'CODE_NAME'
+            FieldName = 'SORT_NAME'
             Footers = <>
             Title.Caption = #21517#31216
             Width = 100
@@ -466,12 +466,5 @@ inherited frmShopInfo: TfrmShopInfo
     Params = <>
     Left = 17
     Top = 295
-  end
-  object cdsSHOPTYPE: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 80
-    Top = 296
   end
 end

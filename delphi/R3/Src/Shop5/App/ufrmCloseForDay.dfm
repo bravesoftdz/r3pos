@@ -569,6 +569,13 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 11
       end
+      object RzButton1: TRzButton
+        Left = 344
+        Top = 88
+        Caption = #25171#21360#23567#31080
+        TabOrder = 12
+        OnClick = RzButton1Click
+      end
     end
   end
   inherited mmMenu: TMainMenu

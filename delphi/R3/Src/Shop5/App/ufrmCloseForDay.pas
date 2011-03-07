@@ -47,11 +47,13 @@ type
     Label2: TLabel;
     edtPAY_MNY: TcxTextEdit;
     labMNY: TLabel;
+    RzButton1: TRzButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
+    procedure RzButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -67,11 +69,9 @@ type
     class function ShowClDy(Owner:TForm):Integer;
   end;
 
-var
-  frmCloseForDay: TfrmCloseForDay;
 
 implementation
-uses uGlobal,uShopGlobal,uDsUtil,Math,uDevFactory;
+uses uGlobal,uShopGlobal,uDsUtil,Math,uDevFactory,ufrmTicketPrint;
 
 {$R *.dfm}
 
@@ -108,8 +108,7 @@ begin
 
     rs.Close;
     rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+
-    ' ';
+    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
     Factor.Open(rs);
     if rs.IsEmpty then
       Is_Print := False
@@ -119,8 +118,7 @@ begin
 
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+
-    ' ';
+    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
     Factor.Open(rs);
     if rs.IsEmpty then
       Is_Print := False
@@ -132,18 +130,18 @@ begin
     rs.Close;
     Str :=
     'select isnull(j1.BALANCE,0)+isnull(j2.PAY_A,0) from '+
-    '(select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A'') j1 left outer join '+
+    '(select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID+' and PAYM_ID=''A'') j1,'+
     '(select sum(PAY_A) as PAY_A '+
     ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE <=:SALES_DATE '+
+    ' where SALES_TYPE = 4 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID+' and SALES_DATE <='+FormatDateTime('YYYYMMDD',Date())+
     ' and not exists('+
     ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE)'+
     ') j2 ';
     rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
-    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    {rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
     rs.FieldByName('CREA_USER').AsString := Global.UserID;
-    rs.FieldByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
+    rs.FieldByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date())};
     Factor.Open(rs);
     labMNY.Caption := '店内金额:'+rs.Fields[0].AsString;
     lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
@@ -383,11 +381,11 @@ end;
 procedure TfrmCloseForDay.Btn_SaveClick(Sender: TObject);
 begin
   inherited;
-  
+
   Save;
   if Is_Print then
-    if MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK)=6 then
-      PrintTickt;
+    if MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION)=1 then
+      TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
   ModalResult := mrOk;
 end;
 
@@ -426,36 +424,36 @@ begin
   P_Width := 38;
   try
     DevFactory.BeginPrint;
-    Writeln(DevFactory.F,FormatTitle('关账表单'));
-    Writeln(DevFactory.F,'');
-    Writeln(DevFactory.F,FormatStr(Label12.Caption+':'+fndCREA_USER.Text,19,0)+FormatStr(Label5.Caption+':'+fndCLSE_DATE.Text,19,0));
-    Writeln(Devfactory.F,'  ----------------------------------  ');
+    DevFactory.WritePrint(FormatTitle('关账表单'));
+    DevFactory.WritePrint('');
+    DevFactory.WritePrint(FormatStr(Label12.Caption+':'+fndCREA_USER.Text,19,0)+FormatStr(Label5.Caption+':'+fndCLSE_DATE.Text,19,0));
+    DevFactory.WritePrint('  ----------------------------------  ');
     if MainRecord.FieldByName('PAY_A').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_A.Caption,edtPAY_A.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_A.Caption,edtPAY_A.Text));
     if MainRecord.FieldByName('PAY_B').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_B.Caption,edtPAY_B.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_B.Caption,edtPAY_B.Text));
     if MainRecord.FieldByName('PAY_C').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_C.Caption,edtPAY_C.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_C.Caption,edtPAY_C.Text));
     if MainRecord.FieldByName('PAY_D').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_D.Caption,edtPAY_D.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_D.Caption,edtPAY_D.Text));
     if MainRecord.FieldByName('PAY_E').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_E.Caption,edtPAY_E.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_E.Caption,edtPAY_E.Text));
     if MainRecord.FieldByName('PAY_F').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_F.Caption,edtPAY_F.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_F.Caption,edtPAY_F.Text));
     if MainRecord.FieldByName('PAY_G').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_G.Caption,edtPAY_G.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_G.Caption,edtPAY_G.Text));
     if MainRecord.FieldByName('PAY_H').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_H.Caption,edtPAY_H.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_H.Caption,edtPAY_H.Text));
     if MainRecord.FieldByName('PAY_I').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_I.Caption,edtPAY_I.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_I.Caption,edtPAY_I.Text));
     if MainRecord.FieldByName('PAY_J').AsFloat <> 0 then
-        Writeln(DevFactory.F,FormatLine(labPAY_J.Caption,edtPAY_J.Text));
+        DevFactory.WritePrint(FormatLine(labPAY_J.Caption,edtPAY_J.Text));
 
-    Writeln(DevFactory.F,FormatLine(Label2.Caption,edtPAY_MNY.Text));
-    Writeln(DevFactory.F,FormatLine(Label2.Caption,edtRECV_MNY.Text));
-    Writeln(DevFactory.F,FormatStr(lblCASH.Caption,38,1));
+    DevFactory.WritePrint(FormatLine(Label2.Caption,edtPAY_MNY.Text));
+    DevFactory.WritePrint(FormatLine(Label2.Caption,edtRECV_MNY.Text));
+    DevFactory.WritePrint(FormatStr(lblCASH.Caption,38,1));
   finally
-    CloseFile(DevFactory.F);
+    DevFactory.EndPrint;
   end;
 end;
 
@@ -488,6 +486,16 @@ begin
     Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
     Factor.Open(Acc_Data);
+
+end;
+
+procedure TfrmCloseForDay.RzButton1Click(Sender: TObject);
+var i: Integer;
+begin
+  inherited;
+  i := MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION);
+  if i = 1 then
+    TfrmTicketPrint.ShowTicketPrint(Self,1,'20110303');
 
 end;
 

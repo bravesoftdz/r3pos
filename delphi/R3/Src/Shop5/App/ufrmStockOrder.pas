@@ -170,7 +170,7 @@ procedure TfrmStockOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   CanAppend := true;
-  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('600041');
+  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label6.Visible := fndMY_AMOUNT.Visible;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
@@ -434,7 +434,7 @@ var
   rs:TZQuery;
 begin
   inherited;
-  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused and ShopGlobal.GetChkRight('400007') then
+  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused and ShopGlobal.GetChkRight('33100001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的供应商是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        edtCLIENT_ID.OnAddClick(nil);
@@ -665,7 +665,7 @@ end;
 
 procedure TfrmStockOrder.fndGODS_IDSaveValue(Sender: TObject);
 begin
-  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('200036') then
+  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('32600001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的商品是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        fndStr := fndGODS_ID.Text;
@@ -678,8 +678,7 @@ end;
 procedure TfrmStockOrder.fndGODS_IDAddClick(Sender: TObject);
 var r:TRecord_;
 begin
-
-//  if not ShopGlobal.GetChkRight('200036') then Exit;
+  //if not ShopGlobal.GetChkRight('200036') then Exit;
   r := TRecord_.Create;
   try
     if TfrmGoodsInfo.AddDialog(self,r,fndStr) then

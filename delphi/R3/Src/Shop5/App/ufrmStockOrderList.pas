@@ -1,3 +1,5 @@
+{ 11200001	0	进货入库	1	查询	2	新增	3	修改	4	删除	5	审核	6	打印	7	导出  }
+
 unit ufrmStockOrderList;
 
 interface
@@ -179,7 +181,7 @@ procedure TfrmStockOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if ShopGlobal.GetChkRight('400020') and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if ShopGlobal.GetChkRight('11200001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmStockOrderList.actFindExecute(Sender: TObject);
@@ -263,7 +265,7 @@ end;
 
 procedure TfrmStockOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400021') then Raise Exception.Create('你没有修改进货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',3) then Raise Exception.Create('你没有修改进货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -275,7 +277,7 @@ end;
 
 procedure TfrmStockOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400022') then Raise Exception.Create('你没有删除进货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',4) then Raise Exception.Create('你没有删除进货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -285,7 +287,7 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'删除当前单据成功,是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('11200001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -300,12 +302,12 @@ begin
        if not CurOrder.saved then Exit;
        if (ShopGlobal.GetParameter('SAVE_STOCK_PRINT')='1')
           and
-          ShopGlobal.GetChkRight('400024')
+          ShopGlobal.GetChkRight('11200001',6)
        then
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('400020') and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('11200001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -314,7 +316,7 @@ end;
 
 procedure TfrmStockOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400023') then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -387,7 +389,7 @@ end;
 procedure TfrmStockOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -411,7 +413,7 @@ end;
 procedure TfrmStockOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -434,7 +436,7 @@ end;
 
 procedure TfrmStockOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400020') then Raise Exception.Create('你没有新增进货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有新增进货单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -471,7 +473,7 @@ var
   clid,cpid,oid:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700025') then Raise Exception.Create('你没有付款单的新增权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21400001',2) then Raise Exception.Create('你没有付款单的新增权限,请和管理员联系.');
   rs := TZQuery.Create(nil);
   try
   if CurOrder<>nil then

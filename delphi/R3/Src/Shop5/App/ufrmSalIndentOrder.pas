@@ -445,7 +445,7 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('12300001',6) then
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -494,7 +494,7 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('12300001',6) then
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -539,7 +539,7 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('12300001',6) then
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -899,7 +899,7 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('12300001',6) then
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -924,7 +924,7 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('12300001',6) then
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -966,7 +966,7 @@ begin
   if Field=nil then Exit;
   if Field.AsFloat <> 0 then
   begin
-    if not ShopGlobal.GetChkRight('12300001',6) then
+    if not ShopGlobal.GetChkRight('12300001',5) then
        begin
        if TfrmLogin.doLogin(Params) then
           begin

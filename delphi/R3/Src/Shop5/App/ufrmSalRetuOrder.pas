@@ -197,7 +197,7 @@ end;
 procedure TfrmSalRetuOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('600041');
+  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label1.Visible := fndMY_AMOUNT.Visible;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -465,11 +465,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  if not ShopGlobal.GetChkRight('12500001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -514,11 +514,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  if not ShopGlobal.GetChkRight('12500001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -559,11 +559,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  if not ShopGlobal.GetChkRight('12500001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -673,7 +673,7 @@ var
   rs:TZQuery;
 begin
   inherited;
-  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused  and ShopGlobal.GetChkRight('400007') then
+  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused  and ShopGlobal.GetChkRight('33300001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的客户是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        edtCLIENT_ID.OnAddClick(nil);
@@ -928,7 +928,7 @@ end;
 
 procedure TfrmSalRetuOrder.fndGODS_IDSaveValue(Sender: TObject);
 begin
-  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('200036') then
+  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('32600001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的商品是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        fndStr := fndGODS_ID.Text;
@@ -1078,11 +1078,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  if not ShopGlobal.GetChkRight('12500001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -1103,11 +1103,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  if not ShopGlobal.GetChkRight('12500001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -1145,11 +1145,11 @@ begin
   if Field=nil then Exit;
   if Field.AsFloat <> 0 then
   begin
-    if not ShopGlobal.GetChkRight('500047') then
+    if not ShopGlobal.GetChkRight('12500001',5) then
        begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12500001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else

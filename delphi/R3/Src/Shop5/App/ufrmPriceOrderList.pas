@@ -1,3 +1,5 @@
+{  12200001	0	商品促销 	1	查询	2	新增	3	修改	4	删除	5	审核	6	打印	7	导出    }
+
 unit ufrmPriceOrderList;
 
 interface
@@ -28,18 +30,19 @@ type
     procedure actFindExecute(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
+    procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure actNewExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
   private
     oid:string;
     procedure AddGridPRICE_IDItems;  //添加PRICE_ID的Items
+    function  CheckCanExport: boolean; override; //判断导出权限
   public
     IsEnd: boolean;
     MaxId:string;
@@ -77,10 +80,10 @@ begin
        ' left join (select PROM_ID,Count(*) as GOODSum From SAL_PRICEDATA where TENANT_ID=:TENANT_ID Group by PROM_ID)B on A.PROM_ID=B.PROM_ID '+
        ' left join (select PROM_ID,count(*) as ShopSum From SAL_PROM_SHOP where TENANT_ID=:TENANT_ID Group by PROM_ID)C on A.PROM_ID=C.PROM_ID ';
   case Factor.iDbType of
-  0,3:result:='select top 600 A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID';
-  1: result:='  ';
-  4: result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+') order by A.PROM_ID) tp fetch first 600  rows only ';
-  5: result:='select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From ('+viwName+') order by A.PROM_ID LIMIT 600 ';
+   0,3:result:='select top 600 A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID';
+   1: result:='  ';
+   4: result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+') order by A.PROM_ID) tp fetch first 600  rows only ';
+   5: result:='select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From ('+viwName+') order by A.PROM_ID LIMIT 600 ';
   end; 
 end;
 
@@ -211,7 +214,7 @@ end;
 
 procedure TfrmPriceOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500015') then Raise Exception.Create('你没有修改促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',3) then Raise Exception.Create('你没有修改促销单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -223,7 +226,7 @@ end;
 
 procedure TfrmPriceOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500016') then Raise Exception.Create('你没有删除促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',4) then Raise Exception.Create('你没有删除促销单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -255,7 +258,7 @@ end;
 
 procedure TfrmPriceOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500017') then Raise Exception.Create('你没有审核促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',5) then Raise Exception.Create('你没有审核促销单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -278,21 +281,21 @@ end;
 
 procedure TfrmPriceOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500014') then Raise Exception.Create('你没有新增促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',2) then Raise Exception.Create('你没有新增促销单的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmPriceOrderList.actPrintExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500018') then Raise Exception.Create('你没有打印促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',6) then Raise Exception.Create('你没有打印促销单的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmPriceOrderList.actPreviewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500018') then Raise Exception.Create('你没有打印促销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12200001',6) then Raise Exception.Create('你没有打印促销单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -329,6 +332,11 @@ begin
       rs.Next;
     end;
   end;
+end;
+
+function TfrmPriceOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('12200001',7);
 end;
 
 end.

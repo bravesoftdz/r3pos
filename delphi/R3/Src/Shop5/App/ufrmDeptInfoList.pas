@@ -1,3 +1,5 @@
+{  31200001	0	部门档案	1	查询 	2	新增  3	修改  4	删除  5	打印  6	导出  }
+
 unit ufrmDeptInfoList;
 
 interface
@@ -70,11 +72,11 @@ type
     procedure Sort_LastClick(Sender: TObject);
     procedure edtKeyKeyPress(Sender: TObject; var Key: Char);
   private
-    // locked, IsCompany : boolean;
-    procedure SetRecNo;  //设置记录序号    
+    procedure SetRecNo;  //设置记录序号
     function  FindNode(ID: string): TTreeNode;
     procedure DeptTreeSort(SortType: string); //职务树型排序
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
+    function  CheckCanExport:boolean; override;
   public
     procedure DoOnTreeChange(Sender: TObject; Node: TTreeNode);
     procedure AddRecord(AObj:TRecord_);
@@ -108,7 +110,7 @@ end;
 procedure TfrmDeptInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31200001',2) then Raise Exception.Create('你没有新增部门的权限,请和管理员联系.');
   with TfrmDeptInfo.Create(self) do
   begin
     try
@@ -124,7 +126,7 @@ end;
 procedure TfrmDeptInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31200001',3)  then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmDeptInfo.Create(self) do
@@ -160,7 +162,7 @@ var
   Params:TftParamList;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31200001',4)  then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
@@ -436,7 +438,7 @@ end;
 
 procedure TfrmDeptInfoList.actPrintExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100014') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31200001',5) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   SetRecNo;  //设置记录序号
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
@@ -444,7 +446,7 @@ end;
 
 procedure TfrmDeptInfoList.actPreviewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100014') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31200001',5) then Raise Exception.Create('你没有报表预览'+Caption+'的权限,请和管理员联系.');
   SetRecNo;  //设置记录序号
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -587,6 +589,11 @@ procedure TfrmDeptInfoList.edtKeyKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if key=#13 then self.Open;
+end;
+
+function TfrmDeptInfoList.CheckCanExport: boolean;
+begin                             
+  result:=ShopGlobal.GetChkRight('31200001',6);
 end;
 
 end.

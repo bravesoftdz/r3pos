@@ -1,6 +1,6 @@
 inherited frmDeptInfoList: TfrmDeptInfoList
-  Left = 193
-  Top = 116
+  Left = 194
+  Top = 106
   Width = 735
   Height = 521
   Caption = #37096#38376#31649#29702

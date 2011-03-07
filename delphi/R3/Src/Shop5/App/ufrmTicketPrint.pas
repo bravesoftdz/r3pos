@@ -148,10 +148,9 @@ begin
     DevFactory.EndPrint;
     ForDay_rs.Free;
     rs.Free;
+
   end;
 
-  Result := True;
-  Close;
 end;
 
 procedure TfrmTicketPrint.FormatGoodsAndMoney(Goods, Num,Unit_Name,
@@ -259,7 +258,6 @@ begin
     begin
       try
         DoPrintDetail(SelectType,WhichDay);
-        ShowModal;
       finally
         Free;
       end;

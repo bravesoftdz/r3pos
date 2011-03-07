@@ -50,7 +50,6 @@ type
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure frfIoroOrderUserFunction(const Name: String; p1, p2,
@@ -125,7 +124,7 @@ begin
   //»’∆⁄
   strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='+inttostr(IoroType)+' and A.IORO_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D1.Date))+ ' and A.IORO_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D2.Date));
   if fndSHOP_ID.AsString <> '' then
-  strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
+     strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
 
   if fndCLIENT_ID.AsString <> '' then
      strWhere := strWhere + ' and A.CLIENT_ID = '+QuotedStr(fndCLIENT_ID.AsString);
@@ -276,19 +275,6 @@ begin
      cdsBrowser.Append;
   AObj.WriteToDataSet(cdsBrowser,false);
   cdsBrowser.Post;
-end;
-
-procedure TfrmIoroOrderList.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open('');
-  if not cdsBrowSer.IsEmpty then
-  begin
-    if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
-      actAudit.Caption:='∆˙…Û'
-    else
-      actAudit.Caption:='…Û∫À';
-  end;
 end;
 
 function TfrmIoroOrderList.PrintSQL(id: string): string;
@@ -525,6 +511,14 @@ begin
      fndCLIENT_ID.DataSet := Global.GeTZQueryFromName('PUB_CLIENTINFO');
      TabSheet1.Caption := Caption + '≤È—Ø';
     end;
+  end;
+  Open('');
+  if not cdsBrowSer.IsEmpty then
+  begin
+    if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
+      actAudit.Caption:='∆˙…Û'
+    else
+      actAudit.Caption:='…Û∫À';
   end;
 end;
 

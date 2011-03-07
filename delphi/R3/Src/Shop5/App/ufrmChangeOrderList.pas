@@ -30,7 +30,6 @@ type
     fndSHOP_ID: TzrComboBoxList;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure actFindExecute(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
@@ -172,13 +171,6 @@ begin
   fndDUTY_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   D1.Date := date();
   D2.Date := date();
-end;
-
-procedure TfrmChangeOrderList.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open('');
-
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1CellClick(Column: TColumnEh);
@@ -497,6 +489,7 @@ begin
   finally
     rs.Free;
   end;
+  Open('');
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1DblClick(Sender: TObject);

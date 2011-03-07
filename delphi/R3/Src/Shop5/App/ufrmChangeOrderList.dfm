@@ -4,7 +4,6 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   Width = 832
   Height = 619
   Caption = #35843#25972#21333
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel

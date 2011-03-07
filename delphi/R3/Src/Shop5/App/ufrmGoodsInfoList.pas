@@ -1,3 +1,4 @@
+{ 32600001	0	商品档案	1	查询  2	新增	3	修改	4	删除	5	打印	6	导出    }
 unit ufrmGoodsInfoList;
 
 interface
@@ -82,6 +83,7 @@ type
      procedure LoadTree;
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
      function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
+     function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd,IsChain,IsCompany: boolean;
@@ -174,8 +176,7 @@ var ARect:TRect;
 begin                   
   if (trim(Lowercase(Column.FieldName))='selflag') and
      (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_ID').AsString)<>'0') then
-    DBGridEh1.Canvas.Brush.Color:= clGray;
-
+    DBGridEh1.Canvas.Brush.Color:= clGray;  
 
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
@@ -449,9 +450,8 @@ var
   sid,sname:string;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('200036') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
 
-  //if rzTree.Selected=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
   CurObj:=TRecord_(rzTree.Selected.Data);
   if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
   if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then  // RELATION_FLAG=2 自主经营
@@ -493,10 +493,10 @@ end;
 procedure TfrmGoodsInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
-  //if not ShopGlobal.GetChkRight('200037') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Raise Exception.Create('   没有数据，请先查询！  ');
+  if cdsBrowser.FieldByName('GODS_ID').AsString='' then Raise Exception.Create('   没有数据，请先查询！  ');
+  if not ShopGlobal.GetChkRight('32600001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
 
-  if cdsBrowser.FieldByName('GODS_ID').AsString='' then exit;
   with TfrmGoodsInfo.Create(self) do
     begin
       try
@@ -519,7 +519,8 @@ begin
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
   if cdsBrowser.State=dsEdit then cdsBrowser.Post;
-  //if not ShopGlobal.GetChkRight('200038') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+
+  if not ShopGlobal.GetChkRight('32600001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
 
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i=6 then
@@ -908,8 +909,8 @@ end;
 procedure TfrmGoodsInfoList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('200040') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('32600001',5) then
+    Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -938,7 +939,7 @@ end;
 procedure TfrmGoodsInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('200040') then
+  if not ShopGlobal.GetChkRight('32600001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
@@ -1039,6 +1040,11 @@ begin
   finally
     CurObj.Free;
   end;
+end;
+
+function TfrmGoodsInfoList.CheckCanExport: boolean;
+begin 
+  result:=ShopGlobal.GetChkRight('32600001',6);
 end;
 
 end.

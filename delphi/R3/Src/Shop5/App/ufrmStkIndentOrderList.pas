@@ -1,3 +1,5 @@
+{  11100001	0	进货订单	1	查询  2	新增	3	修改	4	删除	5	审核	6	打印	7	导出   }
+
 unit ufrmStkIndentOrderList;
 
 interface
@@ -42,8 +44,7 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure frfStockOrderUserFunction(const Name: String; p1, p2,
-      p3: Variant; var Val: Variant);
+    procedure frfStockOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -54,8 +55,8 @@ type
     procedure frfStockOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
-    { Private declarations }
     oid:string;
+     function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -263,7 +264,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400021') then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -275,7 +276,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400022') then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -314,7 +315,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400023') then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -387,7 +388,7 @@ end;
 procedure TfrmStkIndentOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -411,7 +412,7 @@ end;
 procedure TfrmStkIndentOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400024') then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -434,7 +435,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('400020') then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('11100001',2) then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -553,6 +554,11 @@ begin
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
 
+end;
+
+function TfrmStkIndentOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('32600001',6);
 end;
 
 end.

@@ -57,7 +57,7 @@ type
       var ParValue: Variant);
   private
     oid:string;
-     function  CheckCanExport: boolean; override;
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;

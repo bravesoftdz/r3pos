@@ -56,7 +56,7 @@ type
       var ParValue: Variant);
   private
     oid:string;
-     function  CheckCanExport: boolean; override;
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -558,7 +558,7 @@ end;
 
 function TfrmStkIndentOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('32600001',6);
+  result:=ShopGlobal.GetChkRight('32600001',7);
 end;
 
 end.

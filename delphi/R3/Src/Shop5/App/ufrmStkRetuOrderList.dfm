@@ -1,6 +1,5 @@
 inherited frmStkRetuOrderList: TfrmStkRetuOrderList
-  Left = 141
-  Top = 142
+  Left = 190
   Width = 868
   Height = 612
   Caption = #37319#36141#36864#36135#21333
@@ -8,22 +7,22 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 544
+    Width = 860
+    Height = 555
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 534
+      Width = 850
+      Height = 545
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 528
+        Width = 844
+        Height = 539
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37319#36141#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 501
+            Width = 842
+            Height = 512
             inherited RzPanel1: TRzPanel
-              Width = 824
+              Width = 832
               Height = 100
               object RzLabel2: TRzLabel
                 Left = 33
@@ -267,8 +266,8 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 105
-              Width = 824
-              Height = 391
+              Width = 832
+              Height = 402
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -370,17 +369,17 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
+    Width = 860
     inherited Image1: TImage
-      Left = 792
-      Width = 51
+      Left = 788
+      Width = 63
     end
     inherited Image14: TImage
-      Left = 843
+      Left = 851
     end
     inherited Image3: TImage
-      Left = 792
-      Width = 51
+      Left = 788
+      Width = 63
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -389,25 +388,25 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 616
+      Width = 612
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 616
+          MinHeight = 612
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 616
+        Width = 612
         object ToolButton16: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actfrmPayOrder
         end
         object ToolButton17: TToolButton
-          Left = 565
+          Left = 561
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -415,7 +414,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 573
+          Left = 569
           Top = 0
           Action = actExit
         end
@@ -448,7 +447,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     Left = 416
     Top = 193
     ReportForm = {
-      180000003E1F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000371F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00000000000000000000000000000000000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -697,7 +696,6 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
       000000000200000000000000FEFEFF060000000A00205661726961626C657300
       0000000200736C0014006364735F436867426F64792E22534C30303030220002
       006A650014006364735F436867426F64792E224A4530303030220004006B6879
-      6800000000040079687A68000000000200647A000000000000000000000000FD
-      FF0100000000}
+      6800000000040079687A68000000000200647A000000000000000000000000}
   end
 end

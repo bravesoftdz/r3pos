@@ -1,6 +1,6 @@
 inherited frmStkIndentOrder: TfrmStkIndentOrder
-  Left = 231
-  Top = 24
+  Left = 194
+  Top = 107
   Width = 787
   Height = 542
   Caption = #35746#36135#35746#21333

@@ -39,6 +39,8 @@ type
 
     procedure LoadFormat;virtual;
     procedure SaveFormat;virtual;
+
+    function CheckCanExport:boolean;virtual;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -584,6 +586,11 @@ begin
   finally
     F.Free;
   end;
+end;
+
+function TfrmBasic.CheckCanExport: boolean;
+begin
+  result := true;
 end;
 
 end.

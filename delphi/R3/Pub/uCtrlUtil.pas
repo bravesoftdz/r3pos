@@ -114,7 +114,7 @@ procedure SortDbGridEh(Grid:TDBGridEh;FieldName:string;SortMarket:TSortMarkerEh;
 var GlobalCtrl:TGlobalCtrl;
 
 implementation
-uses IniFiles,ufrmDbGridEhDialog,DBGridEhImpExp;
+uses IniFiles,ufrmDbGridEhDialog,DBGridEhImpExp,ufrmBasic;
 procedure SortDbGridEh(Grid:TDBGridEh;FieldName:string;SortMarket:TSortMarkerEh;Saved:Boolean=false);
 var i:integer;
   Column:TColumnEh;
@@ -618,6 +618,7 @@ begin
   if DbGrid.DataSource=nil then Exit;
   if DBGrid.DataSource.DataSet = nil then Exit;
   if DBGrid.DataSource.DataSet.IsEmpty then Exit;
+  if TfrmBasic(Current).CheckCanExport then Raise Exception.Create('你没有此模块的导入权限，请和管理员联系。'); 
   SaveDialog := TSaveDialog.Create(Current);
   try
     SaveDialog.DefaultExt := '*.xls';

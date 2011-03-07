@@ -40,12 +40,12 @@ type
     procedure LoadFormat;virtual;
     procedure SaveFormat;virtual;
 
-    function CheckCanExport:boolean;virtual;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
-
+    //权限控制
+    function CheckCanExport:boolean;virtual;
     //设置Child方式显示时的窗体类型
     procedure SetChildDisplay(MainForm:TForm);
     //设置镶入显示方式

@@ -1,3 +1,5 @@
+{ 13100001	0	收银机	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	兑换	8	审核   }
+
 unit ufrmPosMain;
 
 interface
@@ -265,7 +267,7 @@ type
     procedure Open(id:string);
 
     function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
-    
+
     procedure AmountToCalc(Amount:Real);
     procedure PriceToCalc(APrice:Real);
     procedure AMoneyToCalc(AMoney:Real);
@@ -815,11 +817,11 @@ var
 begin
   if dbState = dsBrowse then Exit;
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  if not ShopGlobal.GetChkRight('500056') then
+  if not ShopGlobal.GetChkRight('13100001',6) then  //赠送权限
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500056',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('13100001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -1434,11 +1436,11 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500055') then
+  if not ShopGlobal.GetChkRight('13100001',5) then //调价权限
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500055',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('13100001',5,Params.UserID);
             if not allow then Raise Exception.Create('输入的用户没有调价权限');
           end
        else
@@ -1483,11 +1485,11 @@ begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
   if not vss then
   begin
-  if not ShopGlobal.GetChkRight('500055') then
+  if not ShopGlobal.GetChkRight('13100001',5) then //调价权限
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500055',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('13100001',5,Params.UserID);
             if not allow then Raise Exception.Create('输入的用户没有调价权限');
           end
        else
@@ -1892,6 +1894,8 @@ procedure TfrmPosMain.NewOrder;
 var
   rs:TZQuery;
 begin
+  if not ShopGlobal.GetChkRight('13100001',2) then
+    Raise Exception.Create('  您没有新增权限，请联系管理员！  '); 
   inherited;
   Open('');
   dbState := dsInsert;
@@ -2425,7 +2429,7 @@ var
   rs:TZQuery;
   ls:TStringList;
 begin
-  if not ShopGlobal.GetChkRight('500058') then
+  if not ShopGlobal.GetChkRight('13100001',9) then  //打印小票权限
      begin
        MessageBox(Handle,'你没有打印小票的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
@@ -2950,11 +2954,11 @@ var
   allow :boolean;
 begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  if not ShopGlobal.GetChkRight('500055') then
+  if not ShopGlobal.GetChkRight('13100001',5) then  //调价权限
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500055',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('13100001',5,Params.UserID);
             if not allow then Raise Exception.Create('输入的用户没有调价权限');
           end
        else
@@ -2983,11 +2987,11 @@ begin
   if Field=nil then Exit;
   if Field.AsFloat <> 0 then
   begin
-    if not ShopGlobal.GetChkRight('500056') then
+    if not ShopGlobal.GetChkRight('13100001',6) then  //赠送权限
        begin
          if TfrmLogin.doLogin(Params) then
             begin
-              allow := ShopGlobal.GetChkRight('500056',1,Params.UserID);
+              allow := ShopGlobal.GetChkRight('13100001',6,Params.UserID);
               if not allow then Raise Exception.Create('输入的用户没有增送权限');
             end
          else
@@ -3097,11 +3101,11 @@ var
   Params:TLoginParam;
   allow :boolean;
 begin
-  if not ShopGlobal.GetChkRight('500055') then
+  if not ShopGlobal.GetChkRight('13100001',8) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500055',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('13100001',8,Params.UserID);
             if not allow then Raise Exception.Create('输入的用户没有退货权限');
           end
        else

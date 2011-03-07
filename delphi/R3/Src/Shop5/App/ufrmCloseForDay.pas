@@ -1,3 +1,5 @@
+{   13200001	 0	交班结账  1	查看  2	结账  3	撤消  4	打印    }
+
 unit ufrmCloseForDay;
 
 interface
@@ -379,13 +381,20 @@ begin
 end;
 
 procedure TfrmCloseForDay.Btn_SaveClick(Sender: TObject);
+var
+  PrintRight: Boolean;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('13200001',2) then
+    Raise Exception.Create('  您没有结账权限，请联系管理员！  ');
 
   Save;
-  if Is_Print then
+  PrintRight:=ShopGlobal.GetChkRight('13200001',4);
+  if Is_Print and PrintRight then
+  begin
     if MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION)=1 then
       TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
+  end;
   ModalResult := mrOk;
 end;
 
@@ -493,6 +502,9 @@ procedure TfrmCloseForDay.RzButton1Click(Sender: TObject);
 var i: Integer;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('13200001',4) then
+    Raise Exception.Create('  您没有打印小票权限，请联系管理员！  ');
+
   i := MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION);
   if i = 1 then
     TfrmTicketPrint.ShowTicketPrint(Self,1,'20110303');

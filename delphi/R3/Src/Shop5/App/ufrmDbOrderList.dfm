@@ -1,6 +1,6 @@
 inherited frmDbOrderList: TfrmDbOrderList
-  Left = 273
-  Top = 181
+  Left = 198
+  Top = 109
   Width = 759
   Height = 536
   Caption = #35843#25320#21333
@@ -8,22 +8,22 @@ inherited frmDbOrderList: TfrmDbOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 743
-    Height = 468
+    Width = 751
+    Height = 479
     inherited RzPanel2: TRzPanel
-      Width = 733
-      Height = 458
+      Width = 741
+      Height = 469
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 452
+        Width = 735
+        Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25320#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 425
+            Width = 733
+            Height = 436
             inherited RzPanel1: TRzPanel
-              Width = 715
+              Width = 723
               Height = 102
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -240,8 +240,8 @@ inherited frmDbOrderList: TfrmDbOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 107
-              Width = 715
-              Height = 313
+              Width = 723
+              Height = 324
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -345,17 +345,17 @@ inherited frmDbOrderList: TfrmDbOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 743
+    Width = 751
     inherited Image1: TImage
-      Left = 741
-      Width = 32
+      Left = 737
+      Width = 5
     end
     inherited Image14: TImage
-      Left = 734
+      Left = 742
     end
     inherited Image3: TImage
-      Left = 741
-      Width = 32
+      Left = 737
+      Width = 5
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -363,20 +363,20 @@ inherited frmDbOrderList: TfrmDbOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end
@@ -432,7 +432,7 @@ inherited frmDbOrderList: TfrmDbOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000002400000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -694,6 +694,6 @@ inherited frmDbOrderList: TfrmDbOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000FDFF0100000000}
+      0000000000}
   end
 end

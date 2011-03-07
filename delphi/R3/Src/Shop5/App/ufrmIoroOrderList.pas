@@ -122,7 +122,7 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
   //日期
-  strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='+inttostr(IoroType)+' and A.IORO_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D1.Date))+ ' and A.IORO_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D2.Date));
+  strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='+inttostr(IoroType)+' and A.IORO_DATE>=' + QuotedStr(FormatDateTime('YYYYMMDD', P1_D1.Date))+ ' and A.IORO_DATE<=' + QuotedStr(FormatDateTime('YYYYMMDD', P1_D2.Date));
   if fndSHOP_ID.AsString <> '' then
      strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
 
@@ -351,6 +351,7 @@ begin
   with TfrmIoroOrder.Create(self) do
   begin
     try
+      IoroType := self.IoroType;
       OnSave := AddRecord;
       Append;
       ShowModal;
@@ -368,6 +369,7 @@ begin
   with TfrmIoroOrder.Create(self) do
   begin
     try
+      IoroType := self.IoroType;
       OnSave := AddRecord;
       Edit(cdsBrowser.FieldByName('IORO_ID').AsString);
       ShowModal;
@@ -384,6 +386,7 @@ begin
   with TfrmIoroOrder.Create(self) do
   begin
     try
+      IoroType := self.IoroType;
       OnSave := AddRecord;
       Open(cdsBrowser.FieldByName('IORO_ID').AsString);
       ShowModal;
@@ -402,6 +405,7 @@ begin
    with TfrmIoroOrder.Create(self) do
       begin
         try
+          IoroType := self.IoroType;
           Open(cdsBrowser.FieldByName('IORO_ID').AsString);
           DeleteOrder;
           cdsBrowser.Delete;
@@ -437,6 +441,7 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Params.ParamByName('IORO_ID').asString := cdsBrowser.FieldbyName('IORO_ID').AsString;
+      Params.ParamByName('IORO_TYPE').AsInteger := IoroType;
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',date());
       Params.ParamByName('CHK_USER').asString := Global.UserID;
       if cdsBrowser.FieldByName('CHK_DATE').AsString='' then

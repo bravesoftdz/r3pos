@@ -28,7 +28,6 @@ type
     edtREMARK: TcxTextEdit;
     DataSource1: TDataSource;
     Label2: TLabel;
-    edtCLIENT_ID: TzrComboBoxList;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     DBGridEh1: TDBGridEh;
@@ -43,6 +42,7 @@ type
     lblCaption: TLabel;
     Image1: TImage;
     Label14: TLabel;
+    edtCLIENT_ID: TzrComboBoxList;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -50,9 +50,6 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
-    procedure edtITEM_IDKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure edtITEM_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure cdsDetailNewRecord(DataSet: TDataSet);
     procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -76,6 +73,8 @@ type
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtIORO_DATEPropertiesChange(Sender: TObject);
+    procedure edtACCOUNT_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     Fcid: string;
     FIoroType: integer;
@@ -159,6 +158,7 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Params.ParamByName('IORO_ID').asString := id;
+      Params.ParamByName('IORO_TYPE').AsInteger := IoroType;
       Factor.AddBatch(cdsHeader,'TIoroOrder',Params);
       Factor.AddBatch(cdsDetail,'TIoroData',Params);
       Factor.OpenBatch;
@@ -237,7 +237,7 @@ end;
 procedure TfrmIoroOrder.SaveOrder;
 var n:integer;
 begin
-  if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
+  if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择科目名称');
   if edtIORO_DATE.EditValue = null then Raise Exception.Create('请选择日期');
   if edtIORO_USER.AsString = '' then Raise Exception.Create('负责人不能为空');
   Check;
@@ -247,6 +247,7 @@ begin
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsHeader.FieldbyName('IORO_TYPE').AsInteger := IoroType;
   cdsHeader.Post;
   cdsDetail.DisableControls;
   try
@@ -257,7 +258,9 @@ begin
         inc(n);
         cdsDetail.Edit;
         cdsDetail.FieldbyName('SHOP_ID').AsString :=  AObj.FieldbyName('SHOP_ID').AsString;
+        cdsDetail.FieldbyName('IORO_TYPE').AsInteger := IoroType;
         cdsDetail.FieldbyName('SEQNO').AsInteger := n;
+        cdsDetail.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
         cdsDetail.FieldbyName('IORO_ID').AsString := AObj.FieldbyName('IORO_ID').AsString;
         cdsDetail.Post;
         cdsDetail.Next;
@@ -293,35 +296,15 @@ end;
 procedure TfrmIoroOrder.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
-var ARect:TRect;
+var
+  ARect:TRect;
 begin
-{  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
-  begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State); }
-
-
-//  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-  
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsDetail.RecNo)),length(Inttostr(cdsDetail.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
- if cdsDetail.FieldByName('item_type').AsString='1' then
-  begin
-    if (Column.FieldName='ITEM_ID_TEXT')  then
-      DBGridEh1.Canvas.Font.Color:=clLime;
-  end
-  else  if cdsDetail.FieldByName('item_type').AsString='2' then
-  begin
-    if (Column.FieldName='ITEM_ID_TEXT')  then
-      DBGridEh1.Canvas.Font.Color:=clRed;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 procedure TfrmIoroOrder.SetdbState(const Value: TDataSetState);
@@ -356,43 +339,8 @@ procedure TfrmIoroOrder.DBGridEh1Columns1BeforeShowControl(
   Sender: TObject);
 begin
   inherited;
-  edtITEM_ID.Text := cdsDetail.FieldbyName('ITEM_ID_TEXT').AsString;
-  edtITEM_ID.KeyValue := cdsDetail.FieldbyName('ITEM_ID').AsString;
-
-end;
-
-procedure TfrmIoroOrder.edtITEM_IDKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  inherited;
-  if (Key=VK_RIGHT) and not edtITEM_ID.Edited then
-     begin
-       DBGridEh1.SetFocus;
-       edtITEM_ID.Visible := false;
-       FocusNextColumn;
-     end;
-  if (Key=VK_UP) and not edtITEM_ID.DropListed then
-     begin
-       DBGridEh1.SetFocus;
-       edtITEM_ID.Visible := false;
-       cdsDetail.Prior;
-     end;
-  if (Key=VK_DOWN) and (Shift=[]) and not edtITEM_ID.DropListed then
-     begin
-       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('ITEM_ID').AsString='') then
-         edtITEM_ID.DropList
-       else
-       begin
-         DBGridEh1.SetFocus;
-         edtITEM_ID.Visible := false;
-         cdsDetail.Next;
-         if cdsDetail.Eof then
-            PostMessage(Handle,WM_INIT_RECORD,0,0);
-         if (cdsDetail.FieldByName('ITEM_ID').AsString <> '') then
-            Key := 0;
-       end;
-     end;
-  inherited;
+  edtACCOUNT_ID.Text := cdsDetail.FieldbyName('ACCOUNT_ID_TEXT').AsString;
+  edtACCOUNT_ID.KeyValue := cdsDetail.FieldbyName('ACCOUNT_ID').AsString;
 
 end;
 
@@ -405,16 +353,16 @@ procedure TfrmIoroOrder.InitRecord;
 begin
   if dbState = dsBrowse then Exit;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
-  edtITEM_ID.Visible := false;
+  edtACCOUNT_ID.Visible := false;
   if DBGridEh1.CanFocus and Visible then DBGridEh1.SetFocus;
   cdsDetail.DisableControls;
   try
   cdsDetail.Last;
-  if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('ITEM_ID').AsString <>'') then
+  if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('ACCOUNT_ID').AsString <>'') then
     begin
       inc(RowID);
       cdsDetail.Append;
-      cdsDetail.FieldByName('ITEM_ID').Value := null;
+      cdsDetail.FieldByName('ACCOUNT_ID').Value := null;
       if cdsDetail.FindField('SEQNO')<> nil then
          cdsDetail.FindField('SEQNO').asInteger := RowID;
       cdsDetail.Post;
@@ -424,29 +372,6 @@ begin
   finally
     cdsDetail.EnableControls;
   end;
-end;
-
-procedure TfrmIoroOrder.edtITEM_IDKeyPress(Sender: TObject;
-  var Key: Char);
-begin
-  inherited;
-  if Key=#13 then
-     begin
-       Key := #0;
-       if edtITEM_ID.AsString = '' then
-          begin
-            PostMessage(Handle,WM_DIALOG_PULL,WM_ADD_ITEMINFO,0);
-            Exit;
-          end;
-       if cdsDetail.FieldbyName('ITEM_ID').AsString = '' then
-          begin
-            edtITEM_ID.DropList;
-            Exit;
-          end;
-       FocusNextColumn;
-       DBGridEh1.SetFocus;
-     end;
-
 end;
 
 procedure TfrmIoroOrder.Check;
@@ -464,6 +389,7 @@ begin
           cdsDetail.Next;
         end;
       end;
+    if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空单，请选择对应的账户名称'); 
   finally
     cdsDetail.EnableControls;
   end;
@@ -548,7 +474,7 @@ procedure TfrmIoroOrder.N1Click(Sender: TObject);
 begin
   inherited;
   if cdsDetail.IsEmpty then exit;
-  if cdsDetail.FieldByName('ITEM_ID').AsString='' then exit;
+  if cdsDetail.FieldByName('ACCOUNT_ID').AsString='' then exit;
   cdsDetail.Delete;
 end;
 
@@ -624,9 +550,16 @@ procedure TfrmIoroOrder.edtACCOUNT_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
-  if not edtACCOUNT_ID.Focused and not DBGridEh1.Focused then
+  if Key=#13 then
      begin
-       inherited;
+       Key := #0;
+       if cdsDetail.FieldbyName('ACCOUNT_ID').AsString = '' then
+          begin
+            edtACCOUNT_ID.DropList;
+            Exit;
+          end;
+       FocusNextColumn;
+       DBGridEh1.SetFocus;
      end;
 end;
 
@@ -695,6 +628,41 @@ begin
      begin
        if Value then Label14.Caption := '状态:审核' else Label14.Caption := '状态:待审';
      end;
+end;
+
+procedure TfrmIoroOrder.edtACCOUNT_IDKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) and not edtACCOUNT_ID.Edited then
+     begin
+       DBGridEh1.SetFocus;
+       edtACCOUNT_ID.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_UP) and not edtACCOUNT_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       edtACCOUNT_ID.Visible := false;
+       cdsDetail.Prior;
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not edtACCOUNT_ID.DropListed then
+     begin
+       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('ITEM_ID').AsString='') then
+         edtACCOUNT_ID.DropList
+       else
+       begin
+         DBGridEh1.SetFocus;
+         edtACCOUNT_ID.Visible := false;
+         cdsDetail.Next;
+         if cdsDetail.Eof then
+            PostMessage(Handle,WM_INIT_RECORD,0,0);
+         if (cdsDetail.FieldByName('ITEM_ID').AsString <> '') then
+            Key := 0;
+       end;
+     end;
+  inherited;
+
 end;
 
 end.

@@ -1,7 +1,6 @@
 inherited frmIoroOrder: TfrmIoroOrder
   Left = 383
   Top = 243
-  ActiveControl = edtCLIENT_ID
   Caption = #20854#20182#36153#29992
   ClientHeight = 367
   ClientWidth = 535
@@ -86,7 +85,7 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Footer.Value = #21512'   '#35745#65306
                 Footer.ValueType = fvtStaticText
                 Footers = <>
-                Title.Caption = #39033#30446#21517#31216
+                Title.Caption = #36134#25143#21517#31216
                 Width = 127
                 Control = edtACCOUNT_ID
                 OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
@@ -125,6 +124,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Visible = False
             OnEnter = edtACCOUNT_IDEnter
             OnExit = edtACCOUNT_IDExit
+            OnKeyDown = edtACCOUNT_IDKeyDown
             OnKeyPress = edtACCOUNT_IDKeyPress
             InGrid = False
             KeyValue = Null
@@ -284,7 +284,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Width = 121
         Height = 20
         Properties.OnChange = edtIORO_DATEPropertiesChange
-        TabOrder = 1
+        TabOrder = 0
       end
       object edtIORO_USER: TzrComboBoxList
         Left = 92
@@ -297,7 +297,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 3
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME'
@@ -334,64 +334,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Width = 237
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 2
-      end
-      object edtCLIENT_ID: TzrComboBoxList
-        Left = 92
-        Top = 46
-        Width = 237
-        Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = True
-        TabOrder = 0
-        InGrid = False
-        KeyValue = Null
-        FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE'
-        KeyField = 'CLIENT_ID'
-        ListField = 'CLIENT_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'CLIENT_ID'
-            Footers = <>
-            Title.Caption = #24080#21495
-            Visible = False
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CLIENT_CODE'
-            Footers = <>
-            Title.Caption = #22995#21517
-            Visible = False
-            Width = 130
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CLIENT_NAME'
-            Footers = <>
-            Title.Caption = #21333#20301#21517
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CLIENT_SPELL'
-            Footers = <>
-            Visible = False
-          end>
-        DropWidth = 180
-        DropHeight = 150
-        ShowTitle = True
-        AutoFitColWidth = True
-        OnAddClick = edtCLIENT_IDAddClick
-        ShowButton = True
-        LocateStyle = lsDark
-        Buttons = [zbNew]
-        DropListStyle = lsFixed
-        OnSaveValue = edtCLIENT_IDSaveValue
-        MultiSelect = False
+        TabOrder = 1
       end
       object edtITEM_ID: TzrComboBoxList
         Left = 92
@@ -404,10 +347,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
-        Visible = False
-        OnKeyDown = edtITEM_IDKeyDown
-        OnKeyPress = edtITEM_IDKeyPress
+        TabOrder = 3
         InGrid = True
         KeyValue = Null
         FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
@@ -463,7 +403,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 5
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -503,7 +443,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 6
+        TabOrder = 5
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -762,6 +702,78 @@ inherited frmIoroOrder: TfrmIoroOrder
           ParentFont = False
           Transparent = True
         end
+      end
+      object edtCLIENT_ID: TzrComboBoxList
+        Left = 92
+        Top = 46
+        Width = 237
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 6
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
+        KeyField = 'CLIENT_ID'
+        ListField = 'CLIENT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CLIENT_CODE'
+            Footers = <>
+            Title.Caption = #23458#25143#21495
+            Width = 60
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CLIENT_NAME'
+            Footers = <>
+            Title.Caption = #23458#25143#21517#31216
+            Width = 150
+          end
+          item
+            EditButtons = <>
+            FieldName = 'LINKMAN'
+            Footers = <>
+            Title.Caption = #32852#31995#20154
+            Width = 70
+          end
+          item
+            EditButtons = <>
+            FieldName = 'TELEPHONE2'
+            Footers = <>
+            Title.Caption = #32852#31995#30005#35805
+            Width = 70
+          end
+          item
+            EditButtons = <>
+            FieldName = 'LICENSE_CODE'
+            Footers = <>
+            Title.Caption = #35777#20214#21495
+            Width = 70
+          end
+          item
+            EditButtons = <>
+            FieldName = 'ADDRESS'
+            Footers = <>
+            Title.Caption = #22320#22336
+            Width = 150
+          end>
+        DropWidth = 314
+        DropHeight = 281
+        ShowTitle = True
+        AutoFitColWidth = False
+        OnAddClick = edtCLIENT_IDAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew]
+        DropListStyle = lsFixed
+        OnSaveValue = edtCLIENT_IDSaveValue
+        MultiSelect = False
       end
     end
   end

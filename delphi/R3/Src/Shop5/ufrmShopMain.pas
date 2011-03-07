@@ -805,7 +805,7 @@ begin
       begin
         tab := RzTab.Tabs.Add;
         tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))-1;
-        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1)+'1');
+        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))+10-1;
       end;
       CA_MODULE.Next;
     end;

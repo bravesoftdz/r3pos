@@ -408,7 +408,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CREA_DATE'
+                    FieldName = 'CREA_USER_TEXT'
                     Footers = <>
                     Title.Caption = #21046#21333#20154
                     Width = 56

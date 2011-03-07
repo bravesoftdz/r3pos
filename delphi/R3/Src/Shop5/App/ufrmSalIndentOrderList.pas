@@ -1,3 +1,5 @@
+{ 12300001	0	销售订单	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印 }
+
 unit ufrmSalIndentOrderList;
 
 interface
@@ -51,11 +53,11 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actRecvExecute(Sender: TObject);
-    procedure frfSalesOrderGetValue(const ParName: String;
-      var ParValue: Variant);
+    procedure frfSalesOrderGetValue(const ParName: String; var ParValue: Variant);
   private
     { Private declarations }
     oid:string;
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -178,12 +180,12 @@ procedure TfrmSalIndentOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if ShopGlobal.GetChkRight('500028') and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if ShopGlobal.GetChkRight('12300001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmSalIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500029') then Raise Exception.Create('你没有删除销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',3) then Raise Exception.Create('你没有删除销售订单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -195,7 +197,7 @@ end;
 
 procedure TfrmSalIndentOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500030') then Raise Exception.Create('你没有删除销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',4) then Raise Exception.Create('你没有删除销售订单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -205,7 +207,7 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('500028') and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售订单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('12300001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售订单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -227,12 +229,13 @@ begin
        //DevFactory.OpenCashBox;
        if (ShopGlobal.GetParameter('SAVE_SALES_PRINT')='1')
           and
-          ShopGlobal.GetChkRight('500033')
+          ShopGlobal.GetChkRight('12300001',8) //打印权限
        then
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('500028') and (MessageBox(Handle,'是否继续新增销售订单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       //判断新单权限
+       if ShopGlobal.GetChkRight('12300001',2) and (MessageBox(Handle,'是否继续新增销售订单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -241,7 +244,7 @@ end;
 
 procedure TfrmSalIndentOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500032') then Raise Exception.Create('你没有新增销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',7) then Raise Exception.Create('你没有审核（弃审）销售订单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -392,7 +395,7 @@ end;
 procedure TfrmSalIndentOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('500033') then Raise Exception.Create('你没有打印销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',8) then Raise Exception.Create('你没有打印销售订单的权限,请和管理员联系.');
   //if (CurOrder<>nil) then
   //   begin
   //     if DevFactory.SavePrint then
@@ -425,7 +428,7 @@ end;
 procedure TfrmSalIndentOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('500033') then Raise Exception.Create('你没有打印销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',8) then Raise Exception.Create('你没有打印销售订单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -448,7 +451,7 @@ end;
 
 procedure TfrmSalIndentOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500028') then Raise Exception.Create('你没有新增销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',2) then Raise Exception.Create('你没有新增销售订单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -484,7 +487,7 @@ var
   clid,cpid,oid:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700014') then Raise Exception.Create('你没有收款单新增权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有收款单新增权限,请和管理员联系.');
   rs := TZQuery.Create(nil);
   try
   if CurOrder<>nil then
@@ -562,6 +565,11 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+end;
+
+function TfrmSalIndentOrderList.CheckCanExport: boolean;
+begin
+  result:=true;
 end;
 
 end.

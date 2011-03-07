@@ -78,6 +78,7 @@ var str:string;
 begin
   inherited;
   //查自已门店用户，及下属直营门店的用户
+  if not ShopGlobal.GetChkRight('31500002',1) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if edtKey.Text<>'' then
      str:=' and ( [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
                   ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
@@ -104,7 +105,7 @@ var i:integer;
 begin
   inherited;
   if (Not Cds_Users.Active) or (Cds_Users.RecordCount = 0) then Exit;
-  if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500005',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -122,7 +123,7 @@ end;
 procedure TfrmUsers.actNewExecute(Sender: TObject);
 begin
   inherited;
-  {if not ShopGlobal.GetChkRight('100017') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');}
+  if not ShopGlobal.GetChkRight('31500003',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
     begin
       try
@@ -139,7 +140,7 @@ procedure TfrmUsers.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Users.Active) or (Cds_Users.IsEmpty) then exit;
-  {if not ShopGlobal.GetChkRight('100018') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');}
+  if not ShopGlobal.GetChkRight('31500004',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
   begin
     try
@@ -285,7 +286,7 @@ begin
   inherited;
   if not Cds_Users.Active then exit;
   if Cds_Users.IsEmpty then exit;
-  if not ShopGlobal.GetChkRight('100020') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500006',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   with TfrmUserRights.Create(self) do
   begin
     try
@@ -336,7 +337,7 @@ end;
 
 procedure TfrmUsers.actPrintExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100014') then
+  if not ShopGlobal.GetChkRight('31500007',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintDBGridEh1.DBGridEh := DBGridEh1;
@@ -346,7 +347,7 @@ end;
 procedure TfrmUsers.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100021') then
+  if not ShopGlobal.GetChkRight('31500007',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do

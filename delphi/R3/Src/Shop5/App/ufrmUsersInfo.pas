@@ -406,7 +406,7 @@ end;
 class function TfrmUsersInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
-{   if not ShopGlobal.GetChkRight('100017') then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.'); }
+   if not ShopGlobal.GetChkRight('31500003',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
    with TfrmUsersInfo.Create(Owner) do
     begin
       try
@@ -427,7 +427,7 @@ end;
 class function TfrmUsersInfo.EditDialog(Owner: TForm; id: string;
   var _AObj: TRecord_): boolean;
 begin
-{   if not ShopGlobal.GetChkRight('100018') then Raise Exception.Create('你没有修改用户的权限,请和管理员联系.'); }
+   if not ShopGlobal.GetChkRight('31500004',3) then Raise Exception.Create('你没有修改用户的权限,请和管理员联系.');
    with TfrmUsersInfo.Create(Owner) do
     begin
       try

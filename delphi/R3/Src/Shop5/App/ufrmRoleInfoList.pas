@@ -1,6 +1,8 @@
+{ 31400001	0	角色权限:  1	查询   2	新增   3	修改  4	删除   5	授权   6	打印   7	导出     }
+
 unit ufrmRoleInfoList;
 
-interface
+interface      
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -26,10 +28,8 @@ type
     ToolButton10: TToolButton;
     DataSource1: TDataSource;
     ToolButton11: TToolButton;
-    PopupMenu1: TPopupMenu;
-    N1: TMenuItem;
     actRIGHTS: TAction;
-    PopupMenu2: TPopupMenu;
+    PopupMenu1: TPopupMenu;
     N2: TMenuItem;
     actRIGHTS1: TAction;
     btnOk: TRzBitBtn;
@@ -91,7 +91,7 @@ procedure TfrmRoleInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
   //if not IsCompany then  raise Exception.Create('不是总店，不能新增职务!');
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31400001',2) then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
   with TfrmRoleInfo.Create(self) do
   begin
     try
@@ -107,7 +107,7 @@ end;
 procedure TfrmRoleInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   with TfrmRoleInfo.Create(self) do
@@ -142,7 +142,7 @@ var Params:TftParamList;
     rzNode:TTreeNode;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31400001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
@@ -226,8 +226,8 @@ procedure TfrmRoleInfoList.FormShow(Sender: TObject);
 begin
   inherited;
   self.Open;
-  if edtKey.CanFocus then
-    edtKey.SetFocus;
+  if edtKey.CanFocus then edtKey.SetFocus;
+  // SetGridExportRight(DBGridEh1,'31400001',6); //设置导出权限
 end;
 
 procedure TfrmRoleInfoList.actInfoExecute(Sender: TObject);
@@ -288,11 +288,10 @@ end;
 procedure TfrmRoleInfoList.actRIGHTSExecute(Sender: TObject);
 begin
   inherited;
-//  if not cdsBrowser.Active then exit;
-//  if cdsBrowser.IsEmpty then exit;
-//  if not IsCompany then  Raise Exception.Create('不是总店,你没有授权'+Caption+'的权限.');
-//  if not ShopGlobal.GetChkRight('100013') then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
-
+  if not cdsBrowser.Active then exit;
+  if cdsBrowser.IsEmpty then exit;
+  //  if not IsCompany then  Raise Exception.Create('不是总店,你没有授权'+Caption+'的权限.');
+  if not ShopGlobal.GetChkRight('31400001',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   with TfrmRoleRights.Create(self) do
   begin
     try
@@ -316,8 +315,8 @@ end;
 procedure TfrmRoleInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  // if not ShopGlobal.GetChkRight('100014') then
-  //   Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31400001',6) then
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   SetRecNo;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
@@ -328,6 +327,8 @@ procedure TfrmRoleInfoList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
+  if not ShopGlobal.GetChkRight('31400001',6) then
+    Raise Exception.Create('你没有预览报表'+Caption+'的权限,请和管理员联系.');
   SetRecNo;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -388,5 +389,6 @@ begin
     cdsBrowser.EnableControls;
   end;
 end;
+ 
 
 end.

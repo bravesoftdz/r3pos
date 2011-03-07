@@ -146,7 +146,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
                 FrozenCols = 1
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-                PopupMenu = PopupMenu2
+                PopupMenu = PopupMenu1
                 ReadOnly = True
                 RowHeight = 20
                 TabOrder = 0
@@ -311,12 +311,11 @@ inherited frmRoleInfoList: TfrmRoleInfoList
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 376
-    Top = 208
+    Left = 464
   end
   inherited actList: TActionList
-    Left = 328
-    Top = 176
+    Left = 336
+    Top = 192
     inherited actNew: TAction
       OnExecute = actNewExecute
     end
@@ -351,18 +350,11 @@ inherited frmRoleInfoList: TfrmRoleInfoList
   object DataSource1: TDataSource
     DataSet = cdsBrowser
     Left = 361
-    Top = 170
+    Top = 194
   end
   object PopupMenu1: TPopupMenu
-    Left = 289
-    Top = 242
-    object N1: TMenuItem
-      Action = actRIGHTS1
-    end
-  end
-  object PopupMenu2: TPopupMenu
-    Left = 297
-    Top = 178
+    Left = 209
+    Top = 154
     object N2: TMenuItem
       Action = actRIGHTS
     end

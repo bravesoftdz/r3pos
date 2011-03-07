@@ -43,7 +43,7 @@ var
   B,Cnd:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('600038') then Raise Exception.Create('你没有撤消盘点的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',4) then Raise Exception.Create('你删除盘点的权限,请和管理员联系.');
   Temp := TZQuery.Create(nil);
   try
     Temp.SQL.Text :='select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and  SHOP_ID=:SHOP_ID ';

@@ -363,6 +363,9 @@ inherited frmCheckOrderList: TfrmCheckOrderList
       OnExecute = actInfoExecute
     end
   end
+  inherited ppmReport: TPopupMenu
+    Top = 72
+  end
   inherited cdsList: TZQuery
     AfterScroll = cdsListAfterScroll
   end

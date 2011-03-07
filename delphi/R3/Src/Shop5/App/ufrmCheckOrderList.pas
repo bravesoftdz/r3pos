@@ -1,3 +1,5 @@
+{ 14400001	0	盘点单 	1	查询	2	新增	3	修改	4	删除	5	审核	6	打印	7	导出   }
+
 unit ufrmCheckOrderList;
 
 interface
@@ -33,17 +35,17 @@ type
     procedure actFindExecute(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
+    procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure actNewExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
   private
-    { Private declarations }
-    oid:string;
+    oid: string;
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -233,7 +235,7 @@ end;
 
 procedure TfrmCheckOrderList.actEditExecute(Sender: TObject);
 begin        
-  if not ShopGlobal.GetChkRight('600036') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',3) then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
   if (CurOrder=nil) then
   begin
     if cdsList.IsEmpty then Exit;
@@ -244,7 +246,7 @@ end;
 
 procedure TfrmCheckOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('600036') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',4) then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
   if (CurOrder=nil) then
   begin
     if cdsList.IsEmpty then Exit;
@@ -279,6 +281,7 @@ end;
 
 procedure TfrmCheckOrderList.actAuditExecute(Sender: TObject);
 begin
+  if not ShopGlobal.GetChkRight('14400001',5) then Raise Exception.Create('你没有审核盘点的权限,请和管理员联系.');
   if (CurOrder=nil) then
   begin
     if cdsList.IsEmpty then Exit;
@@ -299,26 +302,43 @@ end;
 
 procedure TfrmCheckOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('600036') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',2) then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
   //新判断当天是否有盘点
   if not TfrmCheckTask.StartTask then Exit;
   inherited;
 end;
 
 procedure TfrmCheckOrderList.actPrintExecute(Sender: TObject);
+var Aobj: TRecord_;
 begin
-  if not ShopGlobal.GetChkRight('600039') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',6) then Raise Exception.Create('你没有打印盘点单的权限,请和管理员联系.');
   //调用打印报表
-  
-
+  try
+    Aobj:=TRecord_.Create;
+    Aobj.ReadFromDataSet(cdsList);
+    TfrmCheckTablePrint.frmCheckTablePrint(Aobj);
+  finally
+    Aobj.Free;
+  end;
 end;
 
 procedure TfrmCheckOrderList.actPreviewExecute(Sender: TObject);
+var Aobj: TRecord_;
 begin
-  if not ShopGlobal.GetChkRight('600039') then Raise Exception.Create('你没有盘点录入的权限,请和管理员联系.');
-  inherited;
-
+  if not ShopGlobal.GetChkRight('14400001',6) then Raise Exception.Create('你没有打印盘点单的权限,请和管理员联系.');
+  //调用打印报表
+  try
+    Aobj:=TRecord_.Create;
+    Aobj.ReadFromDataSet(cdsList);
+    TfrmCheckTablePrint.frmCheckTablePrint(Aobj);
+  finally
+    Aobj.Free;
+  end;
 end;
 
+function TfrmCheckOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('14400001',7);
+end;
 
 end.

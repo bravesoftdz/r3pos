@@ -50,7 +50,7 @@ var
   B:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('600035') then Raise Exception.Create('你没有开始盘点的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',2) then Raise Exception.Create('你没有开始盘点的权限,请和管理员联系.');
   Temp := TZQuery.Create(nil);
   try
      //判断当前日期否有盘点:

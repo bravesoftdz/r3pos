@@ -40,7 +40,7 @@ type
     sid2: string;
     cdsPrintDate: TZQuery;
     LastPrintDateShopID: string; //最后一次打开cdsPrintDate的SHOP_ID
-        
+
     procedure GetPrintDataList;  //盘点日期下拉选择Items
     function  GetUnitIDIdx: integer;
     //盘点对照表
@@ -49,14 +49,16 @@ type
     procedure RzPage1Open;  //取查询数据
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    procedure DoOpenDefaultData(Aobj: TRecord_); //默认显示传入数据
+    class procedure frmCheckTablePrint(Aobj: TRecord_); //创建并显示
     property  UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
   end;
 
 implementation
 
 uses
-  uShopGlobal, uShopUtil, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort,
-  ObjCommon;
+  uShopGlobal, uShopUtil,uDsUtil, uFnUtil, uGlobal, uCtrlUtil,
+  ufrmSelectGoodSort, ObjCommon;
 
 {$R *.dfm}
 
@@ -351,6 +353,35 @@ begin
 
     end;
   end;
+end;
+
+class procedure TfrmCheckTablePrint.frmCheckTablePrint(Aobj: TRecord_);
+var FrmPrintTab: TfrmCheckTablePrint;
+begin
+  try
+    FrmPrintTab:=TfrmCheckTablePrint.Create(nil);
+    FrmPrintTab.DoOpenDefaultData(Aobj);
+  finally
+    Freeandnil(FrmPrintTab);
+  end;
+end;
+
+procedure TfrmCheckTablePrint.DoOpenDefaultData(Aobj: TRecord_);
+var DropDs: TDataSet; CurID: string;
+begin
+  if Aobj.FindField('PRINT_DATE')<>nil then
+  begin
+    fndP1_PRINT_DATE.KeyValue:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
+    fndP1_PRINT_DATE.Text:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
+  end;
+  if Aobj.FindField('SHOP_ID')<>nil then
+  begin
+    CurID:=trim(Aobj.fieldbyName('SHOP_ID').AsString);
+    DropDs:=fndP1_SHOP_ID.DataSet;
+    fndP1_SHOP_ID.KeyField:=CurID;
+    fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
+  end;
+  self.RzPage1Open;//查询盘点
 end;
 
 end.

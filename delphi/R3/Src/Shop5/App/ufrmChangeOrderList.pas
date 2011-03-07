@@ -1,3 +1,6 @@
+{ 14200001	0	领用单	1	查询	2	新增 	3	修改 	4	删除 	5	审核	6	打印	7	导出 }
+
+
 unit ufrmChangeOrderList;
 
 interface
@@ -43,17 +46,15 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
-    procedure frfChangeOrderGetValue(const ParName: String;
-      var ParValue: Variant);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure frfChangeOrderUserFunction(const Name: String; p1, p2,
-      p3: Variant; var Val: Variant);
+    procedure frfChangeOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure frfChangeOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
   private
     { Private declarations }
     oid:string;
     FCodeId: string;
     procedure SetCodeId(const Value: string);
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -263,11 +264,11 @@ procedure TfrmChangeOrderList.actEditExecute(Sender: TObject);
 begin
   if CodeId='1' then
      begin
-       if not ShopGlobal.GetChkRight('600030') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
      end;
   if CodeId='2' then
-     begin
-       if not ShopGlobal.GetChkRight('600023') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+     begin                        
+       if not ShopGlobal.GetChkRight('14200001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
      end;
   if (CurOrder=nil) then
      begin
@@ -282,13 +283,13 @@ end;
 
 procedure TfrmChangeOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if CodeId='1' then
+  if CodeId='1' then  //损益单:
      begin
-       if not ShopGlobal.GetChkRight('600031') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
      end;
-  if CodeId='2' then
+  if CodeId='2' then  //领用单:
      begin
-       if not ShopGlobal.GetChkRight('600024') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14200001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
      end;
   if (CurOrder=nil) then
      begin
@@ -302,9 +303,9 @@ begin
      begin
        if not CurOrder.saved then Exit;
        if (
-          ((CodeId='1') and ShopGlobal.GetChkRight('600029'))
+          ((CodeId='1') and ShopGlobal.GetChkRight('14300001',2))
            or
-          ((CodeId='2') and ShopGlobal.GetChkRight('600022'))
+          ((CodeId='2') and ShopGlobal.GetChkRight('14200001',2))
           )
           and (MessageBox(Handle,pchar('删除当前单据成功,是否继续新增'+Caption+'？'),pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
@@ -320,9 +321,9 @@ begin
      begin
        if not CurOrder.saved then Exit;
        if (
-          ((CodeId='1') and ShopGlobal.GetChkRight('600029'))
+          ((CodeId='1') and ShopGlobal.GetChkRight('14300001',2))
            or
-          ((CodeId='2') and ShopGlobal.GetChkRight('600022'))
+          ((CodeId='2') and ShopGlobal.GetChkRight('14200001',2))
           )
           and (MessageBox(Handle,pchar('保存当前单据成功,是否继续新增'+Caption+'？'),pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
@@ -336,11 +337,11 @@ procedure TfrmChangeOrderList.actAuditExecute(Sender: TObject);
 begin
   if CodeId='1' then
      begin
-       if not ShopGlobal.GetChkRight('600032') then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',5) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
      end;
   if CodeId='2' then
      begin
-       if not ShopGlobal.GetChkRight('600025') then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14200001',5) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
      end;
   if (CurOrder=nil) then
      begin
@@ -400,11 +401,11 @@ begin
   inherited;
   if CodeId='1' then
      begin
-       if not ShopGlobal.GetChkRight('600033') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
      end;
   if CodeId='2' then
      begin
-       if not ShopGlobal.GetChkRight('600026') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14200001',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
      end;
   with TfrmFastReport.Create(Self) do
     begin
@@ -432,11 +433,11 @@ begin
   inherited;
   if CodeId='1' then
      begin
-       if not ShopGlobal.GetChkRight('600033') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
      end;
   if CodeId='2' then
      begin
-       if not ShopGlobal.GetChkRight('600026') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14200001',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
      end;
   with TfrmFastReport.Create(Self) do
     begin
@@ -463,11 +464,11 @@ procedure TfrmChangeOrderList.actNewExecute(Sender: TObject);
 begin
   if CodeId='1' then
      begin
-       if not ShopGlobal.GetChkRight('600029') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14300001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
      end;
   if CodeId='2' then
      begin
-       if not ShopGlobal.GetChkRight('600022') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+       if not ShopGlobal.GetChkRight('14200001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
      end;
   inherited;
   if CurOrder<>nil then
@@ -546,6 +547,14 @@ begin
        small := frParser.Calc(p1);
        Val := FnNumber.SmallTOBig(small);
      end;
+end;
+
+function TfrmChangeOrderList.CheckCanExport: boolean;
+begin
+  if trim(CodeId)='1' then
+    result:=ShopGlobal.GetChkRight('14300001',7)
+  else if trim(CodeId)='2' then
+    result:=ShopGlobal.GetChkRight('14200001',7);
 end;
 
 end.

@@ -7,22 +7,22 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 816
-    Height = 551
+    Width = 824
+    Height = 562
     inherited RzPanel2: TRzPanel
-      Width = 806
-      Height = 541
+      Width = 814
+      Height = 552
       inherited RzPage: TRzPageControl
-        Width = 800
-        Height = 535
+        Width = 808
+        Height = 546
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25972#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 798
-            Height = 508
+            Width = 806
+            Height = 519
             inherited RzPanel1: TRzPanel
-              Width = 788
+              Width = 796
               Height = 92
               object RzLabel2: TRzLabel
                 Left = 33
@@ -230,8 +230,8 @@ inherited frmChangeOrderList: TfrmChangeOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 97
-              Width = 788
-              Height = 406
+              Width = 796
+              Height = 417
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -316,33 +316,33 @@ inherited frmChangeOrderList: TfrmChangeOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 816
+    Width = 824
     inherited Image1: TImage
-      Left = 741
-      Width = 66
+      Left = 737
+      Width = 78
     end
     inherited Image14: TImage
-      Left = 807
+      Left = 815
     end
     inherited Image3: TImage
-      Left = 741
-      Width = 66
+      Left = 737
+      Width = 78
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton11: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end
@@ -372,7 +372,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000CA1C0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000C31C0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00000000000000000000000000000000000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -602,6 +602,6 @@ inherited frmChangeOrderList: TfrmChangeOrderList
       00205661726961626C6573000000000200736C0014006364735F436867426F64
       792E22534C30303030220002006A650014006364735F436867426F64792E224A
       4530303030220004006B68796800000000040079687A68000000000200647A00
-      0000000000000000000000FDFF0100000000}
+      0000000000000000000000}
   end
 end

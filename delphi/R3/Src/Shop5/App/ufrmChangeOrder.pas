@@ -163,7 +163,7 @@ var
   AObj:TRecord_;
 begin
   inherited;
-  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('600041');
+  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label3.Visible := fndMY_AMOUNT.Visible;
   edtSHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
   edtDEPT_ID.DataSet := Global.GeTZQueryFromName('CA_DEPT_INFO');
@@ -513,7 +513,7 @@ end;
 
 procedure TfrmChangeOrder.fndGODS_IDSaveValue(Sender: TObject);
 begin
-  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('200036') then
+  if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('32600001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的商品是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        fndStr := fndGODS_ID.Text;
@@ -527,7 +527,7 @@ procedure TfrmChangeOrder.fndGODS_IDAddClick(Sender: TObject);
 var r:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('200036') then Exit;
+  if not ShopGlobal.GetChkRight('32600001',2) then Exit;
   r := TRecord_.Create;
   try
     if TfrmGoodsInfo.AddDialog(self,r,fndStr) then

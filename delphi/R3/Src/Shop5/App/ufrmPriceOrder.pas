@@ -32,6 +32,7 @@ type
     cdsDetail: TZQuery;
     cdsShopList: TZQuery;
     Btn_View: TRzBitBtn;
+    Label19: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure actImportFromPrintExecute(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
@@ -49,6 +50,7 @@ type
     function  GetColIdx(ColName: string): integer;
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);
     procedure SetdbState(const Value: TDataSetState); override;
+    procedure CheckPrice_Rate;  //判断明细数据的单价是否为0，指定折扣率：不为0
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -222,13 +224,13 @@ begin
 end;
 
 procedure TfrmPriceOrder.NewOrder;
-var
-  rs:TADODataSet;
 begin
   inherited;
   Open('');
   dbState := dsInsert;
+  edtPRICE_ID.ItemIndex:=0; //新单默认: 所有客户
   AObj.FieldbyName('PROM_ID').asString := TSequence.NewId();
+  //AObj.FieldbyName('GLIDE_NO').asString := TSequence.GetSequence('GNO_PROM_ID'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   oid := AObj.FieldbyName('PROM_ID').asString;
   gid := '..新增..';//AObj.FieldbyName('GLIDE_NO').asString;
   edtBEGIN_DATE.Date := date();
@@ -276,9 +278,13 @@ begin
   Saved := false;
   if edtBEGIN_DATE.EditValue = null then Raise Exception.Create('促销日期不能为空');
   if edtEND_DATE.EditValue = null then Raise Exception.Create('有效日期不能为空');
+  if (edtPRICE_ID.ItemIndex=-1) or
+     (TRecord_(edtPRICE_ID.Properties.Items.Objects[edtPRICE_ID.ItemIndex]).FieldByName('CODE_ID').AsString='') then
+    Raise Exception.Create('  促销范围不能为空！  ');    
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('     不能保存一张空单据...     ');
   if cdsShopList.IsEmpty then Raise Exception.Create('    不能保存没有促销门店的单据，请重新选择促销门店...    ');
+  CheckPrice_Rate; //判断价格、折扣率输入是否为空
 
   CheckInvaid;
   WriteToObject(AObj,self);
@@ -369,8 +375,8 @@ begin
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
          edtCHK_USER_TEXT.Text := Global.UserName;
-         AObj.FieldByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
-         AObj.FieldByName('CHK_USER').AsString := Global.UserID;
+         AObj.FieldByName('CHK_DATE').AsString :=FormatDatetime('YYYY-MM-DD',Global.SysDate);
+         AObj.FieldByName('CHK_USER').AsString :=Global.UserID;
        end
     else
        begin
@@ -394,10 +400,10 @@ end;
 
 procedure TfrmPriceOrder.actImportFromPrintExecute(Sender: TObject);
 var
-  rs:TRecordList;
   i:integer;
-  tmp:TADODataSet;
   s:string;
+  rs:TRecordList;
+  tmp:TZQuery;
 begin
   inherited;
  { if dbState = dsBrowse then Exit;
@@ -414,7 +420,7 @@ begin
              s := s + ''''+rs.Records[i].FieldbyName('SORT_ID').AsString+'''';
            end;
          if s<>'' then s := ' and B.SORT_ID in ('+s+')';
-         tmp := TADODataSet.Create(nil);
+         tmp := TZQuery.Create(nil);
          try
          finally
            tmp.Free;
@@ -530,9 +536,15 @@ begin
 end;
 
 procedure TfrmPriceOrder.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
-var ColIdx: integer;
+var ColIdx: integer; ColName: string;
 begin
   ColIdx:=GetColIdx('AGIO_RATE');
+  if Key='-' then
+  begin
+    ColName:=trim(DBGridEh1.Columns[DBGridEh1.col].FieldName);
+    if (ColName='OUT_PRICE') or (ColName='OUT_PRICE1') or (ColName='OUT_PRICE2') or (ColName='AGIO_RATE') then
+      Key:=#0;
+  end;
   {== 0:不打折; 1:再打折; 2:指定折(可输入再折扣率); ==}
   if (DBGridEh1.Col=ColIdx) and (DBGridEh1.DataSource.DataSet.Active) and
      (DBGridEh1.DataSource.DataSet.FieldByName('RATE_OFF').AsInteger<>2) then
@@ -658,6 +670,24 @@ begin
   inherited;
   Btn_BatchPrice.Enabled:=(dbState<>dsBrowse);
   Btn_AddShop.Enabled:=(dbState<>dsBrowse);
+end;
+
+procedure TfrmPriceOrder.CheckPrice_Rate;
+begin
+  if not edtTable.Active then Exit;
+  edtTable.First;
+  while not edtTable.Eof do
+  begin
+    if (trim(edtTable.fieldbyName('CALC_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE0').AsFloat=0) then
+      Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  计量单价不能为 0！  ');
+    if (trim(edtTable.fieldbyName('SMALL_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE1').AsFloat=0) then
+      Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  包装1单价不能为 0！  ');
+    if (trim(edtTable.fieldbyName('BIG_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE2').AsFloat=0) then
+      Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  包装2单价不能为 0！  ');
+    if (trim(edtTable.fieldbyName('RATE_OFF').AsString)='2') and (edtTable.fieldbyName('AGIO_RATE').AsFloat=0) then
+      Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  再折率不能为0！  ');
+    edtTable.Next;
+  end;
 end;
 
 end.

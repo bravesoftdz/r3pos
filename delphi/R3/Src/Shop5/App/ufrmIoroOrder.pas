@@ -21,10 +21,8 @@ type
     btnClose: TRzBitBtn;
     Label1: TLabel;
     Label3: TLabel;
-    Label5: TLabel;
-    edtGLIDE_NO: TcxTextEdit;
     Label6: TLabel;
-    edtVOUC_DATE: TcxDateEdit;
+    edtIORO_DATE: TcxDateEdit;
     edtIORO_USER: TzrComboBoxList;
     Label7: TLabel;
     edtREMARK: TcxTextEdit;
@@ -38,6 +36,13 @@ type
     edtACCOUNT_ID: TzrComboBoxList;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
+    Label40: TLabel;
+    edtSHOP_ID: TzrComboBoxList;
+    RzPanel4: TRzPanel;
+    Shape1: TShape;
+    lblCaption: TLabel;
+    Image1: TImage;
+    Label14: TLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -65,19 +70,20 @@ type
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure edtITEM_IDSaveValue(Sender: TObject);
     procedure edtREMARKPropertiesChange(Sender: TObject);
-    procedure edtGLIDE_NOPropertiesChange(Sender: TObject);
-    procedure edtVOUC_DATEPropertiesChange(Sender: TObject);
     procedure edtIORO_USERSaveValue(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure edtIORO_DATEPropertiesChange(Sender: TObject);
   private
     Fcid: string;
     FIoroType: integer;
+    FisAudit: boolean;
     procedure Setcid(const Value: string);
     procedure FocusNextColumn;
     procedure SetIoroType(const Value: integer);
+    procedure SetisAudit(const Value: boolean);
     { Private declarations }
   protected
     procedure SetdbState(const Value: TDataSetState); override;
@@ -97,6 +103,7 @@ type
     procedure DeleteOrder;
     property cid:string read Fcid write Setcid;
     property IoroType:integer read FIoroType write SetIoroType;
+    property isAudit:boolean read FisAudit write SetisAudit;
   end;
 
 implementation
@@ -161,6 +168,7 @@ begin
     end;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    cid := AObj.FieldbyName('GLIDE_NO').AsString;
     cdsDetail.DisableControls;
     try
        cdsDetail.Last;
@@ -204,12 +212,12 @@ begin
   edtIORO_USER.KeyValue := Global.UserId;
   edtIORO_USER.Text := Global.UserName;
   AObj.FieldbyName('IORO_ID').asString := TSequence.NewId();
-  edtGLIDE_NO.Text :='..新增..';
+  lblCaption.Caption :='单号:..新增..';
   edtITEM_ID.DataSet.Locate('CODE_ID',inttostr(IoroType),[]);
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
-  edtCLIENT_ID.KeyValue:=Global.CompanyID;
-  edtCLIENT_ID.Text:=Global.CompanyName;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
   dbState := dsInsert;
   InitRecord;
 end;
@@ -230,15 +238,15 @@ procedure TfrmIoroOrder.SaveOrder;
 var n:integer;
 begin
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
-  if edtVOUC_DATE.EditValue = null then Raise Exception.Create('请选择日期');
-  if edtVOUC_USER.AsString = '' then Raise Exception.Create('开单人不能为空');
+  if edtIORO_DATE.EditValue = null then Raise Exception.Create('请选择日期');
+  if edtIORO_USER.AsString = '' then Raise Exception.Create('负责人不能为空');
   Check;
   WriteToObject(AObj,self);
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-  AObj.FieldByName('OPER_USER').AsString := Global.UserID;
+  AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
-  cdsHeader.FieldbyName('COMP_ID').AsString := cid;
+  cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsHeader.Post;
   cdsDetail.DisableControls;
   try
@@ -248,9 +256,9 @@ begin
       begin
         inc(n);
         cdsDetail.Edit;
-        cdsDetail.FieldbyName('COMP_ID').AsString := cid;
+        cdsDetail.FieldbyName('SHOP_ID').AsString :=  AObj.FieldbyName('SHOP_ID').AsString;
         cdsDetail.FieldbyName('SEQNO').AsInteger := n;
-        cdsDetail.FieldbyName('VOUC_ID').AsString := AObj.FieldbyName('VOUC_ID').AsString;
+        cdsDetail.FieldbyName('IORO_ID').AsString := AObj.FieldbyName('IORO_ID').AsString;
         cdsDetail.Post;
         cdsDetail.Next;
       end;
@@ -259,9 +267,9 @@ begin
   end;
   Factor.BeginBatch;
   try
-    Factor.AddBatch(cdsHeader);
-    Factor.AddBatch(cdsDetail);
-    Factor.CommitBatch('TVoucherOrder');
+    Factor.AddBatch(cdsHeader,'TIoroOrder');
+    Factor.AddBatch(cdsDetail,'TIoroData');
+    Factor.CommitBatch;
   except
     Factor.CancelBatch;
     Raise;
@@ -562,11 +570,8 @@ begin
 end;
 
 procedure TfrmIoroOrder.SetIoroType(const Value: integer);
-var
-  rs:TZQuery;
 begin
   FIoroType := Value;
-  rs := Global.GetZQueryFromName('PUB_PARAMS');
   case Value of
   1:begin
      edtCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -652,20 +657,6 @@ begin
 
 end;
 
-procedure TfrmIoroOrder.edtGLIDE_NOPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if not locked then   BtnOk.Enabled := true;
-
-end;
-
-procedure TfrmIoroOrder.edtVOUC_DATEPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if not locked then   BtnOk.Enabled := true;
-
-end;
-
 procedure TfrmIoroOrder.edtIORO_USERSaveValue(Sender: TObject);
 begin
   inherited;
@@ -687,6 +678,23 @@ begin
   inherited;
   if not locked then   BtnOk.Enabled := true;
 
+end;
+
+procedure TfrmIoroOrder.edtIORO_DATEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if not locked then   BtnOk.Enabled := true;
+
+end;
+
+procedure TfrmIoroOrder.SetisAudit(const Value: boolean);
+begin
+  FisAudit := Value;
+  Image1.Visible := Value;
+  if dbState = dsBrowse then
+     begin
+       if Value then Label14.Caption := '状态:审核' else Label14.Caption := '状态:待审';
+     end;
 end;
 
 end.

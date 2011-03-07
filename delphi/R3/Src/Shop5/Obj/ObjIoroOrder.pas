@@ -86,16 +86,16 @@ begin
     'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
     'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CUSTOMER B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=:TENANT_ID and A.IORO_ID=:IORO_ID ) jc '+
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
-    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID '+
-    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and je.IORO_USER=e.CODE_ID';
+    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
+    'left outer join VIW_USERS e on jed.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID';
   2:SelectSQL.Text :=  //Ö§³ö
     'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
     'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
     'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
     'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CLIENTINFO B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=:TENANT_ID and A.IORO_ID=:IORO_ID ) jc '+
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
-    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID '+
-    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and je.IORO_USER=e.CODE_ID';
+    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
+    'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID';
   end;
 
   Str := 'insert into ACC_IOROORDER(TENANT_ID,SHOP_ID,IORO_ID,GLIDE_NO,CLIENT_ID,ITEM_ID,DEPT_ID,IORO_TYPE,IORO_DATE,IORO_USER,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '

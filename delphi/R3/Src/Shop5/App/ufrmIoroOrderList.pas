@@ -6,13 +6,13 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, ComCtrls, ToolWin, StdCtrls,
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,
-  cxContainer, cxEdit, cxTextEdit, RzButton,objBase, DB, RzTreeVw,
+  cxContainer, cxEdit, cxTextEdit, RzButton,ZBase, DB, RzTreeVw,
   cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar, cxMaskEdit,
   cxRadioGroup, FR_Class, PrnDbgeh, jpeg, ZAbstractRODataset,
   ZAbstractDataset, ZDataset;
 
 type
-  TfrmVoucherOrderList = class(TframeToolForm)
+  TfrmIoroOrderList = class(TframeToolForm)
     RzPanel1: TRzPanel;
     DataSource1: TDataSource;
     ToolButton1: TToolButton;
@@ -32,13 +32,15 @@ type
     fndSTATUS: TcxRadioGroup;
     ToolButton3: TToolButton;
     ToolButton6: TToolButton;
-    frfVoucherOrder: TfrReport;
+    frfIoroOrder: TfrReport;
     PrintDBGridEh1: TPrintDBGridEh;
-    Label5: TLabel;
-    fndACCOUNT_ID: TzrComboBoxList;
     Label4: TLabel;
-    fndVOUC_USER: TzrComboBoxList;
+    fndIORO_USER: TzrComboBoxList;
     cdsBrowser: TZQuery;
+    Label17: TLabel;
+    Label40: TLabel;
+    fndCLIENT_ID: TzrComboBoxList;
+    fndSHOP_ID: TzrComboBoxList;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
@@ -49,24 +51,20 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure frfVoucherOrderUserFunction(const Name: String; p1, p2,
+    procedure frfIoroOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
-    procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
-    procedure frfVoucherOrderGetValue(const ParName: String;
-      var ParValue: Variant);
-    procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 
   private
+    FIoroType: integer;
+    procedure SetIoroType(const Value: integer);
     { Private declarations }
   public
     { Public declarations }
@@ -80,17 +78,15 @@ type
     procedure AddRecord(AObj:TRecord_);
     function EncodeSQL(id:string;var w:string):string;
     procedure Open(Id:string);
-    procedure ChangeButton;
-    function sumField(TableName:TClientDataSet;FieldName:string):Real;
-    procedure OpenDetail(Id:string);
     function PrintSQL(id:string):string;
+    property IoroType:integer read FIoroType write SetIoroType;
   end;
 
 implementation
-uses uGlobal, uFnUtil, ufrmEhLibReport, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil,ufrmVoucherOrder;
+uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil,ufrmIoroOrder;
 {$R *.dfm}
 
-procedure TfrmVoucherOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+procedure TfrmIoroOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;
@@ -110,7 +106,7 @@ begin
     end;
 end;
 
-procedure TfrmVoucherOrderList.DBGridEh1GetCellParams(Sender: TObject;
+procedure TfrmIoroOrderList.DBGridEh1GetCellParams(Sender: TObject;
   Column: TColumnEh; AFont: TFont; var Background: TColor;
   State: TGridDrawState);
 begin
@@ -119,119 +115,173 @@ begin
 //     Background := clBtnFace;
 end;
 
-function TfrmVoucherOrderList.EncodeSQL(id: string;var w:string): string;
+function TfrmIoroOrderList.EncodeSQL(id: string;var w:string): string;
 var
   strSql,strWhere: string;
   rs:TZQuery;
 begin
-  if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  //帐款日期
-  strWhere := strWhere + ' and A.VOUC_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D1.Date))+ ' and A.VOUC_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D2.Date));
-  strWhere := strWhere + ' and A.COMP_ID='''+Global.CompanyID+'''';
+  if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
+  //日期
+  strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='+inttostr(IoroType)+' and A.IORO_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D1.Date))+ ' and A.IORO_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D2.Date));
+  if fndSHOP_ID.AsString <> '' then
+  strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
 
-  if fndACCOUNT_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.ACCOUNT_ID = '+QuotedStr(fndACCOUNT_ID.AsString);
+  if fndCLIENT_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.CLIENT_ID = '+QuotedStr(fndCLIENT_ID.AsString);
 
-  if fndVOUC_USER.AsString <> '' then
-     strWhere := strWhere + ' and A.VOUC_USER = '+QuotedStr(fndVOUC_USER.AsString);
+  if fndIORO_USER.AsString <> '' then
+     strWhere := strWhere + ' and A.IORO_USER = '+QuotedStr(fndIORO_USER.AsString);
 
   if id<>'' then
-     strWhere := strWhere + ' and A.VOUC_ID > '+QuotedStr(id);
+     strWhere := strWhere + ' and A.IORO_ID > '+QuotedStr(id);
      
   case fndSTATUS.ItemIndex of
-  1:strWhere := strWhere + ' and CHK_DATE is null ';
-  2:strWhere := strWhere + ' and CHK_DATE is not null ';
+  1:strWhere := strWhere + ' and A.CHK_DATE is null ';
+  2:strWhere := strWhere + ' and A.CHK_DATE is not null ';
   end;
   
-  strSql :=
-     'select top 100 jd.*,d.USER_NAME as CHK_USER_TEXT,E.CLIENT_NAME  from ('+
-     'select jc.*,c.USER_NAME as VOUC_USER_TEXT from ('+
-     'select A.CLIENT_ID,A.VOUC_ID,A.COMP_ID,A.GLIDE_NO,A.ACCOUNT_ID,A.VOUC_DATE,A.VOUC_USER,A.CHK_DATE,A.REMARK,A.CHK_USER,B.ACCT_NAME as ACCOUNT_ID_TEXT,A.COMM '+
-     'from RCK_VOUCHERORDER A,VIW_ACCOUNT_INFO B where A.ACCOUNT_ID=B.ACCOUNT_ID '+strWhere+' ) jc '+
-     'left outer join VIW_USERS c on jc.VOUC_USER=c.USER_ID ) jd '+
-     'left outer join VIW_USERS d on jd.CHK_USER=d.USER_ID '+
-     'left outer join VIW_CLIENTINFO E on jd.CLIENT_ID=E.CLIENT_ID '+
-     ' order by GLIDE_NO';
-  result := strSql;
+  case IoroType of
+  1:strSql :=
+    'select jg.*,g.USER_NAME as CHK_USER_TEXT from ('+
+    'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+    'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
+    'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
+    'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
+    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CUSTOMER B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+' ) jc '+
+    'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
+    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
+    'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID ) jf '+
+    'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+    'left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.CHK_USER=g.USER_ID';
+  2:strSql :=  //支出
+    'select jg.*,g.USER_NAME as CHK_USER_TEXT from ('+
+    'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+    'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
+    'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
+    'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
+    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CLIENTINFO B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+' ) jc '+
+    'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
+    'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
+    'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID ) jf '+
+    'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+    'left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.CHK_USER=g.USER_ID';
+  end;
+
+  case Factor.iDbType of
+  0:result := 'select top 600 * from ('+strSql+') jp order by IORO_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+strSql+') order by IORO_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+strSql+') order by IORO_ID limit 600';
+  else
+    result := 'select * from ('+strSql+') order by IORO_ID';
+  end;
 end;
 
-procedure TfrmVoucherOrderList.Open(Id: string);
+procedure TfrmIoroOrderList.Open(Id: string);
 var
-  rs:TClientDataSet;
+  rs:TZQuery;
   Str:string;
-  tmp:TZQuery;
+  sm:TMemoryStream;
 begin
   if not Visible then Exit;
   if Id='' then cdsBrowser.close;
-  rs := TClientDataSet.Create(nil);
+  rs := TZQuery.Create(nil);
+  sm := TMemoryStream.Create;
   cdsBrowser.DisableControls;
   try
-    rs.CommandText := EncodeSQL(Id,Str);
+    rs.SQL.Text := EncodeSQL(Id,Str);
     Factor.Open(rs);
     rs.Last;
-    MaxId := rs.FieldbyName('VOUC_ID').AsString;
+    MaxId2 := rs.FieldbyName('IORO_ID').AsString;
     if Id='' then
        begin
-         cdsBrowser.Data := rs.Data;
+         rs.SaveToStream(sm);
+         cdsBrowser.LoadFromStream(sm);
          cdsBrowser.IndexFieldNames := 'GLIDE_NO';
        end
     else
-       cdsBrowser.AppendData(rs.Data,true);
-    if rs.RecordCount <100 then IsEnd := True else IsEnd := false;
+       begin
+         rs.SaveToStream(sm);
+         cdsBrowser.AddFromStream(sm);
+       end;
+    if rs.RecordCount <600 then IsEnd2 := True else IsEnd2 := false;
   finally
     cdsBrowser.EnableControls;
+    sm.Free;
     rs.Free;
   end;
 end;
 
-procedure TfrmVoucherOrderList.cdsBrowserAfterScroll(DataSet: TDataSet);
+procedure TfrmIoroOrderList.cdsBrowserAfterScroll(DataSet: TDataSet);
 begin
   if IsEnd or not DataSet.Eof then Exit;
   if cdsBrowser.ControlsDisabled then Exit;
   Open(MaxId);
-  OpenDetail(cdsBrowser.FieldbyName('VOUC_ID').AsString);  
   if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
     actAudit.Caption:='弃审'
   else
     actAudit.Caption:='审核';
 end;
 
-procedure TfrmVoucherOrderList.edtKeyKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmIoroOrderList.edtKeyKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
 //  if Key=#13 then   actFind.OnExecute(nil);
 end;
 
-procedure TfrmVoucherOrderList.rzTreeChange(Sender: TObject; Node: TTreeNode);
+procedure TfrmIoroOrderList.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
   Open('');
 end;
 
-procedure TfrmVoucherOrderList.InitGrid;
+procedure TfrmIoroOrderList.InitGrid;
 begin
   InitGridPickList(DBGridEh1);
 end;
 
-procedure TfrmVoucherOrderList.FormCreate(Sender: TObject);
+procedure TfrmIoroOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self);
-  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndACCOUNT_ID.DataSet := Global.GeTZQueryFromName('RCK_ACCOUNT_INFO');
-  fndVOUC_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
+  fndSHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
+  fndIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   fndSTATUS.ItemIndex := 0;
   InitGrid;
   RzPage.ActivePageIndex := 0;
 end;
 
-procedure TfrmVoucherOrderList.actFindExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
   Open('');
-  if cdsBrowSer.IsEmpty then cdsDetail.Close;
+  if not cdsBrowser.IsEmpty then
+  begin
+    if cdsBrowser.FieldByName('CHK_USER_TEXT').AsString<>'' then
+      actAudit.Caption:='弃审'
+    else
+      actAudit.Caption:='审核';
+  end;
+end;
+
+procedure TfrmIoroOrderList.AddRecord(AObj: TRecord_);
+begin
+  if cdsBrowser.Locate('IORO_ID',AObj.FieldbyName('IORO_ID').AsString,[]) then
+     cdsBrowser.Edit
+  else
+     cdsBrowser.Append;
+  AObj.WriteToDataSet(cdsBrowser,false);
+  cdsBrowser.Post;
+end;
+
+procedure TfrmIoroOrderList.FormShow(Sender: TObject);
+begin
+  inherited;
+  Open('');
   if not cdsBrowSer.IsEmpty then
   begin
     if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
@@ -241,54 +291,7 @@ begin
   end;
 end;
 
-procedure TfrmVoucherOrderList.AddRecord(AObj: TRecord_);
-begin
-  actFindExecute(nil);
-  if cdsBrowser.Locate('VOUC_ID',AObj.FieldbyName('VOUC_ID').AsString,[]) then;
-  OpenDetail(cdsBrowser.FieldbyName('VOUC_ID').AsString);
-end;
-
-procedure TfrmVoucherOrderList.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open('');
-  if cdsBrowSer.IsEmpty then cdsDetail.Close;
-  if not cdsBrowSer.IsEmpty then
-  begin
-    if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
-      actAudit.Caption:='弃审'
-    else
-      actAudit.Caption:='审核';
-  end;
-end;
-
-procedure TfrmVoucherOrderList.OpenDetail(Id: string);
-var
-  Params:TftParamList;
-begin
-  Params := TftParamList.Create(nil);
-  try
-    pid := id;
-    Params.ParamByName('VOUC_ID',True).asString := id;
-    cdsDetail.Close;
-    Factor.Open(cdsDetail,'TVoucherData',Params);
-  finally
-    Params.Free;
-  end;
-end;
-
-procedure TfrmVoucherOrderList.Timer1Timer(Sender: TObject);
-begin
-  inherited;
-  if cdsBrowser.IsEmpty then Exit;
-  if pid<>cdsBrowser.FieldbyName('VOUC_ID').AsString then OpenDetail(cdsBrowser.FieldbyName('VOUC_ID').AsString);
-end;
-
-procedure TfrmVoucherOrderList.ChangeButton;
-begin
-end;
-
-function TfrmVoucherOrderList.PrintSQL(id: string): string;
+function TfrmIoroOrderList.PrintSQL(id: string): string;
 begin
   result :='select jd.GLIDE_NO 收支凭证单号,'+
    'I.ACCT_NAME as 帐户名称,'+
@@ -315,35 +318,35 @@ begin
    'left outer join VIW_CLIENTINFO E on jd.CLIENT_ID=E.CLIENT_ID ';
 end;
 
-procedure TfrmVoucherOrderList.actPrintExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('700035') then Raise Exception.Create('你没有打印其他费用的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
-         PrintReport(PrintSQL(cdsBrowser.FieldbyName('VOUC_ID').AsString),frfVoucherOrder);
+         PrintReport(PrintSQL(cdsBrowser.FieldbyName('IORO_ID').AsString),frfIoroOrder);
       finally
          free;
       end;
     end;
 end;
 
-procedure TfrmVoucherOrderList.actPreviewExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('700035') then Raise Exception.Create('你没有打印其他费用的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
-         ShowReport(PrintSQL(cdsBrowser.FieldbyName('VOUC_ID').AsString),frfVoucherOrder);
+         ShowReport(PrintSQL(cdsBrowser.FieldbyName('IORO_ID').AsString),frfIoroOrder);
       finally
          free;
       end;
     end;
 end;
 
-procedure TfrmVoucherOrderList.frfVoucherOrderUserFunction(const Name: String; p1,
+procedure TfrmIoroOrderList.frfIoroOrderUserFunction(const Name: String; p1,
   p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -355,19 +358,11 @@ begin
      end;
 end;
 
-procedure TfrmVoucherOrderList.DBGridEh1CellClick(Column: TColumnEh);
-begin
-  inherited;
-  if cdsBrowser.IsEmpty then Exit;
-  if pid<>cdsBrowser.FieldbyName('VOUC_ID').AsString then OpenDetail(cdsBrowser.FieldbyName('VOUC_ID').AsString);
-
-end;
-
-procedure TfrmVoucherOrderList.actNewExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actNewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('700031') then Raise Exception.Create('你没有添加其他费用的权限,请和管理员联系.');
-  with TfrmVoucherOrder.Create(self) do
+  with TfrmIoroOrder.Create(self) do
   begin
     try
       OnSave := AddRecord;
@@ -379,16 +374,16 @@ begin
   end;
 end;
 
-procedure TfrmVoucherOrderList.actEditExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if  (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
   if not ShopGlobal.GetChkRight('700032') then Raise Exception.Create('你没有修改其他费用的权限,请和管理员联系.');
-  with TfrmVoucherOrder.Create(self) do
+  with TfrmIoroOrder.Create(self) do
   begin
     try
       OnSave := AddRecord;
-      Edit(cdsBrowser.FieldByName('VOUC_ID').AsString);
+      Edit(cdsBrowser.FieldByName('IORO_ID').AsString);
       ShowModal;
     finally
       free;
@@ -396,15 +391,15 @@ begin
   end;
 end;
 
-procedure TfrmVoucherOrderList.actInfoExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actInfoExecute(Sender: TObject);
 begin
   inherited;
   if  (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
-  with TfrmVoucherOrder.Create(self) do
+  with TfrmIoroOrder.Create(self) do
   begin
     try
       OnSave := AddRecord;
-      Open(cdsBrowser.FieldByName('VOUC_ID').AsString);
+      Open(cdsBrowser.FieldByName('IORO_ID').AsString);
       ShowModal;
     finally
       free;
@@ -412,27 +407,27 @@ begin
   end;
 end;
 
-procedure TfrmVoucherOrderList.actDeleteExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if cdsBrowser.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700033') then Raise Exception.Create('你没有删除其他费用的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('700033') then Raise Exception.Create('你没有删除当前单据的权限,请和管理员联系.');
    if MessageBox(Handle,'确认删除当前选中的其他费用？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-   with TfrmVoucherOrder.Create(self) do
+   with TfrmIoroOrder.Create(self) do
       begin
         try
-          Open(cdsBrowser.FieldByName('VOUC_ID').AsString);
+          Open(cdsBrowser.FieldByName('IORO_ID').AsString);
           DeleteOrder;
           cdsBrowser.Delete;
           cdsDetail.Close;
-          MessageBox(Handle,'删除其他费用成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
+          MessageBox(Handle,'删除当前单据成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
         finally
           free;
         end;
       end;
 end;
 
-procedure TfrmVoucherOrderList.actAuditExecute(Sender: TObject);
+procedure TfrmIoroOrderList.actAuditExecute(Sender: TObject);
 var
   Msg :string;
   Params:TftParamList;
@@ -443,25 +438,25 @@ begin
   if cdsBrowser.FieldByName('CHK_DATE').AsString<>'' then
      begin
        if copy(cdsBrowser.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
-       if cdsBrowser.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前收支凭证执行弃审');
-       if MessageBox(Handle,'确认弃审当前收支凭证？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if cdsBrowser.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
+       if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
   else
      begin
        if copy(cdsBrowser.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
-       if MessageBox(Handle,'确认审核当前收支凭证？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
     Params := TftParamList.Create(nil);
     try
-      Params.ParamByName('COMP_ID',True).asString := cdsBrowser.FieldbyName('COMP_ID').AsString;
-      Params.ParamByName('VOUC_ID',True).asString := cdsBrowser.FieldbyName('VOUC_ID').AsString;
-      Params.ParamByName('CHK_DATE',True).asString := FormatDatetime('YYYY-MM-DD',date());
-      Params.ParamByName('CHK_USER',True).asString := Global.UserID;
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('IORO_ID').asString := cdsBrowser.FieldbyName('IORO_ID').AsString;
+      Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',date());
+      Params.ParamByName('CHK_USER').asString := Global.UserID;
       if cdsBrowser.FieldByName('CHK_DATE').AsString='' then
       begin
          try
-           Msg := Factor.ExecProc('TVoucherAudit',Params);
+           Msg := Factor.ExecProc('TIoroAudit',Params);
            actAudit.Caption:='弃审';
          except
            actAudit.Caption:='审核';
@@ -470,7 +465,7 @@ begin
       else
       begin
        try
-         Msg := Factor.ExecProc('TVoucherUnAudit',Params) ;
+         Msg := Factor.ExecProc('TIoroUnAudit',Params) ;
          actAudit.Caption:='审核';
        except
          actAudit.Caption:='弃审';
@@ -504,52 +499,33 @@ begin
   end;
 end;
 
-procedure TfrmVoucherOrderList.DBGridEh1DblClick(Sender: TObject);
+procedure TfrmIoroOrderList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-  actEditExecute(nil);
+  actInfoExecute(nil);
 end;
 
-procedure TfrmVoucherOrderList.frfVoucherOrderGetValue(
-  const ParName: String; var ParValue: Variant);
+procedure TfrmIoroOrderList.SetIoroType(const Value: integer);
 begin
-  inherited;
-  if ParName='总收入' then
-    ParValue:=sumField(cdsDetail,'IN_MNY');
-  if ParName='总支出' then
-    ParValue:=sumField(cdsDetail,'OUT_MNY');
-end;
-
-function TfrmVoucherOrderList.sumField(TableName: TClientDataSet;
-  FieldName: string): Real;
-var re:Real;
-begin
-  TableName.First;
-  re:=0;
-  while not TableName.Eof do
-  begin
-    re:=re+TableName.FieldByName(FieldName).AsFloat;
-    TableName.Next;
+  FIoroType := Value;
+  case Value of
+  1:begin
+     fndCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
+     Label17.Caption := '客户名称';
+     Caption := '其他收入';
+     lblToolCaption.Caption := '当前位置->'+Caption;
+     fndCLIENT_ID.DataSet := Global.GeTZQueryFromName('PUB_CUSTOMER');
+     TabSheet1.Caption := Caption + '查询';
+    end;
+  2:begin
+     fndCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+     Label17.Caption := '供应商名称';
+     Caption := '其他支出';
+     lblToolCaption.Caption := '当前位置->'+Caption;
+     fndCLIENT_ID.DataSet := Global.GeTZQueryFromName('PUB_CLIENTINFO');
+     TabSheet1.Caption := Caption + '查询';
+    end;
   end;
-  Result:=re;
-end;
-
-procedure TfrmVoucherOrderList.DBGridEh4DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
- if cdsDetail.FieldByName('item_type').AsString='1' then
-  begin
-    if (Column.FieldName='ITEM_ID_TEXT')  then
-      DBGridEh4.Canvas.Font.Color:=clLime;
-  end
-  else  if cdsDetail.FieldByName('item_type').AsString='2' then
-  begin
-    if (Column.FieldName='ITEM_ID_TEXT')  then
-      DBGridEh4.Canvas.Font.Color:=clRed;
-  end;
-  DBGridEh4.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 end.

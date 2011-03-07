@@ -145,7 +145,9 @@ uses
   ufrmTransOrder in 'App\ufrmTransOrder.pas' {frmTransOrder},
   ufrmTransOrderList in 'App\ufrmTransOrderList.pas' {frmTransOrderList},
   ObjTransOrder in 'Obj\ObjTransOrder.pas',
-  ufrmDevFactory in 'App\ufrmDevFactory.pas' {frmDevFactory};
+  ufrmDevFactory in 'App\ufrmDevFactory.pas' {frmDevFactory},
+  ufrmIoroOrder in 'App\ufrmIoroOrder.pas' {frmIoroOrder},
+  ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList};
 
 {$R *.res}
 var

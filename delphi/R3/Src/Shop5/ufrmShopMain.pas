@@ -283,6 +283,8 @@ type
     procedure actfrmDevFactoryExecute(Sender: TObject);
     procedure CA_MODULEFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
+    procedure actfrmIoroOrderList1Execute(Sender: TObject);
+    procedure actfrmIoroOrderList2Execute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -330,7 +332,8 @@ uses
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory;
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
+  ufrmIoroOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -1774,6 +1777,54 @@ procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
 begin
   inherited;
   Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].ImageIndex+1);
+end;
+
+procedure TfrmShopMain.actfrmIoroOrderList1Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmIoroOrderList1');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmIoroOrderList.Create(self);
+       TfrmIoroOrderList(Form).IoroType := 1;
+       TfrmIoroOrderList(Form).Name := 'frmIoroOrderList1';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmIoroOrderList2Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmIoroOrderList2');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmIoroOrderList.Create(self);
+       TfrmIoroOrderList(Form).IoroType := 2;
+       TfrmIoroOrderList(Form).Name := 'frmIoroOrderList2';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

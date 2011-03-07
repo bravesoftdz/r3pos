@@ -1,8 +1,8 @@
-inherited frmVoucherOrderList: TfrmVoucherOrderList
-  Left = 102
-  Top = 130
+inherited frmIoroOrderList: TfrmIoroOrderList
+  Left = 177
+  Top = 112
   Width = 818
-  Height = 572
+  Height = 571
   Caption = #20854#20182#36153#29992
   OnCreate = FormCreate
   OnShow = FormShow
@@ -10,25 +10,25 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 802
-    Height = 504
+    Height = 503
     inherited RzPanel2: TRzPanel
       Width = 792
-      Height = 494
+      Height = 493
       inherited RzPage: TRzPageControl
         Width = 786
-        Height = 488
+        Height = 487
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#20837#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 784
-            Height = 461
+            Height = 460
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
               Width = 772
-              Height = 84
+              Height = 97
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -50,21 +50,27 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 Height = 12
                 Caption = #33267
               end
-              object Label5: TLabel
-                Left = 49
-                Top = 34
-                Width = 24
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #24080#25143
-              end
               object Label4: TLabel
                 Left = 38
-                Top = 56
+                Top = 74
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #24320#21333#20154
+                Caption = #36127#36131#20154
+              end
+              object Label17: TLabel
+                Left = 24
+                Top = 53
+                Width = 48
+                Height = 12
+                Caption = #23458#25143#21517#31216
+              end
+              object Label40: TLabel
+                Left = 24
+                Top = 32
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#38376#24215
               end
               object P1_D1: TcxDateEdit
                 Left = 80
@@ -83,8 +89,8 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 TabOrder = 1
               end
               object btnOk: TRzBitBtn
-                Left = 435
-                Top = 41
+                Left = 443
+                Top = 57
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -113,8 +119,8 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 Left = 316
                 Top = 2
                 Width = 105
-                Height = 71
-                ItemIndex = 1
+                Height = 87
+                ItemIndex = 0
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -126,11 +132,11 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                     Caption = #24050#23457#26680
                   end>
                 TabOrder = 3
-                Caption = #29366#24577
+                Caption = ''
               end
-              object fndACCOUNT_ID: TzrComboBoxList
+              object fndIORO_USER: TzrComboBoxList
                 Left = 80
-                Top = 30
+                Top = 70
                 Width = 114
                 Height = 20
                 Properties.AutoSelect = False
@@ -140,48 +146,6 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                   end>
                 Properties.ReadOnly = False
                 TabOrder = 4
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
-                KeyField = 'ACCOUNT_ID'
-                ListField = 'ACCT_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCT_NAME'
-                    Footers = <>
-                    Title.Caption = #24080#25143#21517#31216
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCOUNT_ID'
-                    Footers = <>
-                    Title.Caption = #24080#25143#20195#30721
-                    Width = 30
-                  end>
-                DropWidth = 157
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = False
-                LocateStyle = lsDark
-                Buttons = []
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
-              object fndVOUC_USER: TzrComboBoxList
-                Left = 80
-                Top = 52
-                Width = 114
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME'
@@ -211,12 +175,124 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndCLIENT_ID: TzrComboBoxList
+                Left = 80
+                Top = 49
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 5
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
+                KeyField = 'CLIENT_ID'
+                ListField = 'CLIENT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_CODE'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 60
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_NAME'
+                    Footers = <>
+                    Title.Caption = #23458#25143#21517#31216
+                    Width = 150
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'LINKMAN'
+                    Footers = <>
+                    Title.Caption = #32852#31995#20154
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'TELEPHONE2'
+                    Footers = <>
+                    Title.Caption = #32852#31995#30005#35805
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'LICENSE_CODE'
+                    Footers = <>
+                    Title.Caption = #35777#20214#21495
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ADDRESS'
+                    Footers = <>
+                    Title.Caption = #22320#22336
+                    Width = 150
+                  end>
+                DropWidth = 296
+                DropHeight = 220
+                ShowTitle = True
+                AutoFitColWidth = False
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndSHOP_ID: TzrComboBoxList
+                Tag = -1
+                Left = 80
+                Top = 28
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 6
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                KeyField = 'SHOP_ID'
+                ListField = 'SHOP_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SEQ_NO'
+                    Footers = <>
+                    Title.Caption = #24207#21495
+                    Width = 20
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = []
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object Panel1: TPanel
               Left = 6
-              Top = 90
+              Top = 103
               Width = 772
-              Height = 365
+              Height = 351
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -224,7 +300,7 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 Left = 1
                 Top = 1
                 Width = 770
-                Height = 363
+                Height = 349
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -252,7 +328,6 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnCellClick = DBGridEh1CellClick
                 OnDblClick = DBGridEh1DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
@@ -267,12 +342,13 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                     Width = 31
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
-                    FieldName = 'VOUC_DATE'
+                    FieldName = 'IORO_DATE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #36134#27454#26085#26399
-                    Width = 66
+                    Title.Caption = #26085#26399
+                    Width = 75
                   end
                   item
                     EditButtons = <>
@@ -282,29 +358,29 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21333#21495
-                    Width = 80
+                    Width = 95
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'Client_NAME'
+                    FieldName = 'CLIENT_ID_TEXT'
                     Footers = <>
                     Title.Caption = #24448#26469#21333#20301
-                    Width = 128
+                    Width = 145
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'ACCOUNT_ID_TEXT'
+                    FieldName = 'ITEM_ID_TEXT'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #24080#25143#21517#31216
-                    Width = 68
+                    Title.Caption = #31185#30446#21517#31216
+                    Width = 79
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'VOUC_USER_TEXT'
+                    FieldName = 'IORO_USER_TEXT'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #24320#21333#21592
+                    Title.Caption = #36127#36131#20154
                     Width = 69
                   end
                   item
@@ -330,6 +406,20 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                     ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
                     Width = 72
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_DATE'
+                    Footers = <>
+                    Title.Caption = #21046#21333#20154
+                    Width = 56
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_DATE'
+                    Footers = <>
+                    Title.Caption = #21046#21333#26085#26399
+                    Width = 118
                   end>
               end
             end
@@ -462,12 +552,11 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
     Left = 113
     Top = 266
   end
-  object frfVoucherOrder: TfrReport
+  object frfIoroOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfVoucherOrderGetValue
-    OnUserFunction = frfVoucherOrderUserFunction
+    OnUserFunction = frfIoroOrderUserFunction
     Left = 176
     Top = 193
     ReportForm = {
@@ -646,9 +735,11 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
     Top = 184
   end
   object cdsBrowser: TZQuery
+    SortedFields = 'GLIDE_NO'
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
+    IndexFieldNames = 'GLIDE_NO Asc'
     Left = 159
     Top = 265
   end

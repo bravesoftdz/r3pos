@@ -15,9 +15,9 @@ inherited frmPayOrder: TfrmPayOrder
     Height = 465
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Top = 154
+      Top = 145
       Width = 646
-      Height = 263
+      Height = 272
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -28,14 +28,14 @@ inherited frmPayOrder: TfrmPayOrder
         Caption = #20184#27454#26126#32454
         inherited RzPanel2: TRzPanel
           Width = 642
-          Height = 236
+          Height = 245
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 632
-            Height = 226
+            Height = 235
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -234,7 +234,7 @@ inherited frmPayOrder: TfrmPayOrder
       Left = 5
       Top = 5
       Width = 646
-      Height = 149
+      Height = 140
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite

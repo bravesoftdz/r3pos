@@ -1,3 +1,5 @@
+{ 12400001	0	销售出货	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印 }
+
 unit ufrmSalesOrderList;
 
 interface
@@ -179,12 +181,12 @@ procedure TfrmSalesOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if ShopGlobal.GetChkRight('500028') and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if ShopGlobal.GetChkRight('12400001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmSalesOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500029') then Raise Exception.Create('你没有删除销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',3) then Raise Exception.Create('你没有编辑销售单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -196,7 +198,7 @@ end;
 
 procedure TfrmSalesOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500030') then Raise Exception.Create('你没有删除销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',4) then Raise Exception.Create('你没有删除销售单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -206,7 +208,7 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('500028') and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -228,12 +230,12 @@ begin
        //DevFactory.OpenCashBox;
        if (ShopGlobal.GetParameter('SAVE_SALES_PRINT')='1')
           and
-          ShopGlobal.GetChkRight('500033')
+          ShopGlobal.GetChkRight('12400001',8)
        then
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('500028') and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('12400001',2) and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -242,7 +244,7 @@ end;
 
 procedure TfrmSalesOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500032') then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',7) then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -393,7 +395,7 @@ end;
 procedure TfrmSalesOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('500033') then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
   //if (CurOrder<>nil) then
   //   begin
   //     if DevFactory.SavePrint then
@@ -426,7 +428,7 @@ end;
 procedure TfrmSalesOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('500033') then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -449,7 +451,7 @@ end;
 
 procedure TfrmSalesOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('500028') then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',2) then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -563,7 +565,7 @@ var
   clid,cpid,oid:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700014') then Raise Exception.Create('你没有收款单新增权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有收款单新增权限,请和管理员联系.');
   rs := TZQuery.Create(nil);
   try
   if CurOrder<>nil then

@@ -202,7 +202,7 @@ end;
 procedure TfrmSalesOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('600041');
+  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label1.Visible := fndMY_AMOUNT.Visible;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -472,11 +472,12 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('500031') then
+  //调价权限(调价权限)
+  if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('500031',1,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else

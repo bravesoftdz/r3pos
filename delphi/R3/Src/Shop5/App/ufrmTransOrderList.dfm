@@ -1,6 +1,6 @@
 inherited frmTransOrderList: TfrmTransOrderList
-  Left = 326
-  Top = 151
+  Left = 270
+  Top = 97
   Width = 906
   Height = 587
   Caption = #23384#21462#27454#21333
@@ -368,6 +368,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                     Width = 100
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'TRANS_DATE'
                     Footers = <>
@@ -445,7 +446,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #21046#21333#26102#38388
-                    Width = 132
+                    Width = 120
                   end>
               end
             end
@@ -531,6 +532,7 @@ inherited frmTransOrderList: TfrmTransOrderList
           Left = 268
           Top = 0
           Action = actPreview
+          OnClick = ToolButton8Click
         end
         object ToolButton9: TToolButton
           Left = 311

@@ -54,6 +54,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure ToolButton8Click(Sender: TObject);
   private
     procedure ChangeButton;
     { Private declarations }
@@ -97,7 +98,9 @@ var StrSql,StrWhere:String;
 begin
   if (TRANS_DATE1.EditValue = null) or (TRANS_DATE2.EditValue = null) then
     Raise Exception.Create('存取日期条件不能为空！');
-  StrWhere := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TRANS_DATE>=:D1 and TRANS_DATE<=:D2';
+   StrWhere := ' TENANT_ID=:TENANT_ID and TRANS_DATE>=:D1 and TRANS_DATE<=:D2 ';
+  if fndSHOP_ID.AsString <> '' then
+    StrWhere := StrWhere+' and SHOP_ID=:SHOP_ID ';
   if fndIN_ACCOUNT_ID.Text <> '' then
     StrWhere := StrWhere + ' and IN_ACCOUNT_ID='+QuotedStr(fndIN_ACCOUNT_ID.AsString);
   if fndOUT_ACCOUNT_ID.Text <> '' then
@@ -218,9 +221,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id,Str);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',TRANS_DATE1.Date));
     rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',TRANS_DATE2.Date));
+    if fndSHOP_ID.AsString <> '' then
+      rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;      
     Factor.Open(rs);
     rs.Last;
     MaxId2 := rs.FieldByName('TRANS_ID').AsString;
@@ -253,7 +257,7 @@ end;
 procedure TfrmTransOrderList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700014') then Raise Exception.Create('你没有新增存取单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21700001',2) then Raise Exception.Create('你没有新增存取单的权限,请和管理员联系.');
   with TfrmTransOrder.Create(nil) do
     begin
       try
@@ -270,7 +274,7 @@ procedure TfrmTransOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700016') then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21700001',4) then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
       try
@@ -287,7 +291,7 @@ procedure TfrmTransOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700015') then Raise Exception.Create('你没有编辑存取单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21700001',3) then Raise Exception.Create('你没有编辑存取单的权限,请和管理员联系.');
   with TfrmTransOrder.Create(nil) do
     begin
       try
@@ -303,6 +307,7 @@ end;
 procedure TfrmTransOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('21700001',1) then Raise Exception.Create('你没有查询存取单的权限,请和管理员联系.');
   Open2('');
 end;
 
@@ -312,7 +317,7 @@ var Msg: String;
 begin
   inherited;
   if cdsList.IsEmpty then Exception.Create('请选择待审核的存取单');
-  if not ShopGlobal.GetChkRight('700017') then Raise Exception.Create('你没有审核存取单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21700001',5) then Raise Exception.Create('你没有审核存取单的权限,请和管理员联系.');
   if cdsList.FieldByName('CHK_DATE').AsString = '' then
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then raise Exception.Create('已经同步的数据不能弃审');
@@ -373,7 +378,7 @@ end;
 procedure TfrmTransOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700018') then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
 end;
 
 procedure TfrmTransOrderList.RzPageChange(Sender: TObject);
@@ -424,6 +429,12 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+end;
+
+procedure TfrmTransOrderList.ToolButton8Click(Sender: TObject);
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
 end;
 
 end.

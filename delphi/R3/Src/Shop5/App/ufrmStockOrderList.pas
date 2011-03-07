@@ -56,8 +56,8 @@ type
     procedure frfStockOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
-    { Private declarations }
     oid:string;
+     function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -545,17 +545,19 @@ begin
     end;
   finally
     rs.Free;
-  end;
-  
+  end;        
 end;
 
-procedure TfrmStockOrderList.frfStockOrderGetValue(const ParName: String;
-  var ParValue: Variant);
+procedure TfrmStockOrderList.frfStockOrderGetValue(const ParName: String; var ParValue: Variant);
 begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+end;
 
+function TfrmStockOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('11200001',7);
 end;
 
 end.

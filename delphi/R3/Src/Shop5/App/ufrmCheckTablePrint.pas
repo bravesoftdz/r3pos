@@ -14,26 +14,27 @@ uses
 type
   TfrmCheckTablePrint = class(TframeBaseReport)
     Label3: TLabel;
+    Label4: TLabel;
     Label6: TLabel;
-    btnOk: TRzBitBtn;
     Label8: TLabel;
+    Label19: TLabel;
+    btnOk: TRzBitBtn;
     fndP1_UNIT_ID: TcxComboBox;
     fndP1_SORT_ID: TcxButtonEdit;
     fndP1_SHOP_ID: TzrComboBoxList;
-    Label19: TLabel;
     fndP1_TYPE_ID: TcxComboBox;
     fndP1_STAT_ID: TzrComboBoxList;
-    fndP1_SHOW_ZERO: TcxCheckBox;
-    Label4: TLabel;
+    fndP1_SHOW_ZERO: TcxCheckBox;  
     fndP1_PRINT_DATE: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndSORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
+    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     sid1,//商品分类ID1;
     srid1,//商品分类REGLATION_ID; 关系ID
@@ -110,12 +111,12 @@ begin
 
   //添加商品指标Items:
   AddGoodSortTypeItems(fndP1_TYPE_ID);
-
   //添加商品某一个指标的下拉List
   AddGoodSortTypeItemsList(fndP1_STAT_ID,2);
   fndP1_TYPE_ID.ItemIndex := 0;
 
   //计量单位:
+  AddTongjiUnitList(fndP1_UNIT_ID);
   fndP1_UNIT_ID.ItemIndex := 0; //默认单位
   fndP1_SHOW_ZERO.Checked := true;
 
@@ -176,7 +177,7 @@ begin
   strWhere := strWhere+' and (B.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.SHOP_ID='''+Global.SHOP_ID+''')';  //过滤企业ID和门店
   if trim(fndP1_SORT_ID.Text)<>'' then
   begin
-    GoodTab:='VIW_BARCODEPRICE_SORTEXT';  
+    GoodTab:='VIW_BARCODEPRICE_SORTEXT';
     strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
   end else
     GoodTab:='VIW_GOODSPRICE_BARCODEEXT'; 
@@ -234,24 +235,6 @@ begin
     PrintDBGridEh1.SetSubstitutes(['%[whr]', s]);
   finally
     TitlList.Free;
-  end;
-end;
-
-procedure TfrmCheckTablePrint.fndSORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
-begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-    if TfrmSelectGoodSort.FindDialog(self,rs) then
-    begin
-      sid1 := rs.FieldbyName('LEVEL_ID').AsString;
-      srid1 := rs.FieldbyName('RELATION_ID').AsString;
-      fndP1_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-    end;
-  finally
-    rs.Free;
   end;
 end;
 
@@ -371,7 +354,8 @@ end;
 procedure TfrmCheckTablePrint.DoOpenDefaultData(Aobj: TRecord_);
 var DropDs: TDataSet; CurID: string;
 begin
-  if Aobj.FindField('PRINT_DATE')<>nil then
+  CurID:='';
+  if (Aobj.FindField('PRINT_DATE')<>nil) then
   begin
     fndP1_PRINT_DATE.KeyValue:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
     fndP1_PRINT_DATE.Text:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
@@ -383,13 +367,20 @@ begin
     fndP1_SHOP_ID.KeyField:=CurID;
     fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
   end;
-  self.RzPage1Open;//查询盘点
+  if (trim(Aobj.fieldbyName('PRINT_DATE').AsString)<>'') and (CurID='')then
+    self.RzPage1Open;//查询盘点
 end;
 
 procedure TfrmCheckTablePrint.FormDestroy(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.FreeForm(self);
+end;
+
+procedure TfrmCheckTablePrint.fndP1_SORT_IDPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+begin
+  fndP1_SORT_ID.Text:=SelectGoodSortType(sid1,srid1);
 end;
 
 end.

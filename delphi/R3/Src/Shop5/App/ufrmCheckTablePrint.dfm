@@ -101,11 +101,6 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #40664#35748#21333#20301
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
                   TabOrder = 6
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
@@ -119,6 +114,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
+                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
                   TabOrder = 4
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
@@ -169,7 +165,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Top = 48
                   Width = 73
                   Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)

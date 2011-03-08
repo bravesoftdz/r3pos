@@ -1,6 +1,6 @@
 inherited frmShopInfo: TfrmShopInfo
-  Left = 581
-  Top = 263
+  Left = 195
+  Top = 102
   Caption = #38376#24215#26723#26696
   ClientHeight = 348
   ClientWidth = 534

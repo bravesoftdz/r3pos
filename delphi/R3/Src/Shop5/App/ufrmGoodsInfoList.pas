@@ -422,7 +422,7 @@ begin
   end;
 
   //判断是否有查看成本价权限
-  if not ShopGlobal.GetChkRight(14500001,2) then
+  if not ShopGlobal.GetChkRight('14500001',2) then
   begin
     SetCol:=FindColumn(DBGridEh1, 'NEW_INPRICE');
     if SetCol<>nil then SetCol.Free;

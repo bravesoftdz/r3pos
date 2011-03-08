@@ -64,16 +64,28 @@ type
     procedure FormResize(Sender: TObject);
     procedure actFilterExecute(Sender: TObject);
   private
+    procedure AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
   public
     constructor Create(AOwner: TComponent); override;
     function GetDBGridEh: TDBGridEh;virtual;
     {=======  2011.03.02 Add TDBGridEh\TzrComboBoxList相关选项目  =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
+
     //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
     procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
     procedure AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);
+
+    //添加门店管理群组的ItemsList[SetFlag对应位数，(REGION_ID、SHOP_ID)1..2位，若为1表添加，若为0表不添加]
+    procedure AddShopGroupItems(ShopGroupID: TcxComboBox; SetFlag: string='11');
+    //动态设置门店管理群组的ItemsList: ItemsIdx对应门店表字段：门店：REGION_ID、SHOP_TYPE
+    procedure AddShopGroupItemsList(ShopGroupList: TzrComboBoxList; ItemsIdx: integer);
+    //添加统计单位Items
+    procedure AddTongjiUnitList(TJUnit: TcxComboBox);
+
+    //选择商品类别[带供应链] 返回名称[类别名称]
+    function SelectGoodSortType(var SortID,SortRelID: string): string;
 
     {=======  2011.03.03 Add 商品统计单位换算关系   =======}
     //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
@@ -108,7 +120,8 @@ type
 
 implementation
 
-uses uGlobal,uShopGlobal,uShopUtil,ufrmEhLibReport,uCtrlUtil;
+uses uGlobal,uShopGlobal,uShopUtil,ufrmEhLibReport,uCtrlUtil,
+  ufrmSelectGoodSort;
 
 {$R *.dfm}
 
@@ -443,13 +456,13 @@ begin
     begin
       SortTypeList.KeyField:='CLIENT_ID';
       SortTypeList.ListField:='CLIENT_NAME';
-      SortTypeList.Filter:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
+      SortTypeList.FilterFields:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
     end;
    else
     begin
       SortTypeList.KeyField:='SORT_ID';
       SortTypeList.ListField:='SORT_NAME';
-      SortTypeList.Filter:='SORT_ID;SORT_NAME;SORT_SPELL';
+      SortTypeList.FilterFields:='SORT_ID;SORT_NAME;SORT_SPELL';
     end;
   end;
   SortTypeList.Columns[0].FieldName:=SortTypeList.ListField;
@@ -465,35 +478,23 @@ begin
   end;
 end;
 
+//添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
 procedure TframeBaseReport.AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
 var
   Rs: TZQuery;
-  CurObj: TRecord_;
   i,InValue: integer;
 begin
   try
-    InValue:=StrtoIntDef(SetFlag,0);
     Rs:=Global.GetZQueryFromName('PUB_PARAMS');
     Rs.Filtered:=False;
     Rs.Filter:=' TYPE_CODE=''SORT_TYPE'' ';
     Rs.Filtered:=true;
     GoodSortList.Properties.Items.Clear;
-    if not Rs.Active then Exit;
     for i:=1 to 8 do
     begin
-      if (InValue and (1 shl (i-1)))=0 then continue;
-      Rs.First;
-      while not Rs.Eof do
-      begin
-        if trim(Rs.FieldByName('CODE_ID').AsString)<>InttoStr(i) then
-        begin
-          CurObj:=TRecord_.Create;
-          CurObj.ReadFromDataSet(Rs);
-          GoodSortList.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
-        end else
-          break;
-        Rs.Next;
-      end;
+      InValue:=StrtoIntDef(SetFlag[i],0);
+      if InValue=1 then
+        AddItems(GoodSortList, Rs, inttostr(i));
     end;
   finally
     Rs.Filtered:=False;
@@ -514,6 +515,74 @@ begin
   begin
     SortIdx:=StrtoInt(TRecord_(GoodSortItems.Properties.Items.Objects[GoodSortItems.ItemIndex]).fieldbyName('CODE_ID').asString);
     result:=JoinOper+'('+AliasName+'.SORT_ID'+InttoStr(SortIdx)+'='+QuotedStr(SortType)+')';
+  end;
+end;
+
+//添加门店管理群组的ItemsList[SetFlag对应位数，1..2位，若为1表添加，若为0表不添加]
+procedure TframeBaseReport.AddShopGroupItems(ShopGroupID: TcxComboBox; SetFlag: string);
+var
+  Rs: TZQuery;
+  InValue: integer;
+  RegID,GroupID: string;
+begin
+  try
+    InValue:=StrtoIntDef(SetFlag,0);
+    Rs:=Global.GetZQueryFromName('PUB_PARAMS');
+    Rs.Filtered:=False;
+    Rs.Filter:=' TYPE_CODE=''CODE_TYPE'' ';
+    Rs.Filtered:=true;
+    if not Rs.Active then Exit;
+    ShopGroupID.Properties.Items.Clear;
+    if Copy(SetFlag,1,1)='1' then RegID:='8'      //门店所属区域
+    else if Copy(SetFlag,2,1)='1' then GroupID:='12'; //门店管理群组
+    //加载所属区域:
+    self.AddItems(ShopGroupID,Rs,RegID);
+    //加载管理群组:
+    self.AddItems(ShopGroupID,Rs,GroupID);
+  finally
+    Rs.Filtered:=False;
+    Rs.Filter:='';  
+  end;
+end;
+
+procedure TframeBaseReport.AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
+var CurObj: TRecord_;
+begin
+  if (not Rs.Active) or (Rs.IsEmpty) then Exit;
+  Rs.First;
+  while not Rs.Eof do
+  begin
+    if trim(Rs.FieldByName('CODE_ID').AsString)=trim(CodeID) then
+    begin
+      CurObj:=TRecord_.Create;
+      CurObj.ReadFromDataSet(Rs);
+      Cbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+      break;
+    end;
+    Rs.Next;
+  end;
+end;
+
+//动态设置门店管理群组的ItemsList: ItemsIdx对应门店表字段：门店：REGION_ID、SHOP_TYPE
+procedure TframeBaseReport.AddShopGroupItemsList(ShopGroupList: TzrComboBoxList; ItemsIdx: integer);
+begin
+  case ItemsIdx of
+   8:
+    begin
+      ShopGroupList.KeyField:='CODE_ID';
+      ShopGroupList.ListField:='CODE_NAME';
+      ShopGroupList.Filter:='CODE_ID;CODE_NAME;CODE_SPELL';
+      ShopGroupList.Columns[0].FieldName:=ShopGroupList.ListField;
+      ShopGroupList.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');  //所属区域
+    end;
+   12:
+    begin
+      ShopGroupList.KeyField:='SORT_ID';
+      ShopGroupList.ListField:='SORT_NAME';
+      ShopGroupList.Filter:='SORT_ID;SORT_NAME;SORT_SPELL';
+      ShopGroupList.Columns[0].FieldName:=ShopGroupList.ListField;
+      ShopGroupList.DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');  //门店类型
+    end;
   end;
 end;
 
@@ -663,6 +732,37 @@ begin
   if (trim(Str)<>'') and (trim(JoinOper)<>'') then
     Str:=' and '+Str;
   result:=str;
+end;
+
+//添加统计单位Items
+procedure TframeBaseReport.AddTongjiUnitList(TJUnit: TcxComboBox);
+begin
+  //按顺序添加[统计时取索引也是按此顺序]
+  TJUnit.Properties.Items.Clear;
+  TJUnit.Properties.Items.Add('默认单位');   
+  TJUnit.Properties.Items.Add('计量单位');
+  TJUnit.Properties.Items.Add('包装1');
+  TJUnit.Properties.Items.Add('包装2');
+end;
+
+function TframeBaseReport.SelectGoodSortType(var SortID, SortRelID: string): string;
+var
+  rs:TRecord_;
+begin
+  result:='';
+  SortID:='';
+  SortRelID:='';
+  rs := TRecord_.Create;
+  try
+    if TfrmSelectGoodSort.FindDialog(self,rs) then
+    begin
+      SortID := rs.FieldbyName('LEVEL_ID').AsString;
+      SortRelID := rs.FieldbyName('RELATION_ID').AsString;
+      result:=rs.FieldbyName('SORT_NAME').AsString;
+    end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

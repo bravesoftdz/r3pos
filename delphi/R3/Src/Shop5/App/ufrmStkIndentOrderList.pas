@@ -182,7 +182,7 @@ begin
   inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
-  if ShopGlobal.GetChkRightGetChkRight('11100001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if (ShopGlobal.GetChkRight('11100001',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmStkIndentOrderList.actFindExecute(Sender: TObject);

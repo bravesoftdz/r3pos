@@ -4,6 +4,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   Width = 1078
   Height = 625
   Caption = #30424#28857#23545#29031#34920
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -34,56 +35,42 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 Height = 76
                 object Label3: TLabel
                   Left = 24
-                  Top = 10
+                  Top = 31
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label6: TLabel
-                  Left = 288
-                  Top = 32
+                  Left = 281
+                  Top = 10
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label8: TLabel
-                  Left = 288
-                  Top = 54
+                  Left = 281
+                  Top = 31
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label19: TLabel
                   Left = 24
-                  Top = 33
+                  Top = 51
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label4: TLabel
-                  Left = 288
+                  Left = 24
                   Top = 10
                   Width = 48
                   Height = 12
                   Caption = #30424#28857#26085#26399
                 end
-                object fndP1_COMP_TYPE: TcxComboBox
-                  Left = 184
-                  Top = 6
-                  Width = 81
-                  Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #21547#30452#33829#24215
-                    #21547#21152#30431#24215
-                    #25152#26377#19979#23646
-                    #25351#23450#38376#24215)
-                  TabOrder = 1
-                  Visible = False
-                end
                 object btnOk: TRzBitBtn
                   Left = 486
-                  Top = 40
+                  Top = 38
                   Width = 67
                   Height = 29
                   Action = actFind
@@ -101,7 +88,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -109,8 +96,8 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Spacing = 5
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 50
+                  Left = 337
+                  Top = 27
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -119,11 +106,11 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 7
+                  TabOrder = 6
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 28
+                  Left = 337
+                  Top = 6
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -132,13 +119,13 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  TabOrder = 5
+                  TabOrder = 4
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 6
+                  Top = 27
                   Width = 185
                   Height = 20
                   Properties.AutoSelect = False
@@ -179,7 +166,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 end
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 28
+                  Top = 48
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -187,12 +174,12 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
                   Properties.OnChange = fndP1_TYPE_IDPropertiesChange
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 28
+                  Top = 48
                   Width = 111
                   Height = 20
                   Properties.AutoSelect = False
@@ -201,7 +188,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -226,18 +213,18 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   MultiSelect = False
                 end
                 object fndP1_SHOW_ZERO: TcxCheckBox
-                  Left = 76
-                  Top = 52
+                  Left = 277
+                  Top = 48
                   Width = 173
                   Height = 21
                   Properties.DisplayUnchecked = 'False'
                   Properties.Caption = #26159#21542#26174#31034#38646#24211#23384#30340#21830#21697
-                  TabOrder = 6
+                  TabOrder = 5
                 end
                 object fndP1_PRINT_DATE: TzrComboBoxList
-                  Left = 344
+                  Left = 80
                   Top = 6
-                  Width = 121
+                  Width = 185
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -245,7 +232,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 1
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'PRINT_DATE'
@@ -290,7 +277,6 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 Width = 843
                 Height = 439
                 inherited DBGridEh1: TDBGridEh
-                  Tag = 1
                   Width = 839
                   Height = 435
                   FrozenCols = 3

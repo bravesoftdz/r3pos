@@ -1,3 +1,5 @@
+{  21400001	0	付款单	1	查询	2	新增 	3	修改	4	删除	5	审核	6	打印 	7	导出  }
+
 unit ufrmPayOrderList;
 
 interface
@@ -63,12 +65,11 @@ type
     procedure frfPayOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actDeleteExecute(Sender: TObject);
-    procedure frfPayOrderGetValue(const ParName: String;
-      var ParValue: Variant);
+    procedure frfPayOrderGetValue(const ParName: String; var ParValue: Variant);
 
   private
     procedure ChangeButton;
-    { Private declarations }
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd2: boolean;
@@ -137,7 +138,7 @@ end;
 procedure TfrmPayOrderList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700014') then Raise Exception.Create('你没有新增付款单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21400001',2) then Raise Exception.Create('你没有新增付款单的权限,请和管理员联系.');
   with TfrmPayOrder.Create(self) do
     begin
       try
@@ -154,7 +155,7 @@ procedure TfrmPayOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700015') then Raise Exception.Create('你没有修改付款单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21400001',3) then Raise Exception.Create('你没有修改付款单的权限,请和管理员联系.');
   with TfrmPayOrder.Create(self) do
     begin
       try
@@ -194,7 +195,7 @@ var
 begin
   inherited;
     if cdsList.IsEmpty then Raise Exception.Create('请选择待审核的付款单');
-   if not ShopGlobal.GetChkRight('700017') then Raise Exception.Create('你没有审核付款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21400001',5) then Raise Exception.Create('你没有审核付款单的权限,请和管理员联系.');
     if cdsList.FieldByName('CHK_DATE').AsString<>'' then
        begin
          if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
@@ -406,7 +407,7 @@ procedure TfrmPayOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
     if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700018') then Raise Exception.Create('你没有打印付款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21400001',6) then Raise Exception.Create('你没有打印付款单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
@@ -422,7 +423,7 @@ procedure TfrmPayOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700018') then Raise Exception.Create('你没有打印付款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21400001',6) then Raise Exception.Create('你没有打印付款单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
@@ -449,7 +450,7 @@ procedure TfrmPayOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
    if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700016') then Raise Exception.Create('你没有删除付款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21400001',4) then Raise Exception.Create('你没有删除付款单的权限,请和管理员联系.');
    if MessageBox(Handle,'确认删除当前选中的付款单？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmPayOrder.Create(self) do
       begin
@@ -495,6 +496,11 @@ begin
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
 
+end;
+
+function TfrmPayOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('32600001',7);
 end;
 
 end.

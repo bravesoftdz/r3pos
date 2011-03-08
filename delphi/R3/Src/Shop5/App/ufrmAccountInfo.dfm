@@ -1,6 +1,6 @@
 inherited frmAccountInfo: TfrmAccountInfo
-  Left = 725
-  Top = 238
+  Left = 297
+  Top = 201
   Caption = #36134#25143#26723#26696
   ClientHeight = 309
   ClientWidth = 476

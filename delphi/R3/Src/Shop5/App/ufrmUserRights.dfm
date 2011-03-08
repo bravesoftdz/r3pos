@@ -1,6 +1,5 @@
 inherited frmUserRights: TfrmUserRights
   Left = 197
-  Top = 195
   Caption = #29992#25143#25480#26435
   ClientHeight = 404
   ClientWidth = 398
@@ -15,6 +14,8 @@ inherited frmUserRights: TfrmUserRights
     inherited RzPage: TRzPageControl
       Width = 388
       Height = 363
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite

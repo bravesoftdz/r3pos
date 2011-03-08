@@ -1,6 +1,6 @@
 inherited frmAccount: TfrmAccount
-  Left = 436
-  Top = 184
+  Left = 194
+  Top = 114
   Width = 706
   Height = 520
   Caption = #36134#25143#26723#26696#31649#29702

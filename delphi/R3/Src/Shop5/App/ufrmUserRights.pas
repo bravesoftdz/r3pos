@@ -120,7 +120,8 @@ begin
   Label5.Caption:=User_ACCOUNT;
   Init(ROLE_IDS);  //初始化显示数据(RoleGird和CheckeTree)
   OpenRight(ROLE_IDS);  //读取当前角色IDS的Checked值
-  RzPage.OnChange:=DoRzPageChange;  
+  RzPage.OnChange:=DoRzPageChange;
+  locked:=false;
 end;
 
 procedure TfrmUserRights.OpenRight(ROLE_IDS: string);
@@ -220,9 +221,10 @@ procedure TfrmUserRights.rzCheckTreeStateChanging(Sender: TObject;
   Node: TTreeNode; NewState: TRzCheckState; var AllowChange: Boolean);
 begin
   inherited;
-  rzCheckTree.CascadeChecks:=True;
   if locked then exit;
   rzCheckTree.CascadeChecks:=True; //全部设置为不可以Checked
+  AllowChange:=False;
+
 
  {if  Global.UserID<>'admin' then
   begin
@@ -318,6 +320,7 @@ end;
 procedure TfrmUserRights.FormCreate(Sender: TObject);
 begin
   inherited;
+  locked:=true;
   RzPage.ActivePage:=TabSheet1;
 end;
 

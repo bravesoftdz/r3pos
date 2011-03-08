@@ -13,6 +13,9 @@ uses
   cxRadioGroup, zBase, jpeg, ZAbstractRODataset, ZAbstractDataset,
   ZDataset;
 
+
+type
+  TOnPrintEvent=procedure(Sender:TObject) of object;
 type
   TfrmCheckOrderList = class(TframeOrderToolForm)
     ToolButton11: TToolButton;
@@ -43,16 +46,21 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     oid: string;
+    FDoCheckPrint: TOnPrintEvent;
     function  CheckCanExport: boolean; override;
+    procedure SetDoCheckPrint(const Value: TOnPrintEvent);
   public
     { Public declarations }
     IsEnd: boolean;
-    MaxId:string;    
+    MaxId:string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
+    property DoCheckPrint: TOnPrintEvent read FDoCheckPrint write SetDoCheckPrint;
   end;
 
 implementation
@@ -165,7 +173,7 @@ end;
 procedure TfrmCheckOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
-  Open('');    
+  Open('');
 end;
 
 procedure TfrmCheckOrderList.actPriorExecute(Sender: TObject);
@@ -316,7 +324,8 @@ begin
   try
     Aobj:=TRecord_.Create;
     Aobj.ReadFromDataSet(cdsList);
-    TfrmCheckTablePrint.frmCheckTablePrint(Aobj);
+    if Assigned(DoCheckPrint) then
+      DoCheckPrint(Aobj);
   finally
     Aobj.Free;
   end;
@@ -339,6 +348,32 @@ end;
 function TfrmCheckOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('14400001',7);
+end;
+
+procedure TfrmCheckOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var ARect:TRect; GridDs: TDataSet;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    GridDs:=DbGridEh1.DataSource.DataSet;
+    DbGridEh1.canvas.FillRect(ARect);
+    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+end;
+
+procedure TfrmCheckOrderList.SetDoCheckPrint(const Value: TOnPrintEvent);
+begin
+  FDoCheckPrint := Value;
 end;
 
 end.

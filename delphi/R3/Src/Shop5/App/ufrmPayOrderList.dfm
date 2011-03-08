@@ -1,6 +1,6 @@
 inherited frmPayOrderList: TfrmPayOrderList
-  Left = 69
-  Top = 0
+  Left = 191
+  Top = 103
   Width = 908
   Height = 600
   Caption = #20184#27454#21333
@@ -9,26 +9,26 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 532
+    Width = 900
+    Height = 543
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 522
+      Width = 890
+      Height = 533
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 516
+        Width = 884
+        Height = 527
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20184#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 489
+            Width = 882
+            Height = 500
             BorderInner = fsStatus
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -408,16 +408,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 862
-              Height = 354
+              Width = 870
+              Height = 365
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 352
+                Width = 868
+                Height = 363
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -557,17 +557,17 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 530
-      Width = 353
+      Width = 361
     end
     inherited Image14: TImage
-      Left = 883
+      Left = 891
     end
     inherited Image3: TImage
       Left = 530
-      Width = 353
+      Width = 361
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -700,7 +700,7 @@ inherited frmPayOrderList: TfrmPayOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      1800000066190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000005F190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00000000000000000000000000000000000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -903,6 +903,6 @@ inherited frmPayOrderList: TfrmPayOrderList
       726961626C6573000000000200736C0014006364735F436867426F64792E2253
       4C30303030220002006A650014006364735F436867426F64792E224A45303030
       30220004006B68796800000000040079687A68000000000200647A0000000000
-      00000000000000FDFF0100000000}
+      00000000000000}
   end
 end

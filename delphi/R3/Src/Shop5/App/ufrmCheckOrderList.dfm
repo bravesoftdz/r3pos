@@ -258,7 +258,6 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                   Width = 71
                 end
                 item
-                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
@@ -353,9 +352,6 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   inherited actList: TActionList
     Left = 216
     Top = 248
-    inherited actPrint: TAction
-      Visible = False
-    end
     inherited actPreview: TAction
       Visible = False
     end

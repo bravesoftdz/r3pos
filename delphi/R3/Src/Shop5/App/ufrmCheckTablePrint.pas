@@ -14,7 +14,6 @@ uses
 type
   TfrmCheckTablePrint = class(TframeBaseReport)
     Label3: TLabel;
-    fndP1_COMP_TYPE: TcxComboBox;
     Label6: TLabel;
     btnOk: TRzBitBtn;
     Label8: TLabel;
@@ -28,7 +27,8 @@ type
     Label4: TLabel;
     fndP1_PRINT_DATE: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
-    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);    
+    procedure FormDestroy(Sender: TObject);
+    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
     procedure fndSORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
@@ -108,7 +108,6 @@ begin
   fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
   fndP1_SHOP_ID.Text := Global.SHOP_NAME;
 
-  //没有门店类型: fndP1_COMP_TYPE.ItemIndex := 3;
   //添加商品指标Items:
   AddGoodSortTypeItems(fndP1_TYPE_ID);
 
@@ -129,6 +128,8 @@ begin
   
   rzPage.ActivePageIndex := 0;
   RefreshColumn;
+  //TDbGridEhSort.InitForm(self);
+  TDbGridEhSort.InitForm(self);
 end;
 
 function TfrmCheckTablePrint.GetRowType: integer;
@@ -265,17 +266,16 @@ end;
 procedure TfrmCheckTablePrint.DBGridEh1TitleClick(Column: TColumnEh);
 begin
   inherited;
-{
-  if (Column.FieldName = 'PROPERTY_01') or (Column.FieldName = 'PROPERTY_02')
-  then Exit;
-  if adoReport1.IsEmpty then Exit;
-  if Column.Title.SortMarker= smNoneEh then
-     Column.Title.SortMarker := smUpEh
+//  if (Column.FieldName = 'PROPERTY_01') or (Column.FieldName = 'PROPERTY_02') then Exit;
+//  if adoReport1.IsEmpty then Exit;
+
+{  if Column.Title.SortMarker= smNoneEh then Column.Title.SortMarker := smUpEh
   else
-  if Column.Title.SortMarker= smUpEh then
-     Column.Title.SortMarker := smDownEh
-  else
-     Column.Title.SortMarker := smNoneEh;
+  begin
+    if Column.Title.SortMarker= smUpEh then Column.Title.SortMarker := smDownEh
+    else Column.Title.SortMarker := smNoneEh;
+  end;
+
   case Column.Title.SortMarker of
   smNoneEh:adoReport1.Sort := '';
   smDownEh:
@@ -356,13 +356,15 @@ begin
 end;
 
 class procedure TfrmCheckTablePrint.frmCheckTablePrint(Aobj: TRecord_);
-var FrmPrintTab: TfrmCheckTablePrint;
+var
+  FrmPrintTab: TfrmCheckTablePrint;
 begin
   try
     FrmPrintTab:=TfrmCheckTablePrint.Create(nil);
     FrmPrintTab.DoOpenDefaultData(Aobj);
+    FrmPrintTab.WindowState := wsMaximized;
+    FrmPrintTab.BringToFront;
   finally
-    Freeandnil(FrmPrintTab);
   end;
 end;
 
@@ -382,6 +384,12 @@ begin
     fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
   end;
   self.RzPage1Open;//查询盘点
+end;
+
+procedure TfrmCheckTablePrint.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  TDbGridEhSort.FreeForm(self);
 end;
 
 end.

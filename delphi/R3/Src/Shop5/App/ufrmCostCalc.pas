@@ -1,3 +1,5 @@
+{  22100001	0	日结账 	1	结账	2	撤消   }
+
 unit ufrmCostCalc;
 
 interface

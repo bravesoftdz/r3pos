@@ -1,3 +1,5 @@
+{  21300001	0	收款单	1	查询	2	新增	3	修改	4	删除	5	审核	6	打印	7	导出   }
+
 unit ufrmRecvOrderList;
 
 interface
@@ -68,7 +70,7 @@ type
 
   private
     procedure ChangeButton;
-    { Private declarations }
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd2: boolean;
@@ -139,7 +141,7 @@ end;
 procedure TfrmRecvOrderList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700014') then Raise Exception.Create('你没有新增收款单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有新增收款单的权限,请和管理员联系.');
   with TfrmRecvOrder.Create(self) do
     begin
       try
@@ -156,7 +158,7 @@ procedure TfrmRecvOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700015') then Raise Exception.Create('你没有修改收款单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21300001',3) then Raise Exception.Create('你没有修改收款单的权限,请和管理员联系.');
   with TfrmRecvOrder.Create(self) do
     begin
       try
@@ -196,7 +198,7 @@ var
 begin
   inherited;
     if cdsList.IsEmpty then Raise Exception.Create('请选择待审核的收款单');
-   if not ShopGlobal.GetChkRight('700017') then Raise Exception.Create('你没有审核收款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21300001',5) then Raise Exception.Create('你没有审核收款单的权限,请和管理员联系.');
     if cdsList.FieldByName('CHK_DATE').AsString<>'' then
        begin
          if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
@@ -409,7 +411,7 @@ procedure TfrmRecvOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
     if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700018') then Raise Exception.Create('你没有打印收款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21300001',6) then Raise Exception.Create('你没有打印收款单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
@@ -425,7 +427,7 @@ procedure TfrmRecvOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700018') then Raise Exception.Create('你没有打印收款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21300001',6) then Raise Exception.Create('你没有打印收款单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
@@ -452,7 +454,7 @@ procedure TfrmRecvOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
    if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('700016') then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('21300001',4) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
    if MessageBox(Handle,'确认删除当前选中的收款单？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmRecvOrder.Create(self) do
       begin
@@ -499,6 +501,11 @@ begin
            break;
          end;
     end;
+end;
+
+function TfrmRecvOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('21300001',7);
 end;
 
 end.

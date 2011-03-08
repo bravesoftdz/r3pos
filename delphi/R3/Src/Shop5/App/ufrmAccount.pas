@@ -1,3 +1,4 @@
+{  21100001	0	银行账户  1	查询	2	新增	3	修改	4	删除	5	打印	6	导出  }
 unit ufrmAccount;
 
 interface
@@ -50,7 +51,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    function  CheckCanExport: boolean; override;
   public
     procedure AddRecord(AObj:TRecord_);
     procedure IniGrid;
@@ -66,6 +67,7 @@ procedure TfrmAccount.actNewExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Exit;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmAccountInfo.Create(self) do
   begin
     try
@@ -165,6 +167,7 @@ procedure TfrmAccount.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsBrowser.Active) and (cdsBrowser.IsEmpty) then exit;
+  if not ShopGlobal.GetChkRight('21100001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmAccountInfo.Create(self) do
     begin
       try
@@ -221,7 +224,7 @@ procedure TfrmAccount.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsBrowser.Active) and (cdsBrowser.IsEmpty) then exit;
-  //if not ShopGlobal.GetChkRight('100019') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('21100001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if cdsBrowser.FieldByName('PAYM_ID').AsString = 'A' then Raise Exception.Create('现金账户不允许删除');
   {if (cdsBrowser.FieldByName('IN_MNY').AsString > 0) or (cdsBrowser.FieldByName('OUT_MNY').AsString > 0) then
     MessageBox(Handle,pchar('进出金额有变动,请确认是否要删除!'),pchar(Caption),MB_OKCANCEL+MB_ICONQUESTION);}
@@ -242,7 +245,7 @@ end;
 procedure TfrmAccount.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700040') then
+  if not ShopGlobal.GetChkRight('21100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;
@@ -251,7 +254,7 @@ end;
 procedure TfrmAccount.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700040') then
+  if not ShopGlobal.GetChkRight('21100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -283,6 +286,11 @@ procedure TfrmAccount.FormCreate(Sender: TObject);
 begin
   inherited;
   IniGrid;
+end;
+
+function TfrmAccount.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('21100001',6);  //返回是否导出Grid
 end;
 
 end.

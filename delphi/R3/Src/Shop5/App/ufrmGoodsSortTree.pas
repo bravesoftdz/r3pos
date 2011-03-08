@@ -539,13 +539,13 @@ end;
 class function TfrmGoodsSortTree.AddDialog(Owner: TForm;
   var AObj: TRecord_;SORTTYPE:Integer): boolean;
 begin
-   {if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑商品分类!');
-   if not ShopGlobal.GetChkRight('200033') then Raise Exception.Create('你没有编辑商品分类的权限,请和管理员联系.');}
+   {if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑商品分类!');}
    with TfrmGoodsSortTree.Create(Owner) do
     begin
       try
         InFlag:=1;
         Sort_Type := SORTTYPE;
+        if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有编辑'+Caption+'的权限,请和管理员联系.');
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -774,10 +774,12 @@ end;
 class function TfrmGoodsSortTree.ShowDialog(Owner: TForm;
   SORTTYPE: Integer): boolean;
 begin
+
   with TfrmGoodsSortTree.Create(Owner) do
     begin
       try
         Sort_Type := SORTTYPE;
+        if not ShopGlobal.GetChkRight('32100001',1) then Raise Exception.Create('你没有查看'+Caption+'的权限,请和管理员联系.');
         ShowModal;
       finally
         Free;

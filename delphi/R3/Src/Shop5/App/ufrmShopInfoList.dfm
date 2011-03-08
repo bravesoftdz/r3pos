@@ -10,31 +10,31 @@ inherited frmShopInfoList: TfrmShopInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 885
-    Height = 448
+    Width = 893
+    Height = 459
     inherited RzPanel2: TRzPanel
-      Width = 875
-      Height = 438
+      Width = 883
+      Height = 449
       inherited RzPage: TRzPageControl
-        Width = 869
-        Height = 432
+        Width = 877
+        Height = 443
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38376#24215#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 867
-            Height = 405
+            Width = 875
+            Height = 416
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 857
+              Width = 865
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                857
+                865
                 36)
               object Panel1: TPanel
                 Left = 0
@@ -123,16 +123,16 @@ inherited frmShopInfoList: TfrmShopInfoList
             object Panel3: TPanel
               Left = 5
               Top = 41
-              Width = 857
-              Height = 359
+              Width = 865
+              Height = 370
               Align = alClient
               Caption = 'Panel3'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 855
-                Height = 338
+                Width = 863
+                Height = 349
                 Align = alClient
                 DataSource = dsBrowser
                 Flat = True
@@ -264,8 +264,8 @@ inherited frmShopInfoList: TfrmShopInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 339
-                Width = 855
+                Top = 350
+                Width = 863
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -291,17 +291,17 @@ inherited frmShopInfoList: TfrmShopInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 885
+    Width = 893
     inherited Image1: TImage
       Left = 484
-      Width = 392
+      Width = 400
     end
     inherited Image14: TImage
-      Left = 876
+      Left = 884
     end
     inherited Image3: TImage
       Left = 484
-      Width = 392
+      Width = 400
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

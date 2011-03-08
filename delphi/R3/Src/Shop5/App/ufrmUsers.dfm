@@ -100,7 +100,7 @@ inherited frmUsers: TfrmUsers
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'DUTY_NAMES'
+                    FieldName = 'DUTY_IDS'
                     Footers = <>
                     Title.Caption = #32844#21153
                     Width = 76
@@ -455,7 +455,7 @@ inherited frmUsers: TfrmUsers
     PageHeader.Font.Name = 'MS Sans Serif'
     PageHeader.Font.Style = []
     Units = MM
-    Left = 270
-    Top = 160
+    Left = 238
+    Top = 200
   end
 end

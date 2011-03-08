@@ -1,7 +1,7 @@
 inherited frmPriceGradeInfo: TfrmPriceGradeInfo
   Left = 524
   Top = 173
-  Caption = #20250#21592#31561#32423#31649#29702
+  Caption = #23458#25143#31561#32423#31649#29702
   ClientHeight = 435
   ClientWidth = 603
   OnShow = FormShow
@@ -20,7 +20,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #20250#21592#31561#32423#26723#26696
+        Caption = #23458#25143#31561#32423#26723#26696
         inherited RzPanel2: TRzPanel
           Width = 589
           Height = 358
@@ -578,7 +578,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
         Spacing = 5
       end
       object edtExit: TRzBitBtn
-        Left = 502
+        Left = 508
         Top = 6
         Width = 70
         Height = 26

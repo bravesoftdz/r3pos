@@ -5,7 +5,6 @@ inherited frmGoodssort: TfrmGoodssort
   ClientHeight = 350
   ClientWidth = 349
   Color = clWhite
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12

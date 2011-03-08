@@ -268,7 +268,7 @@ end;
 
 class function TfrmShopInfo.AddDialog(Owner: TForm;var _AObj: TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('100004') then Raise Exception.Create('你没有新增门店的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增门店的权限,请和管理员联系.');
    with TfrmShopInfo.Create(Owner) do
     begin
       try
@@ -309,7 +309,7 @@ end;
 
 class function TfrmShopInfo.EditDialog(Owner:TForm;id:string;var _AObj:TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('100005') then Raise Exception.Create('你没有修改门店的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('31100001',3) then Raise Exception.Create('你没有修改门店的权限,请和管理员联系.');
    with TfrmShopInfo.Create(Owner) do
     begin
       try

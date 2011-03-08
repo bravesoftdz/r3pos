@@ -40,7 +40,6 @@ type
     procedure cdsUnitAfterEdit(DataSet: TDataSet);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure FormCreate(Sender: TObject);
     procedure CtrlUpExecute(Sender: TObject);
     procedure CtrlDownExecute(Sender: TObject);
     procedure CtrlHomeExecute(Sender: TObject);
@@ -51,6 +50,8 @@ type
     FFlag: integer;
     procedure SetFlag(const Value: integer);
     { Private declarations }
+  protected
+    procedure SetdbState(const Value: TDataSetState);  
   public
     procedure Open;
     procedure Save;
@@ -75,6 +76,7 @@ end;
 procedure TfrmMeaUnits.btnAppendClick(Sender: TObject);
 begin
   inherited;
+  if not (ShopGlobal.GetChkRight('32200001',2) or ShopGlobal.GetChkRight('32200001',3)) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');  
   if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
   if not cdsUnit.IsEmpty then
   begin
@@ -106,6 +108,7 @@ end;
 procedure TfrmMeaUnits.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32200001',4) then Raise Exception.Create('你没有删除计量单位的权限,请和管理员联系.');
   if MessageBox(Handle,pchar('确认要删除"'+cdsUnit.FieldbyName('UNIT_NAME').AsString+'"单位？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsUnit.Delete;
   if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
@@ -305,7 +308,7 @@ end;
 class function TfrmMeaUnits.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('32200001',2) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
    with TfrmMeaUnits.Create(Owner) do
     begin
       try
@@ -335,18 +338,6 @@ procedure TfrmMeaUnits.DBGridEh1Columns2UpdateData(Sender: TObject;
 begin
   inherited;
   btnSave.Enabled:=True;
-end;
-
-procedure TfrmMeaUnits.FormCreate(Sender: TObject);
-begin
-  {if not ShopGlobal.GetChkRight('200043') then
-  begin
-    DBGridEh1.ReadOnly:=True;
-    btnAppend.Enabled:=False;
-    btnSave.Enabled:=False;
-    btnDelete.Enabled:=False;
-  end;  }
-
 end;
 
 procedure TfrmMeaUnits.CtrlUpExecute(Sender: TObject);
@@ -452,31 +443,32 @@ begin
   if (ssCtrl in Shift) and  (Key=VK_UP) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlUpExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_DOWN) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlDownExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_HOME) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlHomeExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_END) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlEndExecute(nil);
   end;
 end;
 
 class function TfrmMeaUnits.ShowDialog(Owner: TForm): boolean;
 begin
+  if not ShopGlobal.GetChkRight('32200001',1) then Raise Exception.Create('你没有查看计量单位的权限,请和管理员联系.');
   with TfrmMeaUnits.Create(Owner) do
     begin
       try
@@ -484,6 +476,18 @@ begin
       finally
         Free;
       end;
+    end;
+
+end;
+
+procedure TfrmMeaUnits.SetdbState(const Value: TDataSetState);
+begin
+  if dbstate = dsBrowse then
+    begin
+      DBGridEh1.ReadOnly:=True;
+      btnAppend.Enabled:=False;
+      btnSave.Enabled:=False;
+      btnDelete.Enabled:=False;
     end;
 end;
 

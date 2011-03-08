@@ -61,6 +61,7 @@ type
     //IsCompany:Boolean;
     //ccid:string;
     { Private declarations }
+    function CheckCanExport:Boolean;
   public
     { Public declarations }
     procedure InitGrid;
@@ -78,7 +79,7 @@ var str:string;
 begin
   inherited;
   //查自已门店用户，及下属直营门店的用户
-  if not ShopGlobal.GetChkRight('31500002',1) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if edtKey.Text<>'' then
      str:=' and ( [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
                   ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
@@ -105,7 +106,7 @@ var i:integer;
 begin
   inherited;
   if (Not Cds_Users.Active) or (Cds_Users.RecordCount = 0) then Exit;
-  if not ShopGlobal.GetChkRight('31500005',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -123,7 +124,7 @@ end;
 procedure TfrmUsers.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31500003',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
     begin
       try
@@ -140,7 +141,7 @@ procedure TfrmUsers.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Users.Active) or (Cds_Users.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('31500004',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
   begin
     try
@@ -181,12 +182,6 @@ end;
 procedure TfrmUsers.FormCreate(Sender: TObject);
 begin
   inherited;
-  {IsCompany:=ShopGlobal.GetIsCompany(Global.UserID);
-  ccid:=ShopGlobal.GetCOMP_ID(Global.UserID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=Global.CompanyID; }
   InitGrid;
   TDbGridEhSort.InitForm(self);  
 end;
@@ -240,16 +235,22 @@ end;
 procedure TfrmUsers.InitGrid;
 var tmp:TZQuery;
 begin
-  DBGridEh1.FieldColumns['SHOP_ID'].PickList.Clear;
-  DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Clear;
+  try
+    DBGridEh1.FieldColumns['SHOP_ID'].PickList.Clear;
+    DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Clear;
 
-  tmp := Global.GetZQueryFromName('CA_SHOP_INFO');
-  tmp.First;
-  while not tmp.Eof do
-  begin
-    DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Add(tmp.Fields[0].asstring);
-    DBGridEh1.FieldColumns['SHOP_ID'].PickList.Add(tmp.Fields[1].asstring);
-    tmp.Next;
+    tmp := TZQuery.Create(nil);
+    tmp.SQL.Text := 'select SHOP_ID,SHOP_NAME from CA_SHOP_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    Factor.Open(tmp);
+    tmp.First;
+    while not tmp.Eof do
+    begin
+      DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Add(tmp.Fields[0].asstring);
+      DBGridEh1.FieldColumns['SHOP_ID'].PickList.Add(tmp.Fields[1].asstring);
+      tmp.Next;
+    end;
+  finally
+    tmp.Free;
   end;
 end;
 
@@ -286,7 +287,7 @@ begin
   inherited;
   if not Cds_Users.Active then exit;
   if Cds_Users.IsEmpty then exit;
-  if not ShopGlobal.GetChkRight('31500006',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31500001',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   with TfrmUserRights.Create(self) do
   begin
     try
@@ -337,7 +338,7 @@ end;
 
 procedure TfrmUsers.actPrintExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('31500007',6) then
+  if not ShopGlobal.GetChkRight('31500001',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintDBGridEh1.DBGridEh := DBGridEh1;
@@ -347,7 +348,7 @@ end;
 procedure TfrmUsers.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31500007',6) then
+  if not ShopGlobal.GetChkRight('31500001',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -358,6 +359,11 @@ begin
       free;
     end;
   end;
+end;
+
+function TfrmUsers.CheckCanExport: Boolean;
+begin
+  Result := ShopGlobal.GetChkRight('31500001',7);
 end;
 
 end.

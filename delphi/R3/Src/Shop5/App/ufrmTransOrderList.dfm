@@ -532,7 +532,6 @@ inherited frmTransOrderList: TfrmTransOrderList
           Left = 268
           Top = 0
           Action = actPreview
-          OnClick = ToolButton8Click
         end
         object ToolButton9: TToolButton
           Left = 311

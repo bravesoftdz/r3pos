@@ -1,11 +1,10 @@
 inherited frmMeaUnits: TfrmMeaUnits
-  Left = 645
-  Top = 192
+  Left = 799
+  Top = 190
   Caption = #35745#37327#21333#20301
   ClientHeight = 350
   ClientWidth = 349
   Color = clWhite
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -98,7 +97,7 @@ inherited frmMeaUnits: TfrmMeaUnits
       BorderColor = clWhite
       Color = clWhite
       object btnSave: TRzBitBtn
-        Left = 93
+        Left = 176
         Top = 13
         Width = 67
         Height = 26
@@ -176,7 +175,7 @@ inherited frmMeaUnits: TfrmMeaUnits
         Spacing = 5
       end
       object btnDelete: TRzBitBtn
-        Left = 176
+        Left = 93
         Top = 13
         Width = 67
         Height = 26

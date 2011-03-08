@@ -710,7 +710,7 @@ class function TfrmPriceGradeInfo.AddDialog(Owner: TForm;
 var tmp:TZQuery;
 begin
   //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑会员等级!');
-  //if not ShopGlobal.GetChkRight('300004') then Raise Exception.Create('你没有编辑会员等级的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有新增客户等级的权限,请和管理员联系.');
   with TfrmPriceGradeInfo.Create(Owner) do
   begin
     try
@@ -847,6 +847,7 @@ end;
 
 class function TfrmPriceGradeInfo.ShowDialog(Owner: TForm): boolean;
 begin
+  if not ShopGlobal.GetChkRight('33200001',1) then Raise Exception.Create('你没有查看客户等级的权限,请和管理员联系.');
   with TfrmPriceGradeInfo.Create(Owner) do
     begin
       try

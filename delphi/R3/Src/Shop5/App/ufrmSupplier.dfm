@@ -1,6 +1,6 @@
 inherited frmSupplier: TfrmSupplier
-  Left = 369
-  Top = 175
+  Left = 421
+  Top = 241
   Width = 742
   Height = 490
   Caption = #20379#24212#21830#31649#29702

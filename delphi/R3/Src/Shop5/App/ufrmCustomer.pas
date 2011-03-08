@@ -89,7 +89,6 @@ type
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure Cds_CustomerAfterScroll(DataSet: TDataSet);
-    procedure But_PrintClick(Sender: TObject);
     procedure actfrmIntegralExecute(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -111,6 +110,7 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
   private
+    function CheckCanExport:boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -135,7 +135,7 @@ uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,
 procedure TfrmCustomer.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('300007') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   With TfrmCustomerInfo.Create(self) do
   begin
     try
@@ -155,7 +155,7 @@ begin
   inherited;
   if (Not Cds_Customer.Active) or (Cds_Customer.RecordCount = 0) then Exit;
   if Cds_Customer.State in [dsEdit,dsInsert] then Cds_Customer.Post;
-  if not ShopGlobal.GetChkRight('300009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33400001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('确定要删除选中记录吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i=6 then
   begin
@@ -203,6 +203,7 @@ end;
 procedure TfrmCustomer.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33400001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   Open('');
 end;
 
@@ -211,7 +212,7 @@ var Tmp:TZQuery;
 begin
   inherited;
   if (not Cds_Customer.Active) or (Cds_Customer.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('300008') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
     with TfrmCustomerInfo.Create(self) do
       begin
         try
@@ -471,12 +472,6 @@ begin
   if IsEnd or not DataSet.Eof then Exit;
   if Cds_Customer.ControlsDisabled then Exit;
   Open(MaxId);
-end;
-
-procedure TfrmCustomer.But_PrintClick(Sender: TObject);
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('300010') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 end;
 
 procedure TfrmCustomer.GetNo;
@@ -782,7 +777,7 @@ end;
 procedure TfrmCustomer.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100014') then
+  if not ShopGlobal.GetChkRight('33400001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintDBGridEh1.DBGridEh := DBGridEh1;
@@ -792,7 +787,7 @@ end;
 procedure TfrmCustomer.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('300010') then
+  if not ShopGlobal.GetChkRight('33400001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -808,6 +803,11 @@ end;
 function TfrmCustomer.ShowExecute(AOwner: TForm; Params: String): Boolean;
 begin
   SetChildDisplay(AOwner);
+end;
+
+function TfrmCustomer.CheckCanExport: boolean;
+begin
+  Result := ShopGlobal.GetChkRight('33400001',6);
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 535
-  Top = 197
+  Left = 574
+  Top = 386
   Caption = #29992#25143#26723#26696
   ClientHeight = 351
   ClientWidth = 529

@@ -524,7 +524,7 @@ end;
 class function TfrmCustomerInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
-  if not ShopGlobal.GetChkRight('300007') then Raise Exception.Create('你没有新增会员的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增会员的权限,请和管理员联系.');
   with TfrmCustomerInfo.Create(Owner) do
   begin
     try
@@ -545,7 +545,7 @@ end;
 class function TfrmCustomerInfo.EditDialog(Owner: TForm; id: string;
   var _AObj: TRecord_): boolean;
 begin
-  if not ShopGlobal.GetChkRight('300008') then Raise Exception.Create('你没有修改会员的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有修改会员的权限,请和管理员联系.');
   with TfrmCustomerInfo.Create(Owner) do
   begin
     try

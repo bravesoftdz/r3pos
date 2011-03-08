@@ -40,7 +40,6 @@ type
     procedure cdsGoodsSortAfterEdit(DataSet: TDataSet);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure FormCreate(Sender: TObject);
     procedure CtrlUpExecute(Sender: TObject);
     procedure CtrlDownExecute(Sender: TObject);
     procedure CtrlHomeExecute(Sender: TObject);
@@ -56,6 +55,8 @@ type
     procedure SetFlag(const Value: integer);
     procedure SetSort_Type(const Value: integer);
     { Private declarations }
+  protected
+    procedure SetdbState(const Value: TDataSetState);
   public
     procedure RefreshTable;
     procedure Open;
@@ -313,15 +314,16 @@ begin
   inherited;
   btnSave.Enabled:=True;
 end;
+
 class function TfrmGoodssort.AddDialog(Owner: TForm;
   var AObj: TRecord_;SORTTYPE:Integer): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('200043') then Raise Exception.Create('你没有编辑本模块的权限,请和管理员联系.');
    with TfrmGoodsSort.Create(Owner) do
     begin
       try
         Flag:=1;
         Sort_Type := SORTTYPE;
+        if not ShopGlobal.GetChkRight('32300001',2) then Raise Exception.Create('你没有编辑'+Caption+'的权限,请和管理员联系.');
         ShowModal;
         if ModalResult=MROK then
         begin
@@ -347,18 +349,6 @@ procedure TfrmGoodssort.DBGridEh1Columns2UpdateData(Sender: TObject;
 begin
   inherited;
   btnSave.Enabled:=True;
-end;
-
-procedure TfrmGoodssort.FormCreate(Sender: TObject);
-begin
-  {if not ShopGlobal.GetChkRight('200043') then
-  begin
-    DBGridEh1.ReadOnly:=True;
-    btnAppend.Enabled:=False;
-    btnSave.Enabled:=False;
-    btnDelete.Enabled:=False;
-  end;  }
-
 end;
 
 procedure TfrmGoodssort.CtrlUpExecute(Sender: TObject);
@@ -464,25 +454,25 @@ begin
   if (ssCtrl in Shift) and  (Key=VK_UP) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlUpExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_DOWN) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlDownExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_HOME) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlHomeExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_END) then
   begin
     Key:=0;
-    if (not ShopGlobal.GetChkRight('200043')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlEndExecute(nil);
   end;
 end;
@@ -497,10 +487,13 @@ end;
 class function TfrmGoodssort.ShowDialog(Owner: TForm;
   SORTTYPE: Integer): boolean;
 begin
+
   with TfrmGoodssort.Create(Owner) do
     begin
       try
         Sort_Type := SORTTYPE;
+        if not ShopGlobal.GetChkRight('32300001',1) then  Raise Exception.Create('你没有查看'+Caption+'的权限,请和管理员联系.');
+        dbState := dsBrowse;
         ShowModal;
       finally
         Free;
@@ -543,7 +536,17 @@ begin
     7: Str_Table := 'PUB_COLOR_GROUP';
     8: Str_Table := 'PUB_SIZE_GROUP';
   end;
-  Global.RefreshTable(Str_Table);
+  if Str_Table <> '' then
+    Global.RefreshTable(Str_Table);
+end;
+
+procedure TfrmGoodssort.SetdbState(const Value: TDataSetState);
+begin
+    inherited;
+    DBGridEh1.ReadOnly:=True;
+    btnAppend.Enabled:=False;
+    btnSave.Enabled:=False;
+    btnDelete.Enabled:=False;
 end;
 
 end.

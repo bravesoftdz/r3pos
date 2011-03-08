@@ -401,6 +401,7 @@ end;
 class function TfrmClientInfo.AddDialog(Owner: TForm;
   var AObj1: TRecord_): boolean;
 begin
+  if not ShopGlobal.GetChkRight('33300001',2) then Raise Exception.Create('你没有新增客户的权限,请和管理员联系.');
    with TfrmClientInfo.Create(Owner) do
    begin
       try
@@ -476,6 +477,7 @@ end;
 class function TfrmClientInfo.EditDialog(Owner: TForm; id: string;
   var AObj1: TRecord_): boolean;
 begin
+  if not ShopGlobal.GetChkRight('33300001',3) then Raise Exception.Create('你没有修改客户的权限,请和管理员联系.');
    with TfrmClientInfo.Create(Owner) do
     begin
       try

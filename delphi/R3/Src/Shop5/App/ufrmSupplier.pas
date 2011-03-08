@@ -53,7 +53,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure edtKeyPropertiesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure But_PrintClick(Sender: TObject);
     procedure Cds_ClientAfterScroll(DataSet: TDataSet);
     procedure FormDestroy(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
@@ -66,7 +65,8 @@ type
     procedure Cds_ClientFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
   private
-    ccid,sqlstring:string;
+    sqlstring:string;
+    function CheckCanExport:boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -81,7 +81,7 @@ uses ufrmSupplierInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmBasic;//,ufrmSe
 procedure TfrmSupplier.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('400007') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   With TfrmSupplierInfo.Create(self) do
   begin
     try
@@ -111,7 +111,7 @@ begin
   inherited;
   if (not Cds_Client.Active) or (Cds_Client.IsEmpty) then exit;
   if Cds_Client.State in [dsInsert,dsEdit] then Cds_Client.Post;
-  if not ShopGlobal.GetChkRight('400009') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33100001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -152,7 +152,8 @@ var
    Str_Wh:String;
 begin
   inherited;
-
+  if not ShopGlobal.GetChkRight('33100001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  
   Str_Wh := 'select 0 as selflag,TENANT_ID,CLIENT_ID,CLIENT_TYPE,CLIENT_CODE,LICENSE_CODE,CLIENT_NAME,CLIENT_SPELL,SORT_ID,REGION_ID,SETTLE_CODE,ADDRESS,'+
   'POSTALCODE,LINKMAN,TELEPHONE3,TELEPHONE1,TELEPHONE2,FAXES,HOMEPAGE,EMAIL,QQ,MSN,BANK_ID,ACCOUNT,INVOICE_FLAG,REMARK,TAX_RATE,PRICE_ID,SHOP_ID'+
   ' from PUB_CLIENTINFO where COMM not in (''02'',''12'') and TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and CLIENT_TYPE=''1'' ';
@@ -178,7 +179,7 @@ procedure TfrmSupplier.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Client.Active) or (Cds_Client.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('400008') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33100001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   With TfrmSupplierInfo.Create(self) do
   begin
     try
@@ -339,12 +340,6 @@ begin
   end;
 end;
 
-procedure TfrmSupplier.But_PrintClick(Sender: TObject);
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('400010') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-end;
-
 procedure TfrmSupplier.Cds_ClientAfterScroll(DataSet: TDataSet);
 var str:string;
 begin
@@ -363,7 +358,7 @@ end;
 procedure TfrmSupplier.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100014') then
+  if not ShopGlobal.GetChkRight('33100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintDBGridEh1.DBGridEh := DBGridEh1;
@@ -373,7 +368,7 @@ end;
 procedure TfrmSupplier.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400010') then
+  if not ShopGlobal.GetChkRight('33100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -502,6 +497,11 @@ begin
      Accept:=True
   else
     Accept:=False;
+end;
+
+function TfrmSupplier.CheckCanExport: boolean;
+begin
+  Result := ShopGlobal.GetChkRight('33100001',6);
 end;
 
 end.

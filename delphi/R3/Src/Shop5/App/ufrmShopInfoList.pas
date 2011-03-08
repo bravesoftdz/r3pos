@@ -59,6 +59,7 @@ type
   private
     { Private declarations }
     locked:Boolean;
+    function CheckCanExport:Boolean;
   public
     { Public declarations }
     function FindColumn(FieldName:String):TColumnEh;
@@ -95,7 +96,7 @@ end;
 procedure TfrmShopInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100004') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmShopInfo.Create(self) do
   begin
     try
@@ -124,7 +125,7 @@ var i:integer;
 begin
   inherited;
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('100006') then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31100001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -144,6 +145,7 @@ procedure TfrmShopInfoList.actFindExecute(Sender: TObject);
 var str:String;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('31100001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');  
   if edtKey.Text<>'' then
      str:= ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
@@ -271,7 +273,7 @@ end;
 procedure TfrmShopInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100005') then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31100001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
   with TfrmShopInfo.Create(self) do
     begin
@@ -323,7 +325,7 @@ end;
 procedure TfrmShopInfoList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100007') then
+  if not ShopGlobal.GetChkRight('31100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   with TfrmEhLibReport.Create(self) do
@@ -354,8 +356,7 @@ end;
 procedure TfrmShopInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100007') then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('31100001',5) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintDBGridEh1.DBGridEh := DBGridEh1;
   PrintDBGridEh1.Print;  
 end;
@@ -378,6 +379,11 @@ procedure TfrmShopInfoList.FormDestroy(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.FreeForm(Self);
+end;
+
+function TfrmShopInfoList.CheckCanExport: Boolean;
+begin
+  Result := ShopGlobal.GetChkRight('31500001',6);
 end;
 
 end.

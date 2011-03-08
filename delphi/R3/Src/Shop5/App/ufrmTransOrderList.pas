@@ -57,6 +57,7 @@ type
     procedure ToolButton8Click(Sender: TObject);
   private
     procedure ChangeButton;
+    function CheckCanExport:boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -316,8 +317,8 @@ var Msg: String;
     Params:TftParamList;
 begin
   inherited;
-  if cdsList.IsEmpty then Exception.Create('请选择待审核的存取单');
   if not ShopGlobal.GetChkRight('21700001',5) then Raise Exception.Create('你没有审核存取单的权限,请和管理员联系.');
+  if cdsList.IsEmpty then Exception.Create('请选择待审核的存取单');
   if cdsList.FieldByName('CHK_DATE').AsString = '' then
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then raise Exception.Create('已经同步的数据不能弃审');
@@ -326,20 +327,25 @@ begin
     end
   else
     begin
-      if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核心');
+      if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
       if MessageBox(Handle,'确认审核当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION)<>6 then Exit;
     end;
   try
     Params := TftParamList.Create(nil);
       try
-        Params.ParamByName('').AsString := Global.SHOP_ID;
-        Params.ParamByName('').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('').AsInteger := Global.TENANT_ID;
+        Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        Params.ParamByName('TRANS_ID').AsString := cdsList.FieldByName('TRANS_ID').AsString;
         if cdsList.FieldByName('CHK_DATE').AsString = '' then
-          Msg := Factor.ExecProc('TTransOrderAudit',Params)
+          begin
+            Params.ParamByName('CHK_USER').AsString := Global.UserID;
+            Params.ParamByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',date());
+            Msg := Factor.ExecProc('TTransOrderAudit',Params);
+          end
         else
-          Msg := Factor.ExecProc('TTransOrderUnAudit',Params);
+          begin
+            Msg := Factor.ExecProc('TTransOrderUnAudit',Params);
+          end;
 
       finally
         Params.Free;
@@ -426,7 +432,7 @@ begin
   if Column.FieldName = 'SEQ_NO' then
     begin
       ARect := Rect;
-      DbGridEh1.canvas.FillRect(ARect);
+      DbGridEh1.canvas.FillRect(ARect);                               
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 end;
@@ -435,6 +441,11 @@ procedure TfrmTransOrderList.ToolButton8Click(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+end;
+
+function TfrmTransOrderList.CheckCanExport: boolean;
+begin
+  Result := ShopGlobal.GetChkRight('21700001',7);
 end;
 
 end.

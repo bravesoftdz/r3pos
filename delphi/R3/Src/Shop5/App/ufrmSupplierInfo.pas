@@ -363,6 +363,7 @@ end;
 class function TfrmSupplierInfo.AddDialog(Owner: TForm;
   var AObj1: TRecord_): boolean;
 begin
+  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增供应商的权限,请和管理员联系.');
    with TfrmSupplierInfo.Create(Owner) do
    begin
       try
@@ -424,7 +425,6 @@ end;
 procedure TfrmSupplierInfo.WriteTo(AObj: TRecord_);
 begin
   WriteToObject(AObj,self);
-  //Aobj.FieldByName('COMP_ID').AsString:=ccid;
   Aobj.FieldByName('SORT_ID').AsString:=edtSORT_ID.AsString;
   Aobj.FieldByName('REGION_ID').AsString:=edtREGION_ID.AsString;
 end;
@@ -432,6 +432,7 @@ end;
 class function TfrmSupplierInfo.EditDialog(Owner: TForm; id: string;
   var AObj1: TRecord_): boolean;
 begin
+  if not ShopGlobal.GetChkRight('33100001',3) then Raise Exception.Create('你没有修改供应商的权限,请和管理员联系.');
    with TfrmSupplierInfo.Create(Owner) do
     begin
       try

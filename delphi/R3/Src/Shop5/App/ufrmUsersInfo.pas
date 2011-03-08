@@ -135,11 +135,6 @@ end;
 procedure TfrmUsersInfo.FormCreate(Sender: TObject);
 begin
   inherited;
-  {ccid:=ShopGlobal.GetSHOP_ID(Global.UserID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=Global.CompanyID;}
   AddCbxPickList(edtIDN_TYPE,'',Global.GetZQueryFromName('PUB_IDNTYPE_INFO')); 
   edtSHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDUTY_IDS.DataSet := Global.GetZQueryFromName('CA_DUTY_INFO');
@@ -168,8 +163,8 @@ begin
     ReadFromObject(Aobj,Self);
     {//edtUSER_SPELL.Text:=AObj.FieldByName('USER_SPELL').AsString;
     edtSHOP_ID.KeyValue:=Aobj.FieldByName('SHOP_ID').AsString;
-    edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;}
-    edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_IDS_TEXT').AsString;
+    edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;
+    edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_IDS_TEXT').AsString;}
     edtSEX.ItemIndex:=AObj.FieldByName('SEX').AsInteger;
     dbState := dsBrowse;
   finally
@@ -406,7 +401,7 @@ end;
 class function TfrmUsersInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('31500003',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
    with TfrmUsersInfo.Create(Owner) do
     begin
       try
@@ -427,7 +422,7 @@ end;
 class function TfrmUsersInfo.EditDialog(Owner: TForm; id: string;
   var _AObj: TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('31500004',3) then Raise Exception.Create('你没有修改用户的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('31500001',3) then Raise Exception.Create('你没有修改用户的权限,请和管理员联系.');
    with TfrmUsersInfo.Create(Owner) do
     begin
       try

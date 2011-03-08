@@ -12,7 +12,7 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxRadioGroup;
 
 type
-  TfrmSaleTotalReport = class(TframeBaseReport)
+  TfrmSaleDayReport = class(TframeBaseReport)
     drpStatInfo: TADODataSet;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
@@ -80,10 +80,6 @@ type
     fndP1_SORT_ID: TcxButtonEdit;
     cxComboBox1: TcxComboBox;
     zrComboBoxList3: TzrComboBoxList;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
-    RadioButton4: TRadioButton;
     cxRadioButton1: TcxRadioButton;
     cxRadioButton2: TcxRadioButton;
     cxRadioButton3: TcxRadioButton;
@@ -201,7 +197,7 @@ implementation
 uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ufrmShowReckInfo, uframeTreeFindDialog;
 {$R *.dfm}
 
-procedure TfrmSaleTotalReport.FormCreate(Sender: TObject);
+procedure TfrmSaleDayReport.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false,'grp0 DESC,');
@@ -282,7 +278,7 @@ begin
   
 end;
 
-function TfrmSaleTotalReport.GetGroupSQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetGroupSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
   rs:TADODataSet;
@@ -371,12 +367,12 @@ begin
   Result := strSql;
 end;
 
-function TfrmSaleTotalReport.GetRowType: integer;
+function TfrmSaleDayReport.GetRowType: integer;
 begin
   result := DBGridEh.DataSource.DataSet.FieldbyName('grp0').AsInteger;
 end;
 
-procedure TfrmSaleTotalReport.actFindExecute(Sender: TObject);
+procedure TfrmSaleDayReport.actFindExecute(Sender: TObject);
 var strSql: string;
 begin
   case rzPage.ActivePageIndex of
@@ -418,7 +414,7 @@ begin
   end;
 end;
 
-procedure TfrmSaleTotalReport.fndP1_TYPE_IDPropertiesChange(
+procedure TfrmSaleDayReport.fndP1_TYPE_IDPropertiesChange(
   Sender: TObject);
 begin
   inherited;
@@ -426,7 +422,7 @@ begin
   fndP1_STAT_ID.Text := '';
 end;
 
-procedure TfrmSaleTotalReport.fndP1_STAT_IDBeforeDropList(Sender: TObject);
+procedure TfrmSaleDayReport.fndP1_STAT_IDBeforeDropList(Sender: TObject);
 begin
   inherited;
   drpStatInfo.Close;
@@ -437,7 +433,7 @@ begin
   Factor.Open(drpStatInfo);
 end;
 
-function TfrmSaleTotalReport.GetCompanySQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetCompanySQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
   rs:TADODataSet;
@@ -526,7 +522,7 @@ begin
   Result := strSql;
 end;
 
-procedure TfrmSaleTotalReport.fndP2_TYPE_IDPropertiesChange(
+procedure TfrmSaleDayReport.fndP2_TYPE_IDPropertiesChange(
   Sender: TObject);
 begin
   inherited;
@@ -535,7 +531,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.fndP2_STAT_IDBeforeDropList(Sender: TObject);
+procedure TfrmSaleDayReport.fndP2_STAT_IDBeforeDropList(Sender: TObject);
 begin
   inherited;
   drpStatInfo.Close;
@@ -547,7 +543,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.P3_TYPE_IDPropertiesChange(Sender: TObject);
+procedure TfrmSaleDayReport.P3_TYPE_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   fndP3_STAT_ID.KeyValue := null;
@@ -555,7 +551,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.fndP3_STAT_IDBeforeDropList(Sender: TObject);
+procedure TfrmSaleDayReport.fndP3_STAT_IDBeforeDropList(Sender: TObject);
 begin
   inherited;
   drpStatInfo.Close;
@@ -567,7 +563,7 @@ begin
 
 end;
 
-function TfrmSaleTotalReport.GetSortSQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetSortSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
   rs:TADODataSet;
@@ -663,7 +659,7 @@ begin
   Result := strSql;
 end;
 
-function TfrmSaleTotalReport.GetGodsSQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetGodsSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
   rs:TADODataSet;
@@ -757,7 +753,7 @@ begin
   Result := strSql;
 end;
 
-function TfrmSaleTotalReport.GetGlideSQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetGlideSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
   rs:TADODataSet;
@@ -838,7 +834,7 @@ begin
   Result := strSql;
 end;
 
-procedure TfrmSaleTotalReport.DBGridEh1DblClick(Sender: TObject);
+procedure TfrmSaleDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
@@ -862,7 +858,7 @@ begin
   actFind.OnExecute(nil);
 end;
 
-procedure TfrmSaleTotalReport.DBGridEh2DblClick(Sender: TObject);
+procedure TfrmSaleDayReport.DBGridEh2DblClick(Sender: TObject);
 //var rs:TADODataSet;
 begin
   inherited;
@@ -894,7 +890,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.DBGridEh3DblClick(Sender: TObject);
+procedure TfrmSaleDayReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
@@ -919,14 +915,14 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.FormDestroy(Sender: TObject);
+procedure TfrmSaleDayReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
 
 end;
 
-procedure TfrmSaleTotalReport.DBGridEh4DblClick(Sender: TObject);
+procedure TfrmSaleDayReport.DBGridEh4DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
@@ -947,7 +943,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.PrintBefore;
+procedure TfrmSaleDayReport.PrintBefore;
 var
   s:string;
   c:integer;
@@ -1158,7 +1154,7 @@ begin
   end;
 end;
 
-procedure TfrmSaleTotalReport.fndP1_SORT_IDPropertiesButtonClick(
+procedure TfrmSaleDayReport.fndP1_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 var
   rs:TRecord_;
@@ -1178,7 +1174,7 @@ begin
   end;
 end;
 
-procedure TfrmSaleTotalReport.fndP1_SORT_IDKeyPress(Sender: TObject;
+procedure TfrmSaleDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -1186,7 +1182,7 @@ begin
   fndP1_SORT_ID.Text := '';
 end;
 
-procedure TfrmSaleTotalReport.fndP2_SORT_IDKeyPress(Sender: TObject;
+procedure TfrmSaleDayReport.fndP2_SORT_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -1194,7 +1190,7 @@ begin
   fndP2_SORT_ID.Text := '';
 end;
 
-procedure TfrmSaleTotalReport.fndP4_SORT_IDKeyPress(Sender: TObject;
+procedure TfrmSaleDayReport.fndP4_SORT_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -1202,7 +1198,7 @@ begin
   fndP4_SORT_ID.Text := '';
 end;
 
-procedure TfrmSaleTotalReport.fndP2_SORT_IDPropertiesButtonClick(
+procedure TfrmSaleDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 var
   rs:TRecord_;
@@ -1222,7 +1218,7 @@ begin
   end;
 end;
 
-procedure TfrmSaleTotalReport.fndP4_SORT_IDPropertiesButtonClick(
+procedure TfrmSaleDayReport.fndP4_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 var
   rs:TRecord_;
@@ -1242,14 +1238,14 @@ begin
   end;
 end;
 
-procedure TfrmSaleTotalReport.actPriorExecute(Sender: TObject);
+procedure TfrmSaleDayReport.actPriorExecute(Sender: TObject);
 begin
   if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
   inherited;
 
 end;
 
-procedure TfrmSaleTotalReport.fndP4_STAT_IDBeforeDropList(Sender: TObject);
+procedure TfrmSaleDayReport.fndP4_STAT_IDBeforeDropList(Sender: TObject);
 begin
   inherited;
   drpStatInfo.Close;
@@ -1262,7 +1258,7 @@ begin
 
 end;
 
-procedure TfrmSaleTotalReport.fndP4_TYPE_IDPropertiesChange(
+procedure TfrmSaleDayReport.fndP4_TYPE_IDPropertiesChange(
   Sender: TObject);
 begin
   inherited;

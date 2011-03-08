@@ -1,4 +1,4 @@
-inherited frmSaleTotalReport: TfrmSaleTotalReport
+inherited frmSaleDayReport: TfrmSaleDayReport
   Left = 148
   Top = 86
   Width = 1011
@@ -15,10 +15,8 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
       inherited RzPage: TRzPageControl
         Width = 780
         Height = 573
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -263,38 +261,6 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object RadioButton1: TRadioButton
-                  Left = 327
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26085
-                  TabOrder = 9
-                end
-                object RadioButton2: TRadioButton
-                  Left = 383
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26376
-                  TabOrder = 10
-                end
-                object RadioButton3: TRadioButton
-                  Left = 439
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #19978#26376
-                  TabOrder = 11
-                end
-                object RadioButton4: TRadioButton
-                  Left = 495
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#24180
-                  TabOrder = 12
-                end
                 object cxRadioButton1: TcxRadioButton
                   Left = 80
                   Top = 79
@@ -302,7 +268,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Height = 17
                   Caption = #20840#37096
                   Checked = True
-                  TabOrder = 13
+                  TabOrder = 9
                   TabStop = True
                 end
                 object cxRadioButton2: TcxRadioButton
@@ -311,7 +277,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Width = 57
                   Height = 17
                   Caption = #38144#21806#21333
-                  TabOrder = 14
+                  TabOrder = 10
                 end
                 object cxRadioButton3: TcxRadioButton
                   Left = 200
@@ -319,7 +285,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Width = 57
                   Height = 17
                   Caption = #38646#21806#21333
-                  TabOrder = 15
+                  TabOrder = 11
                 end
                 object cxRadioButton4: TcxRadioButton
                   Left = 264
@@ -327,7 +293,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Width = 57
                   Height = 17
                   Caption = #36864#36135#21333
-                  TabOrder = 16
+                  TabOrder = 12
                 end
               end
               inherited RzPanel7: TRzPanel

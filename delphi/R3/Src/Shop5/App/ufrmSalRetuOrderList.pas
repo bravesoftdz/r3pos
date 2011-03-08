@@ -478,7 +478,6 @@ begin
       DBGridEh1.canvas.FillRect(ARect);
       DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-
 end;
 
 procedure TfrmSalRetuOrderList.actRecvExecute(Sender: TObject);

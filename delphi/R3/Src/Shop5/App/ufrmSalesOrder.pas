@@ -477,7 +477,7 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -571,7 +571,7 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else

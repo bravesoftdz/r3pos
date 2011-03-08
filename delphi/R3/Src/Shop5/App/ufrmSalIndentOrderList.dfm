@@ -1,5 +1,6 @@
 inherited frmSalIndentOrderList: TfrmSalIndentOrderList
-  Left = 232
+  Left = 192
+  Top = 104
   Width = 836
   Height = 607
   Caption = #38144#21806#35746#21333

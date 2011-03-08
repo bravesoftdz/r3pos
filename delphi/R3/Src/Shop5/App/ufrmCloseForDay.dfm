@@ -570,7 +570,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         TabOrder = 11
       end
       object RzButton1: TRzButton
-        Left = 344
+        Left = 343
         Top = 88
         Caption = #25171#21360#23567#31080
         TabOrder = 12

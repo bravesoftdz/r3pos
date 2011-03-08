@@ -502,8 +502,7 @@ procedure TfrmCloseForDay.RzButton1Click(Sender: TObject);
 var i: Integer;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('13200001',4) then
-    Raise Exception.Create('  您没有打印小票权限，请联系管理员！  ');
+  if not ShopGlobal.GetChkRight('13200001',4) then Raise Exception.Create('  您没有打印小票权限，请联系管理员！  ');
 
   i := MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION);
   if i = 1 then

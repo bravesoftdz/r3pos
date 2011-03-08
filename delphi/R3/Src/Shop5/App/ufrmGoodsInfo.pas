@@ -175,6 +175,9 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtDefault1Click(Sender: TObject);
     procedure edtDefault2Click(Sender: TObject);
+    procedure edtNEW_LOWPRICEExit(Sender: TObject);
+    procedure edtMY_OUTPRICEExit(Sender: TObject);
+    procedure edtNEW_OUTPRICEExit(Sender: TObject);
   private
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
@@ -185,10 +188,11 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
-
     function  IsChinese(str:string):Boolean;
+    procedure OnGridKeyPress(Sender: TObject; var Key: Char);
     procedure EditKeyPress(Sender: TObject; var Key: Char);
     procedure AddSORT_IDClick(Sender: TObject; SortType: integer); //添加Add
+    procedure CheckGoodLowPrice(Sender: TObject; Kind: integer); //判断最低售价
     procedure CheckGoodsFieldIsEmpty; //判断商品非空属性是否为空；
     procedure CheckGoodsNameIsExist; //判断商品名称是否存在本地缓存中存在
     procedure SetZrCbxDefaultValue(SetCbx: TzrComboBoxList);  //设置默认值
@@ -642,8 +646,15 @@ begin
   edtMY_OUTPRICE2.Text:=FloattoStr(AObj.fieldbyname('NEW_OUTPRICE2').AsFloat);  //包装2门店售价
 
   //默认单位读取
-  edtDefault1.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('SMALL_UNITS').AsString);
-  edtDefault2.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('BIG_UNITS').AsString);
+  if trim(AObj.fieldbyName('UNIT_ID').AsString)<>'' then
+  begin
+    edtDefault1.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('SMALL_UNITS').AsString);
+    edtDefault2.Checked:=trim(AObj.fieldbyName('UNIT_ID').AsString)=trim(AObj.fieldbyName('BIG_UNITS').AsString);
+  end else
+  begin
+    edtDefault1.Checked:=False;
+    edtDefault1.Checked:=False;
+  end;
 end;
 
 procedure TfrmGoodsInfo.WriteToObject(AObj: TRecord_);
@@ -741,7 +752,7 @@ function TfrmGoodsInfo.IsEdit(Aobj: TRecord_; cdsTable:  TZQuery): Boolean;
     OldValue:='';
     if not CdsTable.FieldByName(FieldName).IsNull then
       CurValue:=CdsTable.FieldByName(FieldName).Value;
-    if not CdsTable.FieldByName(FieldName).IsNull then
+    if not VarIsNull(CdsTable.FieldByName(FieldName).OldValue) then
       OldValue:=CdsTable.FieldByName(FieldName).OldValue;
     result:=(StrtoFloatDef(CurValue,0)<>StrtoFloatDef(OldValue,0));
   end;
@@ -1036,6 +1047,8 @@ begin
   BtnOk.Visible := (value<>dsBrowse);
   edtPROFIT_RATE.Enabled:=True;
   PriceGrid.ReadOnly:=(dbState=dsBrowse);
+  edtDefault1.Enabled:=true;
+  edtDefault2.Enabled:=true;
   if dbState=dsBrowse then
     PriceGrid.Options:=[dgTitles,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection,dgConfirmDelete,dgCancelOnExit]
   else
@@ -1068,6 +1081,8 @@ begin
       edtHAS_INTEGRAL.Enabled:=False;
       edtPROFIT_RATE.Enabled:=False;
       edtUSING_BARTER.Enabled:=False;
+      edtDefault1.Enabled:=False;
+      edtDefault2.Enabled:=False;
     end;
   end;
 end;
@@ -1691,6 +1706,29 @@ begin
   end;
 end;
 
+procedure TfrmGoodsInfo.CheckGoodLowPrice(Sender: TObject; Kind: integer);
+var IsNewOut,IsMyNewOut: Boolean; CurEdt: TcxTextEdit; 
+begin
+  IsNewOut:=False;
+  IsMyNewOut:=False;
+  if (Kind=1) or (Kind=11) then IsNewOut:=true;
+  if (Kind=10) or (Kind=11) then IsMyNewOut:=true;
+  if Sender is TcxTextEdit then  CurEdt:=TcxTextEdit(Sender);
+  //判断: 标准售价  与  低售价
+  if (IsNewOut) and (StrToFloatDef(edtNEW_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+  begin
+    if CurEdt.CanFocus then CurEdt.SetFocus;
+    raise Exception.Create(' 标准售价不能低于本店的最低售价！ ');
+  end;
+  //判断: 门店售价  与  低售价
+  if (IsMyNewOut) and (StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+  begin
+    if CurEdt.CanFocus then CurEdt.SetFocus;
+    raise Exception.Create(' 门店售价不能低于本店的最低售价！ ');
+  end;
+
+end;
+
 procedure TfrmGoodsInfo.CheckGoodsFieldIsEmpty;
 begin
   if Trim(edtGODS_NAME.Text)='' then
@@ -1719,8 +1757,7 @@ begin
   begin
     if edtMY_OUTPRICE.CanFocus then edtMY_OUTPRICE.SetFocus;
     raise Exception.Create(' 门店售价不能低于本店的最低售价！ ');
-  end; 
-
+  end;
   {==  商品SORT_ID1..8  ==}
   if (SORT_ID1_KeyValue='') or (Trim(edtSORT_ID1.Text)='') then
   begin
@@ -2087,7 +2124,8 @@ begin
     if CdsMemberPrice.State<>dsEdit then CdsMemberPrice.Edit;
     CdsMemberPrice.Post;
     if PriceGrid.Col<PriceGrid.Columns.Count-1 then PriceGrid.Col:= PriceGrid.Col + 1; //跳下一列
-  end;
+  end else
+    OnGridKeyPress(Sender,Key); 
 end;
 
 procedure TfrmGoodsInfo.edtCALC_UNITSPropertiesChange(Sender: TObject);
@@ -2195,12 +2233,9 @@ begin
     case CALCType of  // 0:根据折扣率计算折扣价  1: 根据折扣价计算折扣率
      0:
       begin
-        PROFIT_RATE:=CurObj.FieldByName('PROFIT_RATE').AsFloat*0.01;  //折扣率
-        if PROFIT_RATE>1 then
-        begin
-          CurObj.FieldByName('PROFIT_RATE').AsFloat:=100;
-          PROFIT_RATE:=1;
-        end;
+        PROFIT_RATE:=StrtoFloatDef(CurObj.FieldByName('PROFIT_RATE').asstring,0);
+        PROFIT_RATE:=PROFIT_RATE*0.01;
+        if PROFIT_RATE>1 then PROFIT_RATE:=1;
         ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE');
         if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) then
           CurObj.FieldByName('NEW_OUTPRICE').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE,Deci);
@@ -2216,9 +2251,14 @@ begin
         ColIdx:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE');
         if (ColIdx>0) and (PriceGrid.Columns[ColIdx].Visible) then
           CurObj.FieldByName('PROFIT_RATE').AsFloat:=StrtoFloat(FormatFloat('#0',(100*CurObj.FieldByName('NEW_OUTPRICE').AsFloat)/NewOutPrice));
+        if (CurObj.FieldByName('PROFIT_RATE').AsFloat>100) or (CurObj.FieldByName('PROFIT_RATE').AsFloat<0) then
+          CurObj.FieldByName('PROFIT_RATE').AsFloat:=100;
       end;
     end;
+    if CdsMemberPrice.State=dsEdit then CdsMemberPrice.Edit;
     CurOBj.WriteToDataSet(CdsMemberPrice);
+    if CdsMemberPrice.State=dsEdit then CdsMemberPrice.Edit;
+      CdsMemberPrice.Post;
     FPriceChange:=true;
   finally
     CurOBj.Free;
@@ -2326,31 +2366,116 @@ end;
 
 procedure TfrmGoodsInfo.PriceGridColumns2UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r: Real; MsgStr: string;
 begin
   inherited;
-  if self.PriceGrid.DataSource.DataSet.Active then
-    CALC_MenberProfitPrice(self.CdsMemberPrice,0);
+  MsgStr:='';
+  try
+    if Text='' then
+      r := 0
+    else
+       r := StrtoFloat(Text);
+    if r>100 then MsgStr:='输入的折扣率不能大于100，无效';
+
+    if VarIsNull(Value) then
+    begin
+      r:=0;
+      Text:='0';
+    end else
+      r:=Value;
+    if r>100 then
+    begin
+      r:=100;
+      Text:='100';
+    end;
+
+    if (PriceGrid.DataSource.DataSet.Active) and (Value<>CdsMemberPrice.FieldByName('PROFIT_RATE').AsVariant) then
+    begin
+      if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
+      CdsMemberPrice.FieldByName('PROFIT_RATE').AsString:=FloattoStr(r);
+      CdsMemberPrice.Post;
+      CALC_MenberProfitPrice(CdsMemberPrice,0);
+      if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
+    end;
+    if MsgStr<>'' then  Raise Exception.Create(MsgStr);
+  except
+  end;
+
 end;
 
 procedure TfrmGoodsInfo.PriceGridColumns3UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r: Real;
 begin
   inherited;
-  if PriceGrid.DataSource.DataSet.Active then
-    CALC_MenberProfitPrice(self.CdsMemberPrice,1);
+  try
+    if Text='' then
+      r := 0
+    else
+       r := StrtoFloat(Text);
+    if r>999999 then Raise Exception.Create('输入的数值不能100，无效');
+  except
+    on E:Exception do
+      begin
+        Text :='0';
+        Value :='0';
+        MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+        Exit;
+      end;
+  end;
+
+  if VarIsNull(Value) then r:=0 else r:=Value;
+
+  if (PriceGrid.DataSource.DataSet.Active) and (Value<>CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsVariant) then
+  begin
+    if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
+    CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsString:=FloattoStr(r);
+    CdsMemberPrice.Post;
+    CALC_MenberProfitPrice(CdsMemberPrice,1);
+    if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
+  end; 
 end;
 
 procedure TfrmGoodsInfo.edtDefault1Click(Sender: TObject);
 begin
   inherited;
-  if (edtDefault1.Checked) and () then
-
+  if (edtDefault1.Checked) and (edtDefault2.Checked) then
+    edtDefault2.Checked:=False;
 end;
 
 procedure TfrmGoodsInfo.edtDefault2Click(Sender: TObject);
 begin
   inherited;
-  edtDefault1.Checked:=(true) and (edtDefault2.Checked);
+  if (edtDefault2.Checked) and (edtDefault1.Checked) then
+    edtDefault1.Checked:=False;
+end;
+
+procedure TfrmGoodsInfo.OnGridKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (Key=#161) or (Key='。') then Key:='.';
+  if ((Ord(key) < 48) or (Ord(key) > 57)) and
+     (Ord(key) <> 8) and (Ord(key) <> 3) and (Ord(key) <> 24) and (Ord(key) <> 22) and (Key<>#8) then
+    Key:=#0;
+end;
+
+procedure TfrmGoodsInfo.edtNEW_LOWPRICEExit(Sender: TObject);
+begin
+  inherited;
+  CheckGoodLowPrice(Sender,11);
+end;
+
+procedure TfrmGoodsInfo.edtMY_OUTPRICEExit(Sender: TObject);
+begin
+  inherited;
+  CheckGoodLowPrice(Sender,10);
+end;
+
+procedure TfrmGoodsInfo.edtNEW_OUTPRICEExit(Sender: TObject);
+begin
+  inherited;
+  CheckGoodLowPrice(Sender,1);
 end;
 
 end.

@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
+      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 1
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -1409,6 +1411,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtNEW_OUTPRICEPropertiesChange
         TabOrder = 6
+        OnExit = edtNEW_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
       object edtMY_OUTPRICE: TcxTextEdit
@@ -1418,6 +1421,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 7
+        OnExit = edtMY_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
       object edtCALC_UNITS: TzrComboBoxList
@@ -1500,6 +1504,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 10
+        OnExit = edtNEW_LOWPRICEExit
         OnKeyPress = edtNEW_LOWPRICEKeyPress
       end
       object edtSORT_ID1: TcxButtonEdit

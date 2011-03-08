@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 155
-  Top = 140
+  Left = 191
+  Top = 104
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426

@@ -180,12 +180,13 @@ procedure TfrmDbOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
+  //默认新单前判断是否有权限
   if ShopGlobal.GetChkRight('14100001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmDbOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('14100001',3) then Raise Exception.Create('你没有删除销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',3) then Raise Exception.Create('你没有修改调拨单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -197,17 +198,17 @@ end;
 
 procedure TfrmDbOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('14100001',4) then Raise Exception.Create('你没有删除销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',4) then Raise Exception.Create('你没有删除调拨单的权限,请和管理员联系.');
   if (CurOrder=nil) then
-     begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
-     end;
+  begin
+    if cdsList.IsEmpty then Exit;
+    OpenForm(cdsList.FieldbyName('SALES_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+  end;
   inherited;
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('14100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('14100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增调拨单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;

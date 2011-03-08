@@ -61,6 +61,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     procedure SetRecNo;
+    function  CheckCanExport: boolean; override;
   public
     procedure Open;
     procedure AddRecord(AObj:TRecord_);
@@ -389,6 +390,10 @@ begin
     cdsBrowser.EnableControls;
   end;
 end;
- 
+
+function TfrmRoleInfoList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('31400001',6);  
+end;
 
 end.

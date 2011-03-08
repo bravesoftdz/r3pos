@@ -376,7 +376,7 @@ begin
       AObj.ReadFromDataSet(cdsGoods);
       ReadFromObject(AObj);
       edtGODS_SPELL.Text:=AObj.FieldByName('GODS_SPELL').AsString;
-      if not ShopGlobal.GetChkRight('400019') then
+      if not ShopGlobal.GetChkRight(14500001,2) then
       begin
         Label23.Visible:=False;
         edtNEW_INPRICE.Visible:=False;
@@ -1606,7 +1606,7 @@ begin
       CurObj.ReadFromDataSet(GoodInfo);
       ReadFromObject(CurObj);
       edtGODS_SPELL.Text:=CurObj.FieldByName('GODS_SPELL').AsString;
-      if not ShopGlobal.GetChkRight('400019') then
+      if not ShopGlobal.GetChkRight(14500001,2)  then
       begin
         Label23.Visible:=False;
         edtNEW_INPRICE.Visible:=False;

@@ -1,6 +1,6 @@
 inherited frmChangeOrderList: TfrmChangeOrderList
-  Left = 141
-  Top = 129
+  Left = 193
+  Top = 101
   Width = 832
   Height = 619
   Caption = #35843#25972#21333

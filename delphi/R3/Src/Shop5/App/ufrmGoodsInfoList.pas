@@ -420,6 +420,15 @@ begin
       rs.Next;
     end;
   end;
+
+  //判断是否有查看成本价权限
+  if not ShopGlobal.GetChkRight(14500001,2) then
+  begin
+    SetCol:=FindColumn(DBGridEh1, 'NEW_INPRICE');
+    if SetCol<>nil then SetCol.Free;
+    SetCol:=FindColumn(DBGridEh1, 'PROFIT_RATE');
+    if SetCol<>nil then SetCol.Free;
+  end;
 end;
 
 procedure TfrmGoodsInfoList.FormCreate(Sender: TObject);
@@ -662,18 +671,14 @@ end;
 
 procedure TfrmGoodsInfoList.ToolButton8Click(Sender: TObject);
 begin
-  inherited;
-  if not ShopGlobal.GetChkRight('200040') then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  inherited;   
+  if not ShopGlobal.GetChkRight('32600001',5) then
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 end;
 
 procedure TfrmGoodsInfoList.FormShow(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('400019') then
-  begin
-    DBGridEh1.FieldColumns['NEW_INPRICE'].Visible:=False;
-    DBGridEh1.FieldColumns['PROFIT_RATE'].Visible:=False;
-  end;
   if edtKey.CanFocus then
     edtKey.SetFocus;
   if cdsBrowser.Active then cdsBrowser.First;
@@ -733,8 +738,8 @@ procedure TfrmGoodsInfoList.actCopyNewExecute(Sender: TObject);
 begin
   inherited;
   if cdsBrowser.IsEmpty then exit;
-  if IsChain then Raise Exception.Create('直营店不能新增商品!');
-  if not ShopGlobal.GetChkRight('200036') then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  // if IsChain then Raise Exception.Create('直营店不能新增商品!');
+  if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmGoodsInfo.Create(self) do
     begin
       try

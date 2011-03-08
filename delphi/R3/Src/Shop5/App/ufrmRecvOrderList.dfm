@@ -1,6 +1,6 @@
 inherited frmRecvOrderList: TfrmRecvOrderList
-  Left = 161
-  Top = 133
+  Left = 192
+  Top = 112
   Width = 908
   Height = 600
   Caption = #25910#27454#21333

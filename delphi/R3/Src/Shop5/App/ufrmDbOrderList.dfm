@@ -1,29 +1,29 @@
 inherited frmDbOrderList: TfrmDbOrderList
   Left = 198
   Top = 109
-  Width = 759
+  Width = 845
   Height = 536
   Caption = #35843#25320#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 751
+    Width = 837
     Height = 479
     inherited RzPanel2: TRzPanel
-      Width = 741
+      Width = 827
       Height = 469
       inherited RzPage: TRzPageControl
-        Width = 735
+        Width = 821
         Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25320#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 733
+            Width = 819
             Height = 436
             inherited RzPanel1: TRzPanel
-              Width = 723
+              Width = 809
               Height = 102
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -240,7 +240,7 @@ inherited frmDbOrderList: TfrmDbOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 107
-              Width = 723
+              Width = 809
               Height = 324
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -345,17 +345,17 @@ inherited frmDbOrderList: TfrmDbOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 751
+    Width = 837
     inherited Image1: TImage
       Left = 737
-      Width = 5
+      Width = 91
     end
     inherited Image14: TImage
-      Left = 742
+      Left = 828
     end
     inherited Image3: TImage
       Left = 737
-      Width = 5
+      Width = 91
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

@@ -35,7 +35,7 @@ type
     RzLabel5: TRzLabel;
     Label14: TLabel;
     Label15: TLabel;
-    fndP2_GROUP_LIST: TzrComboBoxList;
+    fndP2_SHOP_VALUE: TzrComboBoxList;
     RzBitBtn1: TRzBitBtn;
     fndP2_TYPE_ID: TcxComboBox;
     fndP2_UNIT_ID: TcxComboBox;
@@ -101,39 +101,32 @@ type
     RadioButton14: TRadioButton;
     RadioButton15: TRadioButton;
     RadioButton16: TRadioButton;
-    fndP2_GROUP_ID: TcxComboBox;
+    fndP2_SHOP_TYPE: TcxComboBox;
     Label5: TLabel;
-    fndP1_GROUP_ID: TcxComboBox;
-    fndP1_GROUP_LIST: TzrComboBoxList;
+    fndP1_SHOP_TYPE: TcxComboBox;
+    fndP1_SHOP_VALUE: TzrComboBoxList;
     Label11: TLabel;
-    fndP3_GROUP_LIST: TzrComboBoxList;
-    fndP3_GROUP_ID: TcxComboBox;
+    fndP3_SHOP_VALUE: TzrComboBoxList;
+    fndP3_SHOP_TYPE: TcxComboBox;
     Label3: TLabel;
-    fndP4_GROUP_LIST: TzrComboBoxList;
-    fndP4_GROUP_ID: TcxComboBox;
+    fndP4_SHOP_VALUE: TzrComboBoxList;
+    fndP4_SHOP_TYPE: TcxComboBox;
     adoReport2: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP2_TYPE_IDPropertiesChange(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure actPriorExecute(Sender: TObject);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure actPriorExecute(Sender: TObject);
-    procedure fndP4_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP4_GROUP_IDPropertiesChange(Sender: TObject);
-    procedure fndP2_GROUP_IDPropertiesChange(Sender: TObject);
-    procedure fndP1_GROUP_IDPropertiesChange(Sender: TObject);
-    procedure fndP3_GROUP_IDPropertiesChange(Sender: TObject);
+    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);  
   private
     sid1,sid2,sid4:string;
     srid1,srid2,srid4:string;
@@ -172,7 +165,23 @@ begin
   TDbGridEhSort.InitForm(self,false);
 
   //初始化Items下拉参数:
-  self.InitialParams;
+  //P1:地区进销存统计:
+  P1_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P1_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+
+  //P2:门店进销存统计
+  P2_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P2_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+
+  //P3:分类进销存统计
+  P3_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P3_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  fndP3_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO'); 
+
+  //P4:商品进销存统计
+  P4_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P4_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  fndP4_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
 
   {
   HasChild := (ShopGlobal.GetADODataSetFromName('CA_COMPANY').RecordCount>1);
@@ -198,16 +207,29 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   //月份日期:
-  strWhere:=GetCxDate('and', 'MONTH', P1_D1, P1_D2);
-  //门店群组:
-  strWhere:=strWhere+GetShopGroupCnd(fndP1_GROUP_ID,fndP1_GROUP_LIST.AsString,'RCK_GOODS_MONTH','and');
+  if (P1_D1.asString<>'') and (P1_D1.asString=P1_D2.asString) then
+    strWhere:=' and A.MONTH='+P1_D1.asString
+  else if P1_D1.asString<=P1_D1.asString then
+    strWhere:=' and (A.MONTH>='+P1_D1.asString+' and A.MONTH<='+P1_D2.asString+') '
+  else
+    strWhere:=' and (A.MONTH>='+P1_D2.asString+' and A.MONTH<='+P1_D1.asString+') ';
+
+  //门店所属行政区域|门店类型: 
+  if (fndP1_SHOP_TYPE.ItemIndex=0) and (fndP1_SHOP_VALUE.AsString<>'') then
+    strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' '
+  else if (fndP1_SHOP_TYPE.ItemIndex=1) and (fndP1_SHOP_VALUE.AsString<>'') then  
+    strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
   //商品指标:
-  strWhere:=strWhere+GetGoodSortTypeCnd(fndP1_TYPE_ID,fndP1_STAT_ID.AsString,'RCK_GOODS_MONTH','and');
+  
+
+
+  //商品指标:
+  //  strWhere:=strWhere+GetGoodSortTypeCnd(fndP1_TYPE_ID,fndP1_STAT_ID.AsString,'RCK_GOODS_MONTH','and');
   //商品分类:
   if (trim(sid1)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
+   //  strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
   end else
     GoodTab:='VIW_GOODSINFO'; 
 
@@ -220,11 +242,20 @@ begin
 
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-         'select REGION_ID '+ //门店地区编码
-
+    {    strSql :=
+         'select C.REGION_ID as GROUP_ID,'+     //--门店地区编码
+         ' A.NEW_INPRICE as NEW_INPRICE,A.NEW_OUTPRICE as NEW_OUTPRICE,'+ //最新 进价|售价
+         ' ORG_AMT,ORG_MNY,ORG_RTL,ORG_CST,'+  //--期初数量、金额
+         'STOCK_AMT,STOCK_MNY, '+
+         ' STOCK_TAX,STOCK_RTL,STOCK_AGO,STKRT_AMT,STKRT_MNY,STKRT_TAX,SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,SALE_PRF,
+SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,PRIOR_YEAR_AMT,PRIOR_YEAR_MNY,PRIOR_YEAR_TAX,PRIOR_YEAR_CST,PRIOR_MONTH_AMT,
+PRIOR_MONTH_MNY,PRIOR_MONTH_TAX,PRIOR_MONTH_CST,DBIN_AMT,DBIN_MNY,DBIN_RTL,DBIN_CST,DBOUT_AMT,DBOUT_MNY,DBOUT_RTL,DBOUT_CST,
+CHANGE1_AMT,CHANGE1_MNY,CHANGE1_RTL,CHANGE1_CST,CHANGE2_AMT,CHANGE2_MNY,CHANGE2_RTL,CHANGE2_CST,CHANGE3_AMT,CHANGE3_MNY,CHANGE3_RTL,
+CHANGE3_CST,CHANGE4_AMT,CHANGE4_MNY,CHANGE4_RTL,CHANGE4_CST,CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,BAL_AMT,BAL_MNY,BAL_RTL,
+BAL_CST,ADJ_CST '+
          'from RCK_GOODS_MONTH A,'+GoodTab+' B,CA_COMPANY C ' +
-
+         TENANT_ID,SHOP_ID,MONTH,
+}
       end;
     3: begin //Access
 
@@ -275,11 +306,6 @@ begin
   end;
 end;
 
-procedure TfrmJxcTotalReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  AddGoodSortTypeItemsList(Sender,fndP1_GROUP_LIST);
-end;
-
 function TfrmJxcTotalReport.GetCompanySQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
@@ -318,7 +344,7 @@ begin
       rs.Free;
     end;
   end;
-  
+
   //月份日期
   strWhere := strWhere + ' and A.PRINT_DATE>=' + QuotedStr(P2_D1.asString+'-01')+ ' and A.PRINT_DATE<=' + QuotedStr(P2_D2.asString+'-31');
   //商品分类
@@ -409,11 +435,6 @@ begin
   Result := strSql;
 
   }  
-end;
-
-procedure TfrmJxcTotalReport.fndP2_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  AddGoodSortTypeItemsList(Sender,fndP2_GROUP_LIST);
 end;
 
 function TfrmJxcTotalReport.GetSortSQL(chk:boolean=true): string;
@@ -708,8 +729,8 @@ begin
   fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
   fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
   if adoReport1.FieldbyName('grp0').AsInteger = 1 then
-  fndP2_GROUP_ID.Text := '' else
-  fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
+  fndP2_SHOP_TYPE.Text := '' else
+  fndP2_SHOP_TYPE.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
   rzPage.ActivePageIndex := 1;
   actFind.OnExecute(nil);
 end;
@@ -937,9 +958,10 @@ begin
 end;
 
 procedure TfrmJxcTotalReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+var SortName: string;
 begin
-  inherited;
-  fndP1_SORT_ID.Text:=SelectGoodSortType(sid1,srid1);
+  if SelectGoodSortType(sid1,srid1,SortName) then
+    fndP1_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmJxcTotalReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -947,6 +969,7 @@ procedure TfrmJxcTotalReport.fndP1_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid1 := '';
+  srid1 := '';
   fndP1_SORT_ID.Text := '';
 end;
 
@@ -955,6 +978,7 @@ procedure TfrmJxcTotalReport.fndP2_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid2 := '';
+  srid2 := '';
   fndP2_SORT_ID.Text := '';
 end;
 
@@ -963,19 +987,22 @@ procedure TfrmJxcTotalReport.fndP4_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid4 := '';
+  srid4 := '';
   fndP4_SORT_ID.Text := '';
 end;
 
 procedure TfrmJxcTotalReport.fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+var SortName: string;
 begin
-  inherited;
-  fndP2_SORT_ID.Text:=SelectGoodSortType(sid2,srid2);
+  if SelectGoodSortType(sid2,srid2,SortName) then
+    fndP2_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmJxcTotalReport.fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+var SortName: string;
 begin
-  inherited;
-  fndP4_SORT_ID.Text:=SelectGoodSortType(sid4,srid4);
+  if SelectGoodSortType(sid4,srid4,SortName) then
+    fndP4_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmJxcTotalReport.actPriorExecute(Sender: TObject);
@@ -1059,11 +1086,6 @@ begin
 }
 end;
 
-procedure TfrmJxcTotalReport.fndP4_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  AddGoodSortTypeItemsList(Sender, fndP4_STAT_ID);  
-end;
-
 procedure TfrmJxcTotalReport.CheckCalc(b, e: integer);
 var
   rs:TZQuery;
@@ -1081,67 +1103,6 @@ begin
   end;
 end;
 
-procedure TfrmJxcTotalReport.InitialParams;
-begin
-  //P1:地区进销存统计:
-  P1_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
-  P1_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
-  //添加门店管理群主及默认List:
-  AddShopGroupItems(fndP1_GROUP_ID,'11');
-  AddShopGroupItemsList(fndP1_GROUP_LIST,8);
-  fndP1_GROUP_ID.ItemIndex:=0;
-  //添加商品指标及默认List:
-  AddGoodSortTypeItems(fndP1_TYPE_ID);
-  AddGoodSortTypeItemsList(fndP1_STAT_ID,2);
-  fndP1_TYPE_ID.ItemIndex := 0;
-  //添加统计单位
-  AddTongjiUnitList(fndP1_UNIT_ID);
-  fndP1_UNIT_ID.ItemIndex:=0;
-
-  //P2:门店进销存统计
-  P2_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
-  P2_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
-  //添加门店管理群主及默认List:
-  AddShopGroupItems(fndP2_GROUP_ID,'11');
-  AddShopGroupItemsList(fndP2_GROUP_LIST,8);
-  fndP2_GROUP_ID.ItemIndex:=0;
-  //添加商品指标及默认List:
-  AddGoodSortTypeItems(fndP2_TYPE_ID);
-  AddGoodSortTypeItemsList(fndP2_STAT_ID,2);
-  fndP2_TYPE_ID.ItemIndex := 0;
-  //添加统计单位
-  AddTongjiUnitList(fndP2_UNIT_ID);
-  fndP2_UNIT_ID.ItemIndex:=0;
-
-  //P3:分类进销存统计
-  P3_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
-  P3_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
-  //添加门店管理群主及默认List:
-  AddShopGroupItems(fndP3_GROUP_ID,'11');
-  AddShopGroupItemsList(fndP3_GROUP_LIST,8);
-  fndP3_GROUP_ID.ItemIndex:=0;
-  fndP3_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO'); 
-  //添加统计单位
-  AddTongjiUnitList(fndP3_UNIT_ID);
-  fndP3_UNIT_ID.ItemIndex:=0;
-
-  //P4:商品进销存统计
-  P4_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
-  P4_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
-  //添加门店管理群主及默认List:
-  AddShopGroupItems(fndP4_GROUP_ID,'11');
-  AddShopGroupItemsList(fndP4_GROUP_LIST,8);
-  fndP4_GROUP_ID.ItemIndex:=0;
-  //添加商品指标及默认List:
-  AddGoodSortTypeItems(fndP4_TYPE_ID);
-  AddGoodSortTypeItemsList(fndP4_STAT_ID,2);
-  fndP4_TYPE_ID.ItemIndex := 0;
-  fndP4_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
-  //添加统计单位
-  AddTongjiUnitList(fndP4_UNIT_ID);
-  fndP4_UNIT_ID.ItemIndex:=0;      
-end;
-
 function TfrmJxcTotalReport.GetUnitIDIdx: integer;
 begin
   result:=0;
@@ -1153,31 +1114,6 @@ begin
     result:=fndP3_UNIT_ID.ItemIndex
   else if (RzPage.ActivePage=TabSheet4) and (fndP4_UNIT_ID.ItemIndex<>-1) then  //商品进销存统计表
     result:=fndP4_UNIT_ID.ItemIndex
-end;
-
-procedure TfrmJxcTotalReport.fndP4_GROUP_IDPropertiesChange(Sender: TObject);
-begin
-  AddShopGroupItemsList(Sender,fndP4_GROUP_LIST);
-end;
-
-procedure TfrmJxcTotalReport.fndP2_GROUP_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  AddShopGroupItemsList(Sender,fndP2_GROUP_LIST);
-end;
-
-procedure TfrmJxcTotalReport.fndP1_GROUP_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  AddShopGroupItemsList(Sender,fndP1_GROUP_LIST);
-end;
-
-procedure TfrmJxcTotalReport.fndP3_GROUP_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  AddShopGroupItemsList(Sender,fndP3_GROUP_LIST);
 end;
 
 end.

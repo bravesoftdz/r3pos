@@ -1,6 +1,6 @@
 inherited frmJxcTotalReport: TfrmJxcTotalReport
-  Left = 193
-  Top = 105
+  Left = 198
+  Top = 110
   Width = 953
   Height = 597
   Caption = #36827#38144#23384#32479#35745#34920
@@ -108,7 +108,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 76
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP1_TYPE_IDPropertiesChange
                   TabOrder = 2
                 end
                 object fndP1_UNIT_ID: TcxComboBox
@@ -242,16 +241,18 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 10
                 end
-                object fndP1_GROUP_ID: TcxComboBox
+                object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 76
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP1_GROUP_IDPropertiesChange
+                  Properties.Items.Strings = (
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 11
                 end
-                object fndP1_GROUP_LIST: TzrComboBoxList
+                object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
                   Top = 32
@@ -571,7 +572,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
-                object fndP2_GROUP_LIST: TzrComboBoxList
+                object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 31
@@ -646,7 +647,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP2_UNIT_ID: TcxComboBox
@@ -780,13 +780,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 11
                 end
-                object fndP2_GROUP_ID: TcxComboBox
+                object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP2_GROUP_IDPropertiesChange
+                  Properties.Items.Strings = (
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 12
                 end
               end
@@ -1262,7 +1264,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 9
                 end
-                object fndP3_GROUP_LIST: TzrComboBoxList
+                object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1304,13 +1306,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP3_GROUP_ID: TcxComboBox
+                object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP3_GROUP_IDPropertiesChange
+                  Properties.Items.Strings = (
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 11
                 end
               end
@@ -1673,7 +1677,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP4_UNIT_ID: TcxComboBox
@@ -1849,7 +1852,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 11
                 end
-                object fndP4_GROUP_LIST: TzrComboBoxList
+                object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1891,13 +1894,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP4_GROUP_ID: TcxComboBox
+                object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = fndP4_GROUP_IDPropertiesChange
+                  Properties.Items.Strings = (
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 13
                 end
               end

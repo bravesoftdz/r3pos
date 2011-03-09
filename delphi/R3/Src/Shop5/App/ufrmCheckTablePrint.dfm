@@ -298,7 +298,14 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       FieldName = 'GODS_NAME'
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
-                      Width = 161
+                      Width = 156
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BATCH_NO'
+                      Footers = <>
+                      Title.Caption = #25209#21495
+                      Width = 66
                     end
                     item
                       EditButtons = <>

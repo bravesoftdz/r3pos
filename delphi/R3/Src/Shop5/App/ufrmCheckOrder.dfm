@@ -1,6 +1,6 @@
 inherited frmCheckOrder: TfrmCheckOrder
-  Left = 359
-  Top = 224
+  Left = 224
+  Top = 192
   Width = 774
   Height = 468
   Caption = #30424#28857#21333

@@ -108,15 +108,6 @@ begin
   fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
   fndP1_SHOP_ID.Text := Global.SHOP_NAME;
 
-  //添加商品指标Items:
-  AddGoodSortTypeItems(fndP1_TYPE_ID);
-  //添加商品某一个指标的下拉List
-  AddGoodSortTypeItemsList(fndP1_STAT_ID,2);
-  fndP1_TYPE_ID.ItemIndex := 0;
-
-  //计量单位:
-  AddTongjiUnitList(fndP1_UNIT_ID);
-  fndP1_UNIT_ID.ItemIndex := 0; //默认单位
   fndP1_SHOW_ZERO.Checked := true;
 
   GetPrintDataList;  //盘点日期下拉选择Items
@@ -147,7 +138,7 @@ end;
 procedure TfrmCheckTablePrint.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
-  AddGoodSortTypeItemsList(Sender,fndP1_STAT_ID);
+  AddGoodSortTypeItemsList(Sender,fndP1_STAT_ID); 
 end;
 
 function TfrmCheckTablePrint.GetGoodPrintSQL: string;
@@ -167,10 +158,10 @@ begin
   strWhere := strWhere+' and (B.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.SHOP_ID='''+Global.SHOP_ID+''')';  //过滤企业ID和门店
   if trim(fndP1_SORT_ID.Text)<>'' then
   begin
-    GoodTab:='VIW_BARCODEPRICE_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
   end else
-    GoodTab:='VIW_GOODSPRICE_BARCODEEXT'; 
+    GoodTab:='VIW_GOODSPRICEEXT'; 
 
   //商品属性:
   if fndP1_STAT_ID.AsString<>'' then
@@ -184,15 +175,15 @@ begin
     strWhere := strWhere + ' and (A.CHK_AMOUNT <> 0 or A.RCK_AMOUNT<>0)';
 
   //统计条件关联单位:
-    strWhere := strWhere + ' and '+ GetUnitIDCnd(UnitIDIdx,'B');
+  // strWhere := strWhere + ' and '+ GetUnitIDCnd(UnitIDIdx,'B');
 
   //当前统计单位:
-  UnitField:=GetUnitID(UnitIDIdx,'B');
+  UnitField:=GetUnitID(UnitIDIdx,'B'); //UNIT_ID
   CalcFields:='('+GetUnitTO_CALC(UnitIDIdx,'B')+')'; //[统计单位Index,查询表别名,字段别名]
   strSql:=
-    'select A.GODS_ID as GODS_ID '+   //--货品内码
+    'select A.TENANT_ID as TENANT_ID,A.GODS_ID as GODS_ID '+   //--货品内码
     ','+UnitField+                    // UNIT_ID统计单位
-    ',B.BARCODE as BARCODE'+          //[查询单位的]条形码
+    //  ',B.BARCODE as BARCODE'+          //[查询单位的]条形码
     ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
     ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
@@ -206,6 +197,12 @@ begin
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
     'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
+
+  strSql:='select M.*,bar.BARCODE as BARCODE from ('+strSql+') M '+
+    ' left outer join VIW_BARCODE Bar '+
+    ' on M.TENANT_ID=Bar.TENANT_ID and Bar.TENANT_ID='+inttostr(Global.TENANT_ID)+' and M.GODS_ID=Bar.GODS_ID and M.UNIT_ID=Bar.UNIT_ID and '+
+    ' M.BATCH_NO=Bar.BATCH_NO and M.PROPERTY_01=Bar.PROPERTY_01 and M.PROPERTY_02=Bar.PROPERTY_02  ';
+
   result:=ParseSQL(Factor.iDbType, strSql);
 end;
 

@@ -341,19 +341,32 @@ begin
       Cbx:=TcxComboBox(Components[i]);
       CmpName:=trim(UpperCase(Cbx.Name));
       FName:=copy(CmpName,1,4);
-      if (FName='FNDP') and (RightStr(CmpName,8)='_UNIT_ID') then    //统计单位
-        AddTongjiUnitList(Cbx)
-      else if (FName='FNDP') and (RightStr(CmpName,10)='_SHOP_TYPE') then //管理群组
+      if FName='FNDP' then
       begin
-        Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
-        Cbx.ItemIndex:=0;
-      end else                                   
-      if (FName='FNDP') and (RightStr(CmpName,8)='_TYPE_ID') then //商品指标
-      begin
-        AddGoodSortTypeItems(Cbx);
-        Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
-        Cbx.ItemIndex:=0;
-      end; 
+        if RightStr(CmpName,8)='_UNIT_ID' then    //统计单位
+          AddTongjiUnitList(Cbx)
+        else if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
+          AddGoodSortTypeItems(Cbx,'11111100') 
+        else if RightStr(CmpName,10)='_SHOP_TYPE' then //管理群组
+        begin
+          Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
+          Cbx.ItemIndex:=0;
+        end else
+        if RightStr(CmpName,8)='_TYPE_ID' then //商品指标
+        begin
+          AddGoodSortTypeItems(Cbx);
+          Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
+          Cbx.ItemIndex:=0;
+        end;
+      end;
+    end;
+
+    //设置Dataset;
+    if Components[i] is TzrComboBoxList then
+    begin
+      CmpName:=trim(UpperCase(TzrComboBoxList(Components[i]).Name));
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_SHOP_ID') then 
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');    
     end;
 
     //设置颜色组、尺码组列是否显示
@@ -488,6 +501,7 @@ begin
     end;
   end;
   SortTypeList.Columns[0].FieldName:=SortTypeList.ListField;
+  SortTypeList.Columns[1].FieldName:=SortTypeList.KeyField;
   case ItemsIdx of
    //1: fndP1_STAT_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');    //分类[大类][在供应链中]
    2: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');    //类别[烟草:一类烟、二类烟、三类烟]

@@ -64,11 +64,11 @@ type
     procedure FormResize(Sender: TObject);
     procedure actFilterExecute(Sender: TObject);
   private
-    procedure AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
+    
   public
     constructor Create(AOwner: TComponent); override;
     function GetDBGridEh: TDBGridEh;virtual;
-    {=======  2011.03.02 Add TDBGridEh\TzrComboBoxList相关选项目  =======}
+    {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
 
@@ -77,42 +77,19 @@ type
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
     procedure AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);overload;
     procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);overload;
-
-    //添加门店管理群组的ItemsList[SetFlag对应位数，(REGION_ID、SHOP_ID)1..2位，若为1表添加，若为0表不添加]
-    procedure AddShopGroupItems(ShopGroupID: TcxComboBox; SetFlag: string='11');
-    //动态设置门店管理群组的ItemsList: ItemsIdx对应门店表字段：门店：REGION_ID、SHOP_TYPE
-    procedure AddShopGroupItemsList(ShopGroupList: TzrComboBoxList; ItemsIdx: integer);overload;
-    procedure AddShopGroupItemsList(Sender: TObject; ShopGroupList: TzrComboBoxList);overload;
-
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
 
     //选择商品类别[带供应链] 返回名称[类别名称]
-    function SelectGoodSortType(var SortID,SortRelID: string): string;
+    function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
 
     {=======  2011.03.03 Add 商品统计单位换算关系   =======}
     //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
     //参数: AliasTabName: 传入表的别名;  AliasFileName: 传入字段别名;
     function GetUnitID(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位UNIT_ID
     function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
-
-    {=======  2011.03.05 Add 生成查询条件  =======}
-    //返回日期查询条件参数说明:
-    // (1)、JoinOper:查询条件操作逻辑[and|or|空]; (2)、FieldName:字段名;    (3)、查询字段比较关系符: RelChar[>、=、<、>=、<=];
-    // (4)、CxDate:查询条件值或时间控件;          (5)、时间格式:FormatStr;  (6)、字段类型[1: 数量型、2: 字符型、3: 日期型:作为组合查询条件参考]
-    function GetCxDate(JoinOper,FieldName,RelChar:String; CxDate: TDate; FormatStr: string='YYYYMMDD'; FieldType: integer=1):string;overload;
-    function GetCxDate(JoinOper,FieldName,RelChar:String; CxDate: TcxDateEdit; FormatStr: string='YYYYMMDD'; FieldType: integer=1):string;overload;
-    function GetCxDate(JoinOper,FieldName:String; InBegDate, InEndDate: TcxDateEdit; FormatStr: string='YYYYMMDD'; IsTime: Boolean=False;FieldType: integer=1):string;overload;
-    function GetCxDate(JoinOper,FieldName:String; InBegMonth, InEndMonth: TzrMonthEdit; FieldType: integer=1):string;overload;
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
-    //返回的商品指标的查询的查询条件:
-    function  GetGoodSortTypeCnd(GoodSortItems: TcxComboBox; SortTypeValue: string; AliasTabName: string; JoinOper: string=''): string;
-    //返回门店管理群主: [所属区域|门店类型]
-    function  GetShopGroupCnd(ShopGroup: TcxComboBox; GroupValue: string; AliasTabName: string; JoinOper: string=''): string;
-    //根据输入的字段名及参数值或参数值的控件返回查询条件
-    function  GetQueryCnd(FileName,ParamsValue: string; JoinOper: string=''): string; overload; //输入查询字段[包含别名]、参数值、查询条件连接字符
-    function  GetQueryCnd(Cbx:TzrComboBoxList;FileName: string; JoinOper: string=''): string; overload; //输入查询字段[包含别名]、参数值、查询条件连接字符
 
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
@@ -504,6 +481,23 @@ end;
 
 //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
 procedure TframeBaseReport.AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
+ procedure AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
+ var CurObj: TRecord_;
+ begin
+   if (not Rs.Active) or (Rs.IsEmpty) then Exit;
+   Rs.First;
+   while not Rs.Eof do
+   begin
+     if trim(Rs.FieldByName('CODE_ID').AsString)=trim(CodeID) then
+     begin
+       CurObj:=TRecord_.Create;
+       CurObj.ReadFromDataSet(Rs);
+       Cbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+       break;
+     end;
+     Rs.Next;
+   end;
+ end;
 var
   Rs: TZQuery;
   i,InValue: integer;
@@ -513,7 +507,7 @@ begin
     Rs.Filtered:=False;
     Rs.Filter:=' TYPE_CODE=''SORT_TYPE'' ';
     Rs.Filtered:=true;
-    GoodSortList.Properties.Items.Clear;
+    ClearCbxPickList(GoodSortList);  //清除节点及Object对象
     for i:=1 to 8 do
     begin
       InValue:=StrtoIntDef(SetFlag[i],0);
@@ -522,136 +516,7 @@ begin
     end;
   finally
     Rs.Filtered:=False;
-    Rs.Filter:='';  
-  end;
-end;
-
-//商品指标[SQL的查询条件]
-function TframeBaseReport.GetGoodSortTypeCnd(GoodSortItems: TcxComboBox; SortTypeValue: string; AliasTabName: string; JoinOper: string=''): string;
-var
-  SortIdx: integer;
-  AliasName: string;
-begin
-  result:='';
-  AliasName:='';
-  if AliasTabName<>'' then AliasName:=AliasTabName+'.';
-  if GoodSortItems.ItemIndex<>-1 then
-  begin
-    SortIdx:=StrtoInt(TRecord_(GoodSortItems.Properties.Items.Objects[GoodSortItems.ItemIndex]).fieldbyName('CODE_ID').asString);
-    result:=JoinOper+'('+AliasName+'SORT_ID'+InttoStr(SortIdx)+'='+QuotedStr(SortTypeValue)+')';
-   {Cnd:=' SORT_ID'+InttoStr(SortIdx)+'='+QuotedStr(SortTypeValue)+'';
-    Cnd:='select GODS_ID from PUB_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and PUB_GOODSINFO.GODS_ID='+AliasTabName+'GODS_ID and '+Cnd;
-    Cnd:=JoinOper+' exists('+Cnd+')';
-    result:=Cnd;
-   }
-  end;
-end;
-
-//返回门店管理群主: [所属区域|门店类型]
-function TframeBaseReport.GetShopGroupCnd(ShopGroup: TcxComboBox; GroupValue, AliasTabName, JoinOper: string): string;
-var
-  SortID, Cnd,AliasName: string;
-begin
-  result:='';
-  AliasName:='';
-  if AliasTabName<>'' then AliasName:=AliasTabName+'.';
-  if ShopGroup.ItemIndex<>-1 then
-  begin
-    SortID:=trim(TRecord_(ShopGroup.Properties.Items.Objects[ShopGroup.ItemIndex]).fieldbyName('CODE_ID').asString);
-    if SortID='8' then
-      SortID:='REGION_ID'
-    else if SortID='12' then
-      SortID:='SHOP_TYPE';
-    Cnd:=AliasName+'.'+SortID+'='+QuotedStr(GroupValue);
-    result:=JoinOper+'('+Cnd+')';
-
-   {
-    Cnd:='select SHOP_ID from CA_SHOP_INFO where '+AliasTabName+'TENANT_ID=CA_SHOP_INFO.TENANT_ID and '+AliasTabName+'SHOP_ID=CA_SHOP_INFO.SHOP_ID and '+Cnd;
-    result:=JoinOper+' exists('+Cnd+')';
-   }
-  end;
-end;
-
-
-//添加门店管理群组的ItemsList[SetFlag对应位数，1..2位，若为1表添加，若为0表不添加]
-procedure TframeBaseReport.AddShopGroupItems(ShopGroupID: TcxComboBox; SetFlag: string);
-var
-  Rs: TZQuery;
-  InValue: integer;
-  RegID,GroupID: string;
-begin
-  try
-    InValue:=StrtoIntDef(SetFlag,0);
-    Rs:=Global.GetZQueryFromName('PUB_PARAMS');
-    Rs.Filtered:=False;
-    Rs.Filter:=' TYPE_CODE=''CODE_TYPE'' ';
-    Rs.Filtered:=true;
-    if not Rs.Active then Exit;
-    ShopGroupID.Properties.Items.Clear;
-    if Copy(SetFlag,1,1)='1' then RegID:='8';    //门店所属区域
-    if Copy(SetFlag,2,1)='1' then GroupID:='12'; //门店管理群组
-    //加载所属区域:
-    self.AddItems(ShopGroupID,Rs,RegID);
-    //加载管理群组:
-    self.AddItems(ShopGroupID,Rs,GroupID);
-  finally
-    Rs.Filtered:=False;
-    Rs.Filter:='';  
-  end;
-end;
-
-procedure TframeBaseReport.AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
-var CurObj: TRecord_;
-begin
-  if (not Rs.Active) or (Rs.IsEmpty) then Exit;
-  Rs.First;
-  while not Rs.Eof do
-  begin
-    if trim(Rs.FieldByName('CODE_ID').AsString)=trim(CodeID) then
-    begin
-      CurObj:=TRecord_.Create;
-      CurObj.ReadFromDataSet(Rs);
-      Cbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
-      break;
-    end;
-    Rs.Next;
-  end;
-end;
-
-//动态设置门店管理群组的ItemsList: ItemsIdx对应门店表字段：门店：REGION_ID、SHOP_TYPE
-procedure TframeBaseReport.AddShopGroupItemsList(ShopGroupList: TzrComboBoxList; ItemsIdx: integer);
-begin
-  case ItemsIdx of
-   8:
-    begin
-      ShopGroupList.KeyField:='CODE_ID';
-      ShopGroupList.ListField:='CODE_NAME';
-      ShopGroupList.Filter:='CODE_ID;CODE_NAME;CODE_SPELL';
-      ShopGroupList.Columns[0].FieldName:=ShopGroupList.ListField;
-      ShopGroupList.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');  //所属区域
-    end;
-   12:
-    begin
-      ShopGroupList.KeyField:='SORT_ID';
-      ShopGroupList.ListField:='SORT_NAME';
-      ShopGroupList.Filter:='SORT_ID;SORT_NAME;SORT_SPELL';
-      ShopGroupList.Columns[0].FieldName:=ShopGroupList.ListField;
-      ShopGroupList.DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');  //门店类型
-    end;
-  end;
-end;
-
-procedure TframeBaseReport.AddShopGroupItemsList(Sender: TObject; ShopGroupList: TzrComboBoxList);
-var
-  ID: string;
-begin
-  ShopGroupList.KeyValue := null;
-  ShopGroupList.Text := '';
-  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
-  begin
-    ID:=TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]).fieldbyName('CODE_ID').AsString;
-    if ID<>'' then
-      self.AddShopGroupItemsList(ShopGroupList,StrToInt(ID));
+    Rs.Filter:='';
   end;
 end;
 
@@ -733,102 +598,6 @@ begin
   end;
 end;      
 
-function TframeBaseReport.GetCxDate(JoinOper, FieldName, RelChar: String;
-  CxDate: TDate;FormatStr: string; FieldType: integer): string;
-var
-  Cnd,CurDate: string;
-begin
-  result:='';
-  if trim(RelChar)='' then Exit;
-  CurDate:=Formatdatetime(FormatStr,CxDate);
-  if CurDate='' then Exit;
-  case FieldType of
-   1: Cnd:='('+FieldName+RelChar+CurDate+')';
-   2: Cnd:='('+FieldName+RelChar+''''+CurDate+''')';
-   3: Cnd:='('+FieldName+RelChar+''''+CurDate+''')';
-  end;
-  if trim(JoinOper)<>'' then
-    Cnd:=JoinOper+' '+Cnd;
-  result:=Cnd;
-end;
-
-function TframeBaseReport.GetCxDate(JoinOper, FieldName, RelChar: String; CxDate: TcxDateEdit;
-  FormatStr: string; FieldType: integer): string;
-begin
-  result:='';
-  if (trim(CxDate.Text)='') or (DatetoStr(CxDate.Date)='0000-0-0') then exit; //时间值为空则退出
-  GetCxDate(JoinOper,FieldName,RelChar,CxDate.Date,FormatStr,FieldType);
-end;
-
-function TframeBaseReport.GetCxDate(JoinOper, FieldName: String; InBegDate,InEndDate: TcxDateEdit;
-  FormatStr: string; IsTime: Boolean; FieldType: integer): string;
-var
-  Str, vBegDate, vEndDate, FmStr: String;
-begin
-  result:='';
-  vBegDate:='';
-  vEndDate:='';
-  if trim(FieldName)='' then Exit;
-  if (trim(InBegDate.Text)='') or (DatetoStr(InBegDate.Date)='0000-0-0') then
-    vBegDate:=Formatdatetime(FormatStr,InBegDate.Date);
-  if (trim(InEndDate.Text)='') or (DatetoStr(InEndDate.Date)='0000-0-0') then
-    vEndDate:=Formatdatetime(FormatStr,InEndDate.Date);
-
-  if vBegDate > vEndDate then //自动调整日期前后大小
-  begin
-    Str:=vBegDate;
-    vBegDate:=vEndDate;
-    vEndDate:=Str;
-  end;
-  //是否:日期+时间
-  if (IsTime) and (vBegDate<>'') then vBegDate:=vBegDate+' 00:00:00';
-  if (IsTime) and (vEndDate<>'') then vEndDate:=vEndDate+' 23:59:59';
-  //根据查询类型进行设置查询值:
-  if (FieldType=2) or (FieldType=3) then
-  begin
-    if vBegDate<>'' then vBegDate:=''''+vBegDate+'''';
-    if vEndDate<>'' then vEndDate:=''''+vEndDate+'''';
-  end;
-
-  if (vBegDate<>'') and (vEndDate<>'') then     //起始日期、结束日期均不为空
-    Str:='('+FieldName+'>='+vBegDate+' and '+FieldName+'<='+vEndDate+')'
-  else if (vBegDate<>'') and (vEndDate='') then  //起始日期不为空、结束日期为空
-    Str:='('+FieldName+'>='+vBegDate+')'
-  else if (vBegDate='') and (vEndDate<>'') then  //起始日期为空、结束日期不为空
-    Str:='('+FieldName+'<='''+vEndDate+''')';
-  //判断是否需加条件连接符[and | or]
-  if (trim(Str)<>'') and (trim(JoinOper)<>'') then
-    Str:=' and '+Str;
-  result:=str;
-end;
-
-function TframeBaseReport.GetCxDate(JoinOper, FieldName: String;
-  InBegMonth, InEndMonth: TzrMonthEdit; FieldType: integer): string;
-var
-  Str,vBegMonth,vEndMonth: string;
-begin
-  result:='';
-  if InBegMonth.asString>=InEndMonth.asString then
-  begin
-    vBegMonth:=InBegMonth.asString;
-    vEndMonth:=InEndMonth.asString;
-  end else
-  begin
-    vBegMonth:=InEndMonth.asString;
-    vEndMonth:=InBegMonth.asString;
-  end;
-  if FieldType<>1 then
-  begin
-    vBegMonth:=''''+vBegMonth+'''';
-    vEndMonth:=''''+vEndMonth+'''';
-  end;
-  Str:=' ('+FieldName+'>='+vBegMonth+') and ('+FieldName+'<='+vEndMonth+') ';
-  if JoinOper<>'' then
-    Str:=' '+JoinOper+Str;
-  result:=Str;
-end;
-
-
 //添加统计单位Items
 procedure TframeBaseReport.AddTongjiUnitList(TJUnit: TcxComboBox);
 begin
@@ -840,43 +609,24 @@ begin
   TJUnit.Properties.Items.Add('包装2');
 end;
 
-function TframeBaseReport.SelectGoodSortType(var SortID, SortRelID: string): string;
+function TframeBaseReport.SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
 var
   rs:TRecord_;
 begin
-  result:='';
-  SortID:='';
-  SortRelID:='';
+  result:=False;
   rs := TRecord_.Create;
   try
     if TfrmSelectGoodSort.FindDialog(self,rs) then
     begin
       SortID := rs.FieldbyName('LEVEL_ID').AsString;
       SortRelID := rs.FieldbyName('RELATION_ID').AsString;
-      result:=rs.FieldbyName('SORT_NAME').AsString;
+      SortName := rs.FieldbyName('SORT_NAME').AsString;
+      result:=true;
     end;
   finally
     rs.Free;
   end;
 end;
-
-
-function TframeBaseReport.GetQueryCnd(FileName, ParamsValue,JoinOper: string): string;
-begin
-  result:='';
-  if trim(FileName)='' then Exit;
-  result:=' ('+FileName+'='''+ParamsValue+''') ';
-  if (trim(JoinOper)<>'') and (result<>'') then
-    result:=' '+JoinOper+' '+result;
-end;
-
-function TframeBaseReport.GetQueryCnd(Cbx: TzrComboBoxList; FileName, JoinOper: string): string;
-begin
-  result:='';
-  if Cbx.AsString<>'' then
-    result:=self.GetQueryCnd(FileName,Cbx.AsString,JoinOper); 
-end;
-
 
 
 end.

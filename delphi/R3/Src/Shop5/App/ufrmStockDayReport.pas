@@ -13,7 +13,6 @@ uses
 
 type
   TfrmStockDayReport = class(TframeBaseReport)
-    drpStatInfo: TADODataSet;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -32,7 +31,6 @@ type
     P2_D2: TcxDateEdit;
     RzPanel10: TRzPanel;
     DBGridEh2: TDBGridEh;
-    adoReport2: TADODataSet;
     dsadoReport2: TDataSource;
     RzPanel6: TRzPanel;
     Panel3: TPanel;
@@ -44,7 +42,6 @@ type
     RzBitBtn2: TRzBitBtn;
     RzPanel12: TRzPanel;
     DBGridEh3: TDBGridEh;
-    adoReport3: TADODataSet;
     dsadoReport3: TDataSource;
     RzPanel13: TRzPanel;
     Panel6: TPanel;
@@ -56,7 +53,6 @@ type
     RzBitBtn3: TRzBitBtn;
     RzPanel15: TRzPanel;
     DBGridEh4: TDBGridEh;
-    adoReport4: TADODataSet;
     RzPanel16: TRzPanel;
     Panel7: TPanel;
     RzPanel17: TRzPanel;
@@ -67,7 +63,6 @@ type
     RzPanel18: TRzPanel;
     dsadoReport4: TDataSource;
     P5_D2: TcxDateEdit;
-    adoReport5: TADODataSet;
     dsadoReport5: TDataSource;
     Label41: TLabel;
     Label6: TLabel;
@@ -144,6 +139,10 @@ type
     fndP5_RB_ALL: TcxRadioButton;
     fndP5_RB_IN: TcxRadioButton;
     fndP5_RB_OUT: TcxRadioButton;
+    adoReport2: TZQuery;
+    adoReport5: TZQuery;
+    adoReport3: TZQuery;
+    adoReport4: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -312,28 +311,28 @@ begin
         if adoReport2.Active then adoReport2.Close;
         strSql := GetShopSQL;
         if strSql='' then Exit;
-        adoReport2.CommandText := strSql;
+        adoReport2.SQL.Text := strSql;
         Factor.Open(adoReport2);
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
         strSql := GetSortSQL;
         if strSql='' then Exit;
-        adoReport3.CommandText := strSql;
+        adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
         if strSql='' then Exit;
-        adoReport4.CommandText := strSql;
+        adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
       end;
     4: begin //按商品流水帐
         if adoReport5.Active then adoReport5.Close;
         strSql := GetGlideSQL;
         if strSql='' then Exit;
-        adoReport5.CommandText := strSql;
+        adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
       end;
   end;
@@ -647,7 +646,6 @@ end;
 procedure TfrmStockDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-
  {
   if adoReport1.IsEmpty then Exit;
   P2_D1.Date := P1_D1.Date;

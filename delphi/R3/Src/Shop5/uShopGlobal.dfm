@@ -919,7 +919,7 @@ inherited ShopGlobal: TShopGlobal
       'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and COD' +
-        'E_TYPE='#39'12'#39
+        'E_TYPE='#39'6'#39
       'order  by  4')
     Params = <
       item

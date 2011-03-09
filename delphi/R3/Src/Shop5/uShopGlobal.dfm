@@ -189,8 +189,8 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select J.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
-        'ME,J.UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO' +
-        '_CALC,'
+        'ME,J.UNIT_ID as UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO' +
+        '_CALC,BIGTO_CALC,'
       
         '       case when C.NEW_INPRICE is null then J.NEW_INPRICE else C' +
         '.NEW_INPRICE end as NEW_INPRICE,'
@@ -265,7 +265,7 @@ inherited ShopGlobal: TShopGlobal
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
         'LL,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RATE,PRICE_ID'
       ' from VIW_CLIENTINFO '
-      'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'2'#39
+      'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'1'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')
     Params = <
       item
@@ -883,7 +883,7 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select '#39'#'#39' as SORT_ID,'#39#26080#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as SE' +
+        'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
         'Q_NO from CA_TENANT'
       'where TENANT_ID=:TENANT_ID'
       'union all'
@@ -912,7 +912,7 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select '#39'#'#39' as SORT_ID,'#39#26080#39' as SORT_NAME,'#39'W'#39' as SORT_SPELL,0 as SE' +
+        'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
         'Q_NO from CA_TENANT'
       'where TENANT_ID=:TENANT_ID'
       'union all'
@@ -929,6 +929,29 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 584
     Top = 168
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object STO_CHANGECODE: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select * from STO_CHANGECODE where TENANT_ID in (0,:TENANT_ID)  ' +
+        'and COMM not in ('#39'02'#39','#39'12'#39') order by CODE_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 40
+    Top = 480
     ParamData = <
       item
         DataType = ftUnknown

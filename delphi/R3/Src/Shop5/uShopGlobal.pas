@@ -46,6 +46,7 @@ type
     PUB_OCCUPATION_INFO: TZQuery;
     PUB_SHOP_TYPE: TZQuery;
     PUB_SETTLE_CODE: TZQuery;
+    STO_CHANGECODE: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

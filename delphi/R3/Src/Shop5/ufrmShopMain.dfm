@@ -6513,8 +6513,8 @@ inherited frmShopMain: TfrmShopMain
     end
   end
   inherited actList: TActionList
-    Left = 456
-    Top = 168
+    Left = 328
+    Top = 192
     object actfrmMeaUnits: TAction
       Tag = 32200001
       Caption = #21830#21697#21333#20301
@@ -6748,6 +6748,14 @@ inherited frmShopMain: TfrmShopMain
     object actfrmStorageInfo: TAction
       Tag = 14500001
       Caption = #26368#26032#24211#23384
+    end
+    object actfrmRckMng: TAction
+      Caption = #32467#36134#31649#29702
+      OnExecute = actfrmRckMngExecute
+    end
+    object actfrmChecktablePrint: TAction
+      Caption = #25171#21360#30424#28857
+      OnExecute = actfrmChecktablePrintExecute
     end
   end
   inherited PopupMenu: TPopupMenu

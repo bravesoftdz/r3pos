@@ -147,12 +147,13 @@ uses
   ObjTransOrder in 'Obj\ObjTransOrder.pas',
   ufrmDevFactory in 'App\ufrmDevFactory.pas' {frmDevFactory},
   ufrmIoroOrder in 'App\ufrmIoroOrder.pas' {frmIoroOrder},
-  ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList},
+  ufrmRckMng in 'App\ufrmRckMng.pas' {frmRckMng},
   ufrmCheckTablePrint in 'App\ufrmCheckTablePrint.pas',
   ufrmClientSort in 'App\ufrmClientSort.pas' {frmClientSort},
   ufrmTicketPrint in 'App\ufrmTicketPrint.pas' {frmTicketPrint},
   uframeBaseReport in 'Frame\uframeBaseReport.pas' {frameBaseReport},
-  uframeFindDialog in 'Frame\uframeFindDialog.pas' {frameFindDialog};
+  uframeFindDialog in 'Frame\uframeFindDialog.pas' {frameFindDialog},
+  ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList};
 
 {$R *.res}
 var

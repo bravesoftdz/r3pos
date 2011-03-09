@@ -220,6 +220,8 @@ type
     actfrmIntfSetup: TAction;
     CA_MODULE: TZQuery;
     actfrmStorageInfo: TAction;
+    actfrmRckMng: TAction;
+    actfrmChecktablePrint: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -285,6 +287,8 @@ type
       var Accept: Boolean);
     procedure actfrmIoroOrderList1Execute(Sender: TObject);
     procedure actfrmIoroOrderList2Execute(Sender: TObject);
+    procedure actfrmChecktablePrintExecute(Sender: TObject);
+    procedure actfrmRckMngExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -333,7 +337,7 @@ uses
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
-  ufrmIoroOrderList;
+  ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -1644,6 +1648,8 @@ begin
        Form := TfrmCheckOrderList.Create(self);
        AddFrom(Form);
      end;
+  // Add 
+  TfrmCheckOrderList(Form).DoCheckPrint:=actfrmChecktablePrintExecute;     
   Form.Show;
   Form.BringToFront;
 end;
@@ -1823,6 +1829,52 @@ begin
        AddFrom(Form);
 //       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
      end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmChecktablePrintExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmCheckTablePrint);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmCheckTablePrint.Create(self);
+    AddFrom(Form);
+  end;
+  if Sender is TRecord_ then
+    TfrmCheckTablePrint(Form).DoOpenDefaultData(TRecord_(Sender));
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmRckMngExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRckMng);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRckMng.Create(self);
+    AddFrom(Form);
+  end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;

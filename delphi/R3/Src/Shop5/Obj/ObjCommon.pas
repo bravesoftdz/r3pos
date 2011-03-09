@@ -402,8 +402,8 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'select max(END_DATE) from ('+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then

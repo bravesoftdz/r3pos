@@ -7,10 +7,10 @@ inherited frmChangeOrder: TfrmChangeOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 780
-    Height = 502
+    Width = 772
+    Height = 491
     inherited RzPanel2: TRzPanel
-      Width = 770
+      Width = 762
       Height = 81
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -208,8 +208,8 @@ inherited frmChangeOrder: TfrmChangeOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 424
-      Width = 770
+      Top = 413
+      Width = 762
       Height = 35
       TabOrder = 2
       object Label8: TLabel
@@ -272,8 +272,8 @@ inherited frmChangeOrder: TfrmChangeOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 119
-      Width = 770
-      Height = 305
+      Width = 762
+      Height = 294
       TabOrder = 3
       Columns = <
         item
@@ -402,15 +402,15 @@ inherited frmChangeOrder: TfrmChangeOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 86
-      Width = 770
+      Width = 762
     end
     inherited stbHint: TRzPanel
-      Top = 459
-      Width = 770
+      Top = 448
+      Width = 762
     end
     inherited rzHelp: TRzPanel
-      Top = 483
-      Width = 770
+      Top = 472
+      Width = 762
       Height = 14
     end
   end

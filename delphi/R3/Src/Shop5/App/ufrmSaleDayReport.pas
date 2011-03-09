@@ -13,7 +13,6 @@ uses
 
 type
   TfrmSaleDayReport = class(TframeBaseReport)
-    drpStatInfo: TADODataSet;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -32,7 +31,6 @@ type
     P2_D2: TcxDateEdit;
     RzPanel10: TRzPanel;
     DBGridEh2: TDBGridEh;
-    adoReport2: TADODataSet;
     dsadoReport2: TDataSource;
     RzPanel6: TRzPanel;
     Panel3: TPanel;
@@ -44,7 +42,6 @@ type
     RzBitBtn2: TRzBitBtn;
     RzPanel12: TRzPanel;
     DBGridEh3: TDBGridEh;
-    adoReport3: TADODataSet;
     dsadoReport3: TDataSource;
     RzPanel13: TRzPanel;
     Panel6: TPanel;
@@ -56,7 +53,6 @@ type
     RzBitBtn3: TRzBitBtn;
     RzPanel15: TRzPanel;
     DBGridEh4: TDBGridEh;
-    adoReport4: TADODataSet;
     RzPanel16: TRzPanel;
     Panel7: TPanel;
     RzPanel17: TRzPanel;
@@ -67,7 +63,6 @@ type
     RzPanel18: TRzPanel;
     dsadoReport4: TDataSource;
     P5_D2: TcxDateEdit;
-    adoReport5: TADODataSet;
     dsadoReport5: TDataSource;
     Label41: TLabel;
     Label6: TLabel;
@@ -78,17 +73,17 @@ type
     fndP1_UNIT_ID: TcxComboBox;
     fndP1_STAT_ID: TzrComboBoxList;
     fndP1_SORT_ID: TcxButtonEdit;
-    cxComboBox1: TcxComboBox;
-    zrComboBoxList3: TzrComboBoxList;
-    cxRadioButton1: TcxRadioButton;
-    cxRadioButton2: TcxRadioButton;
-    cxRadioButton3: TcxRadioButton;
-    cxRadioButton4: TcxRadioButton;
+    fndP1_SHOP_TYPE: TcxComboBox;
+    fndP1_SHOP_VALUE: TzrComboBoxList;
+    fndP1_ALL: TcxRadioButton;
+    fndP1_SALEORDER: TcxRadioButton;
+    fndP1_POSMAIN: TcxRadioButton;
+    fndP1_SALRETU: TcxRadioButton;
     Label10: TLabel;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
-    fndP2_REGION_ID: TzrComboBoxList;
+    fndP2_SHOP_VALUE: TzrComboBoxList;
     RzBitBtn1: TRzBitBtn;
     fndP2_TYPE_ID: TcxComboBox;
     fndP2_UNIT_ID: TcxComboBox;
@@ -96,10 +91,10 @@ type
     fndP2_SORT_ID: TcxButtonEdit;
     fndP2_SHOP_TYPE: TcxComboBox;
     Label3: TLabel;
-    cxRadioButton5: TcxRadioButton;
-    cxRadioButton6: TcxRadioButton;
-    cxRadioButton7: TcxRadioButton;
-    cxRadioButton8: TcxRadioButton;
+    fndP2_ALL: TcxRadioButton;
+    fndP2_SALEORDER: TcxRadioButton;
+    fndP2_POSMAIN: TcxRadioButton;
+    fndP2_SALRETU: TcxRadioButton;
     Label9: TLabel;
     Label19: TLabel;
     Label20: TLabel;
@@ -107,13 +102,13 @@ type
     fndP3_COMP_ID: TzrComboBoxList;
     fndP3_TYPE_ID: TcxComboBox;
     fndP3_UNIT_ID: TcxComboBox;
-    zrComboBoxList4: TzrComboBoxList;
-    cxComboBox2: TcxComboBox;
+    fndP3_SHOP_VALUE: TzrComboBoxList;
+    fndP3_SHOP_TYPE: TcxComboBox;
     Label4: TLabel;
-    cxRadioButton9: TcxRadioButton;
-    cxRadioButton10: TcxRadioButton;
-    cxRadioButton11: TcxRadioButton;
-    cxRadioButton12: TcxRadioButton;
+    fndP3_ALL: TcxRadioButton;
+    fndP3_SALESORDER: TcxRadioButton;
+    fndP3_POSMAIN: TcxRadioButton;
+    fndP3_SALRETU: TcxRadioButton;
     Label21: TLabel;
     Label24: TLabel;
     Label25: TLabel;
@@ -123,32 +118,36 @@ type
     fndP4_UNIT_ID: TcxComboBox;
     fndP4_STAT_ID: TzrComboBoxList;
     fndP4_SORT_ID: TcxButtonEdit;
-    fndP4_COMP_ID: TzrComboBoxList;
-    zrComboBoxList1: TzrComboBoxList;
-    cxComboBox3: TcxComboBox;
+    fndP4_SHOP_VALUE: TzrComboBoxList;
+    fndP4_SHOP_TYPE: TcxComboBox;
     Label16: TLabel;
-    cxRadioButton13: TcxRadioButton;
-    cxRadioButton14: TcxRadioButton;
-    cxRadioButton15: TcxRadioButton;
-    cxRadioButton16: TcxRadioButton;
+    fndP4_ALL: TcxRadioButton;
+    fndP4_SALESORDER: TcxRadioButton;
+    fndP4_POSMAIN: TcxRadioButton;
+    fndP4_SALRETU: TcxRadioButton;
     DBGridEh5: TDBGridEh;
     Label17: TLabel;
     Label18: TLabel;
     Label22: TLabel;
     Label23: TLabel;
     Label28: TLabel;
-    cxComboBox4: TcxComboBox;
-    cxComboBox5: TcxComboBox;
-    zrComboBoxList2: TzrComboBoxList;
-    cxButtonEdit1: TcxButtonEdit;
-    zrComboBoxList5: TzrComboBoxList;
-    zrComboBoxList6: TzrComboBoxList;
-    cxComboBox6: TcxComboBox;
+    fndP5_TYPE_ID: TcxComboBox;
+    fndP5_UNIT_ID: TcxComboBox;
+    fndP5_STAT_ID: TzrComboBoxList;
+    fndP5_SORT_ID: TcxButtonEdit;
+    fndP5_SHOP_VALUE: TzrComboBoxList;
+    fndP5_SHOP_TYPE: TcxComboBox;
     Label29: TLabel;
-    cxRadioButton17: TcxRadioButton;
-    cxRadioButton18: TcxRadioButton;
-    cxRadioButton19: TcxRadioButton;
-    cxRadioButton20: TcxRadioButton;
+    fndP5_ALL: TcxRadioButton;
+    fndP5_SALESORDER: TcxRadioButton;
+    fndP5_POSMAIN: TcxRadioButton;
+    fndP5_SALRETU: TcxRadioButton;
+    fndP4_SHOP_ID: TzrComboBoxList;
+    fndP5_SHOP_ID: TzrComboBoxList;
+    adoReport2: TZQuery;
+    adoReport3: TZQuery;
+    adoReport4: TZQuery;
+    adoReport5: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
@@ -162,8 +161,6 @@ type
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
-    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
@@ -174,8 +171,15 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure fndP4_STAT_IDBeforeDropList(Sender: TObject);
     procedure fndP4_TYPE_IDPropertiesChange(Sender: TObject);
+    procedure fndP1_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP2_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP3_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP4_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP5_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
   private
-    sid1,sid2,sid4:string;
+    sid1,sid2,sid3,sid4,sid5:string;
+    srid1,srid2,srid3,srid4,srid5:string;
     //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店销售汇总表
@@ -194,7 +198,7 @@ type
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ufrmShowReckInfo, uframeTreeFindDialog;
+uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, uframeTreeFindDialog;
 {$R *.dfm}
 
 procedure TfrmSaleDayReport.FormCreate(Sender: TObject);
@@ -418,6 +422,7 @@ procedure TfrmSaleDayReport.fndP1_TYPE_IDPropertiesChange(
   Sender: TObject);
 begin
   inherited;
+  Add
   fndP1_STAT_ID.KeyValue := null;
   fndP1_STAT_ID.Text := '';
 end;
@@ -1154,31 +1159,12 @@ begin
   end;
 end;
 
-procedure TfrmSaleDayReport.fndP1_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
-begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid1 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP1_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
-end;
-
 procedure TfrmSaleDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
   sid1 := '';
+  srid1 := '';
   fndP1_SORT_ID.Text := '';
 end;
 
@@ -1187,6 +1173,7 @@ procedure TfrmSaleDayReport.fndP2_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid2 := '';
+  srid2 := '';
   fndP2_SORT_ID.Text := '';
 end;
 
@@ -1195,6 +1182,7 @@ procedure TfrmSaleDayReport.fndP4_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid4 := '';
+  srid4 := '';
   fndP4_SORT_ID.Text := '';
 end;
 
@@ -1264,6 +1252,80 @@ begin
   inherited;
   fndP4_STAT_ID.KeyValue := null;
   fndP4_STAT_ID.Text := '';
+
+end;
+
+procedure TfrmSaleDayReport.fndP1_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  case fndP1_SHOP_TYPE.ItemIndex of
+  0:fndP1_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
+  1:fndP1_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  end;
+  fndP1_SHOP_VALUE.KeyValue := null;
+  fndP1_SHOP_VALUE.Text := '';
+end;
+
+procedure TfrmSaleDayReport.fndP2_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  case fndP2_SHOP_TYPE.ItemIndex of
+  0:fndP2_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
+  1:fndP2_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  end;
+  fndP2_SHOP_VALUE.KeyValue := null;
+  fndP2_SHOP_VALUE.Text := '';
+
+end;
+
+procedure TfrmSaleDayReport.fndP3_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  case fndP3_SHOP_TYPE.ItemIndex of
+  0:fndP3_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
+  1:fndP3_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  end;
+  fndP3_SHOP_VALUE.KeyValue := null;
+  fndP3_SHOP_VALUE.Text := '';
+
+end;
+
+procedure TfrmSaleDayReport.fndP4_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  case fndP4_SHOP_TYPE.ItemIndex of
+  0:fndP4_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
+  1:fndP4_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  end;
+  fndP4_SHOP_VALUE.KeyValue := null;
+  fndP4_SHOP_VALUE.Text := '';
+
+end;
+
+procedure TfrmSaleDayReport.fndP5_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  case fndP5_SHOP_TYPE.ItemIndex of
+  0:fndP5_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
+  1:fndP5_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  end;
+  fndP5_SHOP_VALUE.KeyValue := null;
+  fndP5_SHOP_VALUE.Text := '';
+
+end;
+
+procedure TfrmSaleDayReport.fndP5_SORT_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  sid5 := '';
+  srid5 := '';
+  fndP5_SORT_ID.Text := '';
 
 end;
 

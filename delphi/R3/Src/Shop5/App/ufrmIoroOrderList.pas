@@ -69,8 +69,6 @@ type
     { Public declarations }
     IsEnd: boolean;
     MaxId:string;
-    IsEnd2: boolean;
-    MaxId2:string;
     pid:string;
     locked:boolean;
     procedure InitGrid;
@@ -193,7 +191,7 @@ begin
     rs.SQL.Text := EncodeSQL(Id,Str);
     Factor.Open(rs);
     rs.Last;
-    MaxId2 := rs.FieldbyName('IORO_ID').AsString;
+    MaxId := rs.FieldbyName('IORO_ID').AsString;
     if Id='' then
        begin
          rs.SaveToStream(sm);
@@ -205,7 +203,7 @@ begin
          rs.SaveToStream(sm);
          cdsBrowser.AddFromStream(sm);
        end;
-    if rs.RecordCount <600 then IsEnd2 := True else IsEnd2 := false;
+    if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
   finally
     cdsBrowser.EnableControls;
     sm.Free;

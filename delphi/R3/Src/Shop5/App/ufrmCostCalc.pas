@@ -58,6 +58,8 @@ type
     procedure CalcMth;
     //生成结账记录
     procedure ClseRck;
+    //计算账户台账
+    procedure CalcAcctMth;
     //核算单位
     property cid:string read Fid write Setid;
     //核算方式 1日加权移动平均 2月加权移平均 3先进先出
@@ -306,6 +308,8 @@ begin
     2:Calc2;
     end;
     CalcMth;
+    //月结时要算账户台账
+    if flag in [2] then CalcAcctMth;
     ClseRck;
   finally
     Factor.DBLock(false);
@@ -340,7 +344,7 @@ begin
          if isfirst and (b=1) then
             begin
               e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-              if e<=bDate+1 then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+              if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
             end
          else
             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
@@ -670,7 +674,7 @@ begin
          if isfirst and (b=1) then
             begin
               e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-              if e<=cDate+1 then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+              if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
             end
          else
             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
@@ -809,7 +813,7 @@ begin
              if isfirst and (b=1) then
                 begin
                   e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
-                  if e<=bDate+1 then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+                  if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
                 end
              else
                 e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
@@ -856,7 +860,7 @@ begin
   end;
 
   SQL :=
-  'if not exists (select * from sys.objects where object_id = OBJECT_ID(N''tempdb..'+tempTableName+''')) '+
+  'if OBJECT_ID(N''tempdb..'+tempTableName+''') is null '+
   'CREATE TABLE '+tempTableName+' ('+
   '	TENANT_ID int NOT NULL ,'+
   '	SHOP_ID varchar (11) NOT NULL ,'+
@@ -920,6 +924,56 @@ begin
   ')';
   Factor.ExecSQL(SQL); 
   Factor.ExecSQL('truncate table '+tempTableName); 
+end;
+
+procedure TfrmCostCalc.CalcAcctMth;
+var
+  i,b,bl:integer;
+  SQL:string;
+  e:TDate;
+begin
+  b := 1;
+  while true do
+  begin
+    if reck_flag=1 then
+       begin
+         if isfirst and (b=1) then
+            begin
+              e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,1))+'01')-1;
+              if e<(bDate+1) then e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate,2))+'01')-1;
+            end
+         else
+            e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,2))+'01')-1
+       end
+    else
+       e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
+
+    SQL := 'delete from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+formatDatetime('YYYYMM',e);
+    Factor.ExecSQL(SQL);
+    SQL :=
+      'insert into RCK_ACCT_MONTH('+
+      'TENANT_ID,SHOP_ID,MONTH,ACCOUNT_ID,'+
+      'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,COMM,TIME_STAMP '+
+      ') '+
+      'select '+
+      'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMM',e)+',ACCOUNT_ID,'+
+      'sum(ORG_MNY),sum(IN_MNY),sum(OUT_MNY),sum(ORG_MNY)+sum(IN_MNY)-sum(OUT_MNY),'+
+      '''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
+      'from('+
+      'select '+
+      'B.TENANT_ID,B.SHOP_ID,B.ACCOUNT_ID,'+
+      'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY '+
+      'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH='+formatDatetime('YYYYMM',incmonth(e,-1))+') A on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+      'union all '+
+      'select '+
+      'TENANT_ID,SHOP_ID,ACCOUNT_ID,'+
+      '0 as ORG_MNY,IN_MNY,OUT_MNY,0 as BAL_MNY '+
+      'from VIW_ACCT_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
+      ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
+    Factor.ExecSQL(SQL);
+    if e>=eDate then break;
+    b := b +round(e-(bDate+b))+1;
+  end;
 end;
 
 end.

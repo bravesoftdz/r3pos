@@ -1,20 +1,20 @@
 inherited frmSaleDayReport: TfrmSaleDayReport
-  Left = 148
-  Top = 86
-  Width = 1011
-  Height = 657
+  Left = 121
+  Top = 140
+  Width = 913
+  Height = 586
   Caption = #21830#21697#38144#21806#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 995
-    Height = 589
+    Width = 897
+    Height = 518
     inherited RzPanel2: TRzPanel
-      Width = 985
-      Height = 579
+      Width = 887
+      Height = 508
       inherited RzPage: TRzPageControl
-        Width = 780
-        Height = 573
+        Width = 682
+        Height = 502
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           Color = clCream
           Caption = #22320#21306#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 778
-            Height = 546
+            Width = 680
+            Height = 475
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 768
-              Height = 536
+              Width = 670
+              Height = 465
               inherited w1: TRzPanel
-                Width = 768
+                Width = 670
                 Height = 105
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -203,23 +203,22 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
                   TabOrder = 6
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
-                object cxComboBox1: TcxComboBox
+                object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  Properties.OnChange = fndP1_SHOP_TYPEPropertiesChange
                   TabOrder = 7
                 end
-                object zrComboBoxList3: TzrComboBoxList
+                object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -261,7 +260,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxRadioButton1: TcxRadioButton
+                object fndP1_ALL: TcxRadioButton
                   Left = 80
                   Top = 79
                   Width = 57
@@ -271,7 +270,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object cxRadioButton2: TcxRadioButton
+                object fndP1_SALEORDER: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -279,7 +278,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38144#21806#21333
                   TabOrder = 10
                 end
-                object cxRadioButton3: TcxRadioButton
+                object fndP1_POSMAIN: TcxRadioButton
                   Left = 200
                   Top = 79
                   Width = 57
@@ -287,7 +286,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38646#21806#21333
                   TabOrder = 11
                 end
-                object cxRadioButton4: TcxRadioButton
+                object fndP1_SALRETU: TcxRadioButton
                   Left = 264
                   Top = 79
                   Width = 57
@@ -298,11 +297,11 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 105
-                Width = 768
-                Height = 431
+                Width = 670
+                Height = 360
                 inherited DBGridEh1: TDBGridEh
-                  Width = 764
-                  Height = 427
+                  Width = 666
+                  Height = 356
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -413,8 +412,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 778
-            Height = 546
+            Width = 680
+            Height = 475
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -422,8 +421,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 768
-              Height = 536
+              Width = 670
+              Height = 465
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -431,7 +430,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 768
+                Width = 670
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -504,7 +503,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
-                object fndP2_REGION_ID: TzrComboBoxList
+                object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 31
@@ -663,12 +662,12 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  Properties.OnChange = fndP2_SHOP_TYPEPropertiesChange
                   TabOrder = 8
                 end
-                object cxRadioButton5: TcxRadioButton
+                object fndP2_ALL: TcxRadioButton
                   Left = 80
                   Top = 79
                   Width = 57
@@ -678,7 +677,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object cxRadioButton6: TcxRadioButton
+                object fndP2_SALEORDER: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -686,7 +685,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38144#21806#21333
                   TabOrder = 10
                 end
-                object cxRadioButton7: TcxRadioButton
+                object fndP2_POSMAIN: TcxRadioButton
                   Left = 200
                   Top = 79
                   Width = 57
@@ -694,7 +693,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38646#21806#21333
                   TabOrder = 11
                 end
-                object cxRadioButton8: TcxRadioButton
+                object fndP2_SALRETU: TcxRadioButton
                   Left = 264
                   Top = 79
                   Width = 57
@@ -706,8 +705,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 768
-                Height = 432
+                Width = 670
+                Height = 361
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -715,8 +714,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 764
-                  Height = 428
+                  Width = 666
+                  Height = 357
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -865,8 +864,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 778
-            Height = 546
+            Width = 680
+            Height = 475
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -874,8 +873,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 768
-              Height = 536
+              Width = 670
+              Height = 465
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -883,7 +882,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 768
+                Width = 670
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1049,7 +1048,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     #21253#35013'2')
                   TabOrder = 5
                 end
-                object zrComboBoxList4: TzrComboBoxList
+                object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1091,19 +1090,19 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox2: TcxComboBox
+                object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  Properties.OnChange = fndP3_SHOP_TYPEPropertiesChange
                   TabOrder = 7
                 end
-                object cxRadioButton9: TcxRadioButton
+                object fndP3_ALL: TcxRadioButton
                   Left = 80
                   Top = 79
                   Width = 57
@@ -1113,7 +1112,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 8
                   TabStop = True
                 end
-                object cxRadioButton10: TcxRadioButton
+                object fndP3_SALESORDER: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -1121,7 +1120,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38144#21806#21333
                   TabOrder = 9
                 end
-                object cxRadioButton11: TcxRadioButton
+                object fndP3_POSMAIN: TcxRadioButton
                   Left = 200
                   Top = 79
                   Width = 57
@@ -1129,7 +1128,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Caption = #38646#21806#21333
                   TabOrder = 10
                 end
-                object cxRadioButton12: TcxRadioButton
+                object fndP3_SALRETU: TcxRadioButton
                   Left = 264
                   Top = 79
                   Width = 57
@@ -1141,8 +1140,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 768
-                Height = 432
+                Width = 670
+                Height = 361
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1151,8 +1150,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 764
-                  Height = 428
+                  Width = 666
+                  Height = 357
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1216,7 +1215,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       FieldName = 'SORT_NAME'
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
-                      Width = 209
+                      Width = 185
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -1301,8 +1300,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 778
-            Height = 546
+            Width = 680
+            Height = 475
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1310,8 +1309,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 768
-              Height = 536
+              Width = 670
+              Height = 465
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1319,7 +1318,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 768
+                Width = 670
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1509,49 +1508,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 6
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
-                object fndP4_COMP_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 80
-                  Top = 54
-                  Width = 193
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 7
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object zrComboBoxList1: TzrComboBoxList
+                object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1563,7 +1520,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1593,58 +1550,100 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox3: TcxComboBox
+                object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
-                  TabOrder = 9
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  Properties.OnChange = fndP4_SHOP_TYPEPropertiesChange
+                  TabOrder = 8
                 end
-                object cxRadioButton13: TcxRadioButton
+                object fndP4_ALL: TcxRadioButton
                   Left = 80
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #20840#37096
                   Checked = True
-                  TabOrder = 10
+                  TabOrder = 9
                   TabStop = True
                 end
-                object cxRadioButton14: TcxRadioButton
+                object fndP4_SALESORDER: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #38144#21806#21333
-                  TabOrder = 11
+                  TabOrder = 10
                 end
-                object cxRadioButton15: TcxRadioButton
+                object fndP4_POSMAIN: TcxRadioButton
                   Left = 200
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #38646#21806#21333
-                  TabOrder = 12
+                  TabOrder = 11
                 end
-                object cxRadioButton16: TcxRadioButton
+                object fndP4_SALRETU: TcxRadioButton
                   Left = 264
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #36864#36135#21333
+                  TabOrder = 12
+                end
+                object fndP4_SHOP_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 54
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 13
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = []
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 768
-                Height = 407
+                Width = 670
+                Height = 336
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1652,8 +1651,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 764
-                  Height = 403
+                  Width = 666
+                  Height = 332
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1809,8 +1808,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 778
-            Height = 546
+            Width = 680
+            Height = 475
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1818,8 +1817,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 768
-              Height = 536
+              Width = 670
+              Height = 465
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1827,7 +1826,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 768
+                Width = 670
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1851,14 +1850,14 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object Label17: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label18: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -1935,7 +1934,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
-                object cxComboBox4: TcxComboBox
+                object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
                   Top = 76
                   Width = 73
@@ -1947,7 +1946,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
-                object cxComboBox5: TcxComboBox
+                object fndP5_UNIT_ID: TcxComboBox
                   Left = 344
                   Top = 76
                   Width = 121
@@ -1959,7 +1958,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     #21253#35013'2')
                   TabOrder = 4
                 end
-                object zrComboBoxList2: TzrComboBoxList
+                object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 76
@@ -2003,9 +2002,9 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
-                object cxButtonEdit1: TcxButtonEdit
+                object fndP5_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 54
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -2016,51 +2015,9 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
                   TabOrder = 6
-                  OnKeyPress = fndP4_SORT_IDKeyPress
+                  OnKeyPress = fndP5_SORT_IDKeyPress
                 end
-                object zrComboBoxList5: TzrComboBoxList
-                  Tag = -1
-                  Left = 80
-                  Top = 54
-                  Width = 193
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 7
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMP_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object zrComboBoxList6: TzrComboBoxList
+                object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -2072,7 +2029,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2102,58 +2059,100 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox6: TcxComboBox
+                object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
-                  TabOrder = 9
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  Properties.OnChange = fndP5_SHOP_TYPEPropertiesChange
+                  TabOrder = 8
                 end
-                object cxRadioButton17: TcxRadioButton
+                object fndP5_ALL: TcxRadioButton
                   Left = 80
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #20840#37096
                   Checked = True
-                  TabOrder = 10
+                  TabOrder = 9
                   TabStop = True
                 end
-                object cxRadioButton18: TcxRadioButton
+                object fndP5_SALESORDER: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #38144#21806#21333
-                  TabOrder = 11
+                  TabOrder = 10
                 end
-                object cxRadioButton19: TcxRadioButton
+                object fndP5_POSMAIN: TcxRadioButton
                   Left = 200
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #38646#21806#21333
-                  TabOrder = 12
+                  TabOrder = 11
                 end
-                object cxRadioButton20: TcxRadioButton
+                object fndP5_SALRETU: TcxRadioButton
                   Left = 264
                   Top = 103
                   Width = 57
                   Height = 17
                   Caption = #36864#36135#21333
+                  TabOrder = 12
+                end
+                object fndP5_SHOP_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 80
+                  Top = 54
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
                   TabOrder = 13
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = []
+                  DropListStyle = lsFixed
+                  MultiSelect = False
                 end
               end
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 768
-                Height = 407
+                Width = 670
+                Height = 336
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2161,8 +2160,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 764
-                  Height = 403
+                  Width = 666
+                  Height = 332
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2373,16 +2372,16 @@ inherited frmSaleDayReport: TfrmSaleDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 783
-        Height = 573
+        Left = 685
+        Height = 502
         inherited Panel2: TPanel
-          Height = 534
+          Height = 463
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 419
+            Height = 348
             inherited rzShowColumns: TRzCheckList
-              Height = 415
+              Height = 344
             end
           end
         end
@@ -2390,15 +2389,15 @@ inherited frmSaleDayReport: TfrmSaleDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 995
+    Width = 897
     inherited Image1: TImage
-      Width = 476
+      Width = 378
     end
     inherited Image14: TImage
-      Left = 986
+      Left = 888
     end
     inherited Image3: TImage
-      Width = 476
+      Width = 378
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2451,44 +2450,52 @@ inherited frmSaleDayReport: TfrmSaleDayReport
     Left = 182
     Top = 205
   end
-  object adoReport2: TADODataSet
-    Parameters = <>
-    Left = 89
-    Top = 321
-  end
   object dsadoReport2: TDataSource
     DataSet = adoReport2
     Left = 89
     Top = 354
-  end
-  object adoReport3: TADODataSet
-    Parameters = <>
-    Left = 137
-    Top = 321
   end
   object dsadoReport3: TDataSource
     DataSet = adoReport3
     Left = 137
     Top = 354
   end
-  object adoReport4: TADODataSet
-    Parameters = <>
-    Left = 185
-    Top = 321
-  end
   object dsadoReport4: TDataSource
     DataSet = adoReport4
     Left = 185
     Top = 354
   end
-  object adoReport5: TADODataSet
-    Parameters = <>
-    Left = 233
-    Top = 321
-  end
   object dsadoReport5: TDataSource
     DataSet = adoReport5
     Left = 233
     Top = 354
+  end
+  object adoReport2: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 89
+    Top = 321
+  end
+  object adoReport3: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 137
+    Top = 321
+  end
+  object adoReport4: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 185
+    Top = 321
+  end
+  object adoReport5: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 233
+    Top = 321
   end
 end

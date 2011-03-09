@@ -37,7 +37,6 @@ type
     TabSheet2: TRzTabSheet;
     RzPanel3: TRzPanel;
     RzLabel8: TRzLabel;
-    edtSETTLE_CODE: TcxComboBox;
     RzLabel22: TRzLabel;
     edtSHOP_ID: TzrComboBoxList;
     RzLabel9: TRzLabel;
@@ -68,6 +67,7 @@ type
     RzLabel23: TRzLabel;
     edtLICENSE_CODE: TcxTextEdit;
     edtBANK_ID: TcxComboBox;
+    edtSETTLE_CODE: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -79,6 +79,7 @@ type
     procedure edtSORT_IDSaveValue(Sender: TObject);
     procedure edtCLIENT_TYPEPropertiesChange(Sender: TObject);
     procedure edtREGION_IDAddClick(Sender: TObject);
+    procedure edtSETTLE_CODEAddClick(Sender: TObject);
   private
     ccid:string;
     { Private declarations }
@@ -87,7 +88,6 @@ type
     Saved,locked:boolean;
     Aobj:TRecord_;
     DefInvFlag:integer;
-    procedure IniComb;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -111,13 +111,14 @@ begin
   edtCLIENT_CODE.Text:='自动编号..';
   edtCLIENT_CODE.SelectAll;
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
-  edtSETTLE_CODE.ItemIndex:=0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='无';
   edtREGION_ID.KeyValue:='#';
   edtREGION_ID.Text:='无';
+  edtSETTLE_CODE.KeyValue:='#';
+  edtSETTLE_CODE.Text:='无';
 end;
 
 procedure TfrmSupplierInfo.Edit(code: string);
@@ -180,7 +181,7 @@ begin
      raise Exception.Create('地区不能为空！');
   end;
 
-  if edtSETTLE_CODE.ItemIndex = -1 then
+  if trim(edtSETTLE_CODE.Text) = '' then
     begin
       if edtSETTLE_CODE.CanFocus then edtSETTLE_CODE.SetFocus;
       Raise Exception.Create('结算方式不能为空！');
@@ -254,8 +255,9 @@ begin
   edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtSETTLE_CODE.DataSet := Global.GetZQueryFromName('PUB_SETTLE_CODE');
+
   AddCbxPickList(edtBANK_ID,'',Global.GetZQueryFromName('PUB_BANK_INFO'));
-  IniComb;
 end;
 
 procedure TfrmSupplierInfo.FormDestroy(Sender: TObject);
@@ -300,7 +302,7 @@ begin
 end;
 
 procedure TfrmSupplierInfo.Btn_SaveClick(Sender: TObject);
-var i,j:integer;
+var i:integer;
     SORT_id,REGION_ID,SORT_NAME,REGION_NAME:string;
     bl:Boolean;
 begin
@@ -314,7 +316,6 @@ begin
     begin
       //保存继续新增前的单位类别、地区等等
       i:=edtINVOICE_Flag.ItemIndex;
-      j:=edtSETTLE_CODE.ItemIndex;
       SORT_ID:=edtSORT_ID.KeyValue;
       SORT_NAME:=edtSORT_ID.Text;
       REGION_ID:=edtREGION_ID.KeyValue;
@@ -323,7 +324,6 @@ begin
       Append;
       //继续新增后,把保存的单位类别、地区等赋值
       edtINVOICE_Flag.ItemIndex:=i;
-      edtSETTLE_CODE.ItemIndex:=j;
       edtSORT_ID.KeyValue:=SORT_ID;
       edtSORT_ID.Text:=SORT_NAME;
       edtREGION_ID.KeyValue:=REGION_ID;
@@ -382,15 +382,16 @@ begin
 end;
 
 procedure TfrmSupplierInfo.edtSORT_IDAddClick(Sender: TObject);
-var Aobj:TRecord_;
+var AObj:TRecord_;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,AObj) then
+    if TfrmCodeInfo.AddDialog(self,AObj,9) then
        begin
-         edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
+         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
        end;
   finally
     AObj.Free;
@@ -480,40 +481,33 @@ procedure TfrmSupplierInfo.edtREGION_IDAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  {AObj := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
   try
-    if TfrmREGION.AddDialog(self,AObj) then
+    if TfrmCodeInfo.AddDialog(self,AObj,8) then
        begin
          edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
          edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
        end;
   finally
     AObj.Free;
-  end; }
+  end;
 end;
 
-procedure TfrmSupplierInfo.IniComb;
-var
-  Tmp: TZQuery;
-  Aobj_: TRecord_;
+procedure TfrmSupplierInfo.edtSETTLE_CODEAddClick(Sender: TObject);
+var AObj:TRecord_;
 begin
+  inherited;
+  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
   try
-    Tmp := TZQuery.Create(nil);
-    Tmp.Close;
-    Tmp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
-    Factor.Open(Tmp);
-    if not Tmp.IsEmpty then ClearCbxPickList(edtSETTLE_CODE);
-    Tmp.First;
-    while not Tmp.Eof do
-      begin
-        AObj_ := TRecord_.Create;
-        AObj_.ReadFromDataSet(Tmp);
-        edtSETTLE_CODE.Properties.Items.AddObject(Tmp.FieldbyName('CODE_NAME').AsString,AObj_);
-        Tmp.Next;
-      end;
-
+    if TfrmCodeInfo.AddDialog(self,AObj,6) then
+       begin
+         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
+         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+       end;
   finally
-    //Tmp.Free;
+    AObj.Free;
   end;
 end;
 

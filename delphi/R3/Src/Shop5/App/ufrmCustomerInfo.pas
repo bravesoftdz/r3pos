@@ -127,6 +127,8 @@ type
     procedure cmbINTEGRALKeyPress(Sender: TObject; var Key: Char);
     procedure cmbMOVE_TELEKeyPress(Sender: TObject; var Key: Char);
     procedure edtSORT_IDAddClick(Sender: TObject);
+    procedure cmbSHOP_IDAddClick(Sender: TObject);
+    procedure edtREGION_IDAddClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -146,7 +148,7 @@ type
 
 
 implementation
-uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,
+uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrmshopinfo,
   Math, ufrmBasic;
 
 {$R *.dfm}
@@ -567,7 +569,8 @@ procedure TfrmCustomerInfo.cmbPRICE_IDAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
- AObj := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
   try
     if TfrmPriceGradeInfo.AddDialog(self,AObj) then
        begin
@@ -691,12 +694,47 @@ procedure TfrmCustomerInfo.edtSORT_IDAddClick(Sender: TObject);
 var Aobj:TRecord_;
 begin
   inherited;
- AObj := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
   try
     if TfrmCodeInfo.AddDialog(self,AObj) then
        begin
          edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
          edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmCustomerInfo.cmbSHOP_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
+  try
+    if TfrmShopInfo.AddDialog(self,AObj) then
+       begin
+         cmbSHOP_ID.KeyValue := AObj.FieldbyName('SHOP_ID').asString;
+         cmbSHOP_ID.Text := AObj.FieldbyName('SHOP_NAME').asString;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmCustomerInfo.edtREGION_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
+  try
+    if TfrmCodeInfo.AddDialog(self,AObj,8) then
+       begin
+         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
+         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
        end;
   finally
     AObj.Free;

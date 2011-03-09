@@ -330,7 +330,7 @@ inherited frmCustomer: TfrmCustomer
                 AutoFitColWidth = True
                 ShowButton = False
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end

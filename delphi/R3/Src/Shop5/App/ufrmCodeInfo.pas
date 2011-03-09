@@ -54,6 +54,9 @@ type
     FCode_type: Integer;
     procedure SetFlag(const Value: integer);
     procedure SetCode_type(const Value: Integer);
+    procedure SetdbState(const Value: TDataSetState);
+  protected
+    function CheckCanExport:boolean;    
     { Private declarations }
   public
     procedure RefreshTable;
@@ -303,8 +306,6 @@ end;
 class function TfrmCodeInfo.AddDialog(Owner: TForm;
   var AObj: TRecord_;CODETYPE:Integer): boolean;
 begin
-   //if (not ShopGlobal.GetIsCompany(Global.UserID))  then raise Exception.Create('不是总店，不能编辑本模块!');
-   if not ShopGlobal.GetChkRight('400004') then Raise Exception.Create('你没有编辑本模块的权限,请和管理员联系.');
    with TfrmCodeInfo.Create(Owner) do
     begin
       try
@@ -347,14 +348,8 @@ begin
     btnAppend.Enabled:=False;
     btnSave.Enabled:=False;
     btnDelete.Enabled:=False;
-  end;
-  if not ShopGlobal.GetChkRight('400004') then
-  begin
-    DBGridEh1.ReadOnly:=True;
-    btnAppend.Enabled:=False;
-    btnSave.Enabled:=False;
-    btnDelete.Enabled:=False;
   end;}
+
 end;
 
 procedure TfrmCodeInfo.CtrlUpExecute(Sender: TObject);
@@ -461,25 +456,25 @@ begin
   if (ssCtrl in Shift) and  (Key=VK_UP) then
   begin
     Key:=0;
-    if (not IsCompany) or (not ShopGlobal.GetChkRight('400004')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlUpExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_DOWN) then
   begin
     Key:=0;
-    if (not IsCompany) or (not ShopGlobal.GetChkRight('400004')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlDownExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_HOME) then
   begin
     Key:=0;
-    if (not IsCompany) or (not ShopGlobal.GetChkRight('400004')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlHomeExecute(nil);
   end;
   if (ssCtrl in Shift) and  (Key=VK_END) then
   begin
     Key:=0;
-    if (not IsCompany) or (not ShopGlobal.GetChkRight('400004')) then exit;
+    if dbState = dsBrowse then exit;
     CtrlEndExecute(nil);
   end;
 end;
@@ -551,6 +546,7 @@ begin
     6: Str_Table := 'PUB_SETTLE_CODE';
     7: Str_Table := 'PUB_BANK_INFO';
     8: Str_Table := 'PUB_REGION_INFO';
+    9: Str_Table := 'PUB_SUPPERSORT';
     11: Str_Table := 'PUB_IDNTYPE_INFO';
     12: Str_Table := 'PUB_SHOP_TYPE';
     13: Str_Table := 'PUB_MONTH_PAY_INFO';
@@ -558,6 +554,22 @@ begin
     15: Str_Table := 'PUB_OCCUPATION_INFO';
   end;
   if Str_Table<>'' then Global.RefreshTable(Str_Table);
+end;
+
+procedure TfrmCodeInfo.SetdbState(const Value: TDataSetState);
+begin
+  if dbState = dsBrowse then
+    begin
+      DBGridEh1.ReadOnly:=True;
+      btnAppend.Enabled:=False;
+      btnSave.Enabled:=False;
+      btnDelete.Enabled:=False;
+    end;
+end;
+
+function TfrmCodeInfo.CheckCanExport: boolean;
+begin
+  Result := True;
 end;
 
 end.

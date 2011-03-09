@@ -56,11 +56,13 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断账户资料是否有修改
     procedure SetdbState(const Value: TDataSetState); override;    
     class function AddDialog(Owner:TForm;var _AObj:TRecord_):boolean;
+    class function EditDialog(Owner:TForm;ID:String;var _AObj:TRecord_):boolean;
+    class function ShowDialog(Owner:TForm;ID:String):Boolean;
     { Public declarations }
   end;
 
 implementation
-uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uShopGlobal;
+uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uShopGlobal,ufrmAccount;
 {$R *.dfm}
 
 { TfrmAccountInfo }
@@ -291,13 +293,18 @@ end;
 class function TfrmAccountInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
   with TfrmAccountInfo.Create(Owner) do
     begin
       try
         Append;
-        result := (ShowModal=MROK);
-        if result then
-           AObj.CopyTo(_AObj);
+        if ShowModal=MROK then
+        begin
+          AObj.CopyTo(_AObj);
+          result :=True;
+        end
+        else
+          result :=False;
       finally
         free;
       end;
@@ -321,6 +328,43 @@ begin
     begin
       StrToFloatDef(Trim(edtORG_MNY.Text),0);
       edtBALANCE.Text := floattostr(StrtoFloatDef(edtORG_MNY.Text,0)+StrtoFloatDef(edtIN_MNY.Text,0)-StrtoFloatDef(edtOUT_MNY.Text,0));
+    end;
+end;
+
+class function TfrmAccountInfo.EditDialog(Owner: TForm; ID: String;
+  var _AObj: TRecord_): boolean;
+begin
+  if not ShopGlobal.GetChkRight('21100001',3) then Raise Exception.Create('你没有修改账户的权限,请和管理员联系.');
+  with TfrmAccountInfo.Create(Owner) do
+    begin
+      try
+        //要检查权限
+        Edit(ID);
+        if ShowModal=MROK then
+        begin
+          AObj.CopyTo(_AObj);
+          result :=True;
+        end
+        else
+          result :=False;
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmAccountInfo.ShowDialog(Owner: TForm;
+  ID: String): Boolean;
+begin
+  with TfrmAccountInfo.Create(Owner) do
+    begin
+      try
+        //要检查权限
+        Open(ID);
+        ShowModal;
+      finally
+        free;
+      end;
     end;
 end;
 

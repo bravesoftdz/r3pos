@@ -57,6 +57,7 @@ type
     { Private declarations }
   protected
     procedure SetdbState(const Value: TDataSetState);
+    function CheckCanExport:boolean;
   public
     procedure RefreshTable;
     procedure Open;
@@ -542,11 +543,19 @@ end;
 
 procedure TfrmGoodssort.SetdbState(const Value: TDataSetState);
 begin
-    inherited;
-    DBGridEh1.ReadOnly:=True;
-    btnAppend.Enabled:=False;
-    btnSave.Enabled:=False;
-    btnDelete.Enabled:=False;
+  inherited;
+  if dbState = dsBrowse then
+    begin
+      DBGridEh1.ReadOnly:=True;
+      btnAppend.Enabled:=False;
+      btnSave.Enabled:=False;
+      btnDelete.Enabled:=False;
+    end;
+end;
+
+function TfrmGoodssort.CheckCanExport: boolean;
+begin
+  Result := ShopGlobal.GetChkRight('32300001',6);
 end;
 
 end.

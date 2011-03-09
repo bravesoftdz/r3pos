@@ -301,11 +301,6 @@ end;
 procedure TfrmClient.FormCreate(Sender: TObject);
 begin
   inherited;
-  {ccid:=ShopGlobal.GetCOMP_ID(Global.UserID);
-  if (ShopGlobal.GetIsCompany(Global.UserID)) and  (ccid<>Global.CompanyID) then
-    ccid:=ccid
-  else
-    ccid:=Global.CompanyID; }
   InitGrid;
   fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   TDbGridEhSort.InitForm(self);

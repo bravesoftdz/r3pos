@@ -51,7 +51,8 @@ type
     procedure SetFlag(const Value: integer);
     { Private declarations }
   protected
-    procedure SetdbState(const Value: TDataSetState);  
+    procedure SetdbState(const Value: TDataSetState);
+    function CheckCanExport:boolean;    
   public
     procedure Open;
     procedure Save;
@@ -489,6 +490,11 @@ begin
       btnSave.Enabled:=False;
       btnDelete.Enabled:=False;
     end;
+end;
+
+function TfrmMeaUnits.CheckCanExport: boolean;
+begin
+  Result := ShopGlobal.GetChkRight('32200001',6);
 end;
 
 end.

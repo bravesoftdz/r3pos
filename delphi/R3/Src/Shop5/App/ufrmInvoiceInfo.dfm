@@ -433,9 +433,10 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       DropHeight = 130
       ShowTitle = True
       AutoFitColWidth = True
+      OnAddClick = edtSHOP_IDAddClick
       ShowButton = True
       LocateStyle = lsDark
-      Buttons = []
+      Buttons = [zbNew]
       DropListStyle = lsFixed
       MultiSelect = False
     end

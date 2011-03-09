@@ -83,6 +83,7 @@ end;
 procedure TfrmAccount.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('21100001',1) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   cdsBrowser.Close;
   cdsBrowser.SQL.Text :='select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
   'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID;

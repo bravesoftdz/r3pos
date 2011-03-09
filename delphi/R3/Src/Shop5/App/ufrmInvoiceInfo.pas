@@ -53,6 +53,7 @@ type
     procedure edtENDED_NOPropertiesChange(Sender: TObject);
     procedure edtCANCEL_AMTPropertiesChange(Sender: TObject);
     procedure edtUSING_AMTPropertiesChange(Sender: TObject);
+    procedure edtSHOP_IDAddClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -73,7 +74,7 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, uShopGlobal;
+uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, uShopGlobal ,ufrmShopInfo;
 {$R *.dfm}
 
 procedure TfrmInvoiceInfo.Append;
@@ -397,6 +398,23 @@ begin
   if Chang_State then Exit;
   StrToIntDef(Trim(edtUSING_AMT.Text),0);
   Calc;
+end;
+
+procedure TfrmInvoiceInfo.edtSHOP_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
+begin
+  inherited;
+  //if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
+  try
+    if TfrmShopInfo.AddDialog(self,AObj) then
+       begin
+         edtSHOP_ID.KeyValue := AObj.FieldbyName('SHOP_ID').asString;
+         edtSHOP_ID.Text := AObj.FieldbyName('SHOP_NAME').asString;
+       end;
+  finally
+    AObj.Free;
+  end;
 end;
 
 end.

@@ -139,7 +139,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 520
       Height = 212
+      ActivePage = TabSheet6
       Align = alBottom
+      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -628,6 +630,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             DropHeight = 130
             ShowTitle = True
             AutoFitColWidth = True
+            OnAddClick = edtREGION_IDAddClick
             ShowButton = True
             LocateStyle = lsDark
             Buttons = [zbNew]
@@ -1553,6 +1556,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = False
+        OnAddClick = cmbSHOP_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = []

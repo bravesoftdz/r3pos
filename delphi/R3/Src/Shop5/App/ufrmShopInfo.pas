@@ -383,6 +383,7 @@ procedure TfrmShopInfo.edtSHOP_TYPEAddClick(Sender: TObject);
 var Aobj_:TRecord_;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   Try
     Aobj_ := TRecord_.Create;
     if TfrmCodeInfo.AddDialog(Self,Aobj_,12) then

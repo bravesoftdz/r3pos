@@ -78,6 +78,8 @@ type
     procedure edt_USER_NAMEPropertiesChange(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtDUTY_IDSAddClick(Sender: TObject);
+    procedure edtDEPT_IDAddClick(Sender: TObject);
+    procedure edtSHOP_IDAddClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -99,7 +101,7 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, uShopGlobal;//,ufrmDeptDutyInfo
+uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, ufrmshopinfo, ufrmDeptInfo, ufrmDutyInfo, uShopGlobal;//
 {$R *.dfm}
 
 procedure TfrmUsersInfo.Append;
@@ -444,16 +446,17 @@ procedure TfrmUsersInfo.edtDUTY_IDSAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
- {AObj := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');  
+  AObj := TRecord_.Create;
   try
-    if TfrmDeptDutyInfo.AddDialog(self,AObj) then
+    if TfrmDutyInfo.AddDialog(self,AObj) then
        begin
          edtDUTY_IDS.KeyValue := AObj.FieldbyName('DUTY_ID').asString;
          edtDUTY_IDS.Text := AObj.FieldbyName('DUTY_NAME').asString;
        end;
   finally
     AObj.Free;
-  end;}
+  end;
 end;
 
 class function TfrmUsersInfo.ShowDialog(Owner: TForm; id: string): boolean;
@@ -489,6 +492,40 @@ begin
       end;
   finally
     Tem.Free;
+  end;
+end;
+
+procedure TfrmUsersInfo.edtDEPT_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
+  try
+    if TfrmDeptInfo.AddDialog(self,AObj) then
+       begin
+         edtDEPT_ID.KeyValue := AObj.FieldbyName('DEPT_ID').asString;
+         edtDEPT_ID.Text := AObj.FieldbyName('DEPT_NAME').asString;
+       end;
+  finally
+    AObj.Free;
+  end;
+end;
+
+procedure TfrmUsersInfo.edtSHOP_IDAddClick(Sender: TObject);
+var AObj:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  AObj := TRecord_.Create;
+  try
+    if TfrmShopInfo.AddDialog(self,AObj) then
+       begin
+         edtSHOP_ID.KeyValue := AObj.FieldbyName('SHOP_ID').asString;
+         edtSHOP_ID.Text := AObj.FieldbyName('SHOP_NAME').asString;
+       end;
+  finally
+    AObj.Free;
   end;
 end;
 

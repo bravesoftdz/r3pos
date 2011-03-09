@@ -665,7 +665,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Width = 121
         Height = 20
         TabStop = False
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 97
@@ -721,7 +721,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -761,14 +761,6 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
         TabOrder = 0
       end
-      object edtSETTLE_CODE: TcxComboBox
-        Left = 97
-        Top = 79
-        Width = 121
-        Height = 20
-        Properties.DropDownListStyle = lsFixedList
-        TabOrder = 3
-      end
       object edtSHOP_ID: TzrComboBoxList
         Left = 371
         Top = 6
@@ -781,7 +773,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -811,6 +803,49 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Buttons = [zbNew]
         DropListStyle = lsFixed
         OnSaveValue = edtSORT_IDSaveValue
+        MultiSelect = False
+      end
+      object edtSETTLE_CODE: TzrComboBoxList
+        Left = 97
+        Top = 79
+        Width = 121
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 6
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CODE_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+            Width = 80
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CODE_ID'
+            Footers = <>
+            Title.Caption = #32534#30721
+            Width = 40
+          end>
+        DropWidth = 176
+        DropHeight = 130
+        ShowTitle = True
+        AutoFitColWidth = True
+        OnAddClick = edtSETTLE_CODEAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew]
+        DropListStyle = lsFixed
         MultiSelect = False
       end
     end

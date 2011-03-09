@@ -80,14 +80,14 @@ begin
   begin
      cdsBrowser.Edit;
      AObj.WriteToDataSet(cdsBrowser,false);
-     cdsBrowser.Post;
+     cdsBrowser.CommitUpdates;
   end
   else
   begin
      //SHOP_ID:=AObj.FieldByName('SHOP_ID').AsString;
      cdsBrowser.Append;
      AObj.WriteToDataSet(cdsBrowser,false);
-     cdsBrowser.Post;
+     cdsBrowser.CommitUpdates;
   end;
 
 end;
@@ -233,7 +233,7 @@ begin
   locked:=True;
   try
     cdsBrowser.Filtered := false;
-    cdsBrowser.Filter := 'SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' ';
+    cdsBrowser.Filter := ' SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' ';
     cdsBrowser.Filtered := (trim(edtKEY.Text)<>'');
   finally
     locked:=False;
@@ -344,7 +344,7 @@ begin
   // 以下带SQL需要重新设计
   if edtKey.Text<>'' then
      str:= ' and (A.SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or A.SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or A.SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
-  Result:='select A.SHOP_ID as 门店代码,A.SHOP_NAME as 门店名称,A.SHOP_SPELL as 拼音码,D.SHOE_NAME as 门店类型,B.SHOP_NAME as 隶属经销商, '+
+  Result:='select A.SHOP_ID as SHOP_ID,A.SHOP_NAME as SHOP_NAME,A.SHOP_SPELL as SHOP_SPELL,D.SHOE_NAME as SHOE_NAME,B.SHOP_NAME as 隶属经销商, '+
   ' C.SHOE_NAME as 地区,A.TELEPHONE as 电话 from CA_COMPANY A  '+
   ' left outer join  CA_COMPANY B on A.UPCOMP_ID=B.COMP_ID  '+
   ' left outer join  PUB_CODE_INFO C on (A.GROUP_NAME=C.CODE_ID and C.CODE_TYPE=8) '+

@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 574
-  Top = 386
+  Left = 607
+  Top = 235
   Caption = #29992#25143#26723#26696
   ClientHeight = 351
   ClientWidth = 529
@@ -721,9 +721,10 @@ inherited frmUsersInfo: TfrmUsersInfo
       DropHeight = 130
       ShowTitle = True
       AutoFitColWidth = True
+      OnAddClick = edtSHOP_IDAddClick
       ShowButton = True
       LocateStyle = lsDark
-      Buttons = []
+      Buttons = [zbNew]
       DropListStyle = lsFixed
       MultiSelect = False
     end
@@ -820,6 +821,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       DropHeight = 130
       ShowTitle = True
       AutoFitColWidth = True
+      OnAddClick = edtDEPT_IDAddClick
       ShowButton = True
       LocateStyle = lsDark
       Buttons = []

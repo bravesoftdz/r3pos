@@ -153,7 +153,7 @@ end;
 function TfrmCheckTablePrint.GetGoodPrintSQL: string;
 var
   SortTypeIdx: integer;
-  strSql,strWhere,GoodTab,CalcFields,UnitField: string;
+  strSql,strWhere,GoodTab,CalcFields,UnitField,CodeID: string;
 begin
   //门店名称
   if trim(fndP1_SHOP_ID.AsString)='' then Raise Exception.Create('  请选择门店名称！  ');
@@ -174,8 +174,11 @@ begin
 
   //商品属性:
   if fndP1_STAT_ID.AsString<>'' then
-    strWhere := strWhere + GetGoodSortTypeCnd(fndP1_TYPE_ID,fndP1_STAT_ID.AsString,'B',' and ');
-  
+  begin
+    CodeID:=trim(TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).fieldbyName('CODE_ID').asString);
+    strWhere := strWhere +' and (B.SORT_ID'+CodeID+'='+QuotedStr(fndP1_STAT_ID.AsString)+')';
+  end;
+
   //零库存
   if not fndP1_SHOW_ZERO.Checked then
     strWhere := strWhere + ' and (A.CHK_AMOUNT <> 0 or A.RCK_AMOUNT<>0)';
@@ -367,10 +370,11 @@ begin
   TDbGridEhSort.FreeForm(self);
 end;
 
-procedure TfrmCheckTablePrint.fndP1_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+procedure TfrmCheckTablePrint.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+var SortName: string;
 begin
-  fndP1_SORT_ID.Text:=SelectGoodSortType(sid1,srid1);
+  if SelectGoodSortType(sid1,srid1,SortName) then
+    fndP1_SORT_ID.Text:=SortName;
 end;
 
 end.

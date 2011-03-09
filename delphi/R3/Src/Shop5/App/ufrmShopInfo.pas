@@ -139,7 +139,7 @@ begin
       end
     else
       begin
-        edtSHOP_TYPE.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SHOP_TYPE'),'SORT_ID','SORT_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
+        edtSHOP_TYPE.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SHOP_TYPE'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SHOP_TYPE').AsString);
         edtSHOP_TYPE.KeyValue := Aobj.FieldByName('SHOP_TYPE').AsString;
       end;
 

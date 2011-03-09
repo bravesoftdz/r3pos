@@ -1,6 +1,6 @@
 inherited frmShopInfo: TfrmShopInfo
-  Left = 195
-  Top = 102
+  Left = 581
+  Top = 263
   Caption = #38376#24215#26723#26696
   ClientHeight = 348
   ClientWidth = 534
@@ -428,13 +428,13 @@ inherited frmShopInfo: TfrmShopInfo
         TabOrder = 2
         InGrid = False
         KeyValue = Null
-        FilterFields = 'SORT_ID,SORT_NAME,SORT_SPELL'
-        KeyField = 'SORT_ID'
-        ListField = 'SORT_NAME'
+        FilterFields = 'CODE_ID,CODE_NAME,CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'SORT_NAME'
+            FieldName = 'CODE_NAME'
             Footers = <>
             Title.Caption = #21517#31216
             Width = 100

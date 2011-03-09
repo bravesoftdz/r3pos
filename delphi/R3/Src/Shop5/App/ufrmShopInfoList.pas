@@ -78,7 +78,6 @@ begin
   if not cdsBrowser.Active  then exit;
   if cdsBrowser.Locate('SHOP_ID',AObj.FieldByName('SHOP_ID').AsString,[]) then
   begin
-     //SHOP_ID:=cdsBrowser.FieldByName('SHOP_ID').AsString;
      cdsBrowser.Edit;
      AObj.WriteToDataSet(cdsBrowser,false);
      cdsBrowser.Post;

@@ -91,7 +91,7 @@ end;
 
 procedure TfrmTransOrderList.ChangeButton;
 begin
-  if cdsList.Active and (cdsList.FieldByName('TRANS_ID').AsString = '') then ToolButton6.Caption := '审核' else ToolButton6.Caption := '弃审';
+  if cdsList.Active and (cdsList.FieldByName('CHK_USER').AsString = '') then ToolButton6.Caption := '审核' else ToolButton6.Caption := '弃审';
 end;
 
 function TfrmTransOrderList.EncodeSQL2(id: string; var w: string): string;
@@ -116,16 +116,20 @@ begin
     StrWhere := StrWhere + ' and TRANS_ID>'+QuotedStr(id);
 
   StrSql :=
+  'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+  'select je.*,e.USER_NAME as CHK_USER_TEXT from ('+
   'select jd.*,d.USER_NAME as TRANS_USER_TEXT from ('+
   'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT,c.BALANCE as OUT_BALANCE from ('+
   'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
   'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from ('+
   'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
-  'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and '+StrWhere+' ) ja '+
+  'REMARK,CREA_DATE,CREA_USER,COMM from ACC_TRANSORDER where COMM not in (''02'',''12'') and '+StrWhere+' ) ja '+
   'left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
   'left outer join VIW_ACCOUNT_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.IN_ACCOUNT_ID=b.ACCOUNT_ID) jc '+
   'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.OUT_ACCOUNT_ID=c.ACCOUNT_ID) jd '+
-  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID';
+  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID) je '+
+  'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CHK_USER=e.USER_ID) jf '+
+  'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ';
 
   case Factor.iDbType of
     0: result:= 'select * from ('+StrSql+') je order by SHOP_ID';
@@ -262,8 +266,8 @@ begin
   with TfrmTransOrder.Create(nil) do
     begin
       try
-        Append;
         OnSave:=AddRecord;
+        Append;
         ShowModal;
       finally
         Free;
@@ -275,6 +279,7 @@ procedure TfrmTransOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能删除!');
   if not ShopGlobal.GetChkRight('21700001',4) then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
@@ -291,13 +296,14 @@ end;
 procedure TfrmTransOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if cdsList.IsEmpty then Exit;
+  if (not cdsList.Active) and cdsList.IsEmpty then Exit;
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改!');
   if not ShopGlobal.GetChkRight('21700001',3) then Raise Exception.Create('你没有编辑存取单的权限,请和管理员联系.');
   with TfrmTransOrder.Create(nil) do
     begin
       try
+        OnSave := AddRecord;      
         Edit(cdsList.FieldByName('TRANS_ID').AsString);
-        OnSave := AddRecord;
         ShowModal;
       finally
         Free;
@@ -315,20 +321,22 @@ end;
 procedure TfrmTransOrderList.actAuditExecute(Sender: TObject);
 var Msg: String;
     Params:TftParamList;
+    i:Integer;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21700001',5) then Raise Exception.Create('你没有审核存取单的权限,请和管理员联系.');
   if cdsList.IsEmpty then Exception.Create('请选择待审核的存取单');
-  if cdsList.FieldByName('CHK_DATE').AsString = '' then
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then raise Exception.Create('已经同步的数据不能弃审');
-      if cdsList.FieldByName('CHK_NAME').AsString <> Global.UserName then Raise Exception.Create('只有审核人才能对当前存取单执行弃审');
-      if MessageBox(Handle,'确认弃审当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION)<>6 then Exit;
+      if cdsList.FieldByName('CHK_USER_TEXT').AsString <> Global.UserName then Raise Exception.Create('只有审核人才能对当前存取单执行弃审');
+      if MessageBox(Handle,'确认弃审当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION)<>1 then Exit;
     end
   else
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
-      if MessageBox(Handle,'确认审核当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION)<>6 then Exit;
+      i := MessageBox(Handle,'确认审核当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
+      if i <>1 then Exit;
     end;
   try
     Params := TftParamList.Create(nil);
@@ -355,14 +363,14 @@ begin
         begin
           cdsList.Edit;
           cdsList.FieldByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',date());
-          cdsList.FieldByName('CHK_USER').AsString := Global.UserID;
+          cdsList.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
           cdsList.Post;
         end
       else
         begin
           cdsList.Edit;
           cdsList.FieldByName('CHK_DATE').AsString := '';
-          cdsList.FieldByName('CHK_USER').AsString := '';
+          cdsList.FieldByName('CHK_USER_TEXT').AsString := '';
           cdsList.Post;
         end;
 

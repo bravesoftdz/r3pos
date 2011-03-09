@@ -1,6 +1,6 @@
 inherited frmTransOrderList: TfrmTransOrderList
-  Left = 270
-  Top = 97
+  Left = 622
+  Top = 187
   Width = 906
   Height = 587
   Caption = #23384#21462#27454#21333
@@ -116,16 +116,10 @@ inherited frmTransOrderList: TfrmTransOrderList
                     EditButtons = <>
                     FieldName = 'ACCT_NAME'
                     Footers = <>
-                    Title.Caption = #21517#31216
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCT_ID'
-                    Footers = <>
-                    Title.Caption = #32534#21495
-                    Width = 40
+                    Title.Caption = #36134#25143#21517#31216
+                    Width = 212
                   end>
-                DropWidth = 185
+                DropWidth = 218
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
@@ -156,24 +150,18 @@ inherited frmTransOrderList: TfrmTransOrderList
                 Columns = <
                   item
                     EditButtons = <>
-                    FieldName = 'ACCT_ID'
-                    Footers = <>
-                    Title.Caption = #32534#21495
-                    Width = 40
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'ACCT_NAME'
                     Footers = <>
-                    Title.Caption = #21517#31216
+                    Title.Caption = #36134#25143#21517#31216
+                    Width = 212
                   end>
-                DropWidth = 185
+                DropWidth = 218
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
                 ShowButton = False
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -288,16 +276,10 @@ inherited frmTransOrderList: TfrmTransOrderList
                     EditButtons = <>
                     FieldName = 'SHOP_NAME'
                     Footers = <>
-                    Title.Caption = #21517#31216
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SEQ_NO'
-                    Footers = <>
-                    Title.Caption = #24207#21495
-                    Width = 20
+                    Title.Caption = #38376#24215#21517#31216
+                    Width = 212
                   end>
-                DropWidth = 185
+                DropWidth = 218
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True

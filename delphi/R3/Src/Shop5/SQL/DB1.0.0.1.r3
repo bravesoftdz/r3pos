@@ -94,36 +94,6 @@ as
       VIW_GOODSPRICE j1 LEFT JOIN 
       PUB_GOODSINFOEXT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID; 
             
---商品条码视图不分门店,关联条码,多条码存在多记录，必须加上条码相关属性字段过段
-CREATE view [VIW_GOODSINFO_BARCODEEXT]
-as
-    SELECT 
-      j1.*,
-      ifnull(j2.BARCODE,j1.BARCODE) as UNIT_BARCODE,
-      ifnull(j2.BATCH_NO,'#') as BATCH_NO,
-      ifnull(j2.PROPERTY_01,'#') as PROPERTY_01,
-      ifnull(j2.PROPERTY_02,'#') as PROPERTY_02,
-      ifnull(j2.BARCODE_TYPE,0) as BARCODE_TYPE,
-      ifnull(j2.UNIT_ID,j1.CALC_UNITS) as BARCODE_UNIT_ID
-    FROM 
-      VIW_GOODSINFO j1 LEFT JOIN 
-      VIW_BARCODE j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID; 
-
---每个门店都有记录，关联需加门店, 多条码存在多记录，必须加上条码相关属性字段过段
-CREATE view [VIW_GOODSPRICE_BARCODEEXT]
-as
-    SELECT 
-      j1.*
-      ifnull(j2.BARCODE,j1.BARCODE) as UNIT_BARCODE,
-      ifnull(j2.BATCH_NO,'#') as BATCH_NO,
-      ifnull(j2.PROPERTY_01,'#') as PROPERTY_01,
-      ifnull(j2.PROPERTY_02,'#') as PROPERTY_02,
-      ifnull(j2.BARCODE_TYPE,0) as BARCODE_TYPE,
-      ifnull(j2.UNIT_ID,j1.CALC_UNITS) as BARCODE_UNIT_ID
-    FROM
-      VIW_GOODSPRICEEXT j1 LEFT JOIN 
-      VIW_BARCODE j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID; 
-
 --每个门店都有记录，关联需加门店
 CREATE view [VIW_GOODSPRICE_SORTEXT]
 as
@@ -141,25 +111,7 @@ as
     FROM 
       VIW_GOODSINFO j1 LEFT JOIN 
       VIW_GOODSSORT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.SORT_ID1 = j2.SORT_ID and j1.RELATION_ID=j2.RELATION_ID; 
-      
---每个门店都有记录，关联需加门店
-CREATE view [VIW_BARCODEINFO_SORTEXT]
-as
-    SELECT 
-      j1.*,j2.LEVEL_ID,j2.SORT_NAME
-    FROM 
-      VIW_GOODSINFO_BARCODEEXT j1 LEFT JOIN 
-      VIW_GOODSSORT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.SORT_ID1 = j2.SORT_ID and j1.RELATION_ID=j2.RELATION_ID; 
-      
---商品分类视图不分门店
-CREATE view [VIW_BARCODEPRICE_SORTEXT]
-as
-    SELECT 
-      j1.*,j2.LEVEL_ID,j2.SORT_NAME
-    FROM 
-      VIW_GOODSPRICE_BARCODEEXT j1 LEFT JOIN 
-      VIW_GOODSSORT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.SORT_ID1 = j2.SORT_ID and j1.RELATION_ID=j2.RELATION_ID; 
-      
+          
 --变价记录
 CREATE TABLE [LOG_PRICING_INFO] (
         --行号ID

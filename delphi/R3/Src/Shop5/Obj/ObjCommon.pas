@@ -21,6 +21,8 @@ function GetSysDateFormat(iDbType:integer):string;
 function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
 //检查date 是否在结账区间内,库存无关的
 function GetAccountRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
+//检查date 是否在月结账区间内,库存无关的
+function GetMthRckRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
 //读取最近没有结账日期
 function GetReckDate(AGlobal:IdbHelp;TENANT_ID,SHOP_ID:string):string;
 //读取系列号
@@ -370,6 +372,38 @@ begin
      Temp.SQL.Text :=
          'select max(CREA_DATE) from ('+
          'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         ') j';
+     AGlobal.Open(Temp);
+     if Temp.Fields[0].AsString = '' then
+        begin
+           Temp.close;
+           Temp.SQL.Text := 'select VALUE from SYS_DEFINE where  TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE''';
+           AGlobal.Open(Temp);
+           if Temp.IsEmpty then
+              B := FormatDatetime('YYYYMMDD',Date()-1)
+           else
+              B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
+        end
+     else
+        B := Temp.Fields[0].AsString;
+     Result := (pDate>B);
+     if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+  finally
+     Temp.Free;
+  end;
+end;
+//检查date 是否在月结账区间内,库存无关的
+function GetMthRckRange(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate:string):Boolean;
+var Temp:TZQuery;
+  B:string;
+begin
+  Result := False;
+  if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
+  Temp := TZQuery.Create(nil);
+  try
+     Temp.SQL.Text :=
+         'select max(CREA_DATE) from ('+
+         'select max(CREA_DATE) as CREA_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then

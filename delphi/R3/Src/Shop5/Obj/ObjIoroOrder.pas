@@ -6,6 +6,7 @@ type
   TIoroOrder=class(TZFactory)
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -57,6 +58,18 @@ function TIoroOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   result := true;
+end;
+
+function TIoroOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var
+   rs:TZQuery;
+begin
+   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
+      begin
+        Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('IORO_DATE').AsString);
+        if FieldbyName('IORO_DATE').AsOldString <> '' then
+           Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('IORO_DATE').AsOldString);
+      end;
 end;
 
 function TIoroOrder.CheckTimeStamp(aGlobal: IdbHelp;

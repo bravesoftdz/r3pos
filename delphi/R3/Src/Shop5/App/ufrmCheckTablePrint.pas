@@ -33,8 +33,7 @@ type
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
   private
     sid1,//商品分类ID1;
     srid1,//商品分类REGLATION_ID; 关系ID
@@ -146,18 +145,9 @@ begin
 end;
 
 procedure TfrmCheckTablePrint.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-var ID: string;
 begin
   inherited;
-  fndP1_STAT_ID.KeyValue := null;
-  fndP1_STAT_ID.Text := '';
-  //设置对应字段:
-  if fndP1_TyPE_ID.ItemIndex<>-1 then
-  begin
-    ID:=TRecord_(fndP1_TyPE_ID.Properties.Items.Objects[fndP1_TyPE_ID.ItemIndex]).fieldbyName('CODE_ID').AsString;
-    if ID<>'' then
-      AddGoodSortTypeItemsList(fndP1_STAT_ID,StrToInt(ID));
-  end;
+  AddGoodSortTypeItemsList(Sender,fndP1_STAT_ID);
 end;
 
 function TfrmCheckTablePrint.GetGoodPrintSQL: string;
@@ -198,11 +188,11 @@ begin
   CalcFields:='('+GetUnitTO_CALC(UnitIDIdx,'B')+')'; //[统计单位Index,查询表别名,字段别名]
   strSql:=
     'select A.GODS_ID as GODS_ID '+   //--货品内码
-    ','+UnitField+ // UNIT_ID统计单位
-    ',B.BARCODE as BARCODE'+        //[查询单位的]条形码
-    ',GODS_NAME,GODS_CODE'+         //--货品名称、货品编码
-    ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+ //--批号、物流码
-    'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +                    //--颜色码、尺码组
+    ','+UnitField+                    // UNIT_ID统计单位
+    ',B.BARCODE as BARCODE'+          //[查询单位的]条形码
+    ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
+    ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
+    'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
     ',(RCK_AMOUNT/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
     ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
     ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
@@ -367,7 +357,7 @@ begin
     fndP1_SHOP_ID.KeyField:=CurID;
     fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
   end;
-  if (trim(Aobj.fieldbyName('PRINT_DATE').AsString)<>'') and (CurID='')then
+  if (trim(Aobj.fieldbyName('PRINT_DATE').AsString)<>'') and (CurID<>'')then
     self.RzPage1Open;//查询盘点
 end;
 

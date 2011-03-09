@@ -8,12 +8,11 @@ uses
   StdCtrls, RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, RzLstBox,
   RzChkLst, RzCmboBx, RzBckgnd, RzButton, Mask, RzEdit, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
-  cxCalendar, cxButtonEdit, cxCheckBox, objbase, zrComboBoxList,
+  cxCalendar, cxButtonEdit, cxCheckBox, zbase, zrComboBoxList,
   zrMonthEdit, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmJxcTotalReport = class(TframeBaseReport)
-    drpStatInfo: TADODataSet;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -36,7 +35,7 @@ type
     RzLabel5: TRzLabel;
     Label14: TLabel;
     Label15: TLabel;
-    fndP2_REGION_ID: TzrComboBoxList;
+    fndP2_GROUP_LIST: TzrComboBoxList;
     RzBitBtn1: TRzBitBtn;
     fndP2_TYPE_ID: TcxComboBox;
     fndP2_UNIT_ID: TcxComboBox;
@@ -44,7 +43,6 @@ type
     fndP2_SORT_ID: TcxButtonEdit;
     RzPanel10: TRzPanel;
     DBGridEh2: TDBGridEh;
-    adoReport2: TADODataSet;
     dsadoReport2: TDataSource;
     RzPanel6: TRzPanel;
     Panel3: TPanel;
@@ -54,13 +52,12 @@ type
     RzLabel7: TRzLabel;
     Label19: TLabel;
     Label20: TLabel;
-    fndP3_COMP_ID: TzrComboBoxList;
+    fndP3_SHOP_ID: TzrComboBoxList;
     RzBitBtn2: TRzBitBtn;
     fndP3_TYPE_ID: TcxComboBox;
     fndP3_UNIT_ID: TcxComboBox;
     RzPanel12: TRzPanel;
     DBGridEh3: TDBGridEh;
-    adoReport3: TADODataSet;
     dsadoReport3: TDataSource;
     RzPanel13: TRzPanel;
     Panel6: TPanel;
@@ -78,11 +75,8 @@ type
     fndP4_SORT_ID: TcxButtonEdit;
     RzPanel15: TRzPanel;
     DBGridEh4: TDBGridEh;
-    fndP4_COMP_ID: TzrComboBoxList;
-    adoReport4: TADODataSet;
+    fndP4_SHOP_ID: TzrComboBoxList;
     dsadoReport4: TDataSource;
-    adoReport5: TADODataSet;
-    dsadoReport5: TDataSource;
     P1_D1: TzrMonthEdit;
     P1_D2: TzrMonthEdit;
     P2_D2: TzrMonthEdit;
@@ -107,44 +101,44 @@ type
     RadioButton14: TRadioButton;
     RadioButton15: TRadioButton;
     RadioButton16: TRadioButton;
-    fndP2_SHOP_TYPE: TcxComboBox;
+    fndP2_GROUP_ID: TcxComboBox;
     Label5: TLabel;
-    cxComboBox1: TcxComboBox;
-    zrComboBoxList3: TzrComboBoxList;
+    fndP1_GROUP_ID: TcxComboBox;
+    fndP1_GROUP_LIST: TzrComboBoxList;
     Label11: TLabel;
-    zrComboBoxList4: TzrComboBoxList;
-    cxComboBox2: TcxComboBox;
+    fndP3_GROUP_LIST: TzrComboBoxList;
+    fndP3_GROUP_ID: TcxComboBox;
     Label3: TLabel;
-    zrComboBoxList1: TzrComboBoxList;
-    cxComboBox3: TcxComboBox;
+    fndP4_GROUP_LIST: TzrComboBoxList;
+    fndP4_GROUP_ID: TcxComboBox;
+    adoReport2: TZQuery;
+    adoReport3: TZQuery;
+    adoReport4: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP1_STAT_IDBeforeDropList(Sender: TObject);
     procedure fndP2_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP2_STAT_IDBeforeDropList(Sender: TObject);
-    procedure P3_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP3_STAT_IDBeforeDropList(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure DBGridEh4DblClick(Sender: TObject);
-    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure actPriorExecute(Sender: TObject);
     procedure fndP4_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP4_STAT_IDBeforeDropList(Sender: TObject);
+    procedure fndP4_GROUP_IDPropertiesChange(Sender: TObject);
+    procedure fndP2_GROUP_IDPropertiesChange(Sender: TObject);
+    procedure fndP1_GROUP_IDPropertiesChange(Sender: TObject);
+    procedure fndP3_GROUP_IDPropertiesChange(Sender: TObject);
   private
     sid1,sid2,sid4:string;
-    procedure CheckCalc(b,e:integer);
+    srid1,srid2,srid4:string;
+    groupid1,groupid2,groupid3,groupid4: string;  //管理群组ID
+    procedure CheckCalc(b, e:integer); //开始月份| 结束月份
      //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店销售汇总表
@@ -153,182 +147,84 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
+    //按商品流水帐汇总表
+    function GetGlideSQL(chk: boolean=true): string;
+    
+    //进入窗体是初始化相应下拉Items参数
+    procedure InitialParams;
+    function  GetUnitIDIdx: integer; //返回当前报表统计单位
   public
     { Public declarations }
     HasChild:boolean;
     procedure CreateGrid;
     procedure PrintBefore;override;
-    function GetRowType:integer;override;
+    function  GetRowType:integer;override;
+    property  UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式    
   end;
 
 implementation
-uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, uframeTreeFindDialog, ufrmCostCalc;
+uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort, ufrmCostCalc;
 {$R *.dfm}
 
 procedure TfrmJxcTotalReport.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
-  P1_D1.asString := FormatDateTime('YYYYMM', date);
-  P1_D2.asString := FormatDateTime('YYYYMM', date);
-  fndP1_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP1_COMP_TYPE.ItemIndex := 0;
-  fndP1_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP1_TYPE_ID.ItemIndex := 0;
 
-  P2_D1.asString := FormatDateTime('YYYYMM', date);
-  P2_D2.asString := FormatDateTime('YYYYMM', date);
-  fndP2_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP2_COMP_TYPE.ItemIndex := 0;
-  fndP2_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP2_TYPE_ID.ItemIndex := 0;
+  //初始化Items下拉参数:
+  self.InitialParams;
 
-  P3_D1.asString := FormatDateTime('YYYYMM', date);
-  P3_D2.asString := FormatDateTime('YYYYMM', date);
-  fndP3_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP3_COMP_TYPE.ItemIndex := 0;
-  fndP3_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP3_SORT_ID.ItemIndex := 2;
-  fndP3_TYPE_ID.ItemIndex := 0;
-
-  P4_D1.asString := FormatDateTime('YYYYMM', date);
-  P4_D2.asString := FormatDateTime('YYYYMM', date);
-  fndP4_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP4_COMP_TYPE.ItemIndex := 0;
-  fndP4_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP4_TYPE_ID.ItemIndex := 0;
-
+  {
   HasChild := (ShopGlobal.GetADODataSetFromName('CA_COMPANY').RecordCount>1);
   rzPage.Pages[0].TabVisible := HasChild;
   rzPage.Pages[1].TabVisible := HasChild;
   if not HasChild then
-     rzPage.ActivePageIndex := 2
+    rzPage.ActivePageIndex := 2
   else
-     rzPage.ActivePageIndex := 0;
-
+    rzPage.ActivePageIndex := 0;
+  }
   CreateGrid;
   RefreshColumn;
-
-  
 end;
 
 function TfrmJxcTotalReport.GetGroupSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  rs: TZQuery;
+  strSql,strWhere,GoodTab,
+  CalcFields,UnitField: string;
 begin
+  result:='';
+  strWhere:='';
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //地区名称
-  if fndP1_GROUP_ID.AsString <> '' then
-  strWhere := strWhere + ' and isnull(C.GROUP_NAME,''#'') in (select CODE_ID from PUB_CODE_INFO where CODE_TYPE=8 and CODE_ID like '+QuotedStr(fndP1_GROUP_ID.AsString + '%')+')';
-  //门店类型
-  case fndP1_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
-  end;
-  if chk then
+  //月份日期:
+  strWhere:=GetCxDate('and', 'MONTH', P1_D1, P1_D2);
+  //门店群组:
+  strWhere:=strWhere+GetShopGroupCnd(fndP1_GROUP_ID,fndP1_GROUP_LIST.AsString,'RCK_GOODS_MONTH','and');
+  //商品指标:
+  strWhere:=strWhere+GetGoodSortTypeCnd(fndP1_TYPE_ID,fndP1_STAT_ID.AsString,'RCK_GOODS_MONTH','and');
+  //商品分类:
+  if (trim(sid1)<>'') and (trim(srid1)<>'') then
   begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select C.* from CA_COMPANY C where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',fnTime.fnStrtoDate(P1_D2.asString+'01')))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER where PRINT_ID<=' + QuotedStr(P5_D2.asString+'31')+') b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where substring(PRINT_DATE,1,7)<>'+QuotedStr(formatDatetime('YYYY-MM',fnTime.fnStrtoDate(P1_D2.asString+'01')))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
-    end;
-  end;
-  
-  //月份日期
-  strWhere := strWhere + ' and A.PRINT_ID>=' + QuotedStr(P1_D1.asString+'01')+ ' and A.PRINT_ID<=' + QuotedStr(P1_D2.asString+'31');
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
+  end else
+    GoodTab:='VIW_GOODSINFO'; 
 
-  //商品分类
-  if trim(fndP1_SORT_ID.Text)<>'' then
-     strWhere := strWhere + ' and B.SORT_ID in (select SORT_ID from PUB_GOODSSORT where LEVEL_ID like '+QuotedStr(sid1 + '%')+')';
-  //商品指标
-  if (fndP1_TYPE_ID.ItemIndex = 0) and (fndP1_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.PROVIDE = '+QuotedStr(fndP1_STAT_ID.AsString);
-  //商品指标
-  if (fndP1_TYPE_ID.ItemIndex = 1) and (fndP1_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.BRAND = '+QuotedStr(fndP1_STAT_ID.AsString);
-  //库存商品
-  if not fndP1_SHOW.Checked then
-     strWhere := strWhere + ' and B.GODS_TYPE <> 2';
+  if chk then
+     CheckCalc(strtoInt(P1_D1.asString),StrtoInt(P1_D2.asString));
+
+  //当前统计单位:
+  UnitField:=GetUnitID(UnitIDIdx,'B');
+  CalcFields:='('+GetUnitTO_CALC(UnitIDIdx,'B')+')'; //[统计单位Index,查询表别名,字段别名]
 
   case Factor.iDbType of
     0: begin //SqlServer
         strSql :=
-          'select C.GROUP_NAME as GROUP_ID' +
-          ',sum(case when substring(PRINT_ID,1,6)='''+P1_D1.asString+''' then ORG_AMOUNT else 0 end/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as ORG_AMOUNT ' + //--期初数量
-          ',sum(case when substring(PRINT_ID,1,6)='''+P1_D1.asString+''' then ORG_AMONEY else 0 end) as ORG_AMONEY ' + //--期初金额
+         'select REGION_ID '+ //门店地区编码
 
-          ',sum(IN_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as IN_AMOUNT ' + //--进货数量
-          ',sum(IN_AMONEY) as IN_AMONEY ' + //--进货金额
-          ',sum(IN_TAX) as IN_TAX ' + //--进货税额
-          ',sum(IN_NOTAX) as IN_NOTAX ' + //--进货不含税
+         'from RCK_GOODS_MONTH A,'+GoodTab+' B,CA_COMPANY C ' +
 
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as SAL_AMOUNT ' + //--销售数量
-          ',sum(SAL_AMONEY) as SAL_AMONEY ' + //--销售金额
-          ',sum(SAL_TAX) as SAL_TAX ' + //--销售税额
-          ',sum(SAL_NOTAX) as SAL_NOTAX ' + //--销售不含税
-          ',sum(SAL_COST) as SAL_COST ' + //--销售成本
-          ',sum(SAL_PROFIT) as SAL_PROFIT ' + //--销售毛利
-
-          ',sum(COMB_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as COMB_AMOUNT ' + //--拆卸数量
-          ',sum(COMB_AMONEY) as COMB_AMONEY ' + //--拆卸金额
-
-          ',sum(MOVEIN_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as MOVEIN_AMOUNT ' + //--调入数量
-          ',sum(MOVEIN_AMONEY) as MOVEIN_AMONEY ' + //--调入金额
-
-          ',sum(MOVEOUT_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as MOVEOUT_AMOUNT ' + //--调出数量
-          ',sum(MOVEOUT_AMONEY) as MOVEOUT_AMONEY ' + //--调出金额
-
-          ',sum(PARM1_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as PARM1_AMOUNT ' + //--PARM1数量
-          ',sum(PARM1_AMONEY) as PARM1_AMONEY ' + //--PARM1金额
-
-          ',sum(PARM2_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as PARM2_AMOUNT ' + //--PARM2数量
-          ',sum(PARM2_AMONEY) as PARM2_AMONEY ' + //--PARM2金额
-
-          ',sum(PARM3_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as PARM3_AMOUNT ' + //--PARM3数量
-          ',sum(PARM3_AMONEY) as PARM3_AMONEY ' + //--PARM3金额
-
-          ',sum(PARM4_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as PARM4_AMOUNT ' + //--PARM4数量
-          ',sum(PARM4_AMONEY) as PARM4_AMONEY ' + //--PARM4金额
-
-          ',sum(PARM5_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as PARM5_AMOUNT ' + //--PARM5数量
-          ',sum(PARM5_AMONEY) as PARM5_AMONEY ' + //--PARM5金额
-
-          ',sum(case when substring(PRINT_ID,1,6)='''+P1_D2.asString+''' then RCK_AMOUNT else 0 end/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as RCK_AMOUNT ' + //--期初数量
-          ',sum(case when substring(PRINT_ID,1,6)='''+P1_D2.asString+''' then RCK_AMONEY else 0 end) as RCK_AMONEY ' + //--期初金额
-
-          ',grouping(C.GROUP_NAME) as grp0 '+  //行标识
-          'from VIW_PRINTDATA A,VIW_GOODSINFO B,CA_COMPANY C ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and B.COMP_ID='''+Global.CompanyId+''' ' + StrWhere +
-          ' group by C.GROUP_NAME with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(SAL_NOTAX,0)=0 then null else SAL_PROFIT/SAL_NOTAX*100 end as PROFIT_RATE,'+ //毛利率
-          'case when J.grp0<>1 then IsNull(G.CODE_NAME,''未分组'') else ''合   计'' end as GROUP_NAME from ('+strSQL+') j '+
-          'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8) g on j.GROUP_ID=g.CODE_ID order by j.grp0 desc,j.GROUP_ID';
       end;
     3: begin //Access
 
@@ -348,86 +244,70 @@ var
   rs:TADODataSet;
 begin
   case rzPage.ActivePageIndex of
-    0: begin //按地区汇总表
+    0:begin //按地区汇总表
         if adoReport1.Active then adoReport1.Close;
         strSql := GetGroupSQL;
         if strSql='' then Exit;
-        adoReport1.CommandText := strSql;
+        adoReport1.SQL.Text := strSql;
         Factor.Open(adoReport1);
       end;
     1: begin //按门店汇总表
         if adoReport2.Active then adoReport2.Close;
         strSql := GetCompanySQL;
         if strSql='' then Exit;
-        adoReport2.CommandText := strSql;
+        adoReport2.SQL.Text := strSql;
         Factor.Open(adoReport2);
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
         strSql := GetSortSQL;
         if strSql='' then Exit;
-        adoReport3.CommandText := strSql;
+        adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
         if strSql='' then Exit;
-        adoReport4.CommandText := strSql;
+        adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
-      end;
-    4: begin //按商品流水帐
-        if adoReport5.Active then adoReport5.Close;
-        strSql := GetGlideSQL;
-        if strSql='' then Exit;
-        adoReport5.CommandText := strSql;
-        Factor.Open(adoReport5);
       end;
   end;
 end;
 
-procedure TfrmJxcTotalReport.fndP1_TYPE_IDPropertiesChange(
-  Sender: TObject);
+procedure TfrmJxcTotalReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
 begin
-  inherited;
-  fndP1_STAT_ID.KeyValue := null;
-  fndP1_STAT_ID.Text := '';
-end;
-
-procedure TfrmJxcTotalReport.fndP1_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP1_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
+  AddGoodSortTypeItemsList(Sender,fndP1_GROUP_LIST);
 end;
 
 function TfrmJxcTotalReport.GetCompanySQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  rs: TZQuery;
 begin
   if P2_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
+  rs := Global.GetZQueryFromName('CA_COMPANY');
+
+  //if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
+
   lvid := rs.FieldbyName('LEVEL_ID').AsString;
   strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
   //地区名称
+  {
   if fndP2_GROUP_ID.AsString <> '' then
   strWhere := strWhere + ' and isnull(C.GROUP_NAME,''#'') in (select CODE_ID from PUB_CODE_INFO where CODE_TYPE=8 and CODE_ID like '+QuotedStr(fndP2_GROUP_ID.AsString + '%')+')';
+
   //门店类型
   case fndP2_COMP_TYPE.ItemIndex of
   0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
   end;
+
   if chk then
   begin
-    rs := TADODataSet.Create(nil);
+    rs := TZQuery.Create(nil);
     try
-      rs.CommandText :=
+      rs.SQL.Text :=
          'select * from ('+
          'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select C.* from CA_COMPANY C where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',fnTime.fnStrtoDate(P2_D2.asString+'01')))+') '+strWhere+ ') j '+
          'left outer join (select * from STO_PRINTORDER where PRINT_ID<=' + QuotedStr(P5_D2.asString+'31')+') b '+
@@ -438,6 +318,7 @@ begin
       rs.Free;
     end;
   end;
+  
   //月份日期
   strWhere := strWhere + ' and A.PRINT_DATE>=' + QuotedStr(P2_D1.asString+'-01')+ ' and A.PRINT_DATE<=' + QuotedStr(P2_D2.asString+'-31');
   //商品分类
@@ -526,77 +407,44 @@ begin
       end;
   end;
   Result := strSql;
+
+  }  
 end;
 
-procedure TfrmJxcTotalReport.fndP2_TYPE_IDPropertiesChange(
-  Sender: TObject);
+procedure TfrmJxcTotalReport.fndP2_TYPE_IDPropertiesChange(Sender: TObject);
 begin
-  inherited;
-  fndP2_STAT_ID.KeyValue := null;
-  fndP2_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmJxcTotalReport.fndP2_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP2_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
-end;
-
-procedure TfrmJxcTotalReport.P3_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  fndP3_STAT_ID.KeyValue := null;
-  fndP3_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmJxcTotalReport.fndP3_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP3_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
+  AddGoodSortTypeItemsList(Sender,fndP2_GROUP_LIST);
 end;
 
 function TfrmJxcTotalReport.GetSortSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  rs: TZQuery;
 begin
   if P3_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if fndP3_COMP_ID.AsString='' then
+  rs := Global.GetZQueryFromName('CA_COMPANY');
+  if fndP3_SHOP_ID.AsString='' then
      begin
-        if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
+        if not rs.Locate('COMP_ID',Global.SHOP_ID,[]) then Raise Exception.Create('门店资料没找到...');
      end
   else
      begin
-        if not rs.Locate('COMP_ID',fndP3_COMP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
+        if not rs.Locate('COMP_ID',fndP3_SHOP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
      end;
   lvid := rs.FieldbyName('LEVEL_ID').AsString;
   strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
   //门店类型
-  case fndP3_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP3_COMP_ID.AsString+'''';
-  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP3_COMP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP3_COMP_ID.AsString+''')';
+{  case fndP3_COMP_TYPE.ItemIndex of
+  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP3_SHOP_ID.AsString+'''';
+  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP3_SHOP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP3_SHOP_ID.AsString+''')';
   end;
+
   if chk then
   begin
-    rs := TADODataSet.Create(nil);
+    rs := TZQuery.Create(nil);
     try
-      rs.CommandText :=
+      rs.SQL.Text :=
          'select * from ('+
          'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select C.* from CA_COMPANY C where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',fnTime.fnStrtoDate(P3_D2.asString+'01')))+') '+strWhere+ ') j '+
          'left outer join (select * from STO_PRINTORDER where PRINT_ID<=' + QuotedStr(P5_D2.asString+'31')+') b '+
@@ -706,30 +554,34 @@ begin
       end;
   end;
   Result := strSql;
+
+  }
+
 end;
 
 function TfrmJxcTotalReport.GetGodsSQL(chk:boolean=true): string;
 var
   strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  rs: TZQuery;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if fndP4_COMP_ID.AsString='' then
+  rs := Global.GetZQueryFromName('CA_COMPANY');
+  if fndP4_SHOP_ID.AsString='' then
      begin
-        if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
+        if not rs.Locate('COMP_ID',Global.SHOP_ID,[]) then Raise Exception.Create('门店资料没找到...');
      end
   else
      begin
-        if not rs.Locate('COMP_ID',fndP4_COMP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
+        if not rs.Locate('COMP_ID',fndP4_SHOP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
      end;
   lvid := rs.FieldbyName('LEVEL_ID').AsString;
   strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
   //门店类型
+{
   case fndP4_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP4_COMP_ID.AsString+'''';
-  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP4_COMP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP4_COMP_ID.AsString+''')';
+  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP4_SHOP_ID.AsString+'''';
+  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP4_SHOP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP4_SHOP_ID.AsString+''')';
   end;
   if chk then
   begin
@@ -834,10 +686,13 @@ begin
       end;
   end;
   Result := strSql;
+
+  }
 end;
 
 function TfrmJxcTotalReport.GetGlideSQL(chk:boolean=true): string;
 begin
+
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh1DblClick(Sender: TObject);
@@ -846,15 +701,12 @@ begin
   if adoReport1.IsEmpty then Exit;
   P2_D1.asString := P1_D1.asString;
   P2_D2.asString := P1_D2.asString;
-  fndP2_COMP_TYPE.ItemIndex := fndP1_COMP_TYPE.ItemIndex;
   fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
   fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
   fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
   fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
-  fndP2_SHOW.Checked := fndP1_SHOW.Checked;
-  fndP2_GROUP_ID.KeyValue := adoReport1.FieldbyName('GROUP_ID').AsString;
   if adoReport1.FieldbyName('grp0').AsInteger = 1 then
   fndP2_GROUP_ID.Text := '' else
   fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
@@ -869,16 +721,12 @@ begin
   P3_D1.asString := P2_D1.asString;
   P3_D2.asString := P2_D2.asString;
   fndP3_TYPE_ID.ItemIndex := 0;
-  fndP3_STAT_ID.KeyValue := fndP2_STAT_ID.KeyValue;
-  fndP3_STAT_ID.Text := fndP2_STAT_ID.Text;
   fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
-  fndP3_SHOW.Checked := fndP2_SHOW.Checked;
-
-  fndP3_COMP_TYPE.ItemIndex := 3;
-  fndP3_COMP_ID.KeyValue := adoReport2.FieldbyName('COMP_ID').AsString;
+ 
+  fndP3_SHOP_ID.KeyValue := adoReport2.FieldbyName('COMP_ID').AsString;
   if adoReport2.FieldbyName('grp0').AsInteger = 1 then
-  fndP3_COMP_ID.Text := '' else
-  fndP3_COMP_ID.Text := adoReport2.FieldbyName('COMP_NAME').AsString;
+  fndP3_SHOP_ID.Text := '' else
+  fndP3_SHOP_ID.Text := adoReport2.FieldbyName('COMP_NAME').AsString;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
 
@@ -890,14 +738,11 @@ begin
   if adoReport3.IsEmpty then Exit;
   P4_D1.asString := P3_D1.asString;
   P4_D2.asString := P3_D2.asString;
-  fndP4_COMP_TYPE.ItemIndex := fndP3_COMP_TYPE.ItemIndex;
   fndP4_TYPE_ID.ItemIndex := fndP3_TYPE_ID.ItemIndex;
-  fndP4_STAT_ID.KeyValue := fndP3_STAT_ID.KeyValue;
   fndP4_STAT_ID.Text := fndP4_STAT_ID.Text;
   fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_SHOW.Checked := fndP3_SHOW.Checked;
-  fndP4_COMP_ID.KeyValue := fndP3_COMP_ID.KeyValue;
-  fndP4_COMP_ID.Text := fndP3_COMP_ID.Text;
+  fndP4_SHOP_ID.KeyValue := fndP3_SHOP_ID.KeyValue;
+  fndP4_SHOP_ID.Text := fndP3_SHOP_ID.Text;
   sid4 := adoReport3.FieldbyName('LEVEL_ID').AsString;
   if adoReport3.FieldbyName('grp0').AsInteger = 1 then
   fndP4_SORT_ID.Text := '' else
@@ -914,37 +759,20 @@ begin
 
 end;
 
-procedure TfrmJxcTotalReport.DBGridEh4DblClick(Sender: TObject);
-begin
-  inherited;
-  if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
-  P5_D1.asString := P4_D1.asString;
-  P5_D2.asString := P4_D2.asString;
-  if fndP4_COMP_TYPE.ItemIndex in [0,1] then
-     fndP5_COMP_TYPE.ItemIndex := 0
-  else
-     fndP5_COMP_TYPE.ItemIndex := 1;
-  fndP5_UNIT_ID.ItemIndex := fndP4_UNIT_ID.ItemIndex;
-  fndP5_GODS_ID.KeyValue := adoReport4.FieldbyName('GODS_ID').AsString;
-  fndP5_GODS_ID.Text := adoReport4.FieldbyName('GODS_NAME').AsString;
-  rzPage.ActivePageIndex := 4;
-  actFind.OnExecute(nil);
-
-end;
-
 procedure TfrmJxcTotalReport.PrintBefore;
 var
   s:string;
   c:integer;
 begin
   inherited;
-  PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
+
+{  PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
   case rzPage.ActivePageIndex of
   0:begin
       c := 0;
       inc(c);
       s := '月份：'+P1_D1.asString+' 至 '+P1_D2.asString;
-      if fndP1_GROUP_ID.AsString <> '' then
+      if fndP1_GROUP_ID <> '' then
          begin
            if c mod 2= 1 then s := s + '    ' else s := s + #13;
            s := s + '地区名称：'+fndP1_GROUP_ID.Text+'('+fndP1_COMP_TYPE.Text+')';
@@ -1016,10 +844,10 @@ begin
       c := 0;
       inc(c);
       s := '月份：'+P3_D1.asString+' 至 '+P3_D2.asString;
-      if fndP3_COMP_ID.AsString <> '' then
+      if fndP3_SHOP_ID.AsString <> '' then
          begin
            if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '门店名称：'+fndP3_COMP_ID.Text+'('+fndP3_COMP_TYPE.Text+')';
+           s := s + '门店名称：'+fndP3_SHOP_ID.Text+'('+fndP3_COMP_TYPE.Text+')';
            inc(c);
          end;
       if not fndP3_SHOW.Checked then
@@ -1052,10 +880,10 @@ begin
       c := 0;
       inc(c);
       s := '月份：'+P4_D1.asString+' 至 '+P4_D2.asString;
-      if fndP4_COMP_ID.AsString <> '' then
+      if fndP4_SHOP_ID.AsString <> '' then
          begin
            if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '门店名称：'+fndP4_COMP_ID.Text+'('+fndP4_COMP_TYPE.Text+')';
+           s := s + '门店名称：'+fndP4_SHOP_ID.Text+'('+fndP4_COMP_TYPE.Text+')';
            inc(c);
          end;
       if not fndP4_SHOW.Checked then
@@ -1105,26 +933,13 @@ begin
          PrintDBGridEh1.Title.Text := '商品名称：'+ fndP5_GODS_ID.Text;
     end;
   end;
+  }
 end;
 
-procedure TfrmJxcTotalReport.fndP1_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
+procedure TfrmJxcTotalReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid1 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP1_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
+  fndP1_SORT_ID.Text:=SelectGoodSortType(sid1,srid1);
 end;
 
 procedure TfrmJxcTotalReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -1151,49 +966,21 @@ begin
   fndP4_SORT_ID.Text := '';
 end;
 
-procedure TfrmJxcTotalReport.fndP2_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
+procedure TfrmJxcTotalReport.fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid2 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP2_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
+  fndP2_SORT_ID.Text:=SelectGoodSortType(sid2,srid2);
 end;
 
-procedure TfrmJxcTotalReport.fndP4_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
+procedure TfrmJxcTotalReport.fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid4 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP4_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
+  fndP4_SORT_ID.Text:=SelectGoodSortType(sid4,srid4);
 end;
 
 procedure TfrmJxcTotalReport.actPriorExecute(Sender: TObject);
 begin
-  if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
+  //if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
   inherited;
 
 end;
@@ -1203,9 +990,9 @@ var
   Column:TColumnEh;
   rs:TADODataSet;
 begin
-  rs := TADODataSet.Create(nil);
+{ rs := TADODataSet.Create(nil);
   try
-    rs.CommandText := 'select CHANGE_CODE,CHANGE_NAME from BAS_CHANGECODE order by CHANGE_CODE';
+    rs.CommandText := 'select CHANGE_CODE,CHANGE_NAME from STO_CHANGECODE order by CHANGE_CODE';
     Factor.Open(rs);
     rs.First;
     while not rs.Eof do
@@ -1264,32 +1051,17 @@ begin
         Column.Title.Caption := rs.Fields[1].AsString+'|金额';
         Column.Width := 74;
         Column.Index := DBGridEh5.Columns.Count -3;
-        
         rs.Next;
       end;
   finally
     rs.Free;
   end;
-end;
-procedure TfrmJxcTotalReport.fndP4_TYPE_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  fndP4_STAT_ID.KeyValue := null;
-  fndP4_STAT_ID.Text := '';
-
+}
 end;
 
-procedure TfrmJxcTotalReport.fndP4_STAT_IDBeforeDropList(Sender: TObject);
+procedure TfrmJxcTotalReport.fndP4_TYPE_IDPropertiesChange(Sender: TObject);
 begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP4_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
+  AddGoodSortTypeItemsList(Sender, fndP4_STAT_ID);  
 end;
 
 procedure TfrmJxcTotalReport.CheckCalc(b, e: integer);
@@ -1307,6 +1079,105 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmJxcTotalReport.InitialParams;
+begin
+  //P1:地区进销存统计:
+  P1_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P1_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  //添加门店管理群主及默认List:
+  AddShopGroupItems(fndP1_GROUP_ID,'11');
+  AddShopGroupItemsList(fndP1_GROUP_LIST,8);
+  fndP1_GROUP_ID.ItemIndex:=0;
+  //添加商品指标及默认List:
+  AddGoodSortTypeItems(fndP1_TYPE_ID);
+  AddGoodSortTypeItemsList(fndP1_STAT_ID,2);
+  fndP1_TYPE_ID.ItemIndex := 0;
+  //添加统计单位
+  AddTongjiUnitList(fndP1_UNIT_ID);
+  fndP1_UNIT_ID.ItemIndex:=0;
+
+  //P2:门店进销存统计
+  P2_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P2_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  //添加门店管理群主及默认List:
+  AddShopGroupItems(fndP2_GROUP_ID,'11');
+  AddShopGroupItemsList(fndP2_GROUP_LIST,8);
+  fndP2_GROUP_ID.ItemIndex:=0;
+  //添加商品指标及默认List:
+  AddGoodSortTypeItems(fndP2_TYPE_ID);
+  AddGoodSortTypeItemsList(fndP2_STAT_ID,2);
+  fndP2_TYPE_ID.ItemIndex := 0;
+  //添加统计单位
+  AddTongjiUnitList(fndP2_UNIT_ID);
+  fndP2_UNIT_ID.ItemIndex:=0;
+
+  //P3:分类进销存统计
+  P3_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P3_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  //添加门店管理群主及默认List:
+  AddShopGroupItems(fndP3_GROUP_ID,'11');
+  AddShopGroupItemsList(fndP3_GROUP_LIST,8);
+  fndP3_GROUP_ID.ItemIndex:=0;
+  fndP3_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO'); 
+  //添加统计单位
+  AddTongjiUnitList(fndP3_UNIT_ID);
+  fndP3_UNIT_ID.ItemIndex:=0;
+
+  //P4:商品进销存统计
+  P4_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P4_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  //添加门店管理群主及默认List:
+  AddShopGroupItems(fndP4_GROUP_ID,'11');
+  AddShopGroupItemsList(fndP4_GROUP_LIST,8);
+  fndP4_GROUP_ID.ItemIndex:=0;
+  //添加商品指标及默认List:
+  AddGoodSortTypeItems(fndP4_TYPE_ID);
+  AddGoodSortTypeItemsList(fndP4_STAT_ID,2);
+  fndP4_TYPE_ID.ItemIndex := 0;
+  fndP4_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
+  //添加统计单位
+  AddTongjiUnitList(fndP4_UNIT_ID);
+  fndP4_UNIT_ID.ItemIndex:=0;      
+end;
+
+function TfrmJxcTotalReport.GetUnitIDIdx: integer;
+begin
+  result:=0;
+  if (RzPage.ActivePage=TabSheet1) and (fndP1_UNIT_ID.ItemIndex<>-1) then       //地区进销存统计表
+    result:=fndP1_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet2) and (fndP2_UNIT_ID.ItemIndex<>-1) then  //门店进销存统计表
+    result:=fndP2_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet3) and (fndP3_UNIT_ID.ItemIndex<>-1) then  //分类进销存统计表
+    result:=fndP3_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet4) and (fndP4_UNIT_ID.ItemIndex<>-1) then  //商品进销存统计表
+    result:=fndP4_UNIT_ID.ItemIndex
+end;
+
+procedure TfrmJxcTotalReport.fndP4_GROUP_IDPropertiesChange(Sender: TObject);
+begin
+  AddShopGroupItemsList(Sender,fndP4_GROUP_LIST);
+end;
+
+procedure TfrmJxcTotalReport.fndP2_GROUP_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  AddShopGroupItemsList(Sender,fndP2_GROUP_LIST);
+end;
+
+procedure TfrmJxcTotalReport.fndP1_GROUP_IDPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  AddShopGroupItemsList(Sender,fndP1_GROUP_LIST);
+end;
+
+procedure TfrmJxcTotalReport.fndP3_GROUP_IDPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  AddShopGroupItemsList(Sender,fndP3_GROUP_LIST);
 end;
 
 end.

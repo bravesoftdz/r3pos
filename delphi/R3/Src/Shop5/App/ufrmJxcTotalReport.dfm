@@ -1,6 +1,6 @@
 inherited frmJxcTotalReport: TfrmJxcTotalReport
-  Left = 129
-  Top = 137
+  Left = 193
+  Top = 105
   Width = 953
   Height = 597
   Caption = #36827#38144#23384#32479#35745#34920
@@ -8,31 +8,29 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 937
-    Height = 529
+    Width = 945
+    Height = 540
     inherited RzPanel2: TRzPanel
-      Width = 927
-      Height = 519
+      Width = 935
+      Height = 530
       inherited RzPage: TRzPageControl
-        Width = 722
-        Height = 513
-        ActivePage = TabSheet4
+        Width = 730
+        Height = 524
         Color = clCream
         ParentColor = False
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
-            Width = 720
-            Height = 486
+            Width = 728
+            Height = 497
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 710
-              Height = 476
+              Width = 718
+              Height = 487
               inherited w1: TRzPanel
-                Width = 710
+                Width = 718
                 Height = 83
                 object Label6: TLabel
                   Left = 288
@@ -50,7 +48,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #25152#23646#26376#20221
                 end
                 object RzLabel3: TRzLabel
-                  Left = 170
+                  Left = 171
                   Top = 14
                   Width = 12
                   Height = 12
@@ -107,12 +105,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 80
                   Top = 54
-                  Width = 73
+                  Width = 76
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
                   Properties.OnChange = fndP1_TYPE_IDPropertiesChange
                   TabOrder = 2
                 end
@@ -122,15 +117,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
                   TabOrder = 5
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 154
+                  Left = 156
                   Top = 54
                   Width = 119
                   Height = 20
@@ -160,7 +151,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -169,7 +159,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP1_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
@@ -205,7 +194,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   asFormatString = '0000-00'
                 end
                 object P1_D2: TzrMonthEdit
-                  Left = 196
+                  Left = 198
                   Top = 10
                   Width = 77
                   Height = 20
@@ -253,21 +242,18 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 10
                 end
-                object cxComboBox1: TcxComboBox
+                object fndP1_GROUP_ID: TcxComboBox
                   Left = 80
                   Top = 32
-                  Width = 73
+                  Width = 76
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                  Properties.OnChange = fndP1_GROUP_IDPropertiesChange
                   TabOrder = 11
                 end
-                object zrComboBoxList3: TzrComboBoxList
+                object fndP1_GROUP_LIST: TzrComboBoxList
                   Tag = -1
-                  Left = 154
+                  Left = 156
                   Top = 32
                   Width = 119
                   Height = 20
@@ -310,11 +296,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 83
-                Width = 710
-                Height = 393
+                Width = 718
+                Height = 404
                 inherited DBGridEh1: TDBGridEh
-                  Width = 706
-                  Height = 389
+                  Width = 714
+                  Height = 400
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   Columns = <
@@ -517,8 +503,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 720
-            Height = 486
+            Width = 728
+            Height = 497
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -526,8 +512,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 710
-              Height = 476
+              Width = 718
+              Height = 487
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -535,7 +521,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 710
+                Width = 718
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -585,7 +571,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
-                object fndP2_REGION_ID: TzrComboBoxList
+                object fndP2_GROUP_LIST: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 31
@@ -660,9 +646,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
                   Properties.OnChange = fndP2_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
@@ -672,10 +655,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
                   TabOrder = 6
                 end
                 object fndP2_STAT_ID: TzrComboBoxList
@@ -710,7 +689,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -719,7 +697,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP2_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
@@ -803,24 +780,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 11
                 end
-                object fndP2_SHOP_TYPE: TcxComboBox
+                object fndP2_GROUP_ID: TcxComboBox
                   Left = 80
                   Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                  Properties.OnChange = fndP2_GROUP_IDPropertiesChange
                   TabOrder = 12
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 710
-                Height = 395
+                Width = 718
+                Height = 406
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -828,8 +802,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 706
-                  Height = 391
+                  Width = 714
+                  Height = 402
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1066,8 +1040,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 720
-            Height = 486
+            Width = 728
+            Height = 497
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1075,8 +1049,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 710
-              Height = 476
+              Width = 718
+              Height = 487
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1084,7 +1058,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 710
+                Width = 718
                 Height = 84
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1134,7 +1108,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
-                object fndP3_COMP_ID: TzrComboBoxList
+                object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -1149,9 +1123,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
                   Columns = <
                     item
                       EditButtons = <>
@@ -1212,7 +1186,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = P3_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP3_UNIT_ID: TcxComboBox
@@ -1221,10 +1194,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
                   TabOrder = 4
                 end
                 object P3_D2: TzrMonthEdit
@@ -1293,7 +1262,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 9
                 end
-                object zrComboBoxList4: TzrComboBoxList
+                object fndP3_GROUP_LIST: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1335,24 +1304,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox2: TcxComboBox
+                object fndP3_GROUP_ID: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                  Properties.OnChange = fndP3_GROUP_IDPropertiesChange
                   TabOrder = 11
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 84
-                Width = 710
-                Height = 392
+                Width = 718
+                Height = 403
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1361,8 +1327,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 706
-                  Height = 388
+                  Width = 714
+                  Height = 399
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1599,8 +1565,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 720
-            Height = 486
+            Width = 728
+            Height = 497
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1608,8 +1574,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 710
-              Height = 476
+              Width = 718
+              Height = 487
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1617,7 +1583,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 710
+                Width = 718
                 Height = 105
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1707,9 +1673,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
                   Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
@@ -1719,10 +1682,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
                   TabOrder = 6
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
@@ -1757,7 +1716,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1766,7 +1724,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
@@ -1784,7 +1741,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 5
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
-                object fndP4_COMP_ID: TzrComboBoxList
+                object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -1799,9 +1756,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
                   Columns = <
                     item
                       EditButtons = <>
@@ -1892,7 +1849,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #26412#24180
                   TabOrder = 11
                 end
-                object zrComboBoxList1: TzrComboBoxList
+                object fndP4_GROUP_LIST: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1934,24 +1891,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox3: TcxComboBox
+                object fndP4_GROUP_ID: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                  Properties.OnChange = fndP4_GROUP_IDPropertiesChange
                   TabOrder = 13
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 105
-                Width = 710
-                Height = 371
+                Width = 718
+                Height = 382
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1959,8 +1913,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 706
-                  Height = 367
+                  Width = 714
+                  Height = 378
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2001,7 +1955,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   Columns = <
@@ -2193,8 +2146,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 725
-        Height = 513
+        Left = 733
+        Height = 524
         inherited Panel2: TPanel
           Height = 474
           inherited RzPanel1: TRzPanel [3]
@@ -2210,15 +2163,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 937
+    Width = 945
     inherited Image1: TImage
-      Width = 418
+      Width = 430
     end
     inherited Image14: TImage
-      Left = 928
+      Left = 936
     end
     inherited Image3: TImage
-      Width = 418
+      Width = 430
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2249,6 +2202,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     PageHeader.Font.Height = -16
     PageHeader.Font.Name = #23435#20307
     PageHeader.Font.Style = [fsBold]
+    Left = 80
+    Top = 256
     BeforeGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
@@ -2262,53 +2217,40 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     Left = 41
     Top = 321
   end
-  object drpStatInfo: TADODataSet
-    CommandText = 
-      'select CLIENT_CODE,CLIENT_NAME from BAS_CLIENTINFO where CLIENT_' +
-      'CODE in (select Distinct PROVIDE from PUB_GOODSINFO where isnull' +
-      '(PROVIDE,'#39#39')<>'#39#39') order by CLIENT_CODE '
-    Parameters = <>
-    Left = 182
-    Top = 205
-  end
-  object adoReport2: TADODataSet
-    Parameters = <>
-    Left = 89
-    Top = 321
-  end
   object dsadoReport2: TDataSource
     DataSet = adoReport2
     Left = 89
     Top = 354
-  end
-  object adoReport3: TADODataSet
-    Parameters = <>
-    Left = 137
-    Top = 321
   end
   object dsadoReport3: TDataSource
     DataSet = adoReport3
     Left = 137
     Top = 354
   end
-  object adoReport4: TADODataSet
-    Parameters = <>
-    Left = 185
-    Top = 321
-  end
   object dsadoReport4: TDataSource
     DataSet = adoReport4
     Left = 185
     Top = 354
   end
-  object adoReport5: TADODataSet
-    Parameters = <>
-    Left = 233
-    Top = 321
+  object adoReport2: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 90
+    Top = 322
   end
-  object dsadoReport5: TDataSource
-    DataSet = adoReport5
-    Left = 233
-    Top = 354
+  object adoReport3: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 138
+    Top = 322
+  end
+  object adoReport4: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 186
+    Top = 323
   end
 end

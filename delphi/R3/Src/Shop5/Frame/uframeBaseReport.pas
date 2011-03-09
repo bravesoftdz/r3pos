@@ -341,7 +341,7 @@ begin
       Cbx:=TcxComboBox(Components[i]);
       CmpName:=trim(UpperCase(Cbx.Name));
       FName:=copy(CmpName,1,4);
-      if (FName='FNDP') and (RightStr(CmpName,7)='_UNIT_ID') then    //统计单位
+      if (FName='FNDP') and (RightStr(CmpName,8)='_UNIT_ID') then    //统计单位
         AddTongjiUnitList(Cbx)
       else if (FName='FNDP') and (RightStr(CmpName,10)='_SHOP_TYPE') then //管理群组
       begin

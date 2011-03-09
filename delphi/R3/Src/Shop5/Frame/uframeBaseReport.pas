@@ -346,8 +346,11 @@ begin
         if RightStr(CmpName,8)='_UNIT_ID' then    //统计单位
           AddTongjiUnitList(Cbx)
         else if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
-          AddGoodSortTypeItems(Cbx,'11111100') 
-        else if RightStr(CmpName,10)='_SHOP_TYPE' then //管理群组
+        begin
+          AddGoodSortTypeItems(Cbx,'11111100')
+          Cbx.ItemIndex:=0;
+        end else
+        if RightStr(CmpName,10)='_SHOP_TYPE' then //管理群组
         begin
           Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
           Cbx.ItemIndex:=0;

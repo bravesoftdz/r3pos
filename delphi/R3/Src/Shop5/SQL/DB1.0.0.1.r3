@@ -98,7 +98,13 @@ as
 CREATE view [VIW_GOODSINFO_BARCODEEXT]
 as
     SELECT 
-      j1.*,j2.BARCODE,j2.BATCH_NO,j2.PROPERTY_01,j2.PROPERTY_02,j2.BARCODE_TYPE,j2.UNIT_ID as BARCODE_UNIT_ID
+      j1.*,
+      ifnull(j2.BARCODE,j1.BARCODE) as UNIT_BARCODE,
+      ifnull(j2.BATCH_NO,'#') as BATCH_NO,
+      ifnull(j2.PROPERTY_01,'#') as PROPERTY_01,
+      ifnull(j2.PROPERTY_02,'#') as PROPERTY_02,
+      ifnull(j2.BARCODE_TYPE,0) as BARCODE_TYPE,
+      ifnull(j2.UNIT_ID,j1.CALC_UNITS) as BARCODE_UNIT_ID
     FROM 
       VIW_GOODSINFO j1 LEFT JOIN 
       VIW_BARCODE j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID; 
@@ -107,7 +113,13 @@ as
 CREATE view [VIW_GOODSPRICE_BARCODEEXT]
 as
     SELECT 
-      j1.*,j2.BARCODE,j2.BATCH_NO,j2.PROPERTY_01,j2.PROPERTY_02,j2.BARCODE_TYPE,j2.UNIT_ID as BARCODE_UNIT_ID
+      j1.*
+      ifnull(j2.BARCODE,j1.BARCODE) as UNIT_BARCODE,
+      ifnull(j2.BATCH_NO,'#') as BATCH_NO,
+      ifnull(j2.PROPERTY_01,'#') as PROPERTY_01,
+      ifnull(j2.PROPERTY_02,'#') as PROPERTY_02,
+      ifnull(j2.BARCODE_TYPE,0) as BARCODE_TYPE,
+      ifnull(j2.UNIT_ID,j1.CALC_UNITS) as BARCODE_UNIT_ID
     FROM
       VIW_GOODSPRICEEXT j1 LEFT JOIN 
       VIW_BARCODE j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.GODS_ID = j2.GODS_ID; 
@@ -1743,6 +1755,8 @@ CREATE TABLE [ACC_CLOSE_FORDAY] (
 	[PAY_H] [decimal](18, 3) NULL ,
 	[PAY_I] [decimal](18, 3) NULL ,
 	[PAY_J] [decimal](18, 3) NULL ,
+	      --保留零钱
+	[BALANCE] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -2535,73 +2549,6 @@ CREATE INDEX IX_RCK_GOODS_MONTH_TENANT_ID ON RCK_GOODS_MONTH(TENANT_ID);
 CREATE INDEX IX_RCK_GOODS_MONTH_TIME_STAMP ON RCK_GOODS_MONTH(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_RCK_GOODS_MONTH_MONTH ON RCK_GOODS_MONTH(TENANT_ID,MONTH);
 CREATE INDEX IX_RCK_GOODS_MONTH_GODS_ID ON RCK_GOODS_MONTH(TENANT_ID,GODS_ID);
-
---发票月台账
-CREATE TABLE [RCK_INVOICE_MONTH] (
-        --企业代码
-	[TENANT_ID] int NOT NULL ,
-        --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
-        --月份
-	[MONTH] int NOT NULL ,
-        --发票代码《发票版号》
-	[INVH_NO] [varchar] (36)  NOT NULL ,
-
---期初类台账		
-        --期初数量
-	[ORG_AMT] int NULL ,
-        --发票号起始号
-	[ORG_BAMT] int NULL ,
-        --发票号结束号
-	[ORG_EAMT] int NULL ,
-	
---领用类台账		
-        --领用数量
-	[ASK_AMT] int NULL ,
-        --发票号起始号
-	[ASK_BAMT] int NULL ,
-        --发票号结束号
-	[ASK_EAMT] int NULL ,
-	
---开票类台账		
-        --开票数量
-	[USE_AMT] int NULL ,
-        --发票号起始号
-	[USE_BAMT] int NULL ,
-        --发票号结束号
-	[USE_EAMT] int NULL ,
-        --开票金额
-	[USE_MNY] [decimal](18, 3) NULL ,
-	
---作废类台账		
-        --作废数量
-	[CNC_AMT] int NULL ,
-        --发票号起始号
-	[CNC_BAMT] int NULL ,
-        --发票号结束号
-	[CNC_EAMT] int NULL ,
-	
---结存类台账		
-        --结存数量
-	[BAL_AMT] int NULL ,
-        --发票号起始号
-	[BAL_BAMT] int NULL ,
-        --发票号结束号
-	[BAL_EAMT] int NULL ,
-	
-        --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_RCK_INVOICE_MONTH_COMM] DEFAULT ('00'),
-        --时间戳 
-  [TIME_STAMP] bigint NOT NULL,
-	CONSTRAINT [PK_RCK_INVOICE_MONTH] PRIMARY KEY   
-	(
-		[TENANT_ID],[SHOP_ID],[MONTH],[INVH_NO]
-	) 
-);
-CREATE INDEX IX_RCK_INVOICE_MONTH_TENANT_ID ON RCK_INVOICE_MONTH(TENANT_ID);
-CREATE INDEX IX_RCK_INVOICE_MONTH_TIME_STAMP ON RCK_INVOICE_MONTH(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_RCK_INVOICE_MONTH_MONTH ON RCK_INVOICE_MONTH(TENANT_ID,MONTH);
-
 
 --账户月台账
 CREATE TABLE [RCK_ACCT_MONTH] (

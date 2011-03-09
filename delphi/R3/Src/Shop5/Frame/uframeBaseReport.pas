@@ -592,9 +592,7 @@ begin
    3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'BIG_UNITS end) ';      //大包装单位
   end;
   if AliasFileName<>'' then
-    result:=result+' as '+AliasFileName+' '
-  else
-    result:=result+' as UNIT_ID '
+    result:=result+' as '+AliasFileName+' ';
 end;
 
 {===返回GoodInfo的统计换算关系[CalUNIT_ID][TabName表名，AliasFileName 字段别名]===}

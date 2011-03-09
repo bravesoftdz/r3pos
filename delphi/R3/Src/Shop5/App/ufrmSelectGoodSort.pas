@@ -15,6 +15,7 @@ uses
 
 type
   TfrmSelectGoodSort = class(TframeTreeFindDialog)
+    procedure FormShow(Sender: TObject);
   private
   public
     procedure LoadGoodSortTree;  //¥¥Ω®º”‘ÿ ˜
@@ -84,6 +85,12 @@ begin
     CreateLevelTree(rs,rzTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
   end;
   rzTree.FullExpand;
+end;
+
+procedure TfrmSelectGoodSort.FormShow(Sender: TObject);
+begin
+  inherited;
+  edtSearch.SetFocus;
 end;
 
 end.

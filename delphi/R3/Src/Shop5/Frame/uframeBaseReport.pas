@@ -347,7 +347,7 @@ begin
           AddTongjiUnitList(Cbx)
         else if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
         begin
-          AddGoodSortTypeItems(Cbx,'11111100')
+          AddGoodSortTypeItems(Cbx,'11111100');
           Cbx.ItemIndex:=0;
         end else
         if RightStr(CmpName,10)='_SHOP_TYPE' then //管理群组

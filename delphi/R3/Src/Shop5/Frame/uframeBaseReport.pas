@@ -64,22 +64,22 @@ type
     procedure FormResize(Sender: TObject);
     procedure actFilterExecute(Sender: TObject);
   private
-    
+    function RightStr(Str: string; vlen: integer): string;
+    function GetCmpNum(CmpName,BegName: string): string; //返回当前控件名中数序号
+    procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
+    procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品指标OnChange
   public
     constructor Create(AOwner: TComponent); override;
     function GetDBGridEh: TDBGridEh;virtual;
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
-    procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
-
+    procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string); 
     //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
-    procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
+    procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
-    procedure AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);overload;
-    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);overload;
+    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
-
     //选择商品类别[带供应链] 返回名称[类别名称]
     function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
 
@@ -325,13 +325,38 @@ begin
 end;
 
 procedure TframeBaseReport.FormCreate(Sender: TObject);
-var i:integer;
+var
+  i:integer;
+  CmpName,FName: string;
+  Cbx: TcxComboBox;
   Column:TColumnEh;
 begin
   inherited;
-  //设置颜色组、尺码组列是否显示
+  //初始化参数:
   for i:=0 to self.ComponentCount -1 do
   begin
+    //初始化Cbx下拉选择Items
+    if (Components[i] is TcxComboBox) then
+    begin
+      Cbx:=TcxComboBox(Components[i]);
+      CmpName:=trim(UpperCase(Cbx.Name));
+      FName:=copy(CmpName,1,4);
+      if (FName='FNDP') and (RightStr(CmpName,7)='_UNIT_ID') then    //统计单位
+        AddTongjiUnitList(Cbx)
+      else if (FName='FNDP') and (RightStr(CmpName,10)='_SHOP_TYPE') then //管理群组
+      begin
+        Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
+        Cbx.ItemIndex:=0;
+      end else                                   
+      if (FName='FNDP') and (RightStr(CmpName,8)='_TYPE_ID') then //商品指标
+      begin
+        AddGoodSortTypeItems(Cbx);
+        Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
+        Cbx.ItemIndex:=0;
+      end; 
+    end;
+
+    //设置颜色组、尺码组列是否显示
     if self.Components[i] is TDBGridEh then
     begin
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
@@ -435,8 +460,19 @@ begin
   result:=Str;
 end;
 
-procedure TframeBaseReport.AddGoodSortTypeItemsList(SortTypeList: TzrComboBoxList; ItemsIdx: integer);
+procedure TframeBaseReport.AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
+var
+  CodeID: string;
+  ItemsIdx: integer;
+  Cbx: TcxComboBox;
 begin
+  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
+  begin
+    Cbx:=TcxComboBox(Sender);
+    CodeID:=trim(TRecord_(Cbx.Properties.Items.Objects[Cbx.ItemIndex]).fieldbyName('CODE_ID').AsString);
+    ItemsIdx:=StrtoIntDef(CodeID,0);
+  end;
+  if ItemsIdx<=0 then Exit;
   case ItemsIdx of
    3:
     begin
@@ -464,23 +500,9 @@ begin
   end;
 end;
 
-procedure TframeBaseReport.AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
-var
-  ID: string;
-begin
-  SortTypeList.KeyValue := null;
-  SortTypeList.Text := '';
-  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
-  begin
-    ID:=TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]).fieldbyName('CODE_ID').AsString;
-    if ID<>'' then
-      self.AddGoodSortTypeItemsList(SortTypeList,StrToInt(ID));
-  end;
-end;
-
 
 //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
-procedure TframeBaseReport.AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111111');
+procedure TframeBaseReport.AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string);
  procedure AddItems(Cbx: TcxComboBox; Rs: TZQuery; CodeID: string);
  var CurObj: TRecord_;
  begin
@@ -607,6 +629,7 @@ begin
   TJUnit.Properties.Items.Add('计量单位');
   TJUnit.Properties.Items.Add('包装1');
   TJUnit.Properties.Items.Add('包装2');
+  TJUnit.ItemIndex:=0;
 end;
 
 function TframeBaseReport.SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
@@ -628,5 +651,72 @@ begin
   end;
 end;
 
+
+function TframeBaseReport.RightStr(Str: string; vlen: integer): string;
+var aLen: integer; 
+begin
+  aLen:=Length(Str);
+  if aLen>vlen then
+    result:=Copy(Str,alen-vlen+1,vlen)
+  else
+    result:=Str;   
+end;
+
+function TframeBaseReport.GetCmpNum(CmpName, BegName: string): string;
+var i,PosIdx: integer; ReStr: string;
+begin
+  result:='';
+  ReStr:='';
+  PosIdx:=Pos(BegName,CmpName);
+  if PosIdx=1 then //在第一位置
+  begin
+    for i:=PosIdx+length(BegName) to 100 do
+    begin
+      if CmpName[i] in ['0'..'9'] then 
+        ReStr:=ReStr+CmpName[i]
+      else
+        break;
+    end;
+    result:=ReStr;    
+  end;
+end;
+
+procedure TframeBaseReport.Dofnd_SHOP_TYPEChange(Sender: TObject);
+var
+  CmpName: string;
+  FindCmp: TComponent;
+begin
+  CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
+  if CmpName<>'' then
+  begin
+    CmpName:='fndP'+CmpName+'_SHOP_VALUE';
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
+    begin
+      case TcxComboBox(Sender).ItemIndex of
+       0: TzrComboBoxList(FindCmp).DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
+       1: TzrComboBoxList(FindCmp).DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');
+      end;
+      TzrComboBoxList(FindCmp).KeyValue:=null;
+      TzrComboBoxList(FindCmp).Text:='';
+    end;
+  end;
+end;
+
+
+procedure TframeBaseReport.Dofnd_TYPE_IDChange(Sender: TObject);
+var
+  CmpName: string;
+  FindCmp: TComponent;
+begin
+  CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
+  if CmpName<>'' then
+  begin
+    CmpName:='fndP'+CmpName+'_STAT_ID';
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
+      AddGoodSortTypeItemsList(Sender,TzrComboBoxList(FindCmp));
+  end;
+end;
 
 end.

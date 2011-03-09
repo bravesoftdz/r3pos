@@ -321,7 +321,6 @@ end;
 procedure TfrmTransOrderList.actAuditExecute(Sender: TObject);
 var Msg: String;
     Params:TftParamList;
-    i:Integer;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21700001',5) then Raise Exception.Create('你没有审核存取单的权限,请和管理员联系.');
@@ -330,13 +329,12 @@ begin
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then raise Exception.Create('已经同步的数据不能弃审');
       if cdsList.FieldByName('CHK_USER_TEXT').AsString <> Global.UserName then Raise Exception.Create('只有审核人才能对当前存取单执行弃审');
-      if MessageBox(Handle,'确认弃审当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION)<>1 then Exit;
+      if MessageBox(Handle,'确认弃审当前存取单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end
   else
     begin
       if Copy(cdsList.FieldByName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
-      i := MessageBox(Handle,'确认审核当前存取单？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
-      if i <>1 then Exit;
+      if MessageBox(Handle,'确认审核当前存取单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
     end;
   try
     Params := TftParamList.Create(nil);

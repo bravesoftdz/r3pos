@@ -128,7 +128,7 @@ begin
     Str := 'update ACC_TRANSORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').AsString+
     ''',CHK_USER='''+Params.FindParam('CHK_USER').AsString+''',COMM='''+GetCommStr(AGlobal.iDbType)+
     ''',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
-    ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and CHK_DATE is null';
+    ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and SHOP_ID='''+Params.FindParam('SHOP_ID').AsString+''' and CHK_DATE is null';
     n := AGlobal.ExecSQL(Str);
     if n = 0 then
       Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
@@ -158,7 +158,7 @@ begin
   try
     Str := 'update ACC_TRANSORDER set CHK_DATE=null,CHK_USER=null,COMM='''+GetCommStr(AGlobal.iDbType)+
     ''',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
-    ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and CHK_DATE is not null';
+    ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and SHOP_ID='''+Params.FindParam('SHOP_ID').AsString+''' and CHK_DATE is not null';
     n := AGlobal.ExecSQL(Str);
     if n = 0 then
       Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')

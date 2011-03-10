@@ -1,37 +1,38 @@
 inherited frmStockDayReport: TfrmStockDayReport
-  Left = 195
+  Left = 140
+  Top = 103
   Width = 1083
-  Height = 623
+  Height = 622
   Caption = #21830#21697#36827#36135#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1075
-    Height = 566
+    Width = 1067
+    Height = 554
     inherited RzPanel2: TRzPanel
-      Width = 1065
-      Height = 556
+      Width = 1057
+      Height = 544
       inherited RzPage: TRzPageControl
-        Width = 860
-        Height = 550
-        ActivePage = TabSheet3
+        Width = 852
+        Height = 538
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 858
-            Height = 523
+            Width = 850
+            Height = 511
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 848
-              Height = 513
+              Width = 840
+              Height = 501
               inherited w1: TRzPanel
-                Width = 848
-                Height = 105
+                Width = 840
+                Height = 87
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -46,13 +47,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 12
                   Height = 12
                   Caption = #33267
-                end
-                object Label41: TLabel
-                  Left = 24
-                  Top = 81
-                  Width = 48
-                  Height = 12
-                  Caption = #21333#25454#31867#22411
                 end
                 object Label6: TLabel
                   Left = 288
@@ -258,40 +252,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP1_RB_ALL: TcxRadioButton
-                  Left = 79
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #20840#37096
-                  Checked = True
-                  TabOrder = 9
-                  TabStop = True
-                end
-                object fndP1_InStock: TcxRadioButton
-                  Left = 136
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36827#36135#21333
-                  TabOrder = 10
-                end
-                object fndP1_ReturnStock: TcxRadioButton
-                  Left = 200
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36864#36135#21333
-                  TabOrder = 11
-                end
               end
               inherited RzPanel7: TRzPanel
-                Top = 105
-                Width = 848
-                Height = 408
+                Top = 87
+                Width = 840
+                Height = 414
                 inherited DBGridEh1: TDBGridEh
-                  Width = 844
-                  Height = 404
+                  Width = 836
+                  Height = 410
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -307,14 +275,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'REGION_ID'
                       Footers = <>
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'CODE_NAME'
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -322,15 +290,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'APRICE'
+                      FieldName = 'STOCK_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 65
@@ -338,7 +306,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMONEY'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -346,15 +314,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NOTAX_MONEY'
-                      Footers = <>
-                      Title.Caption = #26410#31246#37329#39069
-                      Width = 76
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TAX_MONEY'
+                      FieldName = 'STOCK_TAX'
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -362,7 +322,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'STOCK_MNY'
+                      Footers = <>
+                      Title.Caption = #26410#31246#37329#39069
+                      Width = 76
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'STOCK_RTL'
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -370,7 +338,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'STOCK_RATE'
                       Footers = <>
                       Title.Caption = #25240#25187#29575
                       Width = 49
@@ -378,7 +346,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PROFIT_MONEY'
+                      FieldName = 'STOCK_AGO'
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -386,7 +354,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AVG_PROFIT'
+                      FieldName = 'AVG_AGIO'
                       Footers = <>
                       Title.Caption = #21333#20301#21033#28070
                       Width = 67
@@ -402,8 +370,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 523
+            Width = 850
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -411,8 +379,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 513
+              Width = 840
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -420,8 +388,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
-                Height = 104
+                Width = 840
+                Height = 87
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -469,13 +437,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
-                end
-                object Label3: TLabel
-                  Left = 24
-                  Top = 81
-                  Width = 48
-                  Height = 12
-                  Caption = #21333#25454#31867#22411
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
@@ -650,38 +611,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 8
                 end
-                object fndP2_RB_ALL: TcxRadioButton
-                  Left = 80
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #20840#37096
-                  Checked = True
-                  TabOrder = 9
-                  TabStop = True
-                end
-                object fndP2_InStock: TcxRadioButton
-                  Left = 136
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36827#36135#21333
-                  TabOrder = 10
-                end
-                object fndP2_ReturnStock: TcxRadioButton
-                  Left = 208
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36864#36135#21333
-                  TabOrder = 11
-                end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 104
-                Width = 848
-                Height = 409
+                Top = 87
+                Width = 840
+                Height = 414
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -689,8 +624,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 405
+                  Width = 836
+                  Height = 410
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -744,38 +679,38 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_CODE'
                       Footers = <>
                       Title.Caption = #38376#24215#20195#30721
-                      Width = 62
+                      Width = 59
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
-                      Width = 153
+                      Width = 146
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'APRICE'
+                      FieldName = 'STOCK_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMONEY'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -783,15 +718,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NOTAX_MONEY'
-                      Footers = <>
-                      Title.Caption = #26410#31246#37329#39069
-                      Width = 77
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TAX_MONEY'
+                      FieldName = 'STOCK_TAX'
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -799,7 +726,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'STOCK_MNY'
+                      Footers = <>
+                      Title.Caption = #26410#31246#37329#39069
+                      Width = 76
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'STOCK_RTL'
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -807,7 +742,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'STOCK_RATE'
                       Footers = <>
                       Title.Caption = #25240#25187#29575
                       Width = 49
@@ -815,7 +750,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PROFIT_MONEY'
+                      FieldName = 'STOCK_AGO'
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -823,7 +758,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AVG_PROFIT'
+                      FieldName = 'AVG_AGIO'
                       Footers = <>
                       Title.Caption = #21333#20301#21033#28070
                       Width = 67
@@ -839,8 +774,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 523
+            Width = 850
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -848,8 +783,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 513
+              Width = 840
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -857,8 +792,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
-                Height = 104
+                Width = 840
+                Height = 89
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -907,13 +842,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
-                object Label4: TLabel
-                  Left = 24
-                  Top = 81
-                  Width = 48
-                  Height = 12
-                  Caption = #21333#25454#31867#22411
-                end
                 object P3_D1: TcxDateEdit
                   Left = 80
                   Top = 10
@@ -931,8 +859,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 1
                 end
                 object RzBitBtn2: TRzBitBtn
-                  Left = 526
-                  Top = 64
+                  Left = 486
+                  Top = 40
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1072,38 +1000,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 7
                 end
-                object fndP3_RB_ALL: TcxRadioButton
-                  Left = 80
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #20840#37096
-                  Checked = True
-                  TabOrder = 8
-                  TabStop = True
-                end
-                object fndP3_InStock: TcxRadioButton
-                  Left = 136
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36827#36135#21333
-                  TabOrder = 9
-                end
-                object fndP3_ReturnStock: TcxRadioButton
-                  Left = 200
-                  Top = 79
-                  Width = 57
-                  Height = 17
-                  Caption = #36864#36135#21333
-                  TabOrder = 10
-                end
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 104
-                Width = 848
-                Height = 409
+                Top = 89
+                Width = 840
+                Height = 412
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1112,8 +1014,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 405
+                  Width = 836
+                  Height = 408
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1177,28 +1079,28 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'SORT_NAME'
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
-                      Width = 185
+                      Width = 171
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'APRICE'
+                      FieldName = 'STOCK_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMONEY'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -1206,15 +1108,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NOTAX_MONEY'
-                      Footers = <>
-                      Title.Caption = #26410#31246#37329#39069
-                      Width = 77
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TAX_MONEY'
+                      FieldName = 'STOCK_TAX'
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -1222,7 +1116,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'STOCK_MNY'
+                      Footers = <>
+                      Title.Caption = #26410#31246#37329#39069
+                      Width = 76
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'STOCK_RTL'
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -1230,7 +1132,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'STOCK_RATE'
                       Footers = <>
                       Title.Caption = #25240#25187#29575
                       Width = 49
@@ -1238,7 +1140,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PROFIT_MONEY'
+                      FieldName = 'STOCK_AGO'
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -1246,7 +1148,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AVG_PROFIT'
+                      FieldName = 'AVG_AGIO'
                       Footers = <>
                       Title.Caption = #21333#20301#21033#28070
                       Width = 67
@@ -1262,8 +1164,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 523
+            Width = 850
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1271,8 +1173,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 513
+              Width = 840
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1280,8 +1182,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
-                Height = 129
+                Width = 840
+                Height = 108
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1336,13 +1238,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
-                end
-                object Label16: TLabel
-                  Left = 24
-                  Top = 105
-                  Width = 48
-                  Height = 12
-                  Caption = #21333#25454#31867#22411
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -1559,38 +1454,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 9
                 end
-                object fndP4_RB_ALL: TcxRadioButton
-                  Left = 80
-                  Top = 103
-                  Width = 57
-                  Height = 17
-                  Caption = #20840#37096
-                  Checked = True
-                  TabOrder = 10
-                  TabStop = True
-                end
-                object fndP4_InStock: TcxRadioButton
-                  Left = 136
-                  Top = 103
-                  Width = 57
-                  Height = 17
-                  Caption = #36827#36135#21333
-                  TabOrder = 11
-                end
-                object fndP4_ReturnStock: TcxRadioButton
-                  Left = 208
-                  Top = 103
-                  Width = 57
-                  Height = 17
-                  Caption = #36864#36135#21333
-                  TabOrder = 12
-                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 129
-                Width = 848
-                Height = 384
+                Top = 108
+                Width = 840
+                Height = 393
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1598,8 +1467,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 380
+                  Width = 836
+                  Height = 389
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1673,25 +1542,32 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 62
                     end
                     item
+                      EditButtons = <>
+                      FieldName = 'UNIT_NAME'
+                      Footers = <>
+                      Title.Caption = #21333#20301
+                      Width = 35
+                    end
+                    item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'APRICE'
+                      FieldName = 'STOCK_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMONEY'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -1699,15 +1575,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NOTAX_MONEY'
-                      Footers = <>
-                      Title.Caption = #26410#31246#37329#39069
-                      Width = 79
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TAX_MONEY'
+                      FieldName = 'STOCK_TAX'
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -1715,7 +1583,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'STOCK_MNY'
+                      Footers = <>
+                      Title.Caption = #26410#31246#37329#39069
+                      Width = 76
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'STOCK_RTL'
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -1723,7 +1599,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'STOCK_RATE'
                       Footers = <>
                       Title.Caption = #25240#25187#29575
                       Width = 49
@@ -1731,7 +1607,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PROFIT_MONEY'
+                      FieldName = 'STOCK_AGO'
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -1739,7 +1615,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AVG_PROFIT'
+                      FieldName = 'AVG_AGIO'
                       Footers = <>
                       Title.Caption = #21333#20301#21033#28070
                       Width = 67
@@ -1755,8 +1631,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 523
+            Width = 850
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1764,8 +1640,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 513
+              Width = 840
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1773,7 +1649,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2083,8 +1959,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 848
-                Height = 384
+                Width = 840
+                Height = 372
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2092,8 +1968,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 380
+                  Width = 836
+                  Height = 368
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2147,17 +2023,20 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'STOCK_DATE'
                       Footers = <>
                       Title.Caption = #26085#26399
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
                       Width = 80
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'CLIENT_NAME'
                       Footers = <>
                       Title.Caption = #20379#24212#21830#21517#31216
                       Width = 134
@@ -2184,11 +2063,18 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 62
                     end
                     item
+                      EditButtons = <>
+                      FieldName = 'UNIT_NAME'
+                      Footers = <>
+                      Title.Caption = #21333#20301
+                      Width = 31
+                    end
+                    item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
@@ -2196,24 +2082,16 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
-                      Width = 66
+                      Title.Caption = #21333#20215
+                      Width = 55
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AMONEY'
+                      FieldName = 'CALC_MONEY'
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
-                      Width = 76
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'NOTAX_MONEY'
-                      Footers = <>
-                      Title.Caption = #26410#31246#37329#39069
-                      Width = 73
+                      Width = 84
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -2221,12 +2099,20 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'TAX_MONEY'
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
-                      Width = 66
+                      Width = 82
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'NOTAX_MONEY'
+                      Footers = <>
+                      Title.Caption = #26410#31246#37329#39069
+                      Width = 76
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'RTL_MONEY'
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -2234,7 +2120,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'AGIO_RATE'
                       Footers = <>
                       Title.Caption = #25240#25187#29575
                       Width = 49
@@ -2242,48 +2128,66 @@ inherited frmStockDayReport: TfrmStockDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PROFIT_MONEY'
+                      FieldName = 'AGIO_MONEY'
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
                     end
                     item
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'AVG_PROFIT'
-                      Footers = <>
-                      Title.Caption = #21333#20301#21033#28070
-                      Width = 67
-                    end
-                    item
-                      EditButtons = <>
+                      FieldName = 'BATCH_NO'
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 73
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'LOCUS_NO'
                       Footers = <>
                       Title.Caption = #29289#27969#36319#36394#21495
                       Width = 74
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'IS_PRESENT'
                       Footers = <>
                       Title.Caption = #36192#21697
                       Width = 35
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = #21046#21333#20154
-                      Width = 45
+                      Title.Caption = #36827#36135#38376#24215
+                      Width = 82
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GUIDE_USER_TEXT'
+                      Footers = <>
+                      Title.Caption = #39564#36135#21592
+                      Width = 47
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CREA_USER_TEXT'
+                      Footers = <>
+                      Title.Caption = #21046#21333#20154
+                      Width = 46
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21046#21333#26102#38388
                       Width = 111
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'STOCK_TYPE'
+                      Footers = <>
+                      Title.Caption = #21333#25454
+                      Width = 50
                     end>
                 end
               end
@@ -2292,16 +2196,16 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 863
-        Height = 550
+        Left = 855
+        Height = 538
         inherited Panel2: TPanel
-          Height = 500
+          Height = 499
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 385
+            Height = 384
             inherited rzShowColumns: TRzCheckList
-              Height = 381
+              Height = 380
             end
           end
         end
@@ -2309,15 +2213,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1075
+    Width = 1067
     inherited Image1: TImage
-      Width = 560
+      Width = 548
     end
     inherited Image14: TImage
-      Left = 1066
+      Left = 1058
     end
     inherited Image3: TImage
-      Width = 560
+      Width = 548
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

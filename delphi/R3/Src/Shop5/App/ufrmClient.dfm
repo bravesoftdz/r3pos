@@ -1,6 +1,6 @@
 inherited frmClient: TfrmClient
-  Left = 369
-  Top = 175
+  Left = 242
+  Top = 153
   Width = 742
   Height = 490
   Caption = #23458#25143#31649#29702
@@ -66,7 +66,6 @@ inherited frmClient: TfrmClient
                 Top = 5
                 Width = 196
                 Height = 20
-                Properties.OnChange = edtKeyPropertiesChange
                 TabOrder = 0
                 OnKeyDown = edtKeyKeyDown
               end

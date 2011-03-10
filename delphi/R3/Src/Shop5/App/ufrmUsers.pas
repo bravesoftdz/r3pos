@@ -50,7 +50,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure edtKeyPropertiesChange(Sender: TObject);
     procedure actRightsExecute(Sender: TObject);
     procedure Cds_UsersAfterScroll(DataSet: TDataSet);
     procedure N1Click(Sender: TObject);
@@ -270,15 +269,6 @@ begin
      Cds_Users.Next;
   if Key=VK_UP then
      Cds_Users.Prior;
-end;
-
-procedure TfrmUsers.edtKeyPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  Cds_Users.Filtered:=False;
-  Cds_Users.Filter:=' [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
-                  ' or USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%');
-  Cds_Users.Filtered:=(edtKey.Text<>'');
 end;
 
 procedure TfrmUsers.actRightsExecute(Sender: TObject);

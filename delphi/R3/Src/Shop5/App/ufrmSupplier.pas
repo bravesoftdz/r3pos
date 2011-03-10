@@ -51,7 +51,6 @@ type
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormShow(Sender: TObject);
-    procedure edtKeyPropertiesChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Cds_ClientAfterScroll(DataSet: TDataSet);
     procedure FormDestroy(Sender: TObject);
@@ -282,21 +281,11 @@ begin
     edtKey.SetFocus;
 end;
 
-procedure TfrmSupplier.edtKeyPropertiesChange(Sender: TObject);
-begin
-  inherited;
-//  Cds_Client.Filtered:=False;
-//  Cds_Client.Filter:='CLIENT_NAME LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_SPELL LIKE ''%'+trim(edtKey.Text)+'%'' or CLIENT_CODE LIKE ''%'+trim(edtKey.Text)+'%'' ';
-//  Cds_Client.Filtered:=(trim(edtKey.Text)<>'');
-  Cds_Client.Filtered:=False;
-  Cds_Client.Filtered:=True;
-end;
-
 procedure TfrmSupplier.FormCreate(Sender: TObject);
 begin
   inherited;
   InitGrid;
-  fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
+  fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_SUPPERSORT');
   TDbGridEhSort.InitForm(self);
 end;
 
@@ -305,7 +294,7 @@ var tmp,rs:TZQuery;
 begin
   DBGridEh1.FieldColumns['SORT_ID'].KeyList.Clear;
   DBGridEh1.FieldColumns['SORT_ID'].PickList.Clear;
-  tmp:=Global.GetZQueryFromName('PUB_CLIENTSORT');
+  tmp:=Global.GetZQueryFromName('PUB_SUPPERSORT');
   tmp.First;
   while not tmp.Eof do
   begin

@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 416
-  Top = 187
+  Left = 602
+  Top = 193
   Width = 744
   Height = 484
   Caption = #29992#25143#26723#26696#31649#29702
@@ -257,7 +257,6 @@ inherited frmUsers: TfrmUsers
                   Top = 5
                   Width = 196
                   Height = 20
-                  Properties.OnChange = edtKeyPropertiesChange
                   TabOrder = 0
                   OnKeyDown = edtKeyKeyDown
                 end

@@ -252,7 +252,7 @@ begin
   inherited;
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
   Aobj := TRecord_.Create;
-  edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
+  edtSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_SUPPERSORT');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtSETTLE_CODE.DataSet := Global.GetZQueryFromName('PUB_SETTLE_CODE');

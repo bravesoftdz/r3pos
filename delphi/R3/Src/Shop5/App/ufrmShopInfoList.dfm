@@ -1,6 +1,6 @@
 inherited frmShopInfoList: TfrmShopInfoList
-  Left = 318
-  Top = 174
+  Left = 459
+  Top = 313
   Width = 901
   Height = 516
   Caption = #38376#24215#26723#26696#31649#29702
@@ -87,7 +87,6 @@ inherited frmShopInfoList: TfrmShopInfoList
                   Top = 5
                   Width = 196
                   Height = 20
-                  Properties.OnChange = edtKeyPropertiesChange
                   TabOrder = 0
                   OnKeyDown = edtKeyKeyDown
                 end

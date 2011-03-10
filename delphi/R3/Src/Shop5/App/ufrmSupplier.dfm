@@ -66,7 +66,6 @@ inherited frmSupplier: TfrmSupplier
                 Top = 5
                 Width = 196
                 Height = 20
-                Properties.OnChange = edtKeyPropertiesChange
                 TabOrder = 0
                 OnKeyDown = edtKeyKeyDown
               end

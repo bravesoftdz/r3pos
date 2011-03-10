@@ -1,35 +1,36 @@
 inherited frmStockDayReport: TfrmStockDayReport
-  Left = 209
-  Top = 117
-  Width = 1067
+  Left = 195
+  Width = 1083
   Height = 623
   Caption = #21830#21697#36827#36135#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1059
+    Width = 1075
     Height = 566
     inherited RzPanel2: TRzPanel
-      Width = 1049
+      Width = 1065
       Height = 556
       inherited RzPage: TRzPageControl
-        Width = 844
+        Width = 860
         Height = 550
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 842
+            Width = 858
             Height = 523
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 832
+              Width = 848
               Height = 513
               inherited w1: TRzPanel
-                Width = 832
+                Width = 848
                 Height = 105
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -179,7 +180,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -268,7 +268,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object fndP1_RB_IN: TcxRadioButton
+                object fndP1_InStock: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -276,7 +276,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #36827#36135#21333
                   TabOrder = 10
                 end
-                object fndP1_RB_OUT: TcxRadioButton
+                object fndP1_ReturnStock: TcxRadioButton
                   Left = 200
                   Top = 79
                   Width = 57
@@ -287,10 +287,10 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 105
-                Width = 832
+                Width = 848
                 Height = 408
                 inherited DBGridEh1: TDBGridEh
-                  Width = 828
+                  Width = 844
                   Height = 404
                   FrozenCols = 3
                   TitleHeight = 22
@@ -402,7 +402,7 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
+            Width = 858
             Height = 523
             Align = alClient
             BorderOuter = fsNone
@@ -411,7 +411,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 848
               Height = 513
               Align = alClient
               BevelOuter = bvNone
@@ -420,7 +420,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 832
+                Width = 848
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -614,7 +614,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -661,7 +660,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object fndP2_RB_IN: TcxRadioButton
+                object fndP2_InStock: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -669,7 +668,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #36827#36135#21333
                   TabOrder = 10
                 end
-                object fndP2_RB_OUT: TcxRadioButton
+                object fndP2_ReturnStock: TcxRadioButton
                   Left = 208
                   Top = 79
                   Width = 57
@@ -681,7 +680,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 832
+                Width = 848
                 Height = 409
                 Align = alClient
                 BorderOuter = fsGroove
@@ -690,7 +689,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 828
+                  Width = 844
                   Height = 405
                   Align = alClient
                   AllowedOperations = []
@@ -840,7 +839,7 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
+            Width = 858
             Height = 523
             Align = alClient
             BorderOuter = fsNone
@@ -849,7 +848,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 848
               Height = 513
               Align = alClient
               BevelOuter = bvNone
@@ -858,7 +857,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 832
+                Width = 848
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1083,7 +1082,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 8
                   TabStop = True
                 end
-                object fndP3_RB_IN: TcxRadioButton
+                object fndP3_InStock: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -1091,7 +1090,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #36827#36135#21333
                   TabOrder = 9
                 end
-                object fndP3_RB_OUT: TcxRadioButton
+                object fndP3_ReturnStock: TcxRadioButton
                   Left = 200
                   Top = 79
                   Width = 57
@@ -1103,7 +1102,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 832
+                Width = 848
                 Height = 409
                 Align = alClient
                 BorderOuter = fsGroove
@@ -1113,7 +1112,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 828
+                  Width = 844
                   Height = 405
                   Align = alClient
                   AllowedOperations = []
@@ -1263,7 +1262,7 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
+            Width = 858
             Height = 523
             Align = alClient
             BorderOuter = fsNone
@@ -1272,7 +1271,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 848
               Height = 513
               Align = alClient
               BevelOuter = bvNone
@@ -1281,7 +1280,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 832
+                Width = 848
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1440,7 +1439,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1571,7 +1569,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 10
                   TabStop = True
                 end
-                object fndP4_RB_IN: TcxRadioButton
+                object fndP4_InStock: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
@@ -1579,7 +1577,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #36827#36135#21333
                   TabOrder = 11
                 end
-                object fndP4_RB_OUT: TcxRadioButton
+                object fndP4_ReturnStock: TcxRadioButton
                   Left = 208
                   Top = 103
                   Width = 57
@@ -1591,7 +1589,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 832
+                Width = 848
                 Height = 384
                 Align = alClient
                 BorderOuter = fsGroove
@@ -1600,7 +1598,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 828
+                  Width = 844
                   Height = 380
                   Align = alClient
                   AllowedOperations = []
@@ -1757,7 +1755,7 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
+            Width = 858
             Height = 523
             Align = alClient
             BorderOuter = fsNone
@@ -1766,7 +1764,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 848
               Height = 513
               Align = alClient
               BevelOuter = bvNone
@@ -1775,7 +1773,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 832
+                Width = 848
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1935,7 +1933,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1957,7 +1954,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
+                  Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
                   TabOrder = 6
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
@@ -2056,7 +2053,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 9
                 end
-                object fndP5_RB_ALL: TcxRadioButton
+                object fndP5_ALL: TcxRadioButton
                   Left = 80
                   Top = 103
                   Width = 57
@@ -2066,7 +2063,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 10
                   TabStop = True
                 end
-                object fndP5_RB_IN: TcxRadioButton
+                object fndP5_InStock: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
@@ -2074,7 +2071,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #36827#36135#21333
                   TabOrder = 11
                 end
-                object fndP5_RB_OUT: TcxRadioButton
+                object fndP5_ReturnStock: TcxRadioButton
                   Left = 208
                   Top = 103
                   Width = 57
@@ -2086,7 +2083,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 832
+                Width = 848
                 Height = 384
                 Align = alClient
                 BorderOuter = fsGroove
@@ -2095,7 +2092,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 828
+                  Width = 844
                   Height = 380
                   Align = alClient
                   AllowedOperations = []
@@ -2295,7 +2292,7 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 847
+        Left = 863
         Height = 550
         inherited Panel2: TPanel
           Height = 500
@@ -2312,15 +2309,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1059
+    Width = 1075
     inherited Image1: TImage
-      Width = 544
+      Width = 560
     end
     inherited Image14: TImage
-      Left = 1050
+      Left = 1066
     end
     inherited Image3: TImage
-      Width = 544
+      Width = 560
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2330,12 +2327,12 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 128
-    Top = 400
+    Left = 136
+    Top = 448
   end
   inherited actList: TActionList
-    Left = 192
-    Top = 392
+    Left = 168
+    Top = 448
     inherited actFind: TAction
       OnExecute = actFindExecute
     end
@@ -2364,28 +2361,23 @@ inherited frmStockDayReport: TfrmStockDayReport
     Left = 41
     Top = 321
   end
-  object drpStatInfo: TADODataSet
-    CommandText = 
-      'select CLIENT_CODE,CLIENT_NAME from BAS_CLIENTINFO where CLIENT_' +
-      'CODE in (select Distinct PROVIDE from PUB_GOODSINFO where isnull' +
-      '(PROVIDE,'#39#39')<>'#39#39') order by CLIENT_CODE '
-    Parameters = <>
-    Left = 182
-    Top = 205
-  end
   object dsadoReport2: TDataSource
+    DataSet = adoReport2
     Left = 89
     Top = 354
   end
   object dsadoReport3: TDataSource
+    DataSet = adoReport3
     Left = 137
     Top = 354
   end
   object dsadoReport4: TDataSource
+    DataSet = adoReport4
     Left = 185
     Top = 354
   end
   object dsadoReport5: TDataSource
+    DataSet = adoReport5
     Left = 233
     Top = 354
   end

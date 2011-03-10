@@ -76,8 +76,8 @@ type
     fndP1_SHOP_TYPE: TcxComboBox;
     fndP1_SHOP_VALUE: TzrComboBoxList;
     fndP1_RB_ALL: TcxRadioButton;
-    fndP1_RB_IN: TcxRadioButton;
-    fndP1_RB_OUT: TcxRadioButton;
+    fndP1_InStock: TcxRadioButton;
+    fndP1_ReturnStock: TcxRadioButton;
     Label10: TLabel;
     Label13: TLabel;
     Label14: TLabel;
@@ -91,8 +91,8 @@ type
     fndP2_SHOP_TYPE: TcxComboBox;
     Label3: TLabel;
     fndP2_RB_ALL: TcxRadioButton;
-    fndP2_RB_IN: TcxRadioButton;
-    fndP2_RB_OUT: TcxRadioButton;
+    fndP2_InStock: TcxRadioButton;
+    fndP2_ReturnStock: TcxRadioButton;
     Label9: TLabel;
     Label19: TLabel;
     Label20: TLabel;
@@ -104,8 +104,8 @@ type
     fndP3_SHOP_TYPE: TcxComboBox;
     Label4: TLabel;
     fndP3_RB_ALL: TcxRadioButton;
-    fndP3_RB_IN: TcxRadioButton;
-    fndP3_RB_OUT: TcxRadioButton;
+    fndP3_InStock: TcxRadioButton;
+    fndP3_ReturnStock: TcxRadioButton;
     Label21: TLabel;
     Label24: TLabel;
     Label25: TLabel;
@@ -120,8 +120,8 @@ type
     fndP4_SHOP_TYPE: TcxComboBox;
     Label16: TLabel;
     fndP4_RB_ALL: TcxRadioButton;
-    fndP4_RB_IN: TcxRadioButton;
-    fndP4_RB_OUT: TcxRadioButton;
+    fndP4_InStock: TcxRadioButton;
+    fndP4_ReturnStock: TcxRadioButton;
     DBGridEh5: TDBGridEh;
     Label17: TLabel;
     Label18: TLabel;
@@ -136,9 +136,9 @@ type
     fndP5_SHOP_VALUE: TzrComboBoxList;
     fndP5_SHOP_TYPE: TcxComboBox;
     Label29: TLabel;
-    fndP5_RB_ALL: TcxRadioButton;
-    fndP5_RB_IN: TcxRadioButton;
-    fndP5_RB_OUT: TcxRadioButton;
+    fndP5_ALL: TcxRadioButton;
+    fndP5_InStock: TcxRadioButton;
+    fndP5_ReturnStock: TcxRadioButton;
     adoReport2: TZQuery;
     adoReport5: TZQuery;
     adoReport3: TZQuery;
@@ -155,9 +155,12 @@ type
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure actPriorExecute(Sender: TObject);
+    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
+    SortName: string;
     sid1,sid2,sid4,sid5: string;
     srid1,srid2,srid4,srid5: string;
     groupid1,groupid2,groupid3,groupid4,groupid5: string;  //管理群组ID
@@ -171,11 +174,13 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     //5、按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;
+    function GetUnitIDIdx: integer;
   public
     { Public declarations }
     HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
+    property  UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式    
   end;
 
 implementation
@@ -252,9 +257,9 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //单据类型:
-  if fndP1_RB_IN.Checked then //进货单
+  if fndP1_InStock.Checked then //进货单
     strWhere:=strWhere+''
-  else if fndP1_RB_Out.Checked then //退货单
+  else if fndP1_ReturnStock.Checked then //退货单
     strWhere:=strWhere+'';
 
 
@@ -383,9 +388,9 @@ begin
     GoodTab:='VIW_GOODSINFO'; 
 
   //单据类型:
-  if fndP2_RB_IN.Checked then //进货单
+  if fndP2_InStock.Checked then //进货单
     strWhere:=strWhere+''
-  else if fndP2_RB_Out.Checked then //退货单
+  else if fndP2_ReturnStock.Checked then //退货单
     strWhere:=strWhere+'';
         
   case Factor.iDbType of
@@ -446,9 +451,9 @@ begin
     end;
 
   //单据类型:
-  if fndP3_RB_IN.Checked then //进货单
+  if fndP3_InStock.Checked then //进货单
     strWhere:=strWhere+''
-  else if fndP3_RB_Out.Checked then //退货单
+  else if fndP3_ReturnStock.Checked then //退货单
     strWhere:=strWhere+'';    
 
   case Factor.iDbType of
@@ -530,9 +535,9 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //单据类型:
-  if fndP4_RB_IN.Checked then //进货单
+  if fndP4_InStock.Checked then //进货单
     strWhere:=strWhere+''
-  else if fndP4_RB_Out.Checked then //退货单
+  else if fndP4_ReturnStock.Checked then //退货单
     strWhere:=strWhere+'';
 
   case Factor.iDbType of
@@ -605,9 +610,9 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //单据类型:
-  if fndP5_RB_IN.Checked then //进货单
+  if fndP5_InStock.Checked then //进货单
     strWhere:=strWhere+''
-  else if fndP5_RB_Out.Checked then //退货单
+  else if fndP5_ReturnStock.Checked then //退货单
     strWhere:=strWhere+'';
 
   case Factor.iDbType of
@@ -646,11 +651,10 @@ end;
 procedure TfrmStockDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
- {
   if adoReport1.IsEmpty then Exit;
+  //分门店在汇总：
   P2_D1.Date := P1_D1.Date;
   P2_D2.Date := P1_D2.Date;
-
   fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
@@ -665,18 +669,13 @@ begin
   fndP2_GROUP_ID.Text := '' else
   fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
   rzPage.ActivePageIndex := 1;
-  actFind.OnExecute(nil);
-  }
+  actFind.OnExecute(nil); 
 end;
 
 procedure TfrmStockDayReport.DBGridEh2DblClick(Sender: TObject);
-//var rs:TADODataSet;
 begin
   inherited;
-  {
   if adoReport2.IsEmpty then Exit;
-  //  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  //  if not rs.Locate('COMP_ID',adoReport2.FieldbyName('COMP_ID').AsString,[]) then Raise Exception.Create('你没有查看此门店数据的权限');
   P3_D1.Date := P2_D1.Date;
   P3_D2.Date := P2_D2.Date;
   fndP3_TYPE_ID.ItemIndex := 0;
@@ -699,7 +698,6 @@ begin
   end;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
-  }
 end;
 
 procedure TfrmStockDayReport.DBGridEh3DblClick(Sender: TObject);
@@ -972,8 +970,6 @@ begin
 end;
 
 procedure TfrmStockDayReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-var
-  SortName: string;
 begin
   if self.SelectGoodSortType(sid1,srid1,SortName) then
     fndP1_SORT_ID.Text:=SortName;
@@ -984,6 +980,7 @@ procedure TfrmStockDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid1 := '';
+  srid1 :='';
   fndP1_SORT_ID.Text := '';
 end;
 
@@ -992,6 +989,7 @@ procedure TfrmStockDayReport.fndP2_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid2 := '';
+  srid2 :='';
   fndP2_SORT_ID.Text := '';
 end;
 
@@ -1000,31 +998,46 @@ procedure TfrmStockDayReport.fndP4_SORT_IDKeyPress(Sender: TObject;
 begin
   inherited;
   sid4 := '';
+  srid4 :='';
   fndP4_SORT_ID.Text := '';
 end;
 
 procedure TfrmStockDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
-var
-  SortName: string;
 begin
-  if self.SelectGoodSortType(sid1,srid1,SortName) then
+  if self.SelectGoodSortType(sid2,srid2,SortName) then
     fndP1_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmStockDayReport.fndP4_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
-var SortName: string;
 begin
+  inherited;
   if SelectGoodSortType(sid4,srid4,SortName) then
     fndP4_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmStockDayReport.actPriorExecute(Sender: TObject);
+procedure TfrmStockDayReport.fndP5_SORT_IDPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
 begin
-  if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
   inherited;
+  if SelectGoodSortType(sid5,srid5,SortName) then
+    fndP5_SORT_ID.Text:=SortName;
+end;
 
+function TfrmStockDayReport.GetUnitIDIdx: integer;
+begin
+  result:=0;
+  if (RzPage.ActivePage=TabSheet1) and (fndP1_UNIT_ID.ItemIndex<>-1) then       //地区进销存统计表
+    result:=fndP1_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet2) and (fndP2_UNIT_ID.ItemIndex<>-1) then  //门店进销存统计表
+    result:=fndP2_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet3) and (fndP3_UNIT_ID.ItemIndex<>-1) then  //分类进销存统计表
+    result:=fndP3_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet4) and (fndP4_UNIT_ID.ItemIndex<>-1) then  //商品进销存统计表
+    result:=fndP4_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet5) and (fndP5_UNIT_ID.ItemIndex<>-1) then  //进货商品明细统计表
+    result:=fndP5_UNIT_ID.ItemIndex;
 end;
 
 end.

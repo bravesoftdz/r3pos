@@ -1,21 +1,21 @@
 inherited frmJxcTotalReport: TfrmJxcTotalReport
-  Left = 198
-  Top = 110
-  Width = 953
-  Height = 597
+  Left = 181
+  Top = 120
+  Width = 928
+  Height = 627
   Caption = #36827#38144#23384#32479#35745#34920
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 945
-    Height = 540
+    Width = 912
+    Height = 559
     inherited RzPanel2: TRzPanel
-      Width = 935
-      Height = 530
+      Width = 902
+      Height = 549
       inherited RzPage: TRzPageControl
-        Width = 730
-        Height = 524
+        Width = 697
+        Height = 543
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -23,14 +23,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
-            Width = 728
-            Height = 497
+            Width = 695
+            Height = 516
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 718
-              Height = 487
+              Width = 685
+              Height = 506
               inherited w1: TRzPanel
-                Width = 718
+                Width = 685
                 Height = 83
                 object Label6: TLabel
                   Left = 288
@@ -209,38 +209,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   asString = '000000'
                   asFormatString = '0000-00'
                 end
-                object RadioButton1: TRadioButton
-                  Left = 287
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26376
-                  TabOrder = 7
-                end
-                object RadioButton2: TRadioButton
-                  Left = 343
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #19978#26376
-                  TabOrder = 8
-                end
-                object RadioButton3: TRadioButton
-                  Left = 399
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#23395
-                  TabOrder = 9
-                end
-                object RadioButton4: TRadioButton
-                  Left = 455
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#24180
-                  TabOrder = 10
-                end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
@@ -250,7 +218,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 11
+                  TabOrder = 7
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -264,7 +232,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 12
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -297,11 +265,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 83
-                Width = 718
-                Height = 404
+                Width = 685
+                Height = 423
                 inherited DBGridEh1: TDBGridEh
-                  Width = 714
-                  Height = 400
+                  Width = 681
+                  Height = 419
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   Columns = <
@@ -315,38 +283,46 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'REGION_ID'
                       Footers = <>
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'CODE_NAME'
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.0#'
                       EditButtons = <>
-                      FieldName = 'ORG_AMOUNT'
+                      FieldName = 'ORG_AMT'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
                     end
                     item
-                      DisplayFormat = '#0.00#'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMONEY'
+                      FieldName = 'ORG_CST'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#37329#39069
-                      Width = 79
+                      Width = 62
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMOUNT'
+                      FieldName = 'ORG_RTL'
+                      Footers = <>
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
+                      Width = 60
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
                       Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
@@ -354,32 +330,31 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'IN_AMONEY'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#37329#39069
-                      Width = 81
-                    end
-                    item
-                      DisplayFormat = '#0.00#'
-                      EditButtons = <>
-                      FieldName = 'IN_TAX'
-                      Footers = <>
-                      Title.Caption = #36827#36135'|'#31246#39069
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
-                    end
-                    item
-                      DisplayFormat = '#0.00#'
-                      EditButtons = <>
-                      FieldName = 'IN_NOTAX'
-                      Footers = <>
-                      Title.Caption = #36827#36135'|'#19981#21547#31246#37329#39069
-                      Visible = False
-                      Width = 72
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SAL_AMOUNT'
+                      FieldName = 'STOCK_MNY'
+                      Footers = <>
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
+                      Width = 68
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'STOCK_TAX'
+                      Footers = <>
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
+                      Width = 59
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'SALE_AMT'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
@@ -387,32 +362,31 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_AMONEY'
+                      FieldName = 'SALE_TTL'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#37329#39069
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_TAX'
+                      FieldName = 'SALE_MNY'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#31246#39069
-                      Width = 67
-                    end
-                    item
-                      DisplayFormat = '#0.00#'
-                      EditButtons = <>
-                      FieldName = 'SAL_NOTAX'
-                      Footers = <>
-                      Title.Caption = #38144#21806'|'#19981#21547#31246#37329#39069
-                      Visible = False
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_COST'
+                      FieldName = 'SALE_TAX'
+                      Footers = <>
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
+                      Width = 67
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'SALE_CST'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
@@ -420,7 +394,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_PROFIT'
+                      FieldName = 'SALE_PRF'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
@@ -428,14 +402,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'SALE_RATE'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMOUNT'
+                      FieldName = 'DBIN_AMT'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
@@ -443,14 +417,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMONEY'
+                      FieldName = 'DBIN_CST'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMOUNT'
+                      FieldName = 'DBOUT_AMT'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
@@ -458,29 +432,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMONEY'
+                      FieldName = 'DBOUT_CST'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMB_AMOUNT'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#25968#37327
-                      Width = 60
-                    end
-                    item
-                      DisplayFormat = '#0.00#'
-                      EditButtons = <>
-                      FieldName = 'COMB_AMONEY'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#37329#39069
-                      Width = 74
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'RCK_AMOUNT'
+                      FieldName = 'BAL_AMT'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
@@ -488,10 +447,16 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'RCK_AMONEY'
+                      FieldName = 'BAL_CST'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BAL_RTL'
+                      Footers = <>
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -504,8 +469,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 728
-            Height = 497
+            Width = 695
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -513,8 +478,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 718
-              Height = 487
+              Width = 685
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -522,7 +487,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 718
+                Width = 685
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -748,38 +713,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   asString = '000000'
                   asFormatString = '0000-00'
                 end
-                object RadioButton5: TRadioButton
-                  Left = 287
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26376
-                  TabOrder = 8
-                end
-                object RadioButton6: TRadioButton
-                  Left = 343
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #19978#26376
-                  TabOrder = 9
-                end
-                object RadioButton7: TRadioButton
-                  Left = 399
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#23395
-                  TabOrder = 10
-                end
-                object RadioButton8: TRadioButton
-                  Left = 455
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#24180
-                  TabOrder = 11
-                end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 31
@@ -789,14 +722,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 12
+                  TabOrder = 8
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 718
-                Height = 406
+                Width = 685
+                Height = 425
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -804,8 +737,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 714
-                  Height = 402
+                  Width = 681
+                  Height = 421
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -860,22 +793,22 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_CODE'
                       Footers = <>
                       Title.Caption = #38376#24215#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.0#'
                       EditButtons = <>
-                      FieldName = 'ORG_AMOUNT'
+                      FieldName = 'ORG_AMT'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
@@ -883,86 +816,95 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMONEY'
+                      FieldName = 'ORG_CST'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#37329#39069
-                      Width = 79
+                      Width = 62
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMOUNT'
+                      FieldName = 'ORG_RTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#25968#37327
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMONEY'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#37329#39069
-                      Width = 81
+                      Title.Caption = #36827#36135'|'#25968#37327
+                      Width = 61
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'IN_TAX'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#31246#39069
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_NOTAX'
+                      FieldName = 'STOCK_MNY'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#19981#21547#31246#37329#39069
-                      Visible = False
-                      Width = 72
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
+                      Width = 68
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'STOCK_TAX'
+                      Footers = <>
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
+                      Width = 59
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SAL_AMOUNT'
+                      FieldName = 'SALE_AMT'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_AMONEY'
+                      FieldName = 'SALE_TTL'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#37329#39069
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_TAX'
+                      FieldName = 'SALE_MNY'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#31246#39069
-                      Width = 67
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SAL_NOTAX'
-                      Footers = <>
-                      Title.Caption = #38144#21806'|'#19981#21547#31246#37329#39069
-                      Visible = False
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_COST'
+                      FieldName = 'SALE_TAX'
+                      Footers = <>
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
+                      Width = 67
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'SALE_CST'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_PROFIT'
+                      FieldName = 'SALE_PRF'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
@@ -970,66 +912,61 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'SALE_RATE'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMOUNT'
+                      FieldName = 'DBIN_AMT'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMONEY'
+                      FieldName = 'DBIN_CST'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#37329#39069
-                      Width = 70
+                      Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMOUNT'
+                      FieldName = 'DBOUT_AMT'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMONEY'
+                      FieldName = 'DBOUT_CST'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#37329#39069
-                      Width = 73
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMB_AMOUNT'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#25968#37327
-                      Width = 60
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMB_AMONEY'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'RCK_AMOUNT'
+                      FieldName = 'BAL_AMT'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'RCK_AMONEY'
+                      FieldName = 'BAL_CST'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BAL_RTL'
+                      Footers = <>
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -1042,8 +979,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 728
-            Height = 497
+            Width = 695
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1051,8 +988,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 718
-              Height = 487
+              Width = 685
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1060,7 +997,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 718
+                Width = 685
                 Height = 84
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1094,7 +1031,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #25253#34920#31867#22411
+                  Caption = #32479#35745#31867#22411
                 end
                 object Label20: TLabel
                   Left = 288
@@ -1179,7 +1116,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object fndP3_TYPE_ID: TcxComboBox
+                object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
                   Top = 32
                   Width = 121
@@ -1232,38 +1169,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   asString = '000000'
                   asFormatString = '0000-00'
                 end
-                object RadioButton9: TRadioButton
-                  Left = 287
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26376
-                  TabOrder = 6
-                end
-                object RadioButton10: TRadioButton
-                  Left = 343
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #19978#26376
-                  TabOrder = 7
-                end
-                object RadioButton11: TRadioButton
-                  Left = 399
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#23395
-                  TabOrder = 8
-                end
-                object RadioButton12: TRadioButton
-                  Left = 455
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#24180
-                  TabOrder = 9
-                end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
@@ -1276,7 +1181,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1315,14 +1220,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 11
+                  TabOrder = 7
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 84
-                Width = 718
-                Height = 403
+                Width = 685
+                Height = 422
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1331,8 +1236,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 714
-                  Height = 399
+                  Width = 681
+                  Height = 418
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1397,12 +1302,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       FieldName = 'SORT_NAME'
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
-                      Width = 209
+                      Width = 168
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.0#'
                       EditButtons = <>
-                      FieldName = 'ORG_AMOUNT'
+                      FieldName = 'ORG_AMT'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
@@ -1410,86 +1315,95 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMONEY'
+                      FieldName = 'ORG_CST'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#37329#39069
-                      Width = 79
+                      Width = 62
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMOUNT'
+                      FieldName = 'ORG_RTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#25968#37327
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMONEY'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#37329#39069
-                      Width = 81
+                      Title.Caption = #36827#36135'|'#25968#37327
+                      Width = 61
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'IN_TAX'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#31246#39069
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_NOTAX'
+                      FieldName = 'STOCK_MNY'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#19981#21547#31246#37329#39069
-                      Visible = False
-                      Width = 72
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
+                      Width = 68
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'STOCK_TAX'
+                      Footers = <>
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
+                      Width = 59
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SAL_AMOUNT'
+                      FieldName = 'SALE_AMT'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_AMONEY'
+                      FieldName = 'SALE_TTL'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#37329#39069
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_TAX'
+                      FieldName = 'SALE_MNY'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#31246#39069
-                      Width = 67
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SAL_NOTAX'
-                      Footers = <>
-                      Title.Caption = #38144#21806'|'#19981#21547#31246#37329#39069
-                      Visible = False
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_COST'
+                      FieldName = 'SALE_TAX'
+                      Footers = <>
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
+                      Width = 67
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'SALE_CST'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_PROFIT'
+                      FieldName = 'SALE_PRF'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
@@ -1497,66 +1411,61 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'SALE_RATE'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMOUNT'
+                      FieldName = 'DBIN_AMT'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMONEY'
+                      FieldName = 'DBIN_CST'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMOUNT'
+                      FieldName = 'DBOUT_AMT'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMONEY'
+                      FieldName = 'DBOUT_CST'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMB_AMOUNT'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#25968#37327
-                      Width = 60
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMB_AMONEY'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#37329#39069
-                      Width = 74
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'RCK_AMOUNT'
+                      FieldName = 'BAL_AMT'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'RCK_AMONEY'
+                      FieldName = 'BAL_CST'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BAL_RTL'
+                      Footers = <>
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -1569,8 +1478,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 728
-            Height = 497
+            Width = 695
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1578,8 +1487,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 718
-              Height = 487
+              Width = 685
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1587,7 +1496,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 718
+                Width = 685
                 Height = 105
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1820,38 +1729,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   asString = '000000'
                   asFormatString = '0000-00'
                 end
-                object RadioButton13: TRadioButton
-                  Left = 287
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#26376
-                  TabOrder = 8
-                end
-                object RadioButton14: TRadioButton
-                  Left = 343
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #19978#26376
-                  TabOrder = 9
-                end
-                object RadioButton15: TRadioButton
-                  Left = 399
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#23395
-                  TabOrder = 10
-                end
-                object RadioButton16: TRadioButton
-                  Left = 455
-                  Top = 12
-                  Width = 53
-                  Height = 17
-                  Caption = #26412#24180
-                  TabOrder = 11
-                end
                 object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
@@ -1864,7 +1741,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 12
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1903,14 +1780,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 13
+                  TabOrder = 9
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 105
-                Width = 718
-                Height = 382
+                Width = 685
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1918,8 +1795,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 714
-                  Height = 378
+                  Width = 681
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1973,6 +1850,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
@@ -1986,9 +1869,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMOUNT'
+                      FieldName = 'UNIT_NAME'
+                      Footers = <>
+                      Title.Caption = #21333#20301
+                    end
+                    item
+                      DisplayFormat = '#0.0#'
+                      EditButtons = <>
+                      FieldName = 'ORG_AMT'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
@@ -1996,86 +1885,95 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMONEY'
+                      FieldName = 'ORG_CST'
                       Footers = <>
                       Title.Caption = #26399#21021'|'#37329#39069
-                      Width = 79
+                      Width = 62
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMOUNT'
+                      FieldName = 'ORG_RTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#25968#37327
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_AMONEY'
+                      FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#37329#39069
-                      Width = 81
+                      Title.Caption = #36827#36135'|'#25968#37327
+                      Width = 61
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'IN_TAX'
+                      FieldName = 'STOCK_TTL'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#31246#39069
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'IN_NOTAX'
+                      FieldName = 'STOCK_MNY'
                       Footers = <>
-                      Title.Caption = #36827#36135'|'#19981#21547#31246#37329#39069
-                      Visible = False
-                      Width = 72
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
+                      Width = 68
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'STOCK_TAX'
+                      Footers = <>
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
+                      Width = 59
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SAL_AMOUNT'
+                      FieldName = 'SALE_AMT'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_AMONEY'
+                      FieldName = 'SALE_TTL'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#37329#39069
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_TAX'
+                      FieldName = 'SALE_MNY'
                       Footers = <>
-                      Title.Caption = #38144#21806'|'#31246#39069
-                      Width = 67
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SAL_NOTAX'
-                      Footers = <>
-                      Title.Caption = #38144#21806'|'#19981#21547#31246#37329#39069
-                      Visible = False
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_COST'
+                      FieldName = 'SALE_TAX'
+                      Footers = <>
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
+                      Width = 67
+                    end
+                    item
+                      DisplayFormat = '#0.00#'
+                      EditButtons = <>
+                      FieldName = 'SALE_CST'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'SAL_PROFIT'
+                      FieldName = 'SALE_PRF'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
@@ -2083,66 +1981,61 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
-                      FieldName = 'PROFIT_RATE'
+                      FieldName = 'SALE_RATE'
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMOUNT'
+                      FieldName = 'DBIN_AMT'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEIN_AMONEY'
+                      FieldName = 'DBIN_CST'
                       Footers = <>
                       Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMOUNT'
+                      FieldName = 'DBOUT_AMT'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'MOVEOUT_AMONEY'
+                      FieldName = 'DBOUT_CST'
                       Footers = <>
                       Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMB_AMOUNT'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#25968#37327
-                      Width = 60
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'COMB_AMONEY'
-                      Footers = <>
-                      Title.Caption = #25414#32465#25286#21368'|'#37329#39069
-                      Width = 74
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'RCK_AMOUNT'
+                      FieldName = 'BAL_AMT'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'RCK_AMONEY'
+                      FieldName = 'BAL_CST'
                       Footers = <>
                       Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BAL_RTL'
+                      Footers = <>
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -2151,16 +2044,16 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 733
-        Height = 524
+        Left = 700
+        Height = 543
         inherited Panel2: TPanel
-          Height = 474
+          Height = 504
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 359
+            Height = 389
             inherited rzShowColumns: TRzCheckList
-              Height = 355
+              Height = 385
             end
           end
         end
@@ -2168,15 +2061,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 945
+    Width = 912
     inherited Image1: TImage
-      Width = 430
+      Width = 393
     end
     inherited Image14: TImage
-      Left = 936
+      Left = 903
     end
     inherited Image3: TImage
-      Width = 430
+      Width = 393
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

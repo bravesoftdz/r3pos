@@ -26,6 +26,8 @@ begin
     rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where (CALC_UNITS=:OLD_UNIT_ID) or (SMALL_UNITS=:OLD_UNIT_ID)'+
     ' or (BIG_UNITS=:OLD_UNIT_ID) and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('OLD_UNIT_ID').AsString := FieldbyName('UNIT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
@@ -43,6 +45,8 @@ begin
   try
     rs.SQL.Text := 'select UNIT_ID,COMM,SEQ_NO from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('UNIT_NAME').AsString := FieldbyName('UNIT_NAME').AsString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
     rs.First;
     while not rs.Eof do
       begin
@@ -67,8 +71,11 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and UNIT_ID<>:OLD_UNIT_ID and COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_MEAUNITS where UNIT_NAME=:UNIT_NAME and UNIT_ID<>:OLD_UNIT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('UNIT_NAME').AsString := FieldbyName('UNIT_NAME').AsString;
+    rs.ParamByName('OLD_UNIT_ID').AsString := FieldbyName('UNIT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
     if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsString+'"单位名称不能重复设置');
   finally
     rs.Free;

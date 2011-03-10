@@ -1,10 +1,10 @@
 // ************************************************************************ //
 // The types declared in this file were generated from data read from the
 // WSDL File described below:
-// WSDL     : http://10.10.11.232/rsp/services/CaTenantService?wsdl
+// WSDL     : http://10.10.11.249/services/CaTenantService?wsdl
 // Encoding : UTF-8
 // Version  : 1.0
-// (2011/2/15 17:24:47 - 1.33.2.5)
+// (2011/3/10 13:57:15 - 1.33.2.5)
 // ************************************************************************ //
 
 unit CaTenantService;
@@ -24,35 +24,80 @@ type
   // ************************************************************************ //
   // !:string          - "http://www.w3.org/2001/XMLSchema"
 
+  Pub                  = class;                 { "http://xml.soa.modules.rsp.rspcn.com" }
+  MessageException     = class;                 { "http://xml.soa.modules.rsp.rspcn.com" }
+
 
 
   // ************************************************************************ //
-  // Namespace : http://10.10.11.232/rsp/services/CaTenantService
+  // Namespace : http://xml.soa.modules.rsp.rspcn.com
+  // ************************************************************************ //
+  Pub = class(TRemotable)
+  private
+    FtimeStamp: WideString;
+    Fvss: WideString;
+    Fflag: WideString;
+    Fmsg: WideString;
+    FrecAck: WideString;
+  published
+    property timeStamp: WideString read FtimeStamp write FtimeStamp;
+    property vss: WideString read Fvss write Fvss;
+    property flag: WideString read Fflag write Fflag;
+    property msg: WideString read Fmsg write Fmsg;
+    property recAck: WideString read FrecAck write FrecAck;
+  end;
+
+
+
+  // ************************************************************************ //
+  // Namespace : http://xml.soa.modules.rsp.rspcn.com
+  // ************************************************************************ //
+  MessageException = class(TRemotable)
+  private
+    Fmessage: WideString;
+    Fpub: Pub;
+  public
+    destructor Destroy; override;
+  published
+    property message: WideString read Fmessage write Fmessage;
+    property pub: Pub read Fpub write Fpub;
+  end;
+
+  fault           = MessageException;      { "http://10.10.11.249/services/CaTenantService"[F] }
+
+  // ************************************************************************ //
+  // Namespace : http://10.10.11.249/services/CaTenantService
   // transport : http://schemas.xmlsoap.org/soap/http
   // style     : document
   // binding   : CaTenantServiceSoapBinding
-  // service   : CaTenantServiceImplService
+  // service   : CaTenantWebServiceImplService
   // port      : CaTenantService
-  // URL       : http://10.10.11.232/rsp/services/CaTenantService
+  // URL       : http://10.10.11.249/services/CaTenantService
   // ************************************************************************ //
-  CaTenantServiceImpl = interface(IInvokable)
-  ['{D6B4F84E-FD86-42BE-352A-4FEFCFB94DC6}']
-    function  register(const inXml: WideString): WideString; stdcall;
+  CaTenantWebServiceImpl = interface(IInvokable)
+  ['{BA4F5324-098F-1C4D-3ABF-8F98B90C70F7}']
     function  login(const inXml: WideString): WideString; stdcall;
+    function  uniqueLoginName(const inXml: WideString): WideString; stdcall;
+    function  register(const inXml: WideString): WideString; stdcall;
     function  unRegister(const inXml: WideString): WideString; stdcall;
+    function  changePwd(const inXml: WideString): WideString; stdcall;
+    function  modidyInfo(const inXml: WideString): WideString; stdcall;
+    function  applyRelation(const inXml: WideString): WideString; stdcall;
+    function  changeRelationType(const inXml: WideString): WideString; stdcall;
+    function  auditRelation(const inXml: WideString): WideString; stdcall;
     function  getTenantInfo(const inXml: WideString): WideString; stdcall;
   end;
 
-function GetCaTenantServiceImpl(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO: THTTPRIO = nil): CaTenantServiceImpl;
+function GetCaTenantWebServiceImpl(UseWSDL: Boolean=System.False; Addr: string=''; HTTPRIO: THTTPRIO = nil): CaTenantWebServiceImpl;
 
 
 implementation
 
-function GetCaTenantServiceImpl(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): CaTenantServiceImpl;
+function GetCaTenantWebServiceImpl(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): CaTenantWebServiceImpl;
 const
-  defWSDL = 'http://10.10.11.232/rsp/services/CaTenantService?wsdl';
-  defURL  = 'http://10.10.11.232/rsp/services/CaTenantService';
-  defSvc  = 'CaTenantServiceImplService';
+  defWSDL = 'http://10.10.11.249/services/CaTenantService?wsdl';
+  defURL  = 'http://10.10.11.249/services/CaTenantService';
+  defSvc  = 'CaTenantWebServiceImplService';
   defPrt  = 'CaTenantService';
 var
   RIO: THTTPRIO;
@@ -70,7 +115,7 @@ begin
   else
     RIO := HTTPRIO;
   try
-    Result := (RIO as CaTenantServiceImpl);
+    Result := (RIO as CaTenantWebServiceImpl);
     if UseWSDL then
     begin
       RIO.WSDLLocation := Addr;
@@ -85,9 +130,19 @@ begin
 end;
 
 
-initialization
-  InvRegistry.RegisterInterface(TypeInfo(CaTenantServiceImpl), 'http://10.10.11.232/rsp/services/CaTenantService', 'UTF-8');
-  InvRegistry.RegisterDefaultSOAPAction(TypeInfo(CaTenantServiceImpl), '');
-  InvRegistry.RegisterInvokeOptions(TypeInfo(CaTenantServiceImpl), ioDocument);
+destructor MessageException.Destroy;
+begin
+  if Assigned(Fpub) then
+    Fpub.Free;
+  inherited Destroy;
+end;
 
-end. 
+initialization
+  InvRegistry.RegisterInterface(TypeInfo(CaTenantWebServiceImpl), 'http://10.10.11.249/services/CaTenantService', 'UTF-8');
+  InvRegistry.RegisterDefaultSOAPAction(TypeInfo(CaTenantWebServiceImpl), '');
+  InvRegistry.RegisterInvokeOptions(TypeInfo(CaTenantWebServiceImpl), ioDocument);
+  RemClassRegistry.RegisterXSClass(Pub, 'http://xml.soa.modules.rsp.rspcn.com', 'Pub');
+  RemClassRegistry.RegisterXSClass(MessageException, 'http://xml.soa.modules.rsp.rspcn.com', 'MessageException');
+  RemClassRegistry.RegisterXSInfo(TypeInfo(fault), 'http://10.10.11.249/services/CaTenantService', 'fault');
+
+end.

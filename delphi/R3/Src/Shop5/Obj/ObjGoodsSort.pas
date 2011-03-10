@@ -35,9 +35,9 @@ begin
     rs.Close;
     rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
     AGlobal.Open(rs);
-    rs.ParamByName('UNIT_ID').AsString := FieldbyName('UNIT_ID').AsString;
+    rs.ParamByName('UNIT_ID').AsString := FieldbyName('SORT_ID').AsString;
     if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
+       Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
     rs.Free;
   end;
@@ -53,6 +53,9 @@ begin
   try
     rs.SQL.Text := 'select SORT_ID,COMM,SEQ_NO from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_TYPE=:SORT_TYPE and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('SORT_TYPE').AsInteger := Fieldbyname('SORT_TYPE').AsInteger;
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
+    rs.ParamByName('SORT_NAME').AsString := Fieldbyname('SORT_NAME').AsString;
     rs.First;
     while not rs.Eof do
       begin
@@ -79,6 +82,9 @@ begin
   try
     rs.SQL.Text := 'select count(*) from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_ID<>:OLD_SORT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsOldInteger;
+    rs.ParamByName('SORT_NAME').AsString := Fieldbyname('SORT_NAME').AsString;
+    rs.ParamByName('SORT_ID').AsString := Fieldbyname('SORT_ID').AsOldString;
     if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"名称不能重复设置');
   finally
     rs.Free;

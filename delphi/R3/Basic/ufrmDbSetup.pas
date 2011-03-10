@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Forms, Dialogs,
   ExtCtrls, StdCtrls, ComCtrls, EncDec, RzButton, Registry, IniFiles,
-  jpeg,rzPanel, cxSpinEdit, cxTextEdit, cxButtonEdit, cxControls,
+  jpeg,rzPanel, cxSpinEdit, cxTextEdit, cxButtonEdit, cxControls, ZdbFactory,
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, Controls, DB, ADODB,
   ZConnection, Mask;
 
@@ -49,7 +49,6 @@ type
     ODialog: TOpenDialog;
     lblAccountName: TLabel;
     Label4: TLabel;
-    Conn: TZConnection;
     edtDBID: TcxSpinEdit;
     procedure FormCreate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -63,11 +62,13 @@ type
     procedure edtADOPortKeyPress(Sender: TObject; var Key: Char);
     procedure edtAdodbidKeyPress(Sender: TObject; var Key: Char);
     procedure edtDbDirClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure cbAdoTypePropertiesChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FDBID: Integer;
+    IsVisble,IsLoad:Boolean;
     { Private declarations }
+    procedure EnableControl;
     procedure SetIniParams(Section,Key,Value:String);
     function GetIniParams(Section,Key:String):String;
     function GetConnStr:string;
@@ -91,8 +92,9 @@ var
 
 procedure TfrmDBSetup.FormCreate(Sender: TObject);
 begin
-    Font.Assign(Screen.MenuFont);
-    HintL.Caption := '数据库参数配置';
+  Font.Assign(Screen.MenuFont);
+  HintL.Caption := '数据库参数配置';
+  //cbConnMode.ItemIndex := 0;
 end;
 
 procedure TfrmDBSetup.btnOKClick(Sender: TObject);
@@ -112,7 +114,7 @@ begin
       Exit;
       end;
       try
-        //TestConnect;
+        TestConnect;
         SaveParams;
         blnSetup := true;
         ModalResult := mrOk;
@@ -151,8 +153,6 @@ end;
 
 procedure TfrmDBSetup.cbDbTypeChange(Sender: TObject);
 begin
-  //cxBEdit.Visible := False;
-  //cxBEdit.Clear;
   lbDBBaseName.Caption :='数据库名称：';
   if Uppercase(cbDBType.Text)='ORACLE' then
   begin
@@ -216,17 +216,32 @@ begin
 end;
 
 procedure TfrmDBSetup.cbConnModePropertiesChange(Sender: TObject);
+var Pro:String;
 begin
   NbMode.PageIndex := cbConnMode.ItemIndex;
   case NbMOde.PageIndex of
   0:
     begin
-      cbDbType.ItemIndex := 0;
-      cbDBType.SetFocus;
+      if IsLoad then
+        begin
+          Pro := GetIniParams('db'+IntToStr(DBID),'provider');
+          if Pro = 'mssql' then
+            cbDbType.ItemIndex := 0
+          else if Pro = 'oracle-9i' then
+            cbDbType.ItemIndex := 1
+          else if Pro = 'sqlite-3' then
+            cbDbType.ItemIndex := 2
+          else if Pro = 'ado' then
+            cbDbType.ItemIndex := 3;
+        end
+      else
+        cbDbType.ItemIndex := 0;
+
+      //cbDBType.SetFocus;
     end;
   1:begin
       cbADOType.ItemIndex := 1;
-      edtADOHost.SetFocus;
+      //edtADOHost.SetFocus;
     end;
   end;
   
@@ -281,25 +296,53 @@ end;
 function TfrmDBSetup.GetConnStr: string;
 var ConnStr:String;
 begin
+
   try
     if cbConnMode.ItemIndex = 0 then
       begin
-        ConnStr := 'provider='+Trim(cbDbType.Text)+';';
-        if cbDbType.ItemIndex = 2 then
-          ConnStr := ConnStr + 'hostname=' + Trim(edtDbDir.Text)+';'
-        else
-          ConnStr := ConnStr + 'hostname=' + Trim(edtDbName.Text)+';';
+        case cbDbType.ItemIndex of
+          0:begin
+            if Trim(edtDbName.Text) = '' then Raise Exception.Create('');
+            if Trim(edtDatabase.Text) = '' then Raise Exception.Create('');
+            if Trim(edtUser.Text) = '' then Raise Exception.Create('');
+            if Trim(edtUserPw.Text) = '' then Raise Exception.Create('');
+            ConnStr := 'provider=mssql;';
+            ConnStr := ConnStr + 'hostname=' + Trim(edtDbName.Text)+';';
+            ConnStr := ConnStr + 'databasename=' + Trim(edtDatabase.Text)+';';
+            ConnStr := ConnStr + 'uid=' + Trim(edtUser.Text)+';';
+            ConnStr := ConnStr + 'password=' + Trim(edtUserPw.Text);
+           end;
+          1:begin
+            ConnStr := 'provider=oracle-9i';
+            ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
+            ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+            ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+            ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+           end;
+          2:begin
+            ConnStr := 'provider=sqlite-3;';
+            if Trim(edtDbDir.Text) = '' then Raise Exception.Create('sqlite-3');
 
-        ConnStr := ConnStr + 'databasename=' + Trim(edtDatabase.Text)+';';
-        ConnStr := ConnStr + 'uid=' + Trim(edtUser.Text)+';';
-        ConnStr := ConnStr + 'password=' + Trim(edtUserPw.Text);
+            //ConnStr := 'provider=mssql;';
+            ConnStr := ConnStr + 'databasename=' + Trim(edtDbDir.Text);
+            if Trim(edtUser.Text) <> '' then ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+            if Trim(edtUserPw.Text) <> '' then ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+           end;
+          3:begin
+            ConnStr := 'provider=ado;';
+            ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
+            ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+            ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+            ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+           end;
+        end;
       end
     else
       begin
-        ConnStr := 'connmode='+IntToStr(cbAdoType.ItemIndex)+';';
-        ConnStr := ConnStr + 'hostname=' + Trim(edtADOHost.Text) +';';
-        ConnStr := ConnStr + 'port=' + Trim(edtADOPort.Text) + ';';
-        ConnStr := ConnStr + 'dbid=' + IntToStr(DBID);
+        ConnStr := 'connmode='+IntToStr(cbAdoType.ItemIndex);
+        ConnStr := ConnStr + ';hostname=' + Trim(edtADOHost.Text);
+        ConnStr := ConnStr + ';port=' + Trim(edtADOPort.Text);
+        ConnStr := ConnStr + ';dbid=' + IntToStr(DBID);
       end;
     Result := ConnStr;
   finally
@@ -308,67 +351,79 @@ begin
 end;
 
 procedure TfrmDBSetup.TestConnect;
+var Conn:TdbFactory;
+    ConString:String;
 begin
-  with Conn do
-    begin
-      try
-        if cbConnMode.ItemIndex = 0 then
-          begin
-            User := Trim(edtUser.Text);
-            Password := Trim(edtUserPw.Text);
-            Protocol := Trim(cbDbType.Text);
-            HostName := Trim(edtDbName.Text);
-            if cbDbType.ItemIndex = 2 then
-              HostName := Trim(edtDbDir.Text);
-
-            Connect;
-          end
-        else
-          begin
-            Port := StrToInt(edtADOPort.Text);
-          end;
-      except
-        Raise;
-      end;
-    end;
+  try
+    ConString := GetConnStr;
+    Conn := TdbFactory.Create;
+    //Conn.ConnString := ConString;
+    Conn.ConnMode := cbConnMode.ItemIndex + 1;
+    Conn.Initialize(ConString);
+    if not Conn.Connect then
+      Raise Exception.Create('测试连接未通过,请检查各连接参数是否正确!');
+  finally
+    Conn.Free;
+  end;
 end;
 
 procedure TfrmDBSetup.LoadParams;
-var Val:String;
+var Pro:String;
 begin
   if cbConnMode.ItemIndex = 0 then
     begin
-      if cbDbType.ItemIndex = 2 then
-        edtDbDir.Text := GetIniParams('db'+IntToStr(DBID),'hostname')
-      else
-        edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
-
-      edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
-      edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
-      edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
-      cbDbType.Text := GetIniParams('db'+IntToStr(DBID),'provider');
-      //edtDBID.Text := GetIniParams('db'+IntToStr(DBID),'dbid');
-    end
-  else
-    begin
-      if GetIniParams('db','connmode') = IntToStr(cbAdoType.ItemIndex+1) then
+      Pro := GetIniParams('db'+IntToStr(DBID),'provider');
+      if cbDbType.ItemIndex = 0 then
         begin
-          edtADOHost.Text := GetIniParams('db','hostname');
-          edtADOPort.Text := GetIniParams('db','port');
-          //sedtADODBID.Text := GetIniParams('db','dbid');
+          if Pro <> 'mssql' then Exit;
+          edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+          edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+          edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+          edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
         end
-      else
+      else if cbDbType.ItemIndex = 1 then
         begin
-          edtADOHost.Text := '';
-          edtADOPort.Text := '';
-          //sedtADODBID.Text := '';
+          if Pro <> 'oracle-9i' then Exit;
+          edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+          edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+          edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+          edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+        end
+      else if cbDbType.ItemIndex = 2 then
+        begin
+          if Pro <> 'sqlite-3' then Exit;
+          edtDbDir.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+          edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+          edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+          edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+        end
+      else if cbDbType.ItemIndex = 3 then
+        begin
+          if Pro <> 'ado' then Exit;
+          edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+          edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+          edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+          edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
         end;
     end;
+
+  if cbConnMode.ItemIndex = 1 then
+  begin
+    //cbConnMode.Text := 'AdoServer模式';
+    //cbAdoType.Text := 'Ado Server';
+    edtADOHost.Text := GetIniParams('db','hostname');
+    edtADOPort.Text := GetIniParams('db','port');
+  end;
+
+    if IsVisble then EnableControl;
+
 end;
+
 
 procedure TfrmDBSetup.SaveParams;
 var Pro:String;
 begin
+  SetIniParams('db','',IntToStr(cbConnMode.ItemIndex+1));
   case cbConnMode.ItemIndex of
     0:begin
       if cbDbType.ItemIndex = 2 then
@@ -392,9 +447,9 @@ begin
     end;
     1:Begin
       if cbAdoType.ItemIndex = 0 then
-        SetIniParams('db','connmode','1')
+        SetIniParams('db','type','1')
       else
-        SetIniParams('db','connmode','2');
+        SetIniParams('db','type','2');
       SetIniParams('db','hostname',Trim(edtADOHost.Text));
       SetIniParams('db','port',Trim(edtADOPort.Text));
       SetIniParams('db','dbid',IntToStr(DBID));
@@ -402,13 +457,6 @@ begin
       SetIniParams('db','connstr',GetConnStr);
     end;
   end;
-end;
-
-procedure TfrmDBSetup.FormShow(Sender: TObject);
-begin
-  cbConnMode.ItemIndex := 0;
-  cbDbType.ItemIndex := 0;
-  LoadParams;
 end;
 
 procedure TfrmDBSetup.cbAdoTypePropertiesChange(Sender: TObject);
@@ -419,7 +467,9 @@ end;
 procedure TfrmDBSetup.SetDBID(const Value: Integer);
 begin
   FDBID := Value;
-  sedtADODBID.Text := IntToStr(DBID);
+  edtDBID.Text := IntToStr(Value);
+  edtDBID.Enabled := False;
+  sedtADODBID.Text := IntToStr(Value);
   sedtADODBID.Enabled := False;
 end;
 
@@ -431,6 +481,7 @@ begin
     begin
       try
         DBID := Pdbid;
+        IsVisble := False;
         ShowModal;
       finally
         Free;
@@ -458,11 +509,45 @@ begin
     begin
       try
         DBID := Pdbid;
+        IsVisble := True;
+        
         ShowModal;
       finally
         Free;
       end;
     end;
+end;
+
+procedure TfrmDBSetup.EnableControl;
+var i: Integer;
+begin
+  for i := 0 to Self.ComponentCount-1 do
+    begin
+      if Components[i] is TcxComboBox then
+        TcxComboBox(Components[i]).Enabled := False
+      else if Components[i] is TcxTextEdit then
+        TcxTextEdit(Components[i]).Enabled := False
+      else if Components[i] is TcxButtonEdit then
+        TcxButtonEdit(Components[i]).Enabled := False;
+    end;
+end;
+
+procedure TfrmDBSetup.FormShow(Sender: TObject);
+var ModeStr:String;
+begin
+  ModeStr := GetIniParams('db'+IntToStr(DBID),'dbid');
+  if ModeStr <> '' then
+    begin
+      ModeStr := '1';
+      IsLoad := True;
+    end
+  else
+    begin
+      ModeStr := GetIniParams('db','connmode');
+      IsLoad := False;
+    end;
+  if cbConnMode.ItemIndex <> StrToInt(ModeStr)-1 then
+    cbConnMode.ItemIndex := StrToInt(ModeStr)-1;
 end;
 
 end.

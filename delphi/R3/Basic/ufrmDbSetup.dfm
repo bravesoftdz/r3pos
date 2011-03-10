@@ -383,6 +383,7 @@ object frmDBSetup: TfrmDBSetup
       Width = 396
       Height = 129
       Align = alBottom
+      PageIndex = 1
       TabOrder = 1
       object TPage
         Left = 0
@@ -585,10 +586,6 @@ object frmDBSetup: TfrmDBSetup
     DefaultExt = '*.db'
     Filter = 'SQLite '#25991#20214'|*.db'
     Left = 192
-    Top = 8
-  end
-  object Conn: TZConnection
-    Left = 160
     Top = 8
   end
 end

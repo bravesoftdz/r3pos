@@ -190,7 +190,7 @@ begin
   else if P1_D1.asString<P1_D2.asString then
      strWhere:=' and A.MONTH>='+P1_D1.asString+' and A.MONTH<='+P1_D2.asString+' '
   else
-     Raise Exception.Create('结束月结不能小于开始月份...');//strWhere:=' and A.MONTH>='+P1_D2.asString+' and A.MONTH<='+P1_D1.asString+' ';
+     Raise Exception.Create('结束月结不能小于开始月份...');
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -327,7 +327,7 @@ begin
   else if P2_D1.asString<P2_D2.asString then
      strWhere:=' and A.MONTH>='+P2_D1.asString+' and A.MONTH<='+P2_D2.asString+' '
   else
-     Raise Exception.Create('结束月结不能小于开始月份...');//strWhere:=' and A.MONTH>='+P2_D2.asString+' and A.MONTH<='+P2_D1.asString+' ';
+     Raise Exception.Create('结束月结不能小于开始月份...');
 
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
@@ -422,7 +422,7 @@ begin
   else if P3_D1.asString<P3_D2.asString then
      strWhere:=' and A.MONTH>='+P3_D1.asString+' and A.MONTH<='+P3_D2.asString+' '
   else
-     Raise Exception.Create('结束月结不能小于开始月份...');//strWhere:=' and A.MONTH>='+P3_D2.asString+' and A.MONTH<='+P3_D1.asString+' ';
+     Raise Exception.Create('结束月结不能小于开始月份...');
 
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
@@ -641,7 +641,7 @@ begin
   else if P4_D1.asString<P4_D2.asString then
      strWhere:=' and A.MONTH>='+P4_D1.asString+' and A.MONTH<='+P4_D2.asString+' '
   else
-     Raise Exception.Create('结束月结不能小于开始月份...');//strWhere:=' and A.MONTH>='+P4_D2.asString+' and A.MONTH<='+P4_D1.asString+' ';
+     Raise Exception.Create('结束月结不能小于开始月份...');
 
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid4)<>'') and (trim(srid4)<>'') then
@@ -728,14 +728,16 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
+
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '
     );
-  result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE from ('+result+') j left outer join VIW_BARCODE b '+
-            'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID ';
-  result := 'select j.*,u.UNIT_NAME from ('+result+') j left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
+  result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+result+') j '+
+            'left outer join VIW_BARCODE b '+
+            'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+            'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
   result := result +  ' order by j.GODS_CODE';
 end;
 

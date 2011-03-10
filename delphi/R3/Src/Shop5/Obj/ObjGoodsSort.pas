@@ -35,6 +35,7 @@ begin
     rs.Close;
     rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
     AGlobal.Open(rs);
+    rs.ParamByName('UNIT_ID').AsString := FieldbyName('UNIT_ID').AsString;
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('UNIT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally

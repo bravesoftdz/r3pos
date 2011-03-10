@@ -8,12 +8,11 @@ uses
   StdCtrls, RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, RzLstBox,
   RzChkLst, RzCmboBx, RzBckgnd, RzButton, Mask, RzEdit, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
-  cxCalendar, cxButtonEdit, cxCheckBox, objbase, zrComboBoxList, jpeg,
+  cxCalendar, cxButtonEdit, cxCheckBox, zbase, zrComboBoxList, jpeg,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxRadioGroup;
 
 type
   TfrmRecvDayReport = class(TframeBaseReport)
-    drpStatInfo: TADODataSet;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -74,33 +73,15 @@ type
     adoReport4: TZQuery;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP3_SHOP_ID: TzrComboBoxList;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP1_STAT_IDBeforeDropList(Sender: TObject);
-    procedure fndP2_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP2_STAT_IDBeforeDropList(Sender: TObject);
-    procedure P3_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP3_STAT_IDBeforeDropList(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure DBGridEh4DblClick(Sender: TObject);
-    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure actPriorExecute(Sender: TObject);
-    procedure fndP4_STAT_IDBeforeDropList(Sender: TObject);
-    procedure fndP4_TYPE_IDPropertiesChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
-    sid1,sid2,sid4:string;
     //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店销售汇总表
@@ -109,17 +90,13 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
-    //按商品销售流水表
-    function GetGlideSQL(chk:boolean=true): string;
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ufrmShowReckInfo, uframeTreeFindDialog;
+uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil;
 {$R *.dfm}
 
 procedure TfrmRecvDayReport.FormCreate(Sender: TObject);
@@ -128,79 +105,17 @@ begin
   TDbGridEhSort.InitForm(self,false,'grp0 DESC,');
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP1_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP1_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP1_COMP_TYPE.ItemIndex := 0;
-  fndP1_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP1_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP1_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP1_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP1_INVOICE_FLAG.ItemIndex := 0;
-  fndP1_SALES_TYPE.ItemIndex := 0;
-
 
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP2_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP2_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP2_COMP_TYPE.ItemIndex := 0;
-  fndP2_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP2_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP2_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP2_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP2_INVOICE_FLAG.ItemIndex := 0;
-  fndP2_SALES_TYPE.ItemIndex := 0;
 
   P3_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P3_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP3_COMP_ID.KeyValue := Global.CompanyID;
-  fndP3_COMP_ID.Text := Global.CompanyName;
-  fndP3_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP3_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP3_COMP_TYPE.ItemIndex := 0;
-  fndP3_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP3_SORT_ID.ItemIndex := 2;
-  fndP3_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP3_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP3_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP3_INVOICE_FLAG.ItemIndex := 0;
-  fndP3_SALES_TYPE.ItemIndex := 0;
 
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP4_COMP_ID.KeyValue := Global.CompanyID;
-  fndP4_COMP_ID.Text := Global.CompanyName;
-  fndP4_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP4_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP4_COMP_TYPE.ItemIndex := 0;
-  fndP4_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP4_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP4_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP4_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP4_INVOICE_FLAG.ItemIndex := 0;
-  fndP4_SALES_TYPE.ItemIndex := 0;
 
-  P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
-  P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP5_GODS_ID.DataSet := Global.GetADODataSetFromName('BAS_GOODSINFO');
-  fndP5_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP5_COMP_TYPE.ItemIndex := 0;
-  fndP5_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  AddCbxPickList(fndP5_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP5_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP5_INVOICE_FLAG.ItemIndex := 0;
-  fndP5_SALES_TYPE.ItemIndex := 0;
-
-  HasChild := (ShopGlobal.GetADODataSetFromName('CA_COMPANY').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-     rzPage.ActivePageIndex := 2
-  else
-     rzPage.ActivePageIndex := 0;
   RefreshColumn;
-
-  
 end;
 
 function TfrmRecvDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -210,6 +125,7 @@ var
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+{
   rs := Global.GetADODataSetFromName('CA_COMPANY');
   if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
   lvid := rs.FieldbyName('LEVEL_ID').AsString;
@@ -289,6 +205,7 @@ begin
 
       end;
   end;
+  }
   Result := strSql;
 end;
 
@@ -305,57 +222,31 @@ begin
         if adoReport1.Active then adoReport1.Close;
         strSql := GetGroupSQL;
         if strSql='' then Exit;
-        adoReport1.CommandText := strSql;
+        adoReport1.SQL.Text := strSql;
         Factor.Open(adoReport1);
       end;
     1: begin //按门店汇总表
         if adoReport2.Active then adoReport2.Close;
         strSql := GetCompanySQL;
         if strSql='' then Exit;
-        adoReport2.CommandText := strSql;
+        adoReport2.SQL.Text := strSql;
         Factor.Open(adoReport2);
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
         strSql := GetSortSQL;
         if strSql='' then Exit;
-        adoReport3.CommandText := strSql;
+        adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
         if strSql='' then Exit;
-        adoReport4.CommandText := strSql;
+        adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
       end;
-    4: begin //按商品流水帐
-        if adoReport5.Active then adoReport5.Close;
-        strSql := GetGlideSQL;
-        if strSql='' then Exit;
-        adoReport5.CommandText := strSql;
-        Factor.Open(adoReport5);
-      end;
   end;
-end;
-
-procedure TfrmRecvDayReport.fndP1_TYPE_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  fndP1_STAT_ID.KeyValue := null;
-  fndP1_STAT_ID.Text := '';
-end;
-
-procedure TfrmRecvDayReport.fndP1_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP1_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
 end;
 
 function TfrmRecvDayReport.GetCompanySQL(chk:boolean=true): string;
@@ -365,6 +256,7 @@ var
 begin
   if P2_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+{
   rs := Global.GetADODataSetFromName('CA_COMPANY');
   if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
   lvid := rs.FieldbyName('LEVEL_ID').AsString;
@@ -444,48 +336,8 @@ begin
 
       end;
   end;
+  }
   Result := strSql;
-end;
-
-procedure TfrmRecvDayReport.fndP2_TYPE_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  fndP2_STAT_ID.KeyValue := null;
-  fndP2_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmRecvDayReport.fndP2_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP2_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
-end;
-
-procedure TfrmRecvDayReport.P3_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  fndP3_STAT_ID.KeyValue := null;
-  fndP3_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmRecvDayReport.fndP3_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP3_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
 end;
 
 function TfrmRecvDayReport.GetSortSQL(chk:boolean=true): string;
@@ -495,6 +347,7 @@ var
 begin
   if P3_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+{
   rs := Global.GetADODataSetFromName('CA_COMPANY');
   if fndP3_COMP_ID.AsString='' then
      begin
@@ -581,6 +434,7 @@ begin
 
       end;
   end;
+  }
   Result := strSql;
 end;
 
@@ -591,6 +445,7 @@ var
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+{
   rs := Global.GetADODataSetFromName('CA_COMPANY');
   if fndP4_COMP_ID.AsString='' then
      begin
@@ -675,87 +530,7 @@ begin
 
       end;
   end;
-  Result := strSql;
-end;
-
-function TfrmRecvDayReport.GetGlideSQL(chk:boolean=true): string;
-var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
-begin
-  if P5_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if fndP5_GODS_ID.AsString = '' then Raise Exception.Create('请选择要查询的商品名称');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserID+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //门店类型
-  case fndP5_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
-  end;
-  if chk then
-  begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P5_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P5_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
-    end;
-  end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P5_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P5_D2.Date));
-  //商品名称
-  if fndP5_GODS_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.GODS_ID = '+QuotedStr(fndP5_GODS_ID.AsString);
-  //单据类型
-  case fndP5_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //会员名称
-  if fndP5_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP5_CUST_ID.AsString);
-  //票据类型
-  if fndP5_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP5_INVOICE_FLAG.Properties.Items.Objects[fndP5_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
-
-  case Factor.iDbType of
-    0: begin //SqlServer
-        strSql :=
-          'select C.COMP_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP4_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          ' when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(D.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(D.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          ',grouping(C.COMP_ID) as grp0 '+  //行标识
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,VIW_PRICE_INFO D ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and A.GODS_ID=D.GODS_ID and A.COMP_ID=D.COMP_ID and B.COMP_ID='''+Global.CompanyId+''' ' + StrWhere +
-          ' group by C.COMP_ID with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then IsNull(G.COMP_NAME,''未分组'') else ''合   计'' end as COMP_NAME from ('+strSQL+') j '+
-          'left outer join CA_COMPANY g on j.COMP_ID=g.COMP_ID order by j.grp0 desc,g.SEQ_NO';
-      end;
-    3: begin //Access
-
-      end;
-  end;
+  }
   Result := strSql;
 end;
 
@@ -763,81 +538,21 @@ procedure TfrmRecvDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
-  P2_D1.Date := P1_D1.Date;
-  P2_D2.Date := P1_D2.Date;
-  fndP2_COMP_TYPE.ItemIndex := fndP1_COMP_TYPE.ItemIndex;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
-  sid2 := sid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
-  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
-  fndP2_INVOICE_FLAG.ItemIndex := fndP1_INVOICE_FLAG.ItemIndex;
-  fndP2_CUST_ID.KeyValue := fndP1_CUST_ID.KeyValue;
-  fndP2_CUST_ID.Text := fndP1_CUST_ID.Text;
-  fndP2_GROUP_ID.KeyValue := adoReport1.FieldbyName('GROUP_ID').AsString;
-  if adoReport1.FieldbyName('grp0').AsInteger = 1 then
-  fndP2_GROUP_ID.Text := '' else
-  fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
-  rzPage.ActivePageIndex := 1;
-  actFind.OnExecute(nil);
+  DoAssignParamsValue(w1,RzPanel9);
 end;
 
 procedure TfrmRecvDayReport.DBGridEh2DblClick(Sender: TObject);
-//var rs:TADODataSet;
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-//  rs := Global.GetADODataSetFromName('CA_COMPANY');
-//  if not rs.Locate('COMP_ID',adoReport2.FieldbyName('COMP_ID').AsString,[]) then Raise Exception.Create('你没有查看此门店数据的权限');
-  P3_D1.Date := P2_D1.Date;
-  P3_D2.Date := P2_D2.Date;
-  fndP3_TYPE_ID.ItemIndex := 0;
-  fndP3_STAT_ID.KeyValue := fndP2_STAT_ID.KeyValue;
-  fndP3_STAT_ID.Text := fndP2_STAT_ID.Text;
-  fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
-  fndP3_CUST_ID.KeyValue := fndP2_CUST_ID.KeyValue;
-  fndP3_CUST_ID.Text := fndP2_CUST_ID.Text;
-  fndP3_INVOICE_FLAG.ItemIndex := fndP2_INVOICE_FLAG.ItemIndex;
-
-  fndP3_COMP_TYPE.ItemIndex := fndP2_COMP_TYPE.ItemIndex;
-  if adoReport2.FieldbyName('grp0').AsInteger = 1 then
-     begin
-       fndP3_COMP_ID.KeyValue := Global.CompanyID;
-       fndP3_COMP_ID.Text := Global.CompanyName;
-     end else
-  begin
-    fndP3_COMP_ID.Text := adoReport2.FieldbyName('COMP_NAME').AsString;
-    fndP3_COMP_ID.KeyValue := adoReport2.FieldbyName('COMP_ID').AsString;
-  end;
-  rzPage.ActivePageIndex := 2;
-  actFind.OnExecute(nil);
-
+  DoAssignParamsValue(RzPanel9,RzPanel11);
 end;
 
 procedure TfrmRecvDayReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
-  P4_D1.Date := P3_D1.Date;
-  P4_D2.Date := P3_D2.Date;
-  fndP4_COMP_TYPE.ItemIndex := fndP3_COMP_TYPE.ItemIndex;
-  fndP4_TYPE_ID.ItemIndex := fndP3_TYPE_ID.ItemIndex;
-  fndP4_STAT_ID.KeyValue := fndP3_STAT_ID.KeyValue;
-  fndP4_STAT_ID.Text := fndP4_STAT_ID.Text;
-  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_INVOICE_FLAG.ItemIndex := fndP3_INVOICE_FLAG.ItemIndex;
-  fndP4_CUST_ID.KeyValue := fndP3_CUST_ID.KeyValue;
-  fndP4_CUST_ID.Text := fndP3_CUST_ID.Text;
-  fndP4_COMP_ID.KeyValue := fndP3_COMP_ID.KeyValue;
-  fndP4_COMP_ID.Text := fndP3_COMP_ID.Text;
-  sid4 := adoReport3.FieldbyName('LEVEL_ID').AsString;
-  if adoReport3.FieldbyName('grp0').AsInteger = 1 then
-  fndP4_SORT_ID.Text := '' else
-  fndP4_SORT_ID.Text := adoReport3.FieldbyName('SORT_NAME').AsString;
-  rzPage.ActivePageIndex := 3;
-  actFind.OnExecute(nil);
-
+  DoAssignParamsValue(RzPanel11, RzPanel14);
 end;
 
 procedure TfrmRecvDayReport.FormDestroy(Sender: TObject);
@@ -847,33 +562,13 @@ begin
 
 end;
 
-procedure TfrmRecvDayReport.DBGridEh4DblClick(Sender: TObject);
-begin
-  inherited;
-  if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
-  P5_D1.Date := P4_D1.Date;
-  P5_D2.Date := P4_D2.Date;
-  if fndP4_COMP_TYPE.ItemIndex in [0,1] then
-     fndP5_COMP_TYPE.ItemIndex := 0
-  else
-     fndP5_COMP_TYPE.ItemIndex := 1;
-  fndP5_UNIT_ID.ItemIndex := fndP4_UNIT_ID.ItemIndex;
-  fndP5_INVOICE_FLAG.ItemIndex := fndP4_INVOICE_FLAG.ItemIndex;
-  fndP5_CUST_ID.KeyValue := fndP4_CUST_ID.KeyValue;
-  fndP5_CUST_ID.Text := fndP4_CUST_ID.Text;
-  fndP5_GODS_ID.KeyValue := adoReport4.FieldbyName('GODS_ID').AsString;
-  fndP5_GODS_ID.Text := adoReport4.FieldbyName('GODS_NAME').AsString;
-  rzPage.ActivePageIndex := 4;
-  actFind.OnExecute(nil);
-
-end;
-
 procedure TfrmRecvDayReport.PrintBefore;
 var
   s:string;
   c:integer;
 begin
   inherited;
+  {
   PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
   case rzPage.ActivePageIndex of
   0:begin
@@ -1077,119 +772,13 @@ begin
          PrintDBGridEh1.Title.Text := '商品名称：'+ fndP5_GODS_ID.Text;
     end;
   end;
+  }
 end;
 
-procedure TfrmRecvDayReport.fndP1_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
+procedure TfrmRecvDayReport.Button1Click(Sender: TObject);
 begin
   inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid1 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP1_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
-end;
-
-procedure TfrmRecvDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
-begin
-  inherited;
-  sid1 := '';
-  fndP1_SORT_ID.Text := '';
-end;
-
-procedure TfrmRecvDayReport.fndP2_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
-begin
-  inherited;
-  sid2 := '';
-  fndP2_SORT_ID.Text := '';
-end;
-
-procedure TfrmRecvDayReport.fndP4_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
-begin
-  inherited;
-  sid4 := '';
-  fndP4_SORT_ID.Text := '';
-end;
-
-procedure TfrmRecvDayReport.fndP2_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
-begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid2 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP2_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
-end;
-
-procedure TfrmRecvDayReport.fndP4_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
-begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid4 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP4_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
-end;
-
-procedure TfrmRecvDayReport.actPriorExecute(Sender: TObject);
-begin
-  if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
-  inherited;
-
-end;
-
-procedure TfrmRecvDayReport.fndP4_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP4_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
-
-end;
-
-procedure TfrmRecvDayReport.fndP4_TYPE_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  fndP4_STAT_ID.KeyValue := null;
-  fndP4_STAT_ID.Text := '';
-
+  DoAssignParamsValue(w1,RzPanel9);
 end;
 
 end.

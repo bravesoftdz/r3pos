@@ -178,7 +178,7 @@ begin
   // strWhere := strWhere + ' and '+ GetUnitIDCnd(UnitIDIdx,'B');
 
   //当前统计单位:
-  UnitField:=GetUnitID(UnitIDIdx,'B'); //UNIT_ID
+  UnitField:=GetUnitID(UnitIDIdx,'B','UNIT_ID'); //UNIT_ID
   CalcFields:='('+GetUnitTO_CALC(UnitIDIdx,'B')+')'; //[统计单位Index,查询表别名,字段别名]
   strSql:=
     'select A.TENANT_ID as TENANT_ID,A.GODS_ID as GODS_ID '+   //--货品内码

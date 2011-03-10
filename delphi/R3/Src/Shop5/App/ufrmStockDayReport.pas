@@ -653,30 +653,15 @@ begin
   inherited;
   if adoReport1.IsEmpty then Exit;
   //分门店在汇总：
-  P2_D1.Date := P1_D1.Date;
-  P2_D2.Date := P1_D2.Date;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
-  sid2 := sid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
-  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
-  fndP2_INVOICE_FLAG.ItemIndex := fndP1_INVOICE_FLAG.ItemIndex;
-  fndP2_CUST_ID.KeyValue := fndP1_CUST_ID.KeyValue;
-  fndP2_CUST_ID.Text := fndP1_CUST_ID.Text;
-  fndP2_GROUP_ID.KeyValue := adoReport1.FieldbyName('GROUP_ID').AsString;
-  if adoReport1.FieldbyName('grp0').AsInteger = 1 then
-  fndP2_GROUP_ID.Text := '' else
-  fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
-  rzPage.ActivePageIndex := 1;
-  actFind.OnExecute(nil); 
+  DoAssignParamsValue(W1,RzPanel9);
+  //actFind.OnExecute(nil); 
 end;
 
 procedure TfrmStockDayReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-  P3_D1.Date := P2_D1.Date;
+{  P3_D1.Date := P2_D1.Date;
   P3_D2.Date := P2_D2.Date;
   fndP3_TYPE_ID.ItemIndex := 0;
   fndP3_STAT_ID.KeyValue := fndP2_STAT_ID.KeyValue;
@@ -698,6 +683,7 @@ begin
   end;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
+  }
 end;
 
 procedure TfrmStockDayReport.DBGridEh3DblClick(Sender: TObject);

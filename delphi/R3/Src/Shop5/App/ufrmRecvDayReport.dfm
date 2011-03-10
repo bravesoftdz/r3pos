@@ -1,37 +1,37 @@
 inherited frmRecvDayReport: TfrmRecvDayReport
-  Left = 125
-  Top = 101
+  Left = 187
+  Top = 103
   Width = 999
   Height = 600
   Caption = #25910#27454#26085#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 983
-    Height = 532
+    Width = 991
+    Height = 543
     inherited RzPanel2: TRzPanel
-      Width = 973
-      Height = 522
+      Width = 981
+      Height = 533
       inherited RzPage: TRzPageControl
-        Width = 768
-        Height = 516
-        ActivePage = TabSheet3
+        Width = 776
+        Height = 527
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 766
-            Height = 489
+            Width = 774
+            Height = 500
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 756
-              Height = 479
+              Width = 764
+              Height = 490
               inherited w1: TRzPanel
-                Width = 756
+                Width = 764
                 Height = 65
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -72,7 +72,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 302
+                  Left = 322
                   Top = 21
                   Width = 67
                   Height = 32
@@ -105,9 +105,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 3
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
@@ -155,11 +154,11 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 65
-                Width = 756
-                Height = 414
+                Width = 764
+                Height = 425
                 inherited DBGridEh1: TDBGridEh
-                  Width = 752
-                  Height = 410
+                  Width = 760
+                  Height = 421
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -290,8 +289,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 766
-            Height = 489
+            Width = 774
+            Height = 500
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -299,8 +298,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 756
-              Height = 479
+              Width = 764
+              Height = 490
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -308,7 +307,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 756
+                Width = 764
                 Height = 65
                 Align = alTop
                 BorderOuter = fsGroove
@@ -429,17 +428,16 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 4
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 65
-                Width = 756
-                Height = 414
+                Width = 764
+                Height = 425
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -447,8 +445,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 752
-                  Height = 410
+                  Width = 760
+                  Height = 421
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -619,8 +617,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 766
-            Height = 489
+            Width = 774
+            Height = 500
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -628,8 +626,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 756
-              Height = 479
+              Width = 764
+              Height = 490
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -637,7 +635,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 756
+                Width = 764
                 Height = 89
                 Align = alTop
                 BorderOuter = fsGroove
@@ -765,9 +763,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 4
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
@@ -816,8 +813,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 89
-                Width = 756
-                Height = 390
+                Width = 764
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -826,8 +823,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 752
-                  Height = 386
+                  Width = 760
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -991,8 +988,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 766
-            Height = 489
+            Width = 774
+            Height = 500
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1000,8 +997,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 756
-              Height = 479
+              Width = 764
+              Height = 490
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1009,7 +1006,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 756
+                Width = 764
                 Height = 89
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1137,9 +1134,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 4
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
@@ -1188,8 +1184,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 89
-                Width = 756
-                Height = 390
+                Width = 764
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1197,8 +1193,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 752
-                  Height = 386
+                  Width = 760
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1239,7 +1235,6 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   Columns = <
@@ -1360,8 +1355,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 771
-        Height = 516
+        Left = 779
+        Height = 527
         inherited Panel2: TPanel
           Height = 477
           inherited RzPanel1: TRzPanel [3]
@@ -1377,21 +1372,30 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 983
+    Width = 991
     inherited Image1: TImage
-      Width = 464
+      Width = 476
     end
     inherited Image14: TImage
-      Left = 974
+      Left = 982
     end
     inherited Image3: TImage
-      Width = 464
+      Width = 476
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
         Width = 60
         Caption = #25910#27454#26085#25253#34920
       end
+    end
+    object Button1: TButton
+      Left = 536
+      Top = 0
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 2
+      OnClick = Button1Click
     end
   end
   inherited mmMenu: TMainMenu
@@ -1428,15 +1432,6 @@ inherited frmRecvDayReport: TfrmRecvDayReport
   inherited adoReport1: TZQuery
     Left = 41
     Top = 321
-  end
-  object drpStatInfo: TADODataSet
-    CommandText = 
-      'select CLIENT_CODE,CLIENT_NAME from BAS_CLIENTINFO where CLIENT_' +
-      'CODE in (select Distinct PROVIDE from PUB_GOODSINFO where isnull' +
-      '(PROVIDE,'#39#39')<>'#39#39') order by CLIENT_CODE '
-    Parameters = <>
-    Left = 182
-    Top = 205
   end
   object dsadoReport2: TDataSource
     DataSet = adoReport2

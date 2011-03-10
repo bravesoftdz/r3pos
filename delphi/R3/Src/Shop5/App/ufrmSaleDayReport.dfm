@@ -1,20 +1,20 @@
 inherited frmSaleDayReport: TfrmSaleDayReport
-  Left = 121
-  Top = 140
+  Left = 196
+  Top = 109
   Width = 913
   Height = 586
   Caption = #21830#21697#38144#21806#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 897
-    Height = 518
+    Width = 905
+    Height = 529
     inherited RzPanel2: TRzPanel
-      Width = 887
-      Height = 508
+      Width = 895
+      Height = 519
       inherited RzPage: TRzPageControl
-        Width = 682
-        Height = 502
+        Width = 690
+        Height = 513
         ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
@@ -24,14 +24,14 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           Color = clCream
           Caption = #22320#21306#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 680
-            Height = 475
+            Width = 688
+            Height = 486
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 670
-              Height = 465
+              Width = 678
+              Height = 476
               inherited w1: TRzPanel
-                Width = 670
+                Width = 678
                 Height = 105
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -182,7 +182,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -191,7 +190,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP1_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
@@ -205,6 +203,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
+                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
                   TabOrder = 6
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
@@ -217,7 +216,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  Properties.OnChange = fndP1_SHOP_TYPEPropertiesChange
                   TabOrder = 7
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
@@ -262,7 +260,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP1_ALL: TcxRadioButton
+                object fndP1_RB_ALL: TcxRadioButton
                   Left = 80
                   Top = 79
                   Width = 57
@@ -299,11 +297,11 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 105
-                Width = 670
-                Height = 360
+                Width = 678
+                Height = 371
                 inherited DBGridEh1: TDBGridEh
-                  Width = 666
-                  Height = 356
+                  Width = 674
+                  Height = 367
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -414,8 +412,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 680
-            Height = 475
+            Width = 688
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -423,8 +421,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 670
-              Height = 465
+              Width = 678
+              Height = 476
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -432,7 +430,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 670
+                Width = 678
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -630,7 +628,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -639,7 +636,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP2_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
@@ -666,7 +662,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  Properties.OnChange = fndP2_SHOP_TYPEPropertiesChange
                   TabOrder = 8
                 end
                 object fndP2_ALL: TcxRadioButton
@@ -707,8 +702,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 670
-                Height = 361
+                Width = 678
+                Height = 372
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -716,8 +711,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 666
-                  Height = 357
+                  Width = 674
+                  Height = 368
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -866,8 +861,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 680
-            Height = 475
+            Width = 688
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -875,8 +870,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 670
-              Height = 465
+              Width = 678
+              Height = 476
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -884,7 +879,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 670
+                Width = 678
                 Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1035,7 +1030,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = P3_TYPE_IDPropertiesChange
                   TabOrder = 4
                 end
                 object fndP3_UNIT_ID: TcxComboBox
@@ -1101,7 +1095,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  Properties.OnChange = fndP3_SHOP_TYPEPropertiesChange
                   TabOrder = 7
                 end
                 object fndP3_ALL: TcxRadioButton
@@ -1114,7 +1107,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 8
                   TabStop = True
                 end
-                object fndP3_SALESORDER: TcxRadioButton
+                object fndP3_SALEORDER: TcxRadioButton
                   Left = 136
                   Top = 79
                   Width = 57
@@ -1142,8 +1135,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 104
-                Width = 670
-                Height = 361
+                Width = 678
+                Height = 372
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1152,8 +1145,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 666
-                  Height = 357
+                  Width = 674
+                  Height = 368
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1302,8 +1295,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 680
-            Height = 475
+            Width = 688
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1311,8 +1304,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 670
-              Height = 465
+              Width = 678
+              Height = 476
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1320,7 +1313,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 670
+                Width = 678
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1436,7 +1429,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP4_UNIT_ID: TcxComboBox
@@ -1483,7 +1475,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1492,7 +1483,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
@@ -1561,7 +1551,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  Properties.OnChange = fndP4_SHOP_TYPEPropertiesChange
                   TabOrder = 8
                 end
                 object fndP4_ALL: TcxRadioButton
@@ -1574,7 +1563,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object fndP4_SALESORDER: TcxRadioButton
+                object fndP4_SALEORDER: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
@@ -1644,8 +1633,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 670
-                Height = 336
+                Width = 678
+                Height = 347
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1653,8 +1642,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 666
-                  Height = 332
+                  Width = 674
+                  Height = 343
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1810,8 +1799,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 680
-            Height = 475
+            Width = 688
+            Height = 486
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1819,8 +1808,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 670
-              Height = 465
+              Width = 678
+              Height = 476
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1828,7 +1817,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 670
+                Width = 678
                 Height = 129
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1945,7 +1934,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP5_UNIT_ID: TcxComboBox
@@ -1992,7 +1980,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -2001,7 +1988,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
@@ -2015,7 +2001,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
+                  Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
                   TabOrder = 6
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
@@ -2070,7 +2056,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  Properties.OnChange = fndP5_SHOP_TYPEPropertiesChange
                   TabOrder = 8
                 end
                 object fndP5_ALL: TcxRadioButton
@@ -2083,7 +2068,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 9
                   TabStop = True
                 end
-                object fndP5_SALESORDER: TcxRadioButton
+                object fndP5_SALEORDER: TcxRadioButton
                   Left = 136
                   Top = 103
                   Width = 57
@@ -2153,8 +2138,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 129
-                Width = 670
-                Height = 336
+                Width = 678
+                Height = 347
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2162,8 +2147,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 666
-                  Height = 332
+                  Width = 674
+                  Height = 343
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2374,8 +2359,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 685
-        Height = 502
+        Left = 693
+        Height = 513
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2391,15 +2376,15 @@ inherited frmSaleDayReport: TfrmSaleDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 897
+    Width = 905
     inherited Image1: TImage
-      Width = 378
+      Width = 390
     end
     inherited Image14: TImage
-      Left = 888
+      Left = 896
     end
     inherited Image3: TImage
-      Width = 378
+      Width = 390
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2442,15 +2427,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
   inherited adoReport1: TZQuery
     Left = 41
     Top = 321
-  end
-  object drpStatInfo: TADODataSet
-    CommandText = 
-      'select CLIENT_CODE,CLIENT_NAME from BAS_CLIENTINFO where CLIENT_' +
-      'CODE in (select Distinct PROVIDE from PUB_GOODSINFO where isnull' +
-      '(PROVIDE,'#39#39')<>'#39#39') order by CLIENT_CODE '
-    Parameters = <>
-    Left = 182
-    Top = 205
   end
   object dsadoReport2: TDataSource
     DataSet = adoReport2

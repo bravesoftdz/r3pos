@@ -8,7 +8,7 @@ uses
   StdCtrls, RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, RzLstBox,
   RzChkLst, RzCmboBx, RzBckgnd, RzButton, Mask, RzEdit, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
-  cxCalendar, cxButtonEdit, cxCheckBox, objbase, zrComboBoxList, jpeg,
+  cxCalendar, cxButtonEdit, cxCheckBox, zbase, zrComboBoxList, jpeg,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxRadioGroup;
 
 type
@@ -75,7 +75,7 @@ type
     fndP1_SORT_ID: TcxButtonEdit;
     fndP1_SHOP_TYPE: TcxComboBox;
     fndP1_SHOP_VALUE: TzrComboBoxList;
-    fndP1_ALL: TcxRadioButton;
+    fndP1_RB_ALL: TcxRadioButton;
     fndP1_SALEORDER: TcxRadioButton;
     fndP1_POSMAIN: TcxRadioButton;
     fndP1_SALRETU: TcxRadioButton;
@@ -106,7 +106,7 @@ type
     fndP3_SHOP_TYPE: TcxComboBox;
     Label4: TLabel;
     fndP3_ALL: TcxRadioButton;
-    fndP3_SALESORDER: TcxRadioButton;
+    fndP3_SALEORDER: TcxRadioButton;
     fndP3_POSMAIN: TcxRadioButton;
     fndP3_SALRETU: TcxRadioButton;
     Label21: TLabel;
@@ -122,7 +122,7 @@ type
     fndP4_SHOP_TYPE: TcxComboBox;
     Label16: TLabel;
     fndP4_ALL: TcxRadioButton;
-    fndP4_SALESORDER: TcxRadioButton;
+    fndP4_SALEORDER: TcxRadioButton;
     fndP4_POSMAIN: TcxRadioButton;
     fndP4_SALRETU: TcxRadioButton;
     DBGridEh5: TDBGridEh;
@@ -139,7 +139,7 @@ type
     fndP5_SHOP_TYPE: TcxComboBox;
     Label29: TLabel;
     fndP5_ALL: TcxRadioButton;
-    fndP5_SALESORDER: TcxRadioButton;
+    fndP5_SALEORDER: TcxRadioButton;
     fndP5_POSMAIN: TcxRadioButton;
     fndP5_SALRETU: TcxRadioButton;
     fndP4_SHOP_ID: TzrComboBoxList;
@@ -151,11 +151,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP1_STAT_IDBeforeDropList(Sender: TObject);
     procedure fndP2_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP2_STAT_IDBeforeDropList(Sender: TObject);
-    procedure P3_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP3_STAT_IDBeforeDropList(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
@@ -164,206 +160,117 @@ type
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure actPriorExecute(Sender: TObject);
-    procedure fndP4_STAT_IDBeforeDropList(Sender: TObject);
-    procedure fndP4_TYPE_IDPropertiesChange(Sender: TObject);
-    procedure fndP1_SHOP_TYPEPropertiesChange(Sender: TObject);
-    procedure fndP2_SHOP_TYPEPropertiesChange(Sender: TObject);
-    procedure fndP3_SHOP_TYPEPropertiesChange(Sender: TObject);
-    procedure fndP4_SHOP_TYPEPropertiesChange(Sender: TObject);
-    procedure fndP5_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
   private
+    SortName: string; //临时变量
     sid1,sid2,sid3,sid4,sid5:string;
     srid1,srid2,srid3,srid4,srid5:string;
+    groupid1,groupid2,groupid3,groupid4,groupid5: string;  //管理群组ID
+
     //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店销售汇总表
-    function GetCompanySQL(chk:boolean=true): string;
+    function GetShopSQL(chk:boolean=true): string;
     //按分类销售汇总表
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
     //按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;
+    function GetUnitIDIdx: integer;
   public
     { Public declarations }
     HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
+    property  UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式      
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, uframeTreeFindDialog;
+uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil;
 {$R *.dfm}
 
 procedure TfrmSaleDayReport.FormCreate(Sender: TObject);
 begin
   inherited;
-  TDbGridEhSort.InitForm(self,false,'grp0 DESC,');
+  TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP1_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP1_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP1_COMP_TYPE.ItemIndex := 0;
-  fndP1_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP1_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP1_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP1_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP1_INVOICE_FLAG.ItemIndex := 0;
-  fndP1_SALES_TYPE.ItemIndex := 0;
-
 
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP2_GROUP_ID.DataSet := Global.GetADODataSetFromName('PUB_REGION_INFO');
-  fndP2_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP2_COMP_TYPE.ItemIndex := 0;
-  fndP2_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP2_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP2_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP2_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP2_INVOICE_FLAG.ItemIndex := 0;
-  fndP2_SALES_TYPE.ItemIndex := 0;
 
   P3_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P3_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP3_COMP_ID.KeyValue := Global.CompanyID;
-  fndP3_COMP_ID.Text := Global.CompanyName;
-  fndP3_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP3_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP3_COMP_TYPE.ItemIndex := 0;
-  fndP3_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP3_SORT_ID.ItemIndex := 2;
-  fndP3_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP3_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP3_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP3_INVOICE_FLAG.ItemIndex := 0;
-  fndP3_SALES_TYPE.ItemIndex := 0;
 
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP4_COMP_ID.KeyValue := Global.CompanyID;
-  fndP4_COMP_ID.Text := Global.CompanyName;
-  fndP4_COMP_ID.DataSet := Global.GetADODataSetFromName('CA_COMPANY');
-  fndP4_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP4_COMP_TYPE.ItemIndex := 0;
-  fndP4_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  fndP4_TYPE_ID.ItemIndex := 0;
-  AddCbxPickList(fndP4_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP4_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP4_INVOICE_FLAG.ItemIndex := 0;
-  fndP4_SALES_TYPE.ItemIndex := 0;
 
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  fndP5_GODS_ID.DataSet := Global.GetADODataSetFromName('BAS_GOODSINFO');
-  fndP5_CUST_ID.DataSet := Global.GetADODataSetFromName('BAS_CUSTOMER');
-  fndP5_COMP_TYPE.ItemIndex := 0;
-  fndP5_UNIT_ID.ItemIndex := ShopGlobal.DefUnit;
-  AddCbxPickList(fndP5_INVOICE_FLAG,'INVOICE_FLAG');
-  fndP5_INVOICE_FLAG.Properties.Items.Insert(0,'全部');
-  fndP5_INVOICE_FLAG.ItemIndex := 0;
-  fndP5_SALES_TYPE.ItemIndex := 0;
 
-  HasChild := (ShopGlobal.GetADODataSetFromName('CA_COMPANY').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-     rzPage.ActivePageIndex := 2
-  else
-     rzPage.ActivePageIndex := 0;
   RefreshColumn;
-
-  
 end;
 
 function TfrmSaleDayReport.GetGroupSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  strSql,strWhere,GoodTab: string;
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserID+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //地区名称
-  if fndP1_GROUP_ID.AsString <> '' then
-  strWhere := strWhere + ' and isnull(C.GROUP_NAME,''#'') in (select CODE_ID from PUB_CODE_INFO where CODE_TYPE=8 and CODE_ID like '+QuotedStr(fndP1_GROUP_ID.AsString + '%')+')';
-  //门店类型
-  case fndP1_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
-  end;
-  if chk then
-  begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P1_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P1_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
+
+  //月份日期:
+  if (P1_D1.Text<>'') and (P1_D1.Date=P1_D2.Date) then
+     strWhere:=' and A.MONTH='+FormatDatetime('YYYYMMDD',P1_D1.Date)   
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=' and A.MONTH>='+FormatDatetime('YYYYMMDD',P1_D1.Date)+' and A.MONTH<='+FormatDatetime('YYYYMMDD',P1_D2.Date)+' '
+  else
+    Raise Exception.Create('结束月结不能小于开始月份...');//strWhere:=' and A.MONTH>='+P1_D2.asString+' and A.MONTH<='+P1_D1.asString+' ';
+
+  //门店所属行政区域|门店类型:
+  if (fndP1_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP1_SHOP_TYPE.ItemIndex of
+      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
+      end;
     end;
-  end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P1_D2.Date));
-  //商品分类
-  if trim(fndP1_SORT_ID.Text)<>'' then
-     strWhere := strWhere + ' and B.SORT_ID in (select SORT_ID from PUB_GOODSSORT where LEVEL_ID like '+QuotedStr(sid1 + '%')+')';
-  //商品指标
-  if (fndP1_TYPE_ID.ItemIndex = 0) and (fndP1_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.PROVIDE = '+QuotedStr(fndP1_STAT_ID.AsString);
-  //商品指标
-  if (fndP1_TYPE_ID.ItemIndex = 1) and (fndP1_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.BRAND = '+QuotedStr(fndP1_STAT_ID.AsString);
-  //单据类型
-  case fndP1_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //会员名称
-  if fndP1_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP1_CUST_ID.AsString);
-  //票据类型
-  if fndP1_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP1_INVOICE_FLAG.Properties.Items.Objects[fndP1_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //商品指标:  
+  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+     begin
+      case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
+      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
+      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP1_STAT_ID.AsString+''' ';
+      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
+      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
+      end;
+     end;
+  //商品分类:
+  if (trim(fndP1_SORT_ID.Text)<>'')  and (trim(sid1)<>'') and (trim(srid1)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  //单据类型: 
+  if fndP1_SALEORDER.Checked then   //销售单
+    strWhere:=strWhere+''
+  else if fndP1_POSMAIN.Checked then //零售单
+    strWhere:=strWhere+''
+  else if fndP1_SALRETU.Checked then //退货单
+    strWhere:=strWhere+'';
 
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-          'select C.GROUP_NAME as GROUP_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP1_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(D.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(D.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          ',grouping(C.GROUP_NAME) as grp0 '+  //行标识
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,VIW_PRICE_INFO D ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and A.GODS_ID=D.GODS_ID and A.COMP_ID=D.COMP_ID and B.COMP_ID='''+Global.CompanyId+''' ' + StrWhere +
-          ' group by C.GROUP_NAME with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then IsNull(G.CODE_NAME,''未分组'') else ''合   计'' end as GROUP_NAME from ('+strSQL+') j '+
-          'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8) g on j.GROUP_ID=g.CODE_ID order by j.grp0 desc,j.GROUP_ID';
-      end;
+
+
+       end;
     3: begin //Access
 
       end;
@@ -384,141 +291,100 @@ begin
         if adoReport1.Active then adoReport1.Close;
         strSql := GetGroupSQL;
         if strSql='' then Exit;
-        adoReport1.CommandText := strSql;
+        adoReport1.SQL.Text:= strSql;
         Factor.Open(adoReport1);
       end;
     1: begin //按门店汇总表
         if adoReport2.Active then adoReport2.Close;
-        strSql := GetCompanySQL;
+        strSql := GetShopSQL;
         if strSql='' then Exit;
-        adoReport2.CommandText := strSql;
+        adoReport2.SQL.Text := strSql;
         Factor.Open(adoReport2);
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
         strSql := GetSortSQL;
         if strSql='' then Exit;
-        adoReport3.CommandText := strSql;
+        adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
         if strSql='' then Exit;
-        adoReport4.CommandText := strSql;
+        adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
       end;
     4: begin //按商品流水帐
         if adoReport5.Active then adoReport5.Close;
         strSql := GetGlideSQL;
         if strSql='' then Exit;
-        adoReport5.CommandText := strSql;
+        adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
       end;
   end;
 end;
 
-procedure TfrmSaleDayReport.fndP1_TYPE_IDPropertiesChange(
-  Sender: TObject);
+procedure TfrmSaleDayReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
-  Add
   fndP1_STAT_ID.KeyValue := null;
   fndP1_STAT_ID.Text := '';
 end;
 
-procedure TfrmSaleDayReport.fndP1_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP1_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-end;
-
-function TfrmSaleDayReport.GetCompanySQL(chk:boolean=true): string;
+function TfrmSaleDayReport.GetShopSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  strSql,strWhere,GoodTab: string;
 begin
   if P2_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserID+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //地区名称
-  if fndP2_GROUP_ID.AsString <> '' then
-  strWhere := strWhere + ' and isnull(C.GROUP_NAME,''#'') in (select CODE_ID from PUB_CODE_INFO where CODE_TYPE=8 and CODE_ID like '+QuotedStr(fndP2_GROUP_ID.AsString + '%')+')';
-  //门店类型
-  case fndP2_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
-  end;
-  if chk then
-  begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P2_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P2_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
+
+  //月份日期:
+  if (P2_D1.Text<>'') and (P2_D1.Date=P2_D2.Date) then
+     strWhere:=' and A.MONTH='+FormatDatetime('YYYYMMDD',P2_D1.Date)
+  else if P2_D1.Date<P2_D2.Date then
+    strWhere:=' and A.MONTH>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and A.MONTH<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' '
+  else
+    Raise Exception.Create('结束日期不能小于开始日期...');//strWhere:=' and A.MONTH>='+P1_D2.asString+' and A.MONTH<='+P1_D1.asString+' ';
+
+  //门店所属行政区域|门店类型:
+  if (fndP2_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP2_SHOP_TYPE.ItemIndex of
+      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+      end;
     end;
-  end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P2_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P2_D2.Date));
-  //商品分类
-  if trim(fndP2_SORT_ID.Text)<>'' then
-     strWhere := strWhere + ' and B.SORT_ID in (select SORT_ID from PUB_GOODSSORT where LEVEL_ID like '+QuotedStr(sid2 + '%')+')';
-  //商品指标
-  if (fndP2_TYPE_ID.ItemIndex = 0) and (fndP2_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.PROVIDE = '+QuotedStr(fndP2_STAT_ID.AsString);
-  //单据类型
-  case fndP2_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //商品指标
-  if (fndP2_TYPE_ID.ItemIndex = 1) and (fndP2_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.BRAND = '+QuotedStr(fndP2_STAT_ID.AsString);
-  //会员名称
-  if fndP2_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP2_CUST_ID.AsString);
-  //票据类型
-  if fndP2_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP2_INVOICE_FLAG.Properties.Items.Objects[fndP2_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //商品指标:
+  if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
+    begin
+      case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
+      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
+      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP2_STAT_ID.AsString+''' ';
+      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
+      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
+      end;
+    end;
+  //商品分类:
+  if (trim(fndP2_SORT_ID.Text)<>'')  and (trim(sid2)<>'') and (trim(srid2)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' and C.RELATION_ID='''+srid2+''' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  //单据类型: 
+  if fndP2_SALEORDER.Checked then   //销售单
+    strWhere:=strWhere+''
+  else if fndP2_POSMAIN.Checked then //零售单
+    strWhere:=strWhere+''
+  else if fndP2_SALRETU.Checked then //退货单
+    strWhere:=strWhere+'';
 
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-          'select C.COMP_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP2_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(D.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(D.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          ',grouping(C.COMP_ID) as grp0 '+  //行标识
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,VIW_PRICE_INFO D ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and A.GODS_ID=D.GODS_ID and A.COMP_ID=D.COMP_ID and B.COMP_ID='''+Global.CompanyId+'''  ' + StrWhere +
-          ' group by C.COMP_ID with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then IsNull(G.COMP_NAME,''未分组'') else ''合   计'' end as COMP_NAME from ('+strSQL+') j '+
-          'left outer join CA_COMPANY g on j.COMP_ID=g.COMP_ID order by j.grp0 desc,g.SEQ_NO';
+
       end;
     3: begin //Access
 
@@ -532,224 +398,117 @@ procedure TfrmSaleDayReport.fndP2_TYPE_IDPropertiesChange(
 begin
   inherited;
   fndP2_STAT_ID.KeyValue := null;
-  fndP2_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP2_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP2_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
-end;
-
-procedure TfrmSaleDayReport.P3_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  fndP3_STAT_ID.KeyValue := null;
-  fndP3_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP3_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP3_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
+  fndP2_STAT_ID.Text := '';  
 end;
 
 function TfrmSaleDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  strSql,strWhere,GoodTab: string;
 begin
   if P3_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if fndP3_COMP_ID.AsString='' then
-     begin
-        if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-     end
-  else
-     begin
-        if not rs.Locate('COMP_ID',fndP3_COMP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
-     end;
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //门店类型
-  case fndP3_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP3_COMP_ID.AsString+'''';
-  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP3_COMP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP3_COMP_ID.AsString+''')';
-  end;
-  if chk then
-  begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P3_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P3_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
-    end;
-  end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P3_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P3_D2.Date));
-  //商品分类级数
-  strSQL := 'select SORT_ID,LEVEL_ID from PUB_GOODSSORT where COMM not in (''02'',''12'') and SORT_TYPE<='+inttostr(fndP3_SORT_ID.ItemIndex+1)+
-            ' union all '+
-            'select null as SORT_ID,'''' as LEVEL_ID ';
-  //商品指标
-  if (fndP3_TYPE_ID.ItemIndex = 0) and (fndP3_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.PROVIDE = '+QuotedStr(fndP3_STAT_ID.AsString);
-  //商品指标
-  if (fndP3_TYPE_ID.ItemIndex = 1) and (fndP3_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.BRAND = '+QuotedStr(fndP3_STAT_ID.AsString);
-  //单据类型
-  case fndP3_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //会员名称
-  if fndP3_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP3_CUST_ID.AsString);
-  //票据类型
-  if fndP3_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP3_INVOICE_FLAG.Properties.Items.Objects[fndP3_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
 
+  //月份日期:
+  if (P3_D1.Text<>'') and (P3_D1.Date=P3_D2.Date) then
+     strWhere:=' and A.MONTH='+FormatDatetime('YYYYMMDD',P3_D1.Date)
+  else if P3_D1.Date<P3_D2.Date then
+    strWhere:=' and A.MONTH>='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' and A.MONTH<='+FormatDatetime('YYYYMMDD',P3_D2.Date)+' '
+  else
+    Raise Exception.Create('结束日期不能小于开始日期...');
+    
+  //门店所属行政区域|门店类型:
+  if (fndP3_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP3_SHOP_TYPE.ItemIndex of
+       0:strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
+       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+      end;
+    end;
+
+  //单据类型:
+  if fndP3_SALEORDER.Checked then   //销售单
+    strWhere:=strWhere+''
+  else if fndP3_POSMAIN.Checked then //零售单
+    strWhere:=strWhere+''
+  else if fndP3_SALRETU.Checked then //退货单
+    strWhere:=strWhere+'';
+
+  //报表统计类型
+  case fndP3_TYPE_ID.ItemIndex of
+   1: strWhere:=strWhere+'';
+   2: strWhere:=strWhere+'';
+   3: strWhere:=strWhere+'';
+   4: strWhere:=strWhere+'';
+   5: strWhere:=strWhere+'';
+   6: strWhere:=strWhere+'';
+  end;
+          
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-          'select s.SORT_ID,case when isnull(s.SORT_ID,'''')='''' then 1 else 0 end as grp0,sum(AMOUNT) as AMOUNT,sum(AMONEY) as AMONEY,sum(NOTAX_MONEY) as NOTAX_MONEY,sum(COST_MONEY) as COST_MONEY,sum(PROFIT_MONEY) as PROFIT_MONEY,'+
-          'sum(NEW_COST_MONEY) as NEW_COST_MONEY,sum(NEW_PROFIT_MONEY) as NEW_PROFIT_MONEY from ('+strSQL+') s left outer join ('+
-          'select D.LEVEL_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP3_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          'when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY ' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(E.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(E.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,PUB_GOODSSORT D,VIW_PRICE_INFO E ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and B.SORT_ID=D.SORT_ID and A.GODS_ID=E.GODS_ID and A.COMP_ID=E.COMP_ID and B.COMP_ID='''+Global.CompanyId+'''  ' + StrWhere +' group by D.LEVEL_ID) js on s.LEVEL_ID=substring(js.LEVEL_ID,1,len(s.LEVEL_ID)) '+
-          ' group by s.SORT_ID';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then space((g.SORT_TYPE-1)*2)+IsNull(G.SORT_NAME,''未分类'') else ''合   计'' end as SORT_NAME,g.LEVEL_ID from ('+strSQL+') j '+
-          'left outer join PUB_GOODSSORT g on j.SORT_ID=g.SORT_ID order by j.grp0 desc,g.LEVEL_ID';
+
       end;
     3: begin //Access
 
       end;
   end;
+
+
   Result := strSql;
 end;
 
 function TfrmSaleDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  strSql,strWhere,GoodTab: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if fndP4_COMP_ID.AsString='' then
-     begin
-        if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-     end
+
+  //月份日期:
+  if (P4_D1.Text<>'') and (P4_D1.Date=P4_D2.Date) then
+     strWhere:=' and A.MONTH='+FormatDatetime('YYYYMMDD',P4_D1.Date)
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=' and A.MONTH>='+FormatDatetime('YYYYMMDD',P4_D1.Date)+' and A.MONTH<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' '
   else
-     begin
-        if not rs.Locate('COMP_ID',fndP4_COMP_ID.AsString,[]) then Raise Exception.Create('门店资料没找到...');
-     end;
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserId+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //门店类型
-  case fndP4_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID='''+fndP4_COMP_ID.AsString+'''';
-  1:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+fndP4_COMP_ID.AsString+''' and COMP_TYPE=2) or COMP_ID='''+fndP4_COMP_ID.AsString+''')';
-  end;
-  if chk then
+    Raise Exception.Create('结束月结不能小于开始月份...');
+    
+  //门店所属行政区域|门店类型:
+  if (fndP4_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP4_SHOP_TYPE.ItemIndex of
+       0:strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
+       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
+      end;
+    end;
+  //商品指标:  
+  if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
   begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P4_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P4_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
+    case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP4_STAT_ID.AsString+''' ';
+     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP4_STAT_ID.AsString+''' ';
+     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP4_STAT_ID.AsString+''' ';
+     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP4_STAT_ID.AsString+''' ';
+     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
     end;
   end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P4_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P4_D2.Date));
-  //商品分类
-  if trim(fndP4_SORT_ID.Text)<>'' then
-     strWhere := strWhere + ' and B.SORT_ID in (select SORT_ID from PUB_GOODSSORT where LEVEL_ID like '+QuotedStr(sid4 + '%')+')';
-  //商品指标
-  if (fndP4_TYPE_ID.ItemIndex = 0) and (fndP4_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.PROVIDE = '+QuotedStr(fndP4_STAT_ID.AsString);
-  //商品指标
-  if (fndP4_TYPE_ID.ItemIndex = 1) and (fndP4_STAT_ID.AsString<>'') then
-     strWhere := strWhere + ' and B.BRAND = '+QuotedStr(fndP4_STAT_ID.AsString);
-  //单据类型
-  case fndP4_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //会员名称
-  if fndP4_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP4_CUST_ID.AsString);
-  //票据类型
-  if fndP4_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP4_INVOICE_FLAG.Properties.Items.Objects[fndP4_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //商品分类:
+  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid4)<>'') and (trim(srid4)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' and C.RELATION_ID='''+srid4+''' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  //单据类型: 
+  if fndP4_SALEORDER.Checked then   //销售单
+    strWhere:=strWhere+''
+  else if fndP4_POSMAIN.Checked then //零售单
+    strWhere:=strWhere+''
+  else if fndP4_SALRETU.Checked then //退货单
+    strWhere:=strWhere+'';
 
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-          'select A.GODS_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP4_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          ' when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(D.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(D.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          ',grouping(A.GODS_ID) as grp0 '+  //行标识
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,VIW_PRICE_INFO D ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and A.GODS_ID=D.GODS_ID and A.COMP_ID=D.COMP_ID and B.COMP_ID='''+Global.CompanyId+''' ' + StrWhere +
-          ' group by A.GODS_ID with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then IsNull(G.GODS_NAME,''未分组'') else ''合   计'' end as GODS_NAME,G.GODS_CODE,G.BARCODE from ('+strSQL+') j '+
-          'left outer join (select GODS_ID,GODS_NAME,GODS_CODE,BARCODE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyId+''') g on j.GODS_ID=g.GODS_ID order by j.grp0 desc,g.BARCODE';
+
       end;
     3: begin //Access
 
@@ -760,77 +519,58 @@ end;
 
 function TfrmSaleDayReport.GetGlideSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,lvid: string;
-  rs:TADODataSet;
+  strSql,strWhere,GoodTab: string;
 begin
   if P5_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if fndP5_GODS_ID.AsString = '' then Raise Exception.Create('请选择要查询的商品名称');
-  rs := Global.GetADODataSetFromName('CA_COMPANY');
-  if not rs.Locate('COMP_ID',Global.CompanyID,[]) then Raise Exception.Create('门店资料没找到...');
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  strWhere := ' and C.COMP_ID in (select COMP_ID from VIW_COMPRIGHT where USER_ID='''+Global.UserID+''') and C.LEVEL_ID like '+QuotedStr(lvid + '%');
-  //门店类型
-  case fndP5_COMP_TYPE.ItemIndex of
-  0:strWhere := strWhere + ' and C.COMP_ID in (select COMP_ID from CA_COMPANY where (UPCOMP_ID='''+Global.CompanyID+''' and COMP_TYPE=2) or COMP_ID='''+Global.CompanyID+''')';
-  end;
-  if chk then
+
+  //月份日期:
+  if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
+     strWhere:=' and A.MONTH='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+  else if P5_D1.Date<P5_D2.Date then
+    strWhere:=' and A.MONTH>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.MONTH<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' '
+  else
+    Raise Exception.Create('结束月结不能小于开始月份...');
+    
+  //门店所属行政区域|门店类型:
+  if (fndP5_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP5_SHOP_TYPE.ItemIndex of
+       0:strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
+      end;
+    end;
+  //商品指标:
+  if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
-    rs := TADODataSet.Create(nil);
-    try
-      rs.CommandText :=
-         'select * from ('+
-         'select j.COMP_ID,COMP_NAME,isnull(max(PRINT_DATE),''未结帐'') as PRINT_DATE from (select * from CA_COMPANY C  where COMP_ID in (select COMP_ID from SYS_DEFINE where DEFINE=''USING_DATE'' and VALUE<='+QuotedStr(formatDatetime('YYYY-MM-31',P5_D2.Date))+') '+strWhere+ ') j '+
-         'left outer join (select * from STO_PRINTORDER) b '+
-         'on j.COMP_ID=b.COMP_ID group by j.COMP_ID,COMP_NAME) j where PRINT_DATE<'+QuotedStr(formatDatetime('YYYY-MM-DD',P5_D2.Date))+' or PRINT_DATE=''未结帐''';
-      Factor.Open(rs);
-      if not TfrmShowReckInfo.ShowReck(self,rs) then Exit;
-    finally
-      rs.Free;
+    case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
+     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
+     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
+     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
+     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
     end;
   end;
-  //销售日期
-  strWhere := strWhere + ' and A.SALES_DATE>=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P5_D1.Date))+ ' and A.SALES_DATE<=' + QuotedStr(FormatDateTime('YYYY-MM-DD', P5_D2.Date));
-  //商品名称
-  if fndP5_GODS_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.GODS_ID = '+QuotedStr(fndP5_GODS_ID.AsString);
-  //单据类型
-  case fndP5_SALES_TYPE.ItemIndex of
-  1:strWhere := strWhere + ' and A.SALES_TYPE in (3,4)';
-  2:strWhere := strWhere + ' and A.SALES_TYPE in (1)';
-  end;
-  //会员名称
-  if fndP5_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CUST_ID = '+QuotedStr(fndP5_CUST_ID.AsString);
-  //票据类型
-  if fndP5_INVOICE_FLAG.ItemIndex>0 then
-     strWhere := strWhere + ' and A.INVOICE_FLAG = '+QuotedStr(TRecord_(fndP5_INVOICE_FLAG.Properties.Items.Objects[fndP5_INVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  //商品分类:
+  if (trim(fndP5_SORT_ID.Text)<>'')  and (trim(sid5)<>'') and (trim(srid5)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' and C.RELATION_ID='''+srid5+''' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  //单据类型: 
+  if fndP5_SALEORDER.Checked then   //销售单
+    strWhere:=strWhere+''
+  else if fndP5_POSMAIN.Checked then //零售单
+    strWhere:=strWhere+''
+  else if fndP5_SALRETU.Checked then //退货单
+    strWhere:=strWhere+'';
+
 
   case Factor.iDbType of
     0: begin //SqlServer
-        strSql :=
-          'select C.COMP_ID' +
-          ',sum(SAL_AMOUNT/case ' + InttoStr(fndP4_UNIT_ID.ItemIndex) + ' when 0 then 1.0 when 1 then case when IsNull(B.SMALLTO_CALC,0)=0 then 1.0 else IsNull(B.SMALLTO_CALC,0) end ' +
-          ' when 2 then case when IsNull(B.BIGTO_CALC,0)=0 then 1.0 else IsNull(B.BIGTO_CALC,0) end else 1.0 end) as AMOUNT ' + //--数量
-          ',sum(SAL_AMONEY) as AMONEY' + //--销售额
-          ',sum(SAL_NOTAX) as NOTAX_MONEY ' + //--不含税金额,
-          ',sum(SAL_TAX) as TAX_MONEY' + //--销项税额
-          ',sum(SAL_COST) as COST_MONEY' + //--成本
-          ',sum(SAL_NOTAX)-sum(SAL_COST) as PROFIT_MONEY' + //--毛利
-          ',sum(SAL_AMOUNT*isnull(D.NEW_INPRICE,0)) as NEW_COST_MONEY' + //--进价成本
-          ',sum(SAL_AMONEY)-sum(isnull(SAL_AMOUNT,0)*isnull(D.NEW_INPRICE,0)) as NEW_PROFIT_MONEY ' + //--进价毛利
-          ',grouping(C.COMP_ID) as grp0 '+  //行标识
-          'from VIW_SALESDATA A,VIW_GOODSINFO B,CA_COMPANY C,VIW_PRICE_INFO D ' +
-          'where A.GODS_ID=B.GODS_ID and A.COMP_ID=C.COMP_ID and A.GODS_ID=D.GODS_ID and A.COMP_ID=D.COMP_ID and B.COMP_ID='''+Global.CompanyId+''' ' + StrWhere +
-          ' group by C.COMP_ID with rollup';
-        strSql :=
-          'select j.*,'+
-          'case when IsNull(AMOUNT,0)=0 then null else AMONEY/AMOUNT end as APRICE,'+ //均价
-          'case when IsNull(AMOUNT,0)=0 then null else PROFIT_MONEY/AMOUNT end as AVG_PROFIT,'+ //单位毛利
-          'case when IsNull(NOTAX_MONEY,0)=0 then null else PROFIT_MONEY/NOTAX_MONEY*100 end as PROFIT_RATE,'+ //毛利率
-          'case when IsNull(AMONEY,0)=0 then null else NEW_PROFIT_MONEY/AMONEY*100 end as NEW_PROFIT_RATE,'+ //进价毛利率
-          'case when J.grp0<>1 then IsNull(G.COMP_NAME,''未分组'') else ''合   计'' end as COMP_NAME from ('+strSQL+') j '+
-          'left outer join CA_COMPANY g on j.COMP_ID=g.COMP_ID order by j.grp0 desc,g.SEQ_NO';
+        strSql :='';
       end;
     3: begin //Access
 
@@ -842,6 +582,7 @@ end;
 procedure TfrmSaleDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
+{
   if adoReport1.IsEmpty then Exit;
   P2_D1.Date := P1_D1.Date;
   P2_D2.Date := P1_D2.Date;
@@ -861,6 +602,7 @@ begin
   fndP2_GROUP_ID.Text := adoReport1.FieldbyName('GROUP_NAME').AsString;
   rzPage.ActivePageIndex := 1;
   actFind.OnExecute(nil);
+  }
 end;
 
 procedure TfrmSaleDayReport.DBGridEh2DblClick(Sender: TObject);
@@ -868,8 +610,7 @@ procedure TfrmSaleDayReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-//  rs := Global.GetADODataSetFromName('CA_COMPANY');
-//  if not rs.Locate('COMP_ID',adoReport2.FieldbyName('COMP_ID').AsString,[]) then Raise Exception.Create('你没有查看此门店数据的权限');
+ {
   P3_D1.Date := P2_D1.Date;
   P3_D2.Date := P2_D2.Date;
   fndP3_TYPE_ID.ItemIndex := 0;
@@ -892,12 +633,14 @@ begin
   end;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
-
+  }
 end;
 
 procedure TfrmSaleDayReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
+
+  {
   if adoReport3.IsEmpty then Exit;
   P4_D1.Date := P3_D1.Date;
   P4_D2.Date := P3_D2.Date;
@@ -917,6 +660,7 @@ begin
   fndP4_SORT_ID.Text := adoReport3.FieldbyName('SORT_NAME').AsString;
   rzPage.ActivePageIndex := 3;
   actFind.OnExecute(nil);
+  }
 
 end;
 
@@ -930,6 +674,7 @@ end;
 procedure TfrmSaleDayReport.DBGridEh4DblClick(Sender: TObject);
 begin
   inherited;
+  {
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   P5_D1.Date := P4_D1.Date;
   P5_D2.Date := P4_D2.Date;
@@ -945,7 +690,7 @@ begin
   fndP5_GODS_ID.Text := adoReport4.FieldbyName('GODS_NAME').AsString;
   rzPage.ActivePageIndex := 4;
   actFind.OnExecute(nil);
-
+  }
 end;
 
 procedure TfrmSaleDayReport.PrintBefore;
@@ -954,6 +699,7 @@ var
   c:integer;
 begin
   inherited;
+{
   PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
   case rzPage.ActivePageIndex of
   0:begin
@@ -1157,6 +903,7 @@ begin
          PrintDBGridEh1.Title.Text := '商品名称：'+ fndP5_GODS_ID.Text;
     end;
   end;
+  }
 end;
 
 procedure TfrmSaleDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -1177,8 +924,7 @@ begin
   fndP2_SORT_ID.Text := '';
 end;
 
-procedure TfrmSaleDayReport.fndP4_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmSaleDayReport.fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   sid4 := '';
@@ -1188,145 +934,51 @@ end;
 
 procedure TfrmSaleDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
 begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid2 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP2_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
+  if SelectGoodSortType(sid2,srid2,SortName) then
+    fndP2_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmSaleDayReport.fndP4_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
-var
-  rs:TRecord_;
+procedure TfrmSaleDayReport.fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
-  inherited;
-  rs := TRecord_.Create;
-  try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetADODataSetFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','333333',rs)
-  then
-     begin
-       sid4 := rs.FieldbyName('LEVEL_ID').AsString;
-       fndP4_SORT_ID.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
-  finally
-     rs.Free;
-  end;
+  if SelectGoodSortType(sid4,srid4,SortName) then
+    fndP4_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmSaleDayReport.actPriorExecute(Sender: TObject);
-begin
-  if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
-  inherited;
-
-end;
-
-procedure TfrmSaleDayReport.fndP4_STAT_IDBeforeDropList(Sender: TObject);
-begin
-  inherited;
-  drpStatInfo.Close;
-  if fndP4_TYPE_ID.ItemIndex = 0 then
-    drpStatInfo.CommandText := 'select CLIENT_ID as CODE_ID, CLIENT_NAME as CODE_NAME,CLIENT_SPELL as CODE_SPELL from BAS_CLIENTINFO where CLIENT_ID in (select distinct PROVIDE from VIW_GOODSINFO where COMP_ID='''+Global.CompanyID+''')'
-  else
-    drpStatInfo.CommandText := 'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=6 order by CODE_ID';
-  Factor.Open(drpStatInfo);
-
-
-end;
-
-procedure TfrmSaleDayReport.fndP4_TYPE_IDPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  fndP4_STAT_ID.KeyValue := null;
-  fndP4_STAT_ID.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP1_SHOP_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  case fndP1_SHOP_TYPE.ItemIndex of
-  0:fndP1_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-  1:fndP1_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  fndP1_SHOP_VALUE.KeyValue := null;
-  fndP1_SHOP_VALUE.Text := '';
-end;
-
-procedure TfrmSaleDayReport.fndP2_SHOP_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  case fndP2_SHOP_TYPE.ItemIndex of
-  0:fndP2_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-  1:fndP2_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  fndP2_SHOP_VALUE.KeyValue := null;
-  fndP2_SHOP_VALUE.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP3_SHOP_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  case fndP3_SHOP_TYPE.ItemIndex of
-  0:fndP3_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-  1:fndP3_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  fndP3_SHOP_VALUE.KeyValue := null;
-  fndP3_SHOP_VALUE.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP4_SHOP_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  case fndP4_SHOP_TYPE.ItemIndex of
-  0:fndP4_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-  1:fndP4_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  fndP4_SHOP_VALUE.KeyValue := null;
-  fndP4_SHOP_VALUE.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP5_SHOP_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  case fndP5_SHOP_TYPE.ItemIndex of
-  0:fndP5_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-  1:fndP5_SHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  fndP5_SHOP_VALUE.KeyValue := null;
-  fndP5_SHOP_VALUE.Text := '';
-
-end;
-
-procedure TfrmSaleDayReport.fndP5_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmSaleDayReport.fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   sid5 := '';
   srid5 := '';
   fndP5_SORT_ID.Text := '';
+end;
 
+procedure TfrmSaleDayReport.fndP1_SORT_IDPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+begin
+  if SelectGoodSortType(sid1,srid1,SortName) then
+    fndP1_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmSaleDayReport.fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+begin
+  if SelectGoodSortType(sid5,srid5,SortName) then
+    fndP5_SORT_ID.Text:=SortName;
+end;
+
+function TfrmSaleDayReport.GetUnitIDIdx: integer;
+begin
+  result:=0;
+  if (RzPage.ActivePage=TabSheet1) and (fndP1_UNIT_ID.ItemIndex<>-1) then       //地区销售存统计表
+    result:=fndP1_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet2) and (fndP2_UNIT_ID.ItemIndex<>-1) then  //门店销售统计表
+    result:=fndP2_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet3) and (fndP3_UNIT_ID.ItemIndex<>-1) then  //分类销售统计表
+    result:=fndP3_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet4) and (fndP4_UNIT_ID.ItemIndex<>-1) then  //商品销售统计表
+    result:=fndP4_UNIT_ID.ItemIndex
+  else if (RzPage.ActivePage=TabSheet5) and (fndP5_UNIT_ID.ItemIndex<>-1) then  //进货销售商品明表统计表
+    result:=fndP5_UNIT_ID.ItemIndex;
 end;
 
 end.

@@ -75,7 +75,7 @@ type
     procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel); //PageIndex=-1表示由Sender的序号确定PageIndex
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
-    procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string); 
+    procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
     //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
     procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
@@ -811,6 +811,7 @@ begin
     end else
       ParentCmp:=ParentCmp.Parent;
   end;
+  self.actFind.OnExecute(nil);;
 end;
 
 end.

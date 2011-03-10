@@ -942,8 +942,9 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select * from STO_CHANGECODE where TENANT_ID in (0,:TENANT_ID)  ' +
-        'and COMM not in ('#39'02'#39','#39'12'#39') order by CODE_ID')
+        'select CHANGE_CODE,CHANGE_NAME from STO_CHANGECODE where TENANT_' +
+        'ID in (0,:TENANT_ID)  and COMM not in ('#39'02'#39','#39'12'#39') order by CHANG' +
+        'E_CODE')
     Params = <
       item
         DataType = ftUnknown

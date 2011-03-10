@@ -9,8 +9,6 @@ uses
 
 type
   TfrmTicketPrint = class(TfrmBasic)
-    PrintBar: TProgressBar;
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
 
@@ -28,6 +26,8 @@ type
 
 implementation
 
+uses DB;
+
 {$R *.dfm}
 
 { TfrmTicketPrint }
@@ -35,6 +35,7 @@ implementation
 function TfrmTicketPrint.DoPrintDetail(QueryType:Integer;QueryDate:String):Boolean;
 var rs,ForDay_rs:TZQuery;
     WhereStr:String;
+    Sum_Goods,Sum_Money:Double;
 begin
   if DevFactory.LPT < 0 then Exit;
 
@@ -93,19 +94,27 @@ begin
     end;
     Factor.Open(rs);
     if DevFactory.Width = 38 then
-      DevFactory.WritePrint('商品名称             数量      金额  ')
+      DevFactory.WritePrint('商品名称                 数量     金额')
     else
-      DevFactory.WritePrint('商品名称         数量     金额  ');
+      DevFactory.WritePrint('商品名称            数量     金额');
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
-    PrintBar.Max := rs.RecordCount;
+    Sum_Goods := 0;
+    Sum_Money := 0;
     rs.First;
     while not rs.Eof do
       begin
+        Sum_Goods := Sum_Goods + rs.FieldbyName('CALC_AMOUNT').AsFloat;
+        Sum_Money := Sum_Money + rs.FieldbyName('CALC_MONEY').AsFloat;
         FormatGoodsAndMoney(rs.FieldbyName('GODS_NAME').AsString,rs.FieldbyName('CALC_AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
         rs.Next;
-        PrintBar.Position := rs.RecNo;
       end;
+    DevFactory.WritePrint(RepeatCharacter(' ',DevFactory.Width-1));
 
+    if DevFactory.Width = 38 then
+      DevFactory.WritePrint('合计:'+RepeatCharacter(' ',14)+FormatText(FloatToStr(Sum_Goods),8,false)+' '+FormatText(FloatToStr(Sum_Money),8,false))
+    else
+      DevFactory.WritePrint('合计:'+RepeatCharacter(' ',12)+FormatText(FloatToStr(Sum_Goods),7,false)+' '+FormatText(FloatToStr(Sum_Money),8,false));
+    DevFactory.WritePrint('');
 
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
     DevFactory.WritePrint('销售额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
@@ -119,7 +128,7 @@ begin
                                                         ForDay_rs.FieldbyName('PAY_I').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_J').AsFloat));
 
-    DevFactory.WritePrint('合计:'+RepeatCharacter('-',DevFactory.Width-6));
+    
     if ForDay_rs.FieldByName('PAY_A').AsFloat <> 0 then
       DevFactory.WritePrint(GetPayText('A')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat));
     if ForDay_rs.FieldByName('PAY_B').AsFloat <> 0 then
@@ -142,7 +151,7 @@ begin
       DevFactory.WritePrint(GetPayText('J')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_J').AsFloat));
 
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
-    DevFactory.WritePrint('打印日期:'+FormatDateTime('YYYYMMDD HH:NN:SS',Date()));
+    DevFactory.WritePrint('打印日期:'+FormatDateTime('YYYY-MM-DD HH:NN:SS',Now));
 
   finally
     DevFactory.EndPrint;
@@ -192,14 +201,11 @@ begin
   if (i+j) > DevFactory.Width then
     begin
       DevFactory.WritePrint(F_Goods);
-      DevFactory.WritePrint(F_Num+F_Money);
+      DevFactory.WritePrint(FormatText(F_Num,DevFactory.Width-Length(F_Num),False));
     end
   else
     begin
-      if i > (F_N+F_M+2) then
-        DevFactory.WritePrint(FormatText(F_Goods,F_G+(F_N+F_M+2-i))+F_Num)
-      else
-        DevFactory.WritePrint(FormatText(F_Goods,F_G)+F_Num);
+      DevFactory.WritePrint(FormatText(F_Goods,DevFactory.Width-i)+F_Num);
     end;
 
 end;
@@ -262,12 +268,6 @@ begin
         Free;
       end;
     end;
-end;
-
-procedure TfrmTicketPrint.FormCreate(Sender: TObject);
-begin
-  inherited;
-  PrintBar.Min := 0;
 end;
 
 end.

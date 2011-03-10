@@ -279,7 +279,7 @@ procedure TfrmTransOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
-  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能删除!');
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能删除操作!');
   if not ShopGlobal.GetChkRight('21700001',4) then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
@@ -297,7 +297,7 @@ procedure TfrmTransOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
-  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改!');
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改操作!');
   if not ShopGlobal.GetChkRight('21700001',3) then Raise Exception.Create('你没有编辑存取单的权限,请和管理员联系.');
   with TfrmTransOrder.Create(nil) do
     begin
@@ -361,6 +361,7 @@ begin
         begin
           cdsList.Edit;
           cdsList.FieldByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',date());
+          cdsList.FieldByName('CHK_USER').AsString := Global.UserID;
           cdsList.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
           cdsList.Post;
         end
@@ -368,6 +369,7 @@ begin
         begin
           cdsList.Edit;
           cdsList.FieldByName('CHK_DATE').AsString := '';
+          cdsList.FieldByName('CHK_USER').AsString := '';
           cdsList.FieldByName('CHK_USER_TEXT').AsString := '';
           cdsList.Post;
         end;
@@ -430,7 +432,7 @@ begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clHighlight;
+    DBGridEh1.Canvas.Brush.Color := clAqua;
   end;
   
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);

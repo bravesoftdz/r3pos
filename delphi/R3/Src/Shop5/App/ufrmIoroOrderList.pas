@@ -64,6 +64,7 @@ type
   private
     FIoroType: integer;
     procedure SetIoroType(const Value: integer);
+    function CheckCanExport:boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -243,7 +244,7 @@ procedure TfrmIoroOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self);
-  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   fndSHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
   fndIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
@@ -255,6 +256,11 @@ end;
 procedure TfrmIoroOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',1) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',1) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+
   Open('');
   if not cdsBrowser.IsEmpty then
   begin
@@ -305,7 +311,11 @@ end;
 procedure TfrmIoroOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700035') then Raise Exception.Create('你没有打印其他费用的权限,请和管理员联系.');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',6) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',6) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -319,7 +329,10 @@ end;
 procedure TfrmIoroOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700035') then Raise Exception.Create('你没有打印其他费用的权限,请和管理员联系.');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',6) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',6) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -345,7 +358,11 @@ end;
 procedure TfrmIoroOrderList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('700031') then Raise Exception.Create('你没有添加其他费用的权限,请和管理员联系.');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',2) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',2) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+
   with TfrmIoroOrder.Create(self) do
   begin
     try
@@ -363,7 +380,12 @@ procedure TfrmIoroOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if  (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('700032') then Raise Exception.Create('你没有修改其他费用的权限,请和管理员联系.');
+  if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改操作!');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',3) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',3) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+    
   with TfrmIoroOrder.Create(self) do
   begin
     try
@@ -398,7 +420,12 @@ procedure TfrmIoroOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if cdsBrowser.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('700033') then Raise Exception.Create('你没有删除当前单据的权限,请和管理员联系.');
+  if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行删除操作!');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',4) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',4) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+
    if MessageBox(Handle,'确认删除当前选中的其他费用？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmIoroOrder.Create(self) do
       begin
@@ -422,7 +449,11 @@ var
 begin
   inherited;
   if cdsBrowser.IsEmpty then exit;
-  if not ShopGlobal.GetChkRight('700034') then Raise Exception.Create('你没有审核其他费用的权限,请和管理员联系.');
+  if IoroType = 1 then
+    if not ShopGlobal.GetChkRight('21500001',5) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
+  else
+    if not ShopGlobal.GetChkRight('21600001',5) then Raise Exception.Create('你没有添加其他支出的权限,请和管理员联系.');
+
   if cdsBrowser.FieldByName('CHK_DATE').AsString<>'' then
      begin
        if copy(cdsBrowser.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
@@ -523,6 +554,15 @@ begin
     else
       actAudit.Caption:='审核';
   end;
+end;
+
+function TfrmIoroOrderList.CheckCanExport: boolean;
+begin
+  if IoroType = 1 then
+    Result := ShopGlobal.GetChkRight('21500001',7)
+  else
+    Result := ShopGlobal.GetChkRight('21600001',7);
+
 end;
 
 end.

@@ -138,15 +138,13 @@ var
   rs:TZQuery;
 begin
   Open('');
-  edtTRANS_DATE.Date := Global.SysDate;
+  edtTRANS_DATE.Date := Date();
   edtTRANS_USER.KeyValue := Global.UserID;
   edtTRANS_USER.Text := Global.UserName;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
   AObj.FieldByName('TRANS_ID').AsString := TSequence.NewId;
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  edtOUT_ACCOUNT_ID.KeyValue := edtOUT_ACCOUNT_ID.DataSet.FieldByName('ACCOUNT_ID').AsString;
-  edtOUT_ACCOUNT_ID.Text := edtOUT_ACCOUNT_ID.DataSet.FieldByName('ACCT_NAME').AsString;
   dbState := dsInsert;
 end;
 
@@ -314,7 +312,7 @@ begin
   try
     rs.SQL.Text := 'select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and ACCOUNT_ID='''+edtIN_ACCOUNT_ID.AsString+'''';
     Factor.Open(rs);
-    labOUT.Caption := '”‡∂Ó:'+rs.Fields[0].AsString;
+    labIN.Caption := '”‡∂Ó:'+rs.Fields[0].AsString;
   finally
     rs.Free;
   end;

@@ -1,6 +1,6 @@
 inherited frmIoroOrderList: TfrmIoroOrderList
-  Left = 177
-  Top = 114
+  Left = 371
+  Top = 155
   Width = 818
   Height = 569
   Caption = #20854#20182#36153#29992
@@ -8,25 +8,25 @@ inherited frmIoroOrderList: TfrmIoroOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 802
-    Height = 501
+    Width = 810
+    Height = 512
     inherited RzPanel2: TRzPanel
-      Width = 792
-      Height = 491
+      Width = 800
+      Height = 502
       inherited RzPage: TRzPageControl
-        Width = 786
-        Height = 485
+        Width = 794
+        Height = 496
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#20837#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 784
-            Height = 458
+            Width = 792
+            Height = 469
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 772
+              Width = 780
               Height = 97
               Align = alTop
               BorderOuter = fsNone
@@ -290,16 +290,16 @@ inherited frmIoroOrderList: TfrmIoroOrderList
             object Panel1: TPanel
               Left = 6
               Top = 103
-              Width = 772
-              Height = 349
+              Width = 780
+              Height = 360
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 770
-                Height = 347
+                Width = 778
+                Height = 358
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -428,17 +428,17 @@ inherited frmIoroOrderList: TfrmIoroOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 802
+    Width = 810
     inherited Image1: TImage
       Left = 530
-      Width = 263
+      Width = 271
     end
     inherited Image14: TImage
-      Left = 793
+      Left = 801
     end
     inherited Image3: TImage
       Left = 530
-      Width = 263
+      Width = 271
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

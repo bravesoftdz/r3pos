@@ -1,6 +1,6 @@
 inherited frmIoroOrder: TfrmIoroOrder
-  Left = 383
-  Top = 243
+  Left = 567
+  Top = 312
   Caption = #20854#20182#36153#29992
   ClientHeight = 367
   ClientWidth = 535
@@ -281,7 +281,7 @@ inherited frmIoroOrder: TfrmIoroOrder
       object edtIORO_DATE: TcxDateEdit
         Left = 92
         Top = 4
-        Width = 121
+        Width = 141
         Height = 20
         Properties.OnChange = edtIORO_DATEPropertiesChange
         TabOrder = 0
@@ -289,7 +289,7 @@ inherited frmIoroOrder: TfrmIoroOrder
       object edtIORO_USER: TzrComboBoxList
         Left = 92
         Top = 90
-        Width = 121
+        Width = 141
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -350,38 +350,18 @@ inherited frmIoroOrder: TfrmIoroOrder
         TabOrder = 3
         InGrid = True
         KeyValue = Null
-        FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
-        KeyField = 'ITEM_ID'
-        ListField = 'ITEM_NAME'
+        FilterFields = 'CODE_NAME;CODE_ID;CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'ITEM_TYPE'
-            Footers = <>
-            KeyList.Strings = (
-              '1'
-              '2')
-            PickList.Strings = (
-              #25910#20837
-              #25903#20986)
-            Title.Caption = #31867#22411
-            Width = 50
-          end
-          item
-            EditButtons = <>
-            FieldName = 'ITEM_NAME'
+            FieldName = 'CODE_NAME'
             Footers = <>
             Title.Caption = #31185#30446#21517#31216
-            Width = 60
-          end
-          item
-            EditButtons = <>
-            FieldName = 'LEVEL_ID'
-            Footers = <>
-            Title.Caption = #31185#30446#20195#30721
-            Width = 56
+            Width = 140
           end>
-        DropWidth = 180
+        DropWidth = 142
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
@@ -415,15 +395,16 @@ inherited frmIoroOrder: TfrmIoroOrder
             FieldName = 'SHOP_NAME'
             Footers = <>
             Title.Caption = #21517#31216
+            Width = 111
           end
           item
             EditButtons = <>
             FieldName = 'SEQ_NO'
             Footers = <>
             Title.Caption = #24207#21495
-            Width = 20
+            Width = 30
           end>
-        DropWidth = 185
+        DropWidth = 143
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
@@ -706,7 +687,7 @@ inherited frmIoroOrder: TfrmIoroOrder
       object edtCLIENT_ID: TzrComboBoxList
         Left = 92
         Top = 46
-        Width = 237
+        Width = 141
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -778,7 +759,7 @@ inherited frmIoroOrder: TfrmIoroOrder
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 88
+    Left = 80
     Top = 184
   end
   inherited actList: TActionList

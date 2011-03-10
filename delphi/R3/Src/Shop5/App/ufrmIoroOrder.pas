@@ -5,10 +5,9 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
-  cxMaskEdit, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar,
-  cxCurrencyEdit, Grids, DBGridEh, zBase, DB, 
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  RzButton, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, cxCurrencyEdit,
+  cxMaskEdit, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar, Grids,
+  DBGridEh, zBase, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 const
   WM_INIT_RECORD=WM_USER+4;
@@ -195,6 +194,7 @@ begin
   edtACCOUNT_ID.DataSet := Global.GeTZQueryFromName('ACC_ACCOUNT_INFO');
   edtITEM_ID.DataSet := Global.GeTZQueryFromName('ACC_ITEM_INFO');
   edtIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
 
 end;
 

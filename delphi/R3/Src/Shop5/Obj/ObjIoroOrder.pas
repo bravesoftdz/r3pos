@@ -6,7 +6,6 @@ type
   TIoroOrder=class(TZFactory)
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -40,7 +39,7 @@ implementation
 
 function TIoroOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再删除。');
   result := true;
 end;
 
@@ -56,20 +55,8 @@ end;
 
 function TIoroOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再保存。');
   result := true;
-end;
-
-function TIoroOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-var
-   rs:TZQuery;
-begin
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
-      begin
-        Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('IORO_DATE').AsString);
-        if FieldbyName('IORO_DATE').AsOldString <> '' then
-           Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('IORO_DATE').AsOldString);
-      end;
 end;
 
 function TIoroOrder.CheckTimeStamp(aGlobal: IdbHelp;
@@ -79,7 +66,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_IOROORDER where TENANT_ID='+FieldbyName('IORO_ID').AsString+' and IORO_ID='''+FieldbyName('IORO_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_IOROORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and IORO_ID='''+FieldbyName('IORO_ID').AsString+'''';
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
@@ -210,7 +197,10 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
-    Str := 'update ACC_IOROORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NULL';
+    Str :=
+    'update ACC_IOROORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+
+    ''',COMM=' + GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+    '  where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
@@ -237,7 +227,9 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
-    Str := 'update ACC_IOROORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NOT NULL';
+    Str := 'update ACC_IOROORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) +
+    ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where TENANT_ID='+Params.FindParam('TENANT_ID').asString +
+    ' and IORO_ID='''+Params.FindParam('IORO_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到审核单据，是否被另一用户删除或反审核。')

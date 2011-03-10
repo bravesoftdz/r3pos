@@ -8,7 +8,6 @@ type
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
     procedure InitClass; override;
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
@@ -70,18 +69,6 @@ begin
   result := BeforeDeleteRecord(AGlobal);
 end;
 
-function TTransOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-var
-   rs:TZQuery;
-begin
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
-      begin
-        Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('TRANS_DATE').AsString);
-        if FieldbyName('TRANS_DATE').AsOldString <> '' then
-           Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('TRANS_DATE').AsOldString);
-      end;
-end;
-
 function TTransOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
 var
   rs:TZQuery;
@@ -108,7 +95,7 @@ begin
   'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
   'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from ('+
   'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
-  'REMARK,CREA_DATE,CREA_USER from ACC_TRANSORDER where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and TRANS_ID=:TRANS_ID ) ja '+
+  'REMARK,CREA_DATE,CREA_USER,TIME_STAMP from ACC_TRANSORDER where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and TRANS_ID=:TRANS_ID ) ja '+
   'left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
   'left outer join VIW_ACCOUNT_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.IN_ACCOUNT_ID=b.ACCOUNT_ID) jc '+
   'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.OUT_ACCOUNT_ID=c.ACCOUNT_ID) jd '+
@@ -130,17 +117,17 @@ begin
   DeleteSQL.Text := Str;
 end;
 
-{ TTransOrderUnAudit }
+{ TTransOrderAudit }
 
-function TTransOrderUnAudit.Execute(AGlobal: IdbHelp;
+function TTransOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:String;
     n:Integer;
 begin
   try
     Str := 'update ACC_TRANSORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').AsString+
-    ''',CHK_USER='''+Params.FindParam('CHK_USER').AsString+''',COMM='''+GetCommStr(AGlobal.iDbType)+
-    ''',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
+    ''',CHK_USER='''+Params.FindParam('CHK_USER').AsString+''',COMM='+GetCommStr(AGlobal.iDbType)+
+    ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
     ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and SHOP_ID='''+Params.FindParam('SHOP_ID').AsString+''' and CHK_DATE is null';
     n := AGlobal.ExecSQL(Str);
     if n = 0 then
@@ -161,16 +148,16 @@ begin
 
 end;
 
-{ TTransOrderAudit }
+{ TTransOrderUnAudit }
 
-function TTransOrderAudit.Execute(AGlobal: IdbHelp;
+function TTransOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:String;
     n:Integer;
 begin
   try
-    Str := 'update ACC_TRANSORDER set CHK_DATE=null,CHK_USER=null,COMM='''+GetCommStr(AGlobal.iDbType)+
-    ''',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
+    Str := 'update ACC_TRANSORDER set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(AGlobal.iDbType)+
+    ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
     ' and TRANS_ID='''+Params.FindParam('TRANS_ID').AsString+''' and SHOP_ID='''+Params.FindParam('SHOP_ID').AsString+''' and CHK_DATE is not null';
     n := AGlobal.ExecSQL(Str);
     if n = 0 then

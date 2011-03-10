@@ -23,12 +23,14 @@ var Str:String;
 begin
   rs := TZQuery.Create(nil);
   case FieldByName('CODE_TYPE').AsInteger of
-    5:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
-    9:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:OLD_TENANT_ID ';
+    5:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
+    9:Str:='select count(*) from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
   end;
   try
     rs.Close;
     rs.SQL.Text := Str;
+    rs.ParamByName('OLD_CODE_ID').AsString := Fieldbyname('CODE_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsOldString+'"已经在相关资料中使用不能删除.');
@@ -47,6 +49,9 @@ begin
   try
     rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_NAME=:CODE_NAME and CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('CODE_TYPE').AsString := Fieldbyname('CODE_TYPE').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
+    rs.ParamByName('CODE_NAME').AsString := Fieldbyname('CODE_NAME').AsString;
     rs.First;
     while not rs.Eof do
       begin
@@ -74,6 +79,9 @@ begin
     rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where COMM not in (''02'',''12'') and CODE_TYPE=:CODE_TYPE '+
     'and CODE_NAME=:CODE_NAME and CODE_ID<>:CODE_ID and TENANT_ID=:TENANT_ID ';
     AGlobal.Open(rs);
+    rs.ParamByName('CODE_ID').AsString := Fieldbyname('CODE_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
+    rs.ParamByName('CODE_NAME').AsString := Fieldbyname('CODE_NAME').AsString;
     if rs.Fields[0].AsInteger > 0 then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"类别名称不能重复设置');
   finally
     rs.Free;

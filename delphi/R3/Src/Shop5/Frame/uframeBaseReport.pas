@@ -9,7 +9,7 @@ uses
   RzLstBox, RzChkLst, RzCmboBx, Mask, RzEdit, Grids, DBGridEh, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit;
+  ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit;
 
 
 type
@@ -67,10 +67,12 @@ type
     function RightStr(Str: string; vlen: integer): string;
     function GetCmpNum(CmpName,BegName: string): string; //返回当前控件名中数序号
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
-    procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品指标OnChange
+    procedure Dofnd_TYPE_IDChange(Sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
     function GetDBGridEh: TDBGridEh;virtual;
+    {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[查询条件值] =======}
+    procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel); //PageIndex=-1表示由Sender的序号确定PageIndex
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string); 
@@ -731,6 +733,83 @@ begin
     FindCmp:=self.FindComponent(CmpName);
     if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
       AddGoodSortTypeItemsList(Sender,TzrComboBoxList(FindCmp));
+  end;
+end;
+
+procedure TframeBaseReport.DoAssignParamsValue(SrcPnl, DestPnl: TRzPanel);
+ function FindDestComponent(DestPnl: TRzPanel; DestCmpName: string): TComponent;
+ var i: integer; FindCmp: TComponent;
+ begin
+   for i:=0 to DestPnl.ControlCount-1 do
+   begin
+     FindCmp:=TComponent(DestPnl.Controls[i]);
+     if trim(LowerCase(FindCmp.Name))=trim(LowerCase(DestCmpName)) then
+     begin
+       result:=FindCmp;
+       break;
+     end;
+   end;
+ end;
+ function GetDestCmpName(SrcCmpName: string): string;  //第一个下划线之前的Numn为控件PageNum
+ var i,PosIdx: integer;FirtStr,NumStr: string; 
+ begin
+   result:='';
+   FirtStr:='';
+   NumStr:='';
+   PosIdx:=Pos('_',SrcCmpName);
+   for i:=1 to PosIdx-1 do
+   begin
+     if SrcCmpName[i] in ['0'..'9'] then
+       NumStr:=NumStr+SrcCmpName[i]
+     else
+       FirtStr:=FirtStr+SrcCmpName[i];
+   end;
+   if NumStr<>'' then
+   begin
+     NumStr:=InttoStr(StrtoIntDef(NumStr,0)+1);
+     result:=FirtStr+NumStr+Copy(SrcCmpName,PosIdx,100);
+   end;
+ end;
+var
+  DestTab:TRzTabSheet;
+  i,PageIdx: integer;
+  SrcCmpName,DestCmpName: string;
+  SrcCmp,DestCmp: TComponent;
+  ParentCmp: TWinControl;
+begin
+  if (not assigned(SrcPnl)) or (not assigned(DestPnl)) then Exit;
+  for i:=0 to SrcPnl.ControlCount -1 do
+  begin
+    if (SrcPnl.Controls[i] is TLabel) or (SrcPnl.Controls[i] is TRzLabel) or (SrcPnl.Controls[i] is TRzBitBtn) then Continue;
+    SrcCmp:=TComponent(SrcPnl.Controls[i]);
+    SrcCmpName:=SrcCmp.Name;
+    DestCmpName:=GetDestCmpName(SrcCmpName);
+    DestCmp:=FindDestComponent(DestPnl,DestCmpName);
+    if DestCmp=nil then Continue;
+    if SrcPnl.Controls[i] is TcxDateEdit then
+      TcxDateEdit(DestCmp).Date:=TcxDateEdit(SrcCmp).Date
+    else if SrcPnl.Controls[i] is TcxComboBox then
+      TcxComboBox(DestCmp).ItemIndex:=TcxComboBox(SrcCmp).ItemIndex
+    else if SrcPnl.Controls[i] is TzrComboBoxList then
+    begin
+      TzrComboBoxList(DestCmp).KeyValue:=TzrComboBoxList(SrcCmp).KeyValue;
+      TzrComboBoxList(DestCmp).Text:=TzrComboBoxList(SrcCmp).Text;
+    end else
+    if SrcPnl.Controls[i] is TcxButtonEdit then
+      TcxButtonEdit(DestCmp).Text:=TcxButtonEdit(SrcCmp).Text;
+  end;
+  
+  //设置分页：
+  ParentCmp:=DestPnl.Parent;
+  for i:=1 to 100 do
+  begin
+    if ParentCmp=nil then break;
+    if (ParentCmp<>nil) and (ParentCmp is TRzTabSheet) then
+    begin
+      RzPage.ActivePage:=TRzTabSheet(ParentCmp);
+      break;
+    end else
+      ParentCmp:=ParentCmp.Parent;
   end;
 end;
 

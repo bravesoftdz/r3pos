@@ -50,17 +50,18 @@ type
     User_NAME:string;
     FModiRight: boolean;
     FLastRole_IDS: string;  //最后一次打开: Role_IDS
-    procedure Init(ROLE_IDS: String); //初始化显示数据(RoleGird和CheckeTree)
+    procedure Init(InUserID,InUser_NAME,User_ACCOUNT: string; ROLE_IDS: String); //初始化显示数据(RoleGird和CheckeTree)
     procedure SaveRight;
     procedure SetModiRight(const Value: boolean);
     function  GetROLE_IDS: string;
     function  GetROLE_NAMES: string;  //当前的角色List: ROLE_NAMES
-    procedure DoRzPageChange(Sender: Tobject); //Onchange
+    procedure DoRzPageChange(Sender: Tobject);  //Onchange
   public
+    FReROLE_IDS: string;
     ccid:string;
     locked:Boolean;
-    procedure Open(InUserID,InUser_NAME,User_ACCOUNT,ROLE_IDS: string);
     procedure OpenRight(ROLE_IDS: string);
+    class function ShowUserRight(InUserID,InUser_NAME,User_ACCOUNT: string; var ROLE_IDS: string): Boolean;
     property  ModiRight:boolean read FModiRight write SetModiRight;
     property  ROLE_IDS: string read GetROLE_IDS;  //当前的角色List: ROLE_IDS
     property  ROLE_NAMES: string read GetROLE_NAMES;  //当前的角色List: ROLE_NAMES
@@ -82,12 +83,19 @@ begin
   close;
 end;
 
-procedure TfrmUserRights.Init(ROLE_IDS: String);
+procedure TfrmUserRights.Init(InUserID,InUser_NAME,User_ACCOUNT: string; ROLE_IDS: String);
 var
   i:integer;
   Str,Cnd: string;
   adoRs: TZQuery;
 begin
+  //初始化显示
+  User_ID:=InUserID;
+  Label1.Caption:=InUser_NAME;
+  Label2.Caption:=InUser_NAME;
+  Label3.Caption:=User_ACCOUNT;
+  Label5.Caption:=User_ACCOUNT;
+
   Cnd:='Select ROLE_ID as ROLE_ID1  From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and ROLE_ID in ('''+StringReplace(ROLE_IDS,',',''',''',[rfReplaceAll])+''')';
   Str:='Select (case when B.ROLE_ID1 is null then 0 else 1 end) as selflag,A.* from  '+
        ' (select ROLE_ID,ROLE_NAME,REMARK from CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
@@ -109,17 +117,9 @@ begin
   finally
     adoRs.Free;
   end;
-end;
-
-procedure TfrmUserRights.Open(InUserID,InUser_NAME,User_ACCOUNT,ROLE_IDS: string);
-begin
-  User_ID:=InUserID;
-  Label1.Caption:=InUser_NAME;
-  Label2.Caption:=InUser_NAME;
-  Label3.Caption:=User_ACCOUNT;
-  Label5.Caption:=User_ACCOUNT;
-  Init(ROLE_IDS);  //初始化显示数据(RoleGird和CheckeTree)
-  OpenRight(ROLE_IDS);  //读取当前角色IDS的Checked值
+  
+  //读取当前角色IDS的Checked值
+  OpenRight(ROLE_IDS);
   RzPage.OnChange:=DoRzPageChange;
   locked:=false;
 end;
@@ -259,6 +259,7 @@ begin
     Params.ParamByName('USER_ID').AsString:=User_ID;
     Params.ParamByName('ROLE_IDS').asString:=self.ROLE_IDS;
     Params.ParamByName('ROLE_NAMES').asString:=self.ROLE_NAMES;
+    FReROLE_IDS:=Params.ParamByName('ROLE_IDS').asString;
     Factor.ExecProc('TUserRolesList',Params);
   finally
     Params.Free;
@@ -330,6 +331,22 @@ begin
   CurIDS:=ROLE_IDS;
   if (trim(FLastRole_IDS)<>trim(CurIDS)) and (RzPage.ActivePage=TabSheet2) then
     OpenRight(CurIDS);
+end;
+
+class function TfrmUserRights.ShowUserRight(InUserID, InUser_NAME,User_ACCOUNT: string; var ROLE_IDS: string): Boolean;
+var FrmObj: TfrmUserRights;
+begin
+  try
+    FrmObj:=TfrmUserRights.Create(nil);
+    FrmObj.Init(InUserID, InUser_NAME,User_ACCOUNT,ROLE_IDS);  //初始化显示数据(RoleGird和CheckeTree)
+    FrmObj.ShowModal;
+    if FrmObj.ModalResult=MROK then
+    begin
+      ROLE_IDS:=FrmObj.FReROLE_IDS;
+      result:=true;
+    end;
+  finally
+  end;
 end;
 
 end.

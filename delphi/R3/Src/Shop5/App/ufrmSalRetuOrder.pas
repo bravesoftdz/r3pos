@@ -82,6 +82,7 @@ type
     procedure edtCLIENT_IDFindClick(Sender: TObject);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actCustomerExecute(Sender: TObject);
+    procedure actIsPressentExecute(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -246,7 +247,7 @@ begin
     edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品
-    if bs.FieldByName('USING_BARTER').AsInteger=1 then
+    if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
          edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
          edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
@@ -966,7 +967,6 @@ var
   rs:TZQuery;
   SObj:TRecord_;
 begin
-  inherited;
   rs := TZQuery.Create(nil);
   SObj := TRecord_.Create;
   try
@@ -975,7 +975,7 @@ begin
       if not OpenDialogCustomer('') then Exit;
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
-        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.INVOICE_FLAG,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
         'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
@@ -987,7 +987,7 @@ begin
     begin
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
-        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.INVOICE_FLAG,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
         'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
@@ -999,7 +999,7 @@ begin
           rs.Close;
           rs.SQL.Text :=
             'select j.*,c.UNION_NAME from ('+
-            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.INVOICE_FLAG,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
             'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
@@ -1027,9 +1027,12 @@ begin
        end
     else
        if not TframeListDialog.FindDialog(self,rs.SQL.Text,'IC_CARDNO=卡号,CLIENT_NAME=客户名称,UNION_NAME=商盟',SObj) then Exit;
+    edtCLIENT_ID.KeyValue := SObj.FieldbyName('CLIENT_ID').AsString;
+    edtCLIENT_ID.Text := SObj.FieldbyName('CLIENT_NAME').AsString;
     AObj.FieldbyName('UNION_ID').AsString := SObj.FieldbyName('UNION_ID').AsString;
     AObj.FieldbyName('IC_CARDNO').AsString := SObj.FieldbyName('IC_CARDNO').AsString;
     AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CLIENT_ID').AsString;
+    AObj.FieldbyName('CLIENT_CODE').AsString := SObj.FieldbyName('CLIENT_CODE').AsString;
     AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CLIENT_NAME').AsString;
     AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldbyName('PRICE_ID').AsString;
     AObj.FieldbyName('BALANCE').AsFloat := SObj.FieldbyName('BALANCE').AsFloat;
@@ -1224,7 +1227,7 @@ begin
     if not rs.IsEmpty then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
          else
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
             fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
@@ -1388,6 +1391,16 @@ begin
 
     end;
   inherited;
+end;
+
+procedure TfrmSalRetuOrder.actIsPressentExecute(Sender: TObject);
+begin
+  case edtTable.FieldbyName('IS_PRESENT').AsInteger of
+  0:PresentToCalc(1);
+  1:PresentToCalc(2);
+  else
+     PresentToCalc(0);
+  end;
 end;
 
 end.

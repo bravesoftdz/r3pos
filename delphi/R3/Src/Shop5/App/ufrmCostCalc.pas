@@ -360,7 +360,7 @@ begin
   b := 1;
   while true do
   begin
-    RzProgressBar1.Percent := (b*100 div pt) div 3+5;
+    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+5;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -586,7 +586,7 @@ begin
         'max(NEW_INPRICE),max(NEW_OUTPRICE),'+
         'sum(ORG_AMT),sum(ORG_AMT)*max(NEW_INPRICE),sum(ORG_AMT)*max(NEW_OUTPRICE),sum(ORG_CST),'+
         'sum(STOCK_AMT),sum(STOCK_MNY),sum(STOCK_TAX),sum(STOCK_RTL),sum(STOCK_AGO),sum(STKRT_AMT),sum(STKRT_MNY),sum(STKRT_TAX),'+
-        'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),round(case when sum(SALE_AMT)=0 then 0 else sum(SALE_CST)/(sum(SALE_AMT)*1.0) end,6),sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
+        'sum(SALE_AMT),sum(SALE_RTL),sum(SALE_AGO),sum(SALE_MNY),sum(SALE_TAX),sum(SALE_CST),round(case when sum(SALE_AMT)<>0 then sum(SALE_CST)/(sum(SALE_AMT)*1.0) else 0 end,6),sum(SALE_PRF),sum(SALRT_AMT),sum(SALRT_MNY),sum(SALRT_TAX),sum(SALRT_CST),'+
         'sum(DBIN_AMT),sum(DBIN_MNY),sum(DBIN_RTL),sum(DBIN_CST),'+
         'sum(DBOUT_AMT),sum(DBOUT_MNY),sum(DBOUT_RTL),sum(DBOUT_CST),'+
         'sum(CHANGE1_AMT),sum(CHANGE1_MNY),sum(CHANGE1_RTL),sum(CHANGE1_CST),'+
@@ -696,7 +696,7 @@ begin
   b := 1;
   while true do
   begin
-    RzProgressBar1.Percent := (b*100 div pt) div 3+35;
+    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+35;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -825,7 +825,7 @@ begin
   if flag=0 then Exit;
   Factor.BeginTrans;
   try
-    RzProgressBar1.Percent := (b*100 div pt) div 3+90;
+    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+90;
     for i:=1 to pt do
        begin
          if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
@@ -972,7 +972,7 @@ begin
   b := 1;
   while true do
   begin
-    RzProgressBar1.Percent := (b*100 div pt) div 3+70;
+    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+70;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then

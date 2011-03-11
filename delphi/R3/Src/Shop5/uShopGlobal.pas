@@ -48,6 +48,7 @@ type
     PUB_SETTLE_CODE: TZQuery;
     STO_CHANGECODE: TZQuery;
     PUB_SUPPERSORT: TZQuery;
+    PUB_STAT_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

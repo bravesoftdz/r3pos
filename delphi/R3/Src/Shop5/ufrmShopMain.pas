@@ -612,9 +612,12 @@ begin
       frmShopMain.WindowState := wsMaximized;
     end;    
   except
-    Application.Terminate;
-    Exit;
-    Raise;
+    on E:Exception do
+       begin
+         MessageBox(Handle,pchar(E.Message),'”—«ÈÃ· æ...',MB_OK+MB_ICONWARNING);
+         Application.Terminate;
+         Exit;
+       end;
   end;
 end;
 
@@ -935,8 +938,8 @@ end;
 function TfrmShopMain.ConnectToDb:boolean;
 begin
   result := false;
-//  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
-  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
+  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
+//  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
 //  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
   Factor.Connect;
   if not UpdateDbVersion then Exit;

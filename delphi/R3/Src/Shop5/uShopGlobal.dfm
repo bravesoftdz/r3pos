@@ -384,7 +384,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 88
     ParamData = <
       item
@@ -408,7 +408,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 24
     ParamData = <
       item
@@ -437,7 +437,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 152
     ParamData = <
       item
@@ -466,7 +466,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 216
     ParamData = <
       item
@@ -495,7 +495,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 288
     ParamData = <
       item
@@ -524,7 +524,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 360
     ParamData = <
       item
@@ -553,7 +553,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 352
+    Left = 368
     Top = 416
     ParamData = <
       item
@@ -577,8 +577,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 24
+    Left = 504
+    Top = 16
     ParamData = <
       item
         DataType = ftUnknown
@@ -601,8 +601,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 96
+    Left = 504
+    Top = 88
     ParamData = <
       item
         DataType = ftUnknown
@@ -672,8 +672,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 168
+    Left = 504
+    Top = 160
     ParamData = <
       item
         DataType = ftUnknown
@@ -695,8 +695,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 232
+    Left = 504
+    Top = 224
     ParamData = <
       item
         DataType = ftUnknown
@@ -723,8 +723,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 296
+    Left = 504
+    Top = 288
     ParamData = <
       item
         DataType = ftUnknown
@@ -745,8 +745,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 360
+    Left = 504
+    Top = 352
     ParamData = <
       item
         DataType = ftUnknown
@@ -773,8 +773,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 416
+    Left = 504
+    Top = 408
     ParamData = <
       item
         DataType = ftUnknown
@@ -800,8 +800,8 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 456
-    Top = 472
+    Left = 504
+    Top = 464
     ParamData = <
       item
         DataType = ftUnknown
@@ -823,7 +823,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 584
+    Left = 664
     Top = 288
     ParamData = <
       item
@@ -846,7 +846,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 584
+    Left = 664
     Top = 352
     ParamData = <
       item
@@ -869,7 +869,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 584
+    Left = 664
     Top = 416
     ParamData = <
       item
@@ -898,7 +898,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 584
+    Left = 664
     Top = 232
     ParamData = <
       item
@@ -927,7 +927,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 584
+    Left = 664
     Top = 168
     ParamData = <
       item
@@ -979,8 +979,32 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 583
+    Left = 663
     Top = 471
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_STAT_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select j.CODE_ID,j.CODE_NAME from PUB_PARAMS j left outer join (' +
+        'select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT' +
+        '_ID=:TENANT_ID and CODE_TYPE='#39'16'#39' ) b on j.CODE_ID=b.CODE_ID '
+      'where j.TYPE_CODE='#39'SORT_TYPE'#39'  order by  cast(j.CODE_ID as int)')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 478
     ParamData = <
       item
         DataType = ftUnknown

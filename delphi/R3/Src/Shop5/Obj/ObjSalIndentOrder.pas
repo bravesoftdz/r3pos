@@ -195,7 +195,7 @@ begin
   SelectSQL.Text :=
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
-               'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT,b.PRICE_ID from '+
+               'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT,b.PRICE_ID,b.INTEGRAL as ACCU_INTEGRAL,b.BALANCE,b.CLIENT_CODE from '+
                '(select TENANT_ID,SHOP_ID,INDE_ID,GLIDE_NO,INDE_DATE,PLAN_DATE,ADVA_MNY,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,CLIENT_ID,'+
                'IC_CARDNO,UNION_ID,GUIDE_USER,CHK_DATE,CHK_USER,FIG_ID,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,'+
                'INDE_AMT,INDE_MNY,TIME_STAMP from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) jb '+

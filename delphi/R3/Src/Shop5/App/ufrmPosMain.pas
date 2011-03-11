@@ -170,7 +170,7 @@ type
     procedure WMExecOrder(var Message: TMessage); message WM_EXEC_ORDER;
     procedure OpenDialogGoods;
     procedure OpenDialogProperty;
-    function OpenDialogCustomer(KeyString:string):boolean;
+    function  OpenDialogCustomer(KeyString:string):boolean;
     procedure OpenDialogGuide;
     procedure AddFromDialog(AObj:TRecord_);
     procedure SetgRepeat(const Value: boolean);
@@ -814,10 +814,12 @@ procedure TfrmPosMain.ConvertPresent;
 var
   Params:TLoginParam;
   allow :boolean;
+  r:integer;
 begin
   if dbState = dsBrowse then Exit;
+  r := cdsTable.FieldbyName('IS_PRESENT').AsInteger;
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  if not ShopGlobal.GetChkRight('13100001',6) then  //赠送权限
+  if not ShopGlobal.GetChkRight('13100001',6) and not ShopGlobal.GetChkRight('13100001',7) then  //赠送权限
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -831,10 +833,12 @@ begin
   begin
      if cdsTable.FieldbyName('GODS_ID').AsString='' then Exit;
      if cdsTable.FindField('IS_PRESENT')=nil then Exit;
-     if cdsTable.FieldbyName('IS_PRESENT').AsInteger = 0 then
-        PresentToCalc(1)
+     case r of
+     0:PresentToCalc(1);
+     1:PresentToCalc(2);
      else
-        PresentToCalc(0);
+       PresentToCalc(0);
+     end;
   end;
 end;
 
@@ -1566,7 +1570,7 @@ begin
       if not OpenDialogCustomer('') then Exit;
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
-        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
         'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
@@ -1578,7 +1582,7 @@ begin
     begin
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
-        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+        'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
         'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
@@ -1590,7 +1594,7 @@ begin
           rs.Close;
           rs.SQL.Text :=
             'select j.*,c.UNION_NAME from ('+
-            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+            'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
             'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
@@ -1621,6 +1625,7 @@ begin
     AObj.FieldbyName('UNION_ID').AsString := SObj.FieldbyName('UNION_ID').AsString;
     AObj.FieldbyName('IC_CARDNO').AsString := SObj.FieldbyName('IC_CARDNO').AsString;
     AObj.FieldbyName('CLIENT_ID').AsString := SObj.FieldbyName('CLIENT_ID').AsString;
+    AObj.FieldbyName('CLIENT_CODE').AsString := SObj.FieldbyName('CLIENT_CODE').AsString;
     AObj.FieldbyName('CLIENT_ID_TEXT').AsString := SObj.FieldbyName('CLIENT_NAME').AsString;
     AObj.FieldbyName('PRICE_ID').AsString := SObj.FieldbyName('PRICE_ID').AsString;
     AObj.FieldbyName('BALANCE').AsFloat := SObj.FieldbyName('BALANCE').AsFloat;

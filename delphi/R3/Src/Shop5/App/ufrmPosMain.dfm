@@ -484,7 +484,7 @@ inherited frmPosMain: TfrmPosMain
         object lblDIBS: TLabel
           Left = 198
           Top = 108
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #25214#38646#65306
           Font.Charset = GB2312_CHARSET
@@ -497,7 +497,7 @@ inherited frmPosMain: TfrmPosMain
         object lblCASH: TLabel
           Left = 198
           Top = 68
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #29616#37329#65306
           Font.Charset = GB2312_CHARSET
@@ -555,7 +555,7 @@ inherited frmPosMain: TfrmPosMain
         object lblACCT_MNY: TLabel
           Left = 198
           Top = 18
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #32467#31639#65306
           Font.Charset = GB2312_CHARSET

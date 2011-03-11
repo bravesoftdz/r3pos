@@ -197,7 +197,7 @@ begin
       raise Exception.Create('«Î ‰»Îµ«¬ºø⁄¡Ó£°');
     end;
 
-  Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),DecStr(Trim(cxedtPasswrd.Text),ENC_KEY));
+  Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
   if (IntToStr(TENANT_ID) <> '' ) and (TENANT_ID <> Tenant.TENANT_ID) then Exit;
@@ -221,7 +221,7 @@ begin
       CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
       CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
       CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
-      CdsTable.FieldByName('PASSWRD').AsString := EncStr(Tenant.PASSWRD,ENC_KEY);
+      CdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(cxedtPasswrd.Text),ENC_KEY);
       CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
       CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;

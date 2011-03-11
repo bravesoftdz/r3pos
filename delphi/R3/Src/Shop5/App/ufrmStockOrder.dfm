@@ -569,15 +569,6 @@ inherited frmStockOrder: TfrmStockOrder
         end
         item
           EditButtons = <>
-          FieldName = 'BATCH_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #25209#21495
-          Visible = False
-          Width = 96
-        end
-        item
-          EditButtons = <>
           FieldName = 'ORG_PRICE'
           Footers = <>
           ReadOnly = True

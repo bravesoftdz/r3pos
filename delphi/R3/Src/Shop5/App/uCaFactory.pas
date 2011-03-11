@@ -28,6 +28,7 @@ type
     REGION_ID:string;
     SRVR_ID:string;
     PROD_ID:string;
+    DB_ID:string;
     AUDIT_STATUS:string;
   end;
   TCaLogin=record
@@ -60,10 +61,12 @@ type
     FURL: string;
     Fsslpwd: string;
     Fpubpwd: string;
+    FSessionId: string;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
     procedure Setsslpwd(const Value: string);
+    procedure SetSessionId(const Value: string);
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
@@ -74,7 +77,7 @@ type
     function CreateRio:THTTPRIO;
     
     function GetHeader(rio:THTTPRIO):rsp;
-    function SendHeader(rio:THTTPRIO):rsp;
+    function SendHeader(rio:THTTPRIO;flag:integer=1):rsp;
     function  CreateXML(xml:string):IXMLDomDocument;
     function CreateRspXML:IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
@@ -93,6 +96,8 @@ type
     property pubpwd:string read Fpubpwd write Setpubpwd;
     //临时密码
     property sslpwd:string read Fsslpwd write Setsslpwd;
+    //通讯会话
+    property SessionId:string read FSessionId write SetSessionId;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -180,8 +185,69 @@ begin
 end;
 
 function TCaFactory.coGetList(TENANT_ID: string): TCaTenant;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caTenant:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  code:string;
+  h:rsp;
 begin
-  Result.TENANT_ID := 1000001;
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '3';
+  FindNode(doc,'header\pub').appendChild(Node);
+  
+  Node := doc.createElement('caTenant');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := TENANT_ID;
+  FindNode(doc,'body\caTenant').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio;
+  try
+    h := SendHeader(rio,2);
+    try
+    doc := CreateXML(
+                 Decode(
+                    GetCaTenantWebServiceImpl(true,URL,rio).getTenantInfo(Encode(inxml,sslpwd))
+                    ,sslpwd
+                 )
+           );
+    finally
+      h.Free;
+    end;
+    CheckRecAck(doc);
+    caTenant := FindNode(doc,'body\caTenant');
+    result.TENANT_ID := StrtoInt(GetNodeValue(caTenant,'tenantId'));
+    result.LOGIN_NAME := GetNodeValue(caTenant,'loginName');
+    result.TENANT_NAME := GetNodeValue(caTenant,'tenantName');
+    result.SHORT_TENANT_NAME := GetNodeValue(caTenant,'shortTenantName');
+    result.TENANT_SPELL := GetNodeValue(caTenant,'tenantSpell');
+    result.TENANT_TYPE := StrtoInt(GetNodeValue(caTenant,'tenantType'));
+    result.LICENSE_CODE := GetNodeValue(caTenant,'licenseCode');
+    result.LEGAL_REPR := GetNodeValue(caTenant,'legalRepr');
+    result.LINKMAN := GetNodeValue(caTenant,'linkman');
+    result.TELEPHONE := GetNodeValue(caTenant,'telephone');
+    result.FAXES := GetNodeValue(caTenant,'faxes');
+    result.HOMEPAGE := GetNodeValue(caTenant,'homepage');
+    result.ADDRESS := GetNodeValue(caTenant,'address');
+    result.POSTALCODE := GetNodeValue(caTenant,'postalcode');
+    result.PASSWRD := GetNodeValue(caTenant,'passwrd');
+    result.QQ := GetNodeValue(caTenant,'qq');
+    result.MSN := GetNodeValue(caTenant,'msn');
+    result.REMARK := GetNodeValue(caTenant,'remark');
+//    result.SRVR_ID := GetNodeValue(caTenant,'srvrId');
+    result.PROD_ID := GetNodeValue(caTenant,'prodId');
+    result.DB_ID := GetNodeValue(caTenant,'dbId');
+    result.AUDIT_STATUS := GetNodeValue(caTenant,'auditStatus');
+  finally
+    rio.Free;
+  end;    
 end;
 
 function TCaFactory.coLogin(Account, PassWrd: string): TCaLogin;
@@ -214,18 +280,19 @@ begin
 
   rio := CreateRio;
   try
-    h := SendHeader(rio);
+    h := SendHeader(rio,1);
     try
     doc := CreateXML(
                  Decode(
-                    GetCaTenantWebServiceImpl(true,URL,rio).login(Encode(inxml,'SaRi0+jf'))
-                    ,'SaRi0+jf'
+                    GetCaTenantWebServiceImpl(true,URL,rio).login(Encode(inxml,pubpwd))
+                    ,pubpwd
                  )
            );
     finally
       h.Free;
     end;
-    if h.encryptType <> 1 then Raise Exception.Create('无效加密类型...');
+
+    GetHeader(rio);
     CheckRecAck(doc);
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
     code := GetNodeValue(caTenantLoginResp,'code');
@@ -233,9 +300,10 @@ begin
     if StrtoIntDef(code,0) in [1,5] then //认证成功
        begin
          result.TENANT_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'tenantId'));
+         sslpwd := encddecd.DecodeString(GetNodeValue(caTenantLoginResp,'keyStr'));
+         result.SLL := sslpwd;
          if code = '1' then
             begin
-              result.SLL := GetNodeValue(caTenantLoginResp,'keyStr');
               result.HOST_NAME := GetNodeValue(caTenantLoginResp,'hostNmae');
               result.SRVR_PORT := StrtoInt(GetNodeValue(caTenantLoginResp,'srvrPort'));
               result.SRVR_PATH := GetNodeValue(caTenantLoginResp,'srvrPath');
@@ -348,18 +416,17 @@ begin
 
   rio := CreateRio;
   try
-    h := SendHeader(rio);
+    h := SendHeader(rio,1);
     try
     doc := CreateXML(
                  Decode(
-                    GetCaTenantWebServiceImpl(true,URL,rio).register(Encode(inxml,'SaRi0+jf'))
-                    ,'SaRi0+jf'
+                    GetCaTenantWebServiceImpl(true,URL,rio).register(Encode(inxml,pubpwd))
+                    ,pubpwd
                  )
            );
     finally
       h.Free;
     end;
-    if h.encryptType <> 1 then Raise Exception.Create('无效加密类型...');
     CheckRecAck(doc);
     caTenantRegisterResp := FindNode(doc,'body\caTenantRegisterResp');
     code := GetNodeValue(caTenantRegisterResp,'code');
@@ -382,7 +449,7 @@ begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     URL := f.ReadString('CaFactory','url','http://10.10.11.249/services/CaTenantService?wsdl');
-    pubpwd := '';
+    pubpwd := 'SaRi0+jf';
   finally
     f.Free;
   end;
@@ -500,13 +567,14 @@ end;
 function TCaFactory.GetHeader(rio: THTTPRIO): rsp;
 begin
   result := rsp(rio.SOAPHeaders.Get(rsp));
+  SessionId := result.rspSessionId;
 end;
 
-function TCaFactory.SendHeader(rio: THTTPRIO):rsp;
+function TCaFactory.SendHeader(rio: THTTPRIO;flag:integer=1):rsp;
 begin
   result := rsp.Create;
-  result.rspSessionId := 'sdkfjdskfd';
-  result.encryptType := 1;
+  result.rspSessionId := SessionId;
+  result.encryptType := flag;
   rio.SOAPHeaders.Send(result);
 end;
 
@@ -525,6 +593,11 @@ begin
     result := nil;
     Raise;
   end;
+end;
+
+procedure TCaFactory.SetSessionId(const Value: string);
+begin
+  FSessionId := Value;
 end;
 
 { rsp }

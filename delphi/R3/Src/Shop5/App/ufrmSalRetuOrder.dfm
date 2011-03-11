@@ -680,7 +680,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         end
         item
           Alignment = taCenter
-          Checkboxes = True
+          Checkboxes = False
           EditButtons = <>
           FieldName = 'IS_PRESENT'
           Footers = <>
@@ -738,6 +738,9 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
   end
   inherited actList: TActionList
+    inherited actIsPressent: TAction
+      Caption = #20999#25442'('#38144#21806'-'#36192#21697'-'#20817#25442')'
+    end
     object actCustomer: TAction
       Caption = #36755#20837#20250#21592#21345#21495
       ShortCut = 116

@@ -1,5 +1,6 @@
 inherited frmStkRetuOrderList: TfrmStkRetuOrderList
-  Left = 190
+  Left = 257
+  Top = 322
   Width = 868
   Height = 612
   Caption = #37319#36141#36864#36135#21333
@@ -7,22 +8,22 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 860
-    Height = 555
+    Width = 852
+    Height = 544
     inherited RzPanel2: TRzPanel
-      Width = 850
-      Height = 545
+      Width = 842
+      Height = 534
       inherited RzPage: TRzPageControl
-        Width = 844
-        Height = 539
+        Width = 836
+        Height = 528
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37319#36141#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 842
-            Height = 512
+            Width = 834
+            Height = 501
             inherited RzPanel1: TRzPanel
-              Width = 832
+              Width = 824
               Height = 100
               object RzLabel2: TRzLabel
                 Left = 33
@@ -266,8 +267,8 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 105
-              Width = 832
-              Height = 402
+              Width = 824
+              Height = 391
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -369,17 +370,17 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 860
+    Width = 852
     inherited Image1: TImage
-      Left = 788
-      Width = 63
+      Left = 792
+      Width = 51
     end
     inherited Image14: TImage
-      Left = 851
+      Left = 843
     end
     inherited Image3: TImage
-      Left = 788
-      Width = 63
+      Left = 792
+      Width = 51
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -388,25 +389,25 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 612
+      Width = 616
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 612
+          MinHeight = 616
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 612
+        Width = 616
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actfrmPayOrder
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -414,7 +415,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 569
+          Left = 573
           Top = 0
           Action = actExit
         end
@@ -447,8 +448,8 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     Left = 416
     Top = 193
     ReportForm = {
-      18000000371F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
-      00000000000000000000000000000000000000FFFF00000000FFFF0000000000
+      180000003E1F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
       00A4000000F6020000130000003000050001000000000000000000FFFFFF1F00
@@ -696,6 +697,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
       000000000200000000000000FEFEFF060000000A00205661726961626C657300
       0000000200736C0014006364735F436867426F64792E22534C30303030220002
       006A650014006364735F436867426F64792E224A4530303030220004006B6879
-      6800000000040079687A68000000000200647A000000000000000000000000}
+      6800000000040079687A68000000000200647A000000000000000000000000FD
+      FF0100000000}
   end
 end

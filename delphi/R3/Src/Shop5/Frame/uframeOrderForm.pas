@@ -117,6 +117,7 @@ type
     procedure actUnitConvertExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
     procedure actIntegralExecute(Sender: TObject);
+    procedure edtInputEnter(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -206,6 +207,7 @@ type
     procedure ConvertUnit;virtual;
     procedure ConvertPresent;virtual;
 
+    procedure CheckLowerPrice(aprc:Currency);
     function CheckInput:boolean;virtual;
     //输入会员号
     procedure WriteInfo(id:string);virtual;
@@ -1535,6 +1537,7 @@ begin
 
     if Key='-' then
       begin
+        if MessageBox(Handle,pchar('是否删除当前选择商品"'+edtTable.FieldbyName('GODS_NAME').asString+'"'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
         AObj := TRecord_.Create;
         try
            AObj.ReadFromDataSet(edtTable);
@@ -2587,11 +2590,11 @@ begin
       case InputMode of
       0:begin
          lblInput.Caption := '条码输入';
-         lblHint.Caption := '切换成“货号”输入按 tab 健';
+         lblHint.Caption := '切换成“货号”输入按 tab 健  <F2>缴活输入框';
         end;
       1:begin
          lblInput.Caption := '货号输入';
-         lblHint.Caption := '切换成“条码”输入按 tab 健';
+         lblHint.Caption := '切换成“条码”输入按 tab 健  <F2>缴活输入框';
         end;
       end;
       Exit;
@@ -3181,7 +3184,6 @@ begin
     else
        AObj.ReadFromDataSet(rs);
      pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
-
      r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
      if not r then
      begin
@@ -3255,7 +3257,10 @@ end;
 procedure TframeOrderForm.actIsPressentExecute(Sender: TObject);
 begin
   inherited;
-  PresentToCalc(1);
+  if edtTable.FieldbyName('IS_PRESENT').AsInteger = 0 then
+     PresentToCalc(1)
+  else
+     PresentToCalc(0);
 end;
 
 procedure TframeOrderForm.actIntegralExecute(Sender: TObject);
@@ -3263,6 +3268,21 @@ begin
   inherited;
   PresentToCalc(2);
 
+end;
+
+procedure TframeOrderForm.edtInputEnter(Sender: TObject);
+begin
+  inherited;
+  edtInput.SelectAll;
+end;
+
+procedure TframeOrderForm.CheckLowerPrice(aprc: Currency);
+var
+  rs:TZQuery;
+begin
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('当前商品库中没找到此经营商品');
+  if rs.FieldByName('NEW_LOWPRICE').AsCurrency > aprc then Raise Exception.Create('修改的价格不能低于当前商品最低售价,最低售价为:'+rs.FieldByName('NEW_LOWPRICE').AsString);
 end;
 
 end.

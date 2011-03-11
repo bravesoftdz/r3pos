@@ -346,6 +346,7 @@ begin
       result:=true;
     end;
   finally
+    freeandnil(FrmObj);
   end;
 end;
 

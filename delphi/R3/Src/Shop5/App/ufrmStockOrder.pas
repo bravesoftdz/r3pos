@@ -942,14 +942,27 @@ begin
     if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用物流跟踪码...');
      AObj.ReadFromDataSet(edtTable,false);
      pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
-
-     r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
+     if (edtTable.FieldbyName('LOCUS_NO').AsString='') then
+         begin
+           r := false;
+         end
+     else
+         begin
+           AObj.FieldbyName('LOCUS_NO').NewValue := id;
+           r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').NewValue,null]),[]);
+         end;
      if not r then
      begin
-        inc(RowID);
-        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
-        edtTable.Edit else InitRecord;
-        AObj.WriteToDataSet(edtTable);
+        if AObj.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('请输入商品后再输入物流跟踪码...');
+        if (edtTable.FieldbyName('LOCUS_NO').AsString<>'') then
+        begin
+          inc(RowID);
+          if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+          edtTable.Edit else InitRecord;
+          AObj.WriteToDataSet(edtTable);
+        end
+        else
+          edtTable.Edit;
         edtTable.FieldbyName('LOCUS_NO').AsString := id;
      end else Raise Exception.Create('当前物流跟踪号已经存在，不能重复输入,跟踪号为:'+id);
      result := false;

@@ -1122,6 +1122,7 @@ end;
 procedure TfrmSalesOrder.edtSHOP_IDSaveValue(Sender: TObject);
 begin
   inherited;
+  cid := edtSHOP_ID.AsString;
   ShowInfo;
 
 end;

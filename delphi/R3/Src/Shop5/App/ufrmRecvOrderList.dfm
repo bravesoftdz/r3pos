@@ -9,26 +9,26 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 543
+    Width = 892
+    Height = 532
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 533
+      Width = 882
+      Height = 522
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 527
+        Width = 876
+        Height = 516
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 500
+            Width = 874
+            Height = 489
             BorderInner = fsStatus
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -408,16 +408,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 870
-              Height = 365
+              Width = 862
+              Height = 354
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 363
+                Width = 860
+                Height = 352
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -557,17 +557,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image1: TImage
       Left = 530
-      Width = 361
+      Width = 353
     end
     inherited Image14: TImage
-      Left = 891
+      Left = 883
     end
     inherited Image3: TImage
       Left = 530
-      Width = 361
+      Width = 353
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -692,8 +692,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      1800000075190000180000FFFF01000100FFFFFFFFFF00010000340800007805
-      00000000000000000000000000000000000000FFFF00000000FFFF0000000000
+      180000007C190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      00002400000012000000240000002400000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
       00BE000000F6020000140000003000050001000000000000000000FFFFFF1F00
@@ -895,7 +895,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       00000200000000000000FEFEFF060000000A00205661726961626C6573000000
       000200736C0014006364735F436867426F64792E22534C30303030220002006A
       650014006364735F436867426F64792E224A4530303030220004006B68796800
-      000000040079687A68000000000200647A000000000000000000000000}
+      000000040079687A68000000000200647A000000000000000000000000FDFF01
+      00000000}
   end
   object cdsList: TZQuery
     FieldDefs = <>

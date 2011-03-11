@@ -3167,7 +3167,7 @@ begin
   try
     rs.SQL.Text :=
       'select j.* from ('+
-      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+cid+''' and A.LOCUS_NO='''+id+''' ) j';
     Factor.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
     if rs.RecordCount > 1 then

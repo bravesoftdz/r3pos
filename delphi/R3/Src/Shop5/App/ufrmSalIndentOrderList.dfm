@@ -1,6 +1,6 @@
 inherited frmSalIndentOrderList: TfrmSalIndentOrderList
-  Left = 192
-  Top = 104
+  Left = 276
+  Top = 187
   Width = 836
   Height = 607
   Caption = #38144#21806#35746#21333
@@ -8,22 +8,22 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 828
-    Height = 550
+    Width = 820
+    Height = 539
     inherited RzPanel2: TRzPanel
-      Width = 818
-      Height = 540
+      Width = 810
+      Height = 529
       inherited RzPage: TRzPageControl
-        Width = 812
-        Height = 534
+        Width = 804
+        Height = 523
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 810
-            Height = 507
+            Width = 802
+            Height = 496
             inherited RzPanel1: TRzPanel
-              Width = 800
+              Width = 792
               Height = 102
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -268,8 +268,8 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 107
-              Width = 800
-              Height = 395
+              Width = 792
+              Height = 384
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -400,17 +400,17 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 828
+    Width = 820
     inherited Image1: TImage
-      Left = 780
-      Width = 39
+      Left = 784
+      Width = 27
     end
     inherited Image14: TImage
-      Left = 819
+      Left = 811
     end
     inherited Image3: TImage
-      Left = 780
-      Width = 39
+      Left = 784
+      Width = 27
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -418,25 +418,25 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 604
+      Width = 608
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 604
+          MinHeight = 608
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 604
+        Width = 608
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actRecv
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Action = actExit
         end
@@ -491,7 +491,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000002400000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -556,7 +556,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       00CBCECCE5000A000000000000000000090000008600020000000000FFFFFF00
       000000020000000000000000007408000005004D656D6F320002003500000019
       00000085020000180000000100000001000000000000000500FFFFFF1F2E0200
-      00000000010014005BC6F3D2B5C3FBB3C65DCFFACADBB3F6BBF5B5A500000000
+      00000000010014005BC6F3D2B5C3FBB3C65DCFFACADBB6A9BBF5B5A500000000
       FFFF00000000000200000001000000000400CBCECCE500100000000200000000
       000A0000008600020000000000FFFFFF0000000002000000000000000000FB08
       000006004D656D6F313200020035000000320000004600000012000000010000
@@ -586,8 +586,8 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       00000000FFFFFF0000000002000000000000000000600C000006004D656D6F32
       350002003500000012010000B20100001300000001000E000100000000000000
       0000FFFFFF1F2E02000000000001005700BACFBCC6BDF0B6EEA3BA5B536D616C
-      6C546F426967285B53414C455F4D4E595D295D2020A3A43A5B666F726D617446
-      6C6F6174282723302E3030272C5B53414C455F4D4E595D295D20202020202020
+      6C546F426967285B494E44455F4D4E595D295D2020A3A43A5B666F726D617446
+      6C6F6174282723302E3030272C5B494E44455F4D4E595D295D20202020202020
       202020202020202000000000FFFF00000000000200000001000000000400CBCE
       CCE5000A000000020000000000080000008600020000000000FFFFFF00000000
       02000000000000000000EE0C000006004D656D6F3432000200C20100004A0100
@@ -699,7 +699,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       00000002000000000000000000811A000005004D656D6F35000200E701000012
       010000D40000001300000003000B0001000000000000000000FFFFFF1F2E0200
       0000000001006100D7DCCAFDC1BFA3BA5B666F726D6174666C6F617428272330
-      2E2323272C5B53414C455F414D545D295D20B1BED2B3D0A1BCC6A3BAA3A43A5B
+      2E2323272C5B494E44455F414D545D295D20B1BED2B3D0A1BCC6A3BAA3A43A5B
       666F726D6174466C6F6174282723302E3030272C5B73756D285B43414C435F4D
       4F4E45595D295D295D00000000FFFF00000000000200000001000000000400CB
       CECCE5000A000000000000000000090000000100020000000000FFFFFF000000
@@ -753,6 +753,6 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000}
+      0000000000FDFF0100000000}
   end
 end

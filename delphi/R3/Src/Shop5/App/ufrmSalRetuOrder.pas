@@ -1253,6 +1253,7 @@ end;
 procedure TfrmSalRetuOrder.edtSHOP_IDSaveValue(Sender: TObject);
 begin
   inherited;
+  cid := edtSHOP_ID.asString;
   ShowInfo;
 
 end;

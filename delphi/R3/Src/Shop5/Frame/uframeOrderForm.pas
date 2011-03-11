@@ -315,7 +315,7 @@ end;
 
 constructor TframeOrderForm.Create(AOwner: TComponent);
 begin
-  gRepeat := true;
+  gRepeat := false;
   CanAppend := false;
   isZero := false;
   inherited;
@@ -3167,7 +3167,7 @@ begin
   try
     rs.SQL.Text :=
       'select j.* from ('+
-      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
     Factor.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
     if rs.RecordCount > 1 then
@@ -3199,7 +3199,7 @@ begin
         edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
         InitPrice(AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('UNIT_ID').AsString);
      end else Raise Exception.Create('当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id);
-     WriteAmount(AObj.FieldbyName('GODS_ID').AsString,'#','#',1,true);
+     WriteAmount(AObj.FieldbyName('GODS_ID').AsString,'#','#',AObj.FieldbyName('AMOUNT').asFloat,true);
      result := false;
   finally
     AObj.Free;

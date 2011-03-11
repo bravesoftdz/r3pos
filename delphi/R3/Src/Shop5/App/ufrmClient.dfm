@@ -156,7 +156,7 @@ inherited frmClient: TfrmClient
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
                 FooterRowCount = 1
-                FrozenCols = 1
+                FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 PopupMenu = PopupMenu1

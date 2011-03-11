@@ -148,7 +148,7 @@ begin
      str:= ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text:='select SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REGION_ID,SHOP_TYPE'+
-  'REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+str+' order by SEQ_NO';
+  ',REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+str+' order by SEQ_NO';
   Factor.Open(cdsBrowser);
 end;
 

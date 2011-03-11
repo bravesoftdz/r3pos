@@ -240,6 +240,7 @@ begin
 
     tmp := TZQuery.Create(nil);
     tmp.SQL.Text := 'select SHOP_ID,SHOP_NAME from CA_SHOP_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    tmp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(tmp);
     tmp.First;
     while not tmp.Eof do

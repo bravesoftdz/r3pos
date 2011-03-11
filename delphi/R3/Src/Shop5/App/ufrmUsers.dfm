@@ -100,7 +100,7 @@ inherited frmUsers: TfrmUsers
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'DUTY_IDS'
+                    FieldName = 'DUTY_NAMES'
                     Footers = <>
                     Title.Caption = #32844#21153
                     Width = 76

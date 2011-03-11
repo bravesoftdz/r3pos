@@ -221,7 +221,9 @@ type
     CA_MODULE: TZQuery;
     actfrmStorageInfo: TAction;
     actfrmRckMng: TAction;
-    actfrmChecktablePrint: TAction;
+    actfrmCheckTablePrint: TAction;
+    actfrmJxcTotalReport: TAction;
+    actfrmStockDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -287,8 +289,10 @@ type
       var Accept: Boolean);
     procedure actfrmIoroOrderList1Execute(Sender: TObject);
     procedure actfrmIoroOrderList2Execute(Sender: TObject);
-    procedure actfrmChecktablePrintExecute(Sender: TObject);
+    procedure actfrmCheckTablePrintExecute(Sender: TObject);
     procedure actfrmRckMngExecute(Sender: TObject);
+    procedure actfrmJxcTotalReportExecute(Sender: TObject);
+    procedure actfrmStockDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -337,7 +341,7 @@ uses
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
-  ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng;
+  ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -357,6 +361,7 @@ procedure TfrmShopMain.FormCreate(Sender: TObject);
 var F:TextFile;
 begin
   inherited;
+  if not FileExists(Global.InstallPath+'data\R3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\R3.db'),false);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   SystemShutdown := false;
   Loging :=false;
@@ -930,14 +935,11 @@ end;
 function TfrmShopMain.ConnectToDb:boolean;
 begin
   result := false;
-//  if not FileExists(Global.InstallPath+'Data\R3.db') then
-//     CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'Data\R3.db'),false);
 //  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
   Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
 //  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
   Factor.Connect;
   if not UpdateDbVersion then Exit;
-  ShopGlobal.offline := true;
   result := TfrmTenant.coRegister(self);
 end;
 
@@ -1018,10 +1020,10 @@ begin
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmDeptInfo);
+  Form := FindChildForm(TfrmDeptInfoList);
   if not Assigned(Form) then
      begin
-       Form := TfrmDeptInfo.Create(self);
+       Form := TfrmDeptInfoList.Create(self);
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
@@ -1833,7 +1835,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmChecktablePrintExecute(Sender: TObject);
+procedure TfrmShopMain.actfrmCheckTablePrintExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
@@ -1873,6 +1875,50 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmRckMng.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmJxcTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmJxcTotalReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmJxcTotalReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStockDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStockDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmStockDayReport.Create(self);
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;

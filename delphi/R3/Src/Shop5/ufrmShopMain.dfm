@@ -6753,9 +6753,19 @@ inherited frmShopMain: TfrmShopMain
       Caption = #32467#36134#31649#29702
       OnExecute = actfrmRckMngExecute
     end
-    object actfrmChecktablePrint: TAction
+    object actfrmCheckTablePrint: TAction
       Caption = #25171#21360#30424#28857
-      OnExecute = actfrmChecktablePrintExecute
+      OnExecute = actfrmCheckTablePrintExecute
+    end
+    object actfrmJxcTotalReport: TAction
+      Tag = 42300001
+      Caption = #36827#38144#23384#32479#35745#34920
+      OnExecute = actfrmJxcTotalReportExecute
+    end
+    object actfrmStockDayReport: TAction
+      Tag = 42100001
+      Caption = 'actfrmStockDayReport'
+      OnExecute = actfrmStockDayReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

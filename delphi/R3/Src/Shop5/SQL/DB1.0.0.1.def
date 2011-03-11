@@ -26,7 +26,6 @@
 insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(:TENANT_ID,'ADMIN','admin',0,'00',strftime('%s','now','localtime')-1293840000);
 insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(:TENANT_ID,'PASSWRD','79415A40',0,'00',strftime('%s','now','localtime')-1293840000);
 
-
 --为企业初始化职务
 insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP) values(:TENANT_ID,:TENANT_ID*1000+1,'老板','001','LB','企业经营者','00',strftime('%s','now','localtime')-1293840000);
 insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP) values(:TENANT_ID,:TENANT_ID*1000+2,'店长','001001','DZ','门店管理者','00',strftime('%s','now','localtime')-1293840000);

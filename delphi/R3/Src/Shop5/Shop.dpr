@@ -78,7 +78,6 @@ uses
   ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
   ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
   ufrmSelectGoodSort in 'App\ufrmSelectGoodSort.pas' {frmSelectGoodSort},
-  CaTenantService in 'App\CaTenantService.pas',
   Des in '..\..\Pub\des.pas',
   ufrmSalIndentOrder in 'App\ufrmSalIndentOrder.pas' {frmSalIndentOrder},
   ufrmSalIndentOrderList in 'App\ufrmSalIndentOrderList.pas' {frmSalIndentOrderList},
@@ -153,7 +152,10 @@ uses
   ufrmTicketPrint in 'App\ufrmTicketPrint.pas' {frmTicketPrint},
   uframeBaseReport in 'Frame\uframeBaseReport.pas' {frameBaseReport},
   uframeFindDialog in 'Frame\uframeFindDialog.pas' {frameFindDialog},
-  ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList};
+  ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList},
+  ufrmJxcTotalReport in 'App\ufrmJxcTotalReport.pas' {frmJxcTotalReport},
+  ufrmStockDayReport in 'App\ufrmStockDayReport.pas' {frmStockDayReport},
+  CaTenantService in 'App\CaTenantService.pas';
 
 {$R *.res}
 var

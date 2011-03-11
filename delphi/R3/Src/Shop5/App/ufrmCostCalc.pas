@@ -37,6 +37,9 @@ type
     procedure SetmDate(const Value: TDate);
     procedure SetuDate(const Value: TDate);
     { Private declarations }
+  protected
+    procedure DBLock;
+    procedure DBUnLock;
   public
     { Public declarations }
     pt,pc:integer;
@@ -92,9 +95,10 @@ var
   i:integer;
   SQL:string;
 begin
-  Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate)); 
+  Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate));
   for i:= 1 to pt do
     begin
+      RzProgressBar1.Percent := (i*100 div pt) div 3+5;
       //生成数据
       SQL :=
         'insert into RCK_GOODS_DAYS('+
@@ -293,26 +297,43 @@ end;
 procedure TfrmCostCalc.btnStartClick(Sender: TObject);
 begin
   inherited;
+  Label11.Caption := '读取参数...';
+  Label11.Update;
   //读取参数
   Prepare;
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
-  Factor.DBLock(true);
+  DBLock;
   try
+    Label11.Caption := '准备临时表...';
+    Label11.Update;
+    RzProgressBar1.Percent := 1;
     CreateTempTable;
+    Label11.Caption := '准备核算数据...';
+    Label11.Update;
     //数据准备
     PrepareDataForRck;
+    Label11.Caption := '正在核算成本...';
+    Label11.Update;
+    RzProgressBar1.Percent := 5;
     //计算成本
     case calc_flag of
     0:Calc0;
     1:Calc1;
     2:Calc2;
     end;
+    Label11.Caption := '正在计算商品月台账...';
+    Label11.Update;
     CalcMth;
+    Label11.Caption := '正在计算账户月台账...';
+    Label11.Update;
     //月结时要算账户台账
     if flag in [2] then CalcAcctMth;
+    Label11.Caption := '输出数据中...';
+    Label11.Update;
     ClseRck;
+    RzProgressBar1.Percent := 100;
   finally
-    Factor.DBLock(false);
+    DBUnLock;
   end;
   ModalResult := MROK;
 end;
@@ -339,6 +360,7 @@ begin
   b := 1;
   while true do
   begin
+    RzProgressBar1.Percent := (b*100 div pt) div 3+5;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -541,6 +563,7 @@ begin
   Factor.ExecSQL('delete from RCK_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate));
   for i:= 1 to pt do
     begin
+      RzProgressBar1.Percent := (i*100 div pt) div 3+5;
       //生成数据
       SQL :=
         'insert into RCK_GOODS_DAYS('+
@@ -673,6 +696,7 @@ begin
   b := 1;
   while true do
   begin
+    RzProgressBar1.Percent := (b*100 div pt) div 3+35;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -801,6 +825,7 @@ begin
   if flag=0 then Exit;
   Factor.BeginTrans;
   try
+    RzProgressBar1.Percent := (b*100 div pt) div 3+90;
     for i:=1 to pt do
        begin
          if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
@@ -947,6 +972,7 @@ begin
   b := 1;
   while true do
   begin
+    RzProgressBar1.Percent := (b*100 div pt) div 3+70;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -997,6 +1023,16 @@ begin
     if e>=eDate then break;
     b := b +round(e-(bDate+b))+1;
   end;
+end;
+
+procedure TfrmCostCalc.DBLock;
+begin
+  Factor.DBLock(true);
+end;
+
+procedure TfrmCostCalc.DBUnLock;
+begin
+  Factor.DBLock(false);
 end;
 
 end.

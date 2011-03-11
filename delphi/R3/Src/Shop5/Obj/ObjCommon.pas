@@ -340,7 +340,7 @@ begin
   try
      Temp.SQL.Text :=
          'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -371,7 +371,7 @@ begin
   try
      Temp.SQL.Text :=
          'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -403,7 +403,7 @@ begin
   try
      Temp.SQL.Text :=
          'select max(END_DATE) from ('+
-         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -435,7 +435,7 @@ begin
   try
      Temp.SQL.Text :=
          'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
          'union all '+
          'select max(PRINT_DATE) as CREA_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and TIME_STAMP>'+timestamp+' '+
          ') j';

@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzTabs, cxControls, cxContainer, ZBase,
   cxEdit, cxTextEdit, StdCtrls, RzButton, RzLabel, cxMaskEdit, uDsUtil,uCaFactory,
   cxButtonEdit, zrComboBoxList, ExtCtrls, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset, jpeg;
+  ZAbstractDataset, ZDataset, jpeg, ZdbFactory;
 
 type
   TfrmTenant = class(TfrmBasic)
@@ -81,6 +81,7 @@ type
     Obj: TRecord_;
     TENANT_ID: Integer;
     function Check:boolean;
+    procedure SaveParams;
     class function coRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
     procedure Save;
@@ -105,13 +106,11 @@ begin
               begin
                 //登录认证
                 result := Login_F(true);
-                ShopGlobal.offline := false;
                 if not result then Label19.Caption := '登录认证失败 ';
               end
             else
               begin
                 Login_F(false);
-                ShopGlobal.offline := true;
                 Exit;
               end;
           end;
@@ -159,7 +158,7 @@ begin
   Tenant.ADDRESS := Obj.FieldByName('ADDRESS').AsString;
   Tenant.POSTALCODE := Obj.FieldByName('POSTALCODE').AsString;
   Tenant.REMARK := Obj.FieldByName('REMARK').AsString;
-  Tenant.PASSWRD := Obj.FieldByName('PASSWRD').AsString;
+  Tenant.PASSWRD := DecStr(Obj.FieldByName('PASSWRD').AsString,ENC_KEY);
   Tenant.REGION_ID := Obj.FieldByName('REGION_ID').AsString;
   Tenant.SRVR_ID := Obj.FieldByName('SRVR_ID').AsString;
   Tenant.PROD_ID := Obj.FieldByName('PROD_ID').AsString;
@@ -177,6 +176,8 @@ begin
   Factor.UpdateBatch(CdsTable,'TTenant',nil);
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
+  TENANT_ID := Tenant.TENANT_ID;
+  SaveParams;
 end;
 
 procedure TfrmTenant.RzBitBtn1Click(Sender: TObject);
@@ -230,13 +231,15 @@ begin
     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
-
+  TENANT_ID := Tenant.TENANT_ID;
+  SaveParams;
   ModalResult := mrCancel;
 end;
 
 procedure TfrmTenant.Label20Click(Sender: TObject);
 begin
   inherited;
+  if Global.TENANT_ID>0 then Raise Exception.Create('当前账套已经注册企业了，不能注册新的企业，请输入原企业登录名及密码进行认证');
   RzPage.ActivePageIndex := 1;
   Open;
   if edtLOGIN_NAME.CanFocus then edtLOGIN_NAME.SetFocus;
@@ -308,12 +311,30 @@ begin
 end;
 
 function TfrmTenant.Check: boolean;
-var Temp: TZQuery;
+var
+  Temp: TZQuery;
+  dbFactory:TdbFactory;
 begin
   Temp := TZQuery.Create(nil);
   try
-    Temp.SQL.Text := 'Select Value from Sys_Define Where Define = ''TENANT_ID'' and TENANT_ID=0 ';
-    Factor.Open(Temp);
+    Temp.SQL.Text := 'select Value from SYS_DEFINE Where Define = ''TENANT_ID'' and TENANT_ID=0 ';
+    if Factor.iDbType = 5 then
+       Factor.Open(Temp)
+    else
+       begin
+         dbFactory := TdbFactory.Create;
+         try
+           dbFactory.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'data\R3.db');
+           try
+              dbFactory.Connect;
+           except
+              Raise Exception.Create('软件没有正确安装，请联系客服人员');
+           end;
+           dbFactory.Open(Temp);
+         finally
+           dbFactory.Free;
+         end;
+       end;
     result := (Temp.Fields[0].asString<>'');
     // zhangsenrong 20110-01-26
     if result then
@@ -330,6 +351,7 @@ end;
 function TfrmTenant.Login_F(NetWork:boolean=true):Boolean;
 var
   Temp: TZQuery;
+  login:TCaLogin;
 begin
   Result := False;
   try
@@ -339,12 +361,32 @@ begin
     Factor.Open(Temp);
     if NetWork then
        begin
-         CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+         try
+           login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+         except
+           on E:Exception do
+              begin
+                if StrtoIntDef(login.RET,0) in [2,3] then
+                   begin
+                     MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                     result := false;
+                     Exit;
+                   end
+                else
+                   begin
+                     if Temp.IsEmpty then
+                        begin
+                          MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                          Raise;
+                        end;
+                   end;
+              end;
+         end;
        end;
-    Result := True;
     Global.TENANT_ID := Temp.FieldByName('TENANT_ID').AsInteger;
     Global.TENANT_NAME := Temp.FieldByName('TENANT_NAME').AsString;
     Global.SHORT_TENANT_NAME := Temp.FieldByName('SHORT_TENANT_NAME').AsString;
+    Result := True;
   finally
     Temp.Free;
   end;
@@ -354,6 +396,24 @@ procedure TfrmTenant.Paint;
 begin
   inherited;
 
+end;
+
+procedure TfrmTenant.SaveParams;
+var dbFactory:TdbFactory;
+begin
+   if Factor.iDbType = 5 then Exit;
+   dbFactory := TdbFactory.Create;
+   try
+     dbFactory.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'data\R3.db');
+     try
+        dbFactory.Connect;
+     except
+        Raise Exception.Create('软件没有正确安装，请联系客服人员');
+     end;
+     dbFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+inttostr(TENANT_ID)+''',0,''00'',strftime(''%s'',''now'',''localtime'')-1293840000)'); 
+   finally
+     dbFactory.Free;
+   end;
 end;
 
 end.

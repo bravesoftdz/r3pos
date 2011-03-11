@@ -428,7 +428,7 @@ inherited frmShopInfo: TfrmShopInfo
         TabOrder = 2
         InGrid = False
         KeyValue = Null
-        FilterFields = 'CODE_ID,CODE_NAME,CODE_SPELL'
+        FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
         KeyField = 'CODE_ID'
         ListField = 'CODE_NAME'
         Columns = <

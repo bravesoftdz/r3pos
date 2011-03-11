@@ -21,16 +21,8 @@ var Sort_Id:String;
     rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
-  case FieldByName('SORT_TYPE').AsInteger of
-    1: Sort_Id := 'SORT_ID1';    // 分类
-    2: Sort_Id := 'SORT_ID2';    // 类别
-    3: Sort_Id := 'SORT_ID3';    // 厂家
-    4: Sort_Id := 'SORT_ID4';    // 品牌
-    5: Sort_Id := 'SORT_ID5';    // 重点(品牌)
-    6: Sort_Id := 'SORT_ID6';    // 省内外
-    7: Sort_Id := 'SORT_ID7';    // 颜色组
-    8: Sort_Id := 'SORT_ID8';    // 尺码组
-  end;
+    Sort_Id := 'SORT_ID'+FieldByName('SORT_TYPE').AsString;
+//SORT_ID1 分类 SORT_ID2 类别 SORT_ID3 厂家 SORT_ID4 品牌 SORT_ID5 重点(品牌) SORT_ID6 省内外 SORT_ID7 颜色组 SORT_ID8 尺码组
   try
     rs.Close;
     rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
@@ -48,7 +40,7 @@ function TGoodsSort.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
     rs:TZQuery;
 begin
-  result := true;
+  result := False;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select SORT_ID,COMM,SEQ_NO from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_TYPE=:SORT_TYPE and TENANT_ID=:TENANT_ID ';
@@ -59,6 +51,7 @@ begin
     rs.First;
     while not rs.Eof do
       begin
+        if FieldByName('SORT_TYPE').AsInteger = 1 then Exit;
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的分组，重新启动原有编码
            begin
              FieldbyName('SORT_ID').AsString := rs.FieldbyName('SORT_ID').AsString;
@@ -71,6 +64,7 @@ begin
   finally
     rs.Free;
   end;
+  Result := True;
 end;
 
 function TGoodsSort.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -110,9 +104,11 @@ begin
   Str := 'update PUB_GOODSSORT set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where SORT_ID=:OLD_SORT_ID and TENANT_ID=:OLD_TENANT_ID';
   DeleteSQL.Text := Str;
 end;
+
 initialization
   RegisterClass(TGoodsSort);
 finalization
   UnRegisterClass(TGoodsSort);
+  
 end.
 

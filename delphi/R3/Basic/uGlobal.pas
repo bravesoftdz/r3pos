@@ -27,6 +27,7 @@ type
     FSHOP_ID: string;
     FSHOP_NAME: string;
     FSHORT_TENANT_NAME: string;
+    FrspConnected: boolean;
     { Private declarations }
     function  GetUserID: string;
     function  GetUserName: string;
@@ -43,6 +44,7 @@ type
     procedure Setupgrade(const Value: boolean);
     procedure SetTENANT_ID(const Value: integer);
     procedure SetSHORT_TENANT_NAME(const Value: string);
+    procedure SetrspConnected(const Value: boolean);
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -90,7 +92,8 @@ type
     property AccountName:string read FAccountName write SetAccountName;
     property IsAxCall:Boolean read FIsAxCall write SetIsAxCall;
     property upgrade:boolean read Fupgrade write Setupgrade;
-    { Public declarations }
+    //是否能连上RSP服务主机
+    property rspConnected:boolean read FrspConnected write SetrspConnected;
   end;
   
 function CopyScreen(SaveAndFree:Boolean=True): TBitmap;
@@ -486,6 +489,11 @@ end;
 procedure TGlobal.SetSHORT_TENANT_NAME(const Value: string);
 begin
   FSHORT_TENANT_NAME := Value;
+end;
+
+procedure TGlobal.SetrspConnected(const Value: boolean);
+begin
+  FrspConnected := Value;
 end;
 
 initialization

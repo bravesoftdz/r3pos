@@ -587,5 +587,12 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       Caption = #28155#21152#21830#21697#20998#31867
       OnClick = N8Click
     end
+    object N9: TMenuItem
+      Caption = '-'
+    end
+    object N10: TMenuItem
+      Caption = #21047#26032
+      OnClick = N10Click
+    end
   end
 end

@@ -48,6 +48,8 @@ type
     cdsBrowser: TZQuery;
     AddSortTree: TPopupMenu;
     N8: TMenuItem;
+    N9: TMenuItem;
+    N10: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -77,10 +79,10 @@ type
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure N8Click(Sender: TObject);
+    procedure N10Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure GetNo;
-     procedure LoadTree;
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
      function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
      function  CheckCanExport: boolean; override;
@@ -90,6 +92,7 @@ type
     MaxId:string;
     locked:boolean;
     rcAmt:integer;
+    procedure LoadTree;  //刷新SortTree树
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
     function  EncodeSQL(id:string;var Cnd:string):string;
@@ -173,7 +176,8 @@ procedure TfrmGoodsInfoList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;
-begin                   
+begin
+  if not DBGridEh1.DataSource.DataSet.active then Exit;  
   if (trim(Lowercase(Column.FieldName))='selflag') and
      (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_ID').AsString)<>'0') then
     DBGridEh1.Canvas.Brush.Color:= clGray;  
@@ -328,12 +332,12 @@ begin
     if Id='' then
     begin
       rcAmt:=GetReCount(Cnd);
-      {cdsBrowser.Close;
+      cdsBrowser.Close;
       cdsBrowser.SQL.Text:=rs.SQL.Text;
       cdsBrowser.Params.AssignValues(rs.Params);
-      Factor.Open(cdsBrowser);}
-      cdsBrowser.LoadFromStream(StrmData);
-      cdsBrowser.IndexFieldNames := 'GODS_CODE';
+      Factor.Open(cdsBrowser);
+      // cdsBrowser.LoadFromStream(StrmData);
+      // cdsBrowser.IndexFieldNames := 'GODS_CODE';
     end else
       cdsBrowser.AddFromStream(StrmData);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
@@ -460,7 +464,7 @@ var
 begin
   inherited;
   if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
-
+  if rzTree.Selected=nil then Raise Exception.Create(' 商品分类没有节点，请先选择分类节点！');
   CurObj:=TRecord_(rzTree.Selected.Data);
   if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
   if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then  // RELATION_FLAG=2 自主经营
@@ -1050,6 +1054,12 @@ end;
 function TfrmGoodsInfoList.CheckCanExport: boolean;
 begin 
   result:=ShopGlobal.GetChkRight('32600001',6);
+end;
+
+procedure TfrmGoodsInfoList.N10Click(Sender: TObject);
+begin
+  inherited;
+  LoadTree;
 end;
 
 end.

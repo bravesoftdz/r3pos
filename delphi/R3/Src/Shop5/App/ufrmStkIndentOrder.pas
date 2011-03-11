@@ -766,10 +766,10 @@ begin
     if not rs.IsEmpty then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',bs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
          else
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',bs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
          else
             fndMY_AMOUNT.Text := rs.FieldbyName('AMOUNT').AsString;
        end
@@ -905,6 +905,7 @@ procedure TfrmStkIndentOrder.N3Click(Sender: TObject);
 var frmStockOrderList:TfrmStockOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
@@ -917,6 +918,7 @@ procedure TfrmStkIndentOrder.N4Click(Sender: TObject);
 var frmStockOrderList:TfrmStockOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));

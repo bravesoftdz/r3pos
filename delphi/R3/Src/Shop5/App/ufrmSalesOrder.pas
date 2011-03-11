@@ -1165,6 +1165,7 @@ procedure TfrmSalesOrder.N2Click(Sender: TObject);
 var frmSalRetuOrderList:TfrmSalRetuOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
@@ -1177,6 +1178,7 @@ procedure TfrmSalesOrder.N3Click(Sender: TObject);
 var frmSalRetuOrderList:TfrmSalRetuOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));

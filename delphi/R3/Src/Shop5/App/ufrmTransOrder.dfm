@@ -136,7 +136,7 @@ inherited frmTransOrder: TfrmTransOrder
         Top = 116
         Width = 36
         Height = 12
-        Caption = #25910#27454#20154
+        Caption = #32463#25163#20154
       end
       object Label4: TLabel
         Left = 45

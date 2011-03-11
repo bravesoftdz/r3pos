@@ -200,7 +200,11 @@ begin
   Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-  if (IntToStr(TENANT_ID) <> '' ) and (TENANT_ID <> Tenant.TENANT_ID) then Exit;
+  if (TENANT_ID>0) and (TENANT_ID <> Tenant.TENANT_ID) then
+     begin
+       MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   Open;
   IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
     begin
@@ -233,7 +237,7 @@ begin
   Global.TENANT_NAME := Tenant.TENANT_NAME;
   TENANT_ID := Tenant.TENANT_ID;
   SaveParams;
-  ModalResult := mrCancel;
+  ModalResult := mrok;
 end;
 
 procedure TfrmTenant.Label20Click(Sender: TObject);

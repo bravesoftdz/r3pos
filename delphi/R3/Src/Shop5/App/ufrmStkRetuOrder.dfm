@@ -3,7 +3,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
   Top = 139
   Width = 787
   Height = 542
-  Caption = '采购退货单'
+  Caption = #37319#36141#36864#36135#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
@@ -18,63 +18,63 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Top = 9
         Width = 48
         Height = 12
-        Caption = '退货日期'
+        Caption = #36864#36135#26085#26399
       end
       object lblCLIENT_ID: TLabel [1]
         Left = 194
         Top = 9
         Width = 48
         Height = 12
-        Caption = '供 应 商'
+        Caption = #20379' '#24212' '#21830
       end
       object Label1: TLabel [2]
         Left = 409
         Top = 30
         Width = 36
         Height = 12
-        Caption = '验货员'
+        Caption = #39564#36135#21592
       end
       object Label2: TLabel [3]
         Left = 194
         Top = 72
         Width = 48
         Height = 12
-        Caption = '备    注'
+        Caption = #22791'    '#27880
       end
       object Label5: TLabel [4]
         Left = 563
         Top = 30
         Width = 48
         Height = 12
-        Caption = '票据类型'
+        Caption = #31080#25454#31867#22411
       end
       object Label40: TLabel [5]
         Left = 194
         Top = 30
         Width = 48
         Height = 12
-        Caption = '退货门店'
+        Caption = #36864#36135#38376#24215
       end
       object Label12: TLabel [6]
         Left = 194
         Top = 51
         Width = 48
         Height = 12
-        Caption = '订货单号'
+        Caption = #35746#36135#21333#21495
       end
       object Label13: TLabel [7]
         Left = 409
         Top = 51
         Width = 36
         Height = 12
-        Caption = '预付款'
+        Caption = #39044#20184#27454
       end
       object Label14: TLabel [8]
         Left = 563
         Top = 51
         Width = 48
         Height = 12
-        Caption = '进项税率'
+        Caption = #36827#39033#31246#29575
       end
       object Label4: TLabel [9]
         Left = 563
@@ -82,11 +82,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '进项税额'
+        Caption = #36827#39033#31246#39069
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
       end
@@ -138,13 +138,13 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
             EditButtons = <>
             FieldName = 'ACCOUNT'
             Footers = <>
-            Title.Caption = '帐号'
+            Title.Caption = #24080#21495
           end
           item
             EditButtons = <>
             FieldName = 'USER_NAME'
             Footers = <>
-            Title.Caption = '姓名'
+            Title.Caption = #22995#21517
             Width = 130
           end>
         DropWidth = 180
@@ -199,42 +199,42 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
             EditButtons = <>
             FieldName = 'CLIENT_CODE'
             Footers = <>
-            Title.Caption = '代码'
+            Title.Caption = #20195#30721
             Width = 60
           end
           item
             EditButtons = <>
             FieldName = 'CLIENT_NAME'
             Footers = <>
-            Title.Caption = '供应商名称'
+            Title.Caption = #20379#24212#21830#21517#31216
             Width = 150
           end
           item
             EditButtons = <>
             FieldName = 'LINKMAN'
             Footers = <>
-            Title.Caption = '联系人'
+            Title.Caption = #32852#31995#20154
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'TELEPHONE2'
             Footers = <>
-            Title.Caption = '联系电话'
+            Title.Caption = #32852#31995#30005#35805
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'LICENSE_CODE'
             Footers = <>
-            Title.Caption = '证件号'
+            Title.Caption = #35777#20214#21495
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'ADDRESS'
             Footers = <>
-            Title.Caption = '地址'
+            Title.Caption = #22320#22336
             Width = 150
           end>
         DropWidth = 290
@@ -271,13 +271,13 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
             EditButtons = <>
             FieldName = 'SHOP_NAME'
             Footers = <>
-            Title.Caption = '名称'
+            Title.Caption = #21517#31216
           end
           item
             EditButtons = <>
             FieldName = 'SEQ_NO'
             Footers = <>
-            Title.Caption = '序号'
+            Title.Caption = #24207#21495
             Width = 20
           end>
         DropWidth = 185
@@ -321,7 +321,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 10
       end
@@ -337,11 +337,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '本单已退'
+        Caption = #26412#21333#24050#36864
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
       end
@@ -351,11 +351,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '本单欠退'
+        Caption = #26412#21333#27424#36864
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
       end
@@ -365,7 +365,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '审核日期'
+        Caption = #23457#26680#26085#26399
       end
       object Label9: TLabel
         Left = 204
@@ -373,7 +373,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '审核用户'
+        Caption = #23457#26680#29992#25143
       end
       object Label10: TLabel
         Left = 395
@@ -381,11 +381,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = '累计欠款'
+        Caption = #32047#35745#27424#27454
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
       end
@@ -394,11 +394,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Top = 39
         Width = 48
         Height = 12
-        Caption = '最新库存'
+        Caption = #26368#26032#24211#23384
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = '宋体'
+        Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
       end
@@ -412,7 +412,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
       end
@@ -426,7 +426,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 1
       end
@@ -456,7 +456,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clMaroon
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 4
       end
@@ -470,7 +470,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clMaroon
         Style.Font.Height = -12
-        Style.Font.Name = '宋体'
+        Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 5
       end
@@ -485,15 +485,15 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           EditButtons = <>
           FieldName = 'SEQNO'
           Footers = <>
-          Title.Caption = '序号'
+          Title.Caption = #24207#21495
           Width = 31
         end
         item
           EditButtons = <>
           FieldName = 'GODS_NAME'
           Footers = <>
-          Title.Caption = '商品名称'
-          Title.Hint = '支持 "货号、商品名称、拼音码" 查询'
+          Title.Caption = #21830#21697#21517#31216
+          Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
           Width = 153
           Control = fndGODS_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
@@ -502,14 +502,14 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           EditButtons = <>
           FieldName = 'GODS_CODE'
           Footers = <>
-          Title.Caption = '货号'
+          Title.Caption = #36135#21495
           Width = 70
         end
         item
           EditButtons = <>
           FieldName = 'BARCODE'
           Footers = <>
-          Title.Caption = '条码'
+          Title.Caption = #26465#30721
           Width = 95
         end
         item
@@ -517,8 +517,8 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           EditButtons = <>
           FieldName = 'UNIT_ID'
           Footers = <>
-          Title.Caption = '单位'
-          Title.Hint = '按 "空格键(SPACE)" 进行单位转换'
+          Title.Caption = #21333#20301
+          Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
           Width = 41
         end
         item
@@ -527,7 +527,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = '数量'
+          Title.Caption = #25968#37327
           Width = 53
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
           OnUpdateData = DBGridEh1Columns4UpdateData
@@ -536,7 +536,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           EditButtons = <>
           FieldName = 'APRICE'
           Footers = <>
-          Title.Caption = '退货价'
+          Title.Caption = #36864#36135#20215
           Width = 56
           OnUpdateData = DBGridEh1Columns5UpdateData
         end
@@ -545,7 +545,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'AMONEY'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = '金额'
+          Title.Caption = #37329#39069
           Width = 72
           OnUpdateData = DBGridEh1Columns6UpdateData
         end
@@ -558,11 +558,11 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
             '1'
             '0')
           PickList.Strings = (
-            '是'
-            '否')
+            #26159
+            #21542)
           ReadOnly = True
-          Title.Caption = '赠品'
-          Title.Hint = '按 "空格键(SPACE)" 进行赠品转换'
+          Title.Caption = #36192#21697
+          Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#36192#21697#36716#25442
           Width = 39
           OnUpdateData = DBGridEh1Columns7UpdateData
         end
@@ -571,7 +571,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'ORG_PRICE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '零售价'
+          Title.Caption = #38646#21806#20215
           Width = 48
         end
         item
@@ -580,7 +580,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = '销售额'
+          Title.Caption = #38144#21806#39069
           Width = 68
         end
         item
@@ -589,7 +589,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'AGIO_RATE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '折扣率'
+          Title.Caption = #25240#25187#29575
           Width = 45
         end
         item
@@ -598,7 +598,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = '让利金额'
+          Title.Caption = #35753#21033#37329#39069
           Width = 65
         end
         item
@@ -606,7 +606,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'LOCUS_NO'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '物流跟踪号'
+          Title.Caption = #29289#27969#36319#36394#21495
           Width = 89
         end
         item
@@ -614,14 +614,14 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
           FieldName = 'BATCH_NO'
           Footers = <>
           ReadOnly = True
-          Title.Caption = '批号'
+          Title.Caption = #25209#21495
           Width = 93
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
-          Title.Caption = '备注'
+          Title.Caption = #22791#27880
           Width = 157
         end>
     end
@@ -655,7 +655,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
     Left = 248
     Top = 184
     object actPrintBarcode: TAction
-      Caption = '打印条码'
+      Caption = #25171#21360#26465#30721
       OnExecute = actPrintBarcodeExecute
     end
   end

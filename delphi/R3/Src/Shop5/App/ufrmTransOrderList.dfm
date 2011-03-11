@@ -1,6 +1,6 @@
 inherited frmTransOrderList: TfrmTransOrderList
-  Left = 622
-  Top = 187
+  Left = 337
+  Top = 140
   Width = 906
   Height = 587
   Caption = #23384#21462#27454#21333
@@ -9,25 +9,25 @@ inherited frmTransOrderList: TfrmTransOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 898
-    Height = 530
+    Width = 890
+    Height = 519
     inherited RzPanel2: TRzPanel
-      Width = 888
-      Height = 520
+      Width = 880
+      Height = 509
       inherited RzPage: TRzPageControl
-        Width = 882
-        Height = 514
+        Width = 874
+        Height = 503
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23384#21462#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 880
-            Height = 487
+            Width = 872
+            Height = 476
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 870
+              Width = 862
               Height = 117
               Align = alTop
               BorderOuter = fsNone
@@ -68,7 +68,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                 Top = 95
                 Width = 36
                 Height = 12
-                Caption = #36127#36131#20154
+                Caption = #32463#25163#20154
               end
               object Label40: TLabel
                 Left = 26
@@ -293,8 +293,8 @@ inherited frmTransOrderList: TfrmTransOrderList
             object RzPanel6: TRzPanel
               Left = 5
               Top = 122
-              Width = 870
-              Height = 360
+              Width = 862
+              Height = 349
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -302,8 +302,8 @@ inherited frmTransOrderList: TfrmTransOrderList
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 870
-                Height = 360
+                Width = 862
+                Height = 349
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Dsc_1
@@ -438,17 +438,17 @@ inherited frmTransOrderList: TfrmTransOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 898
+    Width = 890
     inherited Image1: TImage
       Left = 530
-      Width = 359
+      Width = 351
     end
     inherited Image14: TImage
-      Left = 889
+      Left = 881
     end
     inherited Image3: TImage
       Left = 530
-      Width = 359
+      Width = 351
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

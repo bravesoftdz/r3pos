@@ -1110,6 +1110,7 @@ procedure TfrmSalIndentOrder.N2Click(Sender: TObject);
 var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
@@ -1122,6 +1123,7 @@ procedure TfrmSalIndentOrder.N3Click(Sender: TObject);
 var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));

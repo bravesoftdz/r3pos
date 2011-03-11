@@ -235,7 +235,9 @@ begin
 end;
 
 procedure TfrmIoroOrder.SaveOrder;
-var n:integer;
+var
+  n:integer;
+  totalfee:real;
 begin
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择科目名称');
   if edtIORO_DATE.EditValue = null then Raise Exception.Create('请选择日期');
@@ -248,10 +250,10 @@ begin
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsHeader.FieldbyName('IORO_TYPE').AsInteger := IoroType;
-  cdsHeader.Post;
   cdsDetail.DisableControls;
   try
     n := 0;
+    totalfee := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
       begin
@@ -262,9 +264,12 @@ begin
         cdsDetail.FieldbyName('SEQNO').AsInteger := n;
         cdsDetail.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
         cdsDetail.FieldbyName('IORO_ID').AsString := AObj.FieldbyName('IORO_ID').AsString;
+        totalfee := totalfee + cdsDetail.FieldbyName('IORO_MNY').AsFloat;
         cdsDetail.Post;
         cdsDetail.Next;
       end;
+  cdsHeader.FieldbyName('IORO_MNY').AsFloat := totalfee;
+  cdsHeader.Post;
   finally
     cdsDetail.EnableControls;
   end;

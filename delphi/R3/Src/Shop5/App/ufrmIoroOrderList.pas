@@ -60,6 +60,8 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
+    procedure frfIoroOrderGetValue(const ParName: String;
+      var ParValue: Variant);
 
   private
     FIoroType: integer;
@@ -214,13 +216,13 @@ end;
 
 procedure TfrmIoroOrderList.cdsBrowserAfterScroll(DataSet: TDataSet);
 begin
-  if IsEnd or not DataSet.Eof then Exit;
-  if cdsBrowser.ControlsDisabled then Exit;
-  Open(MaxId);
   if cdsBrowSer.FieldByName('CHK_USER_TEXT').AsString<>'' then
     actAudit.Caption:='弃审'
   else
     actAudit.Caption:='审核';
+  if IsEnd or not DataSet.Eof then Exit;
+  if cdsBrowser.ControlsDisabled then Exit;
+  Open(MaxId);
 end;
 
 procedure TfrmIoroOrderList.edtKeyKeyPress(Sender: TObject; var Key: Char);
@@ -282,30 +284,40 @@ begin
 end;
 
 function TfrmIoroOrderList.PrintSQL(id: string): string;
+var tb:string;
+  code_name:string;
 begin
-  result :='select jd.GLIDE_NO 收支凭证单号,'+
-   'I.ACCT_NAME as 帐户名称,'+
-   'F.COMP_NAME as 门店名称,'+
-   'jd.REMARK as 说明,'+
-   'jd.SEQNO as 序号,'+
-   'H.ITEM_NAME as 项目名称,'+
-   'jd.BREMARK as 摘要,'+
-   'jd.VOUC_DATE as 账款日期,'+
-   'jd.IN_MNY as 收入,'+
-   'jd.OUT_MNY as 支出,'+
-   'jd.VOUC_USER_TEXT as 开单员,'+
-   'd.USER_NAME as 审核人,E.CLIENT_NAME 往来单位  from ('+
-   'select jc.*,c.USER_NAME as VOUC_USER_TEXT from ('+
-   'select A.CLIENT_ID,A.VOUC_ID,A.COMP_ID,A.GLIDE_NO,A.ACCOUNT_ID,A.VOUC_DATE,A.VOUC_USER,'+
-   'A.CHK_DATE,A.REMARK,A.CHK_USER,A.COMM,B.SEQNO,B.ITEM_ID,B.IN_MNY,B.OUT_MNY,  '+
-   'B.REMARK BREMARK '+
-   'from RCK_VOUCHERORDER A,RCK_VOUCHERDATA B where A.VOUC_ID=B.VOUC_ID and A.VOUC_ID='+QuotedStr(id)+'  ) jc '+
-   'left outer join VIW_USERS c on jc.VOUC_USER=c.USER_ID ) jd '+
-   'left outer join VIW_USERS d on jd.CHK_USER=d.USER_ID '+
-   'left outer join CA_COMPANY F on jd.COMP_ID=F.COMP_ID '+
-   'left outer join RCK_ITEM_INFO H on jd.ITEM_ID=H.ITEM_ID and H.COMM<>''02'' and H.COMM<>''12'' '+
-   'left outer join VIW_ACCOUNT_INFO I on jd.ACCOUNT_ID=I.ACCOUNT_ID '+
-   'left outer join VIW_CLIENTINFO E on jd.CLIENT_ID=E.CLIENT_ID ';
+  case IoroType of
+  1:begin
+      tb := 'VIW_CUSTOMER';
+      code_name := '收入';
+    end;
+  2:begin
+      tb := 'VIW_CLIENTINFO';
+      code_name := '支出';
+    end;
+  end;
+  result :=
+  'select j.*,'''+code_name+''' as CODE_NAME '+
+  'from ( '+
+  'select jk.*,k.USER_NAME as CREA_USER_TEXT from ('+
+  'select ji.*,i.USER_NAME as IORO_USER_TEXT from ('+
+  'select jh.*,h.USER_NAME as CHK_USER_TEXT from ('+
+  'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
+  'select jf.*,f.ACCT_NAME as ACCOUNT_ID_TEXT from ('+
+  'select je.*,e.CODE_NAME as ITEM_ID_TEXT from ('+
+  'select jd.*,d.CLIENT_NAME as CLIENT_ID_TEXT,d.CLIENT_CODE,d.ADDRESS,d.POSTALCODE,d.LINKMAN,d.TELEPHONE2 as MOVE_TELE from ('+
+  'select A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.SEQNO,A.IORO_MNY,'+
+  'A.IORO_INFO,c.CLIENT_ID,C.ITEM_ID,A.ACCOUNT_ID,C.GLIDE_NO,C.IORO_USER,C.IORO_MNY as TOTAL_IORO_MNY,C.CREA_USER,C.REMARK,C.IORO_DATE,C.IORO_TYPE,C.CHK_USER '+
+  'from ACC_IORODATA A,ACC_IOROORDER C where A.TENANT_ID=C.TENANT_ID and A.IORO_ID=C.IORO_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_ID='''+id+''' ) jd '+
+  'left outer join '+tb+' d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
+  'left outer join VIW_ITEM_INFO e on je.TENANT_ID=e.TENANT_ID and je.ITEM_ID=e.CODE_ID ) jf '+
+  'left outer join VIW_ACCOUNT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.ACCOUNT_ID=f.ACCOUNT_ID ) jg '+
+  'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
+  'left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.CHK_USER=h.USER_ID ) ji '+
+  'left outer join VIW_USERS i on ji.TENANT_ID=i.TENANT_ID and ji.IORO_USER=i.USER_ID ) jk '+
+  'left outer join VIW_USERS k on jk.TENANT_ID=k.TENANT_ID and jk.CREA_USER=k.USER_ID ) j '+
+  'order by j.SEQNO' ;
 end;
 
 procedure TfrmIoroOrderList.actPrintExecute(Sender: TObject);
@@ -562,6 +574,15 @@ begin
     Result := ShopGlobal.GetChkRight('21500001',7)
   else
     Result := ShopGlobal.GetChkRight('21600001',7);
+
+end;
+
+procedure TfrmIoroOrderList.frfIoroOrderGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
 
 end;
 

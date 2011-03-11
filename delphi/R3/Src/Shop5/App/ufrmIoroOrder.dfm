@@ -245,7 +245,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #36127#36131#20154
+        Caption = #32463#25163#20154
       end
       object Label6: TLabel
         Left = 62

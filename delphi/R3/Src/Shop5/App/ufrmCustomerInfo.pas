@@ -305,15 +305,15 @@ begin
     if temp1.Locate('CLIENT_CODE',Trim(cmbCUST_CODE.Text),[]) then
       begin
         if temp1.FieldByName('CLIENT_ID').AsString <> Aobj.FieldByName('CUST_ID').AsString then
-          Raise Exception.Create('此会员号已经存在，不能重复！');
+          Raise Exception.Create('此会员号已经存在,不能重复!');
       end;
   end;
   tmp1:=TZQuery.Create(nil);
   try
     tmp1.Close;
     case Factor.iDbType of
-      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
-      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
+      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
+      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
     end;
     Factor.Open(tmp1);
     if (not tmp1.IsEmpty) and (cmbPRICE_ID.AsString<>tmp1.FieldByName('PRICE_ID').AsString) then

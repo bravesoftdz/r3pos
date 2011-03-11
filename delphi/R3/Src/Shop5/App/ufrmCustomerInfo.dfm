@@ -139,9 +139,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 520
       Height = 212
-      ActivePage = TabSheet6
       Align = alBottom
-      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -1163,7 +1161,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #20250#21592#32534#21495
+        Caption = #20250#21592#21345#21495
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12

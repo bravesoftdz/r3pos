@@ -3025,7 +3025,7 @@ union all
 select 3 as FLAG,[TENANT_ID],cast([TENANT_ID] as varchar(36)) as CLIENT_ID,LICENSE_CODE,'2' as CLIENT_TYPE,LOGIN_NAME as CLIENT_CODE,TENANT_NAME as CLIENT_NAME,TENANT_SPELL as CLIENT_SPELL,
 '----' as [SORT_ID],[REGION_ID],'#' as SETTLE_CODE,[ADDRESS],[POSTALCODE],[LINKMAN],TELEPHONE as TELEPHONE3,TELEPHONE as TELEPHONE1,TELEPHONE as TELEPHONE2,
 [FAXES],[HOMEPAGE],null as EMAIL,QQ,MSN,null as BANK_ID,null as ACCOUNT,0 as INVOICE_FLAG,[REMARK],0 as TAX_RATE,'#' as PRICE_ID,'0' as SHOP_ID,'#' as UNION_ID,[COMM],[TIME_STAMP] 
-from CA_TENANT) j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.CLIENT_ID=ic.CLIENT_ID where j.UNION_ID=ic.UNION_ID
+from CA_TENANT) j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.CLIENT_ID=ic.CLIENT_ID and j.UNION_ID=ic.UNION_ID
 GO
 
 
@@ -4851,6 +4851,8 @@ CREATE TABLE [ACC_IOROORDER] (
 	[IORO_DATE] int NOT NULL ,
         --负责人
 	[IORO_USER] [varchar] (36) NULL ,
+        --合计金额
+	[IORO_MNY] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员

@@ -1628,6 +1628,8 @@ CREATE TABLE [ACC_IOROORDER] (
 	[IORO_DATE] int NOT NULL ,
         --负责人
 	[IORO_USER] [varchar] (36) NULL ,
+        --合计金额
+	[IORO_MNY] [decimal](18, 3) NULL ,
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
@@ -2626,12 +2628,12 @@ from VIW_CHANGEDATA;
 create view VIW_RECVALLDATA
 as 
 select TENANT_ID,SHOP_ID,CLSE_DATE as RECV_DATE,CREA_USER,CHK_DATE,
-isnull(PAY_A,0)+isnull(PAY_B,0)+isnull(PAY_C,0)+isnull(PAY_E,0)+isnull(PAY_F,0)+isnull(PAY_G,0)+isnull(PAY_H,0)+isnull(PAY_I,0)+isnull(PAY_J,0) as RECV_MNY,
+ifnull(PAY_A,0)+ifnull(PAY_B,0)+ifnull(PAY_C,0)+ifnull(PAY_E,0)+ifnull(PAY_F,0)+ifnull(PAY_G,0)+ifnull(PAY_H,0)+ifnull(PAY_I,0)+ifnull(PAY_J,0) as RECV_MNY,
 PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J
 from ACC_CLOSE_FORDAY
 union all
 select TENANT_ID,SHOP_ID,CREA_DATE as RECV_DATE,CREA_USER,CHK_DATE,
-isnull(PAY_A,0)+isnull(PAY_B,0)+isnull(PAY_C,0)+isnull(PAY_E,0)+isnull(PAY_F,0)+isnull(PAY_G,0)+isnull(PAY_H,0)+isnull(PAY_I,0)+isnull(PAY_J,0) as RECV_MNY,
+ifnull(PAY_A,0)+ifnull(PAY_B,0)+ifnull(PAY_C,0)+ifnull(PAY_E,0)+ifnull(PAY_F,0)+ifnull(PAY_G,0)+ifnull(PAY_H,0)+ifnull(PAY_I,0)+ifnull(PAY_J,0) as RECV_MNY,
 PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J
 from SAL_IC_GLIDE where IC_GLIDE_TYPE='1'
 union all

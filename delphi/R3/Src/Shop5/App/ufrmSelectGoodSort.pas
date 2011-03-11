@@ -16,6 +16,7 @@ uses
 type
   TfrmSelectGoodSort = class(TframeTreeFindDialog)
     procedure FormShow(Sender: TObject);
+    procedure RzBitBtn4Click(Sender: TObject);
   private
   public
     procedure LoadGoodSortTree;  //´´½¨¼ÓÔØÊ÷
@@ -91,6 +92,28 @@ procedure TfrmSelectGoodSort.FormShow(Sender: TObject);
 begin
   inherited;
   edtSearch.SetFocus;
+end;
+
+procedure TfrmSelectGoodSort.RzBitBtn4Click(Sender: TObject);
+var
+  i:integer;
+  item:TTreeNode;
+begin
+  inherited;
+  item := nil;
+  for i:=0 to rzTree.Items.Count -1 do
+    begin
+      if rzTree.Items[i].Text = edtSearch.Text then
+         begin
+           rzTree.Items[i].Selected := true;
+           Exit;
+         end;
+      if pos(edtSearch.Text,rzTree.Items[i].Text)>0 then
+         begin
+           if item=nil then item := rzTree.Items[i];
+         end;
+    end;
+  if item<>nil then item.Selected := true;
 end;
 
 end.

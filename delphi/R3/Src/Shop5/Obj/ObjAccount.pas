@@ -28,11 +28,12 @@ begin
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
-    rs1.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID';
+    rs1.SQL.Text := 'select MONTH from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
     rs1.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+    rs1.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
     AGlobal.Open(rs);
     AGlobal.Open(rs1);
-    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) or (rs1.Fields[0].AsInteger > 0) then
+    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) or (rs1.Fields[0].AsString <> '') then
       Raise Exception.Create('此账户金额有变动,不能删除!');
   finally
     rs.Free;

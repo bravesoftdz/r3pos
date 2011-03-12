@@ -443,19 +443,19 @@ begin
 end;
 
 procedure TfrmUsersInfo.edtDUTY_IDSAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_5:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');  
-  AObj := TRecord_.Create;
+  AObj_5 := TRecord_.Create;
   try
-    if TfrmDutyInfo.AddDialog(self,AObj) then
+    if TfrmDutyInfo.AddDialog(self,AObj_5) then
        begin
-         edtDUTY_IDS.KeyValue := AObj.FieldbyName('DUTY_ID').asString;
-         edtDUTY_IDS.Text := AObj.FieldbyName('DUTY_NAME').asString;
+         edtDUTY_IDS.KeyValue := AObj_5.FieldbyName('DUTY_ID').asString;
+         edtDUTY_IDS.Text := AObj_5.FieldbyName('DUTY_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_5.Free;
   end;
 end;
 
@@ -474,7 +474,7 @@ end;
 
 procedure TfrmUsersInfo.IniDegrees;
 var Tem:TZQuery;
-    Aobj_:TRecord_;
+    Aobj_3:TRecord_;
 begin
   try
     Tem := TZQuery.Create(nil);
@@ -485,9 +485,9 @@ begin
     Tem.First;
     while not Tem.Eof do
       begin
-        Aobj_ := TRecord_.Create;
-        Aobj_.ReadFromDataSet(Tem);
-        edtDEGREES.Properties.Items.AddObject(Tem.FieldbyName('CODE_NAME').AsString,Aobj_);
+        Aobj_3 := TRecord_.Create;
+        Aobj_3.ReadFromDataSet(Tem);
+        edtDEGREES.Properties.Items.AddObject(Tem.FieldbyName('CODE_NAME').AsString,Aobj_3);
         Tem.Next;
       end;
   finally
@@ -496,36 +496,36 @@ begin
 end;
 
 procedure TfrmUsersInfo.edtDEPT_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_1:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  AObj_1 := TRecord_.Create;
   try
-    if TfrmDeptInfo.AddDialog(self,AObj) then
+    if TfrmDeptInfo.AddDialog(self,AObj_1) then
        begin
-         edtDEPT_ID.KeyValue := AObj.FieldbyName('DEPT_ID').asString;
-         edtDEPT_ID.Text := AObj.FieldbyName('DEPT_NAME').asString;
+         edtDEPT_ID.KeyValue := AObj_1.FieldbyName('DEPT_ID').asString;
+         edtDEPT_ID.Text := AObj_1.FieldbyName('DEPT_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_1.Free;
   end;
 end;
 
 procedure TfrmUsersInfo.edtSHOP_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_2:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  AObj_2 := TRecord_.Create;
   try
-    if TfrmShopInfo.AddDialog(self,AObj) then
+    if TfrmShopInfo.AddDialog(self,AObj_2) then
        begin
-         edtSHOP_ID.KeyValue := AObj.FieldbyName('SHOP_ID').asString;
-         edtSHOP_ID.Text := AObj.FieldbyName('SHOP_NAME').asString;
+         edtSHOP_ID.KeyValue := AObj_2.FieldbyName('SHOP_ID').asString;
+         edtSHOP_ID.Text := AObj_2.FieldbyName('SHOP_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_2.Free;
   end;
 end;
 

@@ -273,23 +273,22 @@ begin
 end;
 
 procedure TfrmUsers.actRightsExecute(Sender: TObject);
-var str:string;
+var ROLE_IDS:string;
 begin
   inherited;
   if not Cds_Users.Active then exit;
   if Cds_Users.IsEmpty then exit;
   if not ShopGlobal.GetChkRight('31500001',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
-  with TfrmUserRights.Create(self) do
+  ROLE_IDS:=Cds_Users.FieldByName('ROLE_IDS').AsString;
+  if TfrmUserRights.ShowUserRight(Cds_Users.FieldByName('USER_ID').AsString,
+                                  Cds_Users.FieldByName('USER_NAME').AsString,
+                                  Cds_Users.FieldByName('ACCOUNT').AsString,
+                                  ROLE_IDS) then
   begin
-    try
-      Open(Cds_Users.FieldByName('USER_ID').AsString,
-      Cds_Users.FieldByName('USER_NAME').AsString,
-      Cds_Users.FieldByName('ACCOUNT').AsString,
-      Cds_Users.FieldByName('ROLE_IDS').AsString);
-      ShowModal;
-    finally
-      free;
-    end;
+    if not (Cds_Users.State in [dsInsert,dsEdit]) then
+      Cds_Users.Edit;
+    Cds_Users.FieldByName('ROLE_IDS').AsString:=ROLE_IDS;
+    Cds_Users.Post;
   end;
 end;
 procedure TfrmUsers.Cds_UsersAfterScroll(DataSet: TDataSet);

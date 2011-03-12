@@ -96,7 +96,7 @@ type
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
     //判断最大结帐日期[传入]
-    function  CheckCalc(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
+    function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
     procedure DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
        Column: TColumnEh; State: TGridDrawState; DrawField: string);
@@ -818,7 +818,7 @@ begin
   self.actFind.OnExecute(nil);
 end;
 
-function TframeBaseReport.CheckCalc(BegDate, EndDate: integer; ShopID: string): integer;
+function TframeBaseReport.CheckAccDate(BegDate, EndDate: integer; ShopID: string): integer;
 var
   str: string;
   rs:TZQuery;

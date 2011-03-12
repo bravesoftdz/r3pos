@@ -76,8 +76,8 @@ type
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
-    //添加商品指标的ItemsList[SetFlag对应位数，1..8位，若为1表添加，若为0表不添加]
-    procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100');
+    //添加商品指标的ItemsList[SetFlag对应位数，1..20位，若为1表添加，若为0表不添加]
+    procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
     procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
     //添加统计单位Items
@@ -95,7 +95,11 @@ type
 
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
-
+    //判断最大结帐日期[传入]
+    function  CheckCalc(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
+    procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
+    procedure DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
+       Column: TColumnEh; State: TGridDrawState; DrawField: string);
     procedure LoadFormat;override;
     procedure PrintBefore;virtual;
     function  GetRowType:integer;virtual;
@@ -544,12 +548,12 @@ var
   i,InValue: integer;
 begin
   try
-    Rs:=Global.GetZQueryFromName('PUB_PARAMS');
-    Rs.Filtered:=False;
+    Rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+    {Rs.Filtered:=False;
     Rs.Filter:=' TYPE_CODE=''SORT_TYPE'' ';
-    Rs.Filtered:=true;
+    Rs.Filtered:=true;}
     ClearCbxPickList(GoodSortList);  //清除节点及Object对象
-    for i:=1 to 8 do
+    for i:=1 to length(SetFlag) do
     begin
       InValue:=StrtoIntDef(SetFlag[i],0);
       if InValue=1 then
@@ -811,7 +815,85 @@ begin
     end else
       ParentCmp:=ParentCmp.Parent;
   end;
-  self.actFind.OnExecute(nil);;
+  self.actFind.OnExecute(nil);
 end;
+
+function TframeBaseReport.CheckCalc(BegDate, EndDate: integer; ShopID: string): integer;
+var
+  str: string;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    str:='select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
+    if trim(ShopID)<>'' then str:=str+' and SHOP_ID=:SHOP_ID '; //过滤门店ID
+    str:=str+' and CREA_DATE>=:CREA_DATE ';
+    rs.SQL.Text :=str;
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:= ShopID;
+    if rs.Params.FindParam('CREA_DATE')<>nil then rs.ParamByName('CREA_DATE').AsInteger :=BegDate;
+    Factor.Open(rs);
+    if trim(rs.Fields[0].AsString)='' then
+      result := BegDate-1
+    else
+      result := rs.Fields[0].AsInteger;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TframeBaseReport.Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
+var
+  Aobj: TRecord_;
+  SetCol: TColumnEh;
+begin
+  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
+  begin
+    Aobj:=TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]);
+    SetCol:=FindColumn(Grid,'SORT_ID');
+    if (Aobj<>nil) and (SetCol<>nil) then
+    begin
+      SetCol.Title.Caption:=Aobj.fieldbyName('CODE_NAME').AsString+'代码';
+      case length(SetCol.Title.Caption) of
+       1..8: SetCol.Width:=70;
+       9..12: SetCol.Width:=90;
+       13..18: SetCol.Width:=120;
+       else SetCol.Width:=160;
+      end; 
+    end;
+    SetCol:=FindColumn(Grid,'SORT_NAME');
+    if (Aobj<>nil) and (SetCol<>nil) then
+    begin
+      SetCol.Title.Caption:=Aobj.fieldbyName('CODE_NAME').AsString+'名称';
+      case length(SetCol.Title.Caption) of
+       1..12: SetCol.Width:=180;
+       13..20: SetCol.Width:=220;
+       else SetCol.Width:=240;
+      end; 
+    end;
+  end;
+end;
+
+
+procedure TframeBaseReport.DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumnEh; State: TGridDrawState; DrawField: string);
+var
+  ARect:TRect;
+  CurID: string;
+  GridDs: TDataSet;
+begin
+{  GridDs:=TDBGridEh(Sender).DataSource.DataSet;
+  if (not GridDs.active) or (GridDs.FindField(DrawField)=nil) then Exit;
+  CurID:=trim(GridDs.FieldbyName(DrawField).AsString);
+  if CurID='' then Exit;
+  CurID:=copy(CurID,length(CurID),1);
+  if StrtoIntDef(CurID,0) mod 2=1 then
+    TDBGridEh(Sender).Canvas.Brush.Color := $00FDECDB
+  else
+    TDBGridEh(Sender).Canvas.Brush.Color := clWhite;
+  TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
+}
+end;
+
 
 end.

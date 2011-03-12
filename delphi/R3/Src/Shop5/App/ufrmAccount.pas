@@ -105,7 +105,7 @@ begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clHighlight;
+    DBGridEh1.Canvas.Brush.Color := clAqua;
   end;
   
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);

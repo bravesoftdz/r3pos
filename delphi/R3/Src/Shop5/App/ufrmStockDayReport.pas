@@ -181,8 +181,7 @@ uses
 
 procedure TfrmStockDayReport.FormCreate(Sender: TObject);
 begin
-  inherited;
-
+  inherited;     
   TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
@@ -254,9 +253,9 @@ begin
   if (vBegDate>0) and (vBegDate=vEndDate) then
     StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
   else if vBegDate<vEndDate then
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' '; 
+    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -384,7 +383,7 @@ begin
   else if vBegDate<vEndDate then
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' '; 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -464,7 +463,7 @@ begin
   else if vBegDate<vEndDate then
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' '; 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate,fndP3_SHOP_ID.AsString);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP3_SHOP_ID.AsString));
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -597,7 +596,7 @@ begin
   else if vBegDate<vEndDate then
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' '; 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate,fndP4_SHOP_ID.AsString);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP4_SHOP_ID.AsString));
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -689,9 +688,6 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
-
-  //检测是否计算
-  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P5_D1.Date)),StrtoInt(formatDatetime('YYYYMMDD',P5_D2.Date)));
 
   SQLData := 'VIW_STOCKDATA';
 

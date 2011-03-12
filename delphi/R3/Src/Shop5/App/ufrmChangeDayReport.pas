@@ -273,7 +273,7 @@ begin
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -402,7 +402,7 @@ begin
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -481,7 +481,7 @@ begin
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate,fndP3_SHOP_ID.AsString);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP3_SHOP_ID.AsString));
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
@@ -612,7 +612,7 @@ begin
     StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
 
   //取日结帐最大日期:
-  RckMaxDate:=CheckCalc(vBegDate,vEndDate);
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP4_SHOP_ID.AsString));
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+ShopCnd+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]

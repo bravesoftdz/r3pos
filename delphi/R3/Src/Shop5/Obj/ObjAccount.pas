@@ -52,7 +52,7 @@ begin
     rs.ParamByName('ACCT_NAME').AsString := FieldByName('ACCT_NAME').AsString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
-    if rs.FieldByName('ACCT_NAME').AsString = '' then
+    if rs.FieldByName('ACCT_NAME').AsString <> '' then
       Raise Exception.Create('此账户名已经存在,请重新输入..');
   finally
     rs.Free;

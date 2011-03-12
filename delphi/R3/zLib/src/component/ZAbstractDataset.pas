@@ -358,13 +358,21 @@ end;
   Performs internal query closing.
 }
 procedure TZAbstractDataset.InternalClose;
+var
+  ds:TDataSource;
 begin
-  inherited InternalClose;
+  ds := DataSource;
+  try
+    ds := nil;
+    inherited InternalClose;
 
-  if Assigned(CachedResultSet) then
-    CachedResultSet.Close;
-  CachedResultSet := nil;
-  CachedResolver := nil;
+    if Assigned(CachedResultSet) then
+       CachedResultSet.Close;
+    CachedResultSet := nil;
+    CachedResolver := nil;
+  finally
+    ds := ds;
+  end;
 end;
 
 {**

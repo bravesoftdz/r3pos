@@ -58,6 +58,7 @@ type
       Shift: TShiftState);
     procedure edtSORT_NAMEExit(Sender: TObject);
   private
+    FIsChange:integer; //是否有保存，有变化
     FInFlag: integer;
     FSort_Type: Integer;
     procedure SetInFlag(const Value: integer);
@@ -200,6 +201,7 @@ begin
   end;
   try
     Factor.UpdateBatch(cdsGoodSort,'TGoodsSort');
+    FIsChange:=1;
   except
     Cancel(6);
     raise;
@@ -782,10 +784,11 @@ begin
   with TfrmGoodsSortTree.Create(Owner) do
     begin
       try
+        FIsChange:=0;
         Sort_Type := SORTTYPE;
         if not ShopGlobal.GetChkRight('32100001',1) then Raise Exception.Create('你没有查看'+Caption+'的权限,请和管理员联系.');
         ShowModal;
-        result:=(ModalResult=MROK);
+        result:=(FIsChange=1);
       finally
         Free;
       end;

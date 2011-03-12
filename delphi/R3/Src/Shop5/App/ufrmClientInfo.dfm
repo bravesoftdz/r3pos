@@ -1,6 +1,6 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 617
-  Top = 218
+  Left = 529
+  Top = 214
   Caption = #23458#25143#26723#26696
   ClientHeight = 364
   ClientWidth = 528
@@ -888,10 +888,9 @@ inherited frmClientInfo: TfrmClientInfo
         DropHeight = 130
         ShowTitle = True
         AutoFitColWidth = True
-        OnAddClick = edtREGION_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
-        Buttons = [zbNew]
+        Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
       end
@@ -962,17 +961,10 @@ inherited frmClientInfo: TfrmClientInfo
             FieldName = 'CODE_NAME'
             Footers = <>
             Title.Caption = #21517#31216
-            Width = 80
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CODE_ID'
-            Footers = <>
-            Title.Caption = #32534#30721
-            Width = 40
+            Width = 120
           end>
-        DropWidth = 176
-        DropHeight = 130
+        DropWidth = 160
+        DropHeight = 139
         ShowTitle = True
         AutoFitColWidth = True
         OnAddClick = edtSETTLE_CODEAddClick

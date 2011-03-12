@@ -229,8 +229,8 @@ inherited frmCustomer: TfrmCustomer
                     Title.Caption = #20837#20250#21333#20301
                     Width = 111
                   end>
-                DropWidth = 112
-                DropHeight = 228
+                DropWidth = 120
+                DropHeight = 160
                 ShowTitle = True
                 AutoFitColWidth = True
                 ShowButton = True
@@ -272,8 +272,8 @@ inherited frmCustomer: TfrmCustomer
                     Title.Caption = #31561#32423#21517#31216
                     Width = 111
                   end>
-                DropWidth = 112
-                DropHeight = 180
+                DropWidth = 120
+                DropHeight = 160
                 ShowTitle = True
                 AutoFitColWidth = False
                 ShowButton = True
@@ -324,8 +324,8 @@ inherited frmCustomer: TfrmCustomer
                     Title.Caption = #31867#21035#21517#31216
                     Width = 111
                   end>
-                DropWidth = 112
-                DropHeight = 180
+                DropWidth = 120
+                DropHeight = 160
                 ShowTitle = True
                 AutoFitColWidth = True
                 ShowButton = False

@@ -1394,6 +1394,21 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Font.Style = []
         ParentFont = False
       end
+      object RzLabel33: TRzLabel
+        Left = 471
+        Top = 29
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = '*'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clMaroon
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object cmbCUST_CODE: TcxTextEdit
         Left = 113
         Top = 1
@@ -1442,7 +1457,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Title.Caption = #31561#32423#21517#31216
             Width = 120
           end>
-        DropWidth = 125
+        DropWidth = 130
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = False
@@ -1507,8 +1522,8 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Title.Caption = #20250#21592#31867#21035
             Width = 120
           end>
-        DropWidth = 125
-        DropHeight = 120
+        DropWidth = 130
+        DropHeight = 180
         ShowTitle = False
         AutoFitColWidth = True
         OnAddClick = edtSORT_IDAddClick
@@ -1542,15 +1557,8 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Footers = <>
             Title.Caption = #38376#24215#21517#31216
             Width = 110
-          end
-          item
-            EditButtons = <>
-            FieldName = 'SHOP_ID'
-            Footers = <>
-            Title.Caption = #32534'  '#21495
-            Width = 50
           end>
-        DropWidth = 170
+        DropWidth = 130
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = False

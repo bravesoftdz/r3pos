@@ -651,6 +651,21 @@ inherited frmSupplierInfo: TfrmSupplierInfo
         Font.Style = []
         ParentFont = False
       end
+      object RzLabel4: TRzLabel
+        Left = 493
+        Top = 34
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = '*'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clMaroon
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtCLIENT_NAME: TcxTextEdit
         Left = 97
         Top = 30
@@ -740,16 +755,16 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             FieldName = 'CODE_ID'
             Footers = <>
             Title.Caption = #32534#30721
-            Width = 40
+            Width = 30
           end>
-        DropWidth = 176
-        DropHeight = 130
+        DropWidth = 122
+        DropHeight = 160
         ShowTitle = True
         AutoFitColWidth = True
         OnAddClick = edtREGION_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
-        Buttons = [zbNew]
+        Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
       end

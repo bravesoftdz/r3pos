@@ -83,9 +83,16 @@ begin
      str:=' and ( [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
                   ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
-  Cds_Users.SQL.Text:='Select A.USER_ID,A.ACCOUNT,A.ENCODE,A.USER_NAME,A.USER_SPELL,A.PASS_WRD,A.SHOP_ID,A.DEPT_ID,A.DUTY_IDS,A.DUTY_NAMES,'+
-  'A.ROLE_IDS,A.ROLE_NAMES,A.TENANT_ID,A.BIRTHDAY,A.DEGREES,A.SEX,A.MOBILE,A.OFFI_TELE,A.FAMI_TELE,A.EMAIL,A.QQ,A.MSN,A.MM,A.ID_NUMBER,A.IDN_TYPE,'
-  +'A.FAMI_ADDR,A.POSTALCODE,A.WORK_DATE,A.DIMI_DATE,A.REMARK From CA_USERS A  Where COMM not in (''02'',''12'') and TENANT_ID='+ IntToStr(Global.TENANT_ID) + str;
+  Cds_Users.SQL.Text :=
+  'select jb.*,b.SHOP_NAME as SHOP_ID_TEXT from( '+
+  'select ja.*,a.DEPT_NAME as DEPT_ID_TEXT from('+
+  'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
+  'ROLE_IDS,ROLE_NAMES as ROLE_IDS_TEXT,SEX,BIRTHDAY,DEGREES,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,'+
+  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK from CA_USERS '+
+  'where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+') ja '+
+  'left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID) jb '+
+  'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID';
+
   Factor.Open(Cds_Users);
 end;
 
@@ -98,7 +105,7 @@ procedure TfrmUsers.actDeleteExecute(Sender: TObject);
     if Tmp.Locate('USER_ID',Str,[]) then
     begin
       Tmp.Delete;
-      Tmp.CommitUpdates;
+      //Tmp.CommitUpdates;
     end;
   end;
 var i:integer;
@@ -234,7 +241,7 @@ end;
 procedure TfrmUsers.InitGrid;
 var tmp:TZQuery;
 begin
-  try
+  {try
     DBGridEh1.FieldColumns['SHOP_ID'].PickList.Clear;
     DBGridEh1.FieldColumns['SHOP_ID'].KeyList.Clear;
 
@@ -251,7 +258,7 @@ begin
     end;
   finally
     tmp.Free;
-  end;
+  end;}
 end;
 
 procedure TfrmUsers.FormShow(Sender: TObject);

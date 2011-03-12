@@ -86,7 +86,6 @@ type
     procedure edtSORT_IDAddClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtCLIENT_TYPEPropertiesChange(Sender: TObject);
-    procedure edtREGION_IDAddClick(Sender: TObject);
     procedure edtPRICE_IDAddClick(Sender: TObject);
     procedure edtSETTLE_CODEAddClick(Sender: TObject);
   private
@@ -103,7 +102,7 @@ type
     procedure Edit(code:string);
     procedure Save;
     procedure WriteTo(AObj:TRecord_);
-    function  IsEdit(Aobj:TRecord_;cdsTable:TDataSet):Boolean;//判断单位资料是否有修改
+    function  IsEdit(Aobj:TRecord_;cdsTable1:TDataSet):Boolean;//判断单位资料是否有修改
     class function AddDialog(Owner:TForm;var AObj1:TRecord_):boolean;
     class function EditDialog(Owner:TForm;id:string;var AObj1:TRecord_):boolean;
   end;
@@ -119,6 +118,7 @@ begin
   dbState := dsInsert;
   edtCLIENT_CODE.Text:='自动编号..';
   edtCLIENT_CODE.SelectAll;
+  
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
   edtBANK_ID.ItemIndex := 0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
@@ -292,6 +292,7 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
   edtSETTLE_CODE.DataSet := Global.GetZQueryFromName('PUB_SETTLE_CODE');
+  edtTELEPHONE2.Text := '13';
 
   AddCbxPickList(edtBANK_ID,'',Global.GetZQueryFromName('PUB_BANK_INFO'));
 end;
@@ -344,7 +345,7 @@ var i:integer;
 begin
   inherited;
   bl:=(dbState<>dsEdit);
-  Save;
+  Save;       
   if Saved and Assigned(OnSave) then OnSave(AObj);
   if Saved and Assigned(OnSave) and bl then //继续新增
   begin
@@ -382,19 +383,19 @@ begin
 end;
 
 function TfrmClientInfo.IsEdit(Aobj: TRecord_;
-  cdsTable: TDataSet): Boolean;
+  cdsTable1: TDataSet): Boolean;
 var i:integer;
 begin
   Result:=False;
-  for i:=0 to cdsTable.FieldCount-1 do
+  for i:=0 to cdsTable1.FieldCount-1 do
   begin
-    if AObj.Fields[i].AsString<>cdsTable.Fields[i].AsString then
+    if AObj.Fields[i].AsString<>cdsTable1.Fields[i].AsString then
     begin
       Result:=True;
       break;
     end;
   end;
-  result := result or TZQuery(cdsTable).Changed;
+  result := result or TZQuery(cdsTable1).Changed;
 end;
 
 class function TfrmClientInfo.AddDialog(Owner: TForm;
@@ -419,19 +420,19 @@ begin
 end;
 
 procedure TfrmClientInfo.edtSORT_IDAddClick(Sender: TObject);
-var Aobj:TRecord_;
+var Aobj_3:TRecord_;
 begin
   inherited;
-  AObj := TRecord_.Create;
+  Aobj_3 := TRecord_.Create;
   if not ShopGlobal.GetChkRight('33300001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   try
-    if TfrmCodeInfo.AddDialog(Self,Aobj,5) then
+    if TfrmCodeInfo.AddDialog(Self,Aobj_3,5) then
        begin
-         edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtSORT_ID.KeyValue := Aobj_3.FieldbyName('CODE_ID').asString;
+         edtSORT_ID.Text := Aobj_3.FieldbyName('CODE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    Aobj_3.Free;
   end;
 end;
 
@@ -510,54 +511,37 @@ begin
   end; }
 end;
 
-procedure TfrmClientInfo.edtREGION_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('33300001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
-  try
-    if TfrmCodeInfo.AddDialog(self,AObj,8) then
-       begin
-         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
-       end;
-  finally
-    AObj.Free;
-  end;
-end;
-
-
 procedure TfrmClientInfo.edtPRICE_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_2:TRecord_;
 begin
   inherited;
-  AObj := TRecord_.Create;
+  AObj_2 := TRecord_.Create;
   if not ShopGlobal.GetChkRight('33300001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   try
-    if TfrmPriceGradeInfo.AddDialog(self,AObj) then
+    if TfrmPriceGradeInfo.AddDialog(self,AObj_2) then
        begin
-         edtPRICE_ID.KeyValue := AObj.FieldbyName('PRICE_ID').asString;
-         edtPRICE_ID.Text := AObj.FieldbyName('PRICE_NAME').asString;
+         edtPRICE_ID.KeyValue := AObj_2.FieldbyName('PRICE_ID').asString;
+         edtPRICE_ID.Text := AObj_2.FieldbyName('PRICE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_2.Free;
   end;
 end;
 
 procedure TfrmClientInfo.edtSETTLE_CODEAddClick(Sender: TObject);
+var Aobj_1:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33300001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  Aobj_1 := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,AObj,6) then
+    if TfrmCodeInfo.AddDialog(self,Aobj_1,6) then
        begin
-         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtSETTLE_CODE.KeyValue := Aobj_1.FieldbyName('CODE_ID').asString;
+         edtSETTLE_CODE.Text := Aobj_1.FieldbyName('CODE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    Aobj_1.Free;
   end;
 end;
 

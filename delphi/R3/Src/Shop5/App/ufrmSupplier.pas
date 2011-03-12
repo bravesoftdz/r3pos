@@ -313,10 +313,11 @@ begin
     DBGridEh1.FieldColumns['REGION_ID'].PickList.Add(tmp.Fields[1].asstring);
     tmp.Next;
   end;
+  
   try
-    rs := TZQuery.Create(nil);
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6';
-    Factor.Open(rs);
+    DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Clear;
+    DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Clear;
+    rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
     rs.First;
     while not rs.Eof do
       begin
@@ -325,7 +326,7 @@ begin
         rs.Next;
       end;
   finally
-    rs.Free;
+
   end;
 end;
 

@@ -140,10 +140,7 @@ begin
     ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE)'+
     ') j2 ';
     rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
-    {rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
-    rs.FieldByName('CREA_USER').AsString := Global.UserID;
-    rs.FieldByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date())};
+
     Factor.Open(rs);
     labMNY.Caption := '店内金额:'+rs.Fields[0].AsString;
     lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));

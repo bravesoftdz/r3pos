@@ -296,7 +296,7 @@ begin
 end;
 
 procedure TfrmClient.InitGrid;
-var tmp,temp:TZQuery;
+var tmp:TZQuery;
 begin
   DBGridEh1.FieldColumns['SORT_ID'].KeyList.Clear;
   DBGridEh1.FieldColumns['SORT_ID'].PickList.Clear;
@@ -334,18 +334,17 @@ begin
   try
     DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Clear;
     DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Clear;
-    temp := TZQuery.Create(nil);
-    temp.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE = 6 ';
-    Factor.Open(temp);
-    temp.First;
-    while not temp.Eof do
+                                  
+    tmp:=Global.GetZQueryFromName('PUB_SETTLE_CODE');
+    tmp.First;
+    while not tmp.Eof do
       begin
-        DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Add(temp.Fields[0].AsString);
-        DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Add(temp.Fields[1].AsString);
-        temp.Next;
+        DBGridEh1.FieldColumns['SETTLE_CODE'].KeyList.Add(tmp.Fields[0].AsString);
+        DBGridEh1.FieldColumns['SETTLE_CODE'].PickList.Add(tmp.Fields[1].AsString);
+        tmp.Next;
       end;
   finally
-    temp.Free;
+
   end;
 end;
 

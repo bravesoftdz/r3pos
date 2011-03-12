@@ -222,19 +222,15 @@ begin
   begin
      temp := Global.GetZQueryFromName('CA_USERS');
      if temp.Locate('ACCOUNT',Trim(edtACCOUNT.Text),[]) then
-        raise Exception.Create('该用户账号，不能重复！');
+        raise Exception.Create('该用户账号已经存在，不能重复！');
   end;
 
   if dbState = dsEdit then
   begin
-      temp:=Global.GetZQueryFromName('CA_USERS');
-      temp.First;
-      while not temp.Eof do
-      begin
-        if (temp.FieldByname('ACCOUNT').AsString=edtACCOUNT.Text)  and (temp.FieldByName('USER_ID').AsString<>AObj.FieldByName('USER_ID').AsString)then
-          raise  Exception.Create('该用户账号已经存在，不能重复！');
-        temp.Next;
-      end;
+    temp:=Global.GetZQueryFromName('CA_USERS');
+    if temp.Locate('ACCOUNT',Trim(edtACCOUNT.Text),[]) then
+      if temp.FieldByName('USER_ID').AsString<>AObj.FieldByName('USER_ID').AsString then
+        raise  Exception.Create('该用户账号已经存在，不能重复！');
   end;
 
   if edtUSER_NAME.Text<>cdsTable.FieldByName('USER_NAME').AsString  then
@@ -242,32 +238,18 @@ begin
     if dbState=dsEdit then
     begin
       tmp:=Global.GetZQueryFromName('CA_USERS');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if (tmp.FieldByName('USER_NAME').AsString=edtUSER_NAME.Text) and (tmp.FieldByName('USER_ID').AsString<>cdsTable.FieldByName('USER_ID').AsString) then
-        begin
-          if edtUSER_NAME.CanFocus then edtUSER_NAME.SetFocus;
+      if temp.Locate('USER_NAME',Trim(edtUSER_NAME.Text),[]) then
+        if tmp.FieldByName('USER_ID').AsString<>cdsTable.FieldByName('USER_ID').AsString then
           MessageBox(handle,Pchar('提示:用户名称已经存在!'),Pchar(Caption),MB_OK);
-        end;
-        tmp.Next;
-      end;
     end;
     if dbState=dsInsert then
     begin
       tmp:=Global.GetZQueryFromName('CA_USERS');
-      tmp.Filtered:=False;
-      tmp.First;
-      while not tmp.Eof do
-      begin
-        if tmp.FieldByName('USER_NAME').AsString=edtUSER_NAME.Text then
+      if temp.Locate('USER_NAME',Trim(edtUSER_NAME.Text),[]) then
         begin
           if edtUSER_NAME.CanFocus then edtUSER_NAME.SetFocus;
           MessageBox(handle,Pchar('提示:用户姓名已经存在!'),Pchar(Caption),MB_OK);
         end;
-        tmp.Next;
-      end;
     end;
   end;
   //检测结束

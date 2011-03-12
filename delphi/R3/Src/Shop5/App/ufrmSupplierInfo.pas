@@ -68,6 +68,7 @@ type
     edtLICENSE_CODE: TcxTextEdit;
     edtBANK_ID: TcxComboBox;
     edtSETTLE_CODE: TzrComboBoxList;
+    RzLabel4: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -140,7 +141,7 @@ begin
     Factor.Open(cdsTable,'TSupplier',Params);
     Aobj.ReadFromDataSet(cdsTable);
     ReadFromObject(Aobj,Self);
-    edtSORT_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_CLIENTSORT'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SORT_ID').AsString);
+    edtSORT_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SUPPERSORT'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SORT_ID').AsString);
     edtSORT_ID.KeyValue := Aobj.FieldByName('SORT_ID').AsString;
     edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
     edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
@@ -390,8 +391,8 @@ begin
   try
     if TfrmCodeInfo.AddDialog(self,AObj,9) then
        begin
-         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
+         edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
        end;
   finally
     AObj.Free;
@@ -481,7 +482,7 @@ procedure TfrmSupplierInfo.edtREGION_IDAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  {if not ShopGlobal.GetChkRight('33100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmCodeInfo.AddDialog(self,AObj,8) then
@@ -491,7 +492,7 @@ begin
        end;
   finally
     AObj.Free;
-  end;
+  end; }
 end;
 
 procedure TfrmSupplierInfo.edtSETTLE_CODEAddClick(Sender: TObject);
@@ -503,8 +504,8 @@ begin
   try
     if TfrmCodeInfo.AddDialog(self,AObj,6) then
        begin
-         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtSETTLE_CODE.KeyValue := AObj.FieldbyName('CODE_ID').asString;
+         edtSETTLE_CODE.Text := AObj.FieldbyName('CODE_NAME').asString;
        end;
   finally
     AObj.Free;

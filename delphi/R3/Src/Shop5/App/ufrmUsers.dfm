@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 602
-  Top = 193
+  Left = 417
+  Top = 166
   Width = 744
   Height = 484
   Caption = #29992#25143#26723#26696#31649#29702
@@ -66,7 +66,7 @@ inherited frmUsers: TfrmUsers
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = actEditExecute
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
@@ -93,14 +93,14 @@ inherited frmUsers: TfrmUsers
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'SHOP_ID'
+                    FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
                     Title.Caption = #25152#23646#38376#24215
                     Width = 94
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'DUTY_NAMES'
+                    FieldName = 'DUTY_IDS_TEXT'
                     Footers = <>
                     Title.Caption = #32844#21153
                     Width = 76
@@ -145,18 +145,21 @@ inherited frmUsers: TfrmUsers
                     Width = 80
                   end
                   item
+                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'QQ'
                     Footers = <>
                     Width = 80
                   end
                   item
+                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'MSN'
                     Footers = <>
                     Width = 80
                   end
                   item
+                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'MM'
                     Footers = <>

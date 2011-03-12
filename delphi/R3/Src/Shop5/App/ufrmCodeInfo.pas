@@ -317,7 +317,6 @@ begin
         if Flag=1 then
         begin
           btnAppend.Enabled:=False;
-          btnDelete.Enabled:=False;
           btnAppendClick(nil);
         end;
         ShowModal;

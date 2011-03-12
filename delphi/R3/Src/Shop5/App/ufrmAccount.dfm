@@ -151,7 +151,7 @@ inherited frmAccount: TfrmAccount
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
-              OnDblClick = DBGridEh1DblClick
+              OnDblClick = actInfoExecute
               OnDrawColumnCell = DBGridEh1DrawColumnCell
               OnGetCellParams = DBGridEh1GetCellParams
               Columns = <

@@ -110,6 +110,7 @@ type
     labJOBUNIT: TRzLabel;
     edtACCU_INTEGRAL: TcxTextEdit;
     RzLabel12: TRzLabel;
+    RzLabel33: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -165,7 +166,8 @@ begin
   TabSheet5.TabVisible:=False;
   dbState := dsInsert;
   cmbCUST_CODE.Text := '自动编号..';
-  cmbSND_DATE.Date := Global.SysDate;
+  cmbBIRTHDAY.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
+  cmbSND_DATE.Date := Date;
   cmbSEX.ItemIndex := 0;
   cmbSHOP_ID.KeyValue := Global.SHOP_ID;
   cmbSHOP_ID.Text := Global.SHOP_NAME;
@@ -566,19 +568,19 @@ begin
 end;
 
 procedure TfrmCustomerInfo.cmbPRICE_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_1:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  AObj_1 := TRecord_.Create;
   try
-    if TfrmPriceGradeInfo.AddDialog(self,AObj) then
+    if TfrmPriceGradeInfo.AddDialog(self,AObj_1) then
        begin
-         cmbPRICE_ID.KeyValue := AObj.FieldbyName('PRICE_ID').asString;
-         cmbPRICE_ID.Text := AObj.FieldbyName('PRICE_NAME').asString;
+         cmbPRICE_ID.KeyValue := AObj_1.FieldbyName('PRICE_ID').asString;
+         cmbPRICE_ID.Text := AObj_1.FieldbyName('PRICE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_1.Free;
   end;
 end;
 
@@ -691,53 +693,53 @@ begin
 end;
 
 procedure TfrmCustomerInfo.edtSORT_IDAddClick(Sender: TObject);
-var Aobj:TRecord_;
+var Aobj_2:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  Aobj_2 := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,AObj) then
+    if TfrmCodeInfo.AddDialog(self,Aobj_2) then
        begin
-         edtSORT_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtSORT_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtSORT_ID.KeyValue := Aobj_2.FieldbyName('CODE_ID').asString;
+         edtSORT_ID.Text := Aobj_2.FieldbyName('CODE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    Aobj_2.Free;
   end;
 end;
 
 procedure TfrmCustomerInfo.cmbSHOP_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_3:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  AObj_3 := TRecord_.Create;
   try
-    if TfrmShopInfo.AddDialog(self,AObj) then
+    if TfrmShopInfo.AddDialog(self,AObj_3) then
        begin
-         cmbSHOP_ID.KeyValue := AObj.FieldbyName('SHOP_ID').asString;
-         cmbSHOP_ID.Text := AObj.FieldbyName('SHOP_NAME').asString;
+         cmbSHOP_ID.KeyValue := AObj_3.FieldbyName('SHOP_ID').asString;
+         cmbSHOP_ID.Text := AObj_3.FieldbyName('SHOP_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_3.Free;
   end;
 end;
 
 procedure TfrmCustomerInfo.edtREGION_IDAddClick(Sender: TObject);
-var AObj:TRecord_;
+var AObj_5:TRecord_;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
-  AObj := TRecord_.Create;
+  AObj_5 := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,AObj,8) then
+    if TfrmCodeInfo.AddDialog(self,AObj_5,8) then
        begin
-         edtREGION_ID.KeyValue := AObj.FieldbyName('CODE_ID').asString;
-         edtREGION_ID.Text := AObj.FieldbyName('CODE_NAME').asString;
+         edtREGION_ID.KeyValue := AObj_5.FieldbyName('CODE_ID').asString;
+         edtREGION_ID.Text := AObj_5.FieldbyName('CODE_NAME').asString;
        end;
   finally
-    AObj.Free;
+    AObj_5.Free;
   end;
 end;
 

@@ -173,7 +173,7 @@ inherited frmSupplier: TfrmSupplier
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = actEditExecute
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 OnTitleClick = DBGridEh1TitleClick

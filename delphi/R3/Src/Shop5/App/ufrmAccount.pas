@@ -44,7 +44,6 @@ type
     procedure edtKeyPropertiesChange(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure DBGridEh1DblClick(Sender: TObject);
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
     procedure actDeleteExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
@@ -196,12 +195,6 @@ begin
         free;
       end;
     end;
-end;
-
-procedure TfrmAccount.DBGridEh1DblClick(Sender: TObject);
-begin
-  inherited;
-  actEditExecute(nil);
 end;
 
 procedure TfrmAccount.cdsBrowserAfterScroll(DataSet: TDataSet);

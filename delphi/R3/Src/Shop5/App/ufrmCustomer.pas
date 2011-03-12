@@ -126,7 +126,7 @@ type
   end;
 
 implementation
-uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,
+uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,uFnUtil,
    ufrmBasic;
 //  ufrmIntegralGlide,ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
 
@@ -365,7 +365,11 @@ begin
   fndSORT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT');
   cmbPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
   cmbSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  TDbGridEhSort.InitForm(self);  
+  TDbGridEhSort.InitForm(self);
+  edtDate1.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
+  edtDate2.Date := Date;
+  edtDate3.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
+  edtDate4.Date := Date;
 end;
 
 procedure TfrmCustomer.Open(id: string);
@@ -424,11 +428,18 @@ begin
 
   //  对会员生日日期进行条件查询
   if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
+     Str_Where:=Str_Where+' and BIRTHDAY='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
+     Str_Where:=Str_Where+' and BIRTHDAY='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date));
+  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
+     Str_Where:=Str_Where+' and BIRTHDAY>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))+' and BIRTHDAY<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+
+{  if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
      Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
      Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));}
 
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then

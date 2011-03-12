@@ -123,10 +123,10 @@ begin
   if cdsBrowser.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
   begin
     try
+      AObj.WriteToDataSet(cdsBrowser,false);
       EditObj:=TRecord_.Create;
       EditObj.ReadFromDataSet(cdsBrowser);
       GODS_ID:=EditObj.FieldByName('GODS_ID').AsString;
-      AObj.WriteToDataSet(cdsBrowser,false);
       if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
         EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
       else

@@ -24,7 +24,7 @@ const
 type
 
   TSocketForm = class(TForm)
-    PopupMenu: TPopupMenu;
+    pmuSystem: TPopupMenu;
     miClose: TMenuItem;
     N1: TMenuItem;
     miProperties: TMenuItem;
@@ -68,7 +68,7 @@ type
     ImageList1: TImageList;
     actRegistryService: TAction;
     actRemoveSerivce: TAction;
-    PopupMenu2: TPopupMenu;
+    pmuLogFile: TPopupMenu;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     actClearLogFile: TAction;
@@ -104,6 +104,11 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Label17: TLabel;
+    pmuDbConfig: TPopupMenu;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);

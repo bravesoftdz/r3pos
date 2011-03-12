@@ -111,8 +111,8 @@ begin
      FLoginParam.ShopName := temp.FieldbyName('SHOP_NAME').asString;
      FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
      Factor.GqqLogin(FLoginParam.UserID,FLoginParam.ShopName+'('+FLoginParam.UserName+')');
-
      ModalResult := MROK;
+     TfrmPswModify.ShowExecute(FLoginParam.UserID,cxedtUsers.Text);
   finally
      temp.Free;
   end;

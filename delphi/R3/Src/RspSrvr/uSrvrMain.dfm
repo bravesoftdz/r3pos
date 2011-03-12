@@ -28,7 +28,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = TabSheet4
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -299,6 +299,7 @@ object SocketForm: TSocketForm
         MultiSelect = True
         ReadOnly = True
         RowSelect = True
+        PopupMenu = pmuDbConfig
         TabOrder = 0
         ViewStyle = vsReport
         OnColumnClick = ConnectionListColumnClick
@@ -356,7 +357,7 @@ object SocketForm: TSocketForm
         Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
-        PopupMenu = PopupMenu2
+        PopupMenu = pmuLogFile
         TabOrder = 0
       end
     end
@@ -493,7 +494,7 @@ object SocketForm: TSocketForm
       end
     end
   end
-  object PopupMenu: TPopupMenu
+  object pmuSystem: TPopupMenu
     Left = 480
     Top = 56
     object miClose: TMenuItem
@@ -736,7 +737,7 @@ object SocketForm: TSocketForm
       F1FFF00FFFFF0000FFFFFFFFFFFF000000000000000000000000000000000000
       000000000000}
   end
-  object PopupMenu2: TPopupMenu
+  object pmuLogFile: TPopupMenu
     Left = 128
     Top = 176
     object MenuItem1: TMenuItem
@@ -756,5 +757,21 @@ object SocketForm: TSocketForm
     Filter = 'sdfsdfas|*.dll,*.ocx'
     Left = 412
     Top = 47
+  end
+  object pmuDbConfig: TPopupMenu
+    Left = 128
+    Top = 88
+    object MenuItem3: TMenuItem
+      Action = actOpenLogFile
+    end
+    object MenuItem4: TMenuItem
+      Action = actClearLogFile
+    end
+    object MenuItem5: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem6: TMenuItem
+      Action = actSaveLogFile
+    end
   end
 end

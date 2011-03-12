@@ -38,7 +38,7 @@ type
     fndOrderStatus: TcxRadioGroup;
     cdsList: TZQuery;
     Dsc_1: TDataSource;
-    frReport1: TfrReport;
+    frfTransOrder: TfrReport;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
@@ -76,7 +76,7 @@ type
 
 implementation
 uses uCtrlUtil,uFnUtil,uGlobal,uShopGlobal,uShopUtil,ufrmBasic,ufrmTransOrder,
-  uframeMDForm, uframeDialogForm, Math;
+  uframeMDForm, uframeDialogForm, Math, ufrmFastReport;
 {$R *.dfm}
 
 procedure TfrmTransOrderList.AddRecord(AObj: TRecord_);
@@ -256,7 +256,19 @@ end;
 
 function TfrmTransOrderList.PrintSQL2(tenantid, id: string): string;
 begin
-
+  result :=
+  'select j.* '+
+  ',ja.ACCT_NAME as IN_ACCOUNT_ID_TEXT '+
+  ',jb.ACCT_NAME as OUT_ACCOUNT_ID_TEXT '+
+  ',jc.USER_NAME as TRANS_USER_TEXT '+
+  ',jd.USER_NAME as CREA_USER_TEXT '+
+  'from ACC_TRANSORDER j '+
+  'left outer join VIW_ACCOUNT_INFO ja on j.TENANT_id=ja.TENANT_ID and j.IN_ACCOUNT_ID=ja.ACCOUNT_ID '+
+  'left outer join VIW_ACCOUNT_INFO jb on j.TENANT_id=jb.TENANT_ID and j.OUT_ACCOUNT_ID=jb.ACCOUNT_ID '+
+  'left outer join VIW_USERS jc on j.TENANT_id=jc.TENANT_ID and j.TRANS_USER=jc.USER_ID '+
+  'left outer join VIW_USERS jc on j.TENANT_id=jc.TENANT_ID and j.CREA_USER=jc.USER_ID '+
+  'where j.TENANT_ID='+tenantid+' and j.TRANS_ID='''+id+'''';
+  ;
 end;
 
 procedure TfrmTransOrderList.actNewExecute(Sender: TObject);
@@ -393,6 +405,14 @@ procedure TfrmTransOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         PrintReport(PrintSQL2(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('TRANS_ID').AsString),frfTransOrder);
+      finally
+         free;
+      end;
+    end;
 end;
 
 procedure TfrmTransOrderList.RzPageChange(Sender: TObject);
@@ -449,6 +469,14 @@ procedure TfrmTransOrderList.ToolButton8Click(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         ShowReport(PrintSQL2(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('TRANS_ID').AsString),frfTransOrder);
+      finally
+         free;
+      end;
+    end;
 end;
 
 function TfrmTransOrderList.CheckCanExport: boolean;

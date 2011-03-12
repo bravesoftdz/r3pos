@@ -112,7 +112,7 @@ begin
      FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
      Factor.GqqLogin(FLoginParam.UserID,FLoginParam.ShopName+'('+FLoginParam.UserName+')');
      ModalResult := MROK;
-     TfrmPswModify.ShowExecute(FLoginParam.UserID,cxedtUsers.Text);
+     if trim(cxedtPasswrd.Text)='1234' then TfrmPswModify.ShowExecute(FLoginParam.UserID,cxedtUsers.Text);
   finally
      temp.Free;
   end;

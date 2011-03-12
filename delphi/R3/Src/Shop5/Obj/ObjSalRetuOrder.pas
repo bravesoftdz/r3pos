@@ -264,7 +264,7 @@ begin
      ,self);
   end;
   
-  if FieldbyName('SALES_MNY').AsOldFloat <> 0 then
+  if FieldbyName('SALE_MNY').AsOldFloat <> 0 then
      begin
        rs := TZQuery.Create(nil);
        try

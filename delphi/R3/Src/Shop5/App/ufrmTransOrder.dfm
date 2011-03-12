@@ -118,7 +118,7 @@ inherited frmTransOrder: TfrmTransOrder
         Caption = #23384#21462#38376#24215
       end
       object LabOUT_ACCOUNT_ID: TLabel
-        Left = 25
+        Left = 24
         Top = 67
         Width = 48
         Height = 12
@@ -139,7 +139,7 @@ inherited frmTransOrder: TfrmTransOrder
         Caption = #32463#25163#20154
       end
       object Label4: TLabel
-        Left = 45
+        Left = 46
         Top = 140
         Width = 26
         Height = 12

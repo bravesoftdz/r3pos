@@ -8,22 +8,22 @@ inherited frmDbOrderList: TfrmDbOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 837
-    Height = 479
+    Width = 829
+    Height = 468
     inherited RzPanel2: TRzPanel
-      Width = 827
-      Height = 469
+      Width = 819
+      Height = 458
       inherited RzPage: TRzPageControl
-        Width = 821
-        Height = 463
+        Width = 813
+        Height = 452
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25320#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 819
-            Height = 436
+            Width = 811
+            Height = 425
             inherited RzPanel1: TRzPanel
-              Width = 809
+              Width = 801
               Height = 102
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -189,9 +189,9 @@ inherited frmDbOrderList: TfrmDbOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -231,17 +231,17 @@ inherited frmDbOrderList: TfrmDbOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
             end
             inherited DBGridEh1: TDBGridEh
               Top = 107
-              Width = 809
-              Height = 324
+              Width = 801
+              Height = 313
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -345,17 +345,17 @@ inherited frmDbOrderList: TfrmDbOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 837
+    Width = 829
     inherited Image1: TImage
-      Left = 737
-      Width = 91
+      Left = 741
+      Width = 79
     end
     inherited Image14: TImage
-      Left = 828
+      Left = 820
     end
     inherited Image3: TImage
-      Left = 737
-      Width = 91
+      Left = 741
+      Width = 79
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -363,20 +363,20 @@ inherited frmDbOrderList: TfrmDbOrderList
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton17: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end
@@ -432,7 +432,7 @@ inherited frmDbOrderList: TfrmDbOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000002400000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -694,6 +694,6 @@ inherited frmDbOrderList: TfrmDbOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000}
+      0000000000FDFF0100000000}
   end
 end

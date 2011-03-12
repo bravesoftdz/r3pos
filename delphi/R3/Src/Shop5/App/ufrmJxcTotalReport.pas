@@ -110,7 +110,8 @@ type
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);  
+    procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
   private
     sid1,sid2,sid4:string;
     srid1,srid2,srid4:string;
@@ -121,7 +122,7 @@ type
      //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): widestring;
     //按门店销售汇总表
-    function GetCompanySQL(chk:boolean=true): string;
+    function GetShopSQL(chk:boolean=true): string;
     //按分类销售汇总表
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
@@ -180,15 +181,16 @@ var
   mx:string;
 begin
   result:='';
-  strWhere:='';
   if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  
+  //过滤企业ID
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
   //月份日期:
   if (P1_D1.asString<>'') and (P1_D1.asString=P1_D2.asString) then
-     strWhere:=' and A.MONTH='+P1_D1.asString
+     strWhere:=strWhere+' and A.MONTH='+P1_D1.asString
   else if P1_D1.asString<P1_D2.asString then
-     strWhere:=' and A.MONTH>='+P1_D1.asString+' and A.MONTH<='+P1_D2.asString+' '
+     strWhere:=strWhere+' and A.MONTH>='+P1_D1.asString+' and A.MONTH<='+P1_D2.asString+' '
   else
      Raise Exception.Create('结束月结不能小于开始月份...');
 
@@ -200,8 +202,8 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
       end;
     end;
-  //商品指标:
 
+  //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -213,10 +215,12 @@ begin
       end;
      end;
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'')  and (trim(sid1)<>'') and (trim(srid1)<>'') then
+  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then   //and (trim(sid1)<>'') 
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
     strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    if  trim(sid1)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -289,7 +293,7 @@ begin
       end;
     1: begin //按门店汇总表
         if adoReport2.Active then adoReport2.Close;
-        strSql := GetCompanySQL;
+        strSql := GetShopSQL;
         if strSql='' then Exit;
         adoReport2.SQL.Text := strSql;
         Factor.Open(adoReport2);
@@ -311,21 +315,22 @@ begin
   end;
 end;
 
-function TfrmJxcTotalReport.GetCompanySQL(chk:boolean=true): string;
+function TfrmJxcTotalReport.GetShopSQL(chk:boolean=true): string;
 var
   strSql,strWhere,GoodTab:widestring;
   mx:string;
 begin
   result:='';
-  strWhere:='';
   if P2_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  
+  //过滤企业ID
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
   //月份日期:
   if (P2_D1.asString<>'') and (P2_D1.asString=P2_D2.asString) then
-     strWhere:=' and A.MONTH='+P2_D1.asString
+     strWhere:=strWhere+' and A.MONTH='+P2_D1.asString
   else if P2_D1.asString<P2_D2.asString then
-     strWhere:=' and A.MONTH>='+P2_D1.asString+' and A.MONTH<='+P2_D2.asString+' '
+     strWhere:=strWhere+' and A.MONTH>='+P2_D1.asString+' and A.MONTH<='+P2_D2.asString+' '
   else
      Raise Exception.Create('结束月结不能小于开始月份...');
 
@@ -350,10 +355,12 @@ begin
       end;
      end;
   //商品分类:
-  if (trim(fndP2_SORT_ID.Text)<>'')  and (trim(sid2)<>'') and (trim(srid2)<>'') then
+  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' and C.RELATION_ID='''+srid2+''' ';
+    strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    if trim(sid2)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -412,15 +419,16 @@ var
   mx:string;
 begin
   result:='';
-  strWhere:='';
   if P3_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
+  //过滤企业ID
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
   
   //月份日期:
   if (P3_D1.asString<>'') and (P3_D1.asString=P3_D2.asString) then
-     strWhere:=' and A.MONTH='+P3_D1.asString
+     strWhere:=strWhere+' and A.MONTH='+P3_D1.asString
   else if P3_D1.asString<P3_D2.asString then
-     strWhere:=' and A.MONTH>='+P3_D1.asString+' and A.MONTH<='+P3_D2.asString+' '
+     strWhere:=strWhere+' and A.MONTH>='+P3_D1.asString+' and A.MONTH<='+P3_D2.asString+' '
   else
      Raise Exception.Create('结束月结不能小于开始月份...');
 
@@ -531,12 +539,14 @@ begin
           ',sum(BAL_MNY) as BAL_MNY '+
           ',sum(BAL_RTL) as BAL_RTL '+
           ',sum(BAL_CST) as BAL_CST '+
+          ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
           'union all '+
           'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' '+
+          ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
     3:begin
@@ -576,7 +586,8 @@ begin
         ',sum(BAL_MNY) as BAL_MNY '+
         ',sum(BAL_RTL) as BAL_RTL '+
         ',sum(BAL_CST) as BAL_CST '+
-        ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
+        ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME '+
+        ' from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
     else
@@ -617,6 +628,7 @@ begin
         ',sum(BAL_MNY) as BAL_MNY '+
         ',sum(BAL_RTL) as BAL_RTL '+
         ',sum(BAL_CST) as BAL_CST '+
+        ',isnull(r.SORT_ID,''#'') as SID '+
         ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
         'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='''+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+''''+
         ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
@@ -631,23 +643,25 @@ var
   mx:string;
 begin
   result:='';
-  strWhere:='';
   if P4_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
   //月份日期:
   if (P4_D1.asString<>'') and (P4_D1.asString=P4_D2.asString) then
-     strWhere:=' and A.MONTH='+P4_D1.asString
+     strWhere:=strWhere+' and A.MONTH='+P4_D1.asString
   else if P4_D1.asString<P4_D2.asString then
-     strWhere:=' and A.MONTH>='+P4_D1.asString+' and A.MONTH<='+P4_D2.asString+' '
+     strWhere:=strWhere+' and A.MONTH>='+P4_D1.asString+' and A.MONTH<='+P4_D2.asString+' '
   else
      Raise Exception.Create('结束月结不能小于开始月份...');
 
   //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid4)<>'') and (trim(srid4)<>'') then
+  if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' and C.RELATION_ID='''+srid4+''' ';
+    strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    if trim(sid4)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -672,10 +686,12 @@ begin
       end;
      end;
   //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid1)<>'') and (trim(srid1)<>'') then
+  if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    if trim(sid4)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -781,13 +797,58 @@ begin
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh3DblClick(Sender: TObject);
+var
+  i,CodeID: integer;
+  SortID: string;
+  Aobj: TRecord_;
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
+  //肯定有报表类型:
+  CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
+  case CodeID of
+   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   else
+      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+  end;
+
+  sid4:='';
+  srid4:='';
+  fndP4_SORT_ID.Text:='';
+  fndP4_TYPE_ID.ItemIndex:=-1;
+  fndP4_STAT_ID.KeyValue:='';
+  fndP4_STAT_ID.Text:='';
+
+  case CodeID of
+   1:  //商品分类[带供应链接]
+    begin
+      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
+    end;
+   else
+    begin
+      fndP4_TYPE_ID.ItemIndex:=-1;
+      for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
+      begin
+        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
+        begin
+          fndP4_TYPE_ID.ItemIndex:=i;
+          break;
+        end;
+      end;
+      if fndP4_TYPE_ID.ItemIndex<>-1 then
+      begin
+        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
+        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
+      end;
+    end;
+  end;
+  
   P4_D1.asString := P3_D1.asString;
   P4_D2.asString := P3_D2.asString;
-
-//  fndP4_TYPE_ID.ItemIndex := fndP3_TYPE_ID.ItemIndex;
 
   fndP4_SHOP_TYPE.ItemIndex := fndP3_SHOP_TYPE.ItemIndex;
   fndP4_SHOP_VALUE.KeyValue := fndP3_SHOP_VALUE.KeyValue;
@@ -796,7 +857,7 @@ begin
   fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
   fndP4_SHOP_ID.KeyValue := fndP3_SHOP_ID.KeyValue;
   fndP4_SHOP_ID.Text := fndP3_SHOP_ID.Text;
-  
+
   rzPage.ActivePageIndex := 3;
   actFind.OnExecute(nil);
 
@@ -1130,6 +1191,13 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmJxcTotalReport.fndP3_REPORT_FLAGPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
 end;
 
 end.

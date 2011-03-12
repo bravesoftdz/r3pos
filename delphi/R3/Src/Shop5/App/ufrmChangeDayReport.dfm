@@ -1,35 +1,37 @@
-inherited frmStockDayReport: TfrmStockDayReport
-  Left = 137
-  Top = 135
+inherited frmChangeDayReport: TfrmChangeDayReport
+  Left = 193
+  Top = 109
   Width = 901
   Height = 589
   Caption = #21830#21697#35843#25972#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 885
-    Height = 521
+    Width = 893
+    Height = 532
     inherited RzPanel2: TRzPanel
-      Width = 875
-      Height = 511
+      Width = 883
+      Height = 522
       inherited RzPage: TRzPageControl
-        Width = 670
-        Height = 505
+        Width = 678
+        Height = 516
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#35843#25972#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 668
-            Height = 478
+            Width = 676
+            Height = 489
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 658
-              Height = 468
+              Width = 666
+              Height = 479
               inherited w1: TRzPanel
-                Width = 658
+                Width = 666
                 Height = 86
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -126,7 +128,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP1_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP1_UNIT_ID: TcxComboBox
@@ -173,7 +174,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -182,7 +182,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP1_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
@@ -200,19 +199,18 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 6
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
-                object cxComboBox1: TcxComboBox
+                object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 7
                 end
-                object zrComboBoxList3: TzrComboBoxList
+                object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -257,11 +255,11 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 86
-                Width = 658
-                Height = 382
+                Width = 666
+                Height = 393
                 inherited DBGridEh1: TDBGridEh
-                  Width = 654
-                  Height = 378
+                  Width = 662
+                  Height = 389
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -277,14 +275,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'REGION_ID'
                       Footers = <>
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'CODE_NAME'
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -310,7 +308,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = #38646#21806#37329#39069
                       Width = 84
                     end
                     item
@@ -318,7 +316,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = #36827#36135#25104#26412
                       Width = 80
                     end
                     item
@@ -340,8 +338,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 668
-            Height = 478
+            Width = 676
+            Height = 489
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -349,8 +347,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 658
-              Height = 468
+              Width = 666
+              Height = 479
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -358,7 +356,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 658
+                Width = 666
                 Height = 85
                 Align = alTop
                 BorderOuter = fsGroove
@@ -424,7 +422,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
-                object fndP2_REGION_ID: TzrComboBoxList
+                object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 31
@@ -502,7 +500,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
                   TabOrder = 4
                 end
                 object fndP2_UNIT_ID: TcxComboBox
@@ -549,7 +546,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -558,7 +554,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP2_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
@@ -583,17 +578,16 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 8
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 85
-                Width = 658
-                Height = 383
+                Width = 666
+                Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -601,8 +595,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 654
-                  Height = 379
+                  Width = 662
+                  Height = 390
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -656,14 +650,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_ID'
                       Footers = <>
                       Title.Caption = #38376#24215#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -682,14 +676,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'APRICE'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = #38646#21806#37329#39069
                       Width = 84
                     end
                     item
@@ -697,7 +691,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = #36827#36135#25104#26412
                       Width = 80
                     end
                     item
@@ -719,8 +713,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 668
-            Height = 478
+            Width = 676
+            Height = 489
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -728,8 +722,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 658
-              Height = 468
+              Width = 666
+              Height = 479
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -737,7 +731,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 658
+                Width = 666
                 Height = 85
                 Align = alTop
                 BorderOuter = fsGroove
@@ -803,7 +797,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
-                object fndP3_COMP_ID: TzrComboBoxList
+                object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -818,19 +812,19 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
+                  FilterFields = 'COMP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
                   Columns = <
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_ID'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -845,7 +839,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP3_TYPE_ID: TcxComboBox
+                object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
                   Top = 32
                   Width = 121
@@ -854,7 +848,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = P3_TYPE_IDPropertiesChange
+                  Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
                   TabOrder = 3
                 end
                 object fndP3_UNIT_ID: TcxComboBox
@@ -869,7 +863,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #21253#35013'2')
                   TabOrder = 4
                 end
-                object zrComboBoxList4: TzrComboBoxList
+                object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -911,16 +905,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox2: TcxComboBox
+                object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 6
                 end
                 object RzBitBtn2: TRzBitBtn
@@ -954,8 +947,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 85
-                Width = 658
-                Height = 383
+                Width = 666
+                Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -964,8 +957,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 654
-                  Height = 379
+                  Width = 662
+                  Height = 390
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1045,14 +1038,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'APRICE'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = #38646#21806#37329#39069
                       Width = 84
                     end
                     item
@@ -1060,7 +1053,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = #36827#36135#25104#26412
                       Width = 80
                     end
                     item
@@ -1082,8 +1075,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 668
-            Height = 478
+            Width = 676
+            Height = 489
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1091,8 +1084,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 658
-              Height = 468
+              Width = 666
+              Height = 479
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1100,7 +1093,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 658
+                Width = 666
                 Height = 107
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1131,7 +1124,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label24: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -1209,7 +1202,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
                 object fndP4_UNIT_ID: TcxComboBox
@@ -1256,7 +1248,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1265,12 +1256,11 @@ inherited frmStockDayReport: TfrmStockDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 54
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1283,7 +1273,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 6
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
-                object fndP4_COMP_ID: TzrComboBoxList
+                object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -1298,19 +1288,19 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 7
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
                   Columns = <
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_ID'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1325,7 +1315,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList1: TzrComboBoxList
+                object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1367,24 +1357,23 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox3: TcxComboBox
+                object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 9
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 107
-                Width = 658
-                Height = 361
+                Width = 666
+                Height = 372
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1392,8 +1381,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 654
-                  Height = 357
+                  Width = 662
+                  Height = 368
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1487,14 +1476,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'APRICE'
                       Footers = <>
                       Title.Caption = #22343#20215
-                      Width = 66
+                      Width = 65
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = #38646#21806#37329#39069
                       Width = 84
                     end
                     item
@@ -1502,7 +1491,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = #36827#36135#25104#26412
                       Width = 80
                     end
                     item
@@ -1524,8 +1513,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 668
-            Height = 478
+            Width = 676
+            Height = 489
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1533,8 +1522,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 658
-              Height = 468
+              Width = 666
+              Height = 479
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1542,7 +1531,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 658
+                Width = 666
                 Height = 108
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1606,7 +1595,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
-                  EditValue = 0d
                 end
                 object RzBitBtn4: TRzBitBtn
                   Left = 478
@@ -1643,7 +1631,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
-                object cxComboBox4: TcxComboBox
+                object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
                   Top = 76
                   Width = 73
@@ -1652,10 +1640,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  Properties.OnChange = fndP4_TYPE_IDPropertiesChange
                   TabOrder = 3
                 end
-                object cxComboBox5: TcxComboBox
+                object fndP5_UNIT_ID: TcxComboBox
                   Left = 344
                   Top = 76
                   Width = 121
@@ -1667,7 +1654,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #21253#35013'2')
                   TabOrder = 4
                 end
-                object zrComboBoxList2: TzrComboBoxList
+                object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 76
@@ -1699,7 +1686,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Title.Caption = #20195#30721
                       Width = 20
                     end>
-                  DataSet = drpStatInfo
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
@@ -1708,10 +1694,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
-                  OnBeforeDropList = fndP4_STAT_IDBeforeDropList
                   MultiSelect = False
                 end
-                object cxButtonEdit1: TcxButtonEdit
+                object fndP5_SORT_ID: TcxButtonEdit
                   Left = 344
                   Top = 52
                   Width = 121
@@ -1722,11 +1707,11 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
+                  Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
                   TabOrder = 6
-                  OnKeyPress = fndP4_SORT_IDKeyPress
+                  OnKeyPress = fndP5_SORT_IDKeyPress
                 end
-                object zrComboBoxList5: TzrComboBoxList
+                object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -1741,19 +1726,19 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 7
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;COMP_NAME;COMP_SPELL'
-                  KeyField = 'COMP_ID'
-                  ListField = 'COMP_NAME'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  KeyField = 'SHOP_ID'
+                  ListField = 'SHOP_NAME'
                   Columns = <
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'COMP_ID'
+                      FieldName = 'SHOP_ID'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1768,7 +1753,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList6: TzrComboBoxList
+                object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1810,24 +1795,23 @@ inherited frmStockDayReport: TfrmStockDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox6: TcxComboBox
+                object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  Properties.OnChange = fndP2_TYPE_IDPropertiesChange
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 9
                 end
               end
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 108
-                Width = 658
-                Height = 360
+                Width = 666
+                Height = 371
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1835,8 +1819,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 654
-                  Height = 356
+                  Width = 662
+                  Height = 367
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1876,7 +1860,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   Columns = <
@@ -1890,17 +1873,20 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'CHANGE_DATE'
                       Footers = <>
                       Title.Caption = #26085#26399
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
                       Width = 80
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'DEPT_ID'
                       Footers = <>
                       Title.Caption = #37096#38376#21517#31216
                       Width = 134
@@ -1946,7 +1932,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #25104#26412#20215
+                      Title.Caption = #38646#21806#20215
                       Width = 66
                     end
                     item
@@ -1954,15 +1940,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = #38646#21806#37329#39069
                       Width = 84
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'COST_MONEY'
+                      FieldName = 'COST_PRICE'
                       Footers = <>
-                      Title.Caption = #38646#21806#20215
+                      Title.Caption = #25104#26412#20215
                       Width = 80
                     end
                     item
@@ -1970,7 +1956,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = #36827#36135#25104#26412
                       Width = 80
                     end
                     item
@@ -1983,30 +1969,35 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'BATCH_NO'
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 73
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'LOCUS_NO'
                       Footers = <>
                       Title.Caption = #29289#27969#36319#36394#21495
                       Width = 74
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'IS_PRESENT'
                       Footers = <>
                       Title.Caption = #36192#21697
                       Width = 35
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'CREA_USER_TEXT'
                       Footers = <>
                       Title.Caption = #21046#21333#20154
                       Width = 45
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21046#21333#26102#38388
                       Width = 111
@@ -2018,8 +2009,8 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 673
-        Height = 505
+        Left = 681
+        Height = 516
         inherited Panel2: TPanel
           Height = 466
           inherited RzPanel1: TRzPanel [3]
@@ -2035,15 +2026,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 885
+    Width = 893
     inherited Image1: TImage
-      Width = 366
+      Width = 378
     end
     inherited Image14: TImage
-      Left = 876
+      Left = 884
     end
     inherited Image3: TImage
-      Width = 366
+      Width = 378
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2083,22 +2074,12 @@ inherited frmStockDayReport: TfrmStockDayReport
       72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
       5C66733136200D0A5C706172207D0D0A00}
   end
+  inherited SaveDialog1: TSaveDialog
+    Left = 229
+    Top = 204
+  end
   inherited adoReport1: TZQuery
     Left = 41
-    Top = 321
-  end
-  object drpStatInfo: TADODataSet
-    CommandText = 
-      'select CLIENT_CODE,CLIENT_NAME from BAS_CLIENTINFO where CLIENT_' +
-      'CODE in (select Distinct PROVIDE from PUB_GOODSINFO where isnull' +
-      '(PROVIDE,'#39#39')<>'#39#39') order by CLIENT_CODE '
-    Parameters = <>
-    Left = 182
-    Top = 205
-  end
-  object adoReport2: TADODataSet
-    Parameters = <>
-    Left = 89
     Top = 321
   end
   object dsadoReport2: TDataSource
@@ -2106,34 +2087,47 @@ inherited frmStockDayReport: TfrmStockDayReport
     Left = 89
     Top = 354
   end
-  object adoReport3: TADODataSet
-    Parameters = <>
-    Left = 137
-    Top = 321
-  end
   object dsadoReport3: TDataSource
     DataSet = adoReport3
     Left = 137
     Top = 354
-  end
-  object adoReport4: TADODataSet
-    Parameters = <>
-    Left = 185
-    Top = 321
   end
   object dsadoReport4: TDataSource
     DataSet = adoReport4
     Left = 185
     Top = 354
   end
-  object adoReport5: TADODataSet
-    Parameters = <>
-    Left = 233
-    Top = 321
-  end
   object dsadoReport5: TDataSource
     DataSet = adoReport5
     Left = 233
     Top = 354
+  end
+  object adoReport2: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 89
+    Top = 321
+  end
+  object adoReport3: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 137
+    Top = 321
+  end
+  object adoReport4: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 185
+    Top = 321
+  end
+  object adoReport5: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 233
+    Top = 321
   end
 end

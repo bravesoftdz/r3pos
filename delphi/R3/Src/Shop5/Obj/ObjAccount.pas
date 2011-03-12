@@ -18,21 +18,25 @@ implementation
 { TAccount }
 
 function TAccount.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var rs:TZQuery;
+var rs,rs1:TZQuery;
 begin
   Result := False;
   rs := TZQuery.Create(nil);
+  rs1 := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
-
+    rs1.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID';
+    rs1.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
     AGlobal.Open(rs);
-    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) then
+    AGlobal.Open(rs1);
+    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) or (rs1.Fields[0].AsInteger > 0) then
       Raise Exception.Create('此账户金额有变动,不能删除!');
   finally
     rs.Free;
+    rs1.Free;
   end;
   result := true;
 end;
@@ -43,12 +47,12 @@ begin
   Result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.SQL.Text := 'select ACCT_NAME from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('ACCT_NAME').AsString := FieldByName('ACCT_NAME').AsString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
-    if rs.RecordCount > 0 then
+    if rs.FieldByName('ACCT_NAME').AsString = '' then
       Raise Exception.Create('此账户名已经存在,请重新输入..');
   finally
     rs.Free;
@@ -57,20 +61,28 @@ begin
 end;
 
 function TAccount.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-var rs:TZQuery;
+var rs,rs1:TZQuery;
 begin
   Result := False;
   rs := TZQuery.Create(nil);
+  rs1 := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select OUT_MNY,IN_MNY from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
     rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
+    rs1.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID';
+    rs1.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
     AGlobal.Open(rs);
-    if ((rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('OUT_MNY').AsFloat <> 0)) and (FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat) then
+    AGlobal.Open(rs1);
+    if ((rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs1.Fields[0].AsInteger > 0))
+      and
+       (FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat)
+     then
       Raise Exception.Create('已经存在结账记录不能修改期初金额...');
   finally
     rs.Free;
+    rs1.Free;
   end;
 
 end;

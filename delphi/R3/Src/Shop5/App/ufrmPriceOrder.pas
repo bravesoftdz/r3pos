@@ -678,7 +678,7 @@ begin
   edtTable.First;
   while not edtTable.Eof do
   begin
-    if (trim(edtTable.fieldbyName('CALC_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE0').AsFloat=0) then
+    if (trim(edtTable.fieldbyName('CALC_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE').AsFloat=0) then
       Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  计量单价不能为 0！  ');
     if (trim(edtTable.fieldbyName('SMALL_UNITS').AsString)<>'') and (edtTable.fieldbyName('OUT_PRICE1').AsFloat=0) then
       Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  包装1单价不能为 0！  ');

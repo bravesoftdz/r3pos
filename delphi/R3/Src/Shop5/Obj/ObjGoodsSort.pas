@@ -25,10 +25,11 @@ begin
 //SORT_ID1 分类 SORT_ID2 类别 SORT_ID3 厂家 SORT_ID4 品牌 SORT_ID5 重点(品牌) SORT_ID6 省内外 SORT_ID7 颜色组 SORT_ID8 尺码组
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select SORT_ID from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
     AGlobal.Open(rs);
     rs.ParamByName('UNIT_ID').AsString := FieldbyName('SORT_ID').AsString;
-    if rs.Fields[0].AsInteger > 0 then
+    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+    if rs.Fields[0].AsString <> '' then
        Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
     rs.Free;

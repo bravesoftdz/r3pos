@@ -12,7 +12,16 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
     procedure InitClass;override;
+  end;
+  TCloseAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TCloseUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
 
 
@@ -21,7 +30,12 @@ implementation
 { TCloseForDay }
 
 function TCloseForDay.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var Str:String;
 begin
+  Result := False;
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
+  Str := 'delete ACC_CLOSE_FORDAY where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and ROWS_ID='''+FieldbyName('ROWS_ID').AsString+'''';
+  AGlobal.ExecSQL(Str);
   Result := True;
 end;
 
@@ -52,6 +66,20 @@ begin
   Result := True;
 end;
 
+function TCloseForDay.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_CLOSE_FORDAY where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and ROWS_ID='''+FieldbyName('ROWS_ID').AsString+'''';
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+  finally
+    rs.Free;
+  end;
+end;
+
 procedure TCloseForDay.InitClass;
 begin
   inherited;
@@ -60,10 +88,71 @@ begin
 end;
 
 
+{ TCloseUnAudit }
+
+function TCloseUnAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var StrSql:String;
+    n:Integer;
+begin
+  try
+    StrSql := 'update ACC_CLOSE_FORDAY set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(AGlobal.iDbType)+
+    ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
+    ' and ROWS_ID='''+Params.FindParam('ROWS_ID').AsString+''' and CHK_DATE is not null';
+    n := AGlobal.ExecSQL(StrSql);
+    if n = 0 then
+      Raise Exception.Create('没找到审核单据,是否被另一用户删除或反审核.')
+    else if n>1 then
+      Raise Exception.Create('弃审指令会影响多行,可能数据库中数据有误.');
+
+    Result := True;
+    Msg := '弃审单据成功';
+  Except
+    on E:Exception do
+      begin
+        Result := False;
+        Msg := '弃审错误:'+E.Message;
+      end;
+  end;
+
+end;
+
+{ TCloseAudit }
+
+function TCloseAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var StrSql:String;
+    n:Integer;
+begin
+  try
+    StrSql := 'update ACC_CLOSE_FORDAY set CHK_DATE='''+Params.FindParam('CHK_DATE').AsString+''',CHK_USER='''+Params.FindParam('CHK_USER').AsString+
+    ''',COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').AsString+
+    ' and ROWS_ID='''+Params.FindParam('ROWS_ID').AsString+''' and CHK_DATE is null';
+    n := AGlobal.ExecSQL(StrSql);
+    if n = 0 then
+      Raise Exception.Create('没找到待审核单据,是否被另一用户删除或已审核.')
+    else if n > 1 then
+      Raise Exception.Create('审核指令会影响多行,可能数据库中数据误.');
+
+    Result := True;
+    Msg := '审核单据成功';
+  Except
+    on E:Exception do
+      begin
+        Result := False;
+        Msg := '审核错误:'+E.Message;
+      end;
+  end;
+end;
+
 initialization
   RegisterClass(TCloseForDay);
+  RegisterClass(TCloseAudit);
+  RegisterClass(TCloseUnAudit);
 
 finalization
   UnRegisterClass(TCloseForDay);
+  UnRegisterClass(TCloseAudit);
+  UnRegisterClass(TCloseUnAudit);
 
 end.

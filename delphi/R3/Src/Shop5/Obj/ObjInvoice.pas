@@ -18,6 +18,7 @@ implementation
 { TInvoice }
 
 function TInvoice.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin  
   {rs := TZQuery.Create(nil);
   try

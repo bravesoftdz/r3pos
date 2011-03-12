@@ -138,6 +138,8 @@ begin
       if Components[i] is TDBGridEh then
          begin
            TDBGridEh(Components[i]).OptionsEh := TDBGridEh(Components[i]).OptionsEh + [dghDialogFind];
+           if TDBGridEh(Components[i]).AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh, alopAppendEh] then
+              TDBGridEh(Components[i]).AllowedOperations := [alopUpdateEh, alopAppendEh];
          end;
     end;
 

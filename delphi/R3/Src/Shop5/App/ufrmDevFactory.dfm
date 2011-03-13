@@ -70,6 +70,26 @@ object frmDevFactory: TfrmDevFactory
         Properties.Caption = #36719#20214#21551#21160#26102#26159#21542#31435#21363#21551#21160#25910#27454#26426
         TabOrder = 0
       end
+      object chkCloseDayPrinted: TcxCheckBox
+        Left = 16
+        Top = 43
+        Width = 108
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #20445#23384#26102#26159#21542#25171#21360
+        TabOrder = 1
+      end
+      object edtCloseDayPrintFlag: TcxComboBox
+        Left = 131
+        Top = 43
+        Width = 63
+        Height = 20
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #25171#21360#37329#39069
+          #25171#21360#26126#32454)
+        TabOrder = 2
+      end
     end
     object TabSheet1: TTabSheet
       Caption = #23567#31080#25171#21360#26426

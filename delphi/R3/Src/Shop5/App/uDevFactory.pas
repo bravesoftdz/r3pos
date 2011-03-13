@@ -22,6 +22,8 @@ TDevFactory=class
     FTitle: string;
     FWidth: integer;
     FPrintNull: integer;
+    FCloseDayPrinted: boolean;
+    FCloseDayPrintFlag: integer;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -41,6 +43,9 @@ TDevFactory=class
     procedure SetTitle(const Value: string);
     procedure SetWidth(const Value: integer);
     procedure SetPrintNull(const Value: integer);
+    function GetTitle: string;
+    procedure SetCloseDayPrinted(const Value: boolean);
+    procedure SetCloseDayPrintFlag(const Value: integer);
   protected
     
   public
@@ -57,6 +62,7 @@ TDevFactory=class
     //打印函数
     procedure BeginPrint;
     procedure WritePrint(s:string);
+    procedure WritePrintNoEnter(s:string);
     procedure EndPrint;
 
     function EncodeDivStr:string;
@@ -86,18 +92,22 @@ TDevFactory=class
     // 不票打印说明
     property Footer:string read FFooter write SetFooter;
     // 小票票题
-    property Title:string read FTitle write SetTitle;
+    property Title:string read GetTitle write SetTitle;
 
     //小打印机可以打印字符数
     property Width:integer read FWidth write SetWidth;
     //补空行数
     property PrintNull:integer read FPrintNull write SetPrintNull;
 
+    //关账时是否打印小票
+    property CloseDayPrinted:boolean read FCloseDayPrinted write SetCloseDayPrinted;
+    //关账时打印类型 0只打金额 1打商品明细
+    property CloseDayPrintFlag:integer read FCloseDayPrintFlag write SetCloseDayPrintFlag;
 end;
 var
   DevFactory:TDevFactory;
 implementation
-uses IniFiles,EncDec,Forms;
+uses IniFiles,EncDec,Forms,uGlobal;
 { TDevFactory }
 
 procedure TDevFactory.BeginPrint;
@@ -143,12 +153,22 @@ function TDevFactory.EncodeDivStr: string;
 var
   i:integer;
 begin
-  for i:=1 to Width do result := result + '-';
+  for i:=1 to Width-1 do result := result + '-';
 end;
 
 procedure TDevFactory.EndPrint;
 begin
   CloseFile(F);
+end;
+
+function TDevFactory.GetTitle: string;
+var s:string;
+begin
+  s := StringReplace(DevFactory.Title,'[门店名称]',Global.SHOP_NAME,[rfReplaceAll]);
+  s := StringReplace(DevFactory.Title,'[企业名称]',Global.TENANT_NAME,[rfReplaceAll]);
+  s := StringReplace(DevFactory.Title,'[企业简称]',Global.SHORT_TENANT_NAME,[rfReplaceAll]);
+  if s='' then s := Global.TENANT_NAME;
+  result := s;
 end;
 
 procedure TDevFactory.InitComm;
@@ -171,7 +191,9 @@ begin
 
      Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33);
      PrintNull :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
-     
+
+     CloseDayPrinted :=  F.ReadBool('SYS_DEFINE','CLOSEDAYPRINTED',false);
+     CloseDayPrintFlag :=  F.ReadInteger('SYS_DEFINE','CLOSEDAYPRINTFLAG',0);
   finally
      F.Free;
   end;
@@ -186,7 +208,7 @@ begin
      begin
         DevFactory.BeginPrint;
         try
-          DevFactory.WritePrint(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255));
+          DevFactory.WritePrintNoEnter(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255));
         finally
           DevFactory.EndPrint;
         end;
@@ -243,6 +265,16 @@ end;
 procedure TDevFactory.SetCashBox(const Value: Integer);
 begin
   FCashBox := Value;
+end;
+
+procedure TDevFactory.SetCloseDayPrinted(const Value: boolean);
+begin
+  FCloseDayPrinted := Value;
+end;
+
+procedure TDevFactory.SetCloseDayPrintFlag(const Value: integer);
+begin
+  FCloseDayPrintFlag := Value;
 end;
 
 procedure TDevFactory.SetDisplayBaudRate(const Value: Integer);
@@ -361,6 +393,11 @@ end;
 procedure TDevFactory.WritePrint(s: string);
 begin
   Writeln(F,s);
+end;
+
+procedure TDevFactory.WritePrintNoEnter(s: string);
+begin
+  Write(F,s);
 end;
 
 initialization

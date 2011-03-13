@@ -172,7 +172,7 @@ inherited frmCheckOrder: TfrmCheckOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 334
+      Top = 318
       Width = 748
       Height = 35
       TabOrder = 2
@@ -254,7 +254,7 @@ inherited frmCheckOrder: TfrmCheckOrder
     inherited DBGridEh1: TDBGridEh
       Top = 119
       Width = 748
-      Height = 215
+      Height = 199
       TabOrder = 3
       UseMultiTitle = False
       Columns = <
@@ -301,6 +301,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 29
         end
         item
+          DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'RCK_AMOUNT'
           Footers = <>
@@ -310,6 +311,7 @@ inherited frmCheckOrder: TfrmCheckOrder
         end
         item
           ButtonStyle = cbsNone
+          DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
@@ -320,6 +322,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
+          DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'PAL_AMOUNT'
           Footers = <>
@@ -383,7 +386,7 @@ inherited frmCheckOrder: TfrmCheckOrder
       Width = 748
     end
     inherited rzHelp: TRzPanel
-      Top = 369
+      Top = 353
       Width = 748
     end
   end

@@ -233,7 +233,6 @@ inherited frmCheckOrderList: TfrmCheckOrderList
               Top = 96
               Width = 847
               Height = 359
-              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -244,11 +243,12 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                   Width = 32
                 end
                 item
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'PRINT_DATE'
                   Footers = <>
-                  Title.Caption = #30424#28857#21333#21495
-                  Width = 113
+                  Title.Caption = #30424#28857#26085#26399
+                  Width = 92
                 end
                 item
                   EditButtons = <>

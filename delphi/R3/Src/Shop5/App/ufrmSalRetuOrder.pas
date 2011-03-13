@@ -183,6 +183,16 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
+    AObj.ReadFromDataSet(cdsHeader);
+    ReadFromObject(AObj,self);
+    ReadHeader;
+    ReadFrom(cdsDetail);
+    IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
+    oid := '';
+    gid := AObj.FieldbyName('GLIDE_NO').AsString;
+    cid := AObj.FieldbyName('SHOP_ID').asString;
+    dbState := dsBrowse;
+    ShowOweInfo;
 end;
 
 procedure TfrmSalRetuOrder.EditOrder;

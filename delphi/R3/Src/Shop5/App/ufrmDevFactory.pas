@@ -46,6 +46,8 @@ type
     edtTICKET_PRINT_NAME: TcxComboBox;
     Label11: TLabel;
     edtTitle: TcxTextEdit;
+    chkCloseDayPrinted: TcxCheckBox;
+    edtCloseDayPrintFlag: TcxComboBox;
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -74,12 +76,14 @@ begin
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
     cxSavePrint.Checked :=  F.ReadString('SYS_DEFINE','SAVEPRINT','0')='1';
+    chkCloseDayPrinted.Checked :=  F.ReadString('SYS_DEFINE','CLOSEDAYPRINTED','0')='1';
     edtAutoRunPos.Checked :=  F.ReadString('SYS_DEFINE','AUTORUNPOS','0')='1';
     cxNullRow.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTNULL','0'),0);
     edtTicketCopy.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','TICKETCOPY','1'),1);
     cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
+    edtCloseDayPrintFlag.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CLOSEDAYPRINTFLAG','0'),0);
     edtTicketPrintComm.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTERCOMM','1'),1);
-    if F.ReadString('SYS_DEFINE','PRINTERWIDTH','32')='38' then
+    if F.ReadString('SYS_DEFINE','PRINTERWIDTH','33')='38' then
        edtPRINTERWIDTH.ItemIndex := 1
     else
        edtPRINTERWIDTH.ItemIndex := 0;
@@ -106,10 +110,14 @@ begin
        F.WriteString('SYS_DEFINE','SAVEPRINT','1')
     else
        F.WriteString('SYS_DEFINE','SAVEPRINT','0');
-    if edtAutoRunPos.Checked then
-       F.WriteString('SYS_DEFINE','AUTORUNPOS','1')
+    if chkCloseDayPrinted.Checked then
+       F.WriteString('SYS_DEFINE','CLOSEDAYPRINTED','1')
     else
-       F.WriteString('SYS_DEFINE','AUTORUNPOS','0');
+       F.WriteString('SYS_DEFINE','CLOSEDAYPRINTED','0');
+    if cxSavePrint.Checked then
+       F.WriteString('SYS_DEFINE','SAVEPRINT','1')
+    else
+       F.WriteString('SYS_DEFINE','SAVEPRINT','0');
     F.WriteString('SYS_DEFINE','PRINTNULL',cxNullRow.Value);
     F.WriteString('SYS_DEFINE','TICKETCOPY',edtTicketCopy.Value);
     F.WriteString('SYS_DEFINE','PRINTFORMAT',Inttostr(cxPrintFormat.ItemIndex));
@@ -117,7 +125,8 @@ begin
     if edtPRINTERWIDTH.ItemIndex = 1 then
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','38')
     else
-       F.WriteString('SYS_DEFINE','PRINTERWIDTH','32');
+       F.WriteString('SYS_DEFINE','PRINTERWIDTH','33');
+    F.WriteString('SYS_DEFINE','CLOSEDAYPRINTFLAG',Inttostr(edtCloseDayPrintFlag.ItemIndex));
     F.WriteString('SYS_DEFINE','BUYERDISPLAY',Inttostr(cxDisplay.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
     F.WriteString('SYS_DEFINE','TICKET_PRINT_NAME',Inttostr(edtTICKET_PRINT_NAME.ItemIndex));

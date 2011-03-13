@@ -47,8 +47,6 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     oid: string;
     FDoCheckPrint: TOnPrintEvent;
@@ -349,27 +347,6 @@ end;
 function TfrmCheckOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('14400001',7);
-end;
-
-procedure TfrmCheckOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-var ARect:TRect; GridDs: TDataSet;
-begin
-  inherited;
-  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh1.Focused) then
-  begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
-  end;
-  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-
-  if Column.FieldName = 'SEQNO' then
-  begin
-    ARect := Rect;
-    GridDs:=DbGridEh1.DataSource.DataSet;
-    DbGridEh1.canvas.FillRect(ARect);
-    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-  end;
 end;
 
 procedure TfrmCheckOrderList.SetDoCheckPrint(const Value: TOnPrintEvent);

@@ -144,6 +144,14 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
+    AObj.ReadFromDataSet(cdsHeader);
+    ReadFromObject(AObj,self);
+    ReadFrom(cdsDetail);
+    IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
+    oid := AObj.FieldbyName('CHANGE_ID').asString;
+    gid := AObj.FieldbyName('GLIDE_NO').asString;
+    cid := AObj.FieldbyName('SHOP_ID').asString;
+    dbState := dsBrowse;
 end;
 
 procedure TfrmChangeOrder.EditOrder;

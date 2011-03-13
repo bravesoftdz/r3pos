@@ -1044,6 +1044,7 @@ begin
           SourceScale := 1;
          end;
       cdsTable.FieldByName('UNIT_ID').AsString := UNIT_ID;
+      cdsTable.FieldByName('BARCODE').AsString := EnCodeBarcode; 
       Field := cdsTable.FindField('CALC_AMOUNT');
       if Field<>nil then
          begin
@@ -2416,15 +2417,6 @@ var PWidth:integer;
       result := DataSet.FieldbyName('GODS_NAME').AsString;
     end;
   end;
-  function GetTicketTitle:string;
-  var s:string;
-  begin
-    s := StringReplace(DevFactory.Title,'[门店名称]',Global.SHOP_NAME,[rfReplaceAll]);
-    s := StringReplace(DevFactory.Title,'[企业名称]',Global.TENANT_NAME,[rfReplaceAll]);
-    s := StringReplace(DevFactory.Title,'[企业简称]',Global.SHORT_TENANT_NAME,[rfReplaceAll]);
-    if s='' then s := Global.TENANT_NAME;
-    result := s;
-  end;
 var
   i,PrintNull:Integer;
   s:string;
@@ -2452,7 +2444,7 @@ begin
     rs.SQL.Text := PrintSQL(cid,id);
     Factor.Open(rs);
     if iFlag<0 then WriteAndEnter(formatTitle('--整单删除--'));
-    WriteAndEnter(formatTitle(GetTicketTitle));
+    WriteAndEnter(formatTitle(DevFactory.Title));
     WriteAndEnter('日期:'+formatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat));
     WriteAndEnter('门店:'+rs.FieldbyName('SHOP_NAME').AsString);
     WriteAndEnter('单号:'+rs.FieldbyName('GLIDE_NO').AsString);
@@ -3083,9 +3075,9 @@ begin
        else
           begin
             if pbar.Locate('GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO',VarArrayOf([cdsTable.FieldbyName('GODS_ID').asString,cdsTable.FieldbyName('UNIT_ID').asString,cdsTable.FieldbyName('PROPERTY_01').asString,cdsTable.FieldbyName('PROPERTY_02').asString,cdsTable.FieldbyName('BATCH_NO').asString]),[]) then
-               b := basInfo.FieldbyName('BARCODE').asString
+               b := pbar.FieldbyName('BARCODE').asString
             else
-               b := '';
+               b := basInfo.FieldbyName('BARCODE').asString;
           end;
        //if (b='') and (basInfo.FieldbyName('BCODE').asString<>'') then
        //   b := GetBarCode(basInfo.FieldbyName('BCODE').asString,'#','#');

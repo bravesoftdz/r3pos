@@ -7,7 +7,7 @@ uses
   Dialogs, uframeOrderForm, DB, ActnList, Menus, StdCtrls, Buttons, cxTextEdit,
   cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit, zrComboBoxList,
   Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit, cxCalendar, zBase,
-  RzButton, ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  RzButton, ZAbstractRODataset, ZAbstractDataset, ZDataset,Math;
 
 type
   TfrmCheckOrder = class(TframeOrderForm)
@@ -61,6 +61,7 @@ type
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
     procedure UnitToCalc(UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
+    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
   public
     //检测数据合法性
     procedure CheckInvaid;override;
@@ -123,6 +124,23 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
+    AObj.ReadFromDataSet(cdsHeader);
+    ReadFromObject(AObj,self);
+    ReadFrom(cdsDetail);
+    //读取计算PrintQry；
+    GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,trim(AObj.fieldbyName('PRINT_DATE').AsString)) ;
+    if (PrintQry.Active) and (edtTable.Active) then
+    begin
+      IsCalcRecordCount:=true;
+      SetRecordCount(PrintQry.RecordCount-edtTable.RecordCount); 
+      Lbl_LinkCheckGoodMouseLeave(nil);
+    end;
+    //判断审核：
+    IsAudit :=(trim(AObj.FieldbyName('CHECK_STATUS').AsString)='3');
+    //oid := AObj.FieldbyName('PRINT_DATE').asString;
+    gid := AObj.FieldbyName('PRINT_DATE').asString;    //盘点单号
+    cid := AObj.FieldbyName('SHOP_ID').asString;
+    dbState := dsBrowse;
 end;
 
 procedure TfrmCheckOrder.EditOrder;
@@ -507,8 +525,8 @@ begin
        end
     else if Kind=2 then //输入 盈亏 计算 实盘
       Aobj.FieldByName('AMOUNT').AsFloat:=Aobj.FieldByName('RCK_AMOUNT').AsFloat-Aobj.FieldByName('PAL_AMOUNT').AsFloat;
-    Aobj.FieldByName('PAL_INAMONEY').AsFloat:=Aobj.FieldbyName('NEW_INPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat;
-    Aobj.FieldByName('PAL_OUTAMONEY').AsFloat:=Aobj.FieldbyName('NEW_OUTPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat;
+    Aobj.FieldByName('PAL_INAMONEY').AsFloat:=roundto(Aobj.FieldbyName('NEW_INPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat,-2);
+    Aobj.FieldByName('PAL_OUTAMONEY').AsFloat:=roundto(Aobj.FieldbyName('NEW_OUTPRICE').AsFloat*Aobj.FieldByName('PAL_AMOUNT').AsFloat,-2);
     Aobj.WriteToDataSet(edtTable);
   finally
     Aobj.Free;
@@ -954,6 +972,44 @@ end;
 function TfrmCheckOrder.CheckInput: boolean;
 begin
   result := pos(inttostr(InputFlag),'089')>0;
+end;
+
+function TfrmCheckOrder.CheckRepeat(AObj: TRecord_;
+  var pt: boolean): boolean;
+var
+  r,c:integer;
+begin
+  result := false;
+  r := edtTable.FieldbyName('SEQNO').AsInteger;
+  edtTable.DisableControls;
+  try
+    c := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if
+           (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (edtTable.FieldbyName('BATCH_NO').AsString = AObj.FieldbyName('BATCH_NO').AsString)
+           and
+           (edtTable.FieldbyName('SEQNO').AsInteger <> r)
+        then
+           begin
+             inc(c);
+             break;
+           end;
+        edtTable.Next;
+      end;
+    pt := false;
+    if c>0 then
+      begin
+        if gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+           result := false else result := true;
+      end;
+  finally
+    edtTable.Locate('SEQNO',r,[]);
+    edtTable.EnableControls;
+  end;
 end;
 
 end.

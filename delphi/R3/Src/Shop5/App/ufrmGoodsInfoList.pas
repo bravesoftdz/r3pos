@@ -208,7 +208,7 @@ end;
 
 function TfrmGoodsInfoList.EncodeSQL(id: string;var Cnd:string): string;
 var
-  w,vCnd,GoodTab,OperChar:string;
+  w,vCnd,GoodTab,OperChar,vLike,LikeCnd:string;
 begin
   vCnd:='';
   OperChar:=GetStrJoin(Factor.iDbType); //字符连接操作符
@@ -241,11 +241,14 @@ begin
 
   if trim(edtKey.Text)<>'' then
   begin
-    w := w+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','BARCODE'],':KEYVALUE','and');
-    vCnd:=vCnd+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','BARCODE'],':KEYVALUE','and');
+    LikeCnd:=GetLikeCnd(Factor.iDbType,'bar.BARCODE',':KEYVALUE','');
+    LikeCnd:=' and ('+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','j.BARCODE'],':KEYVALUE','')+' or (exists(select BARCODE from PUB_BARCODE bar where j.GODS_ID=bar.GODS_ID and '+LikeCnd+'))'+
+                  ')';
+    w := w+LikeCnd;
+    vCnd:=vCnd+LikeCnd;
   end;
 
-  Cnd:=vCnd;
+  Cnd:=vCnd; //返回查询记录数的条件;
   case Factor.iDbType of
   0:
   result := 'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(cast(Round((l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) as varchar)+''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+

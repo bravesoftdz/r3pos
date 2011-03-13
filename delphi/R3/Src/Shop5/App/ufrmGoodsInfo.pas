@@ -178,6 +178,8 @@ type
     procedure edtNEW_LOWPRICEExit(Sender: TObject);
     procedure edtMY_OUTPRICEExit(Sender: TObject);
     procedure edtNEW_OUTPRICEExit(Sender: TObject);
+    procedure edtMY_OUTPRICE2Exit(Sender: TObject);
+    procedure edtMY_OUTPRICE1Exit(Sender: TObject);
   private
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
@@ -192,7 +194,7 @@ type
     procedure OnGridKeyPress(Sender: TObject; var Key: Char);
     procedure EditKeyPress(Sender: TObject; var Key: Char);
     procedure AddSORT_IDClick(Sender: TObject; SortType: integer); //添加Add
-    procedure CheckGoodLowPrice(Sender: TObject; Kind: integer); //判断最低售价
+    procedure CheckGoodLowPrice(Kind: integer); //判断最低售价
     procedure CheckGoodsFieldIsEmpty; //判断商品非空属性是否为空；
     procedure CheckGoodsNameIsExist; //判断商品名称是否存在本地缓存中存在
     procedure SetZrCbxDefaultValue(SetCbx: TzrComboBoxList);  //设置默认值
@@ -423,7 +425,7 @@ end;
 
 procedure TfrmGoodsInfo.Save;
    procedure UpdateToGlobal(AObj:TRecord_);
-   var Temp:TZQuery;
+   var IsExist: Boolean; GodsID: string; Temp:TZQuery; CurObj: TRecord_;
    begin
       Temp := Global.GetZQueryFromName('PUB_GOODSINFO');
       Temp.Filtered :=false;
@@ -432,16 +434,32 @@ procedure TfrmGoodsInfo.Save;
       else
         Temp.Edit;
       AObj.WriteToDataSet(Temp,False);
-      {Temp.FieldbyName('UNIT_ID').ReadOnly := false;
-      Temp.FieldbyName('UNIT_ID').asString := AObj.FieldbyName('CALC_UNITS').asString;
-      Temp.FieldbyName('BARCODE').ReadOnly := false;
-      Temp.FieldbyName('BARCODE').asString := Trim(edtBARCODE1.Text);
-      Temp.FieldByName('PROPERTY_01').ReadOnly:=False;
-      Temp.FieldByName('PROPERTY_01').AsString:=AObj.FieldbyName('PROPERTY_01').asString;
-      Temp.FieldByName('PROPERTY_02').ReadOnly:=False;
-      Temp.FieldByName('PROPERTY_02').AsString:=AObj.FieldbyName('PROPERTY_02').asString;
-      }
       Temp.Post;
+
+      //刷新条形码
+      try
+        CurObj:=TRecord_.Create;
+        Temp := Global.GetZQueryFromName('PUB_BARCODE');
+        if Temp.Filtered then Temp.Filtered :=false;
+        Temp.CommitUpdates; //清除Change
+        //先删除该商品条码:
+        GodsID:=trim(AObj.FieldbyName('GODS_ID').AsString);
+        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',0]),[]) then Temp.Delete;
+        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',1]),[]) then Temp.Delete;
+        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',2]),[]) then Temp.Delete;
+        //循环添加:
+        BarCode.First;
+        while not BarCode.Eof do
+        begin
+          if Temp.IsEmpty then Temp.Edit else Temp.Append;
+          CurObj.ReadFromDataSet(BarCode);
+          CurObj.WriteToDataSet(Temp);
+          Temp.Post;
+          BarCode.Next;
+        end; 
+      finally
+        CurObj.Free;
+      end;
    end;
 var i,j:integer;
     CurObj: TRecord_;
@@ -662,11 +680,19 @@ begin
   edtPROFIT_RATE.Properties.ReadOnly:=true;
   uShopUtil.WriteToObject(AObj,self);
   edtPROFIT_RATE.Properties.ReadOnly:=False;
-  if StrtoFloatDef(edtNEW_OUTPRICE.Text,0)>0 then AObj.FieldByName('RTL_OUTPRICE').AsFloat:=StrtoFloat(edtNEW_OUTPRICE.Text);   //标准售价
-  if StrtoFloatDef(edtNEW_LOWPRICE.Text,0)>0 then AObj.FieldByName('NEW_LOWPRICE').AsFloat:=StrtoFloat(edtNEW_LOWPRICE.Text);   //最低售价
-  if StrtoFloatDef(edtMY_OUTPRICE.Text,0)>0  then AObj.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloat(edtMY_OUTPRICE.Text);    //本店售价
-  if StrtoFloatDef(edtMY_OUTPRICE1.Text,0)>0 then AObj.FieldByName('NEW_OUTPRICE1').AsFloat:=StrtoFloat(edtMY_OUTPRICE1.Text);
-  if StrtoFloatDef(edtMY_OUTPRICE2.Text,0)>0 then AObj.FieldByName('NEW_OUTPRICE2').AsFloat:=StrtoFloat(edtMY_OUTPRICE2.Text);
+
+  AObj.FieldByName('RTL_OUTPRICE').AsFloat:=StrtoFloatDef(edtNEW_OUTPRICE.Text,0);   //标准售价
+  AObj.FieldByName('NEW_LOWPRICE').AsFloat:=StrtoFloatDef(edtNEW_LOWPRICE.Text,0);   //最低售价
+  AObj.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloatDef(edtMY_OUTPRICE.Text,0);    //本店售价
+
+  //门店自定价:
+  AObj.FieldByName('NEW_OUTPRICE1').AsFloat:=0;  //先设为0，只有满足条件有值
+  if (StrtoFloatDef(edtMY_OUTPRICE1.Text,0)>0) and (edtSMALL_UNITS.AsString<>'') and (strtoFloatDef(edtSMALLTO_CALC.Text,0)>0)then
+    AObj.FieldByName('NEW_OUTPRICE1').AsFloat:=StrtoFloatDef(edtMY_OUTPRICE1.Text,0);
+  AObj.FieldByName('NEW_OUTPRICE2').AsFloat:=0;  //先设为0，只有满足条件有值
+  if (StrtoFloatDef(edtMY_OUTPRICE2.Text,0)>0) and (edtBIG_UNITS.AsString<>'') and (strtoFloatDef(edtBIGTO_CALC.Text,0)>0)then
+    AObj.FieldByName('NEW_OUTPRICE2').AsFloat:=StrtoFloat(edtMY_OUTPRICE2.Text);
+
   AObj.FieldByName('SHOP_ID').AsString:=Global.SHOP_ID;
   AObj.FieldbyName('USING_PRICE').AsInteger := edtUSING_PRICE.ItemIndex+1;    //会员折扣率
   AObj.FieldbyName('GODS_TYPE').AsInteger := edtGODS_TYPE.ItemIndex+1;        //库存管理选项
@@ -1043,7 +1069,13 @@ begin
   edtUSING_PRICE.Enabled:=True;
   edtUSING_BATCH_NO.Enabled:=True;
   edtHAS_INTEGRAL.Enabled:=True;
-  edtUSING_BARTER.Enabled:=True;
+  //edtUSING_BARTER[启用积分]
+  RB_NotUSING_BARTER.Enabled:=True;
+  RB_USING_BARTER.Enabled:=True;
+  edtBARTER_INTEGRAL.Enabled:=True;
+  RB_USING_BARTER2.Enabled:=True;
+  edtBARTER_INTEGRAL2.Enabled:=True;
+
   edtUSING_LOCUS_NO.Enabled:=True;
   BtnOk.Visible := (value<>dsBrowse);
   edtPROFIT_RATE.Enabled:=True;
@@ -1081,7 +1113,13 @@ begin
       edtUSING_LOCUS_NO.Enabled:=False;
       edtHAS_INTEGRAL.Enabled:=False;
       edtPROFIT_RATE.Enabled:=False;
-      edtUSING_BARTER.Enabled:=False;
+      //是否启用积分:
+      RB_NotUSING_BARTER.Enabled:=False;
+      RB_USING_BARTER.Enabled:=False;
+      edtBARTER_INTEGRAL.Enabled:=False;
+      RB_USING_BARTER2.Enabled:=False;
+      edtBARTER_INTEGRAL2.Enabled:=False;
+
       edtDefault1.Enabled:=False;
       edtDefault2.Enabled:=False;
     end;
@@ -1707,27 +1745,70 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.CheckGoodLowPrice(Sender: TObject; Kind: integer);
-var IsNewOut,IsMyNewOut: Boolean; CurEdt: TcxTextEdit; 
+//参数: Kind：1判断标准售价; 2判断门店售价; 3判断最低售价;
+procedure TfrmGoodsInfo.CheckGoodLowPrice(Kind: integer);
 begin
-  IsNewOut:=False;
-  IsMyNewOut:=False;
-  if (Kind=1) or (Kind=11) then IsNewOut:=true;
-  if (Kind=10) or (Kind=11) then IsMyNewOut:=true;
-  if Sender is TcxTextEdit then  CurEdt:=TcxTextEdit(Sender);
-  //判断: 标准售价  与  低售价
-  if (IsNewOut) and (StrToFloatDef(edtNEW_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
-  begin
-    if CurEdt.CanFocus then CurEdt.SetFocus;
-    raise Exception.Create(' 标准售价不能低于本店的最低售价！ ');
+  case Kind of
+   1:  //判断输入标准售价是判断是否 小于 最低售价;
+    begin
+      if (StrToFloatDef(edtNEW_OUTPRICE.Text,0)>=0) and (StrToFloatDef(edtNEW_LOWPRICE.Text,0)>=0) and
+         (StrToFloatDef(edtNEW_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+      begin
+        if MessageBox(Handle,' 您当前输入〖标准售价〗小于〖最低售价〗，是否重新输入？','提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+        begin
+          edtNEW_OUTPRICE.Text:='';
+          if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+        end else
+        begin
+          if edtNEW_LOWPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+        end;
+      end;
+    end;
+   2:  //判断门店售价;
+    begin
+      if (StrToFloatDef(edtMY_OUTPRICE.Text,0)>=0) and (StrToFloatDef(edtNEW_LOWPRICE.Text,0)>=0) and
+         (StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+      begin
+        if MessageBox(Handle,' 您当前输入〖本店售价〗小于〖最低售价〗，是否重新输入？','提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+        begin
+          edtMY_OUTPRICE.Text:='';
+          if edtMY_OUTPRICE.CanFocus then edtMY_OUTPRICE.SetFocus;
+        end else
+        begin
+          if edtNEW_LOWPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+        end;
+      end;
+    end;
+   3:  //判断最低售价;
+    begin
+      // [最低售价] 与 [标准售价]
+      if (StrToFloatDef(edtNEW_OUTPRICE.Text,0)>=0) and (StrToFloatDef(edtNEW_LOWPRICE.Text,0)>=0) and
+         (StrToFloatDef(edtNEW_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+      begin
+        if MessageBox(Handle,' 您当前输入〖最低售价〗大于〖标准售价〗，是否重新输入？','提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+        begin
+          edtNEW_OUTPRICE.Text:='';
+          if edtNEW_LOWPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
+        end else
+        begin
+          if edtNEW_OUTPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+        end;
+      end;
+      // [最低售价] 与 [本店售价]
+      if (StrToFloatDef(edtMY_OUTPRICE.Text,0)>=0) and (StrToFloatDef(edtNEW_LOWPRICE.Text,0)>=0) and
+         (StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
+      begin
+        if MessageBox(Handle,' 您当前输入〖最低售价〗大于 〖本店售价〗，是否重新输入？','提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+        begin
+          edtNEW_LOWPRICE.Text:='';
+          if edtNEW_LOWPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+        end else
+        begin
+          if edtMY_OUTPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+        end;
+      end;    
+    end;
   end;
-  //判断: 门店售价  与  低售价
-  if (IsMyNewOut) and (StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
-  begin
-    if CurEdt.CanFocus then CurEdt.SetFocus;
-    raise Exception.Create(' 门店售价不能低于本店的最低售价！ ');
-  end;
-
 end;
 
 procedure TfrmGoodsInfo.CheckGoodsFieldIsEmpty;
@@ -2356,12 +2437,6 @@ end;
 procedure TfrmGoodsInfo.edtMY_OUTPRICE2KeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
-  if Key=#13 then
-  begin
-    RzPage.ActivePage:=TabGoodPrice;
-    PriceGrid.SetFocus;
-    PriceGrid.Col:=2;
-  end;
   EditKeyPress(Sender,Key);
 end;
 
@@ -2464,19 +2539,62 @@ end;
 procedure TfrmGoodsInfo.edtNEW_LOWPRICEExit(Sender: TObject);
 begin
   inherited;
-  CheckGoodLowPrice(Sender,11);
+  CheckGoodLowPrice(3);
 end;
 
 procedure TfrmGoodsInfo.edtMY_OUTPRICEExit(Sender: TObject);
 begin
   inherited;
-  CheckGoodLowPrice(Sender,10);
+  CheckGoodLowPrice(2);
 end;
 
 procedure TfrmGoodsInfo.edtNEW_OUTPRICEExit(Sender: TObject);
 begin
   inherited;
-  CheckGoodLowPrice(Sender,1);
+  CheckGoodLowPrice(1);
+end;
+
+procedure TfrmGoodsInfo.edtMY_OUTPRICE2Exit(Sender: TObject);
+begin
+  inherited;
+  if not ((edtBIG_UNITS.AsString<>'') and (StrtoFloatDef(edtBIGTO_CALC.Text,0)>0)) then //不满足才提示
+  begin
+    if StrtoFloatDef(edtMY_OUTPRICE2.Text,0)>0 then
+    begin
+      edtMY_OUTPRICE2.Text:='';
+      if trim(edtBIG_UNITS.Text)='' then
+      begin
+        edtBIG_UNITS.SetFocus;
+        Raise Exception.Create('  请输入大单位！ ');
+      end else
+      begin
+        edtBIGTO_CALC.SetFocus;
+        Raise Exception.Create('  请输入大单位的换算比例！ ');
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmGoodsInfo.edtMY_OUTPRICE1Exit(Sender: TObject);
+begin
+  inherited;
+  if not ((edtSMALL_UNITS.AsString<>'') and (StrtoFloatDef(edtSMALLTO_CALC.Text,0)>0)) then //不满足才提示
+  begin
+    if StrtoFloatDef(edtMY_OUTPRICE1.Text,0)>0 then
+    begin
+      edtMY_OUTPRICE1.Text:='';
+      if trim(edtSMALL_UNITS.AsString)='' then
+      begin
+        edtSMALL_UNITS.SetFocus;
+        Raise Exception.Create('  请输入小单位！ ');
+      end else
+      begin
+        edtSMALLTO_CALC.SetFocus;
+        Raise Exception.Create('  请输入小单位的换算比例！ ');
+      end;
+    end;
+  end;
+
 end;
 
 end.

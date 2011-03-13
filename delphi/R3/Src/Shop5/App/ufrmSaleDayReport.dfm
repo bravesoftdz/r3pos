@@ -15,10 +15,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 513
-        ActivePage = TabSheet3
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -292,6 +292,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -308,6 +310,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -316,6 +320,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -324,6 +330,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -332,6 +340,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -340,6 +350,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -700,6 +712,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -716,6 +730,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -724,6 +740,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -732,6 +750,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -740,6 +760,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -748,6 +770,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -1094,6 +1118,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -1110,6 +1136,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -1118,6 +1146,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -1126,6 +1156,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1134,6 +1166,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -1142,6 +1176,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -1557,6 +1593,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -1573,6 +1611,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -1581,6 +1621,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -1589,6 +1631,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1597,6 +1641,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -1605,6 +1651,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -2083,6 +2131,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
@@ -2099,6 +2149,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#39069
                       Width = 76
@@ -2107,6 +2159,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'NOTAX_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #19981#21547#31246#37329#39069
                       Width = 73
@@ -2115,6 +2169,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TAX_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 66
@@ -2129,6 +2185,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     item
                       EditButtons = <>
                       FieldName = 'AGIO_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 68
@@ -2137,6 +2195,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 69
@@ -2145,6 +2205,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 68

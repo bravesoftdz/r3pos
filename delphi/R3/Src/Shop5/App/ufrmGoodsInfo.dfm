@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 2
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -306,6 +304,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 100
               Height = 20
               TabOrder = 4
+              OnExit = edtMY_OUTPRICE1Exit
               OnKeyPress = edtMY_OUTPRICE1KeyPress
             end
             object edtDefault1: TcxCheckBox
@@ -452,6 +451,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 100
               Height = 20
               TabOrder = 4
+              OnExit = edtMY_OUTPRICE2Exit
               OnKeyPress = edtMY_OUTPRICE2KeyPress
             end
             object edtDefault2: TcxCheckBox

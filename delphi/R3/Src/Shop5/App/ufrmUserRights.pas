@@ -45,6 +45,7 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DbGridEh1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     User_ID:string;
     User_NAME:string;
@@ -348,6 +349,13 @@ begin
   finally
     freeandnil(FrmObj);
   end;
+end;
+
+procedure TfrmUserRights.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  RzPage.OnChange:=nil;
 end;
 
 end.

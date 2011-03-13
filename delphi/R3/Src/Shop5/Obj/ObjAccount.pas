@@ -29,15 +29,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('IN_MNY').AsFloat <> 0) then
-      begin
-        rs.Close;
-        rs.SQL.Text := 'select MONTH from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
-        rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
-        rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
-        AGlobal.Open(rs);
-        if (rs.Fields[0].AsString <> '') then
-          Raise Exception.Create('此账户金额有变动,不能删除!');
-      end;
+        Raise Exception.Create('此账户金额有变动,不能删除!');
   finally
     rs.Free;
   end;
@@ -50,6 +42,8 @@ begin
   Result := False;
   rs := TZQuery.Create(nil);
   try
+    //检测是否重名
+    rs.Close;
     rs.SQL.Text := 'select ACCT_NAME from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('ACCT_NAME').AsString := FieldByName('ACCT_NAME').AsString;
@@ -57,6 +51,17 @@ begin
     AGlobal.Open(rs);
     if rs.FieldByName('ACCT_NAME').AsString <> '' then
       Raise Exception.Create('此账户名已经存在,请重新输入..');
+    //检测有结账，期初余额只能为0
+    if FieldbyName('ORG_MNY').AsFloat<>0 then
+       begin
+         rs.Close;
+         rs.SQL.Text := 'select max(MONTH) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID ';
+         rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录时期初金额只能是0...');
+       end;
+
+      
   finally
     rs.Free;
   end;
@@ -64,29 +69,42 @@ begin
 end;
 
 function TAccount.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-var rs,rs1:TZQuery;
+var rs:TZQuery;
 begin
   Result := False;
   rs := TZQuery.Create(nil);
-  rs1 := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select OUT_MNY,IN_MNY from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
-    rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
-    rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
-    rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
-    rs1.SQL.Text := 'select MONTH from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
-    rs1.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
-    rs1.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
+    //检测是否重名
+    rs.Close;
+    rs.SQL.Text := 'select ACCT_NAME from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and ACCT_NAME=:ACCT_NAME and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and ACCOUNT_ID<>:OLD_ACCOUNT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('ACCT_NAME').AsString := FieldByName('ACCT_NAME').AsString;
+    rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
+    rs.ParamByName('OLD_ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     AGlobal.Open(rs);
-    AGlobal.Open(rs1);
-    if ((rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs1.Fields[0].AsString <> ''))
-      and
-       (FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat)
-     then
-      Raise Exception.Create('已经存在结账记录不能修改期初金额...');
+    if rs.FieldByName('ACCT_NAME').AsString <> '' then  Raise Exception.Create('此账户名已经存在,请重新输入..');
+
+    //检测是否启用
+    rs.Close;
+    rs.SQL.Text := 'select OUT_MNY,IN_MNY from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID and SHOP_ID=:OLD_SHOP_ID';
+    rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
+    rs.ParamByName('OLD_ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
+    rs.ParamByName('OLD_SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
+    AGlobal.Open(rs);
+    if (rs.FieldByName('OUT_MNY').AsFloat <> 0) or (rs.FieldByName('OUT_MNY').AsFloat <> 0) then
+       Raise Exception.Create('已经存在结账记录不能修改期初金额...');
+
+    //检测余额变成
+    if FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat then
+       begin
+         rs.Close;
+         rs.SQL.Text := 'select max(MONTH) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID ';
+         rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录不能修改期初金额...');
+       end;
   finally
-    rs.Free;
-    rs1.Free;
+    rs.Free;   
   end;
 
 end;

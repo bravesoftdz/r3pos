@@ -225,7 +225,7 @@ inherited frmPriceOrder: TfrmPriceOrder
     inherited DBGridEh1: TDBGridEh
       Top = 122
       Width = 813
-      Height = 320
+      Height = 302
       TabOrder = 3
       Columns = <
         item
@@ -359,8 +359,9 @@ inherited frmPriceOrder: TfrmPriceOrder
       Width = 813
     end
     inherited rzHelp: TRzPanel
-      Top = 442
+      Top = 424
       Width = 813
+      Height = 50
     end
     inherited fndUNIT_ID: TcxComboBox
       Left = 232

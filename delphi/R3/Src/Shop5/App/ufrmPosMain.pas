@@ -184,14 +184,14 @@ type
     //保留小数位
     Deci:integer;
     //结算金额
-    TotalFee:real;
-    TotalAmt:real;
+    TotalFee:Currency;
+    TotalAmt:Currency;
     //默认发票类型
     DefInvFlag:integer;
     //普通税率
-    RtlRate2:real;
+    RtlRate2:Currency;
     //增值税率
-    RtlRate3:real;
+    RtlRate3:Currency;
 
     // 散装条码参数
     BulkiFlag:string;
@@ -204,7 +204,7 @@ type
     Bulk2Dec:integer;
 
     //最低折扣率
-    agioLower:real;
+    agioLower:Currency;
     //赠品处理,
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
@@ -235,6 +235,9 @@ type
     procedure ReturnGods;
     //调价
     procedure OpenDialogPrice;
+
+    procedure CheckInvaid;
+
     //输入跟踪号
     function GodsToLocusNo(id:string):boolean;
     //输入批号
@@ -249,14 +252,14 @@ type
     procedure PopupMenu;
 
     function EnCodeBarcode:string;
-    procedure DoPrintTicket(cid,id:string;iFlag:integer=0;cash:real=0;dibs:real=0);
+    procedure DoPrintTicket(cid,id:string;iFlag:integer=0;cash:Currency=0;dibs:Currency=0);
     //0 找到了 1重复 2没找到
     function DecodeBarcode(BarCode: string):integer;
     procedure AddRecord(AObj: TRecord_; UNIT_ID,P1,P2: string;IsPresent:boolean=false);
     procedure DelRecord(AObj:TRecord_);
 
-    procedure WriteAmount(Amt:real;Appended:boolean=false);
-    procedure BulkAmount(Amt,Pri,mny:real;Appended:boolean=false);
+    procedure WriteAmount(Amt:Currency;Appended:boolean=false);
+    procedure BulkAmount(Amt,Pri,mny:Currency;Appended:boolean=false);
 
     procedure NewOrder;
     procedure EditOrder;
@@ -266,12 +269,12 @@ type
     procedure CancelOrder;
     procedure Open(id:string);
 
-    function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
+    function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):Currency;
 
-    procedure AmountToCalc(Amount:Real);
-    procedure PriceToCalc(APrice:Real);
-    procedure AMoneyToCalc(AMoney:Real);
-    procedure AgioToCalc(Agio:Real);
+    procedure AmountToCalc(Amount:Currency);
+    procedure PriceToCalc(APrice:Currency);
+    procedure AMoneyToCalc(AMoney:Currency);
+    procedure AgioToCalc(Agio:Currency);
     procedure PresentToCalc(Present:integer);
     procedure UnitToCalc(UNIT_ID:string);
     procedure InitPrice(GODS_ID,UNIT_ID:string;CalcAll:boolean=false);
@@ -335,7 +338,7 @@ begin
     F.Free;
   end;
   ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600);
-  SetBounds(Screen.WorkAreaLeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
+  SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   rzinfo1.Width := RzPanel2.ClientWidth div 2 -10;
   
   RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
@@ -623,8 +626,8 @@ begin
   FInputFlag := Value;
 end;
 
-procedure TfrmPosMain.AgioToCalc(Agio: Real);
-var Agio_Rate:Real;
+procedure TfrmPosMain.AgioToCalc(Agio: Currency);
+var Agio_Rate:Currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -650,8 +653,8 @@ begin
   end;
 end;
 
-procedure TfrmPosMain.AMoneyToCalc(AMoney: Real);
-var AMount,APrice,Agio_Rate,Agio_Money:Real;
+procedure TfrmPosMain.AMoneyToCalc(AMoney: Currency);
+var AMount,APrice,Agio_Rate,Agio_Money:Currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -720,10 +723,10 @@ begin
   end;
 end;
 
-procedure TfrmPosMain.AmountToCalc(Amount: Real);
+procedure TfrmPosMain.AmountToCalc(Amount: Currency);
 var
   rs:TZQuery;
-  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Real;
+  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Currency;
   Field:TField;
 begin
   if Locked then Exit;
@@ -939,8 +942,8 @@ begin
   cdsTable.Edit;
 end;
 
-procedure TfrmPosMain.PriceToCalc(APrice: Real);
-var AMount,AMoney,Agio_Rate,Agio_Money:Real;
+procedure TfrmPosMain.PriceToCalc(APrice: Currency);
+var AMount,AMoney,Agio_Rate,Agio_Money:Currency;
     Field:TField;
 begin
   if Locked then Exit;
@@ -1007,7 +1010,7 @@ begin
 end;
 
 procedure TfrmPosMain.UnitToCalc(UNIT_ID: string);
-var AMount,SourceScale:Real;
+var AMount,SourceScale:Currency;
     Field:TField;
     rs:TZQuery;
     u:integer;
@@ -1218,11 +1221,6 @@ begin
        if (dbState = dsBrowse) then Exit;
        ConvertUnit;
      end;
-  if (Shift = []) and(Key = VK_INSERT) then
-     begin
-       if (dbState = dsBrowse) then Exit;
-       DeleteOrder;
-     end;
   if (Shift = []) and(Key = VK_F4) then
      begin
        if (dbState = dsBrowse) then Exit;
@@ -1262,7 +1260,7 @@ procedure TfrmPosMain.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
   s:string;
   IsNumber,IsFind,isAdd:Boolean;
-  amt:Real;
+  amt:Currency;
   AObj:TRecord_;
 begin
   inherited;
@@ -1359,11 +1357,6 @@ begin
            Exit;
          end;
       IsNumber := false;
-      if s[1]='+' then
-         begin
-           Delete(s,1,1);
-           isAdd := true;
-         end;
       if s[1]='=' then
          begin
            isAdd := false;
@@ -1435,7 +1428,7 @@ procedure TfrmPosMain.AgioInfo(id: string);
 var
   Field:TField;
   s:string;
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -1481,7 +1474,7 @@ procedure TfrmPosMain.AgioToGods(id: string;vss:boolean=false);
 var
   Field:TField;
   s:string;
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -1527,7 +1520,7 @@ end;
 
 procedure TfrmPosMain.PriceToGods(id: string);
 var
-  r,op:real;
+  r,op:Currency;
   s:string;
   Field:TField;
 begin
@@ -1571,7 +1564,7 @@ begin
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
         'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
         ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
@@ -1638,7 +1631,7 @@ begin
   end;
 end;
 
-procedure TfrmPosMain.BulkAmount(Amt, Pri, mny: real; Appended: boolean);
+procedure TfrmPosMain.BulkAmount(Amt, Pri, mny: Currency; Appended: boolean);
 begin
    if PropertyEnabled then Raise Exception.Create(XDictFactory.GetMsgString('frame.NoSupportPropertyEnabled','散装商品不支持带颜色及尺码属性的商品...'));
    if Pri<>0 then
@@ -1687,9 +1680,9 @@ var
   AObj:TRecord_;
   r,bulk:Boolean;
   uid:string;
-  amt:real;
-  mny:real;
-  Pri:real;
+  amt:Currency;
+  mny:Currency;
+  Pri:Currency;
 begin
   result := 2;
   if BarCode='' then Exit;
@@ -1850,7 +1843,7 @@ begin
     end;
 end;
 
-procedure TfrmPosMain.WriteAmount(Amt: real; Appended: boolean);
+procedure TfrmPosMain.WriteAmount(Amt: Currency; Appended: boolean);
 var b:boolean;
 begin
   b := PropertyEnabled;
@@ -1881,8 +1874,12 @@ end;
 
 procedure TfrmPosMain.DeleteOrder;
 begin
-  if dbState = dsBrowse then Exit;
-  if cdsTable.IsEmpty then Raise Exception.Create('已经是一张空单，不能再执行新单操作');
+  if dbState = dsBrowse then
+     begin
+       NewOrder;
+       Exit;
+     end;
+  if cdsTable.IsEmpty then Raise Exception.Create('已经是一张空单，不能再执行清屏操作');
   if MessageBox(Handle,'是否删除当前未结帐单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then Exit;
   NewOrder;
 end;
@@ -1976,6 +1973,9 @@ begin
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
 
   Check;
+
+  CheckInvaid;
+  
   Calc;
   Printed := DevFactory.SavePrint;
   //结算对话框
@@ -2021,13 +2021,13 @@ end;
 procedure TfrmPosMain.Calc;
 var
   r:integer;
-  mny1:real;
-  ago1:real;
-  mny:real;
-  ago:real;
-  prf:real;
+  mny1:Currency;
+  ago1:Currency;
+  mny:Currency;
+  ago:Currency;
+  prf:Currency;
   t:integer;
-  amt:integer;
+  amt:Currency;
   integral:integer;
   ps:TZQuery;
 begin
@@ -2035,7 +2035,7 @@ begin
   if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
      begin
        t := ps.FieldbyName('INTE_TYPE').AsInteger;
-       amt := ps.FieldbyName('INTE_AMOUNT').AsInteger;
+       amt := ps.FieldbyName('INTE_AMOUNT').asFloat;
      end
   else
      begin
@@ -2075,9 +2075,9 @@ begin
   if (amt<>0) and (dbState<>dsBrowse) then
      begin
        case t of
-       1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee) div amt;
-       2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf) div amt;
-       3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt) div amt;
+       1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
+       2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf / amt);
+       3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
        end;
        edtINTEGRAL.Text := AObj.FieldbyName('INTEGRAL').asString;
      end;
@@ -2205,12 +2205,7 @@ end;
 procedure TfrmPosMain.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
-     begin
-       Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
-     end;
-  NewOrder;
+  DeleteOrder
 end;
 
 procedure TfrmPosMain.actDeleteExecute(Sender: TObject);
@@ -2321,7 +2316,7 @@ begin
 end;
 
 procedure TfrmPosMain.DoPrintTicket(cid, id: string; iFlag: integer; cash,
-  dibs: real);
+  dibs: Currency);
 var PWidth:integer;
   procedure WriteAndEnter(var F:TextFile;s:string;Len:Integer=0);
     begin
@@ -2430,7 +2425,7 @@ var PWidth:integer;
 var
   i,PrintNull:Integer;
   s:string;
-  total:real;
+  total:Currency;
   rs:TZQuery;
   ls:TStringList;
 begin
@@ -2645,7 +2640,7 @@ end;
 
 procedure TfrmPosMain.ShowHeader(flag:integer=0);
 var slbl:string;
-procedure ShowPay(flag:integer;value:real;lbl:string);
+procedure ShowPay(flag:integer;value:Currency;lbl:string);
 begin
  case flag of
  1:begin
@@ -2954,7 +2949,7 @@ end;
 
 procedure TfrmPosMain.OpenDialogPrice;
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
 begin
@@ -2980,7 +2975,7 @@ end;
 
 procedure TfrmPosMain.PresentToGods;
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -3102,7 +3097,7 @@ end;
 
 procedure TfrmPosMain.ReturnGods;
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
 begin
@@ -3125,7 +3120,7 @@ begin
 end;
 
 function TfrmPosMain.GetCostPrice(SHOP_ID, GODS_ID,
-  BATCH_NO: string): real;
+  BATCH_NO: string): Currency;
 var
   rs:TZQuery;
   bs:TZQuery;
@@ -3200,7 +3195,7 @@ begin
   try
     rs.SQL.Text :=
       'select j.* from ('+
-      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.LOCUS_NO='''+id+''' ) j';
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,A.AMOUNT,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' and A.LOCUS_NO='''+id+''' ) j';
     Factor.Open(rs);
     if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
     if rs.RecordCount > 1 then
@@ -3220,6 +3215,7 @@ begin
      begin
         inc(RowID);
         cdsTable.Append;
+        cdsTable.FieldbyName('SEQNO').asInteger := RowID;
         cdsTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
         cdsTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
         cdsTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
@@ -3233,7 +3229,7 @@ begin
         cdsTable.FieldbyName('PROPERTY_02').AsString := '#';
         InitPrice(AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('UNIT_ID').AsString);
      end else Raise Exception.Create('当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id);
-     WriteAmount(1,true);
+     WriteAmount(AObj.FieldbyName('AMOUNT').asFloat,true);
      result := false;
   finally
     AObj.Free;
@@ -3254,6 +3250,30 @@ begin
   9:PickUp;
   else
     Raise Exception.Create('暂时不支持此项功能...'); 
+  end;
+end;
+
+procedure TfrmPosMain.CheckInvaid;
+var
+  bs:TZQuery;
+  r:integer;
+begin
+  if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  r := cdsTable.RecNo;
+  cdsTable.DisableControls;
+  try
+    cdsTable.First;
+    while not cdsTable.eof do
+      begin
+        if not bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
+        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (cdsTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
+        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (cdsTable.FieldbyName('LOCUS_NO').AsString='') then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品物流跟踪号。');
+        cdsTable.Next;
+      end;
+    if r>0 then cdsTable.RecNo := r;
+  finally
+    cdsTable.EnableControls;
   end;
 end;
 

@@ -1,6 +1,6 @@
 inherited frmSalIndentOrderList: TfrmSalIndentOrderList
-  Left = 276
-  Top = 187
+  Left = 272
+  Top = 97
   Width = 836
   Height = 607
   Caption = #38144#21806#35746#21333
@@ -18,7 +18,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
         Height = 523
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #38144#21806#21333#26597#35810
+          Caption = #38144#21806#35746#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 802
             Height = 496

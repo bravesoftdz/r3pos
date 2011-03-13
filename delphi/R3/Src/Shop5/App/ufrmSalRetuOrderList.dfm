@@ -18,7 +18,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
         Height = 523
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #36864#36135#21333#26597#35810
+          Caption = #38144#21806#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 802
             Height = 496

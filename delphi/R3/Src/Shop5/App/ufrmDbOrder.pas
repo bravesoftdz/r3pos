@@ -7,7 +7,7 @@ uses
   Dialogs, uframeOrderForm, DB, ActnList, Menus, StdCtrls, Buttons,
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit,
-  cxCalendar, ZBase,cxSpinEdit, RzButton, cxListBox,
+  cxCalendar, ZBase,cxSpinEdit, RzButton, cxListBox,math,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, DBClient;
 const
   WM_PRESENT_MSG=WM_USER+4;
@@ -73,6 +73,8 @@ type
     { Public declarations }
     //结算金额
     TotalFee:real;
+    //成本金额
+    StockFee:real;
     //结算数量
     TotalAmt:real;
     //默认发票类型
@@ -301,6 +303,8 @@ begin
   Calc;
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
+  AObj.FieldByName('STOCK_MNY').AsFloat := StockFee;
+
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
   AObj.FieldByName('PAY_ZERO').AsFloat := 0;
   AObj.FieldByName('PAY_DIBS').AsFloat := 0;
@@ -398,9 +402,11 @@ begin
     r := edtTable.FieldbyName('SEQNO').AsInteger;
     TotalFee := 0;
     TotalAmt := 0;
+    StockFee := 0;
     edtTable.First;
     while not edtTable.Eof do
       begin
+        StockFee := StockFee + roundto(edtTable.FieldbyName('CALC_AMOUNT').AsFloat*edtTable.FieldbyName('COST_PRICE').AsFloat,-2);
         TotalFee := TotalFee + edtTable.FieldbyName('CALC_MONEY').AsFloat;
         TotalAmt := TotalAmt + edtTable.FieldbyName('AMOUNT').AsFloat;
         edtTable.Next;

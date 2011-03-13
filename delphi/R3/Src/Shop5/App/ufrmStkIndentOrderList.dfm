@@ -18,7 +18,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
         Height = 528
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #35746#36135#21333#26597#35810
+          Caption = #36827#36135#35746#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 834
             Height = 501

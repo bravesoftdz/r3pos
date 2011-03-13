@@ -106,15 +106,15 @@ type
   public
     { Public declarations }
     //结算金额
-    TotalFee:real;
+    TotalFee:Currency;
     //结算数量
-    TotalAmt:real;
+    TotalAmt:Currency;
     //默认发票类型
     DefInvFlag:integer;
     //普通税率
-    RtlRate2:real;
+    RtlRate2:Currency;
     //增值税率
-    RtlRate3:real;
+    RtlRate3:Currency;
     //赠品处理,
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
@@ -433,7 +433,7 @@ end;
 
 procedure TfrmSalesOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:Real;
+var r:Currency;
 begin
   if edtTable.FieldbyName('GODS_ID').AsString = '' then
      begin
@@ -468,7 +468,7 @@ end;
 procedure TfrmSalesOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r,op:real;
+  r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -518,7 +518,7 @@ end;
 procedure TfrmSalesOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r,op:real;
+  r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -563,7 +563,7 @@ end;
 procedure TfrmSalesOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -617,11 +617,11 @@ end;
 procedure TfrmSalesOrder.Calc;
 var
   r:integer;
-  mny:real;
-  ago:real;
-  prf:real;
+  mny:Currency;
+  ago:Currency;
+  prf:Currency;
   t:integer;
-  amt:integer;
+  amt:Currency;
   integral:integer;
   ps:TZQuery;
 begin
@@ -629,7 +629,7 @@ begin
   if ps.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
      begin
        t := ps.FieldbyName('INTE_TYPE').AsInteger;
-       amt := ps.FieldbyName('INTE_AMOUNT').AsInteger;
+       amt := ps.FieldbyName('INTE_AMOUNT').AsFloat;
      end
   else
      begin
@@ -664,9 +664,9 @@ begin
   if (amt<>0) and (dbState<>dsBrowse) then
      begin
        case t of
-       1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee) div amt;
-       2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf) div amt;
-       3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt) div amt;
+       1:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalFee / amt);
+       2:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(prf / amt);
+       3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
        end;
      end;
 //  edtCALC_MONEY.Text := formatFloat('#0.0##',TotalFee);
@@ -866,7 +866,7 @@ begin
       rs.SQL.Text :=
         'select j.*,c.UNION_NAME from ('+
         'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INVOICE_FLAG,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+        'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
         ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
@@ -945,7 +945,7 @@ end;
 
 procedure TfrmSalesOrder.AgioToGods(id: string);
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -970,7 +970,7 @@ end;
 
 procedure TfrmSalesOrder.PriceToGods(id: string);
 var
-  r,op:real;
+  r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -1006,7 +1006,7 @@ end;
 
 procedure TfrmSalesOrder.PresentToGods;
 var
-  r:real;
+  r:Currency;
   Params:TLoginParam;
   allow :boolean;
   rs,us:TZQuery;
@@ -1093,7 +1093,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
     Factor.Open(rs);
-    if not rs.IsEmpty then
+    if rs.FieldbyName('AMOUNT').asString<>'' then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
             fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)

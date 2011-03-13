@@ -265,9 +265,9 @@ begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      '(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,CALC_MONEY+AGIO_MONEY as STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+') ';
   end;
- 
+
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+

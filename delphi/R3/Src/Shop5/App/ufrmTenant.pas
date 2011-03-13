@@ -85,7 +85,7 @@ type
     class function coRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
     procedure Save;
-    procedure Open;
+    procedure Open(id:integer);
   end;
 
 implementation
@@ -205,8 +205,9 @@ begin
        MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
-  Open;
-  IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
+  Open(Tenant.TENANT_ID);
+//兄弟不能有这句，晕呼  zhangsenrong 修改
+//  IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
     begin
       CdsTable.Edit;
       CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
@@ -235,8 +236,11 @@ begin
     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
-  TENANT_ID := Tenant.TENANT_ID;
-  SaveParams;
+  if TENANT_ID=0 then
+     begin
+       TENANT_ID := Tenant.TENANT_ID;
+       SaveParams;
+     end;
   ModalResult := mrok;
 end;
 
@@ -245,7 +249,7 @@ begin
   inherited;
   if Global.TENANT_ID>0 then Raise Exception.Create('当前账套已经注册企业了，不能注册新的企业，请输入原企业登录名及密码进行认证');
   RzPage.ActivePageIndex := 1;
-  Open;
+  Open(TENANT_ID);
   if edtLOGIN_NAME.CanFocus then edtLOGIN_NAME.SetFocus;
 end;
 
@@ -299,12 +303,12 @@ begin
   ModalResult := mrok;
 end;
 
-procedure TfrmTenant.Open;
+procedure TfrmTenant.Open(id:integer);
 var Params:TftParamList;
 begin
   Params := TftParamList.Create;
   try
-     Params.ParamByName('TENANT_ID').AsInteger := TENANT_ID;
+     Params.ParamByName('TENANT_ID').AsInteger := id;
      Factor.Open(CdsTable,'TTenant',Params);
   finally
     Params.Free;
@@ -405,7 +409,6 @@ end;
 procedure TfrmTenant.SaveParams;
 var dbFactory:TdbFactory;
 begin
-   if Factor.iDbType = 5 then Exit;
    dbFactory := TdbFactory.Create;
    try
      dbFactory.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'data\R3.db');

@@ -1352,6 +1352,7 @@ inherited frmPosMain: TfrmPosMain
   object cdsTable: TZQuery
     FieldDefs = <>
     CachedUpdates = True
+    AfterPost = cdsTableAfterPost
     Params = <>
     Left = 144
     Top = 218

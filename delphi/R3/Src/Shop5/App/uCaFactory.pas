@@ -212,12 +212,24 @@ begin
   try
     h := SendHeader(rio,2);
     try
-    doc := CreateXML(
-                 Decode(
-                    GetCaTenantWebServiceImpl(true,URL,rio).getTenantInfo(Encode(inxml,sslpwd))
-                    ,sslpwd
-                 )
-           );
+      try
+        doc := CreateXML(
+                     Decode(
+                        GetCaTenantWebServiceImpl(true,URL,rio).getTenantInfo(Encode(inxml,sslpwd))
+                        ,sslpwd
+                     )
+               );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
     finally
       h.Free;
     end;
@@ -282,12 +294,24 @@ begin
   try
     h := SendHeader(rio,1);
     try
-    doc := CreateXML(
-                 Decode(
-                    GetCaTenantWebServiceImpl(true,URL,rio).login(Encode(inxml,pubpwd))
-                    ,pubpwd
-                 )
-           );
+      try
+      doc := CreateXML(
+                   Decode(
+                      GetCaTenantWebServiceImpl(true,URL,rio).login(Encode(inxml,pubpwd))
+                      ,pubpwd
+                   )
+             );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
     finally
       h.Free;
     end;
@@ -418,12 +442,24 @@ begin
   try
     h := SendHeader(rio,1);
     try
-    doc := CreateXML(
-                 Decode(
-                    GetCaTenantWebServiceImpl(true,URL,rio).register(Encode(inxml,pubpwd))
-                    ,pubpwd
-                 )
-           );
+      try
+        doc := CreateXML(
+                     Decode(
+                        GetCaTenantWebServiceImpl(true,URL,rio).register(Encode(inxml,pubpwd))
+                        ,pubpwd
+                     )
+               );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
     finally
       h.Free;
     end;

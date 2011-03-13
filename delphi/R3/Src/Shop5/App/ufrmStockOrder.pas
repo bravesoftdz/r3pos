@@ -789,7 +789,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
     Factor.Open(rs);
-    if not rs.IsEmpty then
+    if rs.FieldbyName('AMOUNT').asString<>'' then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
             fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
@@ -923,7 +923,7 @@ function TfrmStockOrder.GodsToLocusNo(id: string): boolean;
 var
   rs,bs:TZQuery;
   AObj:TRecord_;
-  pt:integer;
+  pt,sq:integer;
   r:boolean;
 begin
   if edtTable.FieldByName('GODS_ID').AsString = '' then
@@ -956,10 +956,11 @@ begin
         if AObj.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('请输入商品后再输入物流跟踪码...');
         if (edtTable.FieldbyName('LOCUS_NO').AsString<>'') then
         begin
-          inc(RowID);
           if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
           edtTable.Edit else InitRecord;
+          sq := edtTable.FieldbyName('SEQNO').asInteger;
           AObj.WriteToDataSet(edtTable);
+          edtTable.FieldbyName('SEQNO').asInteger := sq;
         end
         else
           edtTable.Edit;

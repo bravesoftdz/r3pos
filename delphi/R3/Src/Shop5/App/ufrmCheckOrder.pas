@@ -61,6 +61,11 @@ type
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
     procedure UnitToCalc(UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
+
+    //输入跟踪号
+    function GodsToLocusNo(id:string):boolean;override;
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;override;
   public
     //检测数据合法性
     procedure CheckInvaid;override;
@@ -1082,6 +1087,16 @@ end;
 function TfrmCheckOrder.CheckInput: boolean;
 begin
   result := pos(inttostr(InputFlag),'089')>0;
+end;
+
+function TfrmCheckOrder.GodsToBatchNo(id: string): boolean;
+begin
+
+end;
+
+function TfrmCheckOrder.GodsToLocusNo(id: string): boolean;
+begin
+
 end;
 
 end.

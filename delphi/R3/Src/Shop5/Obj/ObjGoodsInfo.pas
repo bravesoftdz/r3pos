@@ -3,7 +3,7 @@ unit ObjGoodsInfo;
 interface
 
 uses
-  SysUtils, zBase, Classes, AdoDb, ZIntf, ObjCommon, ZDataset,uDsUtil;
+  SysUtils, zBase, Classes, AdoDb, ZIntf, ObjCommon, ZDataset;
 
 type
   {== 商品资料 ==}

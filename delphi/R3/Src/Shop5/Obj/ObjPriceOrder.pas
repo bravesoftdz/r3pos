@@ -124,14 +124,9 @@ begin
     +' CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,COMM=' + GetCommStr(iDbType)+','
     +' TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID ';
   UpdateSQL.Add(Str);
-  case iDbType of
-   1: Str:='delete PRC_PRICEORDER where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID ';
-   0,4,5:
-      Str:='delete from PRC_PRICEORDER where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID ';
-  end;
+  Str:='delete from SAL_PRICEORDER where TENANT_ID=:OLD_TENANT_ID and PROM_ID=:OLD_PROM_ID ';
   DeleteSQL.Add(Str);
 end;
-
 
 
 { TPriceData }

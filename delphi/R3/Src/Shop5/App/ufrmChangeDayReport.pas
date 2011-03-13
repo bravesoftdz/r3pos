@@ -230,10 +230,24 @@ begin
   vBegDate:=0;
   vEndDate:=0;
   RckMaxDate:=0;
-
   if P1_D1.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
+  //查询主数据:
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
+  if (vBegDate>0) and (vBegDate=vEndDate) then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE='+InttoStr(vBegDate);
+    strWhere:=strWhere+' and A.CREA_DATE='+inttoStr(vBegDate)+' ';
+  end else if vBegDate<vEndDate then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE>='+InttoStr(vBegDate)+' and CHANGE_DATE<='+InttoStr(vEndDate)+' ';
+    strWhere:=strWhere+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';  
+  end;
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -264,26 +278,20 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
-  if (vBegDate>0) and (vBegDate=vEndDate) then
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
-  else if vBegDate<vEndDate then
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
-    SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='RCK_GOODS_DAYS'
+    // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select '+RCKFields+' from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      '(select '+VIWFields+' from VIW_CHANGEDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ')';
   end;
 
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
@@ -364,6 +372,22 @@ begin
   if P2_D2.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P2_D1.Date>P2_D2.Date  then  Raise Exception.Create('结束日期不能小于开始日期...');
 
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
+  //查询主数据:
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
+  if (vBegDate>0) and (vBegDate=vEndDate) then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE='+InttoStr(vBegDate);
+    strWhere:=strWhere+' and A.CREA_DATE='+inttoStr(vBegDate)+' ';
+  end else if vBegDate<vEndDate then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE>='+InttoStr(vBegDate)+' and CHANGE_DATE<='+InttoStr(vEndDate)+' ';
+    strWhere:=strWhere+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';  
+  end;
+    
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
     begin
@@ -393,26 +417,20 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';    
 
-  //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
-  if (vBegDate>0) and (vBegDate=vEndDate) then
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
-  else if vBegDate<vEndDate then
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
-    SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='RCK_GOODS_DAYS'
+    // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select '+RCKFields+' from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      '(select '+VIWFields+' from VIW_CHANGEDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ')';
   end;
 
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
@@ -447,6 +465,28 @@ begin
   if P3_D1.Date>P3_D2.Date  then  Raise Exception.Create('结束日期不能小于开始日期...');
   if fndP3_REPORT_FLAG.ItemIndex < 0 then Raise Exception.Create('请选择报表类型...'); //商品指标:
 
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  //门店条件
+  if (fndP3_SHOP_ID.AsString<>'') then
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+    StrCnd:=' and SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+  end;
+
+  //查询主数据:
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
+  if (vBegDate>0) and (vBegDate=vEndDate) then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE='+InttoStr(vBegDate);
+    strWhere:=strWhere+' and A.CREA_DATE='+inttoStr(vBegDate)+' ';
+  end else if vBegDate<vEndDate then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE>='+InttoStr(vBegDate)+' and CHANGE_DATE<='+InttoStr(vEndDate)+' ';
+    strWhere:=strWhere+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';  
+  end;
+  
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
     begin
@@ -454,12 +494,6 @@ begin
       0:strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
       end;
-    end;
-
-  //门店条件
-  if (fndP3_SHOP_ID.AsString<>'') then
-    begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
     end;
 
   //商品分类:
@@ -472,26 +506,20 @@ begin
     GoodTab:='VIW_GOODSINFO';
   end;
 
-  //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
-  if (vBegDate>0) and (vBegDate=vEndDate) then
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
-  else if vBegDate<vEndDate then
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-
   //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP3_SHOP_ID.AsString));
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
-    SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='RCK_GOODS_DAYS'
+    // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select '+RCKFields+' from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      '(select '+VIWFields+' from VIW_CHANGEDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ')';
   end;
 
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
@@ -566,10 +594,31 @@ begin
   vEndDate:=0;
   RckMaxDate:=0;
   ShopCnd:='';
-
   if P4_D1.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
+
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  //门店条件
+  if (fndP4_SHOP_ID.AsString<>'') then
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
+    StrCnd:=' and SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
+  end;
+
+  //查询主数据:
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
+  if (vBegDate>0) and (vBegDate=vEndDate) then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE='+InttoStr(vBegDate);
+    strWhere:=strWhere+' and A.CREA_DATE='+inttoStr(vBegDate)+' ';
+  end else if vBegDate<vEndDate then
+  begin
+    StrCnd:=StrCnd+' and CHANGE_DATE>='+InttoStr(vBegDate)+' and CHANGE_DATE<='+InttoStr(vEndDate)+' ';
+    strWhere:=strWhere+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';  
+  end;  
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
@@ -600,31 +649,22 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //门店代码
-  if fndP4_SHOP_ID.AsString<>'' then ShopCnd:=' and SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
-
-  //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
-  if (vBegDate>0) and (vBegDate=vEndDate) then
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
-  else if vBegDate<vEndDate then
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-
   //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate,trim(fndP4_SHOP_ID.AsString));
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+ShopCnd+' '+StrCnd+')'
+    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
-    SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+ShopCnd+' '+StrCnd+')'
+    SQLData:='RCK_GOODS_DAYS'
+    // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select '+RCKFields+' from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+ShopCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      '(select '+VIWFields+' from VIW_CHANGEDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+ShopCnd+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-  end;     
- 
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ')';
+  end;
+
   strSql :=
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
@@ -1121,12 +1161,12 @@ end;
 function TfrmChangeDayReport.GetRCKFields: string;
 begin
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE'+CodeId+'_AMT,CHANGE'+CodeId+'_RTL,CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CREA_DATE,CHANGE'+CodeId+'_AMT,CHANGE'+CodeId+'_RTL,CHANGE'+CodeId+'_CST ';
 end;
 
 function TfrmChangeDayReport.GetVIWFields: string;
 begin
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,PARM'+CodeId+'_AMOUNT as as CHANGE'+CodeId+'_AMT,PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE_DATE as CREA_DATE,PARM'+CodeId+'_AMOUNT as CHANGE'+CodeId+'_AMT,PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
 end;
 
 procedure TfrmChangeDayReport.fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);

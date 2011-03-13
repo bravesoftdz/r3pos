@@ -226,12 +226,12 @@ begin
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
     strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
+    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
   end else
   if vBegDate<vEndDate then
   begin
     strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -265,19 +265,20 @@ begin
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='VIW_STOCKDATA'                                                                                           //CALC_MONEY+AGIO_MONEY
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+    SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
     //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
-      ' select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
-  end;
+      ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+
+      ') ';
+  end;  
+  showmessage(SQLData);
  
   strSql :=
     'SELECT '+
@@ -365,12 +366,12 @@ begin
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
     strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
+    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
   end else
   if vBegDate<vEndDate then
   begin
     strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -405,18 +406,18 @@ begin
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='VIW_STOCKDATA'                                                                                           //CALC_MONEY+AGIO_MONEY
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+    SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
     //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
-      ' select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+
+      ') ';
   end;
 
   strSql :=
@@ -454,17 +455,17 @@ begin
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
 
   //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
     strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
+    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
   end else
   if vBegDate<vEndDate then
   begin
     strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -496,18 +497,18 @@ begin
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='VIW_STOCKDATA'                                                                                           //CALC_MONEY+AGIO_MONEY
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+    SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
     //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
-      ' select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+
+      ') ';
   end;
 
   strSql :=
@@ -595,17 +596,17 @@ begin
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
 
   //查询主数据: 过滤企业ID
-  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
-  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
+  vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
+  vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
     strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE='+InttoStr(vBegDate)
+    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
   end else
   if vBegDate<vEndDate then
   begin
     strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -640,21 +641,20 @@ begin
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='VIW_STOCKDATA'                                                                                           //CALC_MONEY+AGIO_MONEY
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+    SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
     //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData:=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
-      ' select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>'+InttoStr(RckMaxDate)+' and CREA_DATE<='+InttoStr(vEndDate)+' ';
+      ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+
+      ') ';
   end;
-
-
+  
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+

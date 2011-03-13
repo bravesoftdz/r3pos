@@ -2757,7 +2757,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
         --地区编码
 	[REGION_ID] [varchar] (21) NOT NULL ,
         --结帐方式
-	[SETTLE_CODE] [varchar] (1) NOT NULL ,
+	[SETTLE_CODE] [varchar] (36) NOT NULL ,
         --地址
 	[ADDRESS] [varchar] (50) NULL ,
         --邮编
@@ -3916,7 +3916,7 @@ CREATE TABLE [STO_CHANGEORDER] (
         --类型代码
 	[CHANGE_CODE] [varchar] (10) NOT NULL ,
         --所属部门
-	[DEPT_ID] int NULL ,
+	[DEPT_ID] [varchar] (11) NULL ,
         --负责人
 	[DUTY_USER] [varchar] (36) NULL ,
         --调整数量

@@ -781,7 +781,7 @@ CREATE TABLE [STO_CHANGEORDER] (
         --类型代码
 	[CHANGE_CODE] [varchar] (10) NOT NULL ,
         --所属部门
-	[DEPT_ID] int NULL ,
+	[DEPT_ID] [varchar] (11) NULL ,
         --负责人
 	[DUTY_USER] [varchar] (36) NULL ,
         --调整数量

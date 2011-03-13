@@ -1970,7 +1970,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
         --地区编码
 	[REGION_ID] [varchar] (21) NOT NULL ,
         --结帐方式
-	[SETTLE_CODE] [varchar] (1) NOT NULL ,
+	[SETTLE_CODE] [varchar] (36) NOT NULL ,
         --地址
 	[ADDRESS] [varchar] (50) NULL ,
         --邮编

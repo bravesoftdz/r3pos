@@ -2252,6 +2252,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
     Params.ParamByName('CREA_USER').asString := Global.UserID;
     Params.ParamByName('SALES_TYPE').asString := '4';
     if (gid = '') or (gid='..新增..') then
@@ -2285,6 +2286,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
     Params.ParamByName('CREA_USER').asString := Global.UserID;
     Params.ParamByName('SALES_TYPE').asString := '4';
     if gid = '' then
@@ -2318,9 +2320,9 @@ end;
 procedure TfrmPosMain.DoPrintTicket(cid, id: string; iFlag: integer; cash,
   dibs: Currency);
 var PWidth:integer;
-  procedure WriteAndEnter(var F:TextFile;s:string;Len:Integer=0);
+  procedure WriteAndEnter(s:string;Len:Integer=0);
     begin
-      Writeln(F,s);
+      DevFactory.WritePrint(s);
     end;
   function FormatString(s:string;pWidth:Integer):string;
     var i:Integer;
@@ -2338,7 +2340,7 @@ var PWidth:integer;
 
       Result :=s+ Result ;
     end;
-  procedure WirteGodsAndEnter(var F:TextFile;mc:string;sl,dj,je,org:string);
+  procedure WirteGodsAndEnter(mc:string;sl,dj,je,org:string);
     var s,vmc:string;
         n,l:integer;
     begin
@@ -2349,17 +2351,17 @@ var PWidth:integer;
            else
            s :=s + FormatString(Org,5);
          end;
-      if length(dj)>=4 then
+      if length(dj)>=5 then
          s := s+' '+dj
       else
-         s := s+FormatString(dj,4);
-      if length(sl)>=4 then
+         s := s+FormatString(dj,5);
+      if length(sl)>=5 then
          s := s+' '+sl
       else
-         s := s+FormatString(sl,4);
-      if length(je)>=5 then s :=s + ' '+FormatString(je,5)
+         s := s+FormatString(sl,5);
+      if length(je)>=6 then s :=s + ' '+FormatString(je,6)
       else
-         s := s+FormatString(je,5);
+         s := s+FormatString(je,6);
       vmc := StringReplace(mc,'（','(',[rfReplaceAll]);
       vmc := StringReplace(vmc,'）',')',[rfReplaceAll]);
       vmc := StringReplace(vmc,'，',',',[rfReplaceAll]);
@@ -2372,12 +2374,12 @@ var PWidth:integer;
       l := Length(vmc);//品名称长度
       if (n+l+1)>PWidth then
          begin
-           WriteAndEnter(F,vmc);
-           WriteAndEnter(F,FormatString('',PWidth-n-1)+s);
+           WriteAndEnter(vmc);
+           WriteAndEnter(FormatString('',PWidth-n-1)+s);
          end
       else
          begin
-           WriteAndEnter(F,FormatText(vmc,PWidth-n-1)+s);
+           WriteAndEnter(FormatText(vmc,PWidth-n-1)+s);
          end;
     end;
     function FormatTitle(s:string):string;
@@ -2399,6 +2401,7 @@ var PWidth:integer;
        result := rs.FieldbyName('CODE_NAME').AsString
     else
        result := 'id';
+    if length(result)<5 then result := result + '支付';
   end;
   function GetTicketGodsName(DataSet:TDataSet):string;
   begin
@@ -2434,42 +2437,40 @@ begin
        MessageBox(Handle,'你没有打印小票的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
-  if ShopGlobal.okline and (ShopGlobal.Limit > 0) then //体验版，控制会员数
-     begin
-       MessageBox(Handle,'体验版不支持打印小票,请立即升级服务...','友情提示...',MB_OK+MB_ICONINFORMATION);
-       Exit;
-     end;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
   if cdsTable.Modified and not cdsTable.IsEmpty then
      begin
        Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
      end;
   if DevFactory.LPT <=0 then Exit;
-  if DevFactory.ReadDefine('PRINTERWIDTH')='38' then PWidth := 38 else PWidth := 33;
+  PWidth := DevFactory.Width;
 
-  PrintNull := StrtoIntDef(DevFactory.ReadDefine('PRINTNULL'),0);
+  PrintNull := DevFactory.PrintNull;
   DevFactory.BeginPrint;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := PrintSQL(cid,id);
     Factor.Open(rs);
-    if iFlag<0 then WriteAndEnter(DevFactory.F,formatTitle('--整单删除--'));
-    WriteAndEnter(DevFactory.F,formatTitle(GetTicketTitle));
+    if iFlag<0 then WriteAndEnter(formatTitle('--整单删除--'));
+    WriteAndEnter(formatTitle(GetTicketTitle));
+    WriteAndEnter('日期:'+formatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat));
+    WriteAndEnter('门店:'+rs.FieldbyName('SHOP_NAME').AsString);
+    WriteAndEnter('单号:'+rs.FieldbyName('GLIDE_NO').AsString);
     if rs.FieldbyName('CLIENT_CODE').AsString <>'' then
        begin
-         WriteAndEnter(DevFactory.F,'客户:'+rs.FieldbyName('CLIENT_CODE').AsString+'('+rs.FieldbyName('CLIENT_NAME').AsString+')');
+         WriteAndEnter('客户:'+rs.FieldbyName('CLIENT_CODE').AsString+'('+rs.FieldbyName('CLIENT_NAME').AsString+')');
        end;
-    WriteAndEnter(DevFactory.F,'单号:'+rs.FieldbyName('GLIDE_NO').AsString);
-    WriteAndEnter(DevFactory.F,'日期:'+rs.FieldbyName('SALES_DATE').AsString);
+    WriteAndEnter('收银员:'+rs.FieldbyName('CREA_USER_TEXT').AsString+'  导购员:'+rs.FieldbyName('GUIDE_USER_TEXT').AsString);
+    WriteAndEnter(DevFactory.EncodeDivStr);
     if PWidth=33 then
        begin
-         WriteAndEnter(DevFactory.F,'商品        原价 单价 数量  金额');
-         WriteAndEnter(DevFactory.F,'--------------------------------');
+         WriteAndEnter('商品        原价 单价 数量  金额');
+         WriteAndEnter('--------------------------------');
        end
     else
        begin
-         WriteAndEnter(DevFactory.F,'商品              原价 现价 数量  金额');
-         WriteAndEnter(DevFactory.F,'--------------------------------------');
+         WriteAndEnter('商品              原价 现价 数量  金额');
+         WriteAndEnter('--------------------------------------');
        end;
      total := 0;
      rs.First;
@@ -2481,57 +2482,56 @@ begin
             s := rs.FieldbyName('CALC_MONEY').AsString;
          total := total + rs.FieldbyName('CALC_MONEY').AsFloat;
          if rs.FieldbyName('AMOUNT').AsFloat < 0 then
-            WirteGodsAndEnter(DevFactory.F,GetTicketGodsName(rs)+'(退货)',rs.FieldbyName('AMOUNT').AsString+rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('APRICE').asString,s,rs.FieldbyName('ORG_PRICE').asString)
+            WirteGodsAndEnter(GetTicketGodsName(rs)+'(退货)',rs.FieldbyName('AMOUNT').AsString+rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('APRICE').asString,s,rs.FieldbyName('ORG_PRICE').asString)
          else
-            WirteGodsAndEnter(DevFactory.F,GetTicketGodsName(rs),rs.FieldbyName('AMOUNT').AsString+rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('APRICE').asString,s,rs.FieldbyName('ORG_PRICE').asString);
+            WirteGodsAndEnter(GetTicketGodsName(rs),rs.FieldbyName('AMOUNT').AsString+rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('APRICE').asString,s,rs.FieldbyName('ORG_PRICE').asString);
          rs.Next;
        end;
-     WriteAndEnter(DevFactory.F,'--------------------------------');
+     WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('PAY_DIBS').AsFloat<>0 then
-        WriteAndEnter(DevFactory.F,'合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat)+' 抹零:'+FormatFloat('#0.000',rs.FieldbyName('PAY_DIBS').AsFloat))
+        WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat)+' 抹零:'+FormatFloat('#0.000',rs.FieldbyName('PAY_DIBS').AsFloat))
      else
-        WriteAndEnter(DevFactory.F,'合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat));
-     WriteAndEnter(DevFactory.F,'--------------------------------');
+        WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat));
+     WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('PAY_A').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('A')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_A').AsFloat));
+        WriteAndEnter(GetPayText('A')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_A').AsFloat));
      if rs.FieldbyName('PAY_B').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('B')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_B').AsFloat));
+        WriteAndEnter(GetPayText('B')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_B').AsFloat));
      if rs.FieldbyName('PAY_C').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('C')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_C').AsFloat));
+        WriteAndEnter(GetPayText('C')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_C').AsFloat));
      if rs.FieldbyName('PAY_D').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('D')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_D').AsFloat));
+        WriteAndEnter(GetPayText('D')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_D').AsFloat));
      if rs.FieldbyName('PAY_E').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('E')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_E').AsFloat));
+        WriteAndEnter(GetPayText('E')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_E').AsFloat));
      if rs.FieldbyName('PAY_F').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('F')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_F').AsFloat));
+        WriteAndEnter(GetPayText('F')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_F').AsFloat));
      if rs.FieldbyName('PAY_G').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,GetPayText('G')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_G').AsFloat));
+        WriteAndEnter(GetPayText('G')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_G').AsFloat));
 
-     if rs.FieldbyName('CASH_MNY').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,'现金:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat));
-     if rs.FieldbyName('PAY_DIBS').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,'找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_DIBS').AsFloat));
      if rs.FieldbyName('INTEGRAL').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,'本单积分:'+rs.FieldbyName('INTEGRAL').AsString);
+        WriteAndEnter('本单积分:'+rs.FieldbyName('INTEGRAL').AsString);
      if rs.FieldbyName('ACCU_INTEGRAL').AsFloat <> 0 then
-        WriteAndEnter(DevFactory.F,'累计积分:'+rs.FieldbyName('ACCU_INTEGRAL').AsString);
+        WriteAndEnter('累计积分:'+rs.FieldbyName('ACCU_INTEGRAL').AsString);
 
-     WriteAndEnter(DevFactory.F,'--------------------------------');
+     WriteAndEnter(DevFactory.EncodeDivStr);
+     if rs.FieldbyName('CASH_MNY').AsFloat <> 0 then
+        WriteAndEnter('实收:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_DIBS').AsFloat));
+
+     WriteAndEnter(DevFactory.EncodeDivStr);
      if DevFactory.Footer <> '' then
         begin
           ls := TStringList.Create;
           try
             ls.Text := DevFactory.Footer;
             for i:=0 to ls.Count -1 do
-              WriteAndEnter(DevFactory.F,ls[i]);
+              WriteAndEnter(ls[i]);
           finally
             ls.Free;
           end;
         end;
 
-     WriteAndEnter(DevFactory.F,'收银员:'+rs.FieldbyName('CREA_USER_TEXT').AsString+'  导购员:'+rs.FieldbyName('GUIDE_USER_TEXT').AsString);
      for i:=1 to PrintNull do
-        WriteAndEnter(DevFactory.F,'  ',PWidth);
+        WriteAndEnter('  ',PWidth);
   finally
     CloseFile(DevFactory.F);
     rs.Free;
@@ -3183,7 +3183,7 @@ end;
 
 function TfrmPosMain.GodsToLocusNo(id: string): boolean;
 var
-  rs:TZQuery;
+  rs,bs:TZQuery;
   AObj:TRecord_;
   pt:integer;
   r:boolean;
@@ -3197,7 +3197,10 @@ begin
       'select j.* from ('+
       'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,A.AMOUNT,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' and A.LOCUS_NO='''+id+''' ) j';
     Factor.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('无效的物流跟踪号:'+id);
+    if rs.IsEmpty and (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1') then
+       begin
+         Raise Exception.Create('无效的物流跟踪号:'+id);
+       end;
     if rs.RecordCount > 1 then
        begin
          if TframeListDialog.FindDialog(self,rs.SQL.Text,'GODS_CODE=货号,GODS_NAME=商品名称,BATCH_NO=批号,BARCODE=条码',AObj) then
@@ -3207,15 +3210,31 @@ begin
             Exit;
        end
     else
+    if rs.RecordCount =0 then
+       begin
+         if MessageBox(Handle,'当前物流跟踪码没有入库，是否强制手工出库？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+         if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+         if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用物流跟踪码...');
+         AObj.ReadFromDataSet(cdsTable);
+         AObj.FieldbyName('LOCUS_NO').asString := id;
+       end
+    else
        AObj.ReadFromDataSet(rs);
      pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
 
      r := cdsTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
      if not r then
      begin
-        inc(RowID);
-        cdsTable.Append;
-        cdsTable.FieldbyName('SEQNO').asInteger := RowID;
+        if (cdsTable.FieldbyName('GODS_ID').asString=AObj.FieldbyName('GODS_ID').AsString) and (cdsTable.FieldbyName('LOCUS_NO').asString='')
+        then
+           cdsTable.Edit
+        else
+           begin
+             inc(RowID);
+             cdsTable.Append;
+             cdsTable.FieldbyName('SEQNO').asInteger := RowID;
+           end;
         cdsTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
         cdsTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
         cdsTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;

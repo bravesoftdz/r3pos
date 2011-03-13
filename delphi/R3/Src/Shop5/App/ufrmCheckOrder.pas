@@ -61,11 +61,6 @@ type
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
     procedure UnitToCalc(UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
-
-    //输入跟踪号
-    function GodsToLocusNo(id:string):boolean;override;
-    //输入批号
-    function GodsToBatchNo(id:string):boolean;override;
   public
     //检测数据合法性
     procedure CheckInvaid;override;
@@ -492,136 +487,8 @@ begin
 end;
 
 procedure TfrmCheckOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
-var
-  s:string;
-  IsNumber,IsFind,isAdd:Boolean;
-  amt:Real;
-  AObj:TRecord_;
 begin
-  try
-  if Key=#13 then
-    begin
-      if (dbState = dsBrowse) then Exit;
-      s := trim(edtInput.Text);
-      edtInput.SelectAll;
-      edtInput.SetFocus;
-      Key := #0;
-
-      if InputFlag=1 then //会员卡号
-         begin
-           if s<>'' then WriteInfo(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=2 then //整单折扣
-         begin
-           if s<>'' then AgioInfo(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=3 then //单价
-         begin
-           if s<>'' then PriceToGods(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=4 then //折扣率
-         begin
-           if s<>'' then AgioToGods(s);
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=5 then //单位
-         begin
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      if InputFlag=6 then //赠品
-         begin
-           InputFlag := 0;
-           DBGridEh1.Col := 1;
-           edtInput.Text := '';
-           Exit;
-         end;
-      isAdd := false;
-      if s='' then
-         begin
-           fndStr := '';
-           PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,0);
-           Exit;
-         end;
-      IsNumber := false;
-      if s[1]='+' then
-         begin
-            Delete(s,1,1);
-            isAdd := true;
-         end;
-      if s[1]='=' then
-         begin
-            isAdd := false;
-            Delete(s,1,1);
-            if FnString.IsNumberChar(s) then
-               amt := StrtoFloatDef(s,0)
-            else
-               begin
-                 try
-                   amt := GetExpressionValue(s,nil);
-                 except
-                   Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.InvaildExpression','"%s"是无效计算公式.',[trim(edtInput.Text)]));
-                 end;
-               end;
-            IsNumber := true;
-         end ;
-      if ((length(s) in [1,2,3,4]) and FnString.IsNumberChar(s)) or IsNumber then
-         begin
-             if trim(s)='' then Exit;
-             if edtTable.FieldbyName('GODS_ID').asString='' then Exit;
-             if not IsNumber then amt := StrtoFloatDef(s,0);
-             if PropertyEnabled then
-                begin
-                  if (vgds = edtTable.FieldbyName('GODS_ID').AsString) and ((vP1<>'#') or (vP2<>'#')) then
-                    WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,vP1,vP2,amt,isAdd)
-                  else
-                    PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
-                end
-             else
-                begin
-                  WriteAmount(edtTable.FieldbyName('UNIT_ID').AsString,'#','#',amt,isAdd);
-                end;
-            edtInput.Text := '';
-         end
-      else
-         begin
-           case DecodeBarCode(trim(s)) of
-             1:begin
-                PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
-               end;
-             2:begin //判断新增加商品的权限
-                if ShopGlobal.GetChkRight('32600001',2) and Assigned(fndGODS_ID.OnAddClick) and CanAppend and (MessageBox(Handle,'输入的条码或货号无效,是否新增一个新的商品?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
-                   begin
-                     fndGODS_ID.OnAddClick(nil);
-                   end
-                else
-                   if not CanAppend then MessageBox(Handle,'输入的条码无效..','友情提示...',MB_OK+MB_ICONQUESTION);//PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
-               end
-           else
-              edtInput.Text := '';
-           end;
-         end;
-    end;
-  finally
-    edtInput.SetFocus;
-  end;
+inherited;
 end;
 
 //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
@@ -1087,16 +954,6 @@ end;
 function TfrmCheckOrder.CheckInput: boolean;
 begin
   result := pos(inttostr(InputFlag),'089')>0;
-end;
-
-function TfrmCheckOrder.GodsToBatchNo(id: string): boolean;
-begin
-
-end;
-
-function TfrmCheckOrder.GodsToLocusNo(id: string): boolean;
-begin
-
 end;
 
 end.

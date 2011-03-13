@@ -224,6 +224,9 @@ type
     actfrmCheckTablePrint: TAction;
     actfrmJxcTotalReport: TAction;
     actfrmStockDayReport: TAction;
+    actfrmSalesDayReport: TAction;
+    actfrmChange1DayReport: TAction;
+    actfrmChange2DayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -293,6 +296,9 @@ type
     procedure actfrmRckMngExecute(Sender: TObject);
     procedure actfrmJxcTotalReportExecute(Sender: TObject);
     procedure actfrmStockDayReportExecute(Sender: TObject);
+    procedure actfrmSalesDayReportExecute(Sender: TObject);
+    procedure actfrmChange1DayReportExecute(Sender: TObject);
+    procedure actfrmChange2DayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -341,7 +347,8 @@ uses
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
-  ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList;
+  ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
+  ufrmChangeDayReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -363,6 +370,7 @@ begin
   inherited;
   if not FileExists(Global.InstallPath+'data\R3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\R3.db'),false);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
+  ForceDirectories(ExtractFilePath(ParamStr(0))+'debug');
   SystemShutdown := false;
   Loging :=false;
   frmInstall := TfrmInstall.Create(self);
@@ -570,6 +578,7 @@ begin
        Global.SHOP_NAME := Params.ShopName;
        Global.UserID := Params.UserID;
        Global.UserName := Params.UserName;
+       Global.Roles := Params.Roles;
        Global.CloseAll;
        Global.SysDate := lDate;
        Global.LoadBasic();
@@ -1924,6 +1933,76 @@ begin
     Form := TfrmStockDayReport.Create(self);
     AddFrom(Form);
   end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSalesDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSaleDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmSaleDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmChange1DayReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmChange1DayReport');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmChangeDayReport.Create(self);
+       TfrmChangeDayReport(Form).CodeId := '1';
+       TfrmChangeDayReport(Form).Name := 'frmChange1DayReport';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmChange2DayReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmChange2DayReport');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmChangeDayReport.Create(self);
+       TfrmChangeDayReport(Form).CodeId := '2';
+       TfrmChangeDayReport(Form).Name := 'frmChange2DayReport';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;

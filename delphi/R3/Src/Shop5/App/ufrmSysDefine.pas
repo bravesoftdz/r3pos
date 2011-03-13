@@ -110,6 +110,7 @@ type
     edtSTO_AUTO_CHK: TcxCheckBox;
     edtSTK_AUTO_CHK: TcxCheckBox;
     edtSAL_AUTO_CHK: TcxCheckBox;
+    chkLOCUS_NO_MT: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -242,6 +243,13 @@ begin
         IsStorage.Checked := False
       else if Value = '1' then
         IsStorage.Checked := True;
+    end;
+    if Define = 'LOCUS_NO_MT' then
+    begin
+      if Value = '0' then
+        chkLOCUS_NO_MT.Checked := False
+      else if Value = '1' then
+        chkLOCUS_NO_MT.Checked := True;
     end;
     if Define = 'SAL_AUTO_CHK' then
     begin
@@ -426,6 +434,11 @@ begin
     SetValue('CHECKAUDIT', '1')
   else
     SetValue('CHECKAUDIT', '0');
+
+  if chkLOCUS_NO_MT.Checked then
+    SetValue('LOCUS_NO_MT', '1')
+  else
+    SetValue('LOCUS_NO_MT', '0');
 
   if IsStorage.Checked then
     SetValue('STORAGE', '1')
@@ -652,6 +665,7 @@ begin
   edtPosCalcDight.ItemIndex := 0;
   edtINPUT_MODE.ItemIndex := 0;
   edtGUIDE_USER.Checked := true;
+  chkLOCUS_NO_MT.Checked := false;
 
   edtDB_AUTO_OK.Checked := true;
   edtSTO_AUTO_CHK.Checked := true;

@@ -497,7 +497,7 @@ begin
        PostMessage(Handle,WM_EXEC_ORDER,0,6);
      end;
   inherited;
-  if CurOrder<>nil then CurOrder.OnKeyDown(Sender,Key,Shift);
+  if (CurOrder<>nil) then CurOrder.OnKeyDown(Sender,Key,Shift);
 end;
 
 procedure TframeOrderToolForm.FormKeyPress(Sender: TObject; var Key: Char);

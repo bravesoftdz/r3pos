@@ -152,10 +152,10 @@ end;
 
 procedure TShopGlobal.LoadRight;
 var
-  Roles,Str:string;
+  Str:string;
 begin
-  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
-  Roles := CA_USERS.FieldbyName('DUTY_IDS').AsString;
+//  if not CA_USERS.Locate('USER_ID',UserId,[]) then Raise Exception.Create('无效用户名...');
+//  Roles := Global.Roles;
   Str:=
     'select j.* from ('+
     'select MODU_ID,R.ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+

@@ -124,9 +124,9 @@ begin
         rs.Close;
         rs.SQL.Text :=
            'select POLICY_TYPE,SMALL_UNITS,CALC_UNITS,BIG_UNITS,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,SORT_ID1,RELATION_ID,HAS_INTEGRAL '+
-           'from VIW_GOODSPRICE  where GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID and PRICE_ID=''#''';
+           'from VIW_GOODSPRICE  where GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID_ROOT and TENANT_ID=:TENANT_ID and PRICE_ID=''#''';
         rs.Params.AssignValues(Params);
-        Params.ParamByName('SHOP_ID_ROOT').AsString := Params.ParambyName('TENANT_ID').AsString+'0001';
+        rs.ParamByName('SHOP_ID_ROOT').AsString := Params.ParambyName('TENANT_ID').AsString+'0001';
         AGlobal.Open(rs);
        end;
     if Params.ParamByName('UNIT_ID').asString=rs.FieldbyName('SMALL_UNITS').AsString then

@@ -1,6 +1,6 @@
 inherited frameOrderToolForm: TframeOrderToolForm
-  Left = 125
-  Top = 51
+  Left = 352
+  Top = 96
   Width = 862
   Height = 522
   Caption = 'frameOrderToolForm'

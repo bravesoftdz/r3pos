@@ -301,7 +301,7 @@ inherited frameOrderForm: TframeOrderForm
     end
     object RzPanel3: TRzPanel
       Left = 5
-      Top = 315
+      Top = 299
       Width = 621
       Height = 53
       Align = alBottom
@@ -314,7 +314,7 @@ inherited frameOrderForm: TframeOrderForm
       Left = 5
       Top = 125
       Width = 621
-      Height = 190
+      Height = 174
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = dsTable
@@ -491,7 +491,6 @@ inherited frameOrderForm: TframeOrderForm
         ParentFont = False
       end
       object edtInput: TcxTextEdit
-        Tag = -1
         Left = 113
         Top = 3
         Width = 204
@@ -530,9 +529,9 @@ inherited frameOrderForm: TframeOrderForm
     end
     object rzHelp: TRzPanel
       Left = 5
-      Top = 368
+      Top = 352
       Width = 621
-      Height = 32
+      Height = 48
       Align = alBottom
       BorderOuter = fsFlat
       BorderSides = [sdBottom]

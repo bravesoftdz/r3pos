@@ -134,7 +134,7 @@ end;
 function TframeSelectCustomer.EncodeSQL(id: string): string;
 var w:string;
 begin
-  w := 'where COMM not in (''12'',''02'')';
+  w := 'where COMM not in (''12'',''02'') and TENANT_ID='+inttostr(Global.TENANT_ID);
   case CustType of
   1:w := w + ' and CLIENT_TYPE in (0)';
   2:w := w + ' and CLIENT_TYPE in (2)';

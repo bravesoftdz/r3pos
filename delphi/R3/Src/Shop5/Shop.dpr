@@ -155,7 +155,10 @@ uses
   ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList},
   ufrmJxcTotalReport in 'App\ufrmJxcTotalReport.pas' {frmJxcTotalReport},
   ufrmStockDayReport in 'App\ufrmStockDayReport.pas' {frmStockDayReport},
-  CaTenantService in 'App\CaTenantService.pas';
+  CaTenantService in 'App\CaTenantService.pas',
+  ufrmBatchCloseForDay in 'App\ufrmBatchCloseForDay.pas' {frmBatchCloseForDay},
+  ufrmChangeDayReport in 'App\ufrmChangeDayReport.pas' {frmChangeDayReport},
+  ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport};
 
 {$R *.res}
 var

@@ -58,46 +58,55 @@ begin
      begin
        if actDelete.Enabled and Assigned(actDelete.OnExecute) then
           actDelete.OnExecute(actDelete);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key in [ord('I'),ord('i')]) then
      begin
        if actNew.Enabled and Assigned(actNew.OnExecute) then
           actNew.OnExecute(actNew);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key in [ord('S'),ord('s')]) then
      begin
        if actSave.Enabled and Assigned(actSave.OnExecute) then
           actSave.OnExecute(actSave);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key in [ord('Z'),ord('z')]) then
      begin
        if actCancel.Enabled and Assigned(actCancel.OnExecute) then
           actCancel.OnExecute(actCancel);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key = VK_END) then
      begin
        if actAudit.Enabled and Assigned(actAudit.OnExecute) then
           actAudit.OnExecute(actAudit);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key = VK_F5) then
      begin
        if actFind.Enabled and Assigned(actFind.OnExecute) then
           actFind.OnExecute(actFind);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key in [ord('E'),ord('e')]) then
      begin
        if actEdit.Enabled and Assigned(actEdit.OnExecute) then
           actEdit.OnExecute(actEdit);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (Key in [ord('P'),ord('p')]) then
      begin
        if actPrint.Enabled and Assigned(actPrint.OnExecute) then
           actPrint.OnExecute(actPreview);
+       Key := 0;
      end;
   if (ssCtrl in Shift) and (ssShift in Shift) and (Key in [ord('P'),ord('p')]) then
      begin
        if actPreview.Enabled and Assigned(actPreview.OnExecute) then
           actPreview.OnExecute(actPreview);
+       Key := 0;
      end;
 end;
 

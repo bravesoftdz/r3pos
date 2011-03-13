@@ -28,12 +28,13 @@ begin
   4:shopid := 'str(:TENANT_ID)||''0001''';
   5:shopid := 'cast(:TENANT_ID as varchar)||''0001''';
   end;
-  if AGlobal.iDbType = 5 then //是SQLITE本地库时直接保存设置，否则由注册客户端保存本地 zhangsenrong add
-     begin
-        Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
-        ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
-        AGlobal.ExecSQL(Str,self);
-     end;
+//  改为由前台操作本地数据了
+//  if AGlobal.iDbType = 5 then //是SQLITE本地库时直接保存设置，否则由注册客户端保存本地 zhangsenrong add
+//     begin
+//        Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
+//        ' values(0,''TENANT_ID'',:TENANT_ID,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+//        AGlobal.ExecSQL(Str,self);
+//     end;
   Str := 'insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,''USING_DATE'','''+formatDatetime('YYYY-MM-DD',Date())+''',0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);

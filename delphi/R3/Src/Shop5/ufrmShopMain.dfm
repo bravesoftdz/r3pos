@@ -6763,9 +6763,24 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmJxcTotalReportExecute
     end
     object actfrmStockDayReport: TAction
-      Tag = 42100001
-      Caption = 'actfrmStockDayReport'
+      Tag = 41100001
+      Caption = #21830#21697#36827#36135#25253#34920
       OnExecute = actfrmStockDayReportExecute
+    end
+    object actfrmSalesDayReport: TAction
+      Tag = 41200001
+      Caption = #21830#21697#38144#21806#25253#34920
+      OnExecute = actfrmSalesDayReportExecute
+    end
+    object actfrmChange1DayReport: TAction
+      Tag = 41800001
+      Caption = #21830#21697#25439#30410#25253#34920
+      OnExecute = actfrmChange1DayReportExecute
+    end
+    object actfrmChange2DayReport: TAction
+      Tag = 41700001
+      Caption = #21830#21697#39046#29992#25253#34920
+      OnExecute = actfrmChange2DayReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

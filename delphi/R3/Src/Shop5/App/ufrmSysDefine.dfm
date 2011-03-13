@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 426
-    Height = 253
-    ActivePage = TabSheet4
+    Width = 418
+    Height = 242
+    ActivePage = tabBasic
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -109,7 +109,7 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 226
         Top = 36
         Width = 169
-        Height = 77
+        Height = 165
         Caption = #36755#20837#36873#39033
         TabOrder = 3
         object Label18: TLabel
@@ -127,7 +127,8 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             #26465#30721#36755#20837
-            #36135#21495#36755#20837)
+            #36135#21495#36755#20837
+            #29289#27969#30721#36755#20837)
           TabOrder = 0
         end
         object edtDECIAMOUNT: TcxCheckBox
@@ -139,6 +140,16 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ReadOnly = False
           Properties.Caption = #20801#35768#36755#20837#23567#25968#30340#25968#37327
           TabOrder = 1
+        end
+        object chkLOCUS_NO_MT: TcxCheckBox
+          Left = 8
+          Top = 71
+          Width = 156
+          Height = 21
+          Properties.DisplayUnchecked = 'False'
+          Properties.ReadOnly = False
+          Properties.Caption = #21551#29992#29289#27969#36319#36394#30721#24378#21046#20986#24211
+          TabOrder = 2
         end
       end
     end
@@ -636,7 +647,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 192
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #26159#21542#33258#21160#23457#26680#20837#24211#31867#30456#20851#21333#25454
+        Properties.Caption = #26159#21542#33258#21160#23457#26680#38144#21806#31867#30456#20851#21333#25454
         TabOrder = 8
       end
     end
@@ -808,8 +819,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 426
+    Top = 242
+    Width = 418
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

@@ -300,7 +300,7 @@ begin
   if FieldbyName('PLAN_DATE').AsString <> '' then
   begin
     Str := 'insert into STK_STOCKORDER(TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,STOCK_MNY,STOCK_AMT,ADVA_MNY,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
-      + 'VALUES(:TENANT_ID,:CLIENT_ID,:SALES_ID,:GLIDE_NO,:SALES_TYPE,'+formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString))+',:STOCK_USER,:SHOP_ID,:SALE_MNY,:SALE_AMT,0,:CHK_DATE,:CHK_USER,:SALES_ID,:FIG_ID,1,0,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
+      + 'VALUES(:TENANT_ID,:CLIENT_ID,:SALES_ID,:GLIDE_NO,:SALES_TYPE,'+formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString))+',:STOCK_USER,:SHOP_ID,:STOCK_MNY,:SALE_AMT,0,:CHK_DATE,:CHK_USER,:SALES_ID,:FIG_ID,1,0,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
     AGlobal.ExecSQL(Str,self);
   end;
   result := true;
@@ -372,7 +372,7 @@ begin
   lock := false;
   SelectSQL.Text :=
                'select jh.*,h.USER_NAME as STOCK_USER_TEXT from ('+
-               'select jg.*,g.GUIDE_USER as STOCK_USER from ('+
+               'select jg.*,g.GUIDE_USER as STOCK_USER,g.STOCK_MNY from ('+
                'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
                'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+

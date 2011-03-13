@@ -101,12 +101,15 @@ uses IniFiles,EncDec,Forms;
 { TDevFactory }
 
 procedure TDevFactory.BeginPrint;
-var Fstr: String;
 begin
-//  if LPT<1 then Raise Exception.Create('没有安装小票打印机不能打小票');
-//  AssignFile(DevFactory.F,'LPT'+inttostr(DevFactory.LPT));
-  Fstr := ExtractFilePath(ParamStr(0))+'debug\prt.txt';
-  AssignFile(F,Fstr);
+  if LPT<1 then Raise Exception.Create('没有安装小票打印机不能打小票');
+  if DevFactory.LPT<5 then
+     AssignFile(F,'LPT'+inttostr(DevFactory.LPT))
+  else
+  if DevFactory.LPT>29 then
+     AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt')
+  else
+     AssignFile(F,'COM'+inttostr(DevFactory.LPT-4));
   rewrite(F);
 end;
 

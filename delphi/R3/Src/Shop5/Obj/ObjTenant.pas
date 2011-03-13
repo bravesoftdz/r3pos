@@ -1,7 +1,7 @@
 unit ObjTenant;
 
 interface
-uses SysUtils,ZBase,Classes, AdoDb,ZIntf,ObjCommon,ZDataset,uDsUtil;
+uses SysUtils,ZBase,Classes, ZIntf,ObjCommon,ZDataset;
 
 type
   TTenant = class(TZFactory)

@@ -2,7 +2,7 @@ unit ObjSysDefine;
 
 interface
 
-uses SysUtils, ZBase, Classes, AdoDB,zIntf,ObjCommon;
+uses SysUtils, ZBase, Classes, zIntf,ObjCommon;
 
 type
   TSysDefine = class(TZFactory)

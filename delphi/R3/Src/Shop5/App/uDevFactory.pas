@@ -182,18 +182,16 @@ var F:TextFile;
     S:string;
 begin
   if DevFactory.CashBox=0 then Exit;
-  if DevFactory.LPT<=0 then Exit;
   if DevFactory.CashBox=1 then
      begin
-        AssignFile(F,'LPT'+inttostr(DevFactory.LPT));
-        Rewrite(F);
+        DevFactory.BeginPrint;
         try
-          Write(F,CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255));
+          DevFactory.WritePrint(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255));
         finally
-          CloseFile(F);
+          DevFactory.EndPrint;
         end;
      end;
-  if DevFactory.CashBox>=2 then
+  if DevFactory.CashBox>1 then
      begin
         DevFactory.OpenCashBoxComm;
      end;

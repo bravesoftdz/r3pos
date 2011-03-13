@@ -79,7 +79,7 @@ begin
     edtTicketCopy.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','TICKETCOPY','1'),1);
     cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
     edtTicketPrintComm.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTERCOMM','1'),1);
-    if F.ReadString('SYS_DEFINE','PRINTERWIDTH','33')='38' then
+    if F.ReadString('SYS_DEFINE','PRINTERWIDTH','32')='38' then
        edtPRINTERWIDTH.ItemIndex := 1
     else
        edtPRINTERWIDTH.ItemIndex := 0;
@@ -117,7 +117,7 @@ begin
     if edtPRINTERWIDTH.ItemIndex = 1 then
        F.WriteString('SYS_DEFINE','PRINTERWIDTH','38')
     else
-       F.WriteString('SYS_DEFINE','PRINTERWIDTH','33');
+       F.WriteString('SYS_DEFINE','PRINTERWIDTH','32');
     F.WriteString('SYS_DEFINE','BUYERDISPLAY',Inttostr(cxDisplay.ItemIndex));
     F.WriteString('SYS_DEFINE','CASHBOX',Inttostr(cxCashBox.ItemIndex));
     F.WriteString('SYS_DEFINE','TICKET_PRINT_NAME',Inttostr(edtTICKET_PRINT_NAME.ItemIndex));

@@ -21,6 +21,7 @@ TDevFactory=class
     FTicketPrintName: integer;
     FTitle: string;
     FWidth: integer;
+    FPrintNull: integer;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -39,6 +40,7 @@ TDevFactory=class
     procedure SetTicketPrintName(const Value: integer);
     procedure SetTitle(const Value: string);
     procedure SetWidth(const Value: integer);
+    procedure SetPrintNull(const Value: integer);
   protected
     
   public
@@ -86,8 +88,10 @@ TDevFactory=class
     // 小票票题
     property Title:string read FTitle write SetTitle;
 
-    //
+    //小打印机可以打印字符数
     property Width:integer read FWidth write SetWidth;
+    //补空行数
+    property PrintNull:integer read FPrintNull write SetPrintNull;
 
 end;
 var
@@ -147,7 +151,7 @@ end;
 procedure TDevFactory.InitComm;
 var F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
      footer := DecStr(F.ReadString('SYS_DEFINE','FOOTER',EncStr('敬请保留小票,以作售后依据',ENC_KEY)),ENC_KEY);
      title := DecStr(F.ReadString('SYS_DEFINE','TITLE',EncStr('[门店名称]',ENC_KEY)),ENC_KEY);
@@ -161,7 +165,10 @@ begin
      Lpt := F.ReadInteger('SYS_DEFINE','PRINTERCOMM',1);
      LPTType := F.ReadInteger('SYS_DEFINE','PRINT_TYPE',1);
      TicketPrintName := F.ReadInteger('SYS_DEFINE','TICKET_PRINT_NAME',0);
-//     if Lpt=0 then Lpt := 1;
+
+     Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33);
+     PrintNull :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
+     
   finally
      F.Free;
   end;
@@ -224,7 +231,7 @@ end;
 function TDevFactory.ReadDefine(Define: string;Def:string=''): string;
 var F:TIniFile;
 begin
-  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
     result := F.ReadString('SYS_DEFINE',Define,Def);
   finally
@@ -289,6 +296,11 @@ end;
 procedure TDevFactory.SetPrepared(const Value: Boolean);
 begin
   FPrepared := Value;
+end;
+
+procedure TDevFactory.SetPrintNull(const Value: integer);
+begin
+  FPrintNull := Value;
 end;
 
 procedure TDevFactory.SetSavePrint(const Value: Boolean);

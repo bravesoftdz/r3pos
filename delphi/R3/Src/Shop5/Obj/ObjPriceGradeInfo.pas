@@ -23,7 +23,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_CUSTOMER where TENANT_ID=:OLD_TENANT_ID and PRICE_ID=:OLD_PRICE_ID and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from VIW_CUSTOMER where TENANT_ID=:OLD_TENANT_ID and PRICE_ID=:OLD_PRICE_ID and COMM not in (''02'',''12'')';
+    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.ParamByName('OLD_PRICE_ID').AsString := FieldByName('PRICE_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('"'+FieldbyName('PRICE_NAME').AsOldString+'"已经在会员档案中使用不能删除.');

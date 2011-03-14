@@ -208,6 +208,7 @@ end;
 
 function TfrmSaleDayReport.GetGroupSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
   StrCnd:='';
@@ -274,18 +275,19 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(SALE_AMT) as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
+    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
     ',sum(SALE_CST) as SALE_CST '+ //    
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -354,6 +356,7 @@ end;
 
 function TfrmSaleDayReport.GetShopSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,StrCnd,strWhere,ShopCnd,GoodTab,SQLData: string;
 begin
   StrCnd:='';
@@ -422,18 +425,19 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');  
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(SALE_AMT) as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
+    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -454,6 +458,7 @@ end;
 
 function TfrmSaleDayReport.GetSortSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strCnd,strWhere,ShopCnd,lv,GoodTab,SQLData: string;
 begin
   StrCnd:='';
@@ -522,11 +527,12 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(SALE_AMT) as SALE_AMT '+
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
@@ -552,6 +558,7 @@ begin
           ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
+          ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
@@ -590,6 +597,7 @@ begin
           ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
+          ',isnull(r.SORT_ID,''#'') as SID '+
         ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
         'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='''+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+''''+
         ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
@@ -600,6 +608,7 @@ end;
 
 function TfrmSaleDayReport.GetGodsSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strCnd,ShopCnd,strWhere,GoodTab,SQLData: string;
 begin
   strCnd:='';
@@ -675,18 +684,19 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
-    ',sum(SALE_AMT) as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT) else 0 end as SALE_PRC '+
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
+    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
     ',sum(SALE_CST) as SALE_CST '+    
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -756,6 +766,13 @@ begin
     strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
   end else
     GoodTab:='VIW_GOODSINFO';
+
+  if fndP5_SALEORDER.Checked then //销售单:1
+    strWhere := strWhere+' and SALES_TYPE=1 '
+  else if fndP5_POSMAIN.Checked then //零售单:4
+    strWhere := strWhere+' and SALES_TYPE=4 '
+  else if fndP5_SALRETU.Checked then //销售退货:3
+    strWhere := strWhere+' and SALES_TYPE=3 ';
 
   SQLData := 'VIW_SALESDATA';
 
@@ -872,31 +889,50 @@ begin
 end;
 
 procedure TfrmSaleDayReport.DBGridEh3DblClick(Sender: TObject);
+var
+  i,CodeID: integer;
+  SortID: string;
+  Aobj: TRecord_;
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
-  DoAssignParamsValue(RzPanel11,RzPanel14);  //对应查询条件赋值
- {
-  P4_D1.Date := P3_D1.Date;
-  P4_D2.Date := P3_D2.Date;
-  fndP4_COMP_TYPE.ItemIndex := fndP3_COMP_TYPE.ItemIndex;
-  fndP4_TYPE_ID.ItemIndex := fndP3_TYPE_ID.ItemIndex;
-  fndP4_STAT_ID.KeyValue := fndP3_STAT_ID.KeyValue;
-  fndP4_STAT_ID.Text := fndP4_STAT_ID.Text;
-  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_INVOICE_FLAG.ItemIndex := fndP3_INVOICE_FLAG.ItemIndex;
-  fndP4_CUST_ID.KeyValue := fndP3_CUST_ID.KeyValue;
-  fndP4_CUST_ID.Text := fndP3_CUST_ID.Text;
-  fndP4_COMP_ID.KeyValue := fndP3_COMP_ID.KeyValue;
-  fndP4_COMP_ID.Text := fndP3_COMP_ID.Text;
-  sid4 := adoReport3.FieldbyName('LEVEL_ID').AsString;
-  if adoReport3.FieldbyName('grp0').AsInteger = 1 then
-  fndP4_SORT_ID.Text := '' else
-  fndP4_SORT_ID.Text := adoReport3.FieldbyName('SORT_NAME').AsString;
-  rzPage.ActivePageIndex := 3;
-  actFind.OnExecute(nil);
-  }
+  //肯定有报表类型:
+  CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
+  case CodeID of
+   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   else
+      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+  end;
+  
+  case CodeID of
+   1:  //商品分类[带供应链接]
+    begin
+      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
+    end;
+   else
+    begin
+      fndP4_TYPE_ID.ItemIndex:=-1;
+      for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
+      begin
+        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
+        begin
+          fndP4_TYPE_ID.ItemIndex:=i;
+          break;
+        end;
+      end;
+      if fndP4_TYPE_ID.ItemIndex<>-1 then
+      begin
+        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
+        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
+      end;
+    end;
+  end;
 
+  DoAssignParamsValue(RzPanel11,RzPanel14);  //对应查询条件赋值
 end;
 
 procedure TfrmSaleDayReport.FormDestroy(Sender: TObject);
@@ -913,6 +949,7 @@ begin
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
   sid5:=sid4;
   srid5:=srid4;
+  fndP5_ALL.Checked:=true;
   DoAssignParamsValue(RzPanel14,RzPanel17);  //对应查询条件赋值
 
 {

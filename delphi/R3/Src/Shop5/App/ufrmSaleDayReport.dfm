@@ -15,10 +15,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 513
-        ActivePage = TabSheet2
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -929,7 +929,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 3
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -941,7 +941,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1475,7 +1475,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 9
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -1487,7 +1487,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1777,8 +1777,8 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   EditValue = 0d
                 end
                 object RzBitBtn4: TRzBitBtn
-                  Left = 486
-                  Top = 33
+                  Left = 469
+                  Top = 41
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1994,7 +1994,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   TabOrder = 13
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -2006,7 +2006,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20

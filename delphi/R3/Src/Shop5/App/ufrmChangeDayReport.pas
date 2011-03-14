@@ -225,6 +225,7 @@ end;
 
 function TfrmChangeDayReport.GetGroupSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -294,13 +295,14 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');  
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
   strSql :=
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT) as AMOUNT '+   //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+   //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -363,6 +365,7 @@ end;
 
 function TfrmChangeDayReport.GetShopSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strWhere,StrCnd,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -433,13 +436,14 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');  
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
   strSql :=
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT) as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -454,6 +458,7 @@ end;
 
 function TfrmChangeDayReport.GetSortSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strCnd,strWhere,lv,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -522,13 +527,14 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');  
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT) as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -588,6 +594,7 @@ end;
 
 function TfrmChangeDayReport.GetGodsSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strWhere,strCnd,ShopCnd,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -665,12 +672,13 @@ begin
       ')';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');  
   strSql :=
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',A.GODS_ID as GODS_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT) as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -816,8 +824,8 @@ begin
   case CodeID of
    1:  //商品分类[带供应链接]
     begin
-      sid2:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
-      srid2:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;
    else

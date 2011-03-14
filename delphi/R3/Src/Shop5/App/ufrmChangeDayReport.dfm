@@ -15,8 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 678
         Height = 516
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -826,7 +828,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'COMP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -838,7 +840,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1310,7 +1312,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 7
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -1322,7 +1324,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1562,7 +1564,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 666
-                Height = 108
+                Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1584,32 +1586,33 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Caption = #33267
                 end
                 object Label17: TLabel
-                  Left = 24
-                  Top = 57
+                  Left = 288
+                  Top = 38
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label18: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 60
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 79
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label23: TLabel
-                  Left = 288
-                  Top = 80
+                  Left = 520
+                  Top = 16
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
+                  Visible = False
                 end
                 object Label28: TLabel
                   Left = 24
@@ -1628,7 +1631,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn4: TRzBitBtn
                   Left = 478
-                  Top = 65
+                  Top = 41
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1663,7 +1666,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 76
+                  Top = 55
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1673,8 +1676,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 3
                 end
                 object fndP5_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 76
+                  Left = 576
+                  Top = 12
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1683,11 +1686,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #21253#35013'1'
                     #21253#35013'2')
                   TabOrder = 4
+                  Visible = False
                 end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 76
+                  Top = 55
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1728,7 +1732,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 55
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1743,9 +1747,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 80
-                  Top = 54
-                  Width = 193
+                  Left = 344
+                  Top = 33
+                  Width = 121
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1756,7 +1760,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 7
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -1768,7 +1772,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1839,9 +1843,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel18: TRzPanel
                 Left = 0
-                Top = 108
+                Top = 81
                 Width = 666
-                Height = 371
+                Height = 398
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1850,7 +1854,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 662
-                  Height = 367
+                  Height = 394
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

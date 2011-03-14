@@ -1,4 +1,3 @@
-<<<<<<< .mine
 inherited frmRecvDayReport: TfrmRecvDayReport
   Left = 187
   Top = 103
@@ -16,8 +15,10 @@ inherited frmRecvDayReport: TfrmRecvDayReport
       inherited RzPage: TRzPageControl
         Width = 776
         Height = 527
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1387,6 +1388,14 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         Caption = #25910#27454#26085#25253#34920
       end
     end
+    object Button1: TButton
+      Left = 536
+      Top = 0
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 2
+    end
   end
   inherited mmMenu: TMainMenu
     Left = 128
@@ -1460,98 +1469,3 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     Top = 321
   end
 end
-=======
-ˇ
- TFRMRECVDAYREPORT 0jM  TPF0ÒTfrmRecvDayReportfrmRecvDayReportLeftª TopgWidthÁHeightXCaption   6e>kÂe•bhàPixelsPerInch`
-TextHeight ÒTRzPanelbgPanelWidth◊Height ÒTRzPanelRzPanel2WidthÕHeight
- ÒTRzPageControlRzPageWidth HeightColorclCreamParentColorFixedDimension ÒTRzTabSheet	TabSheet1ColorclCreamCaption   0W:S6e>kGl;`hà ÒTRzPanelRzPanel3Width˛HeightÈBorderColor	clBtnFace ÒTPanelPanel4WidthÙHeightﬂ ÒTRzPanelw1WidthÙHeightA TRzLabelRzLabel2LeftTopWidth0Height	AlignmenttaRightJustifyCaption   6e>kÂeg  TRzLabelRzLabel3Left´ TopWidthHeightCaption   ÛÅ  TLabelLabel5LeftTop$Width0HeightCaption   Ëïó^§ƒ~  TcxDateEditP1_D1LeftPTop
-WidthUHeightProperties.DateButtonsbtnToday TabOrder   TcxDateEditP1_D2Leftª Top
-WidthVHeightProperties.DateButtonsbtnToday TabOrder  	TRzBitBtnbtnOkLeftBTopWidthCHeight ActionactFindCaption   Âg‚ãColorclSilverFont.CharsetGB2312_CHARSET
-Font.ColorclBlackFont.HeightÙ	Font.Name   ã[SO
-Font.StylefsBold HighlightColorjçÙ HotTrack	HotTrackColorˇ«< HotTrackColorType
-htctActual
-ParentFontTextShadowColorclWhiteTextShadowDepthTabOrder	TextStyletsRaised
-ThemeAware
-ImageIndex	NumGlyphsSpacing  TcxComboBoxfndP1_SHOP_TYPELeftPTop WidthIHeightProperties.DropDownListStylelsEditFixedListProperties.Items.Strings   Ë°åÊîøÂå∫Âüü   ÁÆ°ÁêÜÁæ§ÁªÑ TabOrder  TzrComboBoxListfndP1_SHOP_VALUETagˇLeftö Top WidthwHeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsCODE_ID;CODE_NAME;CODE_SPELLKeyFieldCODE_ID	ListField	CODE_NAMEColumnsEditButtons 	FieldName	CODE_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameCODE_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtonszbNewzbClearzbFind DropListStylelsFixedMultiSelect   ÒTRzPanelRzPanel7TopAWidthÙHeightû Ò	TDBGridEh	DBGridEh1WidthHeightö
-FrozenColsTitleHeight
-OnDblClickDBGridEh1DblClickColumns	AlignmenttaCenterEditButtons 	FieldNameSEQNOFooters Title.Caption   è^˜SWidth EditButtons 	FieldNameGROUP_IDFooters Title.Caption   0W:S„NxWidth> EditButtons 	FieldName
-GROUP_NAMEFooters Title.Caption   0W:STyWidthô  EditButtons Footers Title.Caption   6e>kT°ãWidthH DisplayFormat#0.00EditButtons 	FieldNamePAY_AFooters Title.Caption   vQ-N| ∞s—ëWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_BFooters Title.Caption   vQ-N| ˆîTÄWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_CFooters Title.Caption   vQ-N| ®P<PaSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_DFooters Title.Caption   vQ-N| ∞ã&çWidth: DisplayFormat#0.00%EditButtons 	FieldNamePAY_EFooters Title.Caption   vQ-N| <ywSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_FFooters Title.Caption   vQ-N| /ehyWidth: EditButtons 	FieldNamePAY_GFooters Title.Caption   vQ-N| \ùò/eÿNWidth: EditButtons 	FieldNamePAY_HFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_IFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_JFooters Title.Caption   vQ-N| Width: EditButtons Footers Title.Caption   4ˆî—ëùò EditButtons Footers Title.Caption   ”~YO∞s—ëWidth?        TRzTabSheet	TabSheet2ColorclCreamCaption   Ëïó^6e>kGl;`hà TRzPanelRzPanel8Left Top WidthHeightÙAlignalClientBorderOuterfsNoneBorderWidthTabOrder  TPanelPanel1LeftTopWidth¸HeightÍAlignalClient
-BevelOuterbvNoneColorclWhiteTabOrder  TRzPanelRzPanel9Left Top Width¸HeightAAlignalTopBorderOuterfsGrooveBorderSidessdLeftsdTopsdRight ColorclWhiteTabOrder  TRzLabelRzLabel4LeftTopWidth0Height	AlignmenttaRightJustifyCaption   6e>kÂeg  TRzLabelRzLabel5Left™ TopWidthHeightCaption   ÛÅ  TLabelLabel10LeftTop#Width0HeightCaption   Ëïó^§ƒ~  TcxDateEditP2_D1LeftPTop
-WidthUHeightProperties.DateButtonsbtnToday TabOrder   TcxDateEditP2_D2Left∫ Top
-WidthWHeightProperties.DateButtonsbtnToday TabOrder  TzrComboBoxListfndP2_SHOP_VALUETagˇLeftö TopWidthwHeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsCODE_ID;CODE_NAME;CODE_SPELLKeyFieldCODE_ID	ListField	CODE_NAMEColumnsEditButtons 	FieldName	CODE_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameCODE_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtonszbNewzbClearzbFind DropListStylelsFixedMultiSelect  	TRzBitBtn	RzBitBtn1Left.TopWidthCHeight ActionactFindCaption   Âg‚ãColorclSilverFont.CharsetGB2312_CHARSET
-Font.ColorclBlackFont.HeightÙ	Font.Name   ã[SO
-Font.StylefsBold HighlightColorjçÙ HotTrack	HotTrackColorˇ«< HotTrackColorType
-htctActual
-ParentFontTextShadowColorclWhiteTextShadowDepthTabOrder	TextStyletsRaised
-ThemeAware
-ImageIndex	NumGlyphsSpacing  TcxComboBoxfndP2_SHOP_TYPELeftPTopWidthIHeightProperties.DropDownListStylelsEditFixedListProperties.Items.Strings   Ë°åÊîøÂå∫Âüü   ÁÆ°ÁêÜÁæ§ÁªÑ TabOrder   TRzPanel	RzPanel10Left TopAWidth¸Height©AlignalClientBorderOuterfsGrooveColorclWhiteTabOrder 	TDBGridEh	DBGridEh2LeftTopWidth¯Height•AlignalClientAllowedOperations BorderStylebsNoneColorclWhiteCtl3D	
-DataSourcedsadoReport2Flat	Font.CharsetGB2312_CHARSET
-Font.ColorclWindowTextFont.HeightÙ	Font.Name   ã[SO
-Font.Style FooterColorclWhiteFooterFont.CharsetGB2312_CHARSETFooterFont.ColorclWindowTextFooterFont.HeightÙFooterFont.Name   ã[SOFooterFont.Style FooterRowCount
-FrozenColsImeName   Åg¡TîN{ìèeQ’lOptionsdgTitlesdgColumnResize
-dgColLines
-dgRowLinesdgTabsdgAlwaysShowSelectiondgConfirmDeletedgCancelOnExit 	OptionsEh
-dghFixed3DdghHighlightFocusdghClearSelection ParentCtl3D
-ParentFontReadOnly		RowHeightSumList.Active	TabOrder TitleFont.CharsetGB2312_CHARSETTitleFont.ColorclWindowTextTitleFont.HeightÙTitleFont.Name   ã[SOTitleFont.StylefsBold TitleHeightUseMultiTitle	IsDrawNullRowCurrencySymbol   ÂˇDecimalNumberDigitalNumber
-OnDblClickDBGridEh2DblClickOnDrawColumnCellDBGridEh1DrawColumnCellOnGetCellParamsDBGridEh1GetCellParamsColumns	AlignmenttaCenterEditButtons 	FieldNameSEQNOFooters Title.Caption   è^˜SWidth EditButtons 	FieldNameGROUP_IDFooters Title.Caption   Ëïó^„NxWidth> EditButtons 	FieldName
-GROUP_NAMEFooters Title.Caption   Ëïó^TyWidthô  EditButtons Footers Title.Caption   6e>kT°ãWidthH DisplayFormat#0.00EditButtons 	FieldNamePAY_AFooters Title.Caption   vQ-N| ∞s—ëWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_BFooters Title.Caption   vQ-N| ˆîTÄWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_CFooters Title.Caption   vQ-N| ®P<PaSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_DFooters Title.Caption   vQ-N| ∞ã&çWidth: DisplayFormat#0.00%EditButtons 	FieldNamePAY_EFooters Title.Caption   vQ-N| <ywSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_FFooters Title.Caption   vQ-N| /ehyWidth: EditButtons 	FieldNamePAY_GFooters Title.Caption   vQ-N| \ùò/eÿNWidth: EditButtons 	FieldNamePAY_HFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_IFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_JFooters Title.Caption   vQ-N| Width: EditButtons Footers Title.Caption   4ˆî—ëùò EditButtons Footers Title.Caption   ”~YO∞s—ëWidth?        TRzTabSheet	TabSheet3ColorclCreamCaption   œkÂe6e>kGl;`hà TRzPanelRzPanel6Left Top WidthHeightÙAlignalClientBorderOuterfsNoneBorderWidthTabOrder  TPanelPanel3LeftTopWidth¸HeightÍAlignalClient
-BevelOuterbvNoneColorclWhiteTabOrder  TRzPanel	RzPanel11Left Top Width¸HeightYAlignalTopBorderOuterfsGrooveBorderSidessdLeftsdTopsdRight ColorclWhiteTabOrder  TRzLabelRzLabel6LeftTopWidth0Height	AlignmenttaRightJustifyCaption   6e>kÂeg  TRzLabelRzLabel7Left™ TopWidthHeightCaption   ÛÅ  TLabelLabel11LeftTop$Width0HeightCaption   Ëïó^§ƒ~  TLabelLabel9LeftTop:Width0HeightCaption   Ëïó^Ty  TcxDateEditP3_D1LeftPTop
-WidthUHeightProperties.DateButtonsbtnToday TabOrder   TcxDateEditP3_D2Left∫ Top
-WidthWHeightProperties.DateButtonsbtnToday TabOrder  	TRzBitBtn	RzBitBtn2Left&Top)WidthCHeight ActionactFindCaption   Âg‚ãColorclSilverFont.CharsetGB2312_CHARSET
-Font.ColorclBlackFont.HeightÙ	Font.Name   ã[SO
-Font.StylefsBold HighlightColorjçÙ HotTrack	HotTrackColorˇ«< HotTrackColorType
-htctActual
-ParentFontTextShadowColorclWhiteTextShadowDepthTabOrder	TextStyletsRaised
-ThemeAware
-ImageIndex	NumGlyphsSpacing  TzrComboBoxListfndP3_SHOP_VALUETagˇLeftö Top WidthwHeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsCODE_ID;CODE_NAME;CODE_SPELLKeyFieldCODE_ID	ListField	CODE_NAMEColumnsEditButtons 	FieldName	CODE_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameCODE_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtonszbNewzbClearzbFind DropListStylelsFixedMultiSelect  TcxComboBoxfndP3_SHOP_TYPELeftPTop WidthIHeightProperties.DropDownListStylelsEditFixedListProperties.Items.Strings   Ë°åÊîøÂå∫Âüü   ÁÆ°ÁêÜÁæ§ÁªÑ TabOrder  TzrComboBoxListfndP3_SHOP_IDTagˇLeftPTop6Width¡ HeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsSHOP_ID;SHOP_NAME;SHOP_SPELLKeyFieldSHOP_ID	ListField	SHOP_NAMEColumnsEditButtons 	FieldName	SHOP_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameSHOP_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtons DropListStylelsFixedMultiSelect   TRzPanel	RzPanel12Left TopYWidth¸HeightëAlignalClientBorderOuterfsGrooveColorclWhiteTabOrder 	TDBGridEh	DBGridEh3TagLeftTopWidth¯HeightçAlignalClientAllowedOperations BorderStylebsNoneColorclWhiteCtl3D	
-DataSourcedsadoReport3Flat	Font.CharsetGB2312_CHARSET
-Font.ColorclWindowTextFont.HeightÙ	Font.Name   ã[SO
-Font.Style FooterColorclWhiteFooterFont.CharsetGB2312_CHARSETFooterFont.ColorclWindowTextFooterFont.HeightÙFooterFont.Name   ã[SOFooterFont.Style FooterRowCount
-FrozenColsImeName   Åg¡TîN{ìèeQ’lOptionsdgTitlesdgColumnResize
-dgColLines
-dgRowLinesdgTabsdgAlwaysShowSelectiondgConfirmDeletedgCancelOnExit 	OptionsEh
-dghFixed3DdghHighlightFocusdghClearSelection ParentCtl3D
-ParentFontReadOnly		RowHeightSumList.Active	TabOrder TitleFont.CharsetGB2312_CHARSETTitleFont.ColorclWindowTextTitleFont.HeightÙTitleFont.Name   ã[SOTitleFont.StylefsBold TitleHeightUseMultiTitle	IsDrawNullRowCurrencySymbol   ÂˇDecimalNumberDigitalNumber
-OnDblClickDBGridEh3DblClickOnDrawColumnCellDBGridEh1DrawColumnCellOnGetCellParamsDBGridEh1GetCellParamsColumns	AlignmenttaCenterEditButtons 	FieldNameSEQNOFooters Title.Caption   è^˜SWidth EditButtons 	FieldName
-GROUP_NAMEFooters Title.Caption   ÂegWidthc EditButtons Footers Title.Caption   6e>kT°ãWidthH DisplayFormat#0.00EditButtons 	FieldNamePAY_AFooters Title.Caption   vQ-N| ∞s—ëWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_BFooters Title.Caption   vQ-N| ˆîTÄWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_CFooters Title.Caption   vQ-N| ®P<PaSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_DFooters Title.Caption   vQ-N| ∞ã&çWidth: DisplayFormat#0.00%EditButtons 	FieldNamePAY_EFooters Title.Caption   vQ-N| <ywSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_FFooters Title.Caption   vQ-N| /ehyWidth: EditButtons 	FieldNamePAY_GFooters Title.Caption   vQ-N| \ùò/eÿNWidth: EditButtons 	FieldNamePAY_HFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_IFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_JFooters Title.Caption   vQ-N| Width: EditButtons Footers Title.Caption   4ˆî—ëùò EditButtons Footers Title.Caption   ”~YO∞s—ëWidth?        TRzTabSheet	TabSheet4ColorclCreamCaption   6eˆîXT6e>kGl;`hà TRzPanel	RzPanel13Left Top Width˛HeightÈAlignalClientBorderOuterfsNoneBorderWidthTabOrder  TPanelPanel6LeftTopWidthÙHeightﬂAlignalClient
-BevelOuterbvNoneColorclWhiteTabOrder  TRzPanel	RzPanel14Left Top WidthÙHeightYAlignalTopBorderOuterfsGrooveBorderSidessdLeftsdTopsdRight ColorclWhiteTabOrder  TRzLabelRzLabel8LeftTopWidth0Height	AlignmenttaRightJustifyCaption   6e>kÂeg  TRzLabelRzLabel9Left´ TopWidthHeightCaption   ÛÅ  TLabelLabel12LeftTop#Width0HeightCaption   Ëïó^§ƒ~  TLabelLabel3LeftTop:Width0HeightCaption   Ëïó^Ty  TcxDateEditP4_D1LeftPTop
-WidthUHeightProperties.DateButtonsbtnToday TabOrder   TcxDateEditP4_D2Leftª Top
-WidthVHeightProperties.DateButtonsbtnToday TabOrder  	TRzBitBtn	RzBitBtn3Left&Top)WidthCHeight ActionactFindCaption   Âg‚ãColorclSilverFont.CharsetGB2312_CHARSET
-Font.ColorclBlackFont.HeightÙ	Font.Name   ã[SO
-Font.StylefsBold HighlightColorjçÙ HotTrack	HotTrackColorˇ«< HotTrackColorType
-htctActual
-ParentFontTextShadowColorclWhiteTextShadowDepthTabOrder	TextStyletsRaised
-ThemeAware
-ImageIndex	NumGlyphsSpacing  TzrComboBoxListfndP4_SHOP_VALUETagˇLeftö Top WidthwHeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsCODE_ID;CODE_NAME;CODE_SPELLKeyFieldCODE_ID	ListField	CODE_NAMEColumnsEditButtons 	FieldName	CODE_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameCODE_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtonszbNewzbClearzbFind DropListStylelsFixedMultiSelect  TcxComboBoxfndP4_SHOP_TYPELeftPTop WidthIHeightProperties.DropDownListStylelsEditFixedListProperties.Items.Strings   Ë°åÊîøÂå∫Âüü   ÁÆ°ÁêÜÁæ§ÁªÑ TabOrder  TzrComboBoxListfndP4_SHOP_IDTagˇLeftPTop6Width¡ HeightProperties.AutoSelectProperties.ButtonsDefault	  Properties.ReadOnlyTabOrderInGridKeyValue FilterFieldsSHOP_ID;SHOP_NAME;SHOP_SPELLKeyFieldSHOP_ID	ListField	SHOP_NAMEColumnsEditButtons 	FieldName	SHOP_NAMEFooters Title.Caption   Ty EditButtons 	FieldNameSHOP_IDFooters Title.Caption   „NxWidth  	DropWidthπ 
-DropHeight¥ 	ShowTitle	AutoFitColWidth	
-ShowButtonLocateStylelsDarkButtons DropListStylelsFixedMultiSelect   TRzPanel	RzPanel15Left TopYWidthÙHeightÜAlignalClientBorderOuterfsGrooveColorclWhiteTabOrder 	TDBGridEh	DBGridEh4LeftTopWidthHeightÇAlignalClientAllowedOperations BorderStylebsNoneColorclWhiteCtl3D	
-DataSourcedsadoReport4Flat	Font.CharsetGB2312_CHARSET
-Font.ColorclWindowTextFont.HeightÙ	Font.Name   ã[SO
-Font.Style FooterColorclWhiteFooterFont.CharsetGB2312_CHARSETFooterFont.ColorclWindowTextFooterFont.HeightÙFooterFont.Name   ã[SOFooterFont.Style FooterRowCount
-FrozenColsImeName   Åg¡TîN{ìèeQ’lOptionsdgTitlesdgColumnResize
-dgColLines
-dgRowLinesdgTabsdgAlwaysShowSelectiondgConfirmDeletedgCancelOnExit 	OptionsEh
-dghFixed3DdghHighlightFocusdghClearSelection ParentCtl3D
-ParentFontReadOnly		RowHeightSumList.Active	TabOrder TitleFont.CharsetGB2312_CHARSETTitleFont.ColorclWindowTextTitleFont.HeightÙTitleFont.Name   ã[SOTitleFont.StylefsBold TitleHeightUseMultiTitle	IsDrawNullRowCurrencySymbol   ÂˇDecimalNumberDigitalNumberOnDrawColumnCellDBGridEh1DrawColumnCellOnGetCellParamsDBGridEh1GetCellParamsColumns	AlignmenttaCenterEditButtons 	FieldNameSEQNOFooters Title.Caption   è^˜SWidth EditButtons 	FieldNameGROUP_IDFooters Title.Caption   Â]˜SWidth> EditButtons 	FieldName
-GROUP_NAMEFooters Title.Caption   ”YTWidthc EditButtons Footers Title.Caption   6e>kT°ãWidthH DisplayFormat#0.00EditButtons 	FieldNamePAY_AFooters Title.Caption   vQ-N| ∞s—ëWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_BFooters Title.Caption   vQ-N| ˆîTÄWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_CFooters Title.Caption   vQ-N| ®P<PaSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_DFooters Title.Caption   vQ-N| ∞ã&çWidth: DisplayFormat#0.00%EditButtons 	FieldNamePAY_EFooters Title.Caption   vQ-N| <ywSWidth: DisplayFormat#0.00EditButtons 	FieldNamePAY_FFooters Title.Caption   vQ-N| /ehyWidth: EditButtons 	FieldNamePAY_GFooters Title.Caption   vQ-N| \ùò/eÿNWidth: EditButtons 	FieldNamePAY_HFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_IFooters Title.Caption   vQ-N| Width: EditButtons 	FieldNamePAY_JFooters Title.Caption   vQ-N| Width: EditButtons Footers Title.Caption   ”~YOˆñ±îWidth<         ÒTPanelPanelColumnSLeftHeight ÒTPanelPanel2Height› ÛTRzPanelRzPanel1  ÛTPanelPanel5Heightj ÒTRzCheckListrzShowColumnsHeightf       ÒTRzPanelRzPanel4Width◊ ÒTImageImage1Width–  ÒTImageImage14LeftŒ  ÒTImageImage3Width–  ÒTPanelrzPanel5 ÒTRzLabellblToolCaptionWidth<Caption   6e>kÂe•bhà   TButtonButton1LeftTop WidthKHeightCaptionButton1TabOrderOnClickButton1Click   Ò	TMainMenummMenuLeftÄ Topê  ÒTActionListactListLeft¿ Topà ÒTActionactFind	OnExecuteactFindExecute   ÒTDataSourcedsadoReport1Left)Topb  ÒTPrintDBGridEhPrintDBGridEh1PageHeader.CenterText.Strings   Êî∂Ê¨æÊ±áÊÄªË°® PageHeader.Font.CharsetGB2312_CHARSETPageHeader.Font.HeightPageHeader.Font.Name   ã[SOPageHeader.Font.StylefsBold BeforeGridText_Data
-—   {\rtf1\ansi\ansicpg936\deff0\deflang1033\deflangfe2052{\fonttbl{\f0\fnil\fcharset134 \'cb\'ce\'cc\'e5;}{\f1\fnil\fcharset134 MS Sans Serif;}}
-\viewkind4\uc1\pard\qr\lang2052\f0\fs24 %[whr]\f1\fs16 
-\par }
-   ÒTZQuery
-adoReport1Left)TopA  TDataSourcedsadoReport2DataSet
-adoReport2LeftYTopb  TDataSourcedsadoReport3DataSet
-adoReport3Leftâ Topb  TDataSourcedsadoReport4DataSet
-adoReport4Leftπ Topb  TZQuery
-adoReport2	FieldDefs CachedUpdates	Params LeftYTopA  TZQuery
-adoReport3	FieldDefs CachedUpdates	Params Leftâ TopA  TZQuery
-adoReport4	FieldDefs CachedUpdates	Params Leftπ TopA   >>>>>>> .r768

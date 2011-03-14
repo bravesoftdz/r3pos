@@ -15,10 +15,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
       inherited RzPage: TRzPageControl
         Width = 776
         Height = 527
-        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -782,7 +780,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   TabOrder = 5
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -794,7 +792,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1153,7 +1151,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   TabOrder = 5
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -1165,7 +1163,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID'
+                      FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
                       Width = 20
@@ -1387,14 +1385,6 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         Width = 60
         Caption = #25910#27454#26085#25253#34920
       end
-    end
-    object Button1: TButton
-      Left = 536
-      Top = 0
-      Width = 75
-      Height = 25
-      Caption = 'Button1'
-      TabOrder = 2
     end
   end
   inherited mmMenu: TMainMenu

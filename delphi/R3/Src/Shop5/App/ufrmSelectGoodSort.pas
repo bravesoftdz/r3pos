@@ -22,7 +22,7 @@ type
     procedure LoadGoodSortTree;  //¥¥Ω®º”‘ÿ ˜
     class function FindDialog(AOwner:TForm; var rs:TRecord_):boolean;
   end;
- 
+
 
 implementation
 
@@ -68,6 +68,8 @@ begin
       begin
         AObj := TRecord_.Create;
         AObj.ReadFromDataSet(rs);
+        AObj.FieldByName('LEVEL_ID').AsString:='';
+        AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
         w := CurObj.FieldByName('RELATION_ID').AsInteger;
       end;

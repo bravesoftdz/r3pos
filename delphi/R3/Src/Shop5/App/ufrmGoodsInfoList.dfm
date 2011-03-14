@@ -481,8 +481,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   end
   object DataSource1: TDataSource
     DataSet = cdsBrowser
-    Left = 873
-    Top = 386
+    Left = 353
+    Top = 250
   end
   object PopupMenu1: TPopupMenu
     AutoHotkeys = maManual
@@ -571,8 +571,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
         ParamType = ptUnknown
       end>
     IndexFieldNames = 'GODS_CODE Asc'
-    Left = 842
-    Top = 386
+    Left = 322
+    Top = 250
     ParamData = <
       item
         DataType = ftUnknown

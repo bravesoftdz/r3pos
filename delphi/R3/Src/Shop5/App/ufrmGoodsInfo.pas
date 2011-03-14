@@ -181,6 +181,7 @@ type
     procedure edtMY_OUTPRICE2Exit(Sender: TObject);
     procedure edtMY_OUTPRICE1Exit(Sender: TObject);
   private
+    DropUNITS_Ds: TZQuery;
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
     FSortName: string;    //Append传入的SortName值
@@ -190,6 +191,7 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
+    procedure UpdateUNITSData; //更新当前选择单位
     function  IsChinese(str:string):Boolean;
     procedure OnGridKeyPress(Sender: TObject; var Key: Char);
     procedure EditKeyPress(Sender: TObject; var Key: Char);
@@ -220,7 +222,7 @@ type
      function  IsEdit(Aobj:TRecord_;cdsTable: TZQuery):Boolean;//判断商品资料是否有修改
      procedure IsBarCodeSame(Aobj:TRecord_);//判断条码有没有重复
      procedure SetdbState(const Value: TDataSetState); override;
-     procedure EditPrice; //只能修改价格
+     procedure EditPrice(IsRelation: Boolean=False); //只能修改价格
      procedure WriteBarCode(str:string);  //写入条形码
      procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
      procedure ReadGoodsBarCode(CdsBarCode: TZQuery);      //读取商品条码
@@ -1183,7 +1185,7 @@ begin
     end;
 end;
 
-procedure TfrmGoodsInfo.EditPrice;
+procedure TfrmGoodsInfo.EditPrice(IsRelation: Boolean=False);
 var i:integer;
 begin
   for i := 0 to ComponentCount-1 do
@@ -1217,9 +1219,31 @@ begin
        begin
          TRadioGroup(Components[i]).Enabled:=False;
        end;
+    if Components[i] is TcxButtonEdit then
+      begin
+        TcxButtonEdit(Components[i]).Enabled:=False;
+      end;
+    if Components[i] is TcxButtonEdit then
+      begin
+        TcxButtonEdit(Components[i]).Enabled:=False;
+      end;
+    if Components[i] is TcxCheckBox then
+      begin
+        TcxCheckBox(Components[i]).Enabled:=False;
+      end;
   end;
-  SetEditStyle(dsEdit,edtNEW_OUTPRICE.Style);
-  edtNEW_OUTPRICE.Properties.ReadOnly:=False;
+  //edtUSING_BARTER[启用积分]
+  RB_NotUSING_BARTER.Enabled:=False;
+  RB_USING_BARTER.Enabled:=False;
+  edtBARTER_INTEGRAL.Enabled:=False;
+  RB_USING_BARTER2.Enabled:=False;
+  edtBARTER_INTEGRAL2.Enabled:=False;
+  //是总店才有权限修改:标准售价：
+  if inttostr(Global.TENANT_ID)+'0001'=trim(Global.SHOP_ID) then 
+  begin
+    SetEditStyle(dsEdit,edtNEW_OUTPRICE.Style);
+    edtNEW_OUTPRICE.Properties.ReadOnly:=False;
+  end;
   SetEditStyle(dsEdit,edtMY_OUTPRICE.Style);
   edtMY_OUTPRICE.Properties.ReadOnly:=False;
   SetEditStyle(dsEdit,edtMY_OUTPRICE1.Style);
@@ -1706,39 +1730,48 @@ begin
   tmp:=Global.GetZQueryFromName('PUB_GOODSINFO');
   tmp.Filtered:=False;
   IsExists:=False;
-  GoodValue:=trim(edtGODS_CODE.Text);
-  tmp.First;
-  while not tmp.Eof do
+  if edtGODS_CODE.Enabled then  //可修改商品编码
   begin
-    CurValue:=trim(tmp.FieldByName('GODS_CODE').AsString);
-    if dbState=dsInsert then
-      IsExists:=(CurValue=GoodValue)
-    else if (dbState=dsEdit)and(CurValue=GoodValue) then
-      IsExists:=(trim(cdsGoods.FieldbyName('GODS_ID').AsString)<>trim(tmp.FieldByname('GODS_ID').AsString)); 
-    if IsExists then
+    GoodValue:=trim(edtGODS_CODE.Text);
+    tmp.First;
+    while not tmp.Eof do
     begin
-      if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
-      raise Exception.Create('货号已经存在，不能重复！');
+      if trim(tmp.FieldByName('RELATION_ID').AsString)='0' then
+      begin
+        CurValue:=trim(tmp.FieldByName('GODS_CODE').AsString);
+        if dbState=dsInsert then
+          IsExists:=(CurValue=GoodValue)
+        else if (dbState=dsEdit)and(CurValue=GoodValue) then
+          IsExists:=(trim(cdsGoods.FieldbyName('GODS_ID').AsString)<>trim(tmp.FieldByname('GODS_ID').AsString));
+        if IsExists then
+        begin
+          if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
+          raise Exception.Create('货号已经存在，不能重复！');
+        end;
+      end;
+      tmp.Next;
     end;
-    tmp.Next;
   end;
-
-  if GoodValue<>trim(cdsGoods.FieldByName('GODS_NAME').AsString) then
+  
+  if edtGODS_NAME.Enabled then //可修改商品名称
   begin
     IsExists:=False;
     GoodValue:=trim(edtGODS_NAME.Text);
     tmp.First;
     while not tmp.Eof do
     begin
-      CurValue:=trim(tmp.FieldByName('GODS_NAME').AsString);
-      if dbState=dsInsert then
-        IsExists:=(CurValue=GoodValue)
-      else if (dbState=dsEdit) and (CurValue=GoodValue) then
-        IsExists:=(trim(tmp.FieldByName('GODS_ID').AsString)<>trim(cdsGoods.FieldByName('GODS_ID').AsString));
-      if IsExists then
+      if trim(tmp.FieldByName('RELATION_ID').AsString)='0' then
       begin
-        if edtGODS_NAME.CanFocus then edtGODS_NAME.SetFocus;
-        raise Exception.Create('  提示:商品名称已经存在！ ');
+        CurValue:=trim(tmp.FieldByName('GODS_NAME').AsString);
+        if dbState=dsInsert then
+          IsExists:=(CurValue=GoodValue)
+        else if (dbState=dsEdit) and (CurValue=GoodValue) then
+          IsExists:=(trim(tmp.FieldByName('GODS_ID').AsString)<>trim(cdsGoods.FieldByName('GODS_ID').AsString));
+        if IsExists then
+        begin
+          if edtGODS_NAME.CanFocus then edtGODS_NAME.SetFocus;
+          raise Exception.Create('  提示:商品名称已经存在！ ');
+        end;
       end;
       tmp.Next;
     end;
@@ -2594,6 +2627,18 @@ begin
       end;
     end;
   end;
+
+end;
+
+procedure TfrmGoodsInfo.UpdateUNITSData;
+var
+  Rs: TZQuery;
+begin
+  {if DropUNITS_Ds=nil then DropUNITS_Ds:=TZQuery.Create(self); //判断是否存在，不存在则增加
+  Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+  if (Rs<>nil)
+
+  }
 
 end;
 

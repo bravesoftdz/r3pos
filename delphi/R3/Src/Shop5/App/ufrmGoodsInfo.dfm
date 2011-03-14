@@ -1302,7 +1302,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #21442#32771#36827#20215
+        Caption = #26368#26032#36827#20215
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12

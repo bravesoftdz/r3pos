@@ -233,10 +233,15 @@ begin
   w := ' and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then w := w + ' and j.GODS_ID>=:MAXID';
 
-  if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
+  if rzTree.Selected<>nil then
   begin
-    w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' and b.RELATION_ID=:RELATION_ID ';
-    vCnd:=' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' and b.RELATION_ID=:RELATION_ID ';
+    w :=w+' and b.RELATION_ID=:RELATION_ID ';
+    vCnd:=' and b.RELATION_ID=:RELATION_ID ';
+    if rzTree.Selected.Level>0 then
+    begin
+      w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
+      vCnd:=' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
+    end;
   end;
 
   if trim(edtKey.Text)<>'' then
@@ -331,16 +336,18 @@ begin
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
     rs.IndexFieldNames := 'GODS_CODE';
+    rs.SortedFields:='GODS_CODE';
     rs.SaveToStream(StrmData);
     if Id='' then
     begin
       rcAmt:=GetReCount(Cnd);
-      cdsBrowser.Close;
-      cdsBrowser.SQL.Text:=rs.SQL.Text;
-      cdsBrowser.Params.AssignValues(rs.Params);
-      Factor.Open(cdsBrowser);
-      // cdsBrowser.LoadFromStream(StrmData);
-      // cdsBrowser.IndexFieldNames := 'GODS_CODE';
+      //  cdsBrowser.Close;
+      //  cdsBrowser.SQL.Text:=rs.SQL.Text;
+      //  cdsBrowser.Params.AssignValues(rs.Params);
+      //  Factor.Open(cdsBrowser);
+      cdsBrowser.LoadFromStream(StrmData);
+      cdsBrowser.IndexFieldNames := 'GODS_CODE';
+      cdsBrowser.SortedFields:='GODS_CODE';
     end else
       cdsBrowser.AddFromStream(StrmData);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
@@ -1002,6 +1009,9 @@ begin
     begin
       AObj := TRecord_.Create;
       AObj.ReadFromDataSet(rs);
+      // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
+      AObj.FieldByName('LEVEL_ID').AsString:='';
+      AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
       rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
       w := rs.FieldByName('RELATION_ID').AsInteger;
     end;

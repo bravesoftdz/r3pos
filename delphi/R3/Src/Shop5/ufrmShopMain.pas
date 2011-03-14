@@ -341,7 +341,7 @@ var
 
 implementation
 uses
-  uFnUtil,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogo, ufrmLogin,
+  uFnUtil,ufrmLogo,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -368,6 +368,7 @@ procedure TfrmShopMain.FormCreate(Sender: TObject);
 var F:TextFile;
 begin
   inherited;
+  frmLogo := TfrmLogo.Create(nil);
   if not FileExists(Global.InstallPath+'data\R3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\R3.db'),false);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   ForceDirectories(ExtractFilePath(ParamStr(0))+'debug');
@@ -392,6 +393,7 @@ procedure TfrmShopMain.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
+  frmLogo.Free;
   if frmInstall<>nil then frmInstall.free;
   screen.OnActiveFormChange := nil;
   for i:=0 to FList.Count - 1 do TObject(FList[i]).Free;
@@ -946,11 +948,16 @@ end;
 
 function TfrmShopMain.ConnectToDb:boolean;
 begin
-  result := false;
-//  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
-  Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
-//  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
-  Factor.Connect;
+  frmLogo.Show;
+  try
+    result := false;
+  //  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
+    Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
+  //  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
+    Factor.Connect;
+  finally
+    frmLogo.Close;
+  end;
   if not UpdateDbVersion then Exit;
   result := TfrmTenant.coRegister(self);
 end;

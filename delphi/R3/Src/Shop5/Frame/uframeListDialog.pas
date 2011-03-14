@@ -157,9 +157,12 @@ begin
      begin
        if not cdsList.IsEmpty then
           begin
-            cdsList.Edit;
-            cdsList.FieldByName('A').AsInteger :=1 ;
-            cdsList.Post;
+            if MultiSelect then
+               begin
+                 cdsList.Edit;
+                 cdsList.FieldByName('A').AsInteger :=1 ;
+                 cdsList.Post;
+               end;
             btnOkClick(nil);
           end
        else

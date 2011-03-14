@@ -1743,9 +1743,9 @@ CREATE TABLE [PUB_GOODS_RELATION] (
         --货品代码
 	[GODS_ID] [varchar] (36) NOT NULL , 
         --行业内码<第三方系统内码>
-	[SECOND_ID] [varchar] (36) NOT NULL , 
+	[SECOND_ID] [varchar] (36) NULL , 
         --货号<识别码>
-	[GODS_CODE] [varchar] (36) NOT NULL , 
+	[GODS_CODE] [varchar] (36) NULL , 
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODS_RELATION_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000

@@ -109,6 +109,9 @@ type
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
+    actfrmAddDb: TAction;
+    actfrmDeleteDb: TAction;
+    actfrmDbConfig: TAction;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -194,7 +197,7 @@ var
 
 implementation
 
-uses IniFiles,Registry,ScktCnst;
+uses IniFiles,Registry,ScktCnst,ufrmDbSetup;
 
 {$R *.dfm}
 

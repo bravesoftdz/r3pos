@@ -156,7 +156,6 @@ type
     procedure OpenDialogProperty;
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
-    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;
     procedure SetTabSheet(const Value: TrzTabSheet);
     function GetIsNull: boolean;
     procedure Setoid(const Value: string);
@@ -180,6 +179,7 @@ type
     procedure SetInputFlag(const Value: integer);virtual;
     function DecodeBarcode(BarCode: string):integer;
     function GetToolHandle:THandle;
+    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;virtual;
   public
     { Public declarations }
     //SEQNO控制号
@@ -1606,6 +1606,8 @@ begin
            (edtTable.FieldbyName('UNIT_ID').AsString = AObj.FieldbyName('UNIT_ID').AsString)
            and
            (edtTable.FieldbyName('LOCUS_NO').AsString = AObj.FieldbyName('LOCUS_NO').AsString)
+           and
+           (edtTable.FieldbyName('BATCH_NO').AsString = AObj.FieldbyName('BATCH_NO').AsString)
            and
            (edtTable.FieldbyName('BOM_ID').AsString = AObj.FieldbyName('BOM_ID').AsString)
            and
@@ -3150,11 +3152,16 @@ begin
   AObj := TRecord_.Create;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   try
-    rs.SQL.Text := 'select GODS_ID,LOCUS_NO,UNIT_ID,BATCH_NO,IS_PRESENT from VIW_STOCKDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID='''+edtTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
+    rs.SQL.Text := 'select max(BATCH_NO) from STO_STORAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+cid+''' and GODS_ID='''+edtTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
     Factor.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('无效的批号:'+id);
+    if rs.Fields[0].asString='' then
+       begin
+         if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+         if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
+         if MessageBox(Handle,'当前门店没有此批号的商品,是否强制手工输入?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       end;
     edtTable.Edit;
-    edtTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+    edtTable.FieldbyName('BATCH_NO').asString := id;
     result := true;
   finally
     AObj.Free;

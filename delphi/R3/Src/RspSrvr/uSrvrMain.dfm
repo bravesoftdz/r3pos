@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 636
-  Top = 128
+  Left = 315
+  Top = 230
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
@@ -592,6 +592,15 @@ object SocketForm: TSocketForm
     end
     object actRefreshComponment: TAction
       Caption = #21047#26032
+    end
+    object actfrmAddDb: TAction
+      Caption = #28155#21152#36830#25509
+    end
+    object actfrmDeleteDb: TAction
+      Caption = #21024#38500#36830#25509
+    end
+    object actfrmDbConfig: TAction
+      Caption = #23646#24615
     end
   end
   object ImageList1: TImageList

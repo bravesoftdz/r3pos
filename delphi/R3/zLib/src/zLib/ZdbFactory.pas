@@ -140,8 +140,8 @@ begin
   try
     inherited;
   finally
-     Leave;
-     DeleteCriticalSection(FThreadLock);
+    Leave;
+    DeleteCriticalSection(FThreadLock);
   end;
 end;
 

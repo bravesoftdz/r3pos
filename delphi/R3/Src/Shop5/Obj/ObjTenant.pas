@@ -83,7 +83,7 @@ begin
 
   //为每个门店初始化现金账户
   Str := 'insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,comm,time_stamp)'+
-  ' values(:TENANT_ID,'+shopid+','''+TSequence.NewId+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,'+shopid+','''+NewId(shopid)+''',''现金'',''XJ'',''A'',0,0,0,0,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
   //为企业初始化管理员
@@ -144,7 +144,7 @@ begin
   AGlobal.ExecSQL(Str,Self);
   //初始化会员等级
   Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
-  'values(:TENANT_ID,'''+TSequence.NewId+''',''普通会员'',''PTFY'',0,0,0,0,0,0,1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  'values(:TENANT_ID,'''+newid(shopid)+''',''普通会员'',''PTFY'',0,0,0,0,0,0,1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,Self);
 
   Result := True;

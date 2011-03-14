@@ -186,6 +186,8 @@ type
     //结算金额
     TotalFee:Currency;
     TotalAmt:Currency;
+    //换购积分
+    TotalBarter:integer;
     //默认发票类型
     DefInvFlag:integer;
     //普通税率
@@ -903,7 +905,7 @@ begin
     cdsTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     cdsTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
     //看是否换购商品
-    if bs.FieldByName('USING_BARTER').AsInteger=1 then
+    if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
          cdsTable.FieldByName('IS_PRESENT').AsInteger := 2;
          cdsTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
@@ -922,24 +924,50 @@ end;
 procedure TfrmPosMain.PresentToCalc(Present: integer);
 var
   Field:TField;
+  bs:TZQuery;
 begin
   if cdsTable.FindField('IS_PRESENT')=nil then Exit;
-  Field := cdsTable.FindField('APRICE');
-  if Field=nil then Exit;
-  cdsTable.Edit;
-  cdsTable.FindField('IS_PRESENT').AsInteger := Present;
-  if Present=1 then
-     begin
-       Field.AsFloat := 0;
-       PriceToCalc(0);
-     end
+  if Present in [0,1] then
+  begin
+    Field := cdsTable.FindField('APRICE');
+    if Field=nil then Exit;
+    cdsTable.Edit;
+    cdsTable.FindField('IS_PRESENT').AsInteger := Present;
+    if Present=1 then
+       begin
+         Field.AsFloat := 0;
+         PriceToCalc(0);
+       end
+    else
+       begin
+         InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString);
+         PriceToCalc(cdsTable.FieldbyName('APRICE').AsFloat);
+       end;
+    if cdsTable.State in [dsInsert,dsEdit] then cdsTable.Post;
+    cdsTable.Edit;
+  end
   else
-     begin
-       InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString);
-       PriceToCalc(cdsTable.FieldbyName('APRICE').AsFloat);
-     end;
-  if cdsTable.State in [dsInsert,dsEdit] then cdsTable.Post;
-  cdsTable.Edit;
+  begin
+     bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+     if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+cdsTable.FieldbyName('GODS_NAME').AsString+'”');
+     //看是否换购商品
+     if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
+        begin
+          cdsTable.Edit;
+          cdsTable.FieldByName('IS_PRESENT').AsInteger := 2;
+          cdsTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+          if bs.FieldByName('USING_BARTER').AsInteger=2 then
+             begin
+               cdsTable.FieldByName('APRICE').AsFloat := 0;
+               PriceToCalc(0);
+             end;
+        end
+     else
+        begin
+          MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+          PresentToCalc(0);
+        end;
+  end;
 end;
 
 procedure TfrmPosMain.PriceToCalc(APrice: Currency);
@@ -2047,6 +2075,8 @@ begin
   try
     r := cdsTable.FieldbyName('SEQNO').AsInteger;
     TotalFee := 0;
+    TotalBarter := 0;
+    TotalAmt := 0;
     mny := 0;
     ago := 0;
     mny1 := 0;
@@ -2067,6 +2097,8 @@ begin
         mny := mny + cdsTable.FieldbyName('AMONEY').AsFloat;
         ago := ago + cdsTable.FieldbyName('AGIO_MONEY').AsFloat;
         end;
+        if cdsTable.FieldbyName('IS_PRESENT').AsInteger = 2 then
+           TotalBarter := TotalBarter + trunc(cdsTable.FieldbyName('CALC_AMOUNT').AsFloat*cdsTable.FieldbyName('BARTER_INTEGRAL').AsFloat);
         cdsTable.Next;
       end;
   finally
@@ -2082,6 +2114,7 @@ begin
        end;
        edtINTEGRAL.Text := AObj.FieldbyName('INTEGRAL').asString;
      end;
+  AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
   edtAGIO_MONEY.Text := formatFloat('#0.0#',ago1);
   edtAMONEY.Text := formatFloat('#0.0#',mny1);
   lblACCT_MNY.Caption := '结算:'+floattostr(TotalFee-AObj.FieldbyName('PAY_DIBS').asFloat);
@@ -2411,7 +2444,7 @@ var PWidth:integer;
     1:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString;
     2:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString;
     3:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
-    4:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+    4:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
     5:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
     else
       result := DataSet.FieldbyName('GODS_NAME').AsString;
@@ -2502,14 +2535,17 @@ begin
 
      if rs.FieldbyName('INTEGRAL').AsFloat <> 0 then
         WriteAndEnter('本单积分:'+rs.FieldbyName('INTEGRAL').AsString);
+     if rs.FieldbyName('BARTER_INTEGRAL').AsFloat <> 0 then
+        WriteAndEnter('兑换积分:'+rs.FieldbyName('BARTER_INTEGRAL').AsString);
      if rs.FieldbyName('ACCU_INTEGRAL').AsFloat <> 0 then
         WriteAndEnter('累计积分:'+rs.FieldbyName('ACCU_INTEGRAL').AsString);
 
      WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('CASH_MNY').AsFloat <> 0 then
-        WriteAndEnter('实收:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_DIBS').AsFloat));
-
-     WriteAndEnter(DevFactory.EncodeDivStr);
+        begin
+          WriteAndEnter('实收:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_DIBS').AsFloat));
+          WriteAndEnter(DevFactory.EncodeDivStr);
+        end;
      if DevFactory.Footer <> '' then
         begin
           ls := TStringList.Create;
@@ -2569,7 +2605,7 @@ begin
    'select A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,'+
    'A.PAY_E,A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
-   'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,B.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
+   'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,A.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='''+tenantid+''' and A.SALES_ID='''+id+''' ) jb '+
    'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
@@ -3161,11 +3197,16 @@ begin
   AObj := TRecord_.Create;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   try
-    rs.SQL.Text := 'select GODS_ID,LOCUS_NO,UNIT_ID,BATCH_NO,IS_PRESENT from VIW_STOCKDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID='''+cdsTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
+    rs.SQL.Text := 'select max(BATCH_NO) from STO_STORAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and GODS_ID='''+cdsTable.FieldbyName('GODS_ID').AsString+''' and BATCH_NO='''+id+'''';
     Factor.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('无效的批号:'+id);
+    if rs.Fields[0].asString='' then
+       begin
+         if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+         if bs.FieldbyName('USING_BATCH_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用批号管制...');
+         if MessageBox(Handle,'当前门店没有此批号的商品,是否强制手工输入?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       end;
     cdsTable.Edit;
-    cdsTable.FieldbyName('BATCH_NO').asString := rs.FieldbyName('BATCH_NO').asString;
+    cdsTable.FieldbyName('BATCH_NO').asString := id;
     result := true;
   finally
     AObj.Free;

@@ -1065,8 +1065,32 @@ begin
 end;
 
 procedure TfrmSalIndentOrder.PresentToCalc(Present: integer);
+var bs:TZQuery;
 begin
-  inherited;
+  if Present in [0,1] then
+     inherited
+  else
+     begin
+       bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+       //看是否换购商品
+       if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
+          begin
+            edtTable.Edit;
+            edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+            if bs.FieldByName('USING_BARTER').AsInteger=2 then
+               begin
+                 edtTable.FieldByName('APRICE').AsFloat := 0;
+                 PriceToCalc(0);
+               end;
+          end
+       else
+          begin
+            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            PresentToCalc(0);
+          end;
+      end;
   ShowInfo;
 end;
 

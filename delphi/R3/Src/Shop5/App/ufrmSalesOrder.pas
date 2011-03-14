@@ -109,6 +109,8 @@ type
     TotalFee:Currency;
     //结算数量
     TotalAmt:Currency;
+    //换购积分
+    TotalBarter:integer;
     //默认发票类型
     DefInvFlag:integer;
     //普通税率
@@ -132,11 +134,12 @@ type
     procedure PriceToGods(id:string);override;
     //赠送
     procedure PresentToGods;
+    //处理积对换
+    procedure PresentToCalc(Present:integer);override;
 
     procedure ReadFrom(DataSet:TDataSet);override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure UnitToCalc(UNIT_ID:string);override;
-    procedure PresentToCalc(Present:integer);override;
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -651,6 +654,7 @@ begin
     r := edtTable.FieldbyName('SEQNO').AsInteger;
     TotalFee := 0;
     TotalAmt := 0;
+    TotalBarter := 0;
     prf := 0;
     mny := 0;
     ago := 0;
@@ -665,6 +669,8 @@ begin
         mny := mny + edtTable.FieldbyName('AMONEY').AsFloat;
         ago := ago + edtTable.FieldbyName('AGIO_MONEY').AsFloat;
         end;
+        if edtTable.FieldbyName('IS_PRESENT').AsInteger = 2 then
+           TotalBarter := TotalBarter + trunc(edtTable.FieldbyName('CALC_AMOUNT').AsFloat*edtTable.FieldbyName('BARTER_INTEGRAL').AsFloat);
         edtTable.Next;
       end;
   finally
@@ -679,6 +685,7 @@ begin
        3:AObj.FieldbyName('INTEGRAL').AsInteger := trunc(TotalAmt / amt);
        end;
      end;
+  AObj.FieldbyName('BARTER_INTEGRAL').AsInteger := TotalBarter;
 //  edtCALC_MONEY.Text := formatFloat('#0.0##',TotalFee);
   edtTAX_MONEY.Text := formatFloat('#0.00',(TotalFee/(1+AObj.FieldbyName('TAX_RATE').AsFloat))*AObj.FieldbyName('TAX_RATE').AsFloat);
   if dbState <> dsBrowse then
@@ -1121,8 +1128,32 @@ begin
 end;
 
 procedure TfrmSalesOrder.PresentToCalc(Present: integer);
+var bs:TZQuery;
 begin
-  inherited;
+  if Present in [0,1] then
+     inherited
+  else
+     begin
+       bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
+       //看是否换购商品
+       if bs.FieldByName('USING_BARTER').AsInteger in [2,3] then
+          begin
+            edtTable.Edit;
+            edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
+            edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+            if bs.FieldByName('USING_BARTER').AsInteger=2 then
+               begin
+                 edtTable.FieldByName('APRICE').AsFloat := 0;
+                 PriceToCalc(0);
+               end;
+          end
+       else
+          begin
+            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            PresentToCalc(0);
+          end;
+      end;
   ShowInfo;
 end;
 

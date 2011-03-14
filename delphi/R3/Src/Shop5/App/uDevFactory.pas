@@ -164,9 +164,9 @@ end;
 function TDevFactory.GetTitle: string;
 var s:string;
 begin
-  s := StringReplace(DevFactory.Title,'[门店名称]',Global.SHOP_NAME,[rfReplaceAll]);
-  s := StringReplace(DevFactory.Title,'[企业名称]',Global.TENANT_NAME,[rfReplaceAll]);
-  s := StringReplace(DevFactory.Title,'[企业简称]',Global.SHORT_TENANT_NAME,[rfReplaceAll]);
+  s := StringReplace(DevFactory.FTitle,'[门店名称]',Global.SHOP_NAME,[rfReplaceAll]);
+  s := StringReplace(DevFactory.FTitle,'[企业名称]',Global.TENANT_NAME,[rfReplaceAll]);
+  s := StringReplace(DevFactory.FTitle,'[企业简称]',Global.SHORT_TENANT_NAME,[rfReplaceAll]);
   if s='' then s := Global.TENANT_NAME;
   result := s;
 end;

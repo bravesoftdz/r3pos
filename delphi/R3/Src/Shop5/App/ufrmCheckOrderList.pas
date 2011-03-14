@@ -47,6 +47,8 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     oid: string;
     FDoCheckPrint: TOnPrintEvent;
@@ -352,6 +354,21 @@ end;
 procedure TfrmCheckOrderList.SetDoCheckPrint(const Value: TOnPrintEvent);
 begin
   FDoCheckPrint := Value;
+end;
+
+procedure TfrmCheckOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  inherited;
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := $0000F2F2;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 end.

@@ -89,7 +89,7 @@ type
   end;
 
 implementation
-uses uGlobal, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
+uses uGlobal,ufrmLogo, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
 {$R *.dfm}
 
 class function TfrmTenant.coRegister(Owner: TForm): boolean;
@@ -97,6 +97,8 @@ begin
   with TfrmTenant.Create(Owner) do
     begin
       try
+        frmLogo.Show;
+        try
         rzPage.ActivePageIndex := 0;
         result := Check;
         if result then
@@ -114,6 +116,9 @@ begin
                 Exit;
               end;
           end;
+        finally
+          frmLogo.Close;
+        end;
         if (not result) then
            result := (ShowModal=MROK);
       finally
@@ -384,7 +389,7 @@ begin
                    begin
                      if Temp.IsEmpty then
                         begin
-                          MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                          //MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
                           Raise;
                         end;
                    end;

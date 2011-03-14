@@ -316,7 +316,7 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio);
+    GetHeader(rio).free;
     CheckRecAck(doc);
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
     code := GetNodeValue(caTenantLoginResp,'code');

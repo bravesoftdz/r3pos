@@ -167,6 +167,7 @@ end;
 
 function TfrmSelectCheckGoods.EncodeSQL(id: string): string;
 var
+  CodeID: integer;
   w:string;
   sc:string;
 begin
@@ -180,15 +181,25 @@ begin
       if w<>'' then w := w + ' and ';
       w := w + 'j.GODS_ID>=:MAXID';
      end;
-  if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
-     begin
+
+  CodeID:=TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger;
+  if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) and (CodeID<>1) then
+  begin
+    if w<>'' then w := w + ' and ';
+     w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
+  end;
+
+  if (CodeID=1) and (rzTree.Selected<>nil) then
+  begin
+    if w<>'' then w := w + ' and ';
+    w := w + ' b.RELATION_ID=:RELATION_ID ';
+    if rzTree.Selected.Level>0 then
+    begin
       if w<>'' then w := w + ' and ';
-      case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      1:w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID ';
-      else
-        w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
-      end;
-     end;
+      w := w + ' b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' ';
+    end;
+  end;
+
   if trim(edtSearch.Text)<>'' then
      begin
       if w<>'' then w := w + ' and ';
@@ -551,6 +562,9 @@ begin
          begin
            AObj := TRecord_.Create;
            AObj.ReadFromDataSet(rs);
+           //2011.03.12 Add 可选择[供应链节点]的作为查询条件
+           AObj.FieldByName('LEVEL_ID').AsString:='';
+           AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
            rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
            w := rs.FieldByName('RELATION_ID').AsInteger;
          end;

@@ -211,11 +211,12 @@ end;
 
 function TfrmStockDayReport.GetGroupSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
   StrCnd:='';
-  if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -277,14 +278,15 @@ begin
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
       ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA  where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ') ';
-  end;  
+  end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(STOCK_AMT) as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+    ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
+    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT/'+UnitCalc+') else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
@@ -350,11 +352,12 @@ end;
 
 function TfrmStockDayReport.GetShopSQL(chk:boolean=true): string;
 var
+  UnitCalc: string; //统计单位换算计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: widestring;
 begin
   StrCnd:='';
-  if P2_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P2_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P2_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
+  if P2_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -419,12 +422,13 @@ begin
       ') ';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(STOCK_AMT) as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+    ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
+    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT/'+UnitCalc+') else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
@@ -443,6 +447,7 @@ end;
 
 function TfrmStockDayReport.GetSortSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strCnd,strWhere,GoodTab,SQLData,lv: widestring;
 begin
   result:='';
@@ -510,11 +515,12 @@ begin
       ') ';
   end;
 
+  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(STOCK_AMT) as STOCK_AMT '+
+    ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
@@ -586,10 +592,11 @@ end;
 
 function TfrmStockDayReport.GetGodsSQL(chk:boolean=true): string;
 var
+  UnitCalc: string; //统计单位换算计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
-  if P4_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P4_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P4_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
+  if P4_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -653,7 +660,8 @@ begin
       ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ') ';
   end;
-  
+
+  UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
@@ -686,8 +694,8 @@ function TfrmStockDayReport.GetGlideSQL(chk:boolean=true): string;
 var
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
-  if P5_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
-  if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P5_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
+  if P5_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
@@ -701,9 +709,7 @@ begin
   if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
      strWhere:=strWhere+' and A.STOCK_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
   else if P5_D1.Date<P5_D2.Date then
-     strWhere:=strWhere+' and A.STOCK_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.STOCK_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' '
-  else
-
+     strWhere:=strWhere+' and A.STOCK_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.STOCK_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
@@ -734,6 +740,12 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  //单据类型[入库单|退货单]
+  if fndP5_InStock.Checked then
+    strWhere:=strWhere+' and STOCK_TYPE=1 '
+  else if fndP5_ReturnStock.Checked then
+    strWhere:=strWhere+' and STOCK_TYPE=3 ';
+    
   SQLData := 'VIW_STOCKDATA';
 
   strSql :=
@@ -840,8 +852,8 @@ begin
   case CodeID of
    1:  //商品分类[带供应链接]
     begin
-      sid2:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
-      srid2:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;
    else
@@ -894,6 +906,7 @@ begin
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
   sid5:=sid4;
   srid5:=srid4;
+  fndP5_ALL.Checked:=true;
   DoAssignParamsValue(RzPanel14, RzPanel17);
 end;
 

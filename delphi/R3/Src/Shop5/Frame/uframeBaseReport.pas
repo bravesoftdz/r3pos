@@ -9,7 +9,8 @@ uses
   RzLstBox, RzChkLst, RzCmboBx, Mask, RzEdit, Grids, DBGridEh, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit;
+  ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit,
+  cxRadioGroup;
 
 
 type
@@ -68,9 +69,11 @@ type
     function GetCmpNum(CmpName,BegName: string): string; //返回当前控件名中数序号
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);
+    procedure DoRBDate(Sender: TObject);   //
+    procedure DoCxDateOnCloseUp(Sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
-    function GetDBGridEh: TDBGridEh;virtual;
+    function  GetDBGridEh: TDBGridEh;virtual;
     {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[查询条件值] =======}
     procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel); //PageIndex=-1表示由Sender的序号确定PageIndex
     {=======  2011.03.02 Add TDBGridEh =======}
@@ -92,9 +95,8 @@ type
     function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
-
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
-    function  FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
+    function  FormatReportHead(TitleList: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
@@ -325,9 +327,19 @@ begin
 end;
 
 procedure TframeBaseReport.actPriorExecute(Sender: TObject);
+var i,MaxCount: integer;
 begin
   inherited;
-  if (rzPage.ActivePageIndex > 0) and (rzPage.Pages[rzPage.ActivePageIndex-1].Visible) then rzPage.ActivePageIndex := rzPage.ActivePageIndex - 1;
+  MaxCount:=rzPage.ActivePageIndex;
+  for i:=0 to MaxCount do
+  begin
+    if rzPage.ActivePageIndex=0 then Exit;
+    if rzPage.Pages[MaxCount-1].TabVisible then
+    begin
+      rzPage.ActivePageIndex := MaxCount - 1;
+      break;
+    end;
+  end;
 end;
 
 procedure TframeBaseReport.FormCreate(Sender: TObject);
@@ -368,6 +380,18 @@ begin
           Cbx.ItemIndex:=0;
         end;
       end;
+    end;
+
+    if (Components[i] is TcxRadioButton) then
+    begin
+      CmpName:=trim(UpperCase(TcxRadioButton(Components[i]).Name));
+      if (Pos('WEEK',CmpName)>0) or (Pos('MONTH',CmpName)>0) or (Pos('QUARTER',CmpName)>0) or (Pos('YEAR',CmpName)>0) then
+        TcxRadioButton(Components[i]).OnClick:=self.DoRBDate;
+    end;
+
+    if (Components[i] is TcxDateEdit) then
+    begin
+      TcxDateEdit(Components[i]).Properties.OnCloseUp:=DoCxDateOnCloseUp;
     end;
 
     //设置Dataset;
@@ -440,7 +464,7 @@ begin
   //
 end;
 
-function TframeBaseReport.FormatTitel(TitlStr: TStringList; Cols: integer; SplitCount: integer=10): string;
+function TframeBaseReport.FormatReportHead(TitleList: TStringList; Cols: integer; SplitCount: integer=10): string;
  function GetSpaceStr(vLen: integer): string;
  begin
    result:=Copy('                                                                                                      ',1,vLen);
@@ -455,21 +479,21 @@ begin
   CurStr:='';
   SpactStr:=Copy('                                                                                                      ',1,SplitCount);
   Idx:=0;
-  for i:=0 to TitlStr.Count-1 do
+  for i:=0 to TitleList.Count-1 do
   begin
     CurStr:='';
-    if Idx>TitlStr.Count-1 then Break;
+    if Idx>TitleList.Count-1 then Break;
     for j:=0 to Cols-1 do
     begin
-      if Idx>TitlStr.Count-1 then Break;
+      if Idx>TitleList.Count-1 then Break;
       if j=0 then
       begin
-        CurStr:=TitlStr.Strings[Idx]+SpactStr;
+        CurStr:=TitleList.Strings[Idx]+SpactStr;
         Inc(Idx);
       end else
       if j>0 then
       begin
-        CurStr:=CurStr+TitlStr.Strings[Idx]+SpactStr;
+        CurStr:=CurStr+TitleList.Strings[Idx]+SpactStr;
         Inc(Idx);
       end;
     end;
@@ -895,5 +919,58 @@ begin
 }
 end;
 
+procedure TframeBaseReport.DoRBDate(Sender: TObject);
+var
+  CmpName: string;
+  FindCmp: TComponent;
+  CurRB: TcxRadioButton;
+begin
+  CurRB:=TcxRadioButton(Sender);
+  if not CurRB.Checked then Exit;
+  CmpName:=GetCmpNum(CurRB.Name,'fndP'); //返回控件Num
+  if CmpName<>'' then
+  begin
+    CmpName:='P'+CmpName+'_D1';
+    FindCmp:=FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TcxDateEdit) then
+    begin
+      CmpName:=LowerCase(TcxRadioButton(Sender).Name);
+      if pos('week',CmpName)>0 then
+        TcxDateEdit(FindCmp).Date:=Date()-7
+      else if pos('month',CmpName)>0 then
+        TcxDateEdit(FindCmp).Date:=Date()-30
+      else if pos('quarter',CmpName)>0 then
+        TcxDateEdit(FindCmp).Date:=Date()-120
+      else if pos('year',CmpName)>0 then
+        TcxDateEdit(FindCmp).Date:=Date()-365;
+    end;
+  end;
+end;
+
+procedure TframeBaseReport.DoCxDateOnCloseUp(Sender: TObject);
+var
+  CmpNum: string;
+  FindCmp: TComponent;
+begin
+  CmpNum:=GetCmpNum(TcxDateEdit(Sender).Name,'P'); //返回控件Num
+  if CmpNum<>'' then
+  begin
+    FindCmp:=FindComponent('fndP'+CmpNum+'_week');
+    if (FindCmp<>nil) and (FindCmp is TcxRadioButton) and (TcxRadioButton(FindCmp).Checked) then
+      TcxRadioButton(FindCmp).Checked:=False;
+
+    FindCmp:=FindComponent('fndP'+CmpNum+'_month');
+    if (FindCmp<>nil) and (FindCmp is TcxRadioButton) and (TcxRadioButton(FindCmp).Checked) then
+      TcxRadioButton(FindCmp).Checked:=False;
+
+    FindCmp:=FindComponent('fndP'+CmpNum+'_quarter');
+    if (FindCmp<>nil) and (FindCmp is TcxRadioButton) and (TcxRadioButton(FindCmp).Checked) then
+      TcxRadioButton(FindCmp).Checked:=False;
+
+    FindCmp:=FindComponent('fndP'+CmpNum+'_year');
+    if (FindCmp<>nil) and (FindCmp is TcxRadioButton) and (TcxRadioButton(FindCmp).Checked) then
+      TcxRadioButton(FindCmp).Checked:=False;
+  end;
+end;
 
 end.

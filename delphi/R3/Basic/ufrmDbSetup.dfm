@@ -1,6 +1,6 @@
 object frmDBSetup: TfrmDBSetup
-  Left = 800
-  Top = 273
+  Left = 564
+  Top = 220
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #31995#32479#21442#25968#35774#32622
@@ -373,7 +373,7 @@ object frmDBSetup: TfrmDBSetup
       Properties.DropDownListStyle = lsFixedList
       Properties.Items.Strings = (
         'CS'#27169#24335
-        'AdoServer'#27169#24335)
+        'RSPServer'#27169#24335)
       Properties.OnChange = cbConnModePropertiesChange
       TabOrder = 0
     end
@@ -429,7 +429,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 109
           Width = 72
           Height = 12
-          Caption = #25968#25454#24211#32534#21495#65306
+          Caption = #25968#25454#24211'ID'#21495#65306
         end
         object Label4: TLabel
           Left = 282
@@ -516,68 +516,49 @@ object frmDBSetup: TfrmDBSetup
       object TPage
         Left = 0
         Top = 0
-        Caption = 'ADOSERVER'
-        object lblADOHost: TLabel
+        Caption = 'RSPSERVER'
+        object lblRSPHost: TLabel
           Left = 61
           Top = 30
           Width = 90
           Height = 12
-          Caption = 'ADO'#26381#21153#22120#22320#22336#65306
+          Caption = 'RSP'#26381#21153#22120#22320#22336#65306
         end
-        object lblADOPort: TLabel
+        object lblRSPPort: TLabel
           Left = 61
           Top = 55
           Width = 90
           Height = 12
-          Caption = 'ADO'#26381#21153#22120#31471#21475#65306
+          Caption = 'RSP'#26381#21153#22120#31471#21475#65306
         end
-        object lblADOID: TLabel
+        object lblRSPID: TLabel
           Left = 61
           Top = 80
           Width = 90
           Height = 12
-          Caption = 'ADO'#36830#25509#20018'ID'#21495#65306
+          Caption = 'RSP'#25968#25454#24211'ID'#21495#65306
         end
-        object lblADOType: TLabel
-          Left = 61
-          Top = 6
-          Width = 90
-          Height = 12
-          Caption = 'ADO'#26381#21153#22120#31867#22411#65306
-        end
-        object edtADOHost: TcxTextEdit
+        object edtRSPHost: TcxTextEdit
           Left = 151
           Top = 26
           Width = 124
           Height = 20
-          TabOrder = 1
+          TabOrder = 0
         end
-        object edtADOPort: TcxTextEdit
+        object edtRSPPort: TcxTextEdit
           Left = 151
           Top = 50
           Width = 124
           Height = 20
-          TabOrder = 2
-          OnKeyPress = edtADOPortKeyPress
+          TabOrder = 1
+          OnKeyPress = edtRSPPortKeyPress
         end
-        object sedtADODBID: TcxSpinEdit
+        object sedtRSPDBID: TcxSpinEdit
           Left = 151
           Top = 76
           Width = 124
           Height = 20
-          TabOrder = 3
-        end
-        object cbAdoType: TcxComboBox
-          Left = 151
-          Top = 3
-          Width = 124
-          Height = 20
-          Properties.DropDownListStyle = lsFixedList
-          Properties.Items.Strings = (
-            'Ado Balance'
-            'Ado Server')
-          Properties.OnChange = cbAdoTypePropertiesChange
-          TabOrder = 0
+          TabOrder = 2
         end
       end
     end

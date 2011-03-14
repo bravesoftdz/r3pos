@@ -57,7 +57,7 @@ type
     function  GlobalAtteExts(AtteID:string):String;virtual;
 
     //用于打开基础资料。
-    procedure LoadBasic(Saveed:Boolean=false;Opened:Boolean=true;Logoed:boolean=true);virtual;
+    procedure LoadBasic(Saveed:Boolean=false;Opened:Boolean=true);virtual;
 
     function GetSrvDateTime:TDatetime;
 
@@ -102,7 +102,7 @@ Var Global:TGlobal;//全局公共基础数据模块
     sysLogFile:Boolean;
     lckStr:string;
 implementation
-uses ufrmLogo,Forms;
+uses Forms;
 {$R *.dfm}
 var
   whKeyboard: HHook;
@@ -232,22 +232,13 @@ begin
   inherited;
 end;
 
-procedure TGlobal.LoadBasic(Saveed:Boolean=false;Opened:Boolean=true;Logoed:boolean=true);
+procedure TGlobal.LoadBasic(Saveed:Boolean=false;Opened:Boolean=true);
 var i:Integer;
     S,SQL:String;
-    Logo:TfrmLogo;
 begin
-  Logo := TfrmLogo.Create(Self);
-  try
-  if Logoed then
-    begin
-     Logo.Show;
-     Logo.Update;
-    end;
   S := '正在初始化基础资料....';
   for i:=0 to ComponentCount -1 do
     begin
-      Logo.ShowPostion(i*100 DIV ComponentCount,S);
       if Components[i] Is TZQuery then
          begin
            Sleep(0);
@@ -272,9 +263,6 @@ begin
               Raise Exception.Create('没有打开数据库连接。');
          end;
     end;
-  finally
-    Logo.Free;
-  end;
 end;
 
 function TGlobal.RefreshTable(Name: String): Boolean;

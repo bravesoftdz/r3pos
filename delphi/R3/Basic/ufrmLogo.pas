@@ -13,12 +13,11 @@ type
     ProgressBar1: TProgressBar;
     Image3: TImage;
   private
-  protected
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
     { Public declarations }
   end;
-
+var frmLogo:TfrmLogo;
 implementation
 
 {$R *.DFM}
@@ -31,5 +30,7 @@ begin
   Label1.Update;
 end;
 
+initialization
+finalization
 end.
 

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Forms, Dialogs,
   ExtCtrls, StdCtrls, ComCtrls, EncDec, RzButton, Registry, IniFiles,
   jpeg,rzPanel, cxSpinEdit, cxTextEdit, cxButtonEdit, cxControls, ZdbFactory,
-  cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, Controls, DB, ADODB,
+  cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, Controls, DB,
   ZConnection, Mask;
 
 type
@@ -36,15 +36,13 @@ type
     edtDatabase: TcxTextEdit;
     edtUser: TcxTextEdit;
     edtUserPw: TcxTextEdit;
-    lblADOHost: TLabel;
-    edtADOHost: TcxTextEdit;
-    lblADOPort: TLabel;
-    edtADOPort: TcxTextEdit;
+    lblRSPHost: TLabel;
+    edtRSPHost: TcxTextEdit;
+    lblRSPPort: TLabel;
+    edtRSPPort: TcxTextEdit;
     Splitter1: TSplitter;
-    lblADOID: TLabel;
-    sedtADODBID: TcxSpinEdit;
-    lblADOType: TLabel;
-    cbAdoType: TcxComboBox;
+    lblRSPID: TLabel;
+    sedtRSPDBID: TcxSpinEdit;
     edtDbDir: TcxButtonEdit;
     ODialog: TOpenDialog;
     lblAccountName: TLabel;
@@ -59,10 +57,10 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure cbConnModePropertiesChange(Sender: TObject);
-    procedure edtADOPortKeyPress(Sender: TObject; var Key: Char);
-    procedure edtAdodbidKeyPress(Sender: TObject; var Key: Char);
+    procedure edtRSPPortKeyPress(Sender: TObject; var Key: Char);
+    procedure edtRSPdbidKeyPress(Sender: TObject; var Key: Char);
     procedure edtDbDirClick(Sender: TObject);
-    procedure cbAdoTypePropertiesChange(Sender: TObject);
+    procedure cbRSPTypePropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FDBID: Integer;
@@ -92,7 +90,7 @@ var
 
 procedure TfrmDBSetup.FormCreate(Sender: TObject);
 begin
-  Font.Assign(Screen.MenuFont);
+//  Font.Assign(Screen.MenuFont);
   HintL.Caption := '数据库参数配置';
   //cbConnMode.ItemIndex := 0;
 end;
@@ -105,12 +103,12 @@ begin
     0:begin
       if cbDBType.Text = '' then
       begin
-      Application.MessageBox('请选择一数据库类型！',Pchar(Application.Title), mb_IconError);
+      MessageBox(Handle,'请选择一数据库类型！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
       end;
       if edtDBID.Text = '' then
       begin
-      Application.MessageBox('请输入帐套名称为不重复的标识名！',Pchar(Application.Title), mb_IconError);
+      MessageBox(Handle,'请输入帐套名称为不重复的标识名！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
       end;
       try
@@ -120,22 +118,21 @@ begin
         ModalResult := mrOk;
         Exit;
       except
-        Application.MessageBox('连接数据库错误，请确认参数是否正确！',Pchar(Application.Title),
-          mb_IconError);
+        MessageBox(Handle,'连接数据库错误，请确认参数是否正确！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
         edtDBName.SetFocus;
       end;
     end;
     1:begin
-        if trim(edtADOHost.Text)='' then
+        if trim(edtRSPHost.Text)='' then
         begin
-          Application.MessageBox('请输入ADO服务器地址！',Pchar(Application.Title), mb_IconError);
-          edtADOHost.SetFocus;
+          MessageBox(Handle,'请输入RSP服务器地址！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
+          edtRSPHost.SetFocus;
           Abort;
         end;
-        if trim(edtADOPort.Text)='' then
+        if trim(edtRSPPort.Text)='' then
         begin
-          Application.MessageBox('请输入ADO服务器端口！',Pchar(Application.Title), mb_IconError);
-          edtADOPort.SetFocus;
+          MessageBox(Handle,'请输入RSP服务器端口！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
+          edtRSPPort.SetFocus;
           Abort;
         end;
         SaveParams;
@@ -231,7 +228,7 @@ begin
             cbDbType.ItemIndex := 1
           else if Pro = 'sqlite-3' then
             cbDbType.ItemIndex := 2
-          else if Pro = 'ado' then
+          else if Pro = 'RSP' then
             cbDbType.ItemIndex := 3;
         end
       else
@@ -239,21 +236,17 @@ begin
 
       //cbDBType.SetFocus;
     end;
-  1:begin
-      cbADOType.ItemIndex := 1;
-      //edtADOHost.SetFocus;
-    end;
   end;
   
 end;
 
-procedure TfrmDBSetup.edtADOPortKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmDBSetup.edtRSPPortKeyPress(Sender: TObject; var Key: Char);
 begin
    if not (key  in ['0'..'9',#8]) then
      key :=#0;
 end;
 
-procedure TfrmDBSetup.edtAdodbidKeyPress(Sender: TObject; var Key: Char);
+procedure TfrmDBSetup.edtRSPdbidKeyPress(Sender: TObject; var Key: Char);
 begin
   if  not (key in ['0'..'9',#8]) then
     key := #0;
@@ -296,7 +289,6 @@ end;
 function TfrmDBSetup.GetConnStr: string;
 var ConnStr:String;
 begin
-
   try
     if cbConnMode.ItemIndex = 0 then
       begin
@@ -339,9 +331,9 @@ begin
       end
     else
       begin
-        ConnStr := 'connmode='+IntToStr(cbAdoType.ItemIndex);
-        ConnStr := ConnStr + ';hostname=' + Trim(edtADOHost.Text);
-        ConnStr := ConnStr + ';port=' + Trim(edtADOPort.Text);
+        ConnStr := 'connmode='+IntToStr(cbConnMode.ItemIndex+1);
+        ConnStr := ConnStr + ';hostname=' + Trim(edtRSPHost.Text);
+        ConnStr := ConnStr + ';port=' + Trim(edtRSPPort.Text);
         ConnStr := ConnStr + ';dbid=' + IntToStr(DBID);
       end;
     Result := ConnStr;
@@ -357,7 +349,6 @@ begin
   try
     ConString := GetConnStr;
     Conn := TdbFactory.Create;
-    //Conn.ConnString := ConString;
     Conn.ConnMode := cbConnMode.ItemIndex + 1;
     Conn.Initialize(ConString);
     if not Conn.Connect then
@@ -370,6 +361,7 @@ end;
 procedure TfrmDBSetup.LoadParams;
 var Pro:String;
 begin
+  cbConnMode.ItemIndex :=StrtoIntDef(GetIniParams('db','connmode'),1)-1;
   if cbConnMode.ItemIndex = 0 then
     begin
       Pro := GetIniParams('db'+IntToStr(DBID),'provider');
@@ -409,13 +401,14 @@ begin
 
   if cbConnMode.ItemIndex = 1 then
   begin
-    //cbConnMode.Text := 'AdoServer模式';
-    //cbAdoType.Text := 'Ado Server';
-    edtADOHost.Text := GetIniParams('db','hostname');
-    edtADOPort.Text := GetIniParams('db','port');
+    //cbConnMode.Text := 'RSPServer模式';
+    //cbRSPType.Text := 'RSP Server';
+    edtRSPHost.Text := GetIniParams('db','hostname');
+    edtRSPPort.Text := GetIniParams('db','port');
+    sedtRSPDBID.Value := GetIniParams('db','dbid');
   end;
 
-    if IsVisble then EnableControl;
+  if IsVisble then EnableControl;
 
 end;
 
@@ -423,7 +416,7 @@ end;
 procedure TfrmDBSetup.SaveParams;
 var Pro:String;
 begin
-  SetIniParams('db','',IntToStr(cbConnMode.ItemIndex+1));
+  SetIniParams('db','connmode',IntToStr(cbConnMode.ItemIndex+1));
   case cbConnMode.ItemIndex of
     0:begin
       if cbDbType.ItemIndex = 2 then
@@ -446,12 +439,8 @@ begin
       SetIniParams('db'+IntToStr(DBID),'connstr',GetConnStr);
     end;
     1:Begin
-      if cbAdoType.ItemIndex = 0 then
-        SetIniParams('db','type','1')
-      else
-        SetIniParams('db','type','2');
-      SetIniParams('db','hostname',Trim(edtADOHost.Text));
-      SetIniParams('db','port',Trim(edtADOPort.Text));
+      SetIniParams('db','hostname',Trim(edtRSPHost.Text));
+      SetIniParams('db','port',Trim(edtRSPPort.Text));
       SetIniParams('db','dbid',IntToStr(DBID));
 
       SetIniParams('db','connstr',GetConnStr);
@@ -459,7 +448,7 @@ begin
   end;
 end;
 
-procedure TfrmDBSetup.cbAdoTypePropertiesChange(Sender: TObject);
+procedure TfrmDBSetup.cbRSPTypePropertiesChange(Sender: TObject);
 begin
   LoadParams;
 end;
@@ -468,9 +457,9 @@ procedure TfrmDBSetup.SetDBID(const Value: Integer);
 begin
   FDBID := Value;
   edtDBID.Text := IntToStr(Value);
-  edtDBID.Enabled := False;
-  sedtADODBID.Text := IntToStr(Value);
-  sedtADODBID.Enabled := False;
+  edtDBID.Enabled := (Value=0);
+  sedtRSPDBID.Text := IntToStr(Value);
+  sedtRSPDBID.Enabled := False;
 end;
 
 

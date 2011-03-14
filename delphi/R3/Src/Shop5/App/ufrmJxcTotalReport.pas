@@ -1174,6 +1174,7 @@ begin
     rs.Free;
   end;
 end;
+
 function TfrmJxcTotalReport.GetMaxMonth(E:integer): string;
 var
   rs:TZQuery;

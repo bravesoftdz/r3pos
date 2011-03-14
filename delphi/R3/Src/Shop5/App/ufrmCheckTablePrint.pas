@@ -220,7 +220,7 @@ begin
     if trim(fndP1_SORT_ID.Text) <> '' then TitlList.Add('商品分类：'+fndP1_SORT_ID.Text);
     if trim(fndP1_STAT_ID.AsString) <> '' then TitlList.Add(fndP1_TYPE_ID.Text+'：'+fndP1_STAT_ID.Text);
     if fndP1_UNIT_ID.ItemIndex >= 0 then TitlList.Add('显示单位：'+fndP1_UNIT_ID.Text);
-    s:=FormatTitel(TitlList,2,10);
+    s:=FormatReportHead(TitlList,2,10);
     PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
     PrintDBGridEh1.SetSubstitutes(['%[whr]', s]);
   finally

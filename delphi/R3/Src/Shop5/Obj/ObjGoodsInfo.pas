@@ -82,13 +82,17 @@ begin
   //删除商品价格:(不需过滤门店ID)
   Str:='Update PUB_GOODSPRICE Set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID';
   AGlobal.ExecSQL(Str, self);
+  //删除商品价格:(不需过滤门店ID)
+  Str:='Update PUB_GOODSINFOEXT Set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID';
+  AGlobal.ExecSQL(Str, self);  
 end;
 
 function TGoodsInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
-  Str:string;
   r:integer;
-begin                          
+  Str:string; 
+  vParam: TftParamList;
+begin
   result := true;
   Str:='Insert Into PUB_GOODSINFO(GODS_ID,TENANT_ID,GODS_CODE,GODS_NAME,GODS_SPELL,GODS_TYPE,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,'+
     'SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,BARCODE,CALC_UNITS,UNIT_ID,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,'+
@@ -102,11 +106,26 @@ begin
   Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
                          ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
   AGlobal.ExecSQL(Str, self);
+  //插入进货价扩展表:
+  try
+    vParam:=TftParamList.Create(nil);
+    vParam.ParamByName('TENANT_ID').AsInteger:=Fieldbyname('TENANT_ID').AsInteger;
+    vParam.ParamByName('GODS_ID').AsString:=Fieldbyname('GODS_ID').AsString;
+    vParam.ParamByName('NEW_INPRICE').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat;
+    vParam.ParamByName('NEW_INPRICE1').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('SMALLTO_CALC').AsFloat;
+    vParam.ParamByName('NEW_INPRICE2').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('BIGTO_CALC').AsFloat;
+    Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                             ' Values (:TENANT_ID,:GODS_ID,,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+    AGlobal.ExecSQL(Str, vParam);
+  finally
+    vParam.Free;
+  end;
 end;
 
 function TGoodsInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
+  vParam: TftParamList;
 begin
   result:=true;
   Str:=
@@ -119,16 +138,46 @@ begin
     'COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
     ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
   AGlobal.ExecSQL(Str,self);
-  Str:='update PUB_GOODSPRICE set NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE1,NEW_OUTPRICE2=:NEW_OUTPRICE2,'+
-    ' COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID and PRICE_ID=''#'' '; 
-  AGlobal.ExecSQL(Str,self);
+
+  //更新最新进价有变化时，更新到商品扩展表：
+  if FieldbyName('NEW_INPRICE').AsFloat<>FieldbyName('NEW_INPRICE').AsOldFloat then
+  begin
+    try
+      vParam:=TftParamList.Create(nil);
+      vParam.ParamByName('TENANT_ID').AsInteger:=Fieldbyname('TENANT_ID').AsInteger;
+      vParam.ParamByName('GODS_ID').AsString:=Fieldbyname('GODS_ID').AsString;
+      vParam.ParamByName('NEW_INPRICE').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat;
+      vParam.ParamByName('NEW_INPRICE1').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('SMALLTO_CALC').AsFloat;
+      vParam.ParamByName('NEW_INPRICE2').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('BIGTO_CALC').AsFloat;
+      Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE1,NEW_INPRICE2=:NEW_INPRICE2,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+           ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+      if AGlobal.ExecSQL(Str, vParam)=0 then
+      begin
+        Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                                 ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+        AGlobal.ExecSQL(Str, vParam);
+      end;
+    finally
+      vParam.Free;
+    end;
+  end;
 
   //修改价格日志：
   if (FieldByName('NEW_OUTPRICE').AsFloat<>FieldByName('NEW_OUTPRICE').AsOldFloat) or
      (FieldByName('NEW_OUTPRICE1').AsFloat<>FieldByName('NEW_OUTPRICE1').AsOldFloat) or
      (FieldByName('NEW_OUTPRICE2').AsFloat<>FieldByName('NEW_OUTPRICE2').AsOldFloat) then
   begin
+    //更新本店定价:
+    Str:='update PUB_GOODSPRICE set NEW_OUTPRICE=:NEW_OUTPRICE,NEW_OUTPRICE1=:NEW_OUTPRICE1,NEW_OUTPRICE2=:NEW_OUTPRICE2,'+
+         ' COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+         ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and SHOP_ID=:OLD_SHOP_ID and PRICE_ID=''#'' ';
+    if AGlobal.ExecSQL(Str,self)=0 then //非创建本商品的门店[更新不到商品出库价则插入新记录]
+    begin
+      Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
+                             ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
+      AGlobal.ExecSQL(Str, self);
+    end;
+    //修改价格日志:
     Params.ParamByName('ROWS_ID').AsString:=NewId(''); //日志日期
     Params.ParamByName('PRICING_DATE').AsString:=FormatDatetime('YYYYMMDD',Date()); //日志日期
     Params.ParamByName('TENANT_ID').AsString:=FieldByName('TENANT_ID').AsString;    //企业ID

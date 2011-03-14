@@ -69,23 +69,7 @@ inherited frmPrcCompList: TfrmPrcCompList
                 EditButtons = <>
                 FieldName = 'SHOP_TYPE'
                 Footers = <>
-                KeyList.Strings = (
-                  '1'
-                  '2'
-                  '3')
-                PickList.Strings = (
-                  #32463#38144#21830
-                  #30452#33829#24215
-                  #21152#30431#24215
-                  #9)
                 Title.Caption = #38376#24215#31867#22411
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TENANT_ID'
-                Footers = <>
-                Title.Caption = #38582#23646#32463#38144#21830
-                Width = 83
               end
               item
                 EditButtons = <>
@@ -172,7 +156,7 @@ inherited frmPrcCompList: TfrmPrcCompList
         Spacing = 5
       end
       object RzBitBtn2: TRzBitBtn
-        Left = 422
+        Left = 424
         Top = 9
         Width = 67
         Height = 26

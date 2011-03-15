@@ -15,10 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 516
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -729,7 +729,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 676
+            Width = 675
             Height = 489
             Align = alClient
             BorderOuter = fsNone
@@ -738,7 +738,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 666
+              Width = 665
               Height = 479
               Align = alClient
               BevelOuter = bvNone
@@ -747,7 +747,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 666
+                Width = 665
                 Height = 85
                 Align = alTop
                 BorderOuter = fsGroove
@@ -963,7 +963,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 85
-                Width = 666
+                Width = 665
                 Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
@@ -973,7 +973,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 662
+                  Width = 661
                   Height = 390
                   Align = alClient
                   AllowedOperations = []
@@ -1044,8 +1044,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
@@ -1062,8 +1060,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 84
@@ -1072,8 +1068,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25104#26412
                       Width = 80
@@ -1082,8 +1076,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
@@ -1545,7 +1537,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 676
+            Width = 675
             Height = 489
             Align = alClient
             BorderOuter = fsNone
@@ -1554,7 +1546,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 666
+              Width = 665
               Height = 479
               Align = alClient
               BevelOuter = bvNone
@@ -1563,7 +1555,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 666
+                Width = 665
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1844,7 +1836,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 666
+                Width = 665
                 Height = 398
                 Align = alClient
                 BorderOuter = fsGroove
@@ -1853,7 +1845,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 662
+                  Width = 661
                   Height = 394
                   Align = alClient
                   AllowedOperations = []
@@ -2102,22 +2094,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
     Left = 41
     Top = 354
   end
-  inherited PrintDBGridEh1: TPrintDBGridEh
-    PageHeader.CenterText.Strings = (
-      #35843#25972#27719#24635#34920)
-    PageHeader.Font.Charset = GB2312_CHARSET
-    PageHeader.Font.Height = -16
-    PageHeader.Font.Name = #23435#20307
-    PageHeader.Font.Style = [fsBold]
-    BeforeGridText_Data = {
-      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
-      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
-      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
-      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
-      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C6C616E67323035325C66305C6673323420255B7768725D5C66315C6673
-      3136200D0A5C706172207D0D0A00}
-  end
   inherited SaveDialog1: TSaveDialog
     Left = 229
     Top = 204
@@ -2125,6 +2101,25 @@ inherited frmChangeDayReport: TfrmChangeDayReport
   inherited adoReport1: TZQuery
     Left = 41
     Top = 321
+  end
+  inherited PrintDBGridEh1: TPrintDBGridEh
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
   object dsadoReport2: TDataSource
     DataSet = adoReport2

@@ -45,18 +45,24 @@ end;
 function TRelation.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
 begin
+  Result := False;
   rs :=  TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from CA_RELATION where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') ';
+    rs.SQL.Text := 'select RELATION_ID,COMM from CA_RELATION where TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then
-      Raise Exception.Create('企业只能创建一条供应链.');
+    if rs.Fields[0].AsString <> '' then
+      begin
+        if Copy(rs.FieldByName('COMM').AsString,2,1) = '2' then
+          AGlobal.ExecSQL('delete from CA_RELATION where TENANT_ID=:TENANT_ID ',self)
+        else
+          Raise Exception.Create('企业只能创建一条供应链.');
+      end;
   finally
     rs.Free;
   end;
-
+  Result := True;
 end;
 
 function TRelation.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;

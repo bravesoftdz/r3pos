@@ -17,7 +17,6 @@ object frmDBSetup: TfrmDBSetup
   Position = poScreenCenter
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object Splitter1: TSplitter
@@ -383,7 +382,6 @@ object frmDBSetup: TfrmDBSetup
       Width = 396
       Height = 129
       Align = alBottom
-      PageIndex = 1
       TabOrder = 1
       object TPage
         Left = 0
@@ -468,7 +466,7 @@ object frmDBSetup: TfrmDBSetup
             'Ms SQL Server'
             'Oracle'
             'SQLite-3'
-            'DB2')
+            'ODBC')
           TabOrder = 0
           OnClick = cbDbTypeChange
         end

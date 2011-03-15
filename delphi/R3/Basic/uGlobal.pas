@@ -28,6 +28,8 @@ type
     FSHOP_NAME: string;
     FSHORT_TENANT_NAME: string;
     FrspConnected: boolean;
+    FRemoteFactory: TdbFactory;
+    FLocalFactory: TdbFactory;
     { Private declarations }
     function  GetUserID: string;
     function  GetUserName: string;
@@ -45,6 +47,8 @@ type
     procedure SetTENANT_ID(const Value: integer);
     procedure SetSHORT_TENANT_NAME(const Value: string);
     procedure SetrspConnected(const Value: boolean);
+    procedure SetLocalFactory(const Value: TdbFactory);
+    procedure SetRemoteFactory(const Value: TdbFactory);
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -67,6 +71,12 @@ type
     function DataSetByName(Name:string):TDataSet;
 
     function GetZQueryFromName(Name:string):TZQuery;
+
+    procedure Connect;
+
+    //连接项控制
+    procedure MoveToLocal;
+    procedure MoveToRemate;
 
     //用户Acount
     property UserID:string read GetUserID write SetUserID;
@@ -94,15 +104,28 @@ type
     property upgrade:boolean read Fupgrade write Setupgrade;
     //是否能连上RSP服务主机
     property rspConnected:boolean read FrspConnected write SetrspConnected;
+    //远程连接
+    property LocalFactory:TdbFactory read FLocalFactory write SetLocalFactory;
+    //本地连接
+    property RemoteFactory:TdbFactory read FRemoteFactory write SetRemoteFactory;
   end;
   
 function CopyScreen(SaveAndFree:Boolean=True): TBitmap;
-Var Global:TGlobal;//全局公共基础数据模块
-    Factor:TdbFactory;//数据库连接代理对象
-    sysLogFile:Boolean;
-    lckStr:string;
+Var
+  Global:TGlobal;//全局公共基础数据模块
+  Factor:TdbFactory;//数据库连接代理对象
+  sysLogFile:Boolean;
+  lckStr:string;
+  //数据库版本 DB5.0.0.3
+  DBVersion:string;
+  //软件版本 .NET 在线版 .LCL 单机版 
+  SFVersion:string;
+  //行业版本 1.FIG 服装版 2.MKT 超市版  3.OHR 标准版  4.DLI 食品业
+  CLVersion:string;
+  //产品编码
+  ProductID:string;
 implementation
-uses Forms;
+uses Forms,IniFiles;
 {$R *.dfm}
 var
   whKeyboard: HHook;
@@ -222,13 +245,16 @@ begin
   GetCurrentThreadID);
   SetPath;
   IsAxCall := false;
+  LocalFactory := TdbFactory.Create;
+  RemoteFactory := TdbFactory.Create;
+  Factor := LocalFactory;
 end;
 
 destructor TGlobal.Destroy;
 begin
   UnhookWindowsHookEx(whKeyboard);
-
-
+  LocalFactory.free;
+  RemoteFactory.free;
   inherited;
 end;
 
@@ -484,10 +510,45 @@ begin
   FrspConnected := Value;
 end;
 
+procedure TGlobal.SetLocalFactory(const Value: TdbFactory);
+begin
+  FLocalFactory := Value;
+end;
+
+procedure TGlobal.SetRemoteFactory(const Value: TdbFactory);
+begin
+  FRemoteFactory := Value;
+end;
+
+procedure TGlobal.Connect;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    if Factor=LocalFactory then
+//       Factor.Initialize('connmode=2;hostname=10.72.11.226;port=1024;dbid=1000001')
+       Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db')
+    else
+       Factor.Initialize(F.ReadString('db','Connstr',''));
+    Factor.Connect;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TGlobal.MoveToLocal;
+begin
+  Factor := LocalFactory;
+end;
+
+procedure TGlobal.MoveToRemate;
+begin
+  Factor := RemoteFactory;
+end;
+
 initialization
-  Factor := TdbFactory.Create;
   Global := nil;
   sysLogFile := true;
 finalization
-  if Factor<>nil then Factor.Free;
 end.

@@ -6744,7 +6744,7 @@ inherited frmShopMain: TfrmShopMain
     end
     object actfrmStorageInfo: TAction
       Tag = 14500001
-      Caption = #26368#26032#24211#23384
+      Caption = #24403#21069#24211#23384
     end
     object actfrmRckMng: TAction
       Caption = #32467#36134#31649#29702
@@ -6782,6 +6782,11 @@ inherited frmShopMain: TfrmShopMain
     object actfrmLockScreen: TAction
       Caption = #38145#23631
       OnExecute = actfrmLockScreenExecute
+    end
+    object actfrmStorageDayReport: TAction
+      Tag = 41900001
+      Caption = #21830#21697#24211#23384#25253#34920
+      OnExecute = actfrmStorageDayReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

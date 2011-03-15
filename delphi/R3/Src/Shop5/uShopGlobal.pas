@@ -118,13 +118,13 @@ begin
            Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE=''USING_DATE''';
            Factor.Open(Temp);
            if Temp.IsEmpty then
-              B := FormatDatetime('YYYY-MM-DD',Date()-1)
+              B := FormatDatetime('YYYYMMDD',Date()-1)
            else
-              B := FormatDatetime('YYYY-MM-DD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
+              B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
         B := Temp.Fields[0].AsString;
-     if B<formatDatetime('YYYY-MM-DD',inherited GetSysDate) then
+     if FnTime.fnStrtoDate(B)<(inherited GetSysDate) then
         result := inherited GetSysDate
      else
         result := FnTime.fnStrtoDate(B)+1;

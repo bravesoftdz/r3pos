@@ -612,7 +612,7 @@ begin
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
     DispParams.rgvarg[0].vt := varOleStr;
-    ZClassName := ClassName;
+    ZClassName := AClassName;
     TVarData(DispParams.rgvarg[0]).VOleStr := PWideChar(ZClassName);
     DispParams.rgvarg[1].vt := varOleStr;
     ParamStr := TftParamList.Encode(Params);
@@ -864,7 +864,7 @@ begin
        ParamsStr := TftParamList.Encode(Params);
     TVarData(DispParams.rgvarg[1]).VOleStr := PWideChar(ParamsStr);
     
-    R := FInterpreter.CallInvoke(Ord(SKTOpenCommandText),0,0,DispParams,@V, @ExcepInfo,nil);
+    R := FInterpreter.CallInvoke(Ord(SKTOpenClassName),0,0,DispParams,@V, @ExcepInfo,nil);
     
     if R = DISP_E_EXCEPTION then
        Raise Exception.Create(ExcepInfo.bstrDescription);
@@ -1059,7 +1059,7 @@ begin
   GetMem(DispParams.rgvarg, DispParams.cArgs * SizeOf(TVariantArg));
   try
     DispParams.rgvarg[0].vt := varOleStr;
-    ZClassName := TZQuery(DataSet).SQL.Text;
+    ZClassName := AClassName;
     TVarData(DispParams.rgvarg[0]).VOleStr := PWideChar(ZClassName);
 
 
@@ -1072,7 +1072,7 @@ begin
 
     V := TZQuery(DataSet).Delta;
 
-    R := FInterpreter.CallInvoke(Ord(SKTUpdateBatchCommandText),0,0,DispParams,@V, @ExcepInfo,nil);
+    R := FInterpreter.CallInvoke(Ord(SKTUpdateBatchClassName),0,0,DispParams,@V, @ExcepInfo,nil);
 
     if R = DISP_E_EXCEPTION then
        Raise Exception.Create(ExcepInfo.bstrDescription);

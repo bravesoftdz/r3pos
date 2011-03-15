@@ -61,7 +61,6 @@ type
     procedure edtRSPdbidKeyPress(Sender: TObject; var Key: Char);
     procedure edtDbDirClick(Sender: TObject);
     procedure cbRSPTypePropertiesChange(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     FDBID: Integer;
     IsVisble,IsLoad:Boolean;
@@ -106,12 +105,13 @@ begin
       MessageBox(Handle,'请选择一数据库类型！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
       end;
-      if edtDBID.Text = '' then
+      if edtDBID.Value < 1 then
       begin
-      MessageBox(Handle,'请输入帐套名称为不重复的标识名！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
+      MessageBox(Handle,'请输入不重复的数据库ID号！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
       end;
       try
+        DBID := edtDBID.Value;
         TestConnect;
         SaveParams;
         blnSetup := true;
@@ -135,6 +135,7 @@ begin
           edtRSPPort.SetFocus;
           Abort;
         end;
+        DBID := edtDBID.Value;
         SaveParams;
         blnSetup := true;
         ModalResult := mrOk;
@@ -151,6 +152,7 @@ end;
 procedure TfrmDBSetup.cbDbTypeChange(Sender: TObject);
 begin
   lbDBBaseName.Caption :='数据库名称：';
+  edtDatabase.Enabled := true;
   if Uppercase(cbDBType.Text)='ORACLE' then
   begin
     edtDbName.Visible := True;
@@ -175,6 +177,7 @@ begin
     edtDBDir.Visible := True;
     edtDbName.Visible := False;
     lbDBName.Caption :='数据库服务器：';
+    edtDatabase.Enabled := false;
   end
   else
   if  Uppercase(cbDBType.Text)= 'DB2' then
@@ -192,7 +195,7 @@ begin
     edtDBDir.Visible := true;
     lbDBName.Caption :='数据库服务器：';
   end;
-  LoadParams;
+//  LoadParams;
 end;
 
 procedure TfrmDBSetup.trvDwdmGetSelectedIndex(Sender: TObject;
@@ -361,10 +364,16 @@ end;
 procedure TfrmDBSetup.LoadParams;
 var Pro:String;
 begin
-  cbConnMode.ItemIndex :=StrtoIntDef(GetIniParams('db','connmode'),1)-1;
+  cbConnMode.ItemIndex := 0;
+  cbConnMode.Enabled := false;
+  //cbConnMode.ItemIndex :=StrtoIntDef(GetIniParams('db','connmode'),1)-1;
   if cbConnMode.ItemIndex = 0 then
     begin
       Pro := GetIniParams('db'+IntToStr(DBID),'provider');
+      if Pro='mssql' then cbDbType.ItemIndex := 0;
+      if Pro='oracle-9i' then cbDbType.ItemIndex := 1;
+      if Pro='sqlite-3' then cbDbType.ItemIndex := 2;
+      if Pro='ado' then cbDbType.ItemIndex := 3;
       if cbDbType.ItemIndex = 0 then
         begin
           if Pro <> 'mssql' then Exit;
@@ -434,14 +443,14 @@ begin
         3: Pro := 'ado';
       end;
       SetIniParams('db'+IntToStr(DBID),'provider',Pro);
-      SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(DBID));
+      SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));
 
       SetIniParams('db'+IntToStr(DBID),'connstr',GetConnStr);
     end;
     1:Begin
       SetIniParams('db','hostname',Trim(edtRSPHost.Text));
       SetIniParams('db','port',Trim(edtRSPPort.Text));
-      SetIniParams('db','dbid',IntToStr(DBID));
+      SetIniParams('db','dbid',IntToStr(edtDBID.Value));
 
       SetIniParams('db','connstr',GetConnStr);
     end;
@@ -471,6 +480,7 @@ begin
       try
         DBID := Pdbid;
         IsVisble := False;
+        LoadParams;
         ShowModal;
       finally
         Free;
@@ -499,7 +509,7 @@ begin
       try
         DBID := Pdbid;
         IsVisble := True;
-        
+        LoadParams;
         ShowModal;
       finally
         Free;
@@ -519,24 +529,6 @@ begin
       else if Components[i] is TcxButtonEdit then
         TcxButtonEdit(Components[i]).Enabled := False;
     end;
-end;
-
-procedure TfrmDBSetup.FormShow(Sender: TObject);
-var ModeStr:String;
-begin
-  ModeStr := GetIniParams('db'+IntToStr(DBID),'dbid');
-  if ModeStr <> '' then
-    begin
-      ModeStr := '1';
-      IsLoad := True;
-    end
-  else
-    begin
-      ModeStr := GetIniParams('db','connmode');
-      IsLoad := False;
-    end;
-  if cbConnMode.ItemIndex <> StrToInt(ModeStr)-1 then
-    cbConnMode.ItemIndex := StrToInt(ModeStr)-1;
 end;
 
 end.

@@ -120,7 +120,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Top = 51
         Width = 36
         Height = 12
-        Caption = #39044#20184#27454
+        Caption = #39044#25910#27454
       end
       object Label4: TLabel [14]
         Left = 564

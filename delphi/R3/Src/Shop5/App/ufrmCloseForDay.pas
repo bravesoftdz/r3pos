@@ -138,7 +138,7 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Factor.Open(rs);
-    labMNY.Caption := '店内金额:'+FloatToStr(Balance+rs.FieldbyName('BALANCE').AsFloat);
+    labMNY.Caption := '店内现金:'+FloatToStr(Balance+rs.FieldbyName('BALANCE').AsFloat);
     lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
@@ -423,7 +423,7 @@ begin
       Save;
       if Is_Print then 
       begin
-        if not ShopGlobal.GetChkRight('13200001',4) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+        if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
         if DevFactory.CloseDayPrinted then
           begin
 //            if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
@@ -440,7 +440,7 @@ begin
     end
   else if Btn_Save.Tag = 1 then
     begin
-      if not ShopGlobal.GetChkRight('13200001',4) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+      if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
       if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
          TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
       ModalResult := mrOk;

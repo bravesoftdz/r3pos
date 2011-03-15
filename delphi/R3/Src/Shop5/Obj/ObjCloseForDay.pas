@@ -34,8 +34,14 @@ var Str:String;
 begin
   Result := False;
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
-  Str := 'delete ACC_CLOSE_FORDAY where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and ROWS_ID='''+FieldbyName('ROWS_ID').AsString+'''';
-  AGlobal.ExecSQL(Str);
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=-OLD_:PAY_A+isnull(IN_MNY,0),BALANCE=-:OLD_PAY_A+isnull(BALANCE,0),'+
+  'COMM='+GetCommStr(iDbType)+
+  ',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and PAYM_ID=''A'' ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
+
+  Str := 'delete ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
+  AGlobal.ExecSQL(Str,self);
   Result := True;
 end;
 
@@ -51,7 +57,7 @@ begin
   Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:PAY_A+isnull(IN_MNY,0),BALANCE=:PAY_A+isnull(BALANCE,0),'+
   'COMM='+GetCommStr(iDbType)+
   ',TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A'' ';
+  ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A'' ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
   Result := True;
 end;

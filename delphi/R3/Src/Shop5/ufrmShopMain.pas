@@ -227,6 +227,7 @@ type
     actfrmChange1DayReport: TAction;
     actfrmChange2DayReport: TAction;
     actfrmLockScreen: TAction;
+    actfrmStorageDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -300,6 +301,7 @@ type
     procedure actfrmChange1DayReportExecute(Sender: TObject);
     procedure actfrmChange2DayReportExecute(Sender: TObject);
     procedure actfrmLockScreenExecute(Sender: TObject);
+    procedure actfrmStorageDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -348,7 +350,7 @@ uses
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
-  ufrmChangeDayReport;
+  ufrmChangeDayReport,ufrmStorageDayReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -576,17 +578,22 @@ begin
   if Logined then
      begin
        Loging := false;
-       Global.SHOP_ID := Params.ShopId;
-       Global.SHOP_NAME := Params.ShopName;
-       Global.UserID := Params.UserID;
-       Global.UserName := Params.UserName;
-       Global.Roles := Params.Roles;
-       Global.CloseAll;
-       Global.SysDate := lDate;
-       Global.LoadBasic();
-       ShopGlobal.LoadRight;
-       CheckEnabled;
-       LoadMenu;
+       frmLogo.Show;
+       try
+         Global.SHOP_ID := Params.ShopId;
+         Global.SHOP_NAME := Params.ShopName;
+         Global.UserID := Params.UserID;
+         Global.UserName := Params.UserName;
+         Global.Roles := Params.Roles;
+         Global.CloseAll;
+         Global.SysDate := lDate;
+         Global.LoadBasic();
+         ShopGlobal.LoadRight;
+         CheckEnabled;
+         LoadMenu;
+       finally
+         frmLogo.Close;
+       end;
 //       Factor.ExecProc('TGetXDictInfo');
 //       MsgFactory.Load;
 //       Timer1.OnTimer(nil);
@@ -2100,6 +2107,28 @@ begin
     frmShopDesk.HookLocked := false;
   end;
 
+end;
+
+procedure TfrmShopMain.actfrmStorageDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStorageDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmStorageDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

@@ -17,7 +17,6 @@ type
     Label6: TLabel;
     RzBitBtn4: TRzBitBtn;
     Label2: TLabel;
-    RzMemo1: TRzMemo;
     RzProgressBar1: TRzProgressBar;
     lblState: TLabel;
     RzBackground1: TRzBackground;
@@ -49,7 +48,7 @@ begin
  lblState.Update;
  RzProgressBar1.Percent := Percent;
 
- RzMemo1.Lines.Add(Title+ ' '+ SQL);
+// RzMemo1.Lines.Add(Title+ ' '+ SQL);
 end;
 
 class function TfrmDbUpgrade.DbUpgrade(Factory: TCreateDbFactory;_LocalFactor:TdbFactory=nil): Boolean;
@@ -59,6 +58,7 @@ begin
       try
         LocalFactor := _LocalFactor;
         CreateDbFactroy := Factory;
+        CreateDbFactroy.CaptureError := true;
         CreateDbFactroy.onCreateDbCallBack := CallBack;
         if CreateDbFactroy.DbVersion<>'' then
         begin
@@ -68,7 +68,7 @@ begin
         begin
           Label1.Caption := '当前数据库版本:数据库初始化';
           RzBitBtn4.Caption := '创建账套';
-          Label6.Caption := '后软件才能正常运行程序。'+#13+#13+'1、升级数据库请点击［创建账套］'+#13+#13+'2、关闭软件暂不使用点击［放弃］';
+          Label6.Caption := '后软件才能正常运行程序。'+#13+#13+'1、创建数据库请点击［创建账套］'+#13+#13+'2、关闭软件暂不使用点击［放弃］';
         end;
         Label2.Caption := CreateDbFactroy.PrgVersion;
 
@@ -84,29 +84,40 @@ var
   fname:string;
   sFactor:TdbFactory;
 begin
-  //检测是否本机
-  
-  //end
   RzBitBtn4.Enabled := false;
   Screen.Cursor := crSQLWait;
   try
     CreateDbFactroy.Load(ExtractFilePath(ParamStr(0))+'dbFile.dat');
-    if (LocalFactor<>nil) and (LocalFactor<>Factor) then
+    if (LocalFactor<>nil) then
        begin
          sFactor := Factor;
          try
-           Factor := LocalFactor;
-           if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
-              CreateDbFactroy.Run;
+           //备份数据库
+           if fileExists(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak')) and not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak')) then Raise Exception.Create('r3.bak文件被其他程序占用，不能完成升级备份');
+           Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak'),false);
+           try
+             Factor := LocalFactor;
+             if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
+                CreateDbFactroy.Run;
+           except
+             on E:Exception do
+                begin
+                   LocalFactor.DisConnect;
+                   if not deletefile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.db')) then Raise Exception.Create('r3.db文件被其他程序占用，不能完成升级恢复');
+                   Copyfile(pchar(ExtractFilePath(ParamStr(0))+'data\r3.bak'),pchar(ExtractFilePath(ParamStr(0))+'data\r3.db'),false);
+                   LocalFactor.Connect;
+                   Raise Exception.Create('升级出错了,错误:'+E.Message);
+                end;
+           end;
          finally
            Factor := sFactor;
          end;
        end;
-    if CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
-       CreateDbFactroy.Run;
-    ForceDirectories(ExtractFilePath(ParamStr(0))+'log');
-    fname := 'dbUpdate'+formatDatetime('YYYYMMDD_HHNN',now())+'.txt';
-    RzMemo1.Lines.SaveToFile(ExtractFilePath(ParamStr(0))+'log\'+fname);
+    if (LocalFactor<>Factor) and CreateDbFactroy.CheckVersion(CreateDbFactroy.PrgVersion) then
+       begin
+         Raise Exception.Create('服务器的版本过旧，请联系管理员升级后台服务器，再使用。'); 
+         //CreateDbFactroy.Run;
+       end;
   finally
     Screen.Cursor := crDefault;
   end;
@@ -117,8 +128,7 @@ begin
      end
   else
      begin
-       if MessageBox(Handle,'升级过程存在错误.是否查看升级日志？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
-          ShellExecute(handle,'open',pchar(ExtractFilePath(ParamStr(0))+'log\'+fname),nil,nil,SW_SHOWNORMAL);
+       MessageBox(Handle,'升级数据过程中存在错误.软件有可能出现异常？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
      end;
 end;
 
@@ -133,7 +143,7 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption := '欢迎使用'+ F.ReadString('soft','name','好店铺')+'系列产品';
+    Caption := '欢迎使用'+ F.ReadString('soft','name','云盟软件R3')+'系列产品';
   finally
     F.Free;
   end;

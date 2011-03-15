@@ -179,6 +179,7 @@ type
 
     function CreatedbResolver(dbid:Integer):TdbResolver;
     procedure FreeCache(i:integer);
+    procedure CheckConnected(Conn:TdbResolver);
 
   public
 
@@ -249,6 +250,7 @@ begin
     SKTExecProc:Result := DoSKTExecProc(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
     SKTParameter:Result := DoSKTParameter(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
     SKTLogin:Result := DoSKTLogin(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
+    SKTDBLock:Result := DoSKTDBLock(Token,LocaleID,Flags,Params,VarResult,ExcepInfo,ArgErr);
   else
     raise EInvokeDispatchError.CreateResFmt(@SIdInvalidToken, [Token]);
   end; 
@@ -1159,6 +1161,7 @@ begin
        end;
     if result=nil then
        result := CreatedbResolver(dbid);
+    CheckConnected(result);
     InterlockedIncrement(FDBCacheLockCount);
   finally
     Leave;
@@ -1181,7 +1184,7 @@ begin
   result := TdbResolver.Create;
   try
     result.dbid := dbid;
-    result.Initialize(F.ReadString(inttostr(dbid),'connstr','Provider=sqlite-3;DatabaseName=D:\Delphi\R3\Src\Shop5\Data\R3.db'));
+    result.Initialize(F.ReadString('db'+inttostr(dbid),'connstr',''));
     result.Connect;
   except
     result.Free;
@@ -1197,6 +1200,11 @@ end;
 function TZConnCache.GetCount: integer;
 begin
   result := FList.Count;
+end;
+
+procedure TZConnCache.CheckConnected(Conn: TdbResolver);
+begin
+  if not Conn.Connected then Conn.Connect;
 end;
 
 initialization

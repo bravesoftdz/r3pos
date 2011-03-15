@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -433,12 +433,26 @@ object SocketForm: TSocketForm
           Caption = #38145#23450#36830#25509#25968':'
         end
         object Label15: TLabel
-          Left = 226
+          Left = 227
           Top = 44
           Width = 6
           Height = 12
           Alignment = taRightJustify
           Caption = ':'
+        end
+        object Label14: TLabel
+          Left = 168
+          Top = 22
+          Width = 78
+          Height = 12
+          Caption = #26368#22823#25191#34892#24310#26102':'
+        end
+        object Label18: TLabel
+          Left = 168
+          Top = 44
+          Width = 78
+          Height = 12
+          Caption = #24179#22343#25191#34892#25928#29575':'
         end
       end
       object GroupBox3: TGroupBox

@@ -16,7 +16,6 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   private
-    FFactor: TdbFactory;
     FLock: Boolean;
     FIsFree : Boolean;
     FContainerHanle: THandle;
@@ -27,6 +26,7 @@ type
     procedure DoDatePropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    function GetFactor: TdbFactory;
     { Private declarations }
   protected
     procedure SetCaption;virtual;
@@ -68,7 +68,7 @@ type
     //Ëø±ê¼Ç£¬
     property Lock:Boolean read FLock write SetLock;
 
-    property Factor:TdbFactory read FFactor;
+    property Factor:TdbFactory read GetFactor;
     property ContainerHanle:THandle read FContainerHanle write SetContainerHanle;
     property OnFreeForm:TNotifyEvent read FOnFreeForm write SetOnFreeForm;
   end;
@@ -114,7 +114,6 @@ end;
 constructor TfrmBasic.Create(AOwner: TComponent);
 var i:integer;
 begin
-  FFactor := uGlobal.Factor;
   inherited;
   try
      LoadInterfaceFromFile;
@@ -593,6 +592,11 @@ end;
 function TfrmBasic.CheckCanExport: boolean;
 begin
   result := true;
+end;
+
+function TfrmBasic.GetFactor: TdbFactory;
+begin
+  result := uGlobal.Factor;
 end;
 
 end.

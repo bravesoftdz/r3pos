@@ -1,7 +1,7 @@
 inherited frmBatchCloseForDay: TfrmBatchCloseForDay
   Left = 584
   Top = 216
-  Caption = #25209#37327#32467#36134
+  Caption = #38646#21806#32467#36134
   ClientHeight = 314
   ClientWidth = 347
   OnCreate = FormCreate
@@ -17,7 +17,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
       Height = 264
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
-        Caption = #25209#37327#32467#36134
+        Caption = #38646#21806#32467#36134
         inherited RzPanel2: TRzPanel
           Width = 333
           Height = 237
@@ -43,7 +43,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
               FooterFont.Height = -12
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
-              FrozenCols = 2
+              FrozenCols = 1
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
               RowHeight = 20
@@ -73,16 +73,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
                     '1')
                   Title.Alignment = taCenter
                   Title.Caption = #36873#25321
-                  Width = 22
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'SEQNO'
-                  Footers = <>
-                  ReadOnly = True
-                  Title.Alignment = taCenter
-                  Title.Caption = #24207#21495
-                  Width = 30
+                  Width = 25
                 end
                 item
                   Alignment = taRightJustify
@@ -99,17 +90,23 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
                   FieldName = 'CREA_DATE'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Title.Caption = #26410#32467#36134#26085#26399
+                  Title.Caption = #38144#21806#26085#26399
                   Width = 80
                 end
                 item
                   DisplayFormat = '#0.00'
                   EditButtons = <>
-                  FieldName = 'SUM_MONEY'
+                  FieldName = 'SALE_MNY'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Title.Caption = #37329'  '#39069
+                  Title.Caption = #38144#21806#37329#39069
                   Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'PAY_A'
+                  Footers = <>
+                  Title.Caption = #29616#37329
                 end>
             end
           end
@@ -120,12 +117,12 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
       Top = 269
       Width = 337
       object Btn_Save: TRzBitBtn
-        Left = 69
-        Top = 11
-        Width = 83
+        Left = 157
+        Top = 9
+        Width = 73
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #31435#21363#32467#36134'(&S)'
+        Caption = #32467#36134'(&S)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -147,12 +144,12 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 193
-        Top = 11
-        Width = 83
+        Left = 241
+        Top = 8
+        Width = 72
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #31245#21518#32467#36134'(&C)'
+        Caption = #20851#38381'(&C)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack

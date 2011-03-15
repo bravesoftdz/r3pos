@@ -1994,6 +1994,10 @@ begin
   end;
 
   Saved := false;
+  Check;
+  CheckInvaid;
+  Calc;
+
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
@@ -2002,12 +2006,7 @@ begin
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
 
-  Check;
-
-  CheckInvaid;
-  
-  Calc;
-  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.'); 
+  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
   Printed := DevFactory.SavePrint;
   //结算对话框
   if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;

@@ -338,7 +338,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #25209#21457#37329#39069
+        Caption = #25209#21457#29616#37329
         Font.Charset = GB2312_CHARSET
         Font.Color = clWhite
         Font.Height = -12
@@ -352,7 +352,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #20805#20540#37329#39069
+        Caption = #20805#20540#29616#37329
         Font.Charset = GB2312_CHARSET
         Font.Color = clWhite
         Font.Height = -12

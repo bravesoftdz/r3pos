@@ -112,6 +112,8 @@ type
     actfrmDeleteDb: TAction;
     actfrmDbConfig: TAction;
     N2: TMenuItem;
+    Label14: TLabel;
+    Label18: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -247,8 +249,8 @@ begin
   end;
   if Pages.ActivePageIndex = 5 then
      begin
-       Label2.Caption := '当前线程数:'+inttostr(WorkThreadCount);
-       Label3.Caption := '运行线程数:'+inttostr(ExecThreadCount);
+       Label2.Caption :=  '当前线程数:'+inttostr(WorkThreadCount);
+       Label3.Caption :=  '运行线程数:'+inttostr(ExecThreadCount);
        Label10.Caption := '最大线程数:'+inttostr(MaxThreadCount);
        if (GetTickCount-StartServiceTickCount)>0 then
           Label11.Caption := '执行效率值:'+inttostr(round((DataBlockCount-WaitDataBlockCount) / (GetTickCount-StartServiceTickCount)*(1000*60)))+'/分'
@@ -258,12 +260,12 @@ begin
        Label5.Caption := '缓冲连接数:'+inttostr(ConnCache.Count);
        Label6.Caption := '锁定连接数:'+inttostr(ConnCache.DBCacheLockCount);
 
-       Label8.Caption := '等待指令数:'+inttostr(WaitDataBlockCount);
+       Label8.Caption :=  '等待指令数:'+inttostr(WaitDataBlockCount);
        Label16.Caption := '最大并发数:'+inttostr(MaxSyncRequestCount);
        Label13.Caption := '在线连接数:'+inttostr(Sessions.Count);
        Label12.Caption := '最大连接数:'+inttostr(Sessions.MaxSessionCount);
        Label17.Caption := '请求指令总数:'+inttostr(DataBlockCount);
-       Label9.Caption := '等待最大时长:'+inttostr(DataBlockMaxWaitTime)+'微秒';
+       Label9.Caption :=  '指令等待延时:'+inttostr(DataBlockMaxWaitTime)+'微秒';
      end;
 end;
 

@@ -159,7 +159,8 @@ uses
   ufrmBatchCloseForDay in 'App\ufrmBatchCloseForDay.pas' {frmBatchCloseForDay},
   ufrmChangeDayReport in 'App\ufrmChangeDayReport.pas' {frmChangeDayReport},
   ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport},
-  uSyncFactory in 'App\uSyncFactory.pas';
+  uSyncFactory in 'App\uSyncFactory.pas',
+  ufrmStorageDayReport in 'App\ufrmStorageDayReport.pas' {frmStorageDayReport};
 
 {$R *.res}
 var

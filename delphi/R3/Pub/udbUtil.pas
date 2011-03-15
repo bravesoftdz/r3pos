@@ -8,13 +8,11 @@ TCreateDbFactory=class
   private
     FList:TStringList;
     CurVersion,NewVersion: string;
-    FLogFiles: TStrings;
     FPrgVersion: string;
     FCaptureError: Boolean;
     FonCreateDbCallBack: TCreateDbCallBack;
     FHasError: Boolean;
     function GetWindowTmp: string;
-    procedure SetLogFiles(const Value: TStrings);
     procedure SetCaptureError(const Value: Boolean);
     procedure SetonCreateDbCallBack(const Value: TCreateDbCallBack);
     procedure SetHasError(const Value: Boolean);
@@ -23,18 +21,11 @@ TCreateDbFactory=class
     constructor Create;
     destructor  Destroy;override;
     function CompareVersion(v1,v2:string):Boolean;
-    function CreateConnected(UserID:string;PassWrd:string;Addr:string):boolean;
-    procedure CreateDataBase(DbName,DbPath:string);
-    procedure CopyDataFile(SourceFile,DbName,DbPath:string);
-    procedure DeleteDataBase(DbName:string);
-    function GetDbList:TStrings;
-    function CheckVersion(Version:string):Boolean;
+    function CheckVersion(Version:string;aFactor:TdbFactory=nil):Boolean;
     procedure UpdateVersion;
     procedure Load(FileName:string);
     procedure Run;
-    procedure ExecSQL;
     property WindowTmp:string read GetWindowTmp;
-    property LogFiles:TStrings read FLogFiles write SetLogFiles;
     property PrgVersion:string read FPrgVersion;
     property DbVersion:string read CurVersion;
     property CaptureError:Boolean read FCaptureError write SetCaptureError;
@@ -47,20 +38,18 @@ implementation
 uses uGlobal,ufrmDbUpgrade;
 { TCreateDbFactory }
 procedure WriteLog(s:string);
-var f:TextFile;
+var
+  f:TextFile;
 begin
+  AssignFile(f,ExtractFilePath(ParamStr(0))+'debug\dbUpgrade.log');
+  if FileExists(ExtractFilepath(ParamStr(0))+'debug\dbUpgrade.log') then
+     append(f)
+  else
+     rewrite(f);
   try
-    AssignFile(f,extractfilepath(ParamStr(0))+'db_debug'+formatDatetime('YYYYMMDD',Date())+'.txt');
-    if FileExists(extractfilepath(ParamStr(0))+'db_debug'+formatDatetime('YYYYMMDD',Date())+'.txt') then
-       append(f)
-    else
-       rewrite(f);
-    try
-       writeln(f,s);
-    finally
-       closefile(f);
-    end;
-  except
+     writeln(f,formatDatetime('YYYY-MM-DD HH:NN:SS',now())+':'+s);
+  finally
+     closefile(f);
   end;
 end;
 
@@ -81,21 +70,24 @@ begin
     Factory.Free;
   end;
 end;
-function TCreateDbFactory.CheckVersion(Version: string): Boolean;
+function TCreateDbFactory.CheckVersion(Version: string;aFactor:TdbFactory=nil): Boolean;
 var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select Value from SYS_DEFINE where DEFINE=''DBVERSION''';
+    rs.SQL.Text := 'select Value from SYS_DEFINE where TENANT_ID=0 and DEFINE=''DBVERSION''';
     try
       FPrgVersion := Version;
-      Factor.Open(rs);
+      if aFactor=nil then
+         Factor.Open(rs)
+      else
+         aFactor.Open(rs);
       CurVersion := rs.Fields[0].asString;
       result := CompareVersion(Version,rs.Fields[0].asString);
     except
       result := true;
       CurVersion := '';
-      raise;
+//      raise;
     end;
   finally
     rs.Free;
@@ -153,68 +145,9 @@ begin
   end;
 end;
 
-procedure TCreateDbFactory.CopyDataFile(SourceFile, DbName,
-  DbPath: string);
-var
-  NewFile:string;
-  sPath:string;
-  dPath:string;
-begin
-  NewFile := DbPath+DbName+'_data.mdf';
-  sPath := ExtractShortPathName(SourceFile);
-  dPath := ExtractShortPathName(NewFile);
-  if lowercase(sPath)<>lowercase(dPath) then
-     begin
-       if not CopyFile(Pchar(SourceFile),Pchar(NewFile),true) then Raise Exception.Create('复制数据文件失败，请检查'+DbPath+'路径下是存在该文件'+NewFile);
-     end;
-end;
-
 constructor TCreateDbFactory.Create;
 begin
   FList := TStringList.Create;
-  LogFiles := nil;
-end;
-
-function TCreateDbFactory.CreateConnected(UserID, PassWrd,
-  Addr: string): Boolean;
-begin
-  try
-
-//    Factor.Initialize('Provider=SQLOLEDB.1;Password='+PassWrd+';Persist Security Info=True;User ID='+UserID+';Initial Catalog=master;Data Source='+Addr);
-//    Factor.IdFactor.Connect;
-    result := true;
-  except
-    on E:Exception do
-    begin
-      result := false;
-      Raise Exception.Create('创建数据库连接失败，错误:'+E.Message);
-    end;
-  end;
-end;
-
-procedure TCreateDbFactory.CreateDataBase(DbName,DbPath: string);
-var SQL:string;
-begin
-  SQL := 'CREATE DATABASE '+DbName+' on '+
-         '(NAME = '+DbName+'_dat,'+
-         'FILENAME = '''+DbPath+DbName+'_data.mdf'','+
-         'SIZE = 10MB,'+
-         'MAXSIZE = 100000MB,'+
-         'FILEGROWTH = 10MB '+
-         ')'+
-         'LOG ON '+
-         '(NAME = '+DbName+'_log,'+
-         'FILENAME = '''+DbPath+DbName+'_log.ldf'','+
-         'SIZE = 10MB,'+
-         'MAXSIZE = 1000MB,'+
-         'FILEGROWTH = 10MB '+
-         ')';
-  Factor.ExecSQL(SQL);
-end;
-
-procedure TCreateDbFactory.DeleteDataBase(DbName: string);
-begin
-  Factor.ExecSQL('DROP DATABASE '+DbName);
 end;
 
 destructor TCreateDbFactory.Destroy;
@@ -222,101 +155,6 @@ begin
   FList.Free;
   inherited;
 end;
-
-procedure TCreateDbFactory.ExecSQL;
-var
-  i,n,CurSize,TotalSize:integer;
-  tmpPath,s:string;
-  F:TextFile;
-  SQL:TStringList;
-begin
-  tmpPath := GetWindowTmp;
-  SQL := TStringList.Create;
-  try
-  FList.Sort;
-  for i:= 0 to FList.Count - 1 do
-    begin
-       SQL.Clear;
-       AssignFile(F,tmpPath+FList[i]);
-       Reset(f);
-       CurSize :=0;
-       try
-         TotalSize := FileSize(F)*1024 div 8;
-         while not eof(f) do
-         begin
-           readln(f,s);
-           CurSize := CurSize + length(s);
-           s := trim(s);
-           if trim(s)='' then Continue;
-           if (uppercase(s)='GO') then
-              begin
-                try
-                  if (SQL.Count>0) then
-                     Factor.ExecSQL(StringReplace(SQL.Text,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]));
-                  if Assigned(onCreateDbCallBack) then
-                    onCreateDbCallBack('执行脚本',SQL.Text,CurSize*100 div TotalSize);
-                except
-                  on E:Exception do
-                  begin
-                     if Assigned(onCreateDbCallBack) then
-                        onCreateDbCallBack('执行错误:'+E.Message,SQL.Text,100);
-                     WriteLog('错误:'+E.Message+#13+SQL.Text);
-                     if CaptureError then Raise;
-                  end;
-                end;
-                SQL.Clear;
-              end
-           else
-              begin
-                if copy(s,1,2)<>'--' then
-                   SQL.Add(s);
-              end;
-         end;
-           try
-             if (SQL.Count>0) then
-                Factor.ExecSQL(StringReplace(SQL.Text,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]));
-             if Assigned(onCreateDbCallBack) then
-                onCreateDbCallBack('执行脚本',SQL.Text,100);
-           except
-             on E:Exception do
-               begin
-                 if Assigned(onCreateDbCallBack) then
-                    onCreateDbCallBack('执行错误:'+E.Message,SQL.Text,100);
-                 WriteLog('错误:'+E.Message+#13+SQL.Text);
-                 if CaptureError then Raise;
-               end;
-           end;
-       finally
-         CloseFile(f);
-         deleteFile(tmpPath+FList[i]);
-       end;
-    end;
-  finally
-    SQL.Free;
-  end;
-end;
-
-function TCreateDbFactory.GetDbList: TStrings;
-var rs:TZQuery;
-begin
-  result := TStringList.Create;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'exec sp_helpdb';
-    Factor.ExecSQL('use Master');
-    Factor.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        if uppercase(copy(rs.Fields[0].asString,1,3))='DB_' then
-           result.Add(rs.Fields[0].asString);
-        rs.Next;
-      end;
-  finally
-    rs.Free;
-  end;
-end;
-
 function TCreateDbFactory.GetiDbType: integer;
 begin
   result := Factor.iDbType;
@@ -336,8 +174,7 @@ begin
   except
     on E:Exception do
       begin
-        if LogFiles<>nil then
-           LogFiles.Add('打开升级包'+FileName+'失败,错误:'+E.Message);
+        WriteLog('打开升级包'+FileName+'失败,错误:'+E.Message);
       end;
   end;
   FList.CommaText := s;
@@ -359,12 +196,16 @@ begin
   for i:= 0 to FList.Count - 1 do
     begin
       SQL.Clear;
-      n := length(FList[i])-6;
+      n := length(FList[i])-2-length(ExtractFileExt(FList[i]));
       Version := copy(FList[i],3,n);
       if (
-          ((iDbType = 0) and (uppercase(ExtractFileExt(FList[i]))='.SQL'))
+          ((iDbType = 0) and (uppercase(ExtractFileExt(FList[i]))='.MSSQL'))
          or
-          ((iDbType = 3) and (uppercase(ExtractFileExt(FList[i]))='.MDB'))
+          ((iDbType = 3) and (uppercase(ExtractFileExt(FList[i]))='.ACCESS'))
+         or
+          ((iDbType = 4) and (uppercase(ExtractFileExt(FList[i]))='.DB2'))
+         or
+          ((iDbType = 5) and (uppercase(ExtractFileExt(FList[i]))='.SQLITE'))
          )
          and
          CompareVersion(Version,CurVersion)
@@ -384,9 +225,14 @@ begin
                CurSize := CurSize + length(s);
                s := trim(s);
                if trim(s)='' then Continue;
-               if (uppercase(s)='GO') then
+               if (uppercase(s)='GO') or (s[length(s)]=';') then
                   begin
                     try
+                      if (s[length(s)]=';') then
+                         begin
+                           delete(s,length(s),1);
+                           SQL.Add(s);
+                         end;
                       if (SQL.Count>0) then
                         Factor.ExecSQL(SQL.Text);
                       if Assigned(onCreateDbCallBack) then
@@ -449,11 +295,6 @@ begin
   FHasError := Value;
 end;
 
-procedure TCreateDbFactory.SetLogFiles(const Value: TStrings);
-begin
-  FLogFiles := Value;
-end;
-
 procedure TCreateDbFactory.SetonCreateDbCallBack(
   const Value: TCreateDbCallBack);
 begin
@@ -464,15 +305,14 @@ procedure TCreateDbFactory.UpdateVersion;
 var n:integer;
 begin
   try
-    n := Factor.ExecSQL('update SYS_DEFINE set [VALUE]='''+NewVersion+''' where DEFINE=''DBVERSION''');
-    if n=0 then
-       Factor.ExecSQL('insert into SYS_DEFINE(COMP_ID,DEFINE,[VALUE],VALUE_TYPE,COMM) values(''----'',''DBVERSION'','''+NewVersion+''',0,''00'')');
+    n := Factor.ExecSQL('update SYS_DEFINE set [VALUE]='''+NewVersion+''' where TENANT_ID=0 and DEFINE=''DBVERSION''');
+    if n=0 then  Factor.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,[VALUE],VALUE_TYPE,COMM,TIME_STAMP) values(0,''DBVERSION'','''+NewVersion+''',0,''00'',5497000)');
   except
     on E:Exception do
       begin
         if pos('SYS_DEFINE',E.Message)=0 then
            begin
-             WriteLog('错误:'+E.Message);
+             WriteLog(E.Message);
              Raise;
            end;
       end;

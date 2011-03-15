@@ -622,9 +622,6 @@ begin
 
   if CachedResultSet <> nil then
     CachedResultSet.CommitUpdates;
-
-  if not (State in [dsInactive]) then
-    RereadRows;
 end;
 
 {**

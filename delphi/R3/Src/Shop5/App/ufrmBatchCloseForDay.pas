@@ -35,7 +35,7 @@ type
     Aobj_A:TRecord_;
   public
     { Public declarations }
-    procedure GetAccountsRecord(User_Id,Day_Date:String);
+    procedure GetAccountsRecord(rs:TZQuery;User_Id,Day_Date:String);
     procedure InitGrid;
     function FindColumn(FieldName:String):TColumnEh;
     procedure Open;
@@ -59,7 +59,7 @@ var Str: String;
 begin
   try
     Str :=
-    'select 0 as selflag,TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,sum(PAY_A) as SUM_MONEY from SAL_SALESORDER A'+
+    'select 0 as selflag,TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,sum(PAY_A) as PAY_A,sum(SALE_MNY) as SALE_MNY from SAL_SALESORDER A'+
     ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE<=:SALES_DATE'+
     ' and not exists('+
     ' select * from ACC_CLOSE_FORDAY  where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
@@ -69,8 +69,7 @@ begin
     DbCloseForDay.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     DbCloseForDay.ParamByName('SALES_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Date));
     Factor.Open(DbCloseForDay);
-    if DbCloseForDay.Fields[1].AsString = '' then
-      Btn_Save.Enabled := False;
+    Btn_Save.Visible := not DbCloseForDay.IsEmpty;
   finally
 
   end;
@@ -196,13 +195,10 @@ begin
   end;
 end;
 
-procedure TfrmBatchCloseForDay.GetAccountsRecord(User_Id, Day_Date: String);
+procedure TfrmBatchCloseForDay.GetAccountsRecord(rs:TZQuery;User_Id, Day_Date: String);
 var StrSql:String;
-    rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-
+    rs.Close;
     StrSql :=
     'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
     'sum(PAY_A) as PAY_A,'+
@@ -225,9 +221,6 @@ begin
     rs.ParamByName('SALES_DATE').AsString := Day_Date;
     Factor.Open(rs);
     Aobj_A.ReadFromDataSet(rs);
-  finally
-    rs.Free;
-  end;
 
 end;
 
@@ -238,33 +231,35 @@ begin
 end;
 
 procedure TfrmBatchCloseForDay.Save;
-var rs:TZQuery;
+var
+  rs,sv:TZQuery;
 begin
   rs := TZQuery.Create(nil);
+  sv := TZQuery.Create(nil);
   try
     DbCloseForDay.CommitUpdates;
     DbCloseForDay.Filtered := False;
     DbCloseForDay.Filter := ' selflag=1 ';
     DbCloseForDay.Filtered := True;
     if DbCloseForDay.IsEmpty then Raise Exception.Create('请选择所需结账记录.');
-    rs.SQL.Text := 'select TENANT_ID,SHOP_ID,CREA_USER,CLSE_DATE,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J from ACC_CLOSE_FORDAY where 1<>1 ';
-    Factor.Open(rs);
     DbCloseForDay.First;
     while not DbCloseForDay.Eof do
       begin
-        GetAccountsRecord(DbCloseForDay.FieldbyName('CREA_USER').AsString,DbCloseForDay.FieldbyName('CREA_DATE').AsString);
-        rs.Append;
-        Aobj_A.WriteToDataSet(rs);
-        rs.Post;
+        GetAccountsRecord(rs,DbCloseForDay.FieldbyName('CREA_USER').AsString,DbCloseForDay.FieldbyName('CREA_DATE').AsString);
+        if not sv.Active then sv.Delta := rs.Delta;
+        sv.Append;
+        Aobj_A.WriteToDataSet(sv);
+        sv.Post;
         DbCloseForDay.Next;
       end;
   try
-    Factor.UpdateBatch(rs,'TCloseForDay');
+    Factor.UpdateBatch(sv,'TCloseForDay');
   Except
     DbCloseForDay.CancelUpdates;
   end;
   finally
     rs.Free;
+    sv.Free;
   end;
 
 end;

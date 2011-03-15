@@ -440,16 +440,6 @@ object frmDbUpgrade: TfrmDbUpgrade
       NumGlyphs = 2
       Spacing = 5
     end
-    object RzMemo1: TRzMemo
-      Left = 44
-      Top = 0
-      Width = 342
-      Height = 8
-      BevelInner = bvNone
-      TabOrder = 1
-      Visible = False
-      FrameVisible = True
-    end
     object RzBitBtn1: TRzBitBtn
       Left = 339
       Top = 262
@@ -466,7 +456,7 @@ object frmDbUpgrade: TfrmDbUpgrade
       ParentFont = False
       TextShadowColor = clYellow
       TextShadowDepth = 4
-      TabOrder = 2
+      TabOrder = 1
       OnClick = RzBitBtn1Click
       NumGlyphs = 2
       Spacing = 5

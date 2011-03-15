@@ -195,6 +195,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_B').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_B').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_B').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -204,6 +209,11 @@ begin
        DoPayC(GetFee(edtTakeFee.Text));
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_C').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_C').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_C').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -212,6 +222,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_D').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_D').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_D').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -222,6 +237,11 @@ begin
        if ShopGlobal.offline then Raise Exception.Create('脱机操作不能记账...'); 
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_E').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_E').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_E').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -230,6 +250,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_F').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_F').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_F').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -238,6 +263,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_G').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_G').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_G').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -246,6 +276,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_H').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_H').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_H').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -254,6 +289,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_I').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_I').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_I').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -262,6 +302,11 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_J').AsFloat := GetFee(edtTakeFee.Text);
+       if MainRecord.FieldByName('PAY_J').AsFloat<0 then
+          begin
+            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+            MainRecord.FieldByName('PAY_J').AsFloat := 0;
+          end;
        ShowFee;
        edtTakeFee.Text := '';
      end;

@@ -12,6 +12,7 @@ type
   TdbHelp=class(TInterfacedObject, IdbHelp)
   private
     ZConn:TZConnection;
+    function CheckError(s:string):boolean;
   protected
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;stdcall;
@@ -195,14 +196,35 @@ implementation
 
 procedure TdbHelp.BeginTrans(TimeOut: integer);
 begin
-  ZConn.TransactIsolationLevel := tiReadCommitted;
-  ZConn.StartTransaction;
+  try
+    ZConn.TransactIsolationLevel := tiReadCommitted;
+    ZConn.StartTransaction;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
+end;
+
+function TdbHelp.CheckError(s:string): boolean;
+begin
+  result := pos('网络错误',s)>0;
 end;
 
 procedure TdbHelp.CommitTrans;
 begin
-  ZConn.Commit;
-  ZConn.TransactIsolationLevel := tiNone;
+  try
+    ZConn.Commit;
+    ZConn.TransactIsolationLevel := tiNone;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
 end;
 
 function TdbHelp.Connect: boolean;
@@ -237,6 +259,7 @@ var
   ZQuery:TZQuery;
   i:integer;
 begin
+  try
   result := -1;
   ZQuery := TZQuery.Create(nil);
   try
@@ -261,6 +284,13 @@ begin
     result := ZQuery.RowsAffected;
   finally
     ZQuery.Free;
+  end;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
   end;
 end;
 
@@ -308,11 +338,20 @@ end;
 
 function TdbHelp.InTransaction: boolean;
 begin
-  result := zConn.InTransaction;
+  try
+    result := zConn.InTransaction;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
 end;
 
 function TdbHelp.Open(DataSet: TDataSet): boolean;
 begin
+  try
   result := false;
   DataSet.Close;
   if DataSet.ClassNameIs('TZQuery') then
@@ -347,17 +386,32 @@ begin
          TZTable(DataSet).Connection := nil;
        end;
   end;
-
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
 end;
 
 procedure TdbHelp.RollbackTrans;
 begin
-  ZConn.Rollback;
-  ZConn.TransactIsolationLevel := tiNone;
+  try
+    ZConn.Rollback;
+    ZConn.TransactIsolationLevel := tiNone;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
 end;
 
 function TdbHelp.UpdateBatch(DataSet: TDataSet): boolean;
 begin
+  try
   result := false;
   if DataSet.ClassNameIs('TZQuery') then
      begin
@@ -382,6 +436,13 @@ begin
        begin
          TZTable(DataSet).Connection := nil;
        end;
+  end;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
   end;
 end;
 

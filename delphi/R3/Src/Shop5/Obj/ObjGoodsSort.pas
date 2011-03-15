@@ -25,10 +25,10 @@ begin
 //SORT_ID1 分类 SORT_ID2 类别 SORT_ID3 厂家 SORT_ID4 品牌 SORT_ID5 重点(品牌) SORT_ID6 省内外 SORT_ID7 颜色组 SORT_ID8 尺码组
   try
     rs.Close;
-    rs.SQL.Text := 'select SORT_ID from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';
-    AGlobal.Open(rs);
+    rs.SQL.Text := 'select SORT_ID from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';;
     rs.ParamByName('UNIT_ID').AsString := FieldbyName('SORT_ID').AsString;
     rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);    
     if rs.Fields[0].AsString <> '' then
        Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');
   finally
@@ -44,11 +44,12 @@ begin
   result := False;
   rs := TZQuery.Create(nil);
   try
+    rs.Close;
     rs.SQL.Text := 'select SORT_ID,COMM,SEQ_NO from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_TYPE=:SORT_TYPE and TENANT_ID=:TENANT_ID ';
-    AGlobal.Open(rs);
     rs.ParamByName('SORT_TYPE').AsInteger := Fieldbyname('SORT_TYPE').AsInteger;
     rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
     rs.ParamByName('SORT_NAME').AsString := Fieldbyname('SORT_NAME').AsString;
+    AGlobal.Open(rs);
     rs.First;
     while not rs.Eof do
       begin
@@ -75,11 +76,12 @@ begin
   result := true;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_ID<>:OLD_SORT_ID and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
-    AGlobal.Open(rs);
-    rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsOldInteger;
+    rs.Close;
+    rs.SQL.Text := 'select count(*) from PUB_GOODSSORT where SORT_NAME=:SORT_NAME and SORT_ID<>:OLD_SORT_ID and COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID ';
+    rs.ParamByName('OLD_TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsOldInteger;
     rs.ParamByName('SORT_NAME').AsString := Fieldbyname('SORT_NAME').AsString;
-    rs.ParamByName('SORT_ID').AsString := Fieldbyname('SORT_ID').AsOldString;
+    rs.ParamByName('OLD_SORT_ID').AsString := Fieldbyname('SORT_ID').AsOldString;
+    AGlobal.Open(rs);
     if rs.Fields[0].AsInteger >0 then Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsString+'"名称不能重复设置');
   finally
     rs.Free;

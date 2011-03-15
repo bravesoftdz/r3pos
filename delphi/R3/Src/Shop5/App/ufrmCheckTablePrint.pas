@@ -28,7 +28,6 @@ type
     fndP1_PRINT_DATE: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
@@ -135,12 +134,6 @@ begin
  }
 end;
 
-procedure TfrmCheckTablePrint.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  AddGoodSortTypeItemsList(Sender,fndP1_STAT_ID); 
-end;
-
 function TfrmCheckTablePrint.GetGoodPrintSQL: string;
 var
   SortTypeIdx: integer;
@@ -159,7 +152,9 @@ begin
   if trim(fndP1_SORT_ID.Text)<>'' then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
-    strWhere := strWhere+' and ('+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' and B.RELATION_ID='''+srid1+''')';
+    strWhere := strWhere+' and B.RELATION_ID='''+srid1+''' ';
+    if sid1<>'' then
+      strWhere := strWhere+' and '+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' ';
   end else
     GoodTab:='VIW_GOODSPRICEEXT'; 
 
@@ -183,7 +178,7 @@ begin
   strSql:=
     'select A.TENANT_ID as TENANT_ID,A.GODS_ID as GODS_ID '+   //--货品内码
     ','+UnitField+                    // UNIT_ID统计单位
-    //  ',B.BARCODE as BARCODE'+          //[查询单位的]条形码
+    //',B.BARCODE as BARCODE'+          //[查询单位的]条形码
     ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
     ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
@@ -207,22 +202,24 @@ begin
 end;
 
 procedure TfrmCheckTablePrint.PrintBefore;
-var s:string; TitlList: TStringList;
+var
+  ReStr:string;
+  TitlList: TStringList;
 begin
   inherited;
-  s:='';
+  ReStr:='';
   PrintDBGridEh1.Title.Clear;
   PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
   try
-    TitlList:=TStringList.Create;
-    if fndP1_PRINT_DATE.AsString <> '' then TitlList.Add(' 盘点日期：'+fndP1_PRINT_DATE.AsString);
+    TitlList:=TStringList.Create;                                    
+    if fndP1_PRINT_DATE.AsString <> '' then TitlList.Add('盘点日期：'+Copy(fndP1_PRINT_DATE.AsString,1,4)+'-'+Copy(fndP1_PRINT_DATE.AsString,5,2)+'-Copy(fndP1_PRINT_DATE.AsString,7,2)');
     if fndP1_SHOP_ID.AsString <> '' then TitlList.Add('门店名称：'+fndP1_SHOP_ID.Text);
     if trim(fndP1_SORT_ID.Text) <> '' then TitlList.Add('商品分类：'+fndP1_SORT_ID.Text);
     if trim(fndP1_STAT_ID.AsString) <> '' then TitlList.Add(fndP1_TYPE_ID.Text+'：'+fndP1_STAT_ID.Text);
     if fndP1_UNIT_ID.ItemIndex >= 0 then TitlList.Add('显示单位：'+fndP1_UNIT_ID.Text);
-    s:=FormatReportHead(TitlList,2,10);
+    ReStr:=FormatReportHead(TitlList,4);
     PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
-    PrintDBGridEh1.SetSubstitutes(['%[whr]', s]);
+    PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
   finally
     TitlList.Free;
   end;
@@ -354,7 +351,7 @@ begin
   begin
     CurID:=trim(Aobj.fieldbyName('SHOP_ID').AsString);
     DropDs:=fndP1_SHOP_ID.DataSet;
-    fndP1_SHOP_ID.KeyField:=CurID;
+    fndP1_SHOP_ID.KeyValue:=CurID;
     fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
   end;
   if (trim(Aobj.fieldbyName('PRINT_DATE').AsString)<>'') and (CurID<>'')then

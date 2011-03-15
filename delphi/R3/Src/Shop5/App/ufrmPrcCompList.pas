@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  Grids, DBGridEh, RzButton, DB, ADODB, zBase, ZAbstractRODataset,
+  Grids, DBGridEh, RzButton, DB, zBase, ZAbstractRODataset,
   ZAbstractDataset, ZDataset;
 
 type
@@ -97,33 +97,45 @@ var
   tmp: TZQuery;
   Column:TColumnEh;
 begin
+  //门店所属企业:
   Column := FindColumn('TENANT_ID');
-  Column.PickList.Clear;
-  Column.KeyList.Clear;
-  Column.KeyList.Add(InttoStr(Global.TENANT_ID));
-  Column.PickList.Add(Global.TENANT_NAME);
-  //门店上级是 企业
- {tmp := Global.GetZQueryFromName('CA_COMPANY');
-  tmp.First;
-  while not tmp.Eof do
+  if Column<>nil then
   begin
-    Column.KeyList.Add(tmp.Fields[0].asstring);
-    Column.PickList.Add(tmp.Fields[1].asstring);
-    tmp.Next;
-  end; }
+    Column.PickList.Clear;
+    Column.KeyList.Clear;
+    Column.KeyList.Add(InttoStr(Global.TENANT_ID));
+    Column.PickList.Add(Global.TENANT_NAME);
+  end;
+  //门店类型:
+  Column := FindColumn('SHOP_TYPE');
+  tmp := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  if (Column<>nil) and (tmp<>nil) then
+  begin
+    Column.PickList.Clear;
+    Column.KeyList.Clear;
+    tmp.First;
+    while not tmp.Eof do
+    begin
+      Column.KeyList.Add(tmp.fieldbyName('CODE_ID').AsString);
+      Column.PickList.Add(tmp.fieldbyName('CODE_NAME').AsString);  
+      tmp.Next;
+    end;
+  end;
 
   tmp := Global.GetZQueryFromName('PUB_REGION_INFO');
   Column := FindColumn('REGION_ID');
-  Column.PickList.Clear;
-  Column.KeyList.Clear;
-  tmp.First;
-  while not tmp.Eof do
+  if (Column<>nil) and (tmp<>nil) and (tmp.Active) and (not tmp.IsEmpty) then
   begin
-    Column.KeyList.Add(tmp.Fields[0].asstring);
-    Column.PickList.Add(tmp.Fields[1].asstring);
-    tmp.Next;
+    Column.PickList.Clear;
+    Column.KeyList.Clear;
+    tmp.First;
+    while not tmp.Eof do
+    begin
+      Column.KeyList.Add(tmp.Fields[0].asstring);
+      Column.PickList.Add(tmp.Fields[1].asstring);
+      tmp.Next;
+    end;
   end;
-
   //判断权限，
 //  btnOk.Enabled:=ShopGlobal.GetChkRight('500014');
 //  RzBitBtn1.Enabled:=btnOk.Enabled;

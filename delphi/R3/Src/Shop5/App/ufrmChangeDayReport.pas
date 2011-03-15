@@ -168,6 +168,7 @@ type
     procedure SetCodeId(const Value: string); //设置调整单的单据类型ID
     function  GetRCKFields: string;  //根据CodeId返回台账表的查询字段:
     function  GetVIWFields: string;  //根据CodeId返回Change视图的查询字段:
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title
   public
     { Public declarations }
     HasChild:boolean;
@@ -869,215 +870,26 @@ end;
 
 procedure TfrmChangeDayReport.PrintBefore;
 var
-  s:string;
-  c:integer;
+  ReStr: string;
+  Title: TStringList;
 begin
   inherited;
-{
   PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
-  case rzPage.ActivePageIndex of
-  0:begin
-      c := 0;
-      inc(c);
-      s := '日期：'+formatDatetime('YYYY-MM-DD',P1_D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',P1_D2.Date);
-      if fndP1_GROUP_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '地区名称：'+fndP1_GROUP_ID.Text+'('+fndP1_COMP_TYPE.Text+')';
-           inc(c);
-         end;
-      if fndP1_CUST_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '会员名称：'+fndP1_CUST_ID.Text;
-           inc(c);
-         end;
-      if trim(fndP1_SORT_ID.Text) <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '商品分类：'+fndP1_SORT_ID.Text;
-           inc(c);
-         end;
-      if fndP1_STAT_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + fndP1_TYPE_ID.Text+'：'+fndP1_STAT_ID.Text;
-           inc(c);
-         end;
-      if fndP1_INVOICE_FLAG.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '票据类型：'+fndP1_INVOICE_FLAG.Text;
-           inc(c);
-         end;
-      if fndP1_UNIT_ID.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示单位：'+fndP1_UNIT_ID.Text;
-           inc(c);
-         end;
-      PrintDBGridEh1.BeforeGridText.Text := s;
+  try
+    Title:=TStringList.Create;
+    case rzPage.ActivePageIndex of
+     0: AddReportReport(Title,'1');
+     1: AddReportReport(Title,'2');
+     2: AddReportReport(Title,'3');
+     3: AddReportReport(Title,'4');
+     4: AddReportReport(Title,'5');
     end;
-  1:begin
-      c := 0;
-      inc(c);
-      s := '日期：'+formatDatetime('YYYY-MM-DD',P2_D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',P2_D2.Date);
-      if fndP2_GROUP_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '地区名称：'+fndP2_GROUP_ID.Text+'('+fndP2_COMP_TYPE.Text+')';
-           inc(c);
-         end;
-      if fndP2_CUST_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '会员名称：'+fndP2_CUST_ID.Text;
-           inc(c);
-         end;
-      if trim(fndP2_SORT_ID.Text) <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '商品分类：'+fndP2_SORT_ID.Text;
-           inc(c);
-         end;
-      if fndP2_STAT_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + fndP2_TYPE_ID.Text+'：'+fndP2_STAT_ID.Text;
-           inc(c);
-         end;
-      if fndP2_INVOICE_FLAG.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '票据类型：'+fndP2_INVOICE_FLAG.Text;
-           inc(c);
-         end;
-      if fndP2_UNIT_ID.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示单位：'+fndP2_UNIT_ID.Text;
-           inc(c);
-         end;
-      PrintDBGridEh1.BeforeGridText.Text := s;
-    end;
-  2:begin
-      c := 0;
-      inc(c);
-      s := '日期：'+formatDatetime('YYYY-MM-DD',P3_D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',P3_D2.Date);
-      if fndP3_COMP_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '门店名称：'+fndP3_COMP_ID.Text+'('+fndP3_COMP_TYPE.Text+')';
-           inc(c);
-         end;
-      if fndP3_CUST_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '会员名称：'+fndP3_CUST_ID.Text;
-           inc(c);
-         end;
-      if trim(fndP3_SORT_ID.Text) <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示级别：'+fndP3_SORT_ID.Text;
-           inc(c);
-         end;
-      if fndP3_STAT_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + fndP3_TYPE_ID.Text+'：'+fndP3_STAT_ID.Text;
-           inc(c);
-         end;
-      if fndP3_INVOICE_FLAG.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '票据类型：'+fndP3_INVOICE_FLAG.Text;
-           inc(c);
-         end;
-      if fndP3_UNIT_ID.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示单位：'+fndP3_UNIT_ID.Text;
-           inc(c);
-         end;
-      PrintDBGridEh1.BeforeGridText.Text := s;
-    end;
-  3:begin
-      c := 0;
-      inc(c);
-      s := '日期：'+formatDatetime('YYYY-MM-DD',P4_D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',P4_D2.Date);
-      if fndP4_COMP_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '门店名称：'+fndP4_COMP_ID.Text+'('+fndP4_COMP_TYPE.Text+')';
-           inc(c);
-         end;
-      if fndP4_CUST_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '会员名称：'+fndP4_CUST_ID.Text;
-           inc(c);
-         end;
-      if trim(fndP4_SORT_ID.Text) <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '商品分类：'+fndP4_SORT_ID.Text;
-           inc(c);
-         end;
-      if fndP4_STAT_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + fndP4_TYPE_ID.Text+'：'+fndP4_STAT_ID.Text;
-           inc(c);
-         end;
-      if fndP4_INVOICE_FLAG.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '票据类型：'+fndP4_INVOICE_FLAG.Text;
-           inc(c);
-         end;
-      if fndP4_UNIT_ID.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示单位：'+fndP4_UNIT_ID.Text;
-           inc(c);
-         end;
-      PrintDBGridEh1.BeforeGridText.Text := s;
-    end;
-  4:begin
-      c := 0;
-      inc(c);
-      s := '日期：'+formatDatetime('YYYY-MM-DD',P5_D1.Date)+' 至 '+formatDatetime('YYYY-MM-DD',P5_D2.Date);
-      if fndP5_COMP_TYPE.ItemIndex>=0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '门店类型：'+fndP5_COMP_TYPE.Text;
-           inc(c);
-         end;
-      if fndP5_CUST_ID.AsString <> '' then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '会员名称：'+fndP5_CUST_ID.Text;
-           inc(c);
-         end;
-      if fndP5_INVOICE_FLAG.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '票据类型：'+fndP5_INVOICE_FLAG.Text;
-           inc(c);
-         end;
-      if fndP5_UNIT_ID.ItemIndex >= 0 then
-         begin
-           if c mod 2= 1 then s := s + '    ' else s := s + #13;
-           s := s + '显示单位：'+fndP5_UNIT_ID.Text;
-           inc(c);
-         end;
-      PrintDBGridEh1.BeforeGridText.Text := s;
-      if fndP5_GODS_ID.asString<>'' then
-         PrintDBGridEh1.Title.Text := '商品名称：'+ fndP5_GODS_ID.Text;
-    end;
+    ReStr:=FormatReportHead(Title,4);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
+  finally
+    Title.Free;
   end;
-  }
 end;
 
 procedure TfrmChangeDayReport.fndP1_SORT_IDPropertiesButtonClick(
@@ -1188,6 +1000,42 @@ procedure TfrmChangeDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
 begin
   inherited;
   DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
+end;
+
+function TfrmChangeDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
+var
+  FindCmp1,FindCmp2: TComponent;
+begin
+  //日期
+  FindCmp1:=FindComponent('P'+PageNo+'_D1');
+  FindCmp2:=FindComponent('P'+PageNo+'_D2');
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
+     (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
+    TitleList.add('日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
+ //门店名称：
+ FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
+ if (FindCmp1<>nil) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
+   TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
+  //管理群组：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_TYPE');  
+  FindCmp2:=FindComponent('fndP'+PageNo+'_SHOP_VALUE');   
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList)  and (TcxComboBox(FindCmp1).Visible) and
+     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'')  then
+    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
+  //商品指标：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');   
+  FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
+     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'') then
+    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
+  //商品分类
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
+  if (FindCmp1<>nil) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
+    TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);   
+  //计量单位
+  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
+  if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
+    TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 end;
 
 end.

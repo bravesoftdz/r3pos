@@ -1,19 +1,19 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
-  Left = 193
+  Left = 194
   Top = 109
-  Width = 901
+  Width = 900
   Height = 589
   Caption = #21830#21697#35843#25972#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 893
+    Width = 892
     Height = 532
     inherited RzPanel2: TRzPanel
-      Width = 883
+      Width = 882
       Height = 522
       inherited RzPage: TRzPageControl
-        Width = 678
+        Width = 677
         Height = 516
         ActivePage = TabSheet4
         Color = clCream
@@ -24,14 +24,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           Color = clCream
           Caption = #22320#21306#35843#25972#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 676
+            Width = 675
             Height = 489
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 666
+              Width = 665
               Height = 479
               inherited w1: TRzPanel
-                Width = 666
+                Width = 665
                 Height = 86
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -255,10 +255,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 86
-                Width = 666
+                Width = 665
                 Height = 393
                 inherited DBGridEh1: TDBGridEh
-                  Width = 662
+                  Width = 661
                   Height = 389
                   FrozenCols = 3
                   TitleHeight = 22
@@ -1099,7 +1099,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 676
+            Width = 675
             Height = 489
             Align = alClient
             BorderOuter = fsNone
@@ -1108,7 +1108,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 666
+              Width = 665
               Height = 479
               Align = alClient
               BevelOuter = bvNone
@@ -1117,7 +1117,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 666
+                Width = 665
                 Height = 107
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1396,7 +1396,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 107
-                Width = 666
+                Width = 665
                 Height = 372
                 Align = alClient
                 BorderOuter = fsGroove
@@ -1405,7 +1405,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 662
+                  Width = 661
                   Height = 368
                   Align = alClient
                   AllowedOperations = []
@@ -2053,7 +2053,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 681
+        Left = 680
         Height = 516
         inherited Panel2: TPanel
           Height = 466
@@ -2070,15 +2070,15 @@ inherited frmChangeDayReport: TfrmChangeDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 893
+    Width = 892
     inherited Image1: TImage
-      Width = 378
+      Width = 377
     end
     inherited Image14: TImage
-      Left = 884
+      Left = 883
     end
     inherited Image3: TImage
-      Width = 378
+      Width = 377
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2115,8 +2115,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
       635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
       53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
-      5C66733136200D0A5C706172207D0D0A00}
+      72645C6C616E67323035325C66305C6673323420255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
   end
   inherited SaveDialog1: TSaveDialog
     Left = 229

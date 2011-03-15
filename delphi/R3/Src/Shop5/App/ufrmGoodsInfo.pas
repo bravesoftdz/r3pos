@@ -327,9 +327,10 @@ begin
   TabGoodPrice.TabVisible:=False;  //价格管理分页 默认为False;
 
   AObj := TRecord_.Create;
-  edtCALC_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
-  edtSMALL_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
-  edtBIG_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
+  UpdateUNITSData;  //单位下拉
+  // edtCALC_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
+  // edtSMALL_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
+  // edtBIG_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   //商品的的8个SORT_ID数据集:
   //edtSORT_ID1.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');     //分类
   edtSORT_ID2.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');     //类别[烟草:一类烟、二类烟、三类烟]
@@ -759,13 +760,14 @@ procedure TfrmGoodsInfo.edtCALC_UNITSAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
- AObj := TRecord_.Create;
+  AObj := TRecord_.Create;
   try
     if TfrmMeaUnits.AddDialog(self,AObj) then
-       begin
-         edtCALC_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
-         edtCALC_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
-       end;
+    begin
+      edtCALC_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
+      edtCALC_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
+      UpdateUNITSData;  //单位下拉
+    end;
   finally
     AObj.Free;
   end;
@@ -930,10 +932,11 @@ begin
  AObj := TRecord_.Create;
   try
     if TfrmMeaUnits.AddDialog(self,AObj) then
-       begin
-         edtSMALL_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
-         edtSMALL_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
-       end;
+    begin
+      edtSMALL_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
+      edtSMALL_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
+      UpdateUNITSData;  //单位下拉
+    end;
   finally
     AObj.Free;
   end;
@@ -947,10 +950,11 @@ begin
   AObj := TRecord_.Create;
   try
     if TfrmMeaUnits.AddDialog(self,AObj) then
-       begin
-         edtBIG_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
-         edtBIG_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
-       end;
+    begin
+      edtBIG_UNITS.KeyValue := AObj.FieldbyName('UNIT_ID').asString;
+      edtBIG_UNITS.Text := AObj.FieldbyName('UNIT_NAME').asString;
+      UpdateUNITSData;  //单位下拉
+    end;
   finally
     AObj.Free;
   end;
@@ -2634,12 +2638,26 @@ procedure TfrmGoodsInfo.UpdateUNITSData;
 var
   Rs: TZQuery;
 begin
-  {if DropUNITS_Ds=nil then DropUNITS_Ds:=TZQuery.Create(self); //判断是否存在，不存在则增加
+  if DropUNITS_Ds=nil then
+  begin
+    DropUNITS_Ds:=TZQuery.Create(self); //判断是否存在，不存在则增加
+    edtCALC_UNITS.DataSet:=DropUNITS_Ds;
+    edtSMALL_UNITS.DataSet:=DropUNITS_Ds;
+    edtBIG_UNITS.DataSet:=DropUNITS_Ds;
+  end;
+  
   Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
-  if (Rs<>nil)
-
-  }
-
+  if (Rs<>nil) and (Rs.Active) then
+  begin
+    DropUNITS_Ds.Close;
+    DropUNITS_Ds.Data:=Rs.Data;
+    if DropUNITS_Ds.Active then
+    begin
+      DropUNITS_Ds.Filtered:=False;
+      DropUNITS_Ds.Filter:=' RELATION_FLAG=''2'' ';
+      DropUNITS_Ds.Filtered:=true;
+    end;
+  end;
 end;
 
 end.

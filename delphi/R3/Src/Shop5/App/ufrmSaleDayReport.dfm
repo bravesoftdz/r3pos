@@ -15,10 +15,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 513
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -32,10 +32,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               Height = 476
               inherited w1: TRzPanel
                 Width = 678
-                Height = 82
+                Height = 77
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -43,42 +43,42 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label6: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label7: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label8: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 54
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -86,7 +86,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 8
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -94,7 +94,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 478
-                  Top = 41
+                  Top = 39
                   Width = 67
                   Height = 29
                   Action = actFind
@@ -121,7 +121,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 53
+                  Top = 51
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -133,7 +133,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 53
+                  Top = 51
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -146,7 +146,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 53
+                  Top = 51
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -187,7 +187,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 32
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -202,7 +202,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -214,7 +214,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -255,12 +255,12 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 82
+                Top = 77
                 Width = 678
-                Height = 394
+                Height = 399
                 inherited DBGridEh1: TDBGridEh
                   Width = 674
-                  Height = 390
+                  Height = 395
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -822,7 +822,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 Left = 0
                 Top = 0
                 Width = 678
-                Height = 80
+                Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -830,7 +830,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 TabOrder = 0
                 object RzLabel6: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -838,42 +838,42 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object RzLabel7: TRzLabel
                   Left = 170
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
                   Left = 288
-                  Top = 58
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -881,7 +881,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object P3_D2: TcxDateEdit
                   Left = 186
-                  Top = 10
+                  Top = 8
                   Width = 87
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -889,7 +889,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 481
-                  Top = 40
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -917,7 +917,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 54
+                  Top = 52
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -958,7 +958,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 32
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -970,7 +970,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 54
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -983,7 +983,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1024,7 +1024,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1036,9 +1036,9 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 80
+                Top = 77
                 Width = 678
-                Height = 396
+                Height = 399
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1048,7 +1048,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Left = 2
                   Top = 2
                   Width = 674
-                  Height = 392
+                  Height = 395
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2318,22 +2318,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
     Left = 41
     Top = 354
   end
-  inherited PrintDBGridEh1: TPrintDBGridEh
-    PageHeader.CenterText.Strings = (
-      #38144#21806#27719#24635#34920)
-    PageHeader.Font.Charset = GB2312_CHARSET
-    PageHeader.Font.Height = -16
-    PageHeader.Font.Name = #23435#20307
-    PageHeader.Font.Style = [fsBold]
-    BeforeGridText_Data = {
-      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
-      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
-      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
-      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
-      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
-      5C66733136200D0A5C706172207D0D0A00}
-  end
   inherited SaveDialog1: TSaveDialog
     Left = 173
     Top = 220
@@ -2342,52 +2326,62 @@ inherited frmSaleDayReport: TfrmSaleDayReport
     Left = 41
     Top = 321
   end
-  object dsadoReport2: TDataSource
+  object dsadoReport2: TDataSource [7]
     DataSet = adoReport2
     Left = 89
     Top = 354
   end
-  object dsadoReport3: TDataSource
+  object dsadoReport3: TDataSource [8]
     DataSet = adoReport3
     Left = 137
     Top = 354
   end
-  object dsadoReport4: TDataSource
+  object dsadoReport4: TDataSource [9]
     DataSet = adoReport4
     Left = 185
     Top = 354
   end
-  object dsadoReport5: TDataSource
+  object dsadoReport5: TDataSource [10]
     DataSet = adoReport5
     Left = 233
     Top = 354
   end
-  object adoReport2: TZQuery
+  object adoReport2: TZQuery [11]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 89
     Top = 321
   end
-  object adoReport3: TZQuery
+  object adoReport3: TZQuery [12]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 137
     Top = 321
   end
-  object adoReport4: TZQuery
+  object adoReport4: TZQuery [13]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 185
     Top = 321
   end
-  object adoReport5: TZQuery
+  object adoReport5: TZQuery [14]
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 233
     Top = 321
+  end
+  inherited PrintDBGridEh1: TPrintDBGridEh
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
   end
 end

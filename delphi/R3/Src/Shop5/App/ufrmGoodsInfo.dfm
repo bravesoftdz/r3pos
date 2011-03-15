@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
+      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 1
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -100,7 +102,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           object edtSORT_ID7: TzrComboBoxList
             Left = 79
             Top = 11
-            Width = 133
+            Width = 139
             Height = 20
             Properties.AutoSelect = False
             Properties.Buttons = <
@@ -137,7 +139,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           object edtSORT_ID8: TzrComboBoxList
             Left = 330
             Top = 11
-            Width = 138
+            Width = 139
             Height = 20
             Properties.AutoSelect = False
             Properties.Buttons = <
@@ -193,7 +195,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               ParentFont = False
             end
             object Label26: TLabel
-              Left = 250
+              Left = 287
               Top = 23
               Width = 48
               Height = 12
@@ -221,7 +223,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               ParentFont = False
             end
             object Label36: TLabel
-              Left = 237
+              Left = 274
               Top = 48
               Width = 61
               Height = 12
@@ -238,7 +240,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             object edtSMALL_UNITS: TzrComboBoxList
               Left = 80
               Top = 19
-              Width = 41
+              Width = 60
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -283,7 +285,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               MultiSelect = False
             end
             object edtSMALLTO_CALC: TcxTextEdit
-              Left = 304
+              Left = 341
               Top = 19
               Width = 100
               Height = 20
@@ -294,12 +296,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             object edtBARCODE2: TcxTextEdit
               Left = 80
               Top = 43
-              Width = 135
+              Width = 160
               Height = 20
               TabOrder = 3
             end
             object edtMY_OUTPRICE1: TcxTextEdit
-              Left = 304
+              Left = 341
               Top = 44
               Width = 100
               Height = 20
@@ -308,7 +310,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               OnKeyPress = edtMY_OUTPRICE1KeyPress
             end
             object edtDefault1: TcxCheckBox
-              Left = 122
+              Left = 145
               Top = 19
               Width = 97
               Height = 21
@@ -340,7 +342,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               ParentFont = False
             end
             object Label2: TLabel
-              Left = 249
+              Left = 288
               Top = 24
               Width = 48
               Height = 12
@@ -368,7 +370,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               ParentFont = False
             end
             object Label16: TLabel
-              Left = 236
+              Left = 275
               Top = 47
               Width = 61
               Height = 12
@@ -385,7 +387,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             object edtBIG_UNITS: TzrComboBoxList
               Left = 80
               Top = 20
-              Width = 41
+              Width = 60
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -430,7 +432,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               MultiSelect = False
             end
             object edtBIGTO_CALC: TcxTextEdit
-              Left = 303
+              Left = 342
               Top = 20
               Width = 100
               Height = 20
@@ -441,12 +443,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             object edtBARCODE3: TcxTextEdit
               Left = 80
               Top = 44
-              Width = 135
+              Width = 160
               Height = 20
               TabOrder = 3
             end
             object edtMY_OUTPRICE2: TcxTextEdit
-              Left = 303
+              Left = 342
               Top = 44
               Width = 100
               Height = 20
@@ -455,7 +457,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               OnKeyPress = edtMY_OUTPRICE2KeyPress
             end
             object edtDefault2: TcxCheckBox
-              Left = 121
+              Left = 145
               Top = 20
               Width = 97
               Height = 21

@@ -1039,6 +1039,15 @@ begin
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
   if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
+
+  //单据类型:
+  if (trim(PageNo)='5') and (not fndP5_ALL.Checked) then
+  begin
+    if fndP5_InStock.Checked then
+      TitleList.Add('单据类型：'+fndP5_InStock.Caption)
+    else if fndP5_ReturnStock.Checked then
+      TitleList.Add('单据类型：'+fndP5_ReturnStock.Caption);
+  end;    
 end;
 
 end.

@@ -96,7 +96,7 @@ type
     GroupBox3: TGroupBox;
     Label8: TLabel;
     Label9: TLabel;
-    ListView1: TListView;
+    dbList: TListView;
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
@@ -108,10 +108,10 @@ type
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
-    MenuItem6: TMenuItem;
     actfrmAddDb: TAction;
     actfrmDeleteDb: TAction;
     actfrmDbConfig: TAction;
+    N2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -139,6 +139,10 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure edtKeepAliveClick(Sender: TObject);
     procedure mnuMgrClick(Sender: TObject);
+    procedure actfrmAddDbExecute(Sender: TObject);
+    procedure actfrmDeleteDbExecute(Sender: TObject);
+    procedure actfrmDbConfigExecute(Sender: TObject);
+    procedure dbListDblClick(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -174,6 +178,9 @@ type
     procedure AddLogFile;
 
     procedure ApplicationException(Sender: TObject; E: Exception);
+
+    //数据库连接管理
+    procedure ReadDbList;
   public
     procedure Initialize(FromService: Boolean);
     property ItemIndex: Integer read GetItemIndex write SetItemIndex;
@@ -342,6 +349,7 @@ begin
   end;
   mnuMgr.Visible := FromService;
   UpdateStatus;
+  ReadDbList;
   AddIcon;
   if IE4Installed then
     FTaskMessage := RegisterWindowMessage('TaskbarCreated');
@@ -777,6 +785,37 @@ begin
   end;
 end;
 
+procedure TSocketForm.ReadDbList;
+var
+  F:TIniFile;
+  db:TStringList;
+  i:integer;
+  item:TListItem;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  db := TStringList.Create;
+  try
+    F.ReadSections(db);
+    dbList.Clear;
+    for i:=0 to db.Count -1 do
+      begin
+        if (length(db[i])>2) and (copy(db[i],1,2)='db') then
+           begin
+             if StrtoInt(copy(db[i],3,20))>0 then
+             begin
+             Item := dbList.Items.Add;
+             Item.Caption := copy(db[i],3,20);
+             Item.SubItems.Add(F.ReadString(db[i],'hostname','')+'  <数据库名:'+F.ReadString(db[i],'databasename','')+'>'); 
+             Item.SubItems.Add('数据库类型:'+F.ReadString(db[i],'provider',''));
+             end;
+           end;
+      end;
+  finally
+    db.Free;
+    F.Free;
+  end;
+end;
+
 { TSocketService }
 
 procedure ServiceController(CtrlCode: DWord); stdcall;
@@ -812,6 +851,31 @@ begin
   Stopped := True;
 end;
 
+
+procedure TSocketForm.actfrmAddDbExecute(Sender: TObject);
+begin
+  TfrmDbSetup.EditDialog(self,0);
+  ReadDbList;
+end;
+
+procedure TSocketForm.actfrmDeleteDbExecute(Sender: TObject);
+begin
+  if dbList.Selected = nil then Raise Exception.Create('请选择要删除的连接..'); 
+  TfrmDbSetup.DeleteFun(StrtoInt(dbList.Selected.Caption));
+  dbList.Selected.Delete;
+end;
+
+procedure TSocketForm.actfrmDbConfigExecute(Sender: TObject);
+begin
+  if dbList.Selected = nil then Exit;
+  TfrmDbSetup.EditDialog(self,StrtoInt(dbList.Selected.Caption));
+
+end;
+
+procedure TSocketForm.dbListDblClick(Sender: TObject);
+begin
+  actfrmDbConfigExecute(nil);
+end;
 
 initialization
 finalization

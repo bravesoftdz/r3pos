@@ -16,6 +16,7 @@ object SocketForm: TSocketForm
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = True
+  PopupMenu = pmuSystem
   Position = poScreenCenter
   ScreenSnap = True
   OnCloseQuery = FormCloseQuery
@@ -277,7 +278,7 @@ object SocketForm: TSocketForm
     object TabSheet3: TTabSheet
       Caption = #25968#25454#24211
       ImageIndex = 4
-      object ListView1: TListView
+      object dbList: TListView
         Left = 0
         Top = 0
         Width = 511
@@ -304,6 +305,7 @@ object SocketForm: TSocketForm
         ViewStyle = vsReport
         OnColumnClick = ConnectionListColumnClick
         OnCompare = ConnectionListCompare
+        OnDblClick = dbListDblClick
       end
     end
     object TabSheet1: TTabSheet
@@ -595,12 +597,15 @@ object SocketForm: TSocketForm
     end
     object actfrmAddDb: TAction
       Caption = #28155#21152#36830#25509
+      OnExecute = actfrmAddDbExecute
     end
     object actfrmDeleteDb: TAction
       Caption = #21024#38500#36830#25509
+      OnExecute = actfrmDeleteDbExecute
     end
     object actfrmDbConfig: TAction
       Caption = #23646#24615
+      OnExecute = actfrmDbConfigExecute
     end
   end
   object ImageList1: TImageList
@@ -771,16 +776,17 @@ object SocketForm: TSocketForm
     Left = 128
     Top = 88
     object MenuItem3: TMenuItem
-      Action = actOpenLogFile
-    end
-    object MenuItem4: TMenuItem
-      Action = actClearLogFile
+      Action = actfrmDbConfig
+      Default = True
     end
     object MenuItem5: TMenuItem
       Caption = '-'
     end
-    object MenuItem6: TMenuItem
-      Action = actSaveLogFile
+    object MenuItem4: TMenuItem
+      Action = actfrmAddDb
+    end
+    object N2: TMenuItem
+      Action = actfrmDeleteDb
     end
   end
 end

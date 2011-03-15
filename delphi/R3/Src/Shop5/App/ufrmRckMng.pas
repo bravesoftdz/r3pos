@@ -29,8 +29,6 @@ type
     fndP1_STATUS: TcxRadioGroup;
     ToolButton3: TToolButton;
     ToolButton6: TToolButton;
-    Label4: TLabel;
-    fndP1_CREA_USER: TzrComboBoxList;
     cdsBrowser: TZQuery;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
@@ -74,8 +72,6 @@ type
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure frfIoroOrderUserFunction(const Name: String; p1, p2,
-      p3: Variant; var Val: Variant);
     procedure actNewExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
@@ -106,8 +102,6 @@ type
     procedure Audit3;
     function EncodeSQL:string;
     procedure Open;
-    procedure OpenD;
-    procedure OpenM;
     procedure Cancel;
     procedure CancelD;
     procedure CancelM;
@@ -115,7 +109,7 @@ type
 
 implementation
 uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmBatchCloseForDay,
-  ufrmBasic, uframeMDForm;
+  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -143,12 +137,15 @@ procedure TfrmRckMng.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-//  if Column.FieldName = 'SEQ_NO' then
-//     Background := clBtnFace;
+  if cdsBrowser.FieldByName('flag').AsInteger=1 then
+     Background := clBtnFace;
 end;
 
 function TfrmRckMng.EncodeSQL: string;
-var strSql,StrWhere:string;
+var
+  strSql,shpSql,StrWhere:string;
+  rs:TZQuery;
+  Date:TDate;
 begin
   if RzPage.TabIndex = 0 then
     begin
@@ -158,53 +155,123 @@ begin
       StrWhere := ' and CLSE_DATE>='+FormatDateTime('YYYYMMDD',P1_D1.Date)+' and CLSE_DATE <='+FormatDateTime('YYYYMMDD',P1_D2.Date);
       if Trim(fndP1_SHOP_ID.AsString) <> '' then
         StrWhere := StrWhere + ' and SHOP_ID='+QuotedStr(fndP1_SHOP_ID.AsString);
-      if Trim(fndP1_CREA_USER.AsString) <> '' then
-        StrWhere := StrWhere + ' and CREA_USER='+QuotedStr(fndP1_CREA_USER.AsString);
       case fndP1_STATUS.ItemIndex of
         1:StrWhere := StrWhere + ' and CHK_DATE is null';
         2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
       end;
 
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and END_DATE<='''+FormatDateTime('YYYY-MM-DD',P1_D1.Date)+'''';
+        Factor.Open(rs);
+//        if 
+      finally
+        rs.free;
+      end;
+
       strSql :=
-      'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+
-      'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+      'select jc.*,null as SHOP_ID_TEXT,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as IRIN_MNY,0 as IROT_MNY,0 as TRNIN_MNY,0 as TRNOT_MNY,0 as PUSH_MNY from ('+
+      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,'+
+      'CHK_DATE,CHK_USER,CREA_DATE,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ) jc '+
+      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ';
+
+      shpSql :=
       'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from ('+
-      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,'+
-      'CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ) jc '+
-      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ) jd '+
+      'select 1 as FLAG,null as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
+      'sum(PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as TOTAL_MNY,'+
+      'sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
+      'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,'+
+      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,max(CREA_USER) as CREA_USER '+
+      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
+      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
+
+      //算出余额及其他收支
+      shpSql :=
+      'select j.*,s.BAL_MNY,s.PAY_MNY,s.RECV_MNY,s.IRIN_MNY,s.IROT_MNY,s.TRNIN_MNY,s.TRNOT_MNY,s.PUSH_MNY from ('+shpSql+') j left outer join ('+
+      'select A.TENANT_ID,A.SHOP_ID,B.CLSE_DATE,'+
+      'sum(A.IN_MNY-A.OUT_MNY) as BAL_MNY,'+
+      'sum(case when A.FLAG=1 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as PAY_MNY,'+
+      'sum(case when A.FLAG=2 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as RECV_MNY,'+
+      'sum(case when A.FLAG=3 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as IRIN_MNY,'+
+      'sum(case when A.FLAG=3 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as IROT_MNY,'+
+      'sum(case when A.FLAG=4 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as TRNIN_MNY,'+
+      'sum(case when A.FLAG=4 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as TRNOT_MNY,'+
+      'sum(case when A.FLAG=6 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as PUSH_MNY '+
+      'from VIW_ACCT_FORPAY_A A,(select TENANT_ID,SHOP_ID,CLSE_DATE from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) B '+
+      'where A.CREA_DATE<B.CLSE_DATE and A.TENANT_ID=B.TENANT_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CLSE_DATE>='+FormatDateTime('YYYYMMDD',P1_D1.Date)+' and CLSE_DATE <='+FormatDateTime('YYYYMMDD',P1_D2.Date)+' '+
+      'group by A.TENANT_ID,A.SHOP_ID,B.CLSE_DATE ) s on j.TENANT_ID=s.TENANT_ID and j.SHOP_ID=s.SHOP_ID and j.CLSE_DATE=s.CLSE_DATE';
+      strSql := strSql + ' union all '+shpSql;
+
+      result :=
+      'select je.*,case when flag=1 then ''小计'' else e.USER_NAME end as CREA_USER_TEXT from ('+
+      'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+StrSql+') jd '+
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
-      'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by jc.CREA_DATE desc';
+      'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag desc';
     end
   else if RzPage.TabIndex = 1 then
     begin
-      if fndP2_D1.EditValue = null then Exception.Create('结账日期不能为空!');
-      if fndP2_D2.EditValue = null then Exception.Create('结账日期不能为空!');
+      if P2_D1.EditValue = null then Exception.Create('结账日期不能为空!');
+      if P2_D2.EditValue = null then Exception.Create('结账日期不能为空!');
       StrWhere := ' and CREA_DATE>='+FormatDateTime('YYYYMMDD',P2_D1.Date)+' and CREA_DATE<='+FormatDateTime('YYYYMMDD',P2_D2.Date);
-      StrWhere := StrWhere + ' and SHOP_ID='+QuotedStr(fndP2_SHOP_ID.AsString+'0001');
+      StrWhere := StrWhere + ' and SHOP_ID='+QuotedStr(inttostr(Global.TENANT_ID)+'0001');
       if fndP2_CREA_USER.AsString <> '' then
         StrWhere := StrWhere + ' and CREA_USER='+QuotedStr(fndP2_CREA_USER.AsString);
+      case fndP2_STATUS.ItemIndex of
+        1:StrWhere := StrWhere + ' and CHK_DATE is null';
+        2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
+      end;
       StrSql :=
       'select jc.*,c.USER_NAME as CHK_USER_TEXT from('+
       'select jb.*,b.USER_NAME as CREA_USER_TEXT from('+
       'select 0 as FLAG,TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_DAYS_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+') jb '+
       ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc '+
-      ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER';
-      Db_CloseDay.Close;
-      Db_CloseDay.SQL.Text := StrSql;
-      Factor.Open(Db_CloseDay);
+      ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by CREA_DATE desc';
+      result := StrSql;
     end
   else if RzPage.TabIndex = 2 then
     begin
+      if P3_M1.asString = '' then Exception.Create('结账月份不能为空!');
+      if P3_M2.asString = '' then Exception.Create('结账月份不能为空!');
+      StrWhere := ' and MONTH>='+P3_M1.asString+' and MONTH<='+P3_M2.asString;
+      StrWhere := StrWhere + ' and SHOP_ID='+QuotedStr(inttostr(Global.TENANT_ID)+'0001');
+      if fndP3_CREA_USER.AsString <> '' then
+        StrWhere := StrWhere + ' and CREA_USER='+QuotedStr(fndP3_CREA_USER.AsString);
+      case fndP3_STATUS.ItemIndex of
+        1:StrWhere := StrWhere + ' and CHK_DATE is null';
+        2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
+      end;
+      StrSql :=
+      'select jc.*,c.USER_NAME as CHK_USER_TEXT from('+
+      'select jb.*,b.USER_NAME as CREA_USER_TEXT from('+
+      'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from('+
+      'select 0 as FLAG,TENANT_ID,SHOP_ID,MONTH,CREA_USER,BEGIN_DATE,END_DATE,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_MONTH_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+') ja'+
+      ' left outer join CA_SHOP_INFO a on a.TENANT_ID=ja.TENANT_ID and a.SHOP_ID=ja.SHOP_ID where a.COMM not in (''12'',''02'')) jb'+
+      ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc'+
+      ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by MONTH desc';
+      result := StrSql;
     end;
-  result := strSQL;
 end;
 
 procedure TfrmRckMng.Open;
 begin
   if not Visible then Exit;
-  cdsBrowser.Close;
-  cdsBrowser.SQL.Text := EncodeSQL;
-  Factor.Open(cdsBrowser);
+  case rzPage.ActivePageIndex of
+  0:begin
+      cdsBrowser.Close;
+      cdsBrowser.SQL.Text := EncodeSQL;
+      Factor.Open(cdsBrowser);
+    end;
+  1:begin
+      Db_CloseDay.Close;
+      Db_CloseDay.SQL.Text := EncodeSQL;
+      Factor.Open(Db_CloseDay);
+    end;
+  2:begin
+      Db_CloseMonth.Close;
+      Db_CloseMonth.SQL.Text := EncodeSQL;
+      Factor.Open(Db_CloseMonth);
+    end;
+  end;
 end;
 
 procedure TfrmRckMng.cdsBrowserAfterScroll(DataSet: TDataSet);
@@ -224,7 +291,7 @@ end;
 procedure TfrmRckMng.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
-  Open('');
+  Open;
 end;
 
 procedure TfrmRckMng.InitGrid;
@@ -238,10 +305,10 @@ begin
   while not rs.Eof do
     begin
       Column := DBGridEh1.Columns.Add;
-      Column.FieldName := 'PAY_A'+rs.FieldbyName('CODE_ID').AsString;
-      Column.Width := 65;
+      Column.FieldName := 'PAY_'+rs.FieldbyName('CODE_ID').AsString;
+      Column.Width := 55;
       Column.Title.Caption := rs.FieldbyName('CODE_NAME').AsString;
-      Column.Index := DBGridEh1.Columns.Count -5;
+      Column.Index := DBGridEh1.Columns.Count -4;
       rs.Next;
     end;
 end;
@@ -254,12 +321,10 @@ begin
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  P3_M1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-01', date));
-  P3_M2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM', date));
+  P3_M1.asString := FormatDateTime('YYYY01', date);
+  P3_M2.asString := FormatDateTime('YYYYMM', date);
   fndP1_SHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
-  fndP2_SHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
-  fndP3_SHOP_ID.DataSet := Global.GeTZQueryFromName('CA_SHOP_INFO');
-  fndP1_CREA_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
+//  fndP1_CREA_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   fndP2_CREA_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   fndP3_CREA_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   fndP1_STATUS.ItemIndex := 0;
@@ -272,30 +337,7 @@ end;
 procedure TfrmRckMng.actFindExecute(Sender: TObject);
 begin
   inherited;
-  if RzPage.TabIndex = 0 then
-    begin
-      Open('');
-    end
-  else if RzPage.TabIndex = 1 then
-    begin
-      OpenD;
-    end
-  else if RzPage.TabIndex = 2 then
-    begin
-      OpenM;
-    end;
-end;
-
-procedure TfrmRckMng.frfIoroOrderUserFunction(const Name: String; p1,
-  p2, p3: Variant; var Val: Variant);
-var small:real;
-begin
-  inherited;
-  if UPPERCASE(Name)='SMALLTOBIG' then
-     begin
-       small := frParser.Calc(p1);
-       Val := FnNumber.SmallTOBig(small);
-     end;
+  Open
 end;
 
 procedure TfrmRckMng.actNewExecute(Sender: TObject);
@@ -304,50 +346,46 @@ begin
   if RzPage.TabIndex = 0 then
     begin
       if TfrmBatchCloseForDay.EditDialog(Self) then
-        Open('');
+        Open;
     end
   else if RzPage.TabIndex = 1 then
     begin
+      if not frmShopMain.actfrmDaysClose.Enabled then Raise Exception.Create('你没有日结账权限，不能完成操作此功能.');
+      frmShopMain.actfrmDaysClose.OnExecute(nil);
+      Open;
     end
   else if RzPage.TabIndex = 2 then
     begin
+      if not frmShopMain.actfrmMonthClose.Enabled then Raise Exception.Create('你没有月结账权限，不能完成操作此功能.');
+      frmShopMain.actfrmMonthClose.OnExecute(nil);
+      Open;
     end;
 end;
 
 procedure TfrmRckMng.FormShow(Sender: TObject);
 begin
   inherited;
-  Open('');
+  Open;
 end;
 
 procedure TfrmRckMng.Cancel;
 var rs: TZQuery;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('13200001',3) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
   rs := TZQuery.Create(nil);
   try
     cdsBrowser.CommitUpdates;
-    cdsBrowser.Filtered := False;
-    cdsBrowser.Filter := ' FLAG=1 ';
-    cdsBrowser.Filtered := True;
-    if cdsBrowser.IsEmpty then Raise Exception.Create('请选择撤消记录.');
-
-    cdsBrowser.First;
-    while not cdsBrowser.Eof do
-      begin
-        if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('已经审核,不能进行撤消操作.');
-        rs.Close;
-        rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and ROWS_ID='+QuotedStr(cdsBrowser.FieldbyName('ROWS_ID').AsString);
-        Factor.Open(rs);
-        if (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('数据已经同步,不能撤消!');
-        if cdsBrowser.FieldByName('FLAG').AsString = '1' then
-          cdsBrowser.Delete
-        else
-          cdsBrowser.Next;
-      end;
+    if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('已经审核,不能进行撤消操作.');
+    if MessageBox(Handle,'是否撤消当前选择的结账记录？ ','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    rs.Close;
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and ROWS_ID='+QuotedStr(cdsBrowser.FieldbyName('ROWS_ID').AsString);
+    Factor.Open(rs);
+    if (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('数据已经同步,不能撤消!');
+    cdsBrowser.Delete;
     try
       Factor.UpdateBatch(cdsBrowser,'TCloseForDay');
-    Except
+    except
       cdsBrowser.CancelUpdates;
     end;
   finally
@@ -365,12 +403,10 @@ begin
     end
   else if RzPage.TabIndex = 1 then
     begin
-      if Db_CloseDay.IsEmpty and (not Db_CloseDay.Active) then Exit;
       CancelD;
     end
   else if RzPage.TabIndex = 2 then
     begin
-      if Db_CloseMonth.IsEmpty and (not Db_CloseMonth.Active) then Exit;
       CancelM;
     end;
 
@@ -382,7 +418,7 @@ var Msg:String;
 begin
   inherited;
   if cdsBrowser.IsEmpty then  Exit;
-
+  if not ShopGlobal.GetChkRight('13200001',4) then  Raise Exception.Create('您没有审核权限,请联系管理员!');
   //权限
   if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then
     begin
@@ -455,7 +491,7 @@ var Msg:String;
 begin
   inherited;
   if Db_CloseDay.IsEmpty then  Exit;
-
+  if not ShopGlobal.GetChkRight('22100001',3) then  Raise Exception.Create('您没有审核权限,请联系管理员!');
   //权限
   if Db_CloseDay.FieldByName('CHK_DATE').AsString <> '' then
     begin
@@ -472,15 +508,10 @@ begin
   try
     Params := TftParamList.Create(nil);
     try
-      Params.ParamByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
-      Params.ParamByName('CHK_USER').AsString := Global.UserID;
-      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      Params.ParamByName('CREA_DATE').AsString := Db_CloseDay.FieldbyName('CREA_DATE').AsString;
-      Params.ParamByName('SHOP_ID').AsString := Db_CloseDay.FieldbyName('SHOP_ID').AsString;
       if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
         begin
           try
-            Msg := Factor.ExecProc('',Params);
+            Factor.ExecSQL('update RCK_DAYS_CLOSE set CHK_DATE='''+FormatDateTime('YYYY-MM-DD',Date)+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and CREA_DATE='+Db_CloseDay.FieldbyName('CREA_DATE').AsString);
             actAudit.Caption := '弃审';
           Except
             actAudit.Caption := '审核';
@@ -489,7 +520,7 @@ begin
       else
         begin
           try
-            Msg := Factor.ExecProc('',Params);
+            Factor.ExecSQL('update RCK_DAYS_CLOSE set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and CREA_DATE='+Db_CloseDay.FieldbyName('CREA_DATE').AsString);
             actAudit.Caption := '审核';
           Except
             actAudit.Caption := '弃审';
@@ -529,7 +560,7 @@ var Msg:String;
 begin
   inherited;
   if Db_CloseMonth.IsEmpty then  Exit;
-
+  if not ShopGlobal.GetChkRight('22200001',3) then  Raise Exception.Create('您没有审核权限,请联系管理员!');
   //权限
   if Db_CloseMonth.FieldByName('CHK_DATE').AsString <> '' then
     begin
@@ -546,15 +577,10 @@ begin
   try
     Params := TftParamList.Create(nil);
     try
-      Params.ParamByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
-      Params.ParamByName('CHK_USER').AsString := Global.UserID;
-      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      Params.ParamByName('SHOP_ID').AsString := Db_CloseMonth.FieldbyName('SHOP_ID').AsString;
-      Params.ParamByName('CREA_DATE').AsString := Db_CloseMonth.FieldbyName('CREA_DATE').AsString;
       if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
         begin
           try
-            Msg := Factor.ExecProc('',Params);
+            Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE='''+formatDatetime('YYYY-MM-DD',date())+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '弃审';
           Except
             actAudit.Caption := '审核';
@@ -563,7 +589,7 @@ begin
       else
         begin
           try
-            Msg := Factor.ExecProc('',Params);
+            Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '审核';
           Except
             actAudit.Caption := '弃审';
@@ -615,41 +641,63 @@ begin
 end;
 
 procedure TfrmRckMng.CancelD;
+var
+  rs:TZQuery;
+  d,r:integer;
 begin
-
+  if not ShopGlobal.GetChkRight('22100001',2) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs);
+    if rs.Fields[0].AsString = '' then Raise Exception.Create('没有找到结账记录不能完成结账操作...');
+    if MessageBox(Handle,pchar('是否撤消'+formatFloat('0000-00-00',rs.Fields[0].AsInteger)+'号的日结账操作？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    d := rs.Fields[0].AsInteger;
+    rs.Close;
+    rs.SQL.Text := 'select COMM,CHK_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE=:CREA_DATE';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('CREA_DATE').AsInteger := d;
+    Factor.Open(rs);
+    if rs.Fields[1].AsString <> '' then Raise Exception.Create(formatFloat('0000-00-00',d)+'号的结账记录已经审核不能撤消。');
+    if copy(rs.Fields[0].AsString,1,1)='1' then Raise Exception.Create(formatFloat('0000-00-00',d)+'号的结账记录已经上报不能撤消。');
+    r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(d)+'');
+    MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION);
+    Open;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmRckMng.CancelM;
+var
+  rs:TZQuery;
+  d,r:integer;
 begin
-
-end;
-
-procedure TfrmRckMng.OpenD;
-var StrSql,StrWhere:String;
-begin
-end;
-
-procedure TfrmRckMng.OpenM;
-var StrSql,StrWhere:String;
-begin
-  if fndP3_M1.asString = '' then Exception.Create('结账月份不能为空!');
-  if fndP3_M2.asString = '' then Exception.Create('结账月份不能为空!');
-  StrWhere := ' and MONTH>='+fndP3_M1.asString+' and MONTH<='+fndP3_M2.asString;
-  if fndSHOP_ID_M.AsString <> '' then
-    StrWhere := StrWhere + ' and SHOP_ID='+QuotedStr(fndSHOP_ID_D.AsString);
-  if fndCREA_USER_M.AsString <> '' then
-    StrWhere := StrWhere + ' and CREA_USER='+QuotedStr(fndCREA_USER_D.AsString);
-  StrSql :=
-  'select jc.*,c.USER_NAME as CHK_USER_TEXT from('+
-  'select jb.*,b.USER_NAME as CREA_USER_TEXT from('+
-  'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from('+
-  'select 0 as FLAG,TENANT_ID,SHOP_ID,MONTH,CREA_USER,BEGIN_DATE,END_DATE,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_MONTH_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+') ja'+
-  ' left outer join CA_SHOP_INFO a on a.TENANT_ID=ja.TENANT_ID and a.SHOP_ID=ja.SHOP_ID where a.COMM not in (''12'',''02'')) jb'+
-  ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc'+
-  ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER';
-  Db_CloseMonth.Close;
-  Db_CloseMonth.SQL.Text := StrSql;
-  Factor.Open(Db_CloseMonth);
+  if not ShopGlobal.GetChkRight('22200001',2) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select max(MONTH) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs);
+    if rs.Fields[0].AsString = '' then Raise Exception.Create('没有找到结账记录不能完成结账操作...');
+    if MessageBox(Handle,pchar('是否撤消'+formatFloat('0000-00',rs.Fields[0].AsInteger)+'月的月结账操作？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    d := rs.Fields[0].AsInteger;
+    rs.Close;
+    rs.SQL.Text := 'select COMM,CHK_DATE from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH=:MONTH';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('MONTH').AsInteger := d;
+    Factor.Open(rs);
+    if rs.Fields[1].AsString <> '' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经审核不能撤消。');
+    if copy(rs.Fields[0].AsString,1,1)='1' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经上报不能撤消。');
+    r := Factor.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+inttostr(d)+'');
+    MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION); 
+    Open;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmRckMng.DBGridEh2DrawColumnCell(Sender: TObject;

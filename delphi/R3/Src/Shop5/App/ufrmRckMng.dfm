@@ -1,35 +1,35 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 187
-  Top = 149
-  Width = 818
-  Height = 569
+  Left = 224
+  Top = 129
+  Width = 791
+  Height = 577
   Caption = #32467#36134#31649#29702
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 802
-    Height = 501
+    Width = 775
+    Height = 509
     inherited RzPanel2: TRzPanel
-      Width = 792
-      Height = 491
+      Width = 765
+      Height = 499
       inherited RzPage: TRzPageControl
-        Width = 786
-        Height = 485
+        Width = 759
+        Height = 493
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 784
-            Height = 458
+            Width = 757
+            Height = 466
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 772
-              Height = 80
+              Width = 745
+              Height = 70
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -51,17 +51,9 @@ inherited frmRckMng: TfrmRckMng
                 Height = 12
                 Caption = #33267
               end
-              object Label4: TLabel
-                Left = 38
-                Top = 53
-                Width = 36
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #25910#38134#21592
-              end
               object Label6: TLabel
                 Left = 24
-                Top = 32
+                Top = 40
                 Width = 48
                 Height = 12
                 Caption = #25152#23646#38376#24215
@@ -84,7 +76,7 @@ inherited frmRckMng: TfrmRckMng
               end
               object btnOk: TRzBitBtn
                 Left = 435
-                Top = 41
+                Top = 31
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -113,7 +105,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 316
                 Top = 2
                 Width = 105
-                Height = 71
+                Height = 61
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -128,51 +120,10 @@ inherited frmRckMng: TfrmRckMng
                 TabOrder = 3
                 Caption = ''
               end
-              object fndP1_CREA_USER: TzrComboBoxList
-                Left = 80
-                Top = 49
-                Width = 114
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 4
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'ACCOUNT;USER_NAME'
-                KeyField = 'USER_ID'
-                ListField = 'USER_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCOUNT'
-                    Footers = <>
-                    Title.Caption = #24080#21495
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'USER_NAME'
-                    Footers = <>
-                    Title.Caption = #22995#21517
-                    Width = 130
-                  end>
-                DropWidth = 180
-                DropHeight = 150
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = [zbClear]
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
               object fndP1_SHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 28
+                Top = 36
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -181,7 +132,7 @@ inherited frmRckMng: TfrmRckMng
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -214,17 +165,17 @@ inherited frmRckMng: TfrmRckMng
             end
             object Panel1: TPanel
               Left = 6
-              Top = 86
-              Width = 772
-              Height = 366
+              Top = 76
+              Width = 745
+              Height = 384
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 770
-                Height = 364
+                Width = 743
+                Height = 382
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -235,7 +186,7 @@ inherited frmRckMng: TfrmRckMng
                 FooterFont.Height = -12
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
-                FrozenCols = 2
+                FrozenCols = 1
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 RowHeight = 20
@@ -292,33 +243,25 @@ inherited frmRckMng: TfrmRckMng
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'BAL_CASH'
+                    Footers = <>
+                    Title.Caption = #32467#20313#29616#37329
+                    Width = 66
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'TOTAL_MNY'
                     Footers = <>
-                    Title.Caption = #21512#35745#37329#39069
+                    Title.Caption = #33829#19994#39069
                     Width = 70
                   end
                   item
-                    EditButtons = <>
-                    FieldName = 'BALANCE'
-                    Footers = <>
-                    Title.Caption = #20445#30041#38646#38065
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'REMARK'
-                    Footers = <>
-                    Title.Caption = #35828'  '#26126
-                    Width = 160
-                  end
-                  item
-                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23457#26680#20154
-                    Width = 75
+                    Width = 52
                   end
                   item
                     EditButtons = <>
@@ -326,14 +269,14 @@ inherited frmRckMng: TfrmRckMng
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
-                    Width = 80
+                    Width = 79
                   end
                   item
                     EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>
                     Title.Caption = #32467#36134#26102#38388
-                    Width = 120
+                    Width = 122
                   end>
               end
             end
@@ -344,8 +287,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 784
-            Height = 458
+            Width = 1262
+            Height = 665
             Align = alClient
             BorderInner = fsGroove
             BorderOuter = fsNone
@@ -354,8 +297,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel7: TRzPanel
               Left = 7
               Top = 81
-              Width = 770
-              Height = 370
+              Width = 1248
+              Height = 577
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -363,8 +306,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh2: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 770
-                Height = 370
+                Width = 1248
+                Height = 577
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseDay
@@ -375,7 +318,7 @@ inherited frmRckMng: TfrmRckMng
                 FooterFont.Height = -12
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
-                FrozenCols = 2
+                FrozenCols = 1
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 RowHeight = 20
@@ -410,7 +353,7 @@ inherited frmRckMng: TfrmRckMng
                     FieldName = 'CREA_DATE'
                     Footers = <>
                     Title.Caption = #32467#36134#26085#26399
-                    Width = 120
+                    Width = 84
                   end
                   item
                     EditButtons = <>
@@ -420,7 +363,6 @@ inherited frmRckMng: TfrmRckMng
                     Width = 75
                   end
                   item
-                    Alignment = taRightJustify
                     DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
@@ -435,14 +377,14 @@ inherited frmRckMng: TfrmRckMng
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
-                    Width = 80
+                    Width = 83
                   end>
               end
             end
             object RzPanel10: TRzPanel
               Left = 7
               Top = 7
-              Width = 770
+              Width = 1248
               Height = 74
               Align = alTop
               BorderOuter = fsNone
@@ -582,8 +524,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 784
-            Height = 458
+            Width = 1262
+            Height = 665
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -592,8 +534,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel9: TRzPanel
               Left = 6
               Top = 79
-              Width = 772
-              Height = 373
+              Width = 1250
+              Height = 580
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -601,8 +543,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh3: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 772
-                Height = 373
+                Width = 1250
+                Height = 580
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -613,7 +555,7 @@ inherited frmRckMng: TfrmRckMng
                 FooterFont.Height = -12
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
-                FrozenCols = 2
+                FrozenCols = 1
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 RowHeight = 20
@@ -640,37 +582,39 @@ inherited frmRckMng: TfrmRckMng
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #24207#21495
-                    Width = 26
+                    Width = 30
+                  end
+                  item
+                    DisplayFormat = '0000-00'
+                    EditButtons = <>
+                    FieldName = 'MONTH'
+                    Footers = <>
+                    Title.Caption = #32467#36134#26376#20221
+                    Width = 59
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'SHOP_ID_TEXT'
-                    Footer.Value = #21512'   '#35745#65306
-                    Footer.ValueType = fvtStaticText
+                    FieldName = 'CREA_USER_TEXT'
                     Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #38376#24215#21517#31216
-                    Width = 120
+                    Title.Caption = #32467#36134#20154
+                    Width = 72
                   end
                   item
-                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'BEGIN_DATE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #32467#36134#26085#26399
+                    Title.Caption = #24320#22987#26085#26399
                     Width = 80
                   end
                   item
-                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'END_DATE'
                     Footers = <>
-                    Title.Caption = #35828'  '#26126
-                    Width = 160
+                    Title.Caption = #32467#26463#26085#26399
+                    Width = 82
                   end
                   item
-                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
                     Footers = <>
@@ -686,28 +630,13 @@ inherited frmRckMng: TfrmRckMng
                     ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
                     Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER_TEXT'
-                    Footers = <>
-                    Title.Caption = #21046#21333#20154
-                    Width = 75
-                  end
-                  item
-                    DisplayFormat = '0000-00-00'
-                    EditButtons = <>
-                    FieldName = 'MONTH'
-                    Footers = <>
-                    Title.Caption = #21046#21333#26102#38388
-                    Width = 120
                   end>
               end
             end
             object RzPanel11: TRzPanel
               Left = 6
               Top = 6
-              Width = 772
+              Width = 1250
               Height = 73
               Align = alTop
               BorderOuter = fsNone
@@ -730,7 +659,7 @@ inherited frmRckMng: TfrmRckMng
               end
               object Label3: TLabel
                 Left = 38
-                Top = 41
+                Top = 43
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -784,7 +713,7 @@ inherited frmRckMng: TfrmRckMng
               end
               object fndP3_CREA_USER: TzrComboBoxList
                 Left = 80
-                Top = 37
+                Top = 39
                 Width = 114
                 Height = 20
                 Properties.AutoSelect = False
@@ -864,17 +793,17 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 802
+    Width = 775
     inherited Image1: TImage
       Left = 444
-      Width = 349
+      Width = 322
     end
     inherited Image14: TImage
-      Left = 793
+      Left = 766
     end
     inherited Image3: TImage
       Left = 444
-      Width = 349
+      Width = 322
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

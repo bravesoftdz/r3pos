@@ -108,14 +108,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Alignment = taRightJustify
         Caption = #38144#39033#31246#29575
       end
-      object Label20: TLabel [12]
-        Left = 673
-        Top = 93
-        Width = 6
-        Height = 12
-        Caption = '%'
-      end
-      object Label22: TLabel [13]
+      object Label22: TLabel [12]
         Left = 204
         Top = 113
         Width = 39
@@ -128,7 +121,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object Label4: TLabel [14]
+      object Label4: TLabel [13]
         Left = 564
         Top = 114
         Width = 48

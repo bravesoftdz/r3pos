@@ -57,7 +57,7 @@ begin
         qTemp := TZQuery.Create(nil);
         try
           qTemp.Close;
-          qTemp.SQL.Text := 'select PASS_WRD,USER_NAME from VIW_USERS where USER_ID=''' + USERID + '''';
+          qTemp.SQL.Text := 'select PASS_WRD,USER_NAME from VIW_USERS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and USER_ID=''' + USERID + '''';
           Factor.Open(qTemp);
           if qTemp.RecordCount > 0 then
             begin
@@ -122,11 +122,11 @@ begin
   ANEWPSW := UpperCase(edtNEWPSW.Text);
   if lowercase(userid)<>'admin' then
     sSqlTxt := 'update CA_USERS set PASS_WRD=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
-  ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where '
+  ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'USER_ID=''' + USERID + ''''
   else
     sSqlTxt := 'update SYS_DEFINE set [VALUE]=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
-  ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where '
+  ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'DEFINE=''PASSWRD''';
   try
     Factor.ExecSQL(sSqlTxt);

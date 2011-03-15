@@ -316,9 +316,9 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption := '欢迎使用'+ F.ReadString('soft','name','好店铺')+'系列产品';
-    Label10.Caption :=  F.ReadString('home','url','www.okonly.net');
-    Label12.Caption :=  F.ReadString('home','qq','30355701');
+    Caption := '欢迎使用'+ F.ReadString('soft','name','云盟软件R3')+'系列产品';
+    Label10.Caption :=  F.ReadString('soft','url','www.okonly.net');
+    Label12.Caption :=  F.ReadString('soft','qq','30355701');
   finally
     F.Free;
   end;

@@ -33,6 +33,7 @@ type
     Label4: TLabel;
     edtOPER_DATE: TcxDateEdit;
     cxedtUsers: TcxTextEdit;
+    lblTenantName: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxcbxLoginParamPropertiesChange(Sender: TObject);
@@ -97,7 +98,10 @@ begin
      end;
   temp := TZQuery.Create(nil);
   try
-     temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
+     if not cxedtUsers.Enabled then
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
+     else
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
      if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
@@ -194,7 +198,7 @@ begin
   edtOPER_DATE.Date := Date();
   if FileExists(ExtractFilePath(ParamStr(0))+'login.jpg') then
      imgLogin.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'login.jpg');
-
+  lblTenantName.Caption := '当前企业:'+Global.TENANT_NAME;
 end;
 
 function WinExecAndWait32V2(FileName: string; Visibility: integer): DWORD;

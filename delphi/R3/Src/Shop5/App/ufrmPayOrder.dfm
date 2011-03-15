@@ -337,70 +337,13 @@ inherited frmPayOrder: TfrmPayOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object edtITEM_ID: TzrComboBoxList
-        Left = 236
-        Top = 77
-        Width = 120
-        Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = True
-        Properties.OnChange = edtITEM_IDPropertiesChange
-        TabOrder = 1
-        InGrid = False
-        KeyValue = Null
-        FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
-        KeyField = 'ITEM_ID'
-        ListField = 'ITEM_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'ITEM_NAME'
-            Footers = <>
-            Title.Caption = #24080#25143#21517#31216
-            Width = 60
-          end
-          item
-            EditButtons = <>
-            FieldName = 'ITEM_TYPE'
-            Footers = <>
-            KeyList.Strings = (
-              '1'
-              '2')
-            PickList.Strings = (
-              #25910#20837
-              #25903#20986)
-            Title.Caption = #20998#31867
-            Width = 40
-          end
-          item
-            EditButtons = <>
-            FieldName = 'LEVEL_ID'
-            Footers = <>
-            Title.Caption = #20195#30721
-            Width = 30
-          end>
-        DropWidth = 180
-        DropHeight = 180
-        ShowTitle = True
-        AutoFitColWidth = True
-        OnAddClick = edtITEM_IDAddClick
-        ShowButton = True
-        LocateStyle = lsDark
-        Buttons = [zbNew]
-        DropListStyle = lsFixed
-        MultiSelect = False
-      end
       object edtPAY_DATE: TcxDateEdit
         Left = 492
         Top = 13
         Width = 131
         Height = 20
         Properties.OnChange = edtRECV_DATEPropertiesChange
-        TabOrder = 3
+        TabOrder = 2
       end
       object edtREMARK: TcxTextEdit
         Left = 236
@@ -408,7 +351,7 @@ inherited frmPayOrder: TfrmPayOrder
         Width = 277
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 2
+        TabOrder = 1
       end
       object RzPanel4: TRzPanel
         Left = 8
@@ -420,7 +363,7 @@ inherited frmPayOrder: TfrmPayOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 4
+        TabOrder = 3
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -691,7 +634,7 @@ inherited frmPayOrder: TfrmPayOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 5
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
@@ -757,7 +700,7 @@ inherited frmPayOrder: TfrmPayOrder
         Width = 120
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 492
@@ -770,7 +713,7 @@ inherited frmPayOrder: TfrmPayOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 7
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -797,6 +740,43 @@ inherited frmPayOrder: TfrmPayOrder
         ShowButton = False
         LocateStyle = lsDark
         Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
+      object edtITEM_ID: TzrComboBoxList
+        Left = 236
+        Top = 77
+        Width = 120
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        Properties.OnChange = edtITEM_IDPropertiesChange
+        TabOrder = 7
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'CODE_NAME;CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CODE_NAME'
+            Footers = <>
+            Title.Caption = #24080#25143#21517#31216
+            Width = 60
+          end>
+        DropWidth = 180
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        OnAddClick = edtITEM_IDAddClick
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew]
         DropListStyle = lsFixed
         MultiSelect = False
       end

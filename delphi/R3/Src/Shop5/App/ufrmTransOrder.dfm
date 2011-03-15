@@ -27,6 +27,8 @@ inherited frmTransOrder: TfrmTransOrder
         Color = clWhite
         Caption = #23384#21462#27454#35814#24773
         inherited RzPanel2: TRzPanel
+          Width = 1266
+          Height = 406
           BorderColor = clWhite
           Color = clWhite
         end
@@ -543,6 +545,7 @@ inherited frmTransOrder: TfrmTransOrder
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
+        OnAddClick = edtOUT_ACCOUNT_IDAddClick
         ShowButton = False
         LocateStyle = lsDark
         Buttons = []
@@ -585,6 +588,7 @@ inherited frmTransOrder: TfrmTransOrder
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
+        OnAddClick = edtIN_ACCOUNT_IDAddClick
         ShowButton = False
         LocateStyle = lsDark
         Buttons = []
@@ -650,9 +654,10 @@ inherited frmTransOrder: TfrmTransOrder
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
-        ShowButton = False
+        OnAddClick = edtTRANS_USERAddClick
+        ShowButton = True
         LocateStyle = lsDark
-        Buttons = []
+        Buttons = [zbNew]
         DropListStyle = lsFixed
         MultiSelect = False
       end

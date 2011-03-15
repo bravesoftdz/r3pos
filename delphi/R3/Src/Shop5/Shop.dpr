@@ -158,7 +158,8 @@ uses
   CaTenantService in 'App\CaTenantService.pas',
   ufrmBatchCloseForDay in 'App\ufrmBatchCloseForDay.pas' {frmBatchCloseForDay},
   ufrmChangeDayReport in 'App\ufrmChangeDayReport.pas' {frmChangeDayReport},
-  ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport};
+  ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport},
+  uSyncFactory in 'App\uSyncFactory.pas';
 
 {$R *.res}
 var
@@ -167,10 +168,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  SFVersion := '.NET';
-  CLVersion := '.MKT';
   DBVersion := 'DB1.0.0.1';
-  ProductID := 'R3_RYC';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmShopMain, frmShopMain);

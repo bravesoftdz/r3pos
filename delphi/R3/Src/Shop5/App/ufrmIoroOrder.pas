@@ -74,6 +74,8 @@ type
     procedure edtIORO_DATEPropertiesChange(Sender: TObject);
     procedure edtACCOUNT_IDKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure edtITEM_IDAddClick(Sender: TObject);
+    procedure edtIORO_USERAddClick(Sender: TObject);
   private
     Fcid: string;
     FIoroType: integer;
@@ -105,7 +107,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,ufrmClientInfo,ufrmAccountInfo;
+uses uGlobal,uShopUtil,uDsUtil,ufrmClientInfo,ufrmAccountInfo,ufrmCodeInfo,ufrmUsersInfo,
+  uShopGlobal;
 {$R *.dfm}
 
 procedure TfrmIoroOrder.FocusNextColumn;
@@ -487,6 +490,7 @@ procedure TfrmIoroOrder.edtACCOUNT_IDAddClick(Sender: TObject);
 var AObj:TRecord_;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
   AObj := TRecord_.Create;
   try
     if TfrmAccountInfo.AddDialog(self,AObj) then
@@ -668,6 +672,42 @@ begin
      end;
   inherited;
 
+end;
+
+procedure TfrmIoroOrder.edtITEM_IDAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21200001',2) then Raise Exception.Create('你没有新增科目的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmCodeInfo.AddDialog(self,r,3) then
+       begin
+         edtITEM_ID.KeyValue := r.FieldbyName('CODE_ID').AsString;
+         edtITEM_ID.Text := r.FieldbyName('CODE_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;
+end;
+
+procedure TfrmIoroOrder.edtIORO_USERAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmUsersInfo.AddDialog(self,r) then
+       begin
+         edtIORO_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
+         edtIORO_USER.Text := r.FieldbyName('USER_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;
 end;
 
 end.

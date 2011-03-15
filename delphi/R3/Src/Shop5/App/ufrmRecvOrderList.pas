@@ -39,7 +39,6 @@ type
     fndOrderStatus: TcxRadioGroup;
     fndRECV_USER: TzrComboBoxList;
     fndACCOUNT_ID: TzrComboBoxList;
-    fndITEM_ID: TzrComboBoxList;
     Panel2: TPanel;
     DBGridEh2: TDBGridEh;
     Label17: TLabel;
@@ -49,6 +48,7 @@ type
     fndPAYM_ID: TcxComboBox;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    fndITEM_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);

@@ -626,9 +626,8 @@ inherited frmPosMain: TfrmPosMain
           object rzHint: TLabel
             Left = 246
             Top = 14
-            Width = 12
+            Width = 6
             Height = 12
-            Caption = '33'
           end
           object edtInput: TcxTextEdit
             Tag = -1
@@ -996,6 +995,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = RzStatusPane3Click
       Alignment = taCenter
       Caption = #25346#21333#25968':5'#21333
     end

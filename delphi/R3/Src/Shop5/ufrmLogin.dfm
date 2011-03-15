@@ -473,7 +473,7 @@ inherited frmLogin: TfrmLogin
   end
   object lblName: TLabel [1]
     Left = 51
-    Top = 119
+    Top = 123
     Width = 60
     Height = 12
     Caption = #29992#25143#24080#21495#65306
@@ -515,12 +515,26 @@ inherited frmLogin: TfrmLogin
   end
   object Label4: TLabel [5]
     Left = 51
-    Top = 85
+    Top = 97
     Width = 60
     Height = 12
     Caption = #19994#21153#26085#26399#65306
   end
-  object cxBtnOk: TRzBitBtn [6]
+  object lblTenantName: TLabel [6]
+    Left = 51
+    Top = 71
+    Width = 60
+    Height = 12
+    Caption = #24403#21069#20225#19994#65306
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clRed
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+    Transparent = True
+  end
+  object cxBtnOk: TRzBitBtn [7]
     Left = 174
     Top = 215
     Caption = #30331#24405'(&O)'
@@ -583,7 +597,7 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxbtnCancel: TRzBitBtn [7]
+  object cxbtnCancel: TRzBitBtn [8]
     Left = 254
     Top = 215
     Cancel = True
@@ -647,7 +661,7 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxcbSave: TcxCheckBox [8]
+  object cxcbSave: TcxCheckBox [9]
     Left = 47
     Top = 218
     Width = 103
@@ -658,7 +672,7 @@ inherited frmLogin: TfrmLogin
     TabOrder = 2
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object cxedtPasswrd: TcxTextEdit [9]
+  object cxedtPasswrd: TcxTextEdit [10]
     Left = 111
     Top = 144
     Width = 184
@@ -667,27 +681,27 @@ inherited frmLogin: TfrmLogin
     TabOrder = 0
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object edtOPER_DATE: TcxDateEdit [10]
+  object edtOPER_DATE: TcxDateEdit [11]
     Left = 111
-    Top = 81
+    Top = 93
     Width = 184
     Height = 20
     Properties.DateOnError = deToday
     TabOrder = 4
   end
-  object cxedtUsers: TcxTextEdit [11]
+  object cxedtUsers: TcxTextEdit [12]
     Left = 111
-    Top = 115
+    Top = 119
     Width = 184
     Height = 20
     TabOrder = 5
   end
   inherited mmMenu: TMainMenu
-    Left = 16
-    Top = 8
+    Left = 65528
+    Top = 184
   end
   inherited actList: TActionList
-    Left = 64
-    Top = 8
+    Left = 40
+    Top = 184
   end
 end

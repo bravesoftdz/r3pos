@@ -388,6 +388,7 @@ begin
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   Calc;
+  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.'); 
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;

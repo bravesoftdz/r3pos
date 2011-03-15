@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=5
 MinorVer=0
 Release=0
-Build=24
+Build=32
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=5.0.0.24
+FileVersion=5.0.0.32
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -137,7 +137,18 @@ Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=1
+Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
 [HistoryLists\hlUnitOutputDirectory]
 Count=2
 Item0=D:\Delphi\R3\Src\Shop5\temp
 Item1=C:\Program Files\Developer Express Inc\ExpressEditors Library 4\Delphi 7\Lib
+[HistoryLists\hlOutputDirectorry]
+Count=3
+Item0=D:\Delphi\R3\Src
+Item1=D:\Delphi\R3\20110314\2003BR3V5
+Item2=D:\Delphi\Shop5\Shop5
+[HistoryLists\hlDCPOutput]
+Count=1
+Item0=D:\Delphi\R3\Src\Shop5\temp

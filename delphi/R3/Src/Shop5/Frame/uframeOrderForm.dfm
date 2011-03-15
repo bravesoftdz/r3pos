@@ -585,6 +585,7 @@ inherited frameOrderForm: TframeOrderForm
     Top = 264
   end
   object PopupMenu1: TPopupMenu
+    AutoHotkeys = maManual
     Left = 312
     Top = 208
     object munInsertRow: TMenuItem

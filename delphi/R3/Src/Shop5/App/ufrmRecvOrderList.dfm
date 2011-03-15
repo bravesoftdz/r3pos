@@ -194,9 +194,9 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -236,51 +236,9 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
-              object fndITEM_ID: TzrComboBoxList
-                Left = 253
-                Top = 69
-                Width = 120
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 6
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
-                KeyField = 'ITEM_ID'
-                ListField = 'ITEM_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'ITEM_NAME'
-                    Footers = <>
-                    Title.Caption = #24080#25143#21517#31216
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LEVEL_ID'
-                    Footers = <>
-                    Title.Caption = #24080#25143#20195#30721
-                    Width = 30
-                  end>
-                DropWidth = 157
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = False
-                LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -295,7 +253,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 7
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -360,7 +318,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Width = 97
                 Height = 20
                 Properties.DropDownListStyle = lsFixedList
-                TabOrder = 8
+                TabOrder = 7
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
@@ -374,7 +332,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 9
+                TabOrder = 8
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -398,9 +356,44 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndITEM_ID: TzrComboBoxList
+                Left = 253
+                Top = 69
+                Width = 120
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 9
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CODE_NAME;CODE_SPELL'
+                KeyField = 'CODE_ID'
+                ListField = 'CODE_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CODE_NAME'
+                    Footers = <>
+                    Title.Caption = #24080#25143#21517#31216
+                    Width = 60
+                  end>
+                DropWidth = 157
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end

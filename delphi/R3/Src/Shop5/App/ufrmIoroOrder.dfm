@@ -321,6 +321,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         DropHeight = 150
         ShowTitle = True
         AutoFitColWidth = True
+        OnAddClick = edtIORO_USERAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]
@@ -365,6 +366,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = True
+        OnAddClick = edtITEM_IDAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]

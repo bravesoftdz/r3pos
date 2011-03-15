@@ -152,6 +152,7 @@ type
     procedure rckPAY_1Enter(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure RzStatusPane3Click(Sender: TObject);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -320,7 +321,7 @@ begin
   Height := 600;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+F.ReadString('soft','name','好店铺')+'"';
+    s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+ F.ReadString('soft','name','云盟软件R3')+'系列产品"';
     if F.ReadString('home','url','')<>'' then
        s := '  网址：'+F.ReadString('home','url','');
     if F.ReadString('soft','copyright','')<>'' then
@@ -2006,6 +2007,7 @@ begin
   CheckInvaid;
   
   Calc;
+  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.'); 
   Printed := DevFactory.SavePrint;
   //结算对话框
   if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
@@ -2890,7 +2892,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  MessageBox(Handle,'挂单成功，取单请按F8健',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  MessageBox(Handle,'挂单成功，取单请按F2键->8键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   NewOrder;
   LoadFile('H');
 end;
@@ -3327,6 +3329,13 @@ begin
   finally
     cdsTable.EnableControls;
   end;
+end;
+
+procedure TfrmPosMain.RzStatusPane3Click(Sender: TObject);
+begin
+  inherited;
+  if MessageBox(Handle,'是否执行取单操作.','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  PickUp;
 end;
 
 end.

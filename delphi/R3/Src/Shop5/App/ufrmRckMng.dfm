@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 386
-  Top = 116
+  Left = 187
+  Top = 149
   Width = 818
   Height = 569
   Caption = #32467#36134#31649#29702
@@ -9,26 +9,26 @@ inherited frmRckMng: TfrmRckMng
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 810
-    Height = 512
+    Width = 802
+    Height = 501
     inherited RzPanel2: TRzPanel
-      Width = 800
-      Height = 502
+      Width = 792
+      Height = 491
       inherited RzPage: TRzPageControl
-        Width = 794
-        Height = 496
+        Width = 786
+        Height = 485
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 792
-            Height = 469
+            Width = 784
+            Height = 458
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 780
+              Width = 772
               Height = 80
               Align = alTop
               BorderOuter = fsNone
@@ -59,7 +59,7 @@ inherited frmRckMng: TfrmRckMng
                 Alignment = taRightJustify
                 Caption = #25910#38134#21592
               end
-              object Label40: TLabel
+              object Label6: TLabel
                 Left = 24
                 Top = 32
                 Width = 48
@@ -83,7 +83,7 @@ inherited frmRckMng: TfrmRckMng
                 TabOrder = 1
               end
               object btnOk: TRzBitBtn
-                Left = 443
+                Left = 435
                 Top = 41
                 Width = 67
                 Height = 32
@@ -109,7 +109,7 @@ inherited frmRckMng: TfrmRckMng
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndSTATUS: TcxRadioGroup
+              object fndP1_STATUS: TcxRadioGroup
                 Left = 316
                 Top = 2
                 Width = 105
@@ -128,7 +128,7 @@ inherited frmRckMng: TfrmRckMng
                 TabOrder = 3
                 Caption = ''
               end
-              object fndCREA_USER: TzrComboBoxList
+              object fndP1_CREA_USER: TzrComboBoxList
                 Left = 80
                 Top = 49
                 Width = 114
@@ -163,13 +163,13 @@ inherited frmRckMng: TfrmRckMng
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndSHOP_ID: TzrComboBoxList
+              object fndP1_SHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
                 Top = 28
@@ -215,16 +215,16 @@ inherited frmRckMng: TfrmRckMng
             object Panel1: TPanel
               Left = 6
               Top = 86
-              Width = 780
-              Height = 377
+              Width = 772
+              Height = 366
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 778
-                Height = 375
+                Width = 770
+                Height = 364
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -238,7 +238,6 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-                PopupMenu = PopupMenu1
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -256,20 +255,6 @@ inherited frmRckMng: TfrmRckMng
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
-                  item
-                    Checkboxes = True
-                    EditButtons = <>
-                    FieldName = 'FLAG'
-                    Footers = <>
-                    KeyList.Strings = (
-                      '1'
-                      '0')
-                    PickList.Strings = (
-                      '0'
-                      '1')
-                    Title.Caption = #36873#25321
-                    Width = 20
-                  end
                   item
                     Color = clBtnFace
                     EditButtons = <>
@@ -290,6 +275,13 @@ inherited frmRckMng: TfrmRckMng
                     Width = 120
                   end
                   item
+                    EditButtons = <>
+                    FieldName = 'CREA_USER_TEXT'
+                    Footers = <>
+                    Title.Caption = #25910#38134#21592
+                    Width = 75
+                  end
+                  item
                     DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CLSE_DATE'
@@ -299,86 +291,18 @@ inherited frmRckMng: TfrmRckMng
                     Width = 80
                   end
                   item
-                    DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'PAY_A'
+                    FieldName = 'TOTAL_MNY'
                     Footers = <>
-                    Title.Caption = #29616#37329#25903#20184
-                    Width = 80
+                    Title.Caption = #21512#35745#37329#39069
+                    Width = 70
                   end
                   item
-                    DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'PAY_B'
+                    FieldName = 'BALANCE'
                     Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #38134#32852#25903#20184
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_C'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #20648#20540#21345#25903#20184
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_D'
-                    Footers = <>
-                    Title.Caption = #35760'    '#36134
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_E'
-                    Footers = <>
-                    Title.Caption = #31036#21048#25903#20184
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_F'
-                    Footers = <>
-                    Title.Caption = #25903#31080#25903#20184
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_G'
-                    Footers = <>
-                    Title.Caption = #23567#39069#25903#20184
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_H'
-                    Footers = <>
-                    Visible = False
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_I'
-                    Footers = <>
-                    Visible = False
-                    Width = 80
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_J'
-                    Footers = <>
-                    Visible = False
-                    Width = 80
+                    Title.Caption = #20445#30041#38646#38065
+                    Width = 70
                   end
                   item
                     EditButtons = <>
@@ -406,16 +330,9 @@ inherited frmRckMng: TfrmRckMng
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CREA_USER_TEXT'
-                    Footers = <>
-                    Title.Caption = #21046#21333#20154
-                    Width = 75
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>
-                    Title.Caption = #21046#21333#26102#38388
+                    Title.Caption = #32467#36134#26102#38388
                     Width = 120
                   end>
               end
@@ -427,8 +344,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 792
-            Height = 469
+            Width = 784
+            Height = 458
             Align = alClient
             BorderInner = fsGroove
             BorderOuter = fsNone
@@ -436,9 +353,9 @@ inherited frmRckMng: TfrmRckMng
             TabOrder = 0
             object RzPanel7: TRzPanel
               Left = 7
-              Top = 87
-              Width = 778
-              Height = 375
+              Top = 81
+              Width = 770
+              Height = 370
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -446,8 +363,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh2: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 778
-                Height = 375
+                Width = 770
+                Height = 370
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseDay
@@ -461,7 +378,6 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-                PopupMenu = PopupMenu2
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -480,20 +396,6 @@ inherited frmRckMng: TfrmRckMng
                 OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
                   item
-                    Checkboxes = True
-                    EditButtons = <>
-                    FieldName = 'FLAG'
-                    Footers = <>
-                    KeyList.Strings = (
-                      '1'
-                      '0')
-                    PickList.Strings = (
-                      '0'
-                      '1')
-                    Title.Caption = #36873#25321
-                    Width = 20
-                  end
-                  item
                     Color = clBtnFace
                     EditButtons = <>
                     FieldName = 'SEQNO'
@@ -503,14 +405,19 @@ inherited frmRckMng: TfrmRckMng
                     Width = 28
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
-                    FieldName = 'SHOP_ID_TEXT'
-                    Footer.Value = #21512'   '#35745#65306
-                    Footer.ValueType = fvtStaticText
+                    FieldName = 'CREA_DATE'
                     Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #38376#24215#21517#31216
+                    Title.Caption = #32467#36134#26085#26399
                     Width = 120
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_USER_TEXT'
+                    Footers = <>
+                    Title.Caption = #32467#36134#20154
+                    Width = 75
                   end
                   item
                     Alignment = taRightJustify
@@ -529,36 +436,21 @@ inherited frmRckMng: TfrmRckMng
                     ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
                     Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER_TEXT'
-                    Footers = <>
-                    Title.Caption = #21046#21333#20154
-                    Width = 75
-                  end
-                  item
-                    DisplayFormat = '0000-00-00'
-                    EditButtons = <>
-                    FieldName = 'CREA_DATE'
-                    Footers = <>
-                    Title.Caption = #21046#21333#26102#38388
-                    Width = 120
                   end>
               end
             end
             object RzPanel10: TRzPanel
               Left = 7
               Top = 7
-              Width = 778
-              Height = 80
+              Width = 770
+              Height = 74
               Align = alTop
               BorderOuter = fsNone
               Color = clWhite
               TabOrder = 1
               object RzLabel1: TRzLabel
                 Left = 24
-                Top = 11
+                Top = 15
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -566,37 +458,30 @@ inherited frmRckMng: TfrmRckMng
               end
               object RzLabel4: TRzLabel
                 Left = 186
-                Top = 11
+                Top = 15
                 Width = 12
                 Height = 12
                 Caption = #33267
               end
               object Label1: TLabel
                 Left = 38
-                Top = 53
+                Top = 42
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
                 Caption = #32467#36134#20154
               end
-              object Label2: TLabel
-                Left = 24
-                Top = 32
-                Width = 48
-                Height = 12
-                Caption = #25152#23646#38376#24215
-              end
-              object fndCREA_DATE_D1: TcxDateEdit
+              object P2_D1: TcxDateEdit
                 Left = 80
-                Top = 7
+                Top = 11
                 Width = 97
                 Height = 20
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
-              object fndCREA_DATE_D2: TcxDateEdit
+              object P2_D2: TcxDateEdit
                 Left = 205
-                Top = 7
+                Top = 11
                 Width = 98
                 Height = 20
                 Properties.DateButtons = [btnToday]
@@ -604,7 +489,7 @@ inherited frmRckMng: TfrmRckMng
               end
               object RzBitBtn1: TRzBitBtn
                 Left = 443
-                Top = 41
+                Top = 33
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -629,11 +514,11 @@ inherited frmRckMng: TfrmRckMng
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndSTATUS_D: TcxRadioGroup
+              object fndP2_STATUS: TcxRadioGroup
                 Left = 316
                 Top = 2
                 Width = 105
-                Height = 71
+                Height = 63
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -648,9 +533,9 @@ inherited frmRckMng: TfrmRckMng
                 TabOrder = 3
                 Caption = ''
               end
-              object fndCREA_USER_D: TzrComboBoxList
+              object fndP2_CREA_USER: TzrComboBoxList
                 Left = 80
-                Top = 49
+                Top = 38
                 Width = 114
                 Height = 20
                 Properties.AutoSelect = False
@@ -683,51 +568,9 @@ inherited frmRckMng: TfrmRckMng
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
-              object fndSHOP_ID_D: TzrComboBoxList
-                Tag = -1
-                Left = 80
-                Top = 28
-                Width = 223
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 5
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
-                KeyField = 'SHOP_ID'
-                ListField = 'SHOP_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'SHOP_NAME'
-                    Footers = <>
-                    Title.Caption = #21517#31216
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SEQ_NO'
-                    Footers = <>
-                    Title.Caption = #24207#21495
-                    Width = 20
-                  end>
-                DropWidth = 185
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = False
-                LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -739,8 +582,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 792
-            Height = 469
+            Width = 784
+            Height = 458
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -748,9 +591,9 @@ inherited frmRckMng: TfrmRckMng
             TabOrder = 0
             object RzPanel9: TRzPanel
               Left = 6
-              Top = 86
-              Width = 780
-              Height = 377
+              Top = 79
+              Width = 772
+              Height = 373
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -758,8 +601,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh3: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 780
-                Height = 377
+                Width = 772
+                Height = 373
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -773,7 +616,6 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-                PopupMenu = PopupMenu3
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -791,20 +633,6 @@ inherited frmRckMng: TfrmRckMng
                 OnDrawColumnCell = DBGridEh3DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
-                  item
-                    Checkboxes = True
-                    EditButtons = <>
-                    FieldName = 'FLAG'
-                    Footers = <>
-                    KeyList.Strings = (
-                      '1'
-                      '0')
-                    PickList.Strings = (
-                      '0'
-                      '1')
-                    Title.Caption = #36873#25321
-                    Width = 20
-                  end
                   item
                     Color = clBtnFace
                     EditButtons = <>
@@ -879,15 +707,15 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel11: TRzPanel
               Left = 6
               Top = 6
-              Width = 780
-              Height = 80
+              Width = 772
+              Height = 73
               Align = alTop
               BorderOuter = fsNone
               Color = clWhite
               TabOrder = 1
               object RzLabel5: TRzLabel
                 Left = 24
-                Top = 11
+                Top = 16
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -895,45 +723,22 @@ inherited frmRckMng: TfrmRckMng
               end
               object RzLabel6: TRzLabel
                 Left = 186
-                Top = 11
+                Top = 16
                 Width = 12
                 Height = 12
                 Caption = #33267
               end
               object Label3: TLabel
                 Left = 38
-                Top = 53
+                Top = 41
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
                 Caption = #32467#36134#20154
               end
-              object Label5: TLabel
-                Left = 24
-                Top = 32
-                Width = 48
-                Height = 12
-                Caption = #25152#23646#38376#24215
-              end
-              object fndCREA_DATE_M1: TcxDateEdit
-                Left = 80
-                Top = 7
-                Width = 97
-                Height = 20
-                Properties.DateButtons = [btnToday]
-                TabOrder = 0
-              end
-              object fndCREA_DATE_M2: TcxDateEdit
-                Left = 205
-                Top = 7
-                Width = 98
-                Height = 20
-                Properties.DateButtons = [btnToday]
-                TabOrder = 1
-              end
               object RzBitBtn2: TRzBitBtn
                 Left = 443
-                Top = 41
+                Top = 33
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -951,18 +756,18 @@ inherited frmRckMng: TfrmRckMng
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 0
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object cxRadioGroup1: TcxRadioGroup
+              object fndP3_STATUS: TcxRadioGroup
                 Left = 316
                 Top = 2
                 Width = 105
-                Height = 71
+                Height = 63
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -974,12 +779,12 @@ inherited frmRckMng: TfrmRckMng
                   item
                     Caption = #24050#23457#26680
                   end>
-                TabOrder = 3
+                TabOrder = 1
                 Caption = ''
               end
-              object fndCREA_USER_M: TzrComboBoxList
+              object fndP3_CREA_USER: TzrComboBoxList
                 Left = 80
-                Top = 49
+                Top = 37
                 Width = 114
                 Height = 20
                 Properties.AutoSelect = False
@@ -988,7 +793,7 @@ inherited frmRckMng: TfrmRckMng
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME'
@@ -1012,53 +817,45 @@ inherited frmRckMng: TfrmRckMng
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndSHOP_ID_M: TzrComboBoxList
-                Tag = -1
+              object P3_M1: TzrMonthEdit
                 Left = 80
-                Top = 28
-                Width = 223
+                Top = 12
+                Width = 97
                 Height = 20
-                Properties.AutoSelect = False
                 Properties.Buttons = <
                   item
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
-                KeyField = 'SHOP_ID'
-                ListField = 'SHOP_NAME'
-                Columns = <
+                TabOrder = 3
+                Text = '2011/03'
+                Year = 0
+                Month = 0
+                asString = '000000'
+                asFormatString = '0000-00'
+              end
+              object P3_M2: TzrMonthEdit
+                Left = 206
+                Top = 12
+                Width = 97
+                Height = 20
+                Properties.Buttons = <
                   item
-                    EditButtons = <>
-                    FieldName = 'SHOP_NAME'
-                    Footers = <>
-                    Title.Caption = #21517#31216
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SEQ_NO'
-                    Footers = <>
-                    Title.Caption = #24207#21495
-                    Width = 20
+                    Default = True
                   end>
-                DropWidth = 185
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = False
-                LocateStyle = lsDark
-                Buttons = []
-                DropListStyle = lsFixed
-                MultiSelect = False
+                Properties.ReadOnly = False
+                TabOrder = 4
+                Text = '2011/03'
+                Year = 0
+                Month = 0
+                asString = '000000'
+                asFormatString = '0000-00'
               end
             end
           end
@@ -1067,17 +864,17 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 810
+    Width = 802
     inherited Image1: TImage
       Left = 444
-      Width = 357
+      Width = 349
     end
     inherited Image14: TImage
-      Left = 801
+      Left = 793
     end
     inherited Image3: TImage
       Left = 444
-      Width = 357
+      Width = 349
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -1167,188 +964,6 @@ inherited frmRckMng: TfrmRckMng
     Left = 113
     Top = 266
   end
-  object frfIoroOrder: TfrReport
-    InitialZoom = pzDefault
-    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
-    StoreInDFM = True
-    OnUserFunction = frfIoroOrderUserFunction
-    Left = 176
-    Top = 193
-    ReportForm = {
-      18000000E8120000180000FFFF01000100FFFFFFFFFF00010000340800007805
-      00000000000000000000000000000000000000FFFF00000000FFFF0000000000
-      00000000000000030400466F726D000F000080DC000000780000007C0100002C
-      010000040000000200D60000000B004D61737465724461746131000201000000
-      00BE000000F6020000140000003000050001000000000000000000FFFFFF1F00
-      0000000C0066724442446174615365743100000000000000FFFF000000000002
-      000000010000000000000001000000C800000014000000010000000000000200
-      3B0100000500D2B3CDB7310002010000000024000000F6020000680000003000
-      020001000000000000000000FFFFFF1F00000000000000000000000000FFFF00
-      0000000002000000010000000000000001000000C80000001400000001000000
-      0000000200A20100000700D6F7CFEEBDC531000201000000004C010000F60200
-      004D0000003000060001000000000000000000FFFFFF1F000000000000000000
-      00000000FFFF000000000002000000010000000000000001000000C800000014
-      000000010000000000000200070200000500D2B3BDC53100020100000000F600
-      0000F6020000150000003000030001000000000000000000FFFFFF1F00000000
-      000000000000000000FFFF000000000002000000010000000000000001000000
-      C8000000140000000100000000000000008E02000005004D656D6F390002007B
-      00000052000000640000001200000003000F0001000000000000000000FFFFFF
-      1F2E02000000000001000A005BD5CABBA7C3FBB3C65D00000000FFFF00000000
-      000200000001000000000400CBCECCE5000A0000000000000000000800000086
-      00020000000000FFFFFF00000000020000000000000000001A03000006004D65
-      6D6F353800020045020000410000007A0000000F000000030000000100000000
-      0000000000FFFFFF1F2E02000000000001000E005BCAD5D6A7C6BED6A4B5A5BA
-      C55D00000000FFFF00000000000200000001000000000400CBCECCE5000A0000
-      00000000000000000000008600020000000000FFFFFF00000000020000000000
-      00000000A203000005004D656D6F320002000A01000025000000A50000001800
-      00000300020001000000000000000500FFFFFF1F2E02000000000001000B00CA
-      D520D6A720C6BE20D6A400000000FFFF00000000000200000001000000000400
-      CBCECCE500100000000200000000000A0000008600020000000000FFFFFF0000
-      0000020000000000000000002904000005004D656D6F35000200390000004100
-      0000440000000F0000000300000001000000000000000000FFFFFF1F2E020000
-      00000001000A00C3C5B5EAC3FBB3C6A3BA00000000FFFF000000000002000000
-      01000000000400CBCECCE5000A00000002000000000008000000860002000000
-      0000FFFFFF0000000002000000000000000000AF04000006004D656D6F313200
-      02003900000052000000420000001200000003000F0001000000000000000000
-      FFFFFF1F2E02000000000001000800D5CABBA7C3FBB3C600000000FFFF000000
-      00000200000001000000000400CBCECCE5000A0000000200000000000A000000
-      8600020000000000FFFFFF00000000020000000000000000003705000006004D
-      656D6F333100020080000000410000000B0100000F0000000300000001000000
-      000000000000FFFFFF1F2E02000000000001000A005BC3C5B5EAC3FBB3C65D00
-      000000FFFF00000000000200000001000000000400CBCECCE5000A0000000000
-      00000000080000008600020000000000FFFFFF00000000020000000000000000
-      00C305000006004D656D6F3332000200E201000041000000600000000F000000
-      0300000001000000000000000000FFFFFF1F2E02000000000001000E00CAD5D6
-      A7C6BED6A4B5A5BAC5A3BA00000000FFFF000000000002000000010000000004
-      00CBCECCE5000A000000020000000000080000008600020000000000FFFFFF00
-      000000020000000000000000004506000006004D656D6F333400020063020000
-      760000005C0000001600000003000F0001000000000000000000FFFFFF1F2E02
-      000000000001000400D6A7B3F600000000FFFF00000000000200000001000000
-      000400CBCECCE5000A0000000200000000000A0000008600020000000000FFFF
-      FF0000000002000000000000000000C706000006004D656D6F3336000200DE00
-      000076000000310100001600000003000F0001000000000000000000FFFFFF1F
-      2E02000000000001000400D5AAD2AA00000000FFFF0000000000020000000100
-      0000000400CBCECCE5000A0000000200000000000A0000008600020000000000
-      FFFFFF00000000020000000000000000004907000006004D656D6F3337000200
-      0F02000076000000540000001600000003000F0001000000000000000000FFFF
-      FF1F2E02000000000001000400CAD5C8EB00000000FFFF000000000002000000
-      01000000000400CBCECCE5000A0000000200000000000A000000860002000000
-      0000FFFFFF0000000002000000000000000000CF07000006004D656D6F323500
-      0200390000004C010000500000001300000003000F0001000000000000000000
-      FFFFFF1F2E02000000000001000800BACFBCC6CAD5C8EB00000000FFFF000000
-      00000200000001000000000400CBCECCE5000A0000000200000000000A000000
-      8600020000000000FFFFFF00000000020000000000000000005D08000006004D
-      656D6F3434000200BA010000840100007C000000140000000300000001000000
-      000000000000FFFFFF1F2E02000000000001001000C9F3BACBC8CBA3BA5BC9F3
-      BACBC8CB5D00000000010000000000000200000001000000000400CBCECCE500
-      0A0000000200FFFFFF1F080000008600020000000000FFFFFF00000000020000
-      00000000000000EB08000006004D656D6F34310002003D020000840100008100
-      0000140000000300000001000000000000000000FFFFFF1F2E02000000000001
-      001000BFAAB5A5D4B1A3BA5BBFAAB5A5D4B15D00000000FFFF00000000000200
-      000001000000000400CBCECCE5000A0000000200000000000A00000086000200
-      00000000FFFFFF00000000020000000000000000009809000006004D656D6F34
-      33000200890000004C010000360200001300000003000F000100000000000000
-      0000FFFFFF1F2E02000000000001002F005B73756D285BD7DCCAD5C8EB5D295D
-      20285B536D616C6C546F426967285B73756D285BD7DCCAD5C8EB5D295D295D29
-      00000000FFFF00000000000200000001000000000400CBCECCE5000A00000000
-      0000000000080000008600020000000000FFFFFF000000000200000000000000
-      00001A0A000006004D656D6F353500020039000000760000001B000000160000
-      0003000F0001000000000000000000FFFFFF1F2E02000000000001000400D0F2
-      BAC500000000FFFF00000000000200000001000000000400CBCECCE5000A0000
-      000200000000000A0000008600020000000000FFFFFF00000000020000000000
-      000000009F0A000005004D656D6F3700020054000000760000008A0000001600
-      000003000F0001000000000000000000FFFFFF1F2E02000000000001000800CF
-      EEC4BFC3FBB3C600000000FFFF00000000000200000001000000000400CBCECC
-      E5000A0000000200000000000A0000000100020000000000FFFFFF0000000002
-      000000000000000000580B000006004D656D6F32340002003C000000F7000000
-      86020000130000000300000001000000000000000000FFFFFF1F2E0200000000
-      0001003B00B5DA5B50414745235D2F5B544F54414C50414745535DD2B320D0A1
-      BCC63A5B73756D285BCAD5C8EB5D295D202F205B73756D285BD6A7B3F65D295D
-      00000000FFFF00000000000200000001000000000400CBCECCE5000A00000000
-      0000000000090000008600020000000000FFFFFF000000000200000000000000
-      0000DC0B000006004D656D6F32360002007B0000006400000044020000120000
-      0003000F0001000000000000000000FFFFFF1F2E020000000000010006005BCB
-      B5C3F75D00000000FFFF00000000000200000001000000000400CBCECCE5000A
-      000000000000000000080000008600020000000000FFFFFF0000000002000000
-      0000000000005E0C000006004D656D6F32370002003900000064000000420000
-      001200000003000F0001000000000000000000FFFFFF1F2E0200000000000100
-      0400CBB5C3F700000000FFFF00000000000200000001000000000400CBCECCE5
-      000A0000000200000000000A0000008600020000000000FFFFFF000000000200
-      0000000000000000F80C000005004D656D6F3100020063020000BE0000005C00
-      00001400000003000F0001000000000000000000FFFFFF1F2E02000000000001
-      001D005B666F726D6174466C6F6174282723302E3030272C5BD6A7B3F65D295D
-      00000000FFFF00000000000200000001000000000400CBCECCE5000A00000000
-      0000000000090000008600020000000000FFFFFF000000000200000000000000
-      00007B0D000005004D656D6F33000200DE000000BE0000003101000014000000
-      03000F0001000000000000000000FFFFFF1F2E020000000000010006005BD5AA
-      D2AA5D00000000FFFF00000000000200000001000000000400CBCECCE5000A00
-      0000000000000000080000008600020000000000FFFFFF000000000200000000
-      0000000000150E000005004D656D6F340002000F020000BE0000005400000014
-      00000003000F0001000000000000000000FFFFFF1F2E02000000000001001D00
-      5B666F726D6174466C6F6174282723302E3030272C5BCAD5C8EB5D295D000000
-      00FFFF00000000000200000001000000000400CBCECCE5000A00000000000000
-      0000090000008600020000000000FFFFFF000000000200000000000000000098
-      0E000005004D656D6F3600020039000000BE0000001B0000001400000003000F
-      0001000000000000000000FFFFFF1F2E020000000000010006005BD0F2BAC55D
-      00000000FFFF00000000000200000001000000000400CBCECCE5000A00000000
-      00000000000A0000008600020000000000FFFFFF000000000200000000000000
-      00001F0F000005004D656D6F3800020054000000BE0000008A00000014000000
-      03000F0001000000000000000000FFFFFF1F2E02000000000001000A005BCFEE
-      C4BFC3FBB3C65D00000000FFFF00000000000200000001000000000400CBCECC
-      E5000A0000000000000000000A0000000100020000000000FFFFFF0000000002
-      000000000000000000A70F000006004D656D6F31300002006302000052000000
-      5C0000001200000003000F0001000000000000000000FFFFFF1F2E0200000000
-      0001000A005BD5CBBFEEC8D5C6DA5D00000000FFFF0000000000020000000100
-      0000000400CBCECCE5000A0000000000000000000A0000008600020000000000
-      FFFFFF00000000020000000000000000002D10000006004D656D6F3131000200
-      17020000520000004C0000001200000003000F0001000000000000000000FFFF
-      FF1F2E02000000000001000800D5CBBFEEC8D5C6DA00000000FFFF0000000000
-      0200000001000000000400CBCECCE5000A0000000200000000000A0000008600
-      020000000000FFFFFF0000000002000000000000000000B510000006004D656D
-      6F31330002003701000052000000E00000001200000003000F00010000000000
-      00000000FFFFFF1F2E02000000000001000A005BCDF9C0B4B5A5CEBB5D000000
-      00FFFF00000000000200000001000000000400CBCECCE5000A00000000000000
-      00000A0000008600020000000000FFFFFF00000000020000000000000000003B
-      11000006004D656D6F3134000200DF0000005200000058000000120000000300
-      0F0001000000000000000000FFFFFF1F2E02000000000001000800CDF9C0B4B5
-      A5CEBB00000000FFFF00000000000200000001000000000400CBCECCE5000A00
-      00000200000000000A0000008600020000000000FFFFFF000000000200000000
-      0000000000C111000006004D656D6F3135000200390000005F01000050000000
-      1300000003000F0001000000000000000000FFFFFF1F2E020000000000010008
-      00BACFBCC6D6A7B3F600000000FFFF00000000000200000001000000000400CB
-      CECCE5000A0000000200000000000A0000008600020000000000FFFFFF000000
-      00020000000000000000006E12000006004D656D6F3136000200890000005F01
-      0000360200001300000003000F0001000000000000000000FFFFFF1F2E020000
-      00000001002F005B73756D285BD7DCD6A7B3F65D295D20285B536D616C6C546F
-      426967285B73756D285BD7DCD6A7B3F65D295D295D2900000000FFFF00000000
-      000200000001000000000400CBCECCE5000A0000000000000000000800000086
-      00020000000000FFFFFF000000000200000000000000FEFEFF060000000A0020
-      5661726961626C6573000000000200736C0014006364735F436867426F64792E
-      22534C30303030220002006A650014006364735F436867426F64792E224A4530
-      303030220004006B68796800000000040079687A68000000000200647A000000
-      000000000000000000FDFF0100000000}
-  end
-  object PrintDBGridEh1: TPrintDBGridEh
-    DBGridEh = DBGridEh1
-    Options = [pghFitGridToPageWidth]
-    Page.BottomMargin = 2.000000000000000000
-    Page.LeftMargin = 2.000000000000000000
-    Page.RightMargin = 2.000000000000000000
-    Page.TopMargin = 2.000000000000000000
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'MS Sans Serif'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'MS Sans Serif'
-    PageHeader.Font.Style = []
-    Units = MM
-    Left = 144
-    Top = 184
-  end
   object cdsBrowser: TZQuery
     FieldDefs = <>
     AfterScroll = cdsBrowserAfterScroll
@@ -1382,53 +997,5 @@ inherited frmRckMng: TfrmRckMng
     DataSet = Db_CloseMonth
     Left = 113
     Top = 336
-  end
-  object PopupMenu1: TPopupMenu
-    Left = 279
-    Top = 277
-    object AllSelect: TMenuItem
-      Caption = #20840#36873
-      OnClick = AllSelectClick
-    end
-    object InverseSelect: TMenuItem
-      Caption = #21453#36873
-      OnClick = InverseSelectClick
-    end
-    object NotSelect: TMenuItem
-      Caption = #20840#19981#36873
-      OnClick = NotSelectClick
-    end
-  end
-  object PopupMenu2: TPopupMenu
-    Left = 311
-    Top = 277
-    object AllSelect1: TMenuItem
-      Caption = #20840#36873
-      OnClick = AllSelect1Click
-    end
-    object InverserSelect1: TMenuItem
-      Caption = #21453#36873
-      OnClick = InverserSelect1Click
-    end
-    object NotSelect1: TMenuItem
-      Caption = #20840#19981#36873
-      OnClick = NotSelect1Click
-    end
-  end
-  object PopupMenu3: TPopupMenu
-    Left = 343
-    Top = 277
-    object AllSelect2: TMenuItem
-      Caption = #20840#36873
-      OnClick = AllSelect2Click
-    end
-    object InverserSelect2: TMenuItem
-      Caption = #21453#36873
-      OnClick = InverserSelect2Click
-    end
-    object NotSelect2: TMenuItem
-      Caption = #20840#19981#36873
-      OnClick = NotSelect2Click
-    end
   end
 end

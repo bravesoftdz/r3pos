@@ -48,7 +48,6 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     Label11: TLabel;
-    Label20: TLabel;
     Label22: TLabel;
     edtADVA_MNY: TcxTextEdit;
     cdsHeader: TZQuery;

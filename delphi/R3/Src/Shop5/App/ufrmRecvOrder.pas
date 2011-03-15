@@ -88,7 +88,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,//ufrmFindReveAbleList,ufrmAccountInfo,ufrmItemInfo,ufrmRecvAbleInfo,
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,ufrmCodeInfo,ufrmAccountInfo,//ufrmFindReveAbleList,ufrmItemInfo,ufrmRecvAbleInfo,
   uShopGlobal;
 {$R *.dfm}
 
@@ -418,16 +418,17 @@ var
   r:TRecord_;
 begin
   inherited;
-{  r := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('21200001',2) then Raise Exception.Create('你没有新增科目的权限,请和管理员联系.');
+  r := TRecord_.Create;
   try
-    if TfrmItemInfo.AddDialog(self,r) then
+    if TfrmCodeInfo.AddDialog(self,r,3) then
        begin
-         edtITEM_ID.KeyValue := r.FieldbyName('ITEM_ID').AsString;
-         edtITEM_ID.Text := r.FieldbyName('ITEM_NAME').AsString;
+         edtITEM_ID.KeyValue := r.FieldbyName('CODE_ID').AsString;
+         edtITEM_ID.Text := r.FieldbyName('CODE_NAME').AsString;
        end;
   finally
     r.Free;
-  end; }
+  end;
 end;
 
 procedure TfrmRecvOrder.edtACCOUNT_IDAddClick(Sender: TObject);
@@ -435,7 +436,8 @@ var
   r:TRecord_;
 begin
   inherited;
-{  r := TRecord_.Create;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
+  r := TRecord_.Create;
   try
     if TfrmAccountInfo.AddDialog(self,r) then
        begin
@@ -444,7 +446,7 @@ begin
        end;
   finally
     r.Free;
-  end;  }
+  end;  
 end;
 
 procedure TfrmRecvOrder.FillData;

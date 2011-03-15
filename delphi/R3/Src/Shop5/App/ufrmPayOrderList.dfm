@@ -194,9 +194,9 @@ inherited frmPayOrderList: TfrmPayOrderList
                 DropHeight = 150
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -236,9 +236,9 @@ inherited frmPayOrderList: TfrmPayOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -256,31 +256,24 @@ inherited frmPayOrderList: TfrmPayOrderList
                 TabOrder = 6
                 InGrid = False
                 KeyValue = Null
-                FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
-                KeyField = 'ITEM_ID'
-                ListField = 'ITEM_NAME'
+                FilterFields = 'CODE_NAME;CODE_SPELL'
+                KeyField = 'CODE_ID'
+                ListField = 'CODE_NAME'
                 Columns = <
                   item
                     EditButtons = <>
-                    FieldName = 'ITEM_NAME'
+                    FieldName = 'CODE_NAME'
                     Footers = <>
                     Title.Caption = #24080#25143#21517#31216
                     Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LEVEL_ID'
-                    Footers = <>
-                    Title.Caption = #24080#25143#20195#30721
-                    Width = 30
                   end>
                 DropWidth = 157
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -398,9 +391,9 @@ inherited frmPayOrderList: TfrmPayOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end

@@ -195,7 +195,6 @@ type
     actfrmSupplier: TAction;
     actfrmSalRetuOrderList: TAction;
     actfrmStkRetuOrderList: TAction;
-    actfrmLockScreen: TAction;
     actfrmPosMain: TAction;
     actfrmPriceGradeInfo: TAction;
     actfrmSalIndentOrderList: TAction;
@@ -224,9 +223,10 @@ type
     actfrmCheckTablePrint: TAction;
     actfrmJxcTotalReport: TAction;
     actfrmStockDayReport: TAction;
-    actfrmSalesDayReport: TAction;
+    actfrmSaleDayReport: TAction;
     actfrmChange1DayReport: TAction;
     actfrmChange2DayReport: TAction;
+    actfrmLockScreen: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -296,9 +296,10 @@ type
     procedure actfrmRckMngExecute(Sender: TObject);
     procedure actfrmJxcTotalReportExecute(Sender: TObject);
     procedure actfrmStockDayReportExecute(Sender: TObject);
-    procedure actfrmSalesDayReportExecute(Sender: TObject);
+    procedure actfrmSaleDayReportExecute(Sender: TObject);
     procedure actfrmChange1DayReportExecute(Sender: TObject);
     procedure actfrmChange2DayReportExecute(Sender: TObject);
+    procedure actfrmLockScreenExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -319,7 +320,6 @@ type
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
-    procedure actfrmLockScreenExecute(Sender: TObject);
   public
     { Publicdeclarations }
     procedure LoadMenu;
@@ -656,17 +656,6 @@ begin
   UpdateTimer.Enabled := true;
 end;
 
-procedure TfrmShopMain.actfrmLockScreenExecute(Sender: TObject);
-begin
-  inherited;
-  frmShopDesk.HookLocked := true;
-  try
-    Login(true);
-  finally
-    frmShopDesk.HookLocked := false;
-  end;
-end;
-
 procedure TfrmShopMain.CheckEnabled;
 var i:integer;
 begin
@@ -728,8 +717,8 @@ begin
   result := true;
   Factory := TCreateDbFactory.Create;
   try
-    if Factory.CheckVersion(DBVersion) then
-       result := TfrmDbUpgrade.DbUpgrade(Factory,uGlobal.Factor);
+    if Factory.CheckVersion(DBVersion,Global.LocalFactory) then
+       result := TfrmDbUpgrade.DbUpgrade(Factory,Global.LocalFactory);
   finally
     Factory.Free;
   end;
@@ -752,16 +741,18 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption := F.ReadString('soft','name','零售终端管理系统(R3)')+' 版本:'+RzVersionInfo.FileVersion;
-    Application.Title := F.ReadString('soft','name','零售终端管理系统(R3)');
+    Caption :=  F.ReadString('soft','name','云盟软件R3')+' 版本:'+RzVersionInfo.FileVersion;
+    Application.Title :=  F.ReadString('soft','name','云盟软件R3');
     SFVersion := F.ReadString('soft','SFVersion','.NET');
+    CLVersion := F.ReadString('soft','CLVersion','.MKT');
+    ProductID := F.ReadString('soft','ProductID','R3_RYC');
   finally
     F.Free;
   end;
 //  if FileExists(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg') then
 //    Image4.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg');
-
 //  Label4.Caption := '版本:'+RzVersionInfo.FileVersion;
+
 end;
 
 procedure TfrmShopMain.SetLoging(const Value: boolean);
@@ -899,7 +890,7 @@ procedure TfrmShopMain.RzTabChange(Sender: TObject);
 begin
   inherited;
   if rzLeft.Width = 28 then rzLeft.Width := 147;
-  LoadMenu;
+  if Logined then LoadMenu;
 end;
 
 procedure TfrmShopMain.Image19Click(Sender: TObject);
@@ -947,19 +938,99 @@ begin
 end;
 
 function TfrmShopMain.ConnectToDb:boolean;
+procedure SynTenantId;
+var
+  Params:TftParamList;
+  rs,ls:TZQuery;
+  i:integer;
+begin
+  Params := TftParamList.Create;
+  rs := TZQuery.Create(nil);
+  ls := TZQuery.Create(nil);
+  try
+     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     Global.RemoteFactory.Open(rs,'TTenant',Params);
+     if not rs.IsEmpty then Exit;
+     Global.LocalFactory.Open(ls,'TTenant',Params);
+     rs.Edit;
+     for i:=0 to ls.Fields.Count-1 do
+       begin
+         if rs.FindField(ls.Fields[i].FieldName)<>nil then
+            rs.FindField(ls.Fields[i].FieldName).Value := ls.Fields[i].Value;
+       end;
+     rs.Post;
+     Global.RemoteFactory.UpdateBatch(rs,'TTenant',nil);
+  finally
+    Params.Free;
+    rs.Free;
+    ls.Free;
+  end;
+  
+end;
 begin
   frmLogo.Show;
   try
+    ShopGlobal.offline := false;
     result := false;
-  //  Factor.Initialize('Provider=sqlite-3;DatabaseName='+Global.InstallPath+'Data\R3.db');
-    Factor.Initialize('Provider=mssql;DatabaseName=db_r3;uid=sa;password=rsp@2011;hostname=10.10.11.249\RSP');
-  //  Factor.Initialize('connmode=2;hostname=zhangsr;port=1024;dbid=1');
-    Factor.Connect;
+    Global.MoveToLocal;
+    Global.Connect;
   finally
     frmLogo.Close;
   end;
-  if not UpdateDbVersion then Exit;
+  if not UpdateDbVersion then
+     begin
+       result := false;
+       Exit;
+     end;
   result := TfrmTenant.coRegister(self);
+  if result then
+     begin
+      if SFVersion='.NET' then
+         begin
+           frmLogo.Show;
+           try
+             Global.MoveToRemate;
+             try
+               Global.Connect;
+               with TCreateDbFactory.Create do
+               begin
+                 try
+                    if CheckVersion(DBVersion,Global.RemoteFactory) then
+                    begin
+                      result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                      if result then
+                        begin
+                          Global.MoveToLocal;
+                          Global.Connect;
+                        end;
+                    end;
+                 finally
+                    free;
+                 end;
+               end;
+             except
+               result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+               if result then
+                  begin
+                    Global.MoveToLocal;
+                    Global.Connect;
+                  end;
+             end;
+           finally
+             frmLogo.Close;
+           end;
+         end;
+     end;
+  //连接到远程时，可能远程端没有企业资料，
+  try
+    if result and (Factor=Global.RemoteFactory) then SynTenantId;
+  except
+    on E:Exception do
+      begin
+        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        result := false;
+      end;
+  end;
 end;
 
 procedure TfrmShopMain.actfrmMeaUnitsExecute(Sender: TObject);
@@ -1201,6 +1272,7 @@ begin
 end;
 
 procedure TfrmShopMain.actfrmGoodsSortExecute(Sender: TObject);
+var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
@@ -1210,8 +1282,12 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  TfrmGoodsSortTree.ShowDialog(self,1);
-
+  if TfrmGoodsSortTree.ShowDialog(self,1) then
+  begin
+    Form:=FindChildForm(TfrmGoodsInfoList);
+    if Form<>nil then
+      TfrmGoodsInfoList(Form).LoadTree;
+  end;
 end;
 
 procedure TfrmShopMain.actfrmCodeInfo3Execute(Sender: TObject);
@@ -1944,7 +2020,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmSalesDayReportExecute(Sender: TObject);
+procedure TfrmShopMain.actfrmSaleDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
@@ -2012,6 +2088,18 @@ begin
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmLockScreenExecute(Sender: TObject);
+begin
+  inherited;
+  frmShopDesk.HookLocked := true;
+  try
+    Login(true);
+  finally
+    frmShopDesk.HookLocked := false;
+  end;
+
 end;
 
 end.

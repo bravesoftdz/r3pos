@@ -51,6 +51,9 @@ type
     procedure edtREMARKPropertiesChange(Sender: TObject);
     procedure edtOUT_ACCOUNT_IDSaveValue(Sender: TObject);
     procedure edtIN_ACCOUNT_IDSaveValue(Sender: TObject);
+    procedure edtOUT_ACCOUNT_IDAddClick(Sender: TObject);
+    procedure edtIN_ACCOUNT_IDAddClick(Sender: TObject);
+    procedure edtTRANS_USERAddClick(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -72,7 +75,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, ufrmBasic;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmUsersInfo,ufrmAccountInfo;
   
 {$R *.dfm}
 
@@ -317,6 +320,60 @@ begin
     rs.Free;
   end;
   btnOk.Enabled := True;
+end;
+
+procedure TfrmTransOrder.edtOUT_ACCOUNT_IDAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmAccountInfo.AddDialog(self,r) then
+       begin
+         edtOUT_ACCOUNT_ID.KeyValue := r.FieldbyName('ACCOUNT_ID').AsString;
+         edtOUT_ACCOUNT_ID.Text := r.FieldbyName('ACCT_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;
+end;
+
+procedure TfrmTransOrder.edtIN_ACCOUNT_IDAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21100001',2) then Raise Exception.Create('你没有新增账户的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmAccountInfo.AddDialog(self,r) then
+       begin
+         edtIN_ACCOUNT_ID.KeyValue := r.FieldbyName('ACCOUNT_ID').AsString;
+         edtIN_ACCOUNT_ID.Text := r.FieldbyName('ACCT_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;  
+end;
+
+procedure TfrmTransOrder.edtTRANS_USERAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
+  r := TRecord_.Create;
+  try
+    if TfrmUsersInfo.AddDialog(self,r) then
+       begin
+         edtTRANS_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
+         edtTRANS_USER.Text := r.FieldbyName('USER_NAME').AsString;
+       end;
+  finally
+    r.Free;
+  end;
 end;
 
 end.

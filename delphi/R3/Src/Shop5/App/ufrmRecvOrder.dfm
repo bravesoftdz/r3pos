@@ -1,6 +1,6 @@
 inherited frmRecvOrder: TfrmRecvOrder
-  Left = 198
-  Top = 107
+  Left = 199
+  Top = 76
   ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465
@@ -350,36 +350,16 @@ inherited frmRecvOrder: TfrmRecvOrder
         TabOrder = 1
         InGrid = False
         KeyValue = Null
-        FilterFields = 'ITEM_NAME;LEVEL_ID;ITEM_SPELL'
-        KeyField = 'ITEM_ID'
-        ListField = 'ITEM_NAME'
+        FilterFields = 'CODE_NAME;CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
         Columns = <
           item
             EditButtons = <>
-            FieldName = 'ITEM_NAME'
+            FieldName = 'CODE_NAME'
             Footers = <>
             Title.Caption = #24080#25143#21517#31216
             Width = 60
-          end
-          item
-            EditButtons = <>
-            FieldName = 'ITEM_TYPE'
-            Footers = <>
-            KeyList.Strings = (
-              '1'
-              '2')
-            PickList.Strings = (
-              #25910#20837
-              #25903#20986)
-            Title.Caption = #20998#31867
-            Width = 40
-          end
-          item
-            EditButtons = <>
-            FieldName = 'LEVEL_ID'
-            Footers = <>
-            Title.Caption = #20195#30721
-            Width = 30
           end>
         DropWidth = 180
         DropHeight = 180

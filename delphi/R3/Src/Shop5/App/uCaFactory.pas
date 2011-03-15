@@ -78,7 +78,7 @@ type
     
     function GetHeader(rio:THTTPRIO):rsp;
     function SendHeader(rio:THTTPRIO;flag:integer=1):rsp;
-    function  CreateXML(xml:string):IXMLDomDocument;
+    function CreateXML(xml:string):IXMLDomDocument;
     function CreateRspXML:IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
     function FindNode(doc:IXMLDomDocument;tree:string):IXMLDOMNode;
@@ -101,7 +101,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses EncDec,ZLibExGZ,uShopGlobal,encddecd,CaTenantService,IniFiles;
+uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,IniFiles;
 { TCaFactory }
 
 procedure TCaFactory.CheckRecAck(doc: IXMLDomDocument);
@@ -484,7 +484,7 @@ var
 begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    URL := f.ReadString('CaFactory','url','http://10.10.11.249/services/CaTenantService?wsdl');
+    URL := f.ReadString('soft','rsp','http://10.10.11.249/services/CaTenantService?wsdl');
     pubpwd := 'SaRi0+jf';
   finally
     f.Free;

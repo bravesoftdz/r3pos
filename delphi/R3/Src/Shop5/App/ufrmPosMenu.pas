@@ -67,7 +67,11 @@ end;
 procedure TfrmPosMenu.rgMenuKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
-  if Key in ['1'..'9',#13] then ModalResult := MROK;
+  if Key in ['1'..'9',#13] then
+     begin
+       if Key in ['1'..'9'] then rgMenu.Row := StrtoInt(Key)-1;
+       ModalResult := MROK;
+     end;
 end;
 
 end.

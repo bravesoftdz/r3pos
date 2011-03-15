@@ -5,6 +5,7 @@ inherited frmPosMenu: TfrmPosMenu
   Caption = #21151#33021#33756#21333
   ClientHeight = 329
   ClientWidth = 442
+  OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12

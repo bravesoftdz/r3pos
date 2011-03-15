@@ -1,6 +1,6 @@
 inherited frmCloseForDay: TfrmCloseForDay
-  Left = 540
-  Top = 242
+  Left = 328
+  Top = 230
   BorderStyle = bsNone
   Caption = #20132#29677#20851#36134
   ClientHeight = 258

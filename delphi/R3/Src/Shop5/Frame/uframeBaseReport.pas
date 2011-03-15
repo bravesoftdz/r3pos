@@ -28,7 +28,6 @@ type
     actColumnVisible: TAction;
     ToolButton10: TToolButton;
     Panel4: TPanel;
-    PrintDBGridEh1: TPrintDBGridEh;
     SaveDialog1: TSaveDialog;
     w1: TRzPanel;
     RzPanel7: TRzPanel;
@@ -46,6 +45,7 @@ type
     Label27: TLabel;
     actFindNext: TAction;
     adoReport1: TZQuery;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure ActCloseExecute(Sender: TObject);
     procedure actColumnVisibleExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
@@ -96,7 +96,7 @@ type
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
-    function  FormatReportHead(TitleList: TStringList; Cols: integer; SplitCount: integer=10): string;virtual;
+    function  FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
@@ -135,6 +135,7 @@ procedure TframeBaseReport.actPrintExecute(Sender: TObject);
 begin
   if DBGridEh = nil then Exit;
   PrintBefore;
+  PrintDBGridEh1.PageHeader.CenterText.Text:=Global.TENANT_NAME+trim(PrintDBGridEh1.PageHeader.CenterText.Text);
   DBGridEh.DataSource.DataSet.Filtered := false;
   PrintDBGridEh1.DBGridEh := DBGridEh;
   PrintDBGridEh1.Print;
@@ -144,6 +145,7 @@ procedure TframeBaseReport.actPreviewExecute(Sender: TObject);
 begin
   if DBGridEh = nil then Exit;
   PrintBefore;
+  PrintDBGridEh1.PageHeader.CenterText.Text:=Global.TENANT_NAME+trim(PrintDBGridEh1.PageHeader.CenterText.Text);
   DBGridEh.DataSource.DataSet.Filtered := false;
   PrintDBGridEh1.DBGridEh := DBGridEh;
   with TfrmEhLibReport.Create(self) do
@@ -464,46 +466,96 @@ begin
   //
 end;
 
-function TframeBaseReport.FormatReportHead(TitleList: TStringList; Cols: integer; SplitCount: integer=10): string;
- function GetSpaceStr(vLen: integer): string;
- begin
-   result:=Copy('                                                                                                      ',1,vLen);
- end;
-const Srcwidth=120;   //1个字节=6px，默认以800象素宽度设计  120
+//宽度: 80个字节 最后一列不加格式，尽量靠右对齐
+function TframeBaseReport.FormatReportHead(TitleList: TStringList; Cols: integer): string;
 var
-  Str,CurStr,SpactStr: string;
-  i,j,Idx,vLen,CurLen: integer;
+  spaceStr,str1: string;
+  i,j: integer;
 begin
+  //中间间隔4个空格:
   result:='';
-  str:='';
-  CurStr:='';
-  SpactStr:=Copy('                                                                                                      ',1,SplitCount);
-  Idx:=0;
   for i:=0 to TitleList.Count-1 do
   begin
-    CurStr:='';
-    if Idx>TitleList.Count-1 then Break;
-    for j:=0 to Cols-1 do
+    if i mod Cols=0 then
     begin
-      if Idx>TitleList.Count-1 then Break;
-      if j=0 then
-      begin
-        CurStr:=TitleList.Strings[Idx]+SpactStr;
-        Inc(Idx);
-      end else
-      if j>0 then
-      begin
-        CurStr:=CurStr+TitleList.Strings[Idx]+SpactStr;
-        Inc(Idx);
+      j:=i;
+      if j<=TitleList.Count-1 then str1:=trim(TitleList.Strings[j]);    //1
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //2
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //3
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //4
+      case length(str1) of
+        1.. 50:  spaceStr:='                         ';
+        51..60:  spaceStr:='                  ';
+        61..75:  spaceStr:='            ';
+        76..90:  spaceStr:='      ';
+        else     spaceStr:=' ';
       end;
     end;
-    if CurStr<>'' then
+    if result='' then result:=trim(TitleList.Strings[i])
+    else
     begin
-      if Str='' then Str:=trim(CurStr)
-      else Str:=Str+#13+trim(CurStr);
+      if (i mod Cols=0) and (i>=Cols) then
+        result:=result+#13+trim(TitleList.Strings[i])
+      else
+        result:=result+spaceStr+trim(TitleList.Strings[i]);
     end;
   end;
-  result:=Str;
+  
+{var
+  StrList: TStringList;
+  LineStr,CurStr: string;
+  i,j,Idx,SigWidth: integer;
+begin
+  //格式化规则: 默认按设定Cols数，计算出每列长度为:PrintWidth / Cols=xx字节
+  result:='';
+  LineStr:='';
+  CurStr:='';
+  Idx:=0;
+  case Cols of
+   1: SigWidth:=78; //39个汉字
+   2: SigWidth:=40;
+   3: SigWidth:=27;                       
+   4: SigWidth:=20;
+   5: SigWidth:=16;
+  end;
+
+  try
+    StrList:=TStringList.Create;
+    for i:=TitleList.Count-1 downto 0 do //倒序过来
+    begin
+      StrList.Add(trim(TitleList.Strings[i])); 
+    end;
+
+    for i:=StrList.Count-1 downto 0 do
+    begin
+      CurStr:=trim(StrList.Strings[i]);
+      if (length(CurStr)>SigWidth) and (Cols-Idx>1) then
+      begin
+        Idx:=Idx+2;
+        if LineStr<>'' then LineStr:=LineStr+' ';
+        LineStr:=LineStr+CurStr;
+      end else
+      begin
+        inc(Idx);
+        if LineStr<>'' then LineStr:=LineStr+' ';
+        LineStr:=LineStr+CurStr+Copy('                                                            ',1,SigWidth-length(CurStr));
+      end;
+      if Idx=Cols then
+      begin
+        if result='' then result:=LineStr
+        else result:=result+#13+LineStr;
+        CurStr:='';
+        LineStr:='';
+        Idx:=0;
+      end;
+    end;
+  finally
+    StrList.Free;
+  end;
+  }  
 end;
 
 procedure TframeBaseReport.AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
@@ -534,7 +586,8 @@ begin
     end;
   end;
   SortTypeList.Columns[0].FieldName:=SortTypeList.ListField;
-  SortTypeList.Columns[1].FieldName:=SortTypeList.KeyField;
+  if SortTypeList.Columns.Count>1 then
+    SortTypeList.Columns[1].FieldName:=SortTypeList.KeyField;
   case ItemsIdx of
    //1: fndP1_STAT_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');    //分类[大类][在供应链中]
    2: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');    //类别[烟草:一类烟、二类烟、三类烟]

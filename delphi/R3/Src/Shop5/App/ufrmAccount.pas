@@ -80,12 +80,19 @@ begin
 end;
 
 procedure TfrmAccount.actFindExecute(Sender: TObject);
+var IsHeadShop:String;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21100001',1) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if Global.SHOP_ID = IntToStr(Global.TENANT_ID)+'0001' then
+    IsHeadShop := ''
+  else
+    IsHeadShop := ' and SHOP_ID='+Global.SHOP_ID;
+  if edtKey.Text<>'' then
+     IsHeadShop := ' and (ACCT_NAME like ''%'+trim(edtKEY.Text)+'%'' or ACCT_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text :='select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
-  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID;
+  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop;
   Factor.Open(cdsBrowser);
 end;
 
@@ -168,6 +175,7 @@ begin
   inherited;
   if (not cdsBrowser.Active) and (cdsBrowser.IsEmpty) then exit;
   if not ShopGlobal.GetChkRight('21100001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if cdsBrowser.FieldByName('PAYM_ID').AsString = 'A' then Raise Exception.Create('现金账户不能修改!');
   with TfrmAccountInfo.Create(self) do
     begin
       try

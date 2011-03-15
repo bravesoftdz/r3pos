@@ -140,15 +140,19 @@ begin
 end;
 
 procedure TfrmShopInfoList.actFindExecute(Sender: TObject);
-var str:String;
+var IsHeadShop:String;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31100001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');  
+  if not ShopGlobal.GetChkRight('31100001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  if Global.SHOP_ID = IntToStr(Global.TENANT_ID)+'0001' then
+    IsHeadShop := ' '
+  else
+    IsHeadShop := ' and SHOP_ID='+Global.SHOP_ID;
   if edtKey.Text<>'' then
-     str:= ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
+     IsHeadShop := ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text:='select SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REGION_ID,SHOP_TYPE'+
-  ',REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+str+' order by SEQ_NO';
+  ',REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+IsHeadShop+' order by SEQ_NO';
   Factor.Open(cdsBrowser);
 end;
 

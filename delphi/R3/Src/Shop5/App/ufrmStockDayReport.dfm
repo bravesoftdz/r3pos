@@ -15,10 +15,8 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -2308,72 +2306,75 @@ inherited frmStockDayReport: TfrmStockDayReport
     Left = 41
     Top = 354
   end
+  inherited adoReport1: TZQuery
+    Left = 41
+    Top = 321
+  end
+  object dsadoReport2: TDataSource [7]
+    DataSet = adoReport2
+    Left = 89
+    Top = 354
+  end
+  object dsadoReport3: TDataSource [8]
+    DataSet = adoReport3
+    Left = 137
+    Top = 354
+  end
+  object dsadoReport4: TDataSource [9]
+    DataSet = adoReport4
+    Left = 185
+    Top = 354
+  end
+  object dsadoReport5: TDataSource [10]
+    DataSet = adoReport5
+    Left = 233
+    Top = 354
+  end
+  object adoReport2: TZQuery [11]
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 89
+    Top = 321
+  end
+  object adoReport5: TZQuery [12]
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 233
+    Top = 321
+  end
+  object adoReport3: TZQuery [13]
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 137
+    Top = 321
+  end
+  object adoReport4: TZQuery [14]
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 185
+    Top = 321
+  end
   inherited PrintDBGridEh1: TPrintDBGridEh
-    PageHeader.CenterText.Strings = (
-      #36827#36135#27719#24635#34920)
-    PageHeader.Font.Charset = GB2312_CHARSET
-    PageHeader.Font.Height = -16
-    PageHeader.Font.Name = #23435#20307
-    PageHeader.Font.Style = [fsBold]
     BeforeGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
       5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
       635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
       53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C6C616E67323035325C66305C6673323420255B7768725D5C66315C6673
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
       3136200D0A5C706172207D0D0A00}
-  end
-  inherited adoReport1: TZQuery
-    Left = 41
-    Top = 321
-  end
-  object dsadoReport2: TDataSource
-    DataSet = adoReport2
-    Left = 89
-    Top = 354
-  end
-  object dsadoReport3: TDataSource
-    DataSet = adoReport3
-    Left = 137
-    Top = 354
-  end
-  object dsadoReport4: TDataSource
-    DataSet = adoReport4
-    Left = 185
-    Top = 354
-  end
-  object dsadoReport5: TDataSource
-    DataSet = adoReport5
-    Left = 233
-    Top = 354
-  end
-  object adoReport2: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 89
-    Top = 321
-  end
-  object adoReport5: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 233
-    Top = 321
-  end
-  object adoReport3: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 137
-    Top = 321
-  end
-  object adoReport4: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 185
-    Top = 321
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

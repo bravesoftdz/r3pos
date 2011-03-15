@@ -1,6 +1,6 @@
 inherited frmShopInfoList: TfrmShopInfoList
-  Left = 464
-  Top = 372
+  Left = 315
+  Top = 285
   Width = 901
   Height = 516
   Caption = #38376#24215#26723#26696#31649#29702

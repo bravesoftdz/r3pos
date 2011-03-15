@@ -128,7 +128,8 @@ procedure TfrmPriceGradeInfo.rzTreeChange(Sender: TObject;
 var str,id:string;
 begin
   inherited;
-  if (rzTree.Selected=nil) or (rzTree.Selected.Data = nil) then exit;
+  if (rzTree.Selected=nil) then exit;
+  if (rzTree.Selected.Data = nil) then exit;
   locked := true;
   try
     ReadFrom(TRecord_(rzTree.Selected.Data));  //*************************************
@@ -182,30 +183,8 @@ procedure TfrmPriceGradeInfo.ReadFrom(AObj: TRecord_);
         ID,Str_SORT:string;
     var tmp:TZQuery;
     begin
-      //cds_GoodsPercent.Close;
 
       cds_GoodsPercent.CreateDataSet;
-
-      //tmp:=TZQuery.Create(nil);
-      {try
-        //tmp.Close;
-        //tmp.SQL.Text := 'select SORT_ID,SORT_NAME,100 AGIO_SORTS from PUB_GOODSSORT where COMM not in (''02'',''12'') and length(LEVEL_ID)=4';
-        tmp := Global.GetZQueryFromName('PUB_GOODSSORT');
-        //Factor.Open(tmp);
-        tmp.First;
-        while not tmp.Eof do
-        begin
-          cds_GoodsPercent.Append;
-          cds_GoodsPercent.FieldByName('SORT_ID').AsString:=tmp.FieldByName('SORT_ID').AsString;
-          cds_GoodsPercent.FieldByName('SORT_NAME').AsString:=tmp.FieldByName('SORT_NAME').AsString;
-          cds_GoodsPercent.FieldByName('AGIO_SORTS').AsFloat:=tmp.FieldByName('AGIO_SORTS').AsFloat;
-          cds_GoodsPercent.Post;
-          tmp.Next;
-        end;
-      finally
-        //tmp.Free;
-      end;}
-      //cds_GoodsPercent.First;
       vList := TStringList.Create;
       try
         vList.CommaText := s;
@@ -213,11 +192,9 @@ procedure TfrmPriceGradeInfo.ReadFrom(AObj: TRecord_);
         for i:=0 to vList.Count-1  do
         begin
           Str_SORT := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
-          //if cds_GoodsPercent.Locate('SORT_NAME',Copy(vList.Strings[i],1,5),[]) then
           if tmp.Locate('SORT_ID',Str_SORT,[]) then
           begin
             cds_GoodsPercent.Append;
-            //cds_GoodsPercent.FieldByName('AGIO_SORTS').AsString:=Copy(vList.Strings[i],7,length(vList.Strings[i])-6);
             cds_GoodsPercent.FieldByName('SORT_ID').AsString:=tmp.FieldByName('SORT_ID').AsString;
             cds_GoodsPercent.FieldByName('SORT_NAME').AsString:=tmp.FieldByName('SORT_NAME').AsString;
             cds_GoodsPercent.FieldByName('AGIO_SORTS').AsString:=vList.Values[Str_SORT];
@@ -259,24 +236,12 @@ var
   Params: TftParamList;
 begin
   inherited;
-  {rs:=TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text:='select max(PRICE_ID) from PUB_PRICEGRADE ';
-    Factor.Open(rs);
-    if rs.Fields[0].AsString='' then
-       p:=0
-    else
-      p:=rs.Fields[0].AsInteger;
-  finally
-    rs.Free;
-  end; }
   try
     Params := TftParamList.Create;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsPRICEGRADE.Close;
     Factor.Open(cdsPRICEGRADE,'TPRICEGRADEInfo',Params);
-    ClearTree(rzTree);
+    //ClearTree(rzTree);
     CreateLevelTree(cdsPRICEGRADE,rzTree,'44444444','PRICE_ID','PRICE_NAME','LEVEL_ID',1,3);
     dbState := dsEdit;
     rzTree.SetFocus;
@@ -456,6 +421,8 @@ procedure TfrmPriceGradeInfo.edtPriceGradeClick(Sender: TObject);
 var i:integer;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  
   if rzTree.Selected<>nil then WriteTo(TRecord_(rzTree.Selected.Data));
   for i:=0 to rzTree.Items.Count -1 do
   begin
@@ -496,17 +463,7 @@ begin
   inherited;
   Open;
   InitButton;
-  {IsCompany:=ShopGlobal.GetIsCompany(Global.UserID);
-  if not IsCompany then
-  begin
-    dbState:=dsBrowse;
-    DBGridEh1.ReadOnly:=True;
-    edtPriceGrade.Enabled:=False;
-    edtSave.Enabled:=False;
-    edtCancel.Enabled:=False;
-    edtDelete.Enabled:=False;
-  end; }
-  if not ShopGlobal.GetChkRight('300004') then
+  if not ShopGlobal.GetChkRight('33200001',2) then
   begin
     dbState:=dsBrowse;
     DBGridEh1.ReadOnly:=True;
@@ -588,6 +545,7 @@ var Aobj:TRecord_;
     ID:string;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33200001',4) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   if rzTree.Selected = nil then Exit;
   if MessageBox(Handle,pchar('是否删除"'+rzTree.Selected.Text+'"会员等级?'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   if (TRecord_(rzTree.Selected.Data).FieldbyName('PRICE_ID').AsString='---')  or (TRecord_(rzTree.Selected.Data).FieldbyName('PRICE_ID').AsString='000') then
@@ -709,7 +667,6 @@ class function TfrmPriceGradeInfo.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 var tmp:TZQuery;
 begin
-  //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能编辑会员等级!');
   if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有新增客户等级的权限,请和管理员联系.');
   with TfrmPriceGradeInfo.Create(Owner) do
   begin
@@ -815,28 +772,36 @@ begin
 end;
 
 procedure TfrmPriceGradeInfo.btnAddClick(Sender: TObject);
-var Aobj_:TRecord_;
+var Aobj_1:TRecord_;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有添加的权限,请和管理员联系.');
   try
-    Aobj_ := TRecord_.Create;
-    If TfrmSelectGoodSort.FindDialog(Self,Aobj_) then
+    Aobj_1 := TRecord_.Create;
+    If TfrmSelectGoodSort.FindDialog(Self,Aobj_1) then
       begin
-        cds_GoodsPercent.Append;
-        //Aobj_.WriteToDataSet(cds_GoodsPercent);
-        cds_GoodsPercent.FieldByName('SORT_ID').AsString := Aobj_.FieldbyName('SORT_ID').AsString;
-        cds_GoodsPercent.FieldByName('SORT_NAME').AsString := Aobj_.FieldByName('SORT_NAME').AsString;
-        cds_GoodsPercent.FieldByName('AGIO_SORTS').AsFloat := 0;
-        cds_GoodsPercent.Post;
+        if cds_GoodsPercent.Locate('SORT_ID',cds_GoodsPercent.FieldByName('SORT_ID').AsString,[]) then
+          begin
+            MessageBox(Handle,pchar('此商品已经添加到列表.'),pchar('友情提示..'),MB_OK+MB_ICONINFORMATION);
+          end
+        else
+          begin
+            cds_GoodsPercent.Append;
+            cds_GoodsPercent.FieldByName('SORT_ID').AsString := Aobj_1.FieldbyName('SORT_ID').AsString;
+            cds_GoodsPercent.FieldByName('SORT_NAME').AsString := Aobj_1.FieldByName('SORT_NAME').AsString;
+            cds_GoodsPercent.FieldByName('AGIO_SORTS').AsFloat := 100;
+            cds_GoodsPercent.Post;
+          end;
       end;
   finally
-    Aobj_.Free;
+    Aobj_1.Free;
   end;
 end;
 
 procedure TfrmPriceGradeInfo.btnDeteleClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('33200001',4) then Raise Exception.Create('你没有删除的权限,请和管理员联系.');
   if (cds_GoodsPercent.IsEmpty) or (not cds_GoodsPercent.Active) then Exit;
   cds_GoodsPercent.Delete;
   edtPriceGrade.Enabled := False;

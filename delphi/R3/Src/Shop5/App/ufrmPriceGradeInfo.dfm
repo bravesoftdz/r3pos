@@ -1,6 +1,6 @@
 inherited frmPriceGradeInfo: TfrmPriceGradeInfo
-  Left = 524
-  Top = 173
+  Left = 663
+  Top = 223
   Caption = #23458#25143#31561#32423#31649#29702
   ClientHeight = 435
   ClientWidth = 603
@@ -304,6 +304,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
                       EditButtons = <>
                       FieldName = 'AGIO_SORTS'
                       Footers = <>
+                      MaxWidth = 100
                       Title.Caption = #25240#25187#29575'%'
                       Title.Color = clWhite
                       Width = 66
@@ -398,6 +399,8 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Top = 62
             Width = 75
             Height = 20
+            Properties.MaxValue = 100.000000000000000000
+            Properties.MinValue = 50.000000000000000000
             Properties.ValueType = vtFloat
             Properties.OnChange = edtMINIMUM_PERCENTPropertiesChange
             TabOrder = 3

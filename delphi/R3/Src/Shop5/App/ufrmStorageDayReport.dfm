@@ -15,14 +15,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
-        ActivePage = TabSheet4
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#36827#36135#27719#24635#34920
+          Caption = #22320#21306#24211#23384#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 858
             Height = 522
@@ -237,38 +237,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP1_Week: TcxRadioButton
-                  Left = 168
-                  Top = 12
-                  Width = 62
-                  Height = 17
-                  Caption = #26368#36817'1'#21608
-                  TabOrder = 8
-                end
-                object fndP1_Month: TcxRadioButton
-                  Left = 235
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#26376
-                  TabOrder = 9
-                end
-                object fndP1_quarter: TcxRadioButton
-                  Left = 300
-                  Top = 12
-                  Width = 76
-                  Height = 17
-                  Caption = #26368#36817'1'#23395#24230
-                  TabOrder = 10
-                end
-                object fndP1_year: TcxRadioButton
-                  Left = 380
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#24180
-                  TabOrder = 11
-                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 87
@@ -357,7 +325,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #38376#24215#36827#36135#27719#24635#34920
+          Caption = #38376#24215#24211#23384#27719#24635#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -587,38 +555,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 7
                 end
-                object fndP2_Week: TcxRadioButton
-                  Left = 168
-                  Top = 12
-                  Width = 62
-                  Height = 17
-                  Caption = #26368#36817'1'#21608
-                  TabOrder = 8
-                end
-                object fndP2_Month: TcxRadioButton
-                  Left = 234
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#26376
-                  TabOrder = 9
-                end
-                object fndP2_quarter: TcxRadioButton
-                  Left = 300
-                  Top = 12
-                  Width = 71
-                  Height = 17
-                  Caption = #26368#36817'1'#23395#24230
-                  TabOrder = 10
-                end
-                object fndP2_year: TcxRadioButton
-                  Left = 381
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#24180
-                  TabOrder = 11
-                end
               end
               object RzPanel10: TRzPanel
                 Left = 0
@@ -703,8 +639,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
@@ -722,7 +656,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'ORG_CST'
                       Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
@@ -740,7 +673,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
                       Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
@@ -752,7 +684,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #20998#31867#36827#36135#27719#24635#34920
+          Caption = #20998#31867#24211#23384#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -968,38 +900,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 6
                 end
-                object fndP3_Week: TcxRadioButton
-                  Left = 168
-                  Top = 12
-                  Width = 62
-                  Height = 17
-                  Caption = #26368#36817'1'#21608
-                  TabOrder = 7
-                end
-                object fndP3_Month: TcxRadioButton
-                  Left = 236
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#26376
-                  TabOrder = 8
-                end
-                object fndP3_quarter: TcxRadioButton
-                  Left = 300
-                  Top = 12
-                  Width = 80
-                  Height = 17
-                  Caption = #26368#36817'1'#23395#24230
-                  TabOrder = 9
-                end
-                object fndP3_year: TcxRadioButton
-                  Left = 380
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#24180
-                  TabOrder = 10
-                end
               end
               object RzPanel12: TRzPanel
                 Left = 0
@@ -1134,7 +1034,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #21830#21697#36827#36135#27719#24635#34920
+          Caption = #21830#21697#24211#23384#27719#24635#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -1413,38 +1313,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 8
                 end
-                object fndP4_Week: TcxRadioButton
-                  Left = 168
-                  Top = 12
-                  Width = 62
-                  Height = 17
-                  Caption = #26368#36817'1'#21608
-                  TabOrder = 9
-                end
-                object fndP4_Month: TcxRadioButton
-                  Left = 236
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#26376
-                  TabOrder = 10
-                end
-                object fndP4_quarter: TcxRadioButton
-                  Left = 300
-                  Top = 12
-                  Width = 79
-                  Height = 17
-                  Caption = #26368#36817'1'#23395#24230
-                  TabOrder = 11
-                end
-                object fndP4_year: TcxRadioButton
-                  Left = 381
-                  Top = 12
-                  Width = 66
-                  Height = 17
-                  Caption = #26368#36817'1'#24180
-                  TabOrder = 12
-                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
@@ -1640,24 +1508,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
     Left = 41
     Top = 354
   end
-  inherited PrintDBGridEh1: TPrintDBGridEh
-    PageHeader.CenterText.Strings = (
-      #36827#36135#27719#24635#34920)
-    PageHeader.Font.Charset = GB2312_CHARSET
-    PageHeader.Font.Height = -16
-    PageHeader.Font.Name = #23435#20307
-    PageHeader.Font.Style = [fsBold]
-    Left = 136
-    Top = 224
-    BeforeGridText_Data = {
-      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
-      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
-      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
-      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
-      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C6C616E67323035325C66305C6673323420255B7768725D5C66315C6673
-      3136200D0A5C706172207D0D0A00}
-  end
   inherited SaveDialog1: TSaveDialog
     Left = 237
     Top = 220
@@ -1665,6 +1515,25 @@ inherited frmStorageDayReport: TfrmStorageDayReport
   inherited adoReport1: TZQuery
     Left = 41
     Top = 321
+  end
+  inherited PrintDBGridEh1: TPrintDBGridEh
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
   object dsadoReport2: TDataSource
     DataSet = adoReport2

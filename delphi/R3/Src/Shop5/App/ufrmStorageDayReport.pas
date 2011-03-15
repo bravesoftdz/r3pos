@@ -92,22 +92,6 @@ type
     adoReport5: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
-    fndP1_Week: TcxRadioButton;
-    fndP1_Month: TcxRadioButton;
-    fndP2_Week: TcxRadioButton;
-    fndP2_Month: TcxRadioButton;
-    fndP3_Week: TcxRadioButton;
-    fndP3_Month: TcxRadioButton;
-    fndP4_Week: TcxRadioButton;
-    fndP4_Month: TcxRadioButton;
-    fndP1_quarter: TcxRadioButton;
-    fndP1_year: TcxRadioButton;
-    fndP2_quarter: TcxRadioButton;
-    fndP2_year: TcxRadioButton;
-    fndP3_quarter: TcxRadioButton;
-    fndP3_year: TcxRadioButton;
-    fndP4_quarter: TcxRadioButton;
-    fndP4_year: TcxRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -157,11 +141,11 @@ procedure TfrmStorageDayReport.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
-  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  P3_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-
+  P1_D1.Clear;
+  P2_D1.Clear;
+  P3_D1.Clear;
+  P4_D1.Clear;
+  
   HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
   rzPage.Pages[0].TabVisible := HasChild;
   rzPage.Pages[1].TabVisible := HasChild;
@@ -177,11 +161,8 @@ function TfrmStorageDayReport.GetGroupSQL(chk:boolean=true): string;
 var
   strSql,strWhere,GoodTab: string;
 begin
-  if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));  //库存日期=+1天取期初
-
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(ORG_Date)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -212,24 +193,54 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //检测是否计算
-  CheckCalc(ORG_Date);
+  //日期条件
+  if P1_D1.EditValue = null then //直接查询库存表:
+  begin
+    strSql :=
+      'select '+
+      ' TENANT_ID'+
+      ',REGION_ID'+
+      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_CST) as ORG_CST'+
+      ',sum(ORG_RTL) as ORG_RTL'+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ' from '+
+       '(SELECT '+
+       ' A.TENANT_ID,B.REGION_ID,AMOUNT as ORG_AMT '+     //库存数量
+       ',AMONEY as ORG_CST '+     //库存金额
+       ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
+       'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+      ' group by TENANT_ID,REGION_ID ';
+    Result :=  ParseSQL(Factor.iDbType,
+      'select j.* '+
+      ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
+      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+      );
+  end else
+  begin
+    ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));
+    //检测是否计算
+    CheckCalc(ORG_Date);
+    strWhere:=strWhere+' and exists(select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where DD.CREA_DATE=DD.CREA_DATE and DD.CREA_DATE<='+InttoStr(ORG_Date)+') ';
 
-  strSql :=
-    'SELECT '+
-    ' A.TENANT_ID '+
-    ',B.REGION_ID '+
-    ',sum(ORG_AMT) as ORG_AMT '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-    ',sum(ORG_CST) as ORG_CST '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
-    ',sum(ORG_RTL) as ORG_RTL '+
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,B.REGION_ID';
-  Result :=  ParseSQL(Factor.iDbType,
-    'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
-    );
+    strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',B.REGION_ID '+
+      ',sum(ORG_AMT) as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_CST) as ORG_CST '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',sum(ORG_RTL) as ORG_RTL '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'group by A.TENANT_ID,B.REGION_ID';
+    Result :=  ParseSQL(Factor.iDbType,
+      'select j.* '+
+      ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+      );
+  end;
 end;
 
 function TfrmStorageDayReport.GetRowType: integer;
@@ -276,11 +287,8 @@ function TfrmStorageDayReport.GetShopSQL(chk:boolean=true): string;
 var
   strSql,strWhere,GoodTab: string;
 begin
-  if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));  //库存日期=+1天取期初
-
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(ORG_Date)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
@@ -290,8 +298,8 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
       end;
     end;
+    
   //商品指标:
-
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -312,38 +320,64 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  //日期条件
+  if P1_D1.EditValue = null then //直接查询库存表:
+  begin
+    strSql :=
+      'select '+
+      ' TENANT_ID'+
+      ',SHOP_ID'+
+      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_CST) as ORG_CST'+
+      ',sum(ORG_RTL) as ORG_RTL'+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ' from '+
+       '(SELECT '+
+       ' A.TENANT_ID,B.SHOP_ID,AMOUNT as ORG_AMT '+     //库存数量
+       ',AMONEY as ORG_CST '+     //库存金额
+       ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
+       'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+      ' group by TENANT_ID,SHOP_ID ';
+    Result :=  ParseSQL(Factor.iDbType,
+      'select j.* '+
+      ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+      ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
+      );
+  end else
+  begin
+    //检测是否计算
+    ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));  //库存日期=+1天取期初
+    CheckCalc(ORG_Date);
 
-  //检测是否计算
-  CheckCalc(ORG_Date);
-
-  strSql :=
-    'SELECT '+
-    ' A.TENANT_ID '+
-    ',A.SHOP_ID '+
-    ',sum(ORG_AMT) as ORG_AMT '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-    ',sum(ORG_CST) as ORG_CST '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
-    ',sum(ORG_RTL) as ORG_RTL '+
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID';
-  Result :=  ParseSQL(Factor.iDbType,
-    'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
-    );
-
+    strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.SHOP_ID '+
+      ',sum(ORG_AMT) as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_CST) as ORG_CST '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',sum(ORG_RTL) as ORG_RTL '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'group by A.TENANT_ID,A.SHOP_ID';
+    Result :=  ParseSQL(Factor.iDbType,
+      'select j.* '+
+      ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
+      );
+  end;
 end;
 
 function TfrmStorageDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,GoodTab,lv: string;
+  strSql,strWhere,GoodTab,lv,lv1: string;
 begin
+  lv:='';
+  lv1:='';
   result:='';
-  if P3_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date+1));  //库存日期=+1天取期初
-
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(ORG_Date)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
@@ -367,20 +401,47 @@ begin
   1:begin
       GoodTab:='VIW_GOODSINFO_SORTEXT';
       lv := ',C.LEVEL_ID';
+      lv1 := ',LEVEL_ID';
     end;
   else
     GoodTab:='VIW_GOODSINFO';
   end;
 
-  strSql :=
-    'SELECT '+
-    ' A.TENANT_ID '+
-    ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(ORG_AMT) as ORG_AMT '+
-    ',sum(ORG_CST) as ORG_CST '+
-    ',sum(ORG_RTL) as ORG_RTL '+
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
+  //日期条件
+  if P1_D1.EditValue = null then //直接查询库存表:
+  begin
+    strSql :=
+      'select '+
+      ' TENANT_ID'+
+      ',GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID '+
+      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_CST) as ORG_CST'+
+      ',sum(ORG_RTL) as ORG_RTL'+
+      ' from '+
+       '(SELECT '+
+       ' A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
+       ',AMOUNT as ORG_AMT '+     //库存数量
+       ',AMONEY as ORG_CST '+     //库存金额
+       ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
+       'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+      'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
+  end else
+  begin
+    //检测是否计算
+    ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date+1));  //库存日期=+1天取期初
+    CheckCalc(ORG_Date);
+    strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
+      ',sum(ORG_AMT) as ORG_AMT '+
+      ',sum(ORG_CST) as ORG_CST '+
+      ',sum(ORG_RTL) as ORG_RTL '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
+  end;
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
@@ -433,11 +494,8 @@ function TfrmStorageDayReport.GetGodsSQL(chk:boolean=true): string;
 var
   strSql,strWhere,GoodTab: string;
 begin
-  if P4_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date+1));  //库存日期=+1天取期初
-
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(ORG_Date)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
@@ -469,35 +527,65 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  strSql :=
-    'SELECT '+
-    ' A.TENANT_ID '+
-    ',A.GODS_ID '+
-    ',sum(ORG_AMT) as ORG_AMT '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-    ',sum(ORG_CST) as ORG_CST '+
-    ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
-    ',sum(ORG_RTL) as ORG_RTL '+
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
-    
-  Result :=  ParseSQL(Factor.iDbType,
-    'select j.* '+
-    ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
-    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '
-    );
-  result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+result+') j '+
-            'left outer join VIW_BARCODE b '+
-            'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-            'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
-  result := result +  ' order by j.GODS_CODE';
+  //日期条件
+  if P4_D1.EditValue = null then //直接查询库存表:
+  begin
+    strSql :=
+      'select '+
+      ' TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID  '+
+      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_CST) as ORG_CST'+
+      ',sum(ORG_RTL) as ORG_RTL'+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ' from '+
+       '(SELECT '+
+       ' A.TENANT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
+       ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
+       ',AMOUNT as ORG_AMT '+     //库存数量
+       ',AMONEY as ORG_CST '+     //库存金额
+       ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
+       'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+      ' group by TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
+
+      result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+              'left outer join VIW_BARCODE b '+
+              'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+              'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
+     result := result +  ' order by j.GODS_CODE';
+  end else
+  begin
+    ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date+1));
+    //检测是否计算
+    CheckCalc(ORG_Date);
+    strWhere:=strWhere+' and exists(select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where DD.CREA_DATE=DD.CREA_DATE and DD.CREA_DATE<='+InttoStr(ORG_Date)+') ';
+    strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.GODS_ID '+
+      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
+      ',sum(ORG_AMT) as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_CST) as ORG_CST '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',sum(ORG_RTL) as ORG_RTL '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,CALC_UNITS ';
+
+      result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+              'left outer join VIW_BARCODE b '+
+              'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+              'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
+     result := result +  ' order by j.GODS_CODE';
+  end;
 end;
 
 procedure TfrmStorageDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
-  self.DoAssignParamsValue(w1,RzPanel9); 
+  self.DoAssignParamsValue(w1,RzPanel9);
 end;
 
 procedure TfrmStorageDayReport.DBGridEh2DblClick(Sender: TObject);
@@ -526,8 +614,8 @@ begin
   case CodeID of
    1:  //商品分类[带供应链接]
     begin
-      sid2:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
-      srid2:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;
    else
@@ -550,7 +638,7 @@ begin
       end;
     end;
   end;
-
+  
   self.DoAssignParamsValue(RzPanel11,RzPanel14);
 end;
 
@@ -662,7 +750,7 @@ var
 begin
   //日期
   FindCmp1:=FindComponent('P'+PageNo+'_D1');
-  if (FindCmp1<>nil) and (FindCmp1 is TcxDateEdit) and (TcxDateEdit(FindCmp1).Visible) then
+  if (FindCmp1<>nil) and (FindCmp1 is TcxDateEdit) and (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp1).EditValue<>null) then
     TitleList.add('日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date));
  //门店名称：
  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');

@@ -1,5 +1,6 @@
 inherited frmGoodsSortTree: TfrmGoodsSortTree
-  Left = 613
+  Left = 524
+  Top = 196
   Caption = ''
   ClientHeight = 370
   ClientWidth = 434

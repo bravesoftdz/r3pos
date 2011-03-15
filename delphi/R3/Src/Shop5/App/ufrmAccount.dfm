@@ -86,7 +86,6 @@ inherited frmAccount: TfrmAccount
                   Top = 5
                   Width = 196
                   Height = 20
-                  Properties.OnChange = edtKeyPropertiesChange
                   TabOrder = 0
                   OnKeyDown = edtKeyKeyDown
                 end
@@ -164,7 +163,7 @@ inherited frmAccount: TfrmAccount
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'ACCT_NAME'
+                  FieldName = 'ACCT_NAME_TEXT'
                   Footers = <>
                   Title.Caption = #36134#25143#21517#31216
                   Width = 125

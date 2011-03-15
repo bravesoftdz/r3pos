@@ -20,7 +20,6 @@ type
     Label9: TLabel;
     edtORG_MNY: TcxTextEdit;
     btnOk: TRzBitBtn;
-    btnClose: TRzBitBtn;
     Label10: TLabel;
     edtOUT_MNY: TcxTextEdit;
     Label11: TLabel;
@@ -31,7 +30,8 @@ type
     edtACCT_SPELL: TcxTextEdit;
     Label7: TLabel;
     cdsTable: TZQuery;
-    edtPAYM_ID: TzrComboBoxList;
+    edtPAYM_ID: TcxComboBox;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -48,13 +48,14 @@ type
   public
     Saved:Boolean;
     AObj:TRecord_;
+    procedure IniPaym_Id;
     procedure Open(code:string);
     procedure Append;
     procedure Edit(code: string);
     procedure Save;
     procedure WriteTo(AObj:TRecord_);
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断账户资料是否有修改
-    procedure SetdbState(const Value: TDataSetState); override;    
+    procedure SetdbState(const Value: TDataSetState); override;
     class function AddDialog(Owner:TForm;var _AObj:TRecord_):boolean;
     class function EditDialog(Owner:TForm;ID:String;var _AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm;ID:String):Boolean;
@@ -92,6 +93,8 @@ begin
     Factor.Open(cdsTable,'TAccount',Params);
     AObj.ReadFromDataSet(cdsTable);
     ReadFromObject(AObj,self);
+    if AObj.FieldByName('PAYM_ID').AsString = 'A' then
+      edtPAYM_ID.Text := '现金';
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -138,11 +141,7 @@ end;
 procedure TfrmAccountInfo.FormCreate(Sender: TObject);
 begin
   inherited;
-  //edtCOMP_ID.DataSet:=Global.GetADODataSetFromName('CA_COMPANY');
-  edtPAYM_ID.DataSet := Global.GetZQueryFromName('PUB_PAYMENT');
-  edtPAYM_ID.DataSet.Filtered := False;
-  edtPAYM_ID.DataSet.Filter := 'CODE_ID <> ''A''';
-  edtPAYM_ID.DataSet.Filtered := True;
+  IniPaym_Id;
   AObj := TRecord_.Create;
 end;
 
@@ -366,6 +365,28 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmAccountInfo.IniPaym_Id;
+var Temp:TZQuery;
+    Aobj_1:TRecord_;
+begin
+  try
+    Temp := Global.GetZQueryFromName('PUB_PAYMENT');
+    Temp.First;
+    while not Temp.Eof do
+      begin
+        if Temp.FieldByName('CODE_ID').AsString <> 'A' then
+          begin
+            Aobj_1 := TRecord_.Create;
+            Aobj_1.ReadFromDataSet(Temp);
+            edtPAYM_ID.Properties.Items.AddObject(Temp.FieldByName('CODE_NAME').AsString,Aobj_1);
+          end;
+        Temp.Next;
+      end;
+  finally
+  
+  end;
 end;
 
 end.

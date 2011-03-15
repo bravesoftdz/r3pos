@@ -41,7 +41,6 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure edtKeyPropertiesChange(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
     procedure cdsBrowserAfterScroll(DataSet: TDataSet);
@@ -91,8 +90,14 @@ begin
   if edtKey.Text<>'' then
      IsHeadShop := ' and (ACCT_NAME like ''%'+trim(edtKEY.Text)+'%'' or ACCT_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
-  cdsBrowser.SQL.Text :='select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
-  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop;
+  cdsBrowser.SQL.Text :=
+  'select ja.*,ja.ACCT_NAME+''<''+a.SHOP_NAME+''>'' as ACCT_NAME_TEXT from '+
+  '(select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
+  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop+
+  ' ) ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID';
+
+  {cdsBrowser.SQL.Text :='select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
+  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+;}
   Factor.Open(cdsBrowser);
 end;
 
@@ -140,12 +145,14 @@ begin
   begin
      cdsBrowser.Edit;
      AObj.WriteToDataSet(cdsBrowser,false);
+     cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString+'<'+Global.SHOP_NAME+'>';
      cdsBrowser.Post;
   end
   else
   begin
      cdsBrowser.Append;
      AObj.WriteToDataSet(cdsBrowser,false);
+     cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString+'<'+Global.SHOP_NAME+'>';
      cdsBrowser.Post;
   end;
   if cdsBrowser.Locate('ACCOUNT_ID',AObj.FieldByName('ACCOUNT_ID').AsString,[]) then;
@@ -160,15 +167,6 @@ begin
   if Key=VK_UP then
      cdsBrowser.Prior;
 end;
-
-procedure TfrmAccount.edtKeyPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  cdsBrowser.Filtered:=False;
-  cdsBrowser.Filter:='ACCT_NAME LIKE '+'%'+trim(edtKey.Text)+'%'+' or ACCT_SPELL LIKE '+'%'+trim(edtKey.Text)+'%';
-  cdsBrowser.Filtered:=(trim(edtKey.Text)<>'');
-end;
-
 
 procedure TfrmAccount.actEditExecute(Sender: TObject);
 begin

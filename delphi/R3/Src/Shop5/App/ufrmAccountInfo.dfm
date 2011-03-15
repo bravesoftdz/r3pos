@@ -276,6 +276,21 @@ inherited frmAccountInfo: TfrmAccountInfo
         ParentFont = False
         Visible = False
       end
+      object Label1: TLabel
+        Left = 454
+        Top = 28
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = '*'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clMaroon
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+        Visible = False
+      end
       object edtACCT_NAME: TcxTextEdit
         Left = 101
         Top = 24
@@ -290,7 +305,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         Properties.OnChange = edtORG_MNYPropertiesChange
-        TabOrder = 2
+        TabOrder = 1
         OnExit = edtORG_MNYExit
       end
       object edtACCT_SPELL: TcxTextEdit
@@ -299,49 +314,14 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         TabStop = False
-        TabOrder = 3
+        TabOrder = 2
       end
-      object edtPAYM_ID: TzrComboBoxList
+      object edtPAYM_ID: TcxComboBox
         Left = 101
         Top = 54
         Width = 118
         Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = True
-        TabOrder = 1
-        InGrid = False
-        KeyValue = Null
-        KeyField = 'CODE_ID'
-        ListField = 'CODE_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'CODE_ID'
-            Footers = <>
-            Title.Caption = #32534#30721
-            Width = 30
-          end
-          item
-            EditButtons = <>
-            FieldName = 'CODE_NAME'
-            Footers = <>
-            Title.Caption = #21517'    '#31216
-            Width = 88
-          end>
-        DropWidth = 120
-        DropHeight = 160
-        ShowTitle = True
-        AutoFitColWidth = True
-        ShowButton = True
-        LocateStyle = lsDark
-        Filter = 'CODE_ID,CODE_NAME,CODE_SPELL'
-        Buttons = []
-        DropListStyle = lsFixed
-        MultiSelect = False
+        TabOrder = 3
       end
     end
   end

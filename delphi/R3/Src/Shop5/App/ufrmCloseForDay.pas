@@ -49,21 +49,23 @@ type
     Label2: TLabel;
     edtPAY_MNY: TcxTextEdit;
     labMNY: TLabel;
-    RzButton1: TRzButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
-    procedure RzButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    DateArr:array of Integer;
+    Balance:Double;    
+    LastTime:integer;
     Is_Print: Boolean;
     MainRecord: TRecord_;
-    procedure PrintTickt;
     procedure GetEverydayAcc(var Acc_Data:TZQuery;ThatDay:Integer);
+    procedure GetLastDate;
+    function GetBalance:Boolean;
     procedure Open;
     procedure Save;
     procedure InitForm;
@@ -80,12 +82,14 @@ uses uGlobal,uShopGlobal,uDsUtil,Math,uDevFactory,ufrmTicketPrint;
 { TfrmCloseForDay }
 
 procedure TfrmCloseForDay.Open;
-var
-  rs: TZQuery;
-  Str:string;
+var rs: TZQuery;
+    Str:string;
 begin
   try
     rs := TZQuery.Create(nil);
+
+    //获得当天各种支付方式的汇总
+    rs.Close;
     rs.SQL.Text := 'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,'+
     'sum(PAY_A) as PAY_A,'+
     'sum(PAY_B) as PAY_B,'+
@@ -105,44 +109,36 @@ begin
     rs.ParamByName('CREA_USER').AsString := Global.UserID;
     rs.ParamByName('SALES_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
     Factor.Open(rs);
-    if rs.IsEmpty then Is_Print := False else Is_Print := True;
+
+    if not rs.IsEmpty then Is_Print := True;
     MainRecord.ReadFromDataSet(rs);
 
+    //获得储值卡充值金额
     rs.Close;
     rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
     Factor.Open(rs);
-    if rs.IsEmpty then
-      Is_Print := False
-    else
-      Is_Print := True;
+    if not rs.IsEmpty then Is_Print := True;
     edtPAY_MNY.Text := rs.Fields[0].AsString;
 
+    //获得批发金额
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
     Factor.Open(rs);
-    if rs.IsEmpty then
-      Is_Print := False
-    else
-      Is_Print := True;
+    if not rs.IsEmpty then Is_Print := True;
     edtRECV_MNY.Text := rs.Fields[0].AsString;
 
     ShowFee;
-    rs.Close;
-    Str :=
-    'select isnull(j1.BALANCE,0)+isnull(j2.PAY_A,0) from '+
-    '(select BALANCE from ACC_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID+' and PAYM_ID=''A'') j1,'+
-    '(select sum(PAY_A) as PAY_A '+
-    ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+Global.SHOP_ID+' and SALES_DATE <='+FormatDateTime('YYYYMMDD',Date())+
-    ' and not exists('+
-    ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE)'+
-    ') j2 ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
 
+
+    Str :=
+    ' select isnull(BALANCE,0) as BALANCE from ACC_ACCOUNT_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PAYM_ID=''A'' ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
+    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
     Factor.Open(rs);
-    labMNY.Caption := '店内金额:'+rs.Fields[0].AsString;
+    labMNY.Caption := '店内金额:'+FloatToStr(Balance+rs.FieldbyName('BALANCE').AsFloat);
     lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
@@ -229,12 +225,25 @@ begin
   with TfrmCloseForDay.Create(Owner) do
     begin
       try
-        case ShowModal of
-          mrOk : Result := 1;
-          mrIgnore : Result := 2;
+        GetLastDate;
+        if not ((LastTime = 0) and not GetBalance) then
+          begin
+          if (IntToStr(LastTime) = FormatDateTime('YYYYMMDD',Date())) then  //打印当天已经结账汇总
+            begin
+              Btn_Save.Caption := '打印小票(&P)';
+              Btn_Save.Tag := 1;
+            end;
+            Open;
+            case ShowModal of
+              mrOk : Result := 1;
+              mrIgnore : Result := 2;
+            else
+              Result := 0;
+            end;
+          end
         else
           Result := 0;
-        end;
+
       finally
         Free;
       end;
@@ -343,10 +352,11 @@ begin
   fndCREA_USER.Text := Global.UserName;
   fndCLSE_DATE.Text := FormatDateTime('YYYY-MM-DD',Date);
   Open;
+
 end;
 
 procedure TfrmCloseForDay.Save;
-var 
+var i:Integer;
     rs,sv: TZQuery;
     AObj:TRecord_;
 begin
@@ -357,6 +367,9 @@ begin
       GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',Date())));
       if not rs.IsEmpty then
         begin
+          //把未结账日期值 赋给 动态数组
+          SetLength(DateArr,rs.RecordCount);
+          i:=0;
           sv.Delta := rs.Delta;
           rs.First;
           while not rs.Eof do
@@ -364,7 +377,9 @@ begin
               sv.Append;
               AObj.ReadFromDataSet(rs);
               AObj.WriteToDataSet(sv,false);
-              sv.Post; 
+              sv.Post;
+              DateArr[i]:=rs.FieldbyName('CLSE_DATE').AsInteger;
+              Inc(i);
               rs.Next;
             end;
           Factor.UpdateBatch(sv,'TCloseForDay');
@@ -378,21 +393,35 @@ begin
 end;
 
 procedure TfrmCloseForDay.Btn_SaveClick(Sender: TObject);
-var
-  PrintRight: Boolean;
+var i:Integer;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('13200001',2) then
-    Raise Exception.Create('  您没有结账权限，请联系管理员！  ');
+  if Btn_Save.Tag = 0 then
+    begin
+      if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');
+      Save;
+      if Is_Print then
+      begin
+        if not ShopGlobal.GetChkRight('13200001',4) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+        if DevFactory.CloseDayPrinted then
+          begin
+            if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+              begin
+                for i:=low(DateArr) to High(DateArr) do
+                  TfrmTicketPrint.ShowTicketPrint(Self,1,IntToStr(DateArr[i]));
+              end;
+          end;
+      end;
+      ModalResult := mrOk;
+    end
+  else if Btn_Save.Tag = 1 then
+    begin
+      if not ShopGlobal.GetChkRight('13200001',4) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+      if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+        TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
+      ModalResult := mrOk;
+    end;
 
-  Save;
-  PrintRight:=ShopGlobal.GetChkRight('13200001',4);
-  if Is_Print and PrintRight then
-  begin
-    if MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION)=1 then
-      TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
-  end;
-  ModalResult := mrOk;
 end;
 
 procedure TfrmCloseForDay.Btn_CloseClick(Sender: TObject);
@@ -401,110 +430,87 @@ begin
   ModalResult := mrIgnore;
 end;
 
-procedure TfrmCloseForDay.PrintTickt;
-var P_Width: Integer;
-  function FormatStr(Text:String;W:Integer;LorR:Integer):String;
-    var i,j:Integer;
-    begin
-      j := W-Length(Text);
-      for i := 0 to j do
-        Result := Result + ' ';
-      if LorR = 0 then
-        Result := Text + Result
-      else
-        Result := Result + Text;
-    end;
-  function FormatTitle(Name:String):String;
-    var i,j:Integer;
-    begin
-      j := (P_Width-length(Name)) div 2;
-      for i := 0 to j do
-          Result := Result + ' ';
-      Result := Result + Name;
-    end;
-  function FormatLine(Name:String;Num:String):String;
-    begin
-      Result := FormatStr(Name,10,1)+'                  '+FormatStr(Num,10,1);
-    end;
-begin
-  P_Width := 38;
-  try
-    DevFactory.BeginPrint;
-    DevFactory.WritePrint(FormatTitle('关账表单'));
-    DevFactory.WritePrint('');
-    DevFactory.WritePrint(FormatStr(Label12.Caption+':'+fndCREA_USER.Text,19,0)+FormatStr(Label5.Caption+':'+fndCLSE_DATE.Text,19,0));
-    DevFactory.WritePrint('  ----------------------------------  ');
-    if MainRecord.FieldByName('PAY_A').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_A.Caption,edtPAY_A.Text));
-    if MainRecord.FieldByName('PAY_B').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_B.Caption,edtPAY_B.Text));
-    if MainRecord.FieldByName('PAY_C').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_C.Caption,edtPAY_C.Text));
-    if MainRecord.FieldByName('PAY_D').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_D.Caption,edtPAY_D.Text));
-    if MainRecord.FieldByName('PAY_E').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_E.Caption,edtPAY_E.Text));
-    if MainRecord.FieldByName('PAY_F').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_F.Caption,edtPAY_F.Text));
-    if MainRecord.FieldByName('PAY_G').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_G.Caption,edtPAY_G.Text));
-    if MainRecord.FieldByName('PAY_H').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_H.Caption,edtPAY_H.Text));
-    if MainRecord.FieldByName('PAY_I').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_I.Caption,edtPAY_I.Text));
-    if MainRecord.FieldByName('PAY_J').AsFloat <> 0 then
-        DevFactory.WritePrint(FormatLine(labPAY_J.Caption,edtPAY_J.Text));
-
-    DevFactory.WritePrint(FormatLine(Label2.Caption,edtPAY_MNY.Text));
-    DevFactory.WritePrint(FormatLine(Label2.Caption,edtRECV_MNY.Text));
-    DevFactory.WritePrint(FormatStr(lblCASH.Caption,38,1));
-  finally
-    DevFactory.EndPrint;
-  end;
-end;
-
-
 procedure TfrmCloseForDay.GetEverydayAcc(var Acc_Data: TZQuery;ThatDay:Integer);
 var Str:String;
 begin
-
-    Str :=
-    'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
-    'sum(PAY_A) as PAY_A,'+
-    'sum(PAY_B) as PAY_B,'+
-    'sum(PAY_C) as PAY_C,'+
-    'sum(PAY_D) as PAY_D,'+
-    'sum(PAY_E) as PAY_E,'+
-    'sum(PAY_F) as PAY_F,'+
-    'sum(PAY_G) as PAY_G,'+
-    'sum(PAY_H) as PAY_H,'+
-    'sum(PAY_I) as PAY_I,'+
-    'sum(PAY_J) as PAY_J '+
-    ' from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE <=:SALES_DATE '+
-    ' and not exists('+
-    'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
-    ') group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
-    Acc_Data.Close;
-    Acc_Data.SQL.Text := Str;
-    Acc_Data.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Acc_Data.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
-    Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
-    Factor.Open(Acc_Data);
-
+  Str :=
+  'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
+  'sum(PAY_A) as PAY_A,'+
+  'sum(PAY_B) as PAY_B,'+
+  'sum(PAY_C) as PAY_C,'+
+  'sum(PAY_D) as PAY_D,'+
+  'sum(PAY_E) as PAY_E,'+
+  'sum(PAY_F) as PAY_F,'+
+  'sum(PAY_G) as PAY_G,'+
+  'sum(PAY_H) as PAY_H,'+
+  'sum(PAY_I) as PAY_I,'+
+  'sum(PAY_J) as PAY_J '+
+  ' from SAL_SALESORDER A'+
+  ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE>:LAST_SALES_DATE and SALES_DATE<=:SALES_DATE '+
+  ' and not exists('+
+  'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
+  ') group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
+  Acc_Data.Close;
+  Acc_Data.SQL.Text := Str;
+  Acc_Data.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Acc_Data.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
+  Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
+  Acc_Data.Params.ParamByName('LAST_SALES_DATE').AsInteger := LastTime;
+  Factor.Open(Acc_Data);
 end;
 
-procedure TfrmCloseForDay.RzButton1Click(Sender: TObject);
-var i: Integer;
+procedure TfrmCloseForDay.GetLastDate;
+var rs:TZQuery;
 begin
-  inherited;
-  if not ShopGlobal.GetChkRight('13200001',4) then Raise Exception.Create('  您没有打印小票权限，请联系管理员！  ');
+  try
+    rs := TZQuery.Create(nil);
+    rs.Close;
+    rs.SQL.Text := 'select Max(CLSE_DATE) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER  ';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.ParamByName('CREA_USER').AsString := Global.UserID;
+    Factor.Open(rs);
+    if rs.Fields[0].AsString='' then       //获得当前收银员最近的结账日期
+    LastTime := 0 else
+    LastTime := rs.Fields[0].asInteger;
+  finally
+    rs.Free;
+  end;
+end;
 
-  i := MessageBox(Handle,Pchar('是否打印小票'),Pchar(Caption),MB_OK+MB_ICONQUESTION);
-  if i = 1 then
-    TfrmTicketPrint.ShowTicketPrint(Self,1,'20110303');
+function TfrmCloseForDay.GetBalance: Boolean;
+var rs:TZQuery;
+    Str:String;
+begin
+  try
+    rs := TZQuery.Create(nil);
+    //获得店内余额
+    rs.Close;
+    Str :=
+    'select sum(isnull(PAY_A)) as PAY_A '+
+    ' from SAL_SALESORDER A '+
+    ' where SALES_TYPE=4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE>:LAST_SALES_DATE and SALES_DATE <=:SALES_DATE and CREA_USER=:CREA_USER '+
+    ' and not exists('+
+    ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CLSE_DATE=A.SALES_DATE'+
+    ' )';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
+    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.FieldByName('CREA_USER').AsString := Global.UserID;
+    rs.FieldByName('SALES_DATE').AsString := FormatDatetime('YYYYMMDD',Date());
+    rs.FieldByName('LAST_SALES_DATE').AsInteger := LastTime;
+    Factor.Open(rs);
+    if rs.FieldByName('PAY_A').AsString <> '' then
+      Result := True
+    else
+      Result := False;
 
+    Balance := rs.FieldbyName('PAY_A').AsInteger;
+
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

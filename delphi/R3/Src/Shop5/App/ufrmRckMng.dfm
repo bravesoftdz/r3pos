@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 539
-  Top = 119
+  Left = 386
+  Top = 116
   Width = 818
   Height = 569
   Caption = #32467#36134#31649#29702
@@ -17,8 +17,6 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 794
         Height = 496
-        ActivePage = TabSheet3
-        TabIndex = 2
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -240,6 +238,7 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                PopupMenu = PopupMenu1
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -462,6 +461,7 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                PopupMenu = PopupMenu2
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -514,6 +514,7 @@ inherited frmRckMng: TfrmRckMng
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
                     Footers = <>
@@ -537,6 +538,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 75
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>
@@ -771,6 +773,7 @@ inherited frmRckMng: TfrmRckMng
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                PopupMenu = PopupMenu3
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -831,6 +834,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 80
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'END_DATE'
                     Footers = <>
@@ -847,6 +851,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 75
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CHK_DATE'
                     Footers = <>
@@ -1377,5 +1382,53 @@ inherited frmRckMng: TfrmRckMng
     DataSet = Db_CloseMonth
     Left = 113
     Top = 336
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 279
+    Top = 277
+    object AllSelect: TMenuItem
+      Caption = #20840#36873
+      OnClick = AllSelectClick
+    end
+    object InverseSelect: TMenuItem
+      Caption = #21453#36873
+      OnClick = InverseSelectClick
+    end
+    object NotSelect: TMenuItem
+      Caption = #20840#19981#36873
+      OnClick = NotSelectClick
+    end
+  end
+  object PopupMenu2: TPopupMenu
+    Left = 311
+    Top = 277
+    object AllSelect1: TMenuItem
+      Caption = #20840#36873
+      OnClick = AllSelect1Click
+    end
+    object InverserSelect1: TMenuItem
+      Caption = #21453#36873
+      OnClick = InverserSelect1Click
+    end
+    object NotSelect1: TMenuItem
+      Caption = #20840#19981#36873
+      OnClick = NotSelect1Click
+    end
+  end
+  object PopupMenu3: TPopupMenu
+    Left = 343
+    Top = 277
+    object AllSelect2: TMenuItem
+      Caption = #20840#36873
+      OnClick = AllSelect2Click
+    end
+    object InverserSelect2: TMenuItem
+      Caption = #21453#36873
+      OnClick = InverserSelect2Click
+    end
+    object NotSelect2: TMenuItem
+      Caption = #20840#19981#36873
+      OnClick = NotSelect2Click
+    end
   end
 end

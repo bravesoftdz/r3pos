@@ -1,6 +1,6 @@
 inherited frmCloseForDay: TfrmCloseForDay
-  Left = 360
-  Top = 225
+  Left = 540
+  Top = 242
   BorderStyle = bsNone
   Caption = #20132#29677#20851#36134
   ClientHeight = 258
@@ -568,13 +568,6 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 11
-      end
-      object RzButton1: TRzButton
-        Left = 343
-        Top = 88
-        Caption = #25171#21360#23567#31080
-        TabOrder = 12
-        OnClick = RzButton1Click
       end
     end
   end

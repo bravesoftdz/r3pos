@@ -14,6 +14,7 @@ type
 
   public
     { Public declarations }
+    function GetTicketGodsName(DataSet:TZQuery):string;
     function GetPayText(Pay_Code:String):String;
     function FormatText(Text_Content:String;Text_Width:Integer;Left:Boolean=True):String;
     function FormatTitle(Title:String):String;
@@ -35,6 +36,7 @@ uses DB;
 function TfrmTicketPrint.DoPrintDetail(QueryType:Integer;QueryDate:String):Boolean;
 var rs,ForDay_rs:TZQuery;
     WhereStr:String;
+    i:Integer;
     Sum_Goods,Sum_Money:Double;
 begin
   if DevFactory.LPT < 0 then Exit;
@@ -44,80 +46,101 @@ begin
     ForDay_rs.SQL.Text := 'select jb.*,b.USER_NAME from ('+
                    'select ja.*,A.SHOP_NAME from ( '+
                    'select CLSE_DATE,SHOP_ID,CREA_USER,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J'+
-                   ' from ACC_CLOSE_FORDAY where CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER) ja '+
+                   ' from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER) ja '+
                    'left outer join CA_SHOP_INFO A on ja.SHOP_ID=A.SHOP_ID) jb '+
                    'left outer join VIW_USERS B on jb.CREA_USER=B.USER_ID';
     ForDay_rs.ParamByName('CLSE_DATE').AsString := QueryDate;
+    ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     ForDay_rs.ParamByName('CREA_USER').AsString := Global.UserID;
     Factor.Open(ForDay_rs);
+
+    //开始打印小票
     DevFactory.BeginPrint;
-
     DevFactory.WritePrint(FormatTitle(DevFactory.Title));
-    DevFactory.WritePrint('');
-    DevFactory.WritePrint(FormatText('收银:'+ForDay_rs.FieldbyName('USER_NAME').AsString,DevFactory.Width-15)+'日期:'+ForDay_rs.FieldbyName('CLSE_DATE').AsString);
-
-    case QueryType of
-      1:WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
-      2:WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID ';
-      else
-      WhereStr := ' B.TENANT_ID=:TENANT_ID ';
-    end;
-    rs := TZQuery.Create(nil);
-    rs.SQL.Text :=
-    'select j.SHOP_ID,j.SALES_DATE,j.GODS_ID,j.UNIT_ID,j.UNIT_NAME,'+
-    'j.CALC_AMOUNT/case when j.UNIT_ID=c.SMALL_UNITS then c.SMALLTO_CALC when j.UNIT_ID=c.BIG_UNITS then c.BIGTO_CALC else 1 end as CALC_AMOUNT,'+
-    'j.CALC_MONEY,C.GODS_NAME,C.GODS_CODE,C.BARCODE from('+
-    'select d.TENANT_ID,d.SHOP_ID,d.CREA_USER,d.SALES_DATE,d.GODS_ID,d.UNIT_ID,e.UNIT_NAME,d.CALC_AMOUNT,d.CALC_MONEY from('+
-    'select B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
-    'from SAL_SALESDATA A,SAL_SALESORDER B where A.SALES_ID=B.SALES_ID and A.TENANT_ID=B.TENANT_ID '+
-    'and B.SALES_TYPE=''1'' and SALES_DATE=:SALES_DATE and '+WhereStr+' group by B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID) d '+
-    'left outer join PUB_MEAUNITS e on e.UNIT_ID=d.UNIT_ID and e.TENANT_ID=d.TENANT_ID) j '+
-    'left outer join VIW_GOODSPRICEEXT C on  j.GODS_ID=C.GODS_ID  and j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID order by j.SALES_DATE';
-
     case QueryType of
       1:begin
-        rs.ParamByName('SALES_DATE').AsString := QueryDate;
-        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-        rs.ParamByName('CREA_USER').AsString := Global.UserID;
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
+      DevFactory.WritePrint(FormatText('收银:'+ForDay_rs.FieldbyName('USER_NAME').AsString,DevFactory.Width-16)+'日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
       end;
       2:begin
-        rs.ParamByName('SALES_DATE').AsString := QueryDate;
-        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
+      DevFactory.WritePrint('日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID ';
       end;
-      else
-        begin
-          rs.ParamByName('SALES_DATE').AsString := QueryDate;
-          rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        end;
+      else begin
+      DevFactory.WritePrint('');
+      DevFactory.WritePrint('日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      WhereStr := ' B.TENANT_ID=:TENANT_ID ';
+      end;
     end;
-    Factor.Open(rs);
-    if DevFactory.Width = 38 then
-      DevFactory.WritePrint('商品名称                 数量     金额')
-    else
-      DevFactory.WritePrint('商品名称            数量     金额');
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
-    Sum_Goods := 0;
-    Sum_Money := 0;
-    rs.First;
-    while not rs.Eof do
+
+    if DevFactory.CloseDayPrintFlag = 1 then
       begin
-        Sum_Goods := Sum_Goods + rs.FieldbyName('CALC_AMOUNT').AsFloat;
-        Sum_Money := Sum_Money + rs.FieldbyName('CALC_MONEY').AsFloat;
-        FormatGoodsAndMoney(rs.FieldbyName('GODS_NAME').AsString,rs.FieldbyName('CALC_AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
-        rs.Next;
+        rs := TZQuery.Create(nil);
+        rs.SQL.Text :=
+        'select jd.*,d.COLOR_NAME as PROPERTY_02_TEXT from ('+
+        'select jc.*,c.SIZE_NAME as PROPERTY_01_TEXT from ('+
+        'select jb.TENANT_ID,jb.SHOP_ID,jb.SALES_DATE,jb.GODS_ID,jb.UNIT_ID,jb.UNIT_NAME,'+
+        'jb.CALC_AMOUNT/case when jb.UNIT_ID=b.SMALL_UNITS then b.SMALLTO_CALC when jb.UNIT_ID=b.BIG_UNITS then b.BIGTO_CALC else 1 end as CALC_AMOUNT,'+
+        'jb.CALC_MONEY,b.GODS_NAME,b.GODS_CODE,b.BARCODE,jb.PROPERTY_01,jb.PROPERTY_02 from('+
+        'select ja.*,a.UNIT_NAME from('+
+        'select B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY,A.PROPERTY_01,A.PROPERTY_02 '+
+        'from SAL_SALESDATA A,SAL_SALESORDER B where A.SALES_ID=B.SALES_ID and A.TENANT_ID=B.TENANT_ID '+
+        'and B.SALES_TYPE=''1'' and SALES_DATE=:SALES_DATE and '+WhereStr+' group by B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02) ja '+
+        'left outer join PUB_MEAUNITS a on a.UNIT_ID=ja.UNIT_ID and a.TENANT_ID=ja.TENANT_ID) jb '+
+        'left outer join VIW_GOODSPRICEEXT b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID) jc '+
+        'left outer join  VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
+        'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and  jd.PROPERTY_02=d.COLOR_ID  order by jd.SALES_DATE ';
+
+        case QueryType of
+          1:begin
+            rs.ParamByName('SALES_DATE').AsString := QueryDate;
+            rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+            rs.ParamByName('CREA_USER').AsString := Global.UserID;
+          end;
+          2:begin
+            rs.ParamByName('SALES_DATE').AsString := QueryDate;
+            rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+          end;
+          else
+            begin
+              rs.ParamByName('SALES_DATE').AsString := QueryDate;
+              rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            end;
+        end;
+        Factor.Open(rs);
+        if DevFactory.Width = 38 then
+          DevFactory.WritePrint('商品名称                数量     金额')
+        else
+          DevFactory.WritePrint('商品名称           数量     金额');
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
+        Sum_Goods := 0;
+        Sum_Money := 0;
+        rs.First;
+        while not rs.Eof do
+          begin
+            Sum_Goods := Sum_Goods + rs.FieldbyName('CALC_AMOUNT').AsFloat;
+            Sum_Money := Sum_Money + rs.FieldbyName('CALC_MONEY').AsFloat;
+            FormatGoodsAndMoney(GetTicketGodsName(rs),rs.FieldbyName('CALC_AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
+            rs.Next;
+          end;
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
+
+        if DevFactory.Width = 38 then
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',13)+FormatText(FloatToStr(Sum_Goods),8,false)+' '+FormatText(FloatToStr(Sum_Money),8,false))
+        else
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',11)+FormatText(FloatToStr(Sum_Goods),7,false)+' '+FormatText(FloatToStr(Sum_Money),8,false));
+        DevFactory.WritePrint('');
+        DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
       end;
-    DevFactory.WritePrint(RepeatCharacter(' ',DevFactory.Width-1));
 
-    if DevFactory.Width = 38 then
-      DevFactory.WritePrint('合计:'+RepeatCharacter(' ',14)+FormatText(FloatToStr(Sum_Goods),8,false)+' '+FormatText(FloatToStr(Sum_Money),8,false))
-    else
-      DevFactory.WritePrint('合计:'+RepeatCharacter(' ',12)+FormatText(FloatToStr(Sum_Goods),7,false)+' '+FormatText(FloatToStr(Sum_Money),8,false));
-    DevFactory.WritePrint('');
-
-    DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
-    DevFactory.WritePrint('销售额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
+    DevFactory.WritePrint('销售总额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_B').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_C').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_D').AsFloat+
@@ -128,7 +151,7 @@ begin
                                                         ForDay_rs.FieldbyName('PAY_I').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_J').AsFloat));
 
-    
+    DevFactory.WritePrint('');
     if ForDay_rs.FieldByName('PAY_A').AsFloat <> 0 then
       DevFactory.WritePrint(GetPayText('A')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat));
     if ForDay_rs.FieldByName('PAY_B').AsFloat <> 0 then
@@ -151,7 +174,9 @@ begin
       DevFactory.WritePrint(GetPayText('J')+':'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_J').AsFloat));
 
     DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
-    DevFactory.WritePrint('打印日期:'+FormatDateTime('YYYY-MM-DD HH:NN:SS',Now));
+    DevFactory.WritePrint('打印时间:'+FormatDateTime('YYYY-MM-DD HH:NN:SS',Now));
+    For i:= 0 to DevFactory.PrintNull-1 do
+      DevFactory.WritePrint(' ');
 
   finally
     DevFactory.EndPrint;
@@ -167,7 +192,7 @@ procedure TfrmTicketPrint.FormatGoodsAndMoney(Goods, Num,Unit_Name,
 var F_Num,F_Money,F_Goods:String;
     F_N,F_M,F_G,i,j:Integer;
 begin
-  if DevFactory.Width = 38 then
+  {if DevFactory.Width = 38 then
     begin
       F_G := 20;
       F_N := 8;
@@ -175,10 +200,11 @@ begin
     end
   else
     begin
-      F_G := 16;
+      F_G := 15;
       F_N := 7;
       F_M := 8;
-    end;
+    end;}
+  F_M := 8;
   F_Num := ' '+Num+Unit_Name;
 
   if Length(Money) > F_M then
@@ -201,11 +227,11 @@ begin
   if (i+j) > DevFactory.Width then
     begin
       DevFactory.WritePrint(F_Goods);
-      DevFactory.WritePrint(FormatText(F_Num,DevFactory.Width-Length(F_Num),False));
+      DevFactory.WritePrint(FormatText(F_Num,DevFactory.Width-1,False));
     end
   else
     begin
-      DevFactory.WritePrint(FormatText(F_Goods,DevFactory.Width-i)+F_Num);
+      DevFactory.WritePrint(FormatText(F_Goods,DevFactory.Width-i-1)+F_Num);
     end;
 
 end;
@@ -244,9 +270,29 @@ begin
     if rs.IsEmpty then
       Result := 'ID'
     else
-      Result := rs.FieldbyName('CODE_NAME').AsString;
+      begin
+        if Length(rs.FieldbyName('CODE_NAME').AsString)>5 then
+          Result := rs.FieldbyName('CODE_NAME').AsString
+        else
+          Result := rs.FieldbyName('CODE_NAME').AsString+'支付';
+      end;
+
   finally
     rs.Free;
+  end;
+end;
+
+function TfrmTicketPrint.GetTicketGodsName(DataSet: TZQuery): string;
+begin
+  case DevFactory.TicketPrintName of
+  0:result := DataSet.FieldbyName('GODS_NAME').AsString;
+  1:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString;
+  2:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString;
+  3:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+  4:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('GODS_CODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+  5:result := DataSet.FieldbyName('GODS_NAME').AsString+' '+DataSet.FieldbyName('BARCODE').AsString+' '+DataSet.FieldbyName('PROPERTY_02_TEXT').AsString+DataSet.FieldbyName('PROPERTY_01_TEXT').AsString;
+  else
+    result := DataSet.FieldbyName('GODS_NAME').AsString;
   end;
 end;
 

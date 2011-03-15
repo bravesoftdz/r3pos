@@ -71,6 +71,18 @@ type
     cxRadioGroup1: TcxRadioGroup;
     fndCREA_USER_M: TzrComboBoxList;
     fndSHOP_ID_M: TzrComboBoxList;
+    PopupMenu1: TPopupMenu;
+    PopupMenu2: TPopupMenu;
+    PopupMenu3: TPopupMenu;
+    AllSelect: TMenuItem;
+    InverseSelect: TMenuItem;
+    NotSelect: TMenuItem;
+    AllSelect1: TMenuItem;
+    InverserSelect1: TMenuItem;
+    NotSelect1: TMenuItem;
+    AllSelect2: TMenuItem;
+    InverserSelect2: TMenuItem;
+    NotSelect2: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
@@ -91,6 +103,15 @@ type
     procedure DBGridEh3DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure RzPageChange(Sender: TObject);
+    procedure AllSelectClick(Sender: TObject);
+    procedure InverseSelectClick(Sender: TObject);
+    procedure NotSelectClick(Sender: TObject);
+    procedure AllSelect1Click(Sender: TObject);
+    procedure InverserSelect1Click(Sender: TObject);
+    procedure NotSelect1Click(Sender: TObject);
+    procedure AllSelect2Click(Sender: TObject);
+    procedure NotSelect2Click(Sender: TObject);
+    procedure InverserSelect2Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -393,10 +414,12 @@ begin
     end
   else if RzPage.TabIndex = 1 then
     begin
+      if Db_CloseDay.IsEmpty and (not Db_CloseDay.Active) then Exit;
       CancelD;
     end
   else if RzPage.TabIndex = 2 then
     begin
+      if Db_CloseMonth.IsEmpty and (not Db_CloseMonth.Active) then Exit;
       CancelM;
     end;
 
@@ -476,13 +499,151 @@ begin
 end;
 
 procedure TfrmRckMng.Audit2;
+var Msg:String;
+    Params:TftParamList;
 begin
+  inherited;
+  if Db_CloseDay.IsEmpty then  Exit;
 
+  //权限
+  if Db_CloseDay.FieldByName('CHK_DATE').AsString <> '' then
+    begin
+      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
+      if Db_CloseDay.FieldByName('CHK_USER').AsString <> Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
+      if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    end
+  else
+    begin
+      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
+      if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
+    end;
+
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
+      Params.ParamByName('CHK_USER').AsString := Global.UserID;
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('CREA_DATE').AsString := Db_CloseDay.FieldbyName('CREA_DATE').AsString;
+      Params.ParamByName('SHOP_ID').AsString := Db_CloseDay.FieldbyName('SHOP_ID').AsString;
+      if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+        begin
+          try
+            Msg := Factor.ExecProc('',Params);
+            actAudit.Caption := '弃审';
+          Except
+            actAudit.Caption := '审核';
+          end;
+        end
+      else
+        begin
+          try
+            Msg := Factor.ExecProc('',Params);
+            actAudit.Caption := '审核';
+          Except
+            actAudit.Caption := '弃审';
+          end;
+        end;
+    finally
+      Params.Free;
+    end;
+    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
+    if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
+        cdsBrowser.FieldByName('CHK_USER').AsString := Global.UserID;
+        cdsBrowser.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
+        cdsBrowser.Post;
+      end
+    else
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('CHK_DATE').AsString := '';
+        cdsBrowser.FieldByName('CHK_USER').AsString := '';
+        cdsBrowser.FieldByName('CHK_USER_TEXT').AsString := '';
+        cdsBrowser.Post;
+      end;
+  Except
+    on E:Exception do
+      begin
+        Raise Exception.Create(E.Message);
+      end;
+  end;
 end;
 
 procedure TfrmRckMng.Audit3;
+var Msg:String;
+    Params:TftParamList;
 begin
+  inherited;
+  if Db_CloseMonth.IsEmpty then  Exit;
 
+  //权限
+  if Db_CloseMonth.FieldByName('CHK_DATE').AsString <> '' then
+    begin
+      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
+      if Db_CloseMonth.FieldByName('CHK_USER').AsString <> Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
+      if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    end
+  else
+    begin
+      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
+      if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
+    end;
+
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
+      Params.ParamByName('CHK_USER').AsString := Global.UserID;
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').AsString := Db_CloseMonth.FieldbyName('SHOP_ID').AsString;
+      Params.ParamByName('CREA_DATE').AsString := Db_CloseMonth.FieldbyName('CREA_DATE').AsString;
+      if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+        begin
+          try
+            Msg := Factor.ExecProc('',Params);
+            actAudit.Caption := '弃审';
+          Except
+            actAudit.Caption := '审核';
+          end;
+        end
+      else
+        begin
+          try
+            Msg := Factor.ExecProc('',Params);
+            actAudit.Caption := '审核';
+          Except
+            actAudit.Caption := '弃审';
+          end;
+        end;
+    finally
+      Params.Free;
+    end;
+    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
+    if Db_CloseMonth.FieldByName('CHK_DATE').AsString = '' then
+      begin
+        Db_CloseMonth.Edit;
+        Db_CloseMonth.FieldByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
+        Db_CloseMonth.FieldByName('CHK_USER').AsString := Global.UserID;
+        Db_CloseMonth.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
+        Db_CloseMonth.Post;
+      end
+    else
+      begin
+        Db_CloseMonth.Edit;
+        Db_CloseMonth.FieldByName('CHK_DATE').AsString := '';
+        Db_CloseMonth.FieldByName('CHK_USER').AsString := '';
+        Db_CloseMonth.FieldByName('CHK_USER_TEXT').AsString := '';
+        Db_CloseMonth.Post;
+      end;
+  Except
+    on E:Exception do
+      begin
+        Raise Exception.Create(E.Message);
+      end;
+  end;
 end;
 
 procedure TfrmRckMng.actAuditExecute(Sender: TObject);
@@ -553,9 +714,9 @@ begin
   ' left outer join CA_SHOP_INFO a on a.TENANT_ID=ja.TENANT_ID and a.SHOP_ID=ja.SHOP_ID where a.COMM not in (''12'',''02'')) jb'+
   ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc'+
   ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER';
-  Db_CloseDay.Close;
-  Db_CloseDay.SQL.Text := StrSql;
-  Factor.Open(Db_CloseDay);
+  Db_CloseMonth.Close;
+  Db_CloseMonth.SQL.Text := StrSql;
+  Factor.Open(Db_CloseMonth);
 end;
 
 procedure TfrmRckMng.DBGridEh2DrawColumnCell(Sender: TObject;
@@ -601,7 +762,218 @@ end;
 procedure TfrmRckMng.RzPageChange(Sender: TObject);
 begin
   inherited;
-  actFindExecute(Sender);
+  //actFindExecute(Sender);
+end;
+
+procedure TfrmRckMng.AllSelectClick(Sender: TObject);
+begin
+  inherited;
+  if (not cdsBrowser.Active) and cdsBrowser.IsEmpty then Exit;
+  cdsBrowser.DisableControls;
+  try
+    cdsBrowser.First;
+    while not cdsBrowser.Eof do
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('FLAG').AsString := '1';
+        cdsBrowser.Post;
+        cdsBrowser.Next;
+      end;
+  finally
+    cdsBrowser.First;
+    cdsBrowser.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.InverseSelectClick(Sender: TObject);
+begin
+  inherited;
+  if (not cdsBrowser.Active) or cdsBrowser.IsEmpty then Exit;
+  cdsBrowser.DisableControls;
+  try
+    cdsBrowser.First;
+    while not cdsBrowser.Eof do
+      begin
+        if cdsBrowser.FieldByName('FLAG').AsString = '0' then
+          begin
+            cdsBrowser.Edit;
+            cdsBrowser.FieldByName('FLAG').AsString := '1';
+            cdsBrowser.Post;
+          end
+        else
+          begin
+            cdsBrowser.Edit;
+            cdsBrowser.FieldByName('FLAG').AsString := '0';
+            cdsBrowser.Post;
+          end;
+        cdsBrowser.Next;
+      end;
+
+  finally
+    cdsBrowser.First;
+    cdsBrowser.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.NotSelectClick(Sender: TObject);
+begin
+  inherited;
+  if cdsBrowser.IsEmpty or (not cdsBrowser.Active) then Exit;
+  cdsBrowser.DisableControls ;
+  try
+    cdsBrowser.First;
+    while not cdsBrowser.Eof do
+      begin
+        cdsBrowser.Edit;
+        cdsBrowser.FieldByName('FLAG').AsString := '0';
+        cdsBrowser.Post;
+        cdsBrowser.Next;
+      end;
+
+  finally
+    cdsBrowser.First;
+    cdsBrowser.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.AllSelect1Click(Sender: TObject);
+begin
+  inherited;
+  if (not Db_CloseDay.Active) and Db_CloseDay.IsEmpty then Exit;
+  Db_CloseDay.DisableControls;
+  try
+    Db_CloseDay.First;
+    while not Db_CloseDay.Eof do
+      begin
+        Db_CloseDay.Edit;
+        Db_CloseDay.FieldByName('FLAG').AsString := '1';
+        Db_CloseDay.Post;
+        Db_CloseDay.Next;
+      end;
+  finally
+    Db_CloseDay.First;
+    Db_CloseDay.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.InverserSelect1Click(Sender: TObject);
+begin
+  inherited;
+  if (not Db_CloseDay.Active) or Db_CloseDay.IsEmpty then Exit;
+  Db_CloseDay.DisableControls;
+  try
+    Db_CloseDay.First;
+    while not Db_CloseDay.Eof do
+      begin
+        if Db_CloseDay.FieldByName('FLAG').AsString = '0' then
+          begin
+            Db_CloseDay.Edit;
+            Db_CloseDay.FieldByName('FLAG').AsString := '1';
+            Db_CloseDay.Post;
+          end
+        else
+          begin
+            Db_CloseDay.Edit;
+            Db_CloseDay.FieldByName('FLAG').AsString := '0';
+            Db_CloseDay.Post;
+          end;
+        Db_CloseDay.Next;
+      end;
+
+  finally
+    Db_CloseDay.First;
+    Db_CloseDay.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.NotSelect1Click(Sender: TObject);
+begin
+  inherited;
+  if (not Db_CloseDay.Active) and Db_CloseDay.IsEmpty then Exit;
+  Db_CloseDay.DisableControls;
+  try
+    Db_CloseDay.First;
+    while not Db_CloseDay.Eof do
+      begin
+        Db_CloseDay.Edit;
+        Db_CloseDay.FieldByName('FLAG').AsString := '0';
+        Db_CloseDay.Post;
+        Db_CloseDay.Next;
+      end;
+  finally
+    Db_CloseDay.First;
+    Db_CloseDay.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.AllSelect2Click(Sender: TObject);
+begin
+  inherited;
+ if (not Db_CloseMonth.Active) and Db_CloseMonth.IsEmpty then Exit;
+  Db_CloseMonth.DisableControls;
+  try
+    Db_CloseMonth.First;
+    while not Db_CloseMonth.Eof do
+      begin
+        Db_CloseMonth.Edit;
+        Db_CloseMonth.FieldByName('FLAG').AsString := '1';
+        Db_CloseMonth.Post;
+        Db_CloseMonth.Next;
+      end;
+  finally
+    Db_CloseMonth.First;
+    Db_CloseMonth.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.NotSelect2Click(Sender: TObject);
+begin
+  inherited;
+ if (not Db_CloseMonth.Active) and Db_CloseMonth.IsEmpty then Exit;
+  Db_CloseMonth.DisableControls;
+  try
+    Db_CloseMonth.First;
+    while not Db_CloseMonth.Eof do
+      begin
+        Db_CloseMonth.Edit;
+        Db_CloseMonth.FieldByName('FLAG').AsString := '0';
+        Db_CloseMonth.Post;
+        Db_CloseMonth.Next;
+      end;
+  finally
+    Db_CloseMonth.First;
+    Db_CloseMonth.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.InverserSelect2Click(Sender: TObject);
+begin
+  inherited;
+  if (not Db_CloseMonth.Active) or Db_CloseMonth.IsEmpty then Exit;
+  Db_CloseMonth.DisableControls;
+  try
+    Db_CloseMonth.First;
+    while not Db_CloseMonth.Eof do
+      begin
+        if Db_CloseMonth.FieldByName('FLAG').AsString = '0' then
+          begin
+            Db_CloseMonth.Edit;
+            Db_CloseMonth.FieldByName('FLAG').AsString := '1';
+            Db_CloseMonth.Post;
+          end
+        else
+          begin
+            Db_CloseMonth.Edit;
+            Db_CloseMonth.FieldByName('FLAG').AsString := '0';
+            Db_CloseMonth.Post;
+          end;
+        Db_CloseMonth.Next;
+      end;
+
+  finally
+    Db_CloseMonth.First;
+    Db_CloseMonth.EnableControls;
+  end;
 end;
 
 end.

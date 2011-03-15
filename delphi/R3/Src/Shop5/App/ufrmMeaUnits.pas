@@ -85,6 +85,7 @@ begin
     if (cdsUnit.FieldByName('UNIT_NAME').AsString='') and (cdsUnit.FieldByName('UNIT_SPELL').AsString='') and (cdsUnit.FieldByName('UNIT_ID').AsString='') then
       exit;
   end;
+  
   cdsUnit.DisableControls;
   try
     cdsUnit.First;
@@ -225,8 +226,8 @@ begin
       if i=0 then i:=1;
       cdsUnit.RecNo:=i;
     end;
-    if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
     btnSave.Enabled:=False;
+    if cdsUnit.IsEmpty then btnDelete.Enabled:=False;
     raise;    
   end;
   Global.RefreshTable('PUB_MEAUNITS');
@@ -267,8 +268,6 @@ begin
   if Flag=1 then
   begin
     btnAppendClick(nil);
-    btnAppend.Enabled:=False;
-    btnDelete.Enabled:=False;
   end;
 end;
 

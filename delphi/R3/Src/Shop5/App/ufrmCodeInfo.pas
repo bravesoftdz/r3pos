@@ -316,7 +316,6 @@ begin
         //其它窗体调用此窗体，直接新增记录
         if Flag=1 then
         begin
-          btnAppend.Enabled:=False;
           btnAppendClick(nil);
         end;
         ShowModal;

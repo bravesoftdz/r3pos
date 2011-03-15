@@ -39,10 +39,12 @@ function TPRICEGRADEInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
 begin
-  result := true;
+  result := False;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
+    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.ParamByName('PRICE_NAME').AsString := FieldByName('PRICE_NAME').AsString;
     AGlobal.Open(rs);
     rs.First;
     while not rs.Eof do
@@ -62,12 +64,40 @@ begin
   finally
     rs.Free;
   end;
-
+  result := True;
 end;
 
 function TPRICEGRADEInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
 begin
-  Result:=True;
+  result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_ID<>:PRICE_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
+    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.ParamByName('OLD_PRICE_ID').AsString := FieldByName('PRICE_ID').AsOldString;
+    rs.ParamByName('PRICE_NAME').AsString := FieldByName('PRICE_NAME').AsString;
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的等级，重新启动原有编码
+           begin
+             FieldbyName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+             case iDbType of
+             0: AGlobal.ExecSQL('delete PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
+             3: AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
+             end;
+           end
+        else
+           Raise Exception.Create('"'+FieldbyName('PRICE_NAME').AsString+'"等级名不能重复设置');
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
+  result := True;
 end;
 
 procedure TPRICEGRADEInfo.InitClass;
@@ -75,7 +105,7 @@ var Str:string;
 begin
   inherited;
   SelectSQL.Text := 'select TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,'+
-  'AGIO_SORTS,SEQ_NO,''0000'' as LEVEL_ID,COMM,TIME_STAMP from PUB_PRICEGRADE where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID order by PRICE_ID';
+  'AGIO_SORTS,SEQ_NO,''0000'' as LEVEL_ID,COMM,TIME_STAMP from PUB_PRICEGRADE where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID order by INTEGRAL,PRICE_ID';
   IsSQLUpdate := True;
 
   Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,AGIO_SORTS,SEQ_NO,COMM,TIME_STAMP) '

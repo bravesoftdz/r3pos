@@ -169,9 +169,9 @@ begin
   with TfrmRelationInfo.Create(Owner) do
     begin
       try
+        Edit(Code_id);      
         if IsExist then
           begin
-            Edit(Code_id);
             if ShowModal = mrOk then
               begin
                 Aobj.CopyTo(_Aobj);

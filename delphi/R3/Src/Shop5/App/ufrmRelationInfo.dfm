@@ -36,7 +36,7 @@ inherited frmRelationInfo: TfrmRelationInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #24403#21069#32463#38144#21830#24635#25968
+            Caption = #32463#38144#21830#24635#25968
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -64,6 +64,7 @@ inherited frmRelationInfo: TfrmRelationInfo
             Top = 34
             Width = 118
             Height = 20
+            Enabled = False
             TabOrder = 0
           end
           object edtGOODS_NUM: TcxTextEdit
@@ -71,6 +72,7 @@ inherited frmRelationInfo: TfrmRelationInfo
             Top = 34
             Width = 118
             Height = 20
+            Enabled = False
             TabOrder = 1
           end
         end

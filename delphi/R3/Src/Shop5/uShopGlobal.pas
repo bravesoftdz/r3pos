@@ -80,20 +80,13 @@ type
     property okline:boolean read Fokline write Setokline;
     // 1是离线, 0 是联机
     property offline:boolean read Foffline write Setoffline;
+
   end;
 
 const
   SysID:TGUID='{149C2F30-9066-48A6-8CFC-0EDD7F6DFE54}';
 var
   ShopGlobal: TShopGlobal;
-  //数据库版本 DB5.0.0.3
-  DBVersion:string;
-  //软件版本  .ALL 分销版 .NET 连锁版 .LCL 单机版  .OLE 在线版 
-  SFVersion:string;
-  //行业版本 1.FIG 服装版 2.MKT 超市版  3.OHR 标准版  4.DLI 食品业
-  CLVersion:string;
-  //产品编码
-  ProductID:string;
 implementation
 uses uFnUtil;
 {$R *.dfm}

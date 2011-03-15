@@ -206,7 +206,7 @@ inherited ShopGlobal: TShopGlobal
       '       NEW_LOWPRICE,'
       
         '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,USING_BATC' +
-        'H_NO,USING_LOCUS_NO'
+        'H_NO,USING_LOCUS_NO,j.RELATION_ID as RELATION_ID'
       'from ('
       
         'select * from VIW_GOODSPRICE where POLICY_TYPE=2 and SHOP_ID=:SH' +

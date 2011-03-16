@@ -222,7 +222,7 @@ type
      function  IsEdit(Aobj:TRecord_;cdsTable: TZQuery):Boolean;//判断商品资料是否有修改
      procedure IsBarCodeSame(Aobj:TRecord_);//判断条码有没有重复
      procedure SetdbState(const Value: TDataSetState); override;
-     procedure EditPrice(IsRelation: Boolean=False); //只能修改价格
+     procedure EditPrice; //只能修改价格
      procedure WriteBarCode(str:string);  //写入条形码
      procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
      procedure ReadGoodsBarCode(CdsBarCode: TZQuery);      //读取商品条码
@@ -304,18 +304,21 @@ begin
 end;
 
 procedure TfrmGoodsInfo.Edit(code: string);
-var Tmp: TZQuery;
+var
+  Tmp: TZQuery;
+  IsRelFlag: Boolean; //是否是供应链
 begin
   Open(code);
   dbState := dsEdit;
   FPriceChange:=False;
   CheckTabGoodPriceVisible; //判断会员价格是否显示
-  Tmp:=Global.GetZQueryFromName('CA_TENANT');
-  if Tmp.Locate('TENANT_ID',AObj.FieldByName('TENANT_ID').AsString,[]) then
+  if (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0') and
+     (Inttostr(Global.TENANT_ID)+'0001'<>trim(Global.SHOP_ID)) then //自主经营 且 不是总店  只能修改本店的售价
   begin
-    if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
-      EditPrice;
-  end;
+    EditPrice;
+  end else
+  if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
+    EditPrice;
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
@@ -365,7 +368,6 @@ end;
 
 procedure TfrmGoodsInfo.Open(code: string);
 var
-  CID:string;
   Params: TftParamList;
 begin
   locked:=True;
@@ -403,24 +405,6 @@ begin
     if (dbState=dsBrowse) and (not TabGoodPrice.Visible) then //判断会员价格是否显示
       CheckTabGoodPriceVisible;
 
-    if BarCode.Locate('UNIT_ID',AObj.FieldByName('CALC_UNITS').AsString,[])  then
-    begin
-      if (BarCode.FieldByName('PROPERTY_01').AsString='#')  and  (BarCode.FieldByName('PROPERTY_02').AsString='#')  and (BarCode.FieldByName('BATCH_NO').AsString='#') and (BarCode.FieldByName('TENANT_ID').AsString=CID)then
-         edtBARCODE1.Text:=BarCode.FieldByName('BARCODE').AsString;
-      UnitBarCode:=BarCode.FieldByName('BARCODE').AsString;
-    end;
-    if BarCode.Locate('UNIT_ID',AObj.FieldByName('SMALL_UNITS').AsString,[]) then
-    begin
-      if (BarCode.FieldByName('PROPERTY_01').AsString='#')  and  (BarCode.FieldByName('PROPERTY_02').AsString='#')  and (BarCode.FieldByName('BATCH_NO').AsString='#') and (BarCode.FieldByName('TENANT_ID').AsString=CID) then
-        edtBARCODE2.Text:=BarCode.FieldByName('BARCODE').AsString;
-      SmallBarCode:=BarCode.FieldByName('BARCODE').AsString;
-    end;
-    if BarCode.Locate('UNIT_ID',AObj.FieldByName('BIG_UNITS').AsString,[])  then
-    begin
-      if (BarCode.FieldByName('PROPERTY_01').AsString='#')  and  (BarCode.FieldByName('PROPERTY_02').AsString='#')  and (BarCode.FieldByName('BATCH_NO').AsString='#') and (BarCode.FieldByName('TENANT_ID').AsString=CID) then
-        edtBARCODE3.Text:=BarCode.FieldByName('BARCODE').AsString;
-      BigBarCode:=BarCode.FieldByName('BARCODE').AsString;
-    end;
   finally
     locked:=False;
   end;
@@ -628,6 +612,7 @@ var
   s:string;
 begin
   uShopUtil.ReadFromObject(AObj,self);
+
   if AObj.FieldByName('NEW_OUTPRICE').AsFloat<>0 then
     edtPROFIT_RATE.Text:=formatFloat('#0',AObj.FieldByName('NEW_INPRICE').AsFloat*100/AObj.FieldByName('NEW_OUTPRICE').AsFloat)
   else
@@ -792,10 +777,22 @@ begin
   Result:=False;
   for i:=0 to cdsGoods.FieldCount-1 do
   begin
-    if AObj.Fields[i].AsString<>cdsGoods.Fields[i].AsString then
-    begin
-      Result:=True;
-      break;
+    case cdsGoods.Fields[i].DataType of
+      ftSmallint,ftInteger, ftWord, ftFloat,ftCurrency, ftDate, ftTime, ftDateTime:
+      begin
+        if AObj.Fields[i].AsFloat<>cdsGoods.Fields[i].AsFloat then
+        begin
+          Result:=True;
+          break;
+        end;
+      end else
+      begin
+        if AObj.Fields[i].AsString<>cdsGoods.Fields[i].AsString then
+        begin
+          Result:=True;
+          break;
+        end;
+      end;
     end;
   end;
   //判断条形码是否改变:
@@ -1189,7 +1186,7 @@ begin
     end;
 end;
 
-procedure TfrmGoodsInfo.EditPrice(IsRelation: Boolean=False);
+procedure TfrmGoodsInfo.EditPrice;
 var i:integer;
 begin
   for i := 0 to ComponentCount-1 do
@@ -1243,11 +1240,9 @@ begin
   RB_USING_BARTER2.Enabled:=False;
   edtBARTER_INTEGRAL2.Enabled:=False;
   //是总店才有权限修改:标准售价：
-  if inttostr(Global.TENANT_ID)+'0001'=trim(Global.SHOP_ID) then 
-  begin
-    SetEditStyle(dsEdit,edtNEW_OUTPRICE.Style);
-    edtNEW_OUTPRICE.Properties.ReadOnly:=False;
-  end;
+  //SetEditStyle(dsEdit,edtNEW_OUTPRICE.Style);
+  //edtNEW_OUTPRICE.Properties.ReadOnly:=False;
+
   SetEditStyle(dsEdit,edtMY_OUTPRICE.Style);
   edtMY_OUTPRICE.Properties.ReadOnly:=False;
   SetEditStyle(dsEdit,edtMY_OUTPRICE1.Style);
@@ -1664,7 +1659,6 @@ end;
 
 procedure TfrmGoodsInfo.OpenCopyNew(code: string);
 var
-  CID:string;
   CurObj:TRecord_;
   Params: TftParamList;
   GoodInfo,GoodBarCode: TZQuery;
@@ -1734,7 +1728,7 @@ begin
   tmp:=Global.GetZQueryFromName('PUB_GOODSINFO');
   tmp.Filtered:=False;
   IsExists:=False;
-  if edtGODS_CODE.Enabled then  //可修改商品编码
+  if (not edtGODS_CODE.Properties.ReadOnly) then  //可修改商品编码
   begin
     GoodValue:=trim(edtGODS_CODE.Text);
     tmp.First;
@@ -1757,7 +1751,7 @@ begin
     end;
   end;
   
-  if edtGODS_NAME.Enabled then //可修改商品名称
+  if (not edtGODS_NAME.Properties.ReadOnly) then //可修改商品名称
   begin
     IsExists:=False;
     GoodValue:=trim(edtGODS_NAME.Text);
@@ -2080,20 +2074,24 @@ begin
   CdsBarCode.First;
   while not CdsBarCode.Eof do
   begin
-    if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='0' then
+    if (trim(CdsBarCode.FieldByName('BATCH_NO').AsString)='#') and (trim(CdsBarCode.FieldByName('PROPERTY_01').AsString)='#') and
+       (trim(CdsBarCode.FieldByName('PROPERTY_02').AsString)='#') then
     begin
-      UnitBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtBARCODE1.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
-    end else
-    if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='1' then
-    begin
-      SmallBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtBARCODE2.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
-    end else
-    if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='2' then
-    begin
-      BigBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
-      edtBARCODE3.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='0' then
+      begin
+        UnitBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
+        edtBARCODE1.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      end else
+      if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='1' then
+      begin
+        SmallBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
+        edtBARCODE2.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      end else
+      if trim(CdsBarCode.fieldbyName('BARCODE_TYPE').AsString)='2' then
+      begin
+        BigBarCode:=CdsBarCode.fieldbyName('BARCODE').AsString;
+        edtBARCODE3.Text:=CdsBarCode.fieldbyName('BARCODE').AsString;
+      end;
     end;
     CdsBarCode.Next;
   end;
@@ -2491,7 +2489,7 @@ begin
        r := StrtoFloat(Text);
     if r>100 then MsgStr:='输入的折扣率不能大于100，无效';
 
-    if VarIsNull(Value) then
+    if (VarIsNull(Value)) then
     begin
       r:=0;
       Text:='0';
@@ -2513,8 +2511,7 @@ begin
     end;
     if MsgStr<>'' then  Raise Exception.Create(MsgStr);
   except
-  end;
-
+  end;   
 end;
 
 procedure TfrmGoodsInfo.PriceGridColumns3UpdateData(Sender: TObject;
@@ -2527,7 +2524,7 @@ begin
     if Text='' then
       r := 0
     else
-       r := StrtoFloat(Text);
+       r := StrtoFloatDef(Text,0);
     if r>999999 then Raise Exception.Create('输入的数值不能100，无效');
   except
     on E:Exception do
@@ -2539,7 +2536,7 @@ begin
       end;
   end;
 
-  if VarIsNull(Value) then r:=0 else r:=Value;
+  if (VarIsNull(Value)) then r:=0 else r:=Value;
 
   if (PriceGrid.DataSource.DataSet.Active) and (Value<>CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsVariant) then
   begin

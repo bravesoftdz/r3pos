@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 236
-  Top = 129
+  Left = 229
+  Top = 106
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 426
@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 1
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -839,14 +837,14 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Visible = False
               Width = 50
             end>
-          DropWidth = 100
+          DropWidth = 160
           DropHeight = 120
           ShowTitle = False
           AutoFitColWidth = True
           OnAddClick = edtSORT_ID6AddClick
           ShowButton = True
           LocateStyle = lsDark
-          Buttons = [zbNew]
+          Buttons = [zbNew, zbClear]
           DropListStyle = lsEditFixed
           OnSaveValue = edtSORT_ID6SaveValue
           MultiSelect = False
@@ -884,14 +882,14 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Visible = False
               Width = 50
             end>
-          DropWidth = 100
+          DropWidth = 160
           DropHeight = 120
           ShowTitle = False
           AutoFitColWidth = True
           OnAddClick = edtSORT_ID2AddClick
           ShowButton = True
           LocateStyle = lsDark
-          Buttons = [zbNew]
+          Buttons = [zbNew, zbClear]
           DropListStyle = lsEditFixed
           OnSaveValue = edtSORT_ID2SaveValue
           MultiSelect = False
@@ -1042,8 +1040,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Title.Caption = #25340#38899#30721
               Visible = False
             end>
-          DropWidth = 170
-          DropHeight = 170
+          DropWidth = 160
+          DropHeight = 200
           ShowTitle = True
           AutoFitColWidth = True
           OnAddClick = edtSORT_ID3AddClick

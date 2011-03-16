@@ -23,8 +23,8 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from VIW_CUSTOMER where TENANT_ID=:OLD_TENANT_ID and PRICE_ID=:OLD_PRICE_ID and COMM not in (''02'',''12'')';
-    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.SQL.Text := 'select count(*) from VIW_CUSTOMER where TENANT_ID=:TENANT_ID and PRICE_ID=:OLD_PRICE_ID and COMM not in (''02'',''12'')';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('OLD_PRICE_ID').AsString := FieldByName('PRICE_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
@@ -42,8 +42,8 @@ begin
   result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
-    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_NAME').AsString := FieldByName('PRICE_NAME').AsString;
     AGlobal.Open(rs);
     rs.First;
@@ -74,8 +74,8 @@ begin
   result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_ID<>:PRICE_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
-    rs.ParamByName('OLD_TENANT_ID').AsString := FieldByName('TENANT_ID').AsOldString;
+    rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_ID<>:OLD_PRICE_ID and PRICE_NAME=:PRICE_NAME and COMM not in (''02'',''12'')';
+    rs.ParamByName('OLD_TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('OLD_PRICE_ID').AsString := FieldByName('PRICE_ID').AsOldString;
     rs.ParamByName('PRICE_NAME').AsString := FieldByName('PRICE_NAME').AsString;
     AGlobal.Open(rs);

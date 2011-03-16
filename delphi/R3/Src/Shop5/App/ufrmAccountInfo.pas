@@ -186,7 +186,7 @@ begin
   WriteToObject(AObj,self);
   if dbState = dsInsert then
     begin
-      AObj.FieldByName('SHOP_ID').AsString := IntToStr(Global.TENANT_ID)+'0001';
+      AObj.FieldByName('SHOP_ID').AsString := '#';
       AObj.FieldbyName('ACCOUNT_ID').AsString:=TSequence.NewId;
       AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     end;

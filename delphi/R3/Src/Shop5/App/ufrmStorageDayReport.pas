@@ -92,6 +92,10 @@ type
     adoReport5: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
+    fndP4_ReckType: TcxComboBox;
+    fndP3_ReckType: TcxComboBox;
+    fndP2_ReckType: TcxComboBox;
+    fndP1_ReckType: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -123,6 +127,7 @@ type
     //4、按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title
+    procedure DoReckTypeOnChange(Sender: TObject); //
   public
     { Public declarations }
     HasChild:boolean;
@@ -138,14 +143,23 @@ uses
 {$R *.dfm}
 
 procedure TfrmStorageDayReport.FormCreate(Sender: TObject);
+var
+  i: integer;
+  CmpName: string;
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
-  P1_D1.Clear;
-  P2_D1.Clear;
-  P3_D1.Clear;
-  P4_D1.Clear;
-  
+  for i:=0 to ComponentCount-1 do
+  begin
+    CmpName:=trim(LowerCase(TcxComboBox(Components[i]).Name));
+    if Components[i] is TcxComboBox then
+    begin
+      if (Copy(CmpName,1,4)='fndp') and (RightStr(CmpName,9)='_recktype') then
+        TcxComboBox(Components[i]).Properties.OnChange:=DoReckTypeOnChange; 
+      TcxComboBox(Components[i]).ItemIndex:=0;
+    end;
+  end;
+
   HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
   rzPage.Pages[0].TabVisible := HasChild;
   rzPage.Pages[1].TabVisible := HasChild;
@@ -194,7 +208,7 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //日期条件
-  if P1_D1.EditValue = null then //直接查询库存表:
+  if fndP1_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
@@ -219,7 +233,9 @@ begin
       ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
       );
   end else
+  if fndP1_ReckType.ItemIndex=1 then
   begin
+    if P1_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  '); 
     ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));
     //检测是否计算
     CheckCalc(ORG_Date);
@@ -321,7 +337,7 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //日期条件
-  if P1_D1.EditValue = null then //直接查询库存表:
+  if fndP2_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
@@ -346,7 +362,9 @@ begin
       ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
       );
   end else
+  if fndP2_ReckType.ItemIndex=1 then
   begin
+    if P2_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');
     //检测是否计算
     ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date+1));  //库存日期=+1天取期初
     CheckCalc(ORG_Date);
@@ -408,7 +426,7 @@ begin
   end;
 
   //日期条件
-  if P1_D1.EditValue = null then //直接查询库存表:
+  if fndP3_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
@@ -427,8 +445,10 @@ begin
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
   end else
+  if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:  
   begin
     //检测是否计算
+    if P3_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');    
     ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date+1));  //库存日期=+1天取期初
     CheckCalc(ORG_Date);
     strSql :=
@@ -528,7 +548,7 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   //日期条件
-  if P4_D1.EditValue = null then //直接查询库存表:
+  if fndP4_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
@@ -555,7 +575,9 @@ begin
               'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
      result := result +  ' order by j.GODS_CODE';
   end else
+  if fndP4_ReckType.ItemIndex=1 then //直接查询库存表:  
   begin
+    if P4_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');      
     ORG_Date:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date+1));
     //检测是否计算
     CheckCalc(ORG_Date);
@@ -710,7 +732,7 @@ procedure TfrmStorageDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 begin
   if self.SelectGoodSortType(sid2,srid2,SortName) then
-    fndP1_SORT_ID.Text:=SortName;
+    fndP2_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmStorageDayReport.fndP4_SORT_IDPropertiesButtonClick(
@@ -776,6 +798,25 @@ begin
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
   if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
+end;
+
+procedure TfrmStorageDayReport.DoReckTypeOnChange(Sender: TObject);
+var
+  CmpName: string;
+  FindCmp: TComponent;
+begin
+  CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
+  if CmpName<>'' then
+  begin
+    CmpName:='P'+CmpName+'_D1';
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TcxDateEdit) then
+    begin
+      TcxDateEdit(FindCmp).Visible:=(TcxComboBox(Sender).ItemIndex<>0);
+      if (TcxDateEdit(FindCmp).Visible) and (trim(TcxDateEdit(FindCmp).Text)='') then
+        TcxDateEdit(FindCmp).Date:=Date();
+    end;
+  end;
 end;
 
 end.

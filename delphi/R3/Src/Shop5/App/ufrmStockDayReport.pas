@@ -146,6 +146,7 @@ type
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -972,7 +973,7 @@ procedure TfrmStockDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 begin
   if self.SelectGoodSortType(sid2,srid2,SortName) then
-    fndP1_SORT_ID.Text:=SortName;
+    fndP2_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmStockDayReport.fndP4_SORT_IDPropertiesButtonClick(
@@ -1048,6 +1049,14 @@ begin
     else if fndP5_ReturnStock.Checked then
       TitleList.Add('单据类型：'+fndP5_ReturnStock.Caption);
   end;    
+end;
+
+procedure TfrmStockDayReport.fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  sid5 := '';
+  srid5 :='';
+  fndP5_SORT_ID.Text := '';
 end;
 
 end.

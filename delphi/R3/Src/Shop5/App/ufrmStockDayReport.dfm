@@ -1883,7 +1883,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
                   TabOrder = 6
-                  OnKeyPress = fndP4_SORT_IDKeyPress
+                  OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1

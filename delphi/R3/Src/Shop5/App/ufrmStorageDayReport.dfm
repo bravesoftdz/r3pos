@@ -15,10 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -70,9 +70,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
-                  Left = 80
-                  Top = 10
-                  Width = 85
+                  Left = 154
+                  Top = 11
+                  Width = 119
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
@@ -237,6 +237,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP1_ReckType: TcxComboBox
+                  Left = 80
+                  Top = 11
+                  Width = 73
+                  Height = 20
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #24403#21069#24211#23384
+                    #26085#32467#24211#23384)
+                  TabOrder = 8
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 87
@@ -360,7 +371,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #36827#36135#26085#26399
+                  Caption = #24211#23384#26085#26399
                 end
                 object Label10: TLabel
                   Left = 24
@@ -391,9 +402,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #26174#31034#21333#20301
                 end
                 object P2_D1: TcxDateEdit
-                  Left = 80
+                  Left = 154
                   Top = 10
-                  Width = 85
+                  Width = 119
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
@@ -554,6 +565,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
                   TabOrder = 7
+                end
+                object fndP2_ReckType: TcxComboBox
+                  Left = 80
+                  Top = 10
+                  Width = 73
+                  Height = 20
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #24403#21069#24211#23384
+                    #26085#32467#24211#23384)
+                  TabOrder = 8
                 end
               end
               object RzPanel10: TRzPanel
@@ -719,7 +741,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #36827#36135#26085#26399
+                  Caption = #24211#23384#26085#26399
                 end
                 object Label9: TLabel
                   Left = 24
@@ -750,9 +772,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object P3_D1: TcxDateEdit
-                  Left = 80
+                  Left = 154
                   Top = 10
-                  Width = 85
+                  Width = 119
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
@@ -899,6 +921,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
                   TabOrder = 6
+                end
+                object fndP3_ReckType: TcxComboBox
+                  Left = 80
+                  Top = 10
+                  Width = 73
+                  Height = 20
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #24403#21069#24211#23384
+                    #26085#32467#24211#23384)
+                  TabOrder = 7
                 end
               end
               object RzPanel12: TRzPanel
@@ -1069,7 +1102,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #36827#36135#26085#26399
+                  Caption = #24211#23384#26085#26399
                 end
                 object Label21: TLabel
                   Left = 24
@@ -1107,9 +1140,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object P4_D1: TcxDateEdit
-                  Left = 80
+                  Left = 154
                   Top = 10
-                  Width = 85
+                  Width = 119
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
@@ -1312,6 +1345,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
                   TabOrder = 8
+                end
+                object fndP4_ReckType: TcxComboBox
+                  Left = 80
+                  Top = 10
+                  Width = 73
+                  Height = 20
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #24403#21069#24211#23384
+                    #26085#32467#24211#23384)
+                  TabOrder = 9
                 end
               end
               object RzPanel15: TRzPanel

@@ -223,7 +223,7 @@ type
      procedure IsBarCodeSame(Aobj:TRecord_);//判断条码有没有重复
      procedure SetdbState(const Value: TDataSetState); override;
      procedure EditPrice; //只能修改价格
-     procedure WriteBarCode(str:string);  //写入条形码
+     procedure WriteBarCode;  //写入条形码
      procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
      procedure ReadGoodsBarCode(CdsBarCode: TZQuery);      //读取商品条码
      function  ReadBarCode_INFO(BarCode: string):boolean;  //传入条码读取
@@ -457,6 +457,7 @@ begin
 
   if dbState = dsInsert then
   begin
+    AObj.FieldByName('RELATION_ID').AsString:='0'; //自主创建 
     AObj.FieldbyName('GODS_ID').AsString :=TSequence.NewId;  //GUID号
     if (trim(edtGODS_CODE.Text)='自动编号') or (trim(edtGODS_CODE.Text)='') or (IsChinese(trim(edtGODS_CODE.Text))) then
     begin
@@ -490,8 +491,10 @@ begin
   //(2)写条码
   SaveSId :=SORT_ID1_KeyValue;
   SaveSName := edtSORT_ID1.Text;
-  //写入商品的条形码表
-  WriteBarCode('');
+
+  //写入商品的条形码表 [自主创建才进行写条码]
+  if trim(AObj.FieldByName('RELATION_ID').AsString)='0' then
+    WriteBarCode;
 
   //(3)写会员定价表[循环删除掉没有输入价格]
   WriteMemberPrice(AObj.FieldbyName('GODS_ID').AsString);   //写入会员价
@@ -792,11 +795,17 @@ begin
       end;
     end;
   end;
+  
   //判断条形码是否改变:
-  if (UnitBarCode<>Trim(edtBARCODE1.Text)) or(SmallBarCode<>Trim(edtBARCODE2.Text)) or (BigBarCode<>Trim(edtBARCODE3.Text)) then
-    Result:=True;
+  if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then  //自主经营才判断
+  begin
+    if (UnitBarCode<>Trim(edtBARCODE1.Text)) or(SmallBarCode<>Trim(edtBARCODE2.Text)) or (BigBarCode<>Trim(edtBARCODE3.Text)) then
+      Result:=True;
+  end;
+  
   if not Result then
     result:=(cdsGoods.UpdateStatus <> usUnmodified);
+
   //判断[会员等级价格是否修改]
   if (not Result) and (CdsMemberPrice.Active) and (TabGoodPrice.TabVisible) and (FPriceChange) then  //会员等级价有判断继续循环AsOldValue与AsValue
   begin
@@ -1252,8 +1261,10 @@ begin
   edtPROFIT_RATE.Properties.ReadOnly:=False;
 end;
 
-procedure TfrmGoodsInfo.WriteBarCode(str: string);
+procedure TfrmGoodsInfo.WriteBarCode;
 begin
+  //不是自主经营则退出
+  if cdsGoods.FieldByName('RELATION_ID').AsString<>'0' then Exit;
   BarCode.First;
   while not BarCode.Eof do
   begin
@@ -1264,6 +1275,7 @@ begin
   if trim(edtBarCode1.Text)<>''  then //计量单位
   begin
     BarCode.Append;
+    BARCode.FieldByName('RELATION_FLAG').AsString:='2';
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     BARCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
     BARCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //行号[GUID编号]
@@ -1280,6 +1292,7 @@ begin
   if trim(edtBarCode2.Text)<>'' then
   begin
     BarCode.Append;
+    BARCode.FieldByName('RELATION_FLAG').AsString:='2';    
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     BARCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
     BARCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //行号[GUID编号]
@@ -1295,6 +1308,7 @@ begin
   if trim(edtBarCode3.Text)<>'' then  //大单位条码
   begin
     BarCode.Append;
+    BARCode.FieldByName('RELATION_FLAG').AsString:='2';    
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     BARCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
     BARCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //行号[GUID编号]
@@ -2170,19 +2184,27 @@ procedure TfrmGoodsInfo.edtSORT_ID1PropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 var
   rs:TRecord_;
+  Qry: TZQuery;
 begin
   inherited;
   rs := TRecord_.Create;
   try
-  if TframeTreeFindDialog.FindDialog1(self,Global.GetZQueryFromName('PUB_GOODSSORT'),
-      'SORT_ID','LEVEL_ID','SORT_NAME','444444',rs)
-  then
-     begin
-       SORT_ID1_KeyValue := rs.FieldbyName('SORT_ID').AsString;
-       edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
-     end;
+    Qry:=Global.GetZQueryFromName('PUB_GOODSSORT');
+    if Qry.Active then
+    begin
+      Qry.Filtered:=False;
+      Qry.Filter:='RELATION_ID=''0'' ';
+      Qry.Filtered:=true;
+    end;
+    if TframeTreeFindDialog.FindDialog1(self,Qry,'SORT_ID','LEVEL_ID','SORT_NAME','444444',rs) then
+    begin
+      SORT_ID1_KeyValue := rs.FieldbyName('SORT_ID').AsString;
+      edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
+    end;
   finally
-     rs.Free;
+    Qry.Filtered:=False;
+    Qry.Filter:='';
+    rs.Free;
   end;
 end;
 

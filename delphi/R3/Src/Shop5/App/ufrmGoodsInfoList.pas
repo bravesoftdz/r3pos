@@ -86,9 +86,10 @@ type
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
      function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
      function  CheckCanExport: boolean; override;
+     function  GetReCount(Cnd: string): integer;
   public
     { Public declarations }
-    IsEnd,IsChain,IsCompany: boolean;
+    IsEnd: boolean;  //cdsBrowser.Active
     MaxId:string;
     locked:boolean;
     rcAmt:integer;
@@ -240,7 +241,7 @@ begin
     if rzTree.Selected.Level>0 then
     begin
       w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
-      vCnd:=' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
+      vCnd:=vCnd+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
     end;
   end;
 
@@ -278,46 +279,13 @@ begin
 end;
 
 procedure TfrmGoodsInfoList.Open(Id: string);
-var StrmData: TStream;
-  Cnd: string; rs:TZQuery;  
-  function GetReCount(Cnd: string): integer;
-  var str,GoodTab: string; tmpQry:TZQuery;
-  begin
-    result:=0;
-    tmpQry:=TZQuery.Create(nil);
-    try
-      GoodTab:=
-        '(select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
-        ' union all '+
-        ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
-        ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
-
-      str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b '+
-           ' where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
-      tmpQry.Close;
-      tmpQry.SQL.Text:=str;
-      if tmpQry.Params.FindParam('TENANT_ID')<>nil then
-         tmpQry.Params.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
-      if tmpQry.Params.FindParam('SHOP_ID_ROOT')<>nil then
-         tmpQry.Params.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
-      if tmpQry.Params.FindParam('SHOP_ID')<>nil then
-         tmpQry.Params.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
-      if tmpQry.Params.FindParam('KEYVALUE')<>nil then
-         tmpQry.Params.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
-      if tmpQry.Params.FindParam('SORT_ID')<>nil then
-         tmpQry.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
-      if tmpQry.Params.FindParam('LEVEL_ID')<>nil then
-         tmpQry.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-      if tmpQry.Params.FindParam('RELATION_ID')<>nil then
-         tmpQry.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
-      Factor.Open(tmpQry);
-      Result := tmpQry.Fields[0].AsInteger;
-    finally
-      FreeAndNil(tmpQry);
-    end;
-  end;
+var
+  StrmData: TStream;
+  Cnd: string; rs:TZQuery;
 begin
   if not Visible then Exit;
+  if rzTree.Selected=nil then Exit;
+  if TRecord_(rzTree.Selected.Data)=nil then Exit; 
   if Id='' then cdsBrowser.close;
   rs := TZQuery.Create(nil);
   cdsBrowser.DisableControls;
@@ -329,7 +297,6 @@ begin
     if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then rs.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
     if rs.Params.FindParam('MAXID')<>nil then rs.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then rs.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
-    if rs.Params.FindParam('SORT_ID')<>nil then rs.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
     if rs.Params.FindParam('LEVEL_ID')<>nil then rs.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
     if rs.Params.FindParam('RELATION_ID')<>nil then rs.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     Factor.Open(rs);
@@ -340,7 +307,6 @@ begin
     rs.SaveToStream(StrmData);
     if Id='' then
     begin
-      rcAmt:=GetReCount(Cnd);
       //  cdsBrowser.Close;
       //  cdsBrowser.SQL.Text:=rs.SQL.Text;
       //  cdsBrowser.Params.AssignValues(rs.Params);
@@ -348,6 +314,9 @@ begin
       cdsBrowser.LoadFromStream(StrmData);
       cdsBrowser.IndexFieldNames := 'GODS_CODE';
       cdsBrowser.SortedFields:='GODS_CODE';
+      if rs.RecordCount <600 then rcAmt:=rs.RecordCount
+      else rcAmt:=GetReCount(Cnd);
+      GetNo; 
     end else
       cdsBrowser.AddFromStream(StrmData);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
@@ -713,6 +682,7 @@ begin
       end;
   end;
 end;
+
 procedure TfrmGoodsInfoList.GetNo;
 var str:string;
 begin
@@ -754,7 +724,6 @@ procedure TfrmGoodsInfoList.actCopyNewExecute(Sender: TObject);
 begin
   inherited;
   if cdsBrowser.IsEmpty then exit;
-  // if IsChain then Raise Exception.Create('直营店不能新增商品!');
   if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmGoodsInfo.Create(self) do
     begin
@@ -978,15 +947,6 @@ procedure TfrmGoodsInfoList.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Exit;
-  if trim(LowerCase(Column.FieldName))='selflag' then
-  begin
-    if trim(cdsBrowser.FieldByName('RELATION_ID').AsString)<>'0' then //非自主经营的不能选择删除
-    begin
-      cdsBrowser.Edit;
-      cdsBrowser.FieldByName('selflag').AsString:='0';
-      cdsBrowser.Post;
-    end;
-  end;
 end;
 
 procedure TfrmGoodsInfoList.LoadTree;
@@ -1075,6 +1035,41 @@ procedure TfrmGoodsInfoList.N10Click(Sender: TObject);
 begin
   inherited;
   LoadTree;
+end;
+
+function TfrmGoodsInfoList.GetReCount(Cnd: string): integer;
+var str,GoodTab: string; Qry:TZQuery;
+begin
+  result:=0;
+  Qry:=TZQuery.Create(nil);
+  try
+    GoodTab:=
+      '(select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
+      ' union all '+
+      ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
+      ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
+
+    str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b '+
+         ' where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
+    Qry.Close;
+    Qry.SQL.Text:=str;
+    if Qry.Params.FindParam('TENANT_ID')<>nil then
+      Qry.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
+    if Qry.Params.FindParam('SHOP_ID_ROOT')<>nil then
+      Qry.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
+    if Qry.Params.FindParam('SHOP_ID')<>nil then
+      Qry.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
+    if Qry.Params.FindParam('KEYVALUE')<>nil then
+      Qry.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
+    if Qry.Params.FindParam('LEVEL_ID')<>nil then
+      Qry.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if Qry.Params.FindParam('RELATION_ID')<>nil then
+      Qry.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    Factor.Open(Qry);
+    Result := Qry.Fields[0].AsInteger;
+  finally
+    FreeAndNil(Qry);
+  end;
 end;
 
 end.

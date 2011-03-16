@@ -1,6 +1,6 @@
 inherited frmGoodsInfoList: TfrmGoodsInfoList
   Left = 197
-  Top = 106
+  Top = 102
   Width = 956
   Height = 628
   Caption = #21830#21697#26723#26696#31649#29702

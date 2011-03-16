@@ -665,7 +665,7 @@ begin
   if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid4)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' and C.RELATION_ID='''+srid4+''' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -933,6 +933,7 @@ begin
     end;
   end;
 
+
   DoAssignParamsValue(RzPanel11,RzPanel14);  //对应查询条件赋值
 end;
 
@@ -1087,6 +1088,7 @@ end;
 
 function TfrmSaleDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
+  i: integer;
   FindCmp1,FindCmp2: TComponent;
 begin
   //日期
@@ -1116,9 +1118,20 @@ begin
   if (FindCmp1<>nil) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
     TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);   
   //计量单位
-  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
+  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
+  //单据类型:
+  if (trim(PageNo)='5') and (not fndP5_ALL.Checked) then
+  begin
+    if fndP5_SALEORDER.Checked then
+      TitleList.Add('单据类型：'+fndP5_SALRETU.Caption)
+    else if fndP5_POSMAIN.Checked then
+      TitleList.Add('单据类型：'+fndP5_POSMAIN.Caption)
+    else if fndP5_SALRETU.Checked then
+      TitleList.Add('单据类型：'+fndP5_SALRETU.Caption);
+  end;
 end;
+
 
 end.

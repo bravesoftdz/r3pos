@@ -1,6 +1,6 @@
 inherited frmSaleDayReport: TfrmSaleDayReport
-  Left = 196
-  Top = 109
+  Left = 197
+  Top = 105
   Width = 913
   Height = 586
   Caption = #21830#21697#38144#21806#25253#34920
@@ -15,10 +15,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 513
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1118,8 +1118,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -1136,8 +1134,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -1146,8 +1142,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -1156,8 +1150,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1166,8 +1158,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -1176,8 +1166,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -1258,7 +1246,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object Label24: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -1394,7 +1382,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 53
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -2383,5 +2371,14 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
       72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
       3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

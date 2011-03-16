@@ -52,6 +52,9 @@ type
   private
     FdbHelp: IdbHelp;
     FFactory: TZFactory;
+    idx:array of Integer;
+    FColumnCount: integer;
+    procedure SetColumnCount(const Value: integer);
   protected
     procedure DoBeforeApplyUpdate(Sender: TObject);override;
     procedure PSBeforeDeleteSQL(Sender: TObject);
@@ -71,6 +74,7 @@ type
 
     property dbHelp:IdbHelp read FdbHelp write SetdbHelp;
     property Factory:TZFactory read FFactory write SetFactory;
+    property ColumnCount:integer read FColumnCount write SetColumnCount;
   end;
 
   TCustomdbResolver=class(TInterfacedPersistent)
@@ -810,6 +814,7 @@ begin
   BeforeDeleteSQL := PSBeforeDeleteSQL;
   BeforeInsertSQL := PSBeforeInsertSQL;
   BeforeModifySQL := PSBeforeModifySQL;
+  ColumnCount := 0;
 end;
 
 destructor TZdbUpdate.Destroy;
@@ -866,76 +871,90 @@ var
   i:integer;
   WasNull:boolean;
 begin
-  for i:=0 to Factory.Count -1 do
+  if ColumnCount=0 then
+     begin
+       ColumnCount := FNewRowAccessor.ColumnCount;
+       setLength(idx,FNewRowAccessor.ColumnCount);
+       for i:=0 to FNewRowAccessor.ColumnCount -1 do
+         begin
+           idx[i] :=Factory.FindField(FNewRowAccessor.GetColumnName(i+1)).Index;
+         end;
+     end;
+  for i:=0 to FNewRowAccessor.ColumnCount -1 do
      begin
       case FNewRowAccessor.GetColumnType(i+1)  of
         stBoolean:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetBoolean(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetBoolean(i+1, WasNull);
         stByte:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetByte(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetByte(i+1, WasNull);
         stShort:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetShort(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetShort(i+1, WasNull);
         stInteger:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetInt(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetInt(i+1, WasNull);
         stLong:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetLong(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetLong(i+1, WasNull);
         stFloat:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetFloat(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetFloat(i+1, WasNull);
         stDouble:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetDouble(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetDouble(i+1, WasNull);
         stBigDecimal:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetBigDecimal(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetBigDecimal(i+1, WasNull);
         stString, stUnicodeString:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetString(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetString(i+1, WasNull);
         stBytes:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetBytes(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetBytes(i+1, WasNull);
         stDate:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetDate(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetDate(i+1, WasNull);
         stTime:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetTime(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetTime(i+1, WasNull);
         stTimestamp:
-          Factory.Fields[i].NewValue := FNewRowAccessor.GetTimestamp(i+1, WasNull);
+          Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetTimestamp(i+1, WasNull);
       end;
-      if WasNull then Factory.Fields[i].NewValue := null;
+      if WasNull then Factory.Fields[idx[i]].NewValue := null;
       if FNewRowAccessor.RowBuffer.UpdateType in [utModified,utDeleted] then
          begin
             case FNewRowAccessor.GetColumnType(i+1)  of
               stBoolean:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetBoolean(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetBoolean(i+1, WasNull);
               stByte:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetByte(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetByte(i+1, WasNull);
               stShort:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetShort(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetShort(i+1, WasNull);
               stInteger:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetInt(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetInt(i+1, WasNull);
               stLong:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetLong(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetLong(i+1, WasNull);
               stFloat:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetFloat(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetFloat(i+1, WasNull);
               stDouble:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetDouble(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetDouble(i+1, WasNull);
               stBigDecimal:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetBigDecimal(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetBigDecimal(i+1, WasNull);
               stString, stUnicodeString:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetString(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetString(i+1, WasNull);
               stBytes:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetBytes(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetBytes(i+1, WasNull);
               stDate:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetDate(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetDate(i+1, WasNull);
               stTime:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetTime(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetTime(i+1, WasNull);
               stTimestamp:
-                Factory.Fields[i].OldValue := FOldRowAccessor.GetTimestamp(i+1, WasNull);
+                Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetTimestamp(i+1, WasNull);
             end;
-            if WasNull then Factory.Fields[i].OldValue := null;
+            if WasNull then Factory.Fields[idx[i]].OldValue := null;
          end;
       //为了容错，加入默认值
       if FNewRowAccessor.RowBuffer.UpdateType in [utDeleted] then
-         Factory.Fields[i].NewValue := Factory.Fields[i].OldValue
+         Factory.Fields[idx[i]].NewValue := Factory.Fields[idx[i]].OldValue
       else
       if FNewRowAccessor.RowBuffer.UpdateType in [utUnmodified,utInserted] then
-         Factory.Fields[i].OldValue := Factory.Fields[i].NewValue;
+         Factory.Fields[idx[i]].OldValue := Factory.Fields[idx[i]].NewValue;
      end;
+end;
+
+procedure TZdbUpdate.SetColumnCount(const Value: integer);
+begin
+  FColumnCount := Value;
 end;
 
 procedure TZdbUpdate.SetdbHelp(const Value: IdbHelp);
@@ -953,38 +972,38 @@ var
   i:integer;
   WasNull:boolean;
 begin
-  for i:=0 to Factory.Count -1 do
+  for i:=0 to FNewRowAccessor.ColumnCount-1 do
      begin
-      if VarIsClear(Factory.Fields[i].NewValue) or VarIsNull(Factory.Fields[i].NewValue) then
+      if VarIsClear(Factory.Fields[idx[i]].NewValue) or VarIsNull(Factory.Fields[idx[i]].NewValue) then
          FNewRowAccessor.SetNull(i+1)
       else
       case FNewRowAccessor.GetColumnType(i+1)  of
         stBoolean:
-          FNewRowAccessor.SetBoolean(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetBoolean(i+1,Factory.Fields[idx[i]].NewValue);
         stByte:
-          FNewRowAccessor.SetByte(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetByte(i+1,Factory.Fields[idx[i]].NewValue);
         stShort:
-          FNewRowAccessor.SetShort(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetShort(i+1,Factory.Fields[idx[i]].NewValue);
         stInteger:
-          FNewRowAccessor.SetInt(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetInt(i+1,Factory.Fields[idx[i]].NewValue);
         stLong:
-          FNewRowAccessor.SetLong(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetLong(i+1,Factory.Fields[idx[i]].NewValue);
         stFloat:
-          FNewRowAccessor.SetFloat(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetFloat(i+1,Factory.Fields[idx[i]].NewValue);
         stDouble:
-          FNewRowAccessor.SetDouble(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetDouble(i+1,Factory.Fields[idx[i]].NewValue);
         stBigDecimal:
-          FNewRowAccessor.SetBigDecimal(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetBigDecimal(i+1,Factory.Fields[idx[i]].NewValue);
         stString, stUnicodeString:
-          FNewRowAccessor.SetString(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetString(i+1,Factory.Fields[idx[i]].NewValue);
         stBytes:
-          FNewRowAccessor.SetBytes(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetBytes(i+1,Factory.Fields[idx[i]].NewValue);
         stDate:
-          FNewRowAccessor.SetDate(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetDate(i+1,Factory.Fields[idx[i]].NewValue);
         stTime:
-          FNewRowAccessor.SetTime(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetTime(i+1,Factory.Fields[idx[i]].NewValue);
         stTimestamp:
-          FNewRowAccessor.SetTimestamp(i+1,Factory.Fields[i].NewValue);
+          FNewRowAccessor.SetTimestamp(i+1,Factory.Fields[idx[i]].NewValue);
       end;
      end;
 end;

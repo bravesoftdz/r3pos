@@ -30,6 +30,7 @@ TField_=Class(TInterfacedObject)
     FWidth: Integer;
     FDataReadOnly: Boolean;
     FTableName: string;
+    FIndex: integer;
     procedure SetDataType(const Value: TFieldType);
     procedure SetFieldName(const Value: String);
     procedure SetNewValue(const Value: Variant);
@@ -69,6 +70,7 @@ TField_=Class(TInterfacedObject)
     procedure SetAsDatetime(const Value: TDatetime);
     function GetAsOldDatetime: TDatetime;
     procedure SetAsOldDatetime(const Value: TDatetime);
+    procedure SetIndex(const Value: integer);
   public
     constructor Create(AOwner:TObject);
     destructor  Destroy;override;
@@ -125,6 +127,7 @@ TField_=Class(TInterfacedObject)
     Property AsOldBoolean:Boolean  read GetAsOldBoolean write SetAsOldBoolean;
     //字段转化为日期型
     Property AsOldDatetime:TDatetime read GetAsOldDatetime write SetAsOldDatetime;
+    property Index:integer read FIndex write SetIndex;
   end;
 
 TRecord_=class(TComponent)
@@ -699,6 +702,11 @@ begin
   FFieldName := Value;
 end;
 
+procedure TField_.SetIndex(const Value: integer);
+begin
+  FIndex := Value;
+end;
+
 procedure TField_.SetNewValue(const Value: Variant);
 begin
   FNewValue := Value;
@@ -776,6 +784,7 @@ begin
     if UpperCase(Fields[i].FieldName) = UpperCase(FieldName) then
        begin
          Result := Fields[i];
+         result.Index := i;
          Exit;
        end;
     end;
@@ -814,6 +823,7 @@ begin
          begin
             TmpField := TField_.Create(self);
             TmpField.Assign(ADataSet.Fields[i]);
+            TmpField.Index := FList.Count;
             FList.Add(TmpField);
          end;
     end;
@@ -897,7 +907,8 @@ procedure TRecord_.AddField(Field: TField_);
 begin
   if FindField(Field.FieldName)<>nil then
      Raise Exception.Create(Field.FieldName+'已经存在。');
-  FList.Add(Field); 
+  Field.Index := FList.Count;
+  FList.Add(Field);
 end;
 
 procedure TRecord_.AddField(AFieldName: string; AFieldValue: Variant; AFieldType:TFieldType=ftString);

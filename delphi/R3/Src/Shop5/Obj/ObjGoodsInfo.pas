@@ -251,32 +251,40 @@ function TPUB_BARCODE.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
 begin
-  Str := 'update PUB_BARCODE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
-    ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE_TYPE=:OLD_BARCODE_TYPE and BATCH_NO=:OLD_BATCH_NO ';
-  AGlobal.ExecSQL(Str);
+  if trim(FieldbyName('RELATION_FLAG').AsString)='2' then //只有是自主经营才能修改编辑
+  begin
+    Str := 'update PUB_BARCODE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+      ' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+      ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE_TYPE=:OLD_BARCODE_TYPE and BATCH_NO=:OLD_BATCH_NO ';
+    AGlobal.ExecSQL(Str);
+  end;
 end;
 
 function TPUB_BARCODE.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
 begin
-  Str :='update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,UNIT_ID=:UNIT_ID,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' where TENANT_ID=:OLD_TENANT_ID and BARCODE_TYPE=:OLD_BARCODE_TYPE and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
-    ' PROPERTY_02=:OLD_PROPERTY_02 and BATCH_NO=:OLD_BATCH_NO ';
-
-  if AGlobal.ExecSQL(Str, self)=0 then 
+  if trim(FieldbyName('RELATION_FLAG').AsString)='2' then //只有是自主经营才能修改编辑
   begin
-    Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
-      ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
-    AGlobal.ExecSQL(Str,self);
+    Str :='update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,UNIT_ID=:UNIT_ID,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+      ' where TENANT_ID=:OLD_TENANT_ID and BARCODE_TYPE=:OLD_BARCODE_TYPE and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+      ' PROPERTY_02=:OLD_PROPERTY_02 and BATCH_NO=:OLD_BATCH_NO ';
+    if AGlobal.ExecSQL(Str, self)=0 then
+    begin
+      Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
+        ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
+      AGlobal.ExecSQL(Str,self);
+    end;
   end;
 end;
 
 function TPUB_BARCODE.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  result := BeforeDeleteRecord(AGlobal);
-  result := BeforeInsertRecord(AGlobal);
+  if trim(FieldbyName('RELATION_FLAG').AsString)='2' then //只有是自主经营才能修改编辑
+  begin
+    result := BeforeDeleteRecord(AGlobal);
+    result := BeforeInsertRecord(AGlobal);
+  end;
 end;
 
 procedure TPUB_BARCODE.InitClass;
@@ -284,9 +292,9 @@ var Str: string;
 begin
   inherited;
   //条码不是核心资料，可直接物理删除
-  SelectSQL.Text :='select ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from PUB_BARCODE '+
+  SelectSQL.Text :='select RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
     ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and '+
-    ' PROPERTY_02=''#'' order by BARCODE';
+    ' PROPERTY_02=''#'' order by BARCODE ';
 end;
 
 { TGoodsPrice }

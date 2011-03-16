@@ -3,7 +3,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
   Top = 109
   Width = 900
   Height = 589
-  Caption = #21830#21697#35843#25972#25253#34920
+  Caption = '商品调整报表'
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -20,7 +20,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#35843#25972#27719#24635#34920
+          Caption = '地区调整汇总表'
           inherited RzPanel3: TRzPanel
             Width = 675
             Height = 489
@@ -37,42 +37,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35843#25972#26085#26399
+                  Caption = '调整日期'
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = #33267
+                  Caption = '至'
                 end
                 object Label6: TLabel
                   Left = 288
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#20998#31867
+                  Caption = '商品分类'
                 end
                 object Label7: TLabel
                   Left = 24
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#25351#26631
+                  Caption = '商品指标'
                 end
                 object Label8: TLabel
                   Left = 288
                   Top = 56
                   Width = 48
                   Height = 12
-                  Caption = #26174#31034#21333#20301
+                  Caption = '显示单位'
                 end
                 object Label5: TLabel
                   Left = 24
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = '门店群组'
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
@@ -96,12 +96,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = #26597#35810
+                  Caption = '查询'
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -124,8 +124,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
+                    '主供应商'
+                    '品牌名称')
                   TabOrder = 3
                 end
                 object fndP1_UNIT_ID: TcxComboBox
@@ -135,9 +135,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
+                    '计量单位'
+                    '包装1'
+                    '包装2')
                   TabOrder = 4
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
@@ -163,13 +163,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -204,8 +204,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #34892#25919#21306#22495
-                    #31649#29702#32676#32452)
+                    '行政区域'
+                    '管理群组')
                   TabOrder = 7
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
@@ -231,13 +231,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -268,21 +268,21 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = #24207#21495
+                      Title.Caption = '序号'
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'REGION_ID'
                       Footers = <>
-                      Title.Caption = #22320#21306#20195#30721
+                      Title.Caption = '地区代码'
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #22320#21306#21517#31216
+                      Title.Caption = '地区名称'
                       Width = 153
                     end
                     item
@@ -292,7 +292,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = '数量'
                       Width = 63
                     end
                     item
@@ -300,7 +300,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Caption = '均价'
                       Width = 65
                     end
                     item
@@ -310,7 +310,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = '零售金额'
                       Width = 84
                     end
                     item
@@ -320,7 +320,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = '进货成本'
                       Width = 80
                     end
                     item
@@ -330,7 +330,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24046#39069#27611#21033
+                      Title.Caption = '差额毛利'
                       Width = 80
                     end>
                 end
@@ -340,7 +340,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #38376#24215#35843#25972#27719#24635#34920
+          Caption = '门店调整汇总表'
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -375,42 +375,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35843#25972#26085#26399
+                  Caption = '调整日期'
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = #33267
+                  Caption = '至'
                 end
                 object Label10: TLabel
                   Left = 24
                   Top = 35
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = '门店群组'
                 end
                 object Label13: TLabel
                   Left = 288
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#20998#31867
+                  Caption = '商品分类'
                 end
                 object Label14: TLabel
                   Left = 24
                   Top = 56
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#25351#26631
+                  Caption = '商品指标'
                 end
                 object Label15: TLabel
                   Left = 288
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = #26174#31034#21333#20301
+                  Caption = '显示单位'
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
@@ -451,13 +451,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -476,12 +476,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = #26597#35810
+                  Caption = '查询'
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -504,8 +504,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
+                    '主供应商'
+                    '品牌名称')
                   TabOrder = 4
                 end
                 object fndP2_UNIT_ID: TcxComboBox
@@ -515,9 +515,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
+                    '计量单位'
+                    '包装1'
+                    '包装2')
                   TabOrder = 5
                 end
                 object fndP2_STAT_ID: TzrComboBoxList
@@ -543,13 +543,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -584,8 +584,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #34892#25919#21306#22495
-                    #31649#29702#32676#32452)
+                    '行政区域'
+                    '管理群组')
                   TabOrder = 8
                 end
               end
@@ -613,17 +613,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = #23435#20307
+                  FooterFont.Name = '宋体'
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
+                  ImeName = '极品五笔输入法'
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -635,11 +635,11 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = #23435#20307
+                  TitleFont.Name = '宋体'
                   TitleFont.Style = [fsBold]
                   TitleHeight = 22
                   IsDrawNullRow = False
-                  CurrencySymbol = #65509
+                  CurrencySymbol = '￥'
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh2DblClick
@@ -651,21 +651,21 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = #24207#21495
+                      Title.Caption = '序号'
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_ID'
                       Footers = <>
-                      Title.Caption = #38376#24215#20195#30721
+                      Title.Caption = '门店代码'
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = #38376#24215#21517#31216
+                      Title.Caption = '门店名称'
                       Width = 153
                     end
                     item
@@ -675,7 +675,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = '数量'
                       Width = 63
                     end
                     item
@@ -683,7 +683,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Caption = '均价'
                       Width = 65
                     end
                     item
@@ -693,7 +693,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = '零售金额'
                       Width = 84
                     end
                     item
@@ -703,7 +703,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = '进货成本'
                       Width = 80
                     end
                     item
@@ -713,7 +713,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24046#39069#27611#21033
+                      Title.Caption = '差额毛利'
                       Width = 80
                     end>
                 end
@@ -723,7 +723,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #20998#31867#35843#25972#27719#24635#34920
+          Caption = '分类调整汇总表'
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -758,42 +758,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35843#25972#26085#26399
+                  Caption = '调整日期'
                 end
                 object RzLabel7: TRzLabel
                   Left = 170
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = #33267
+                  Caption = '至'
                 end
                 object Label9: TLabel
                   Left = 24
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#21517#31216
+                  Caption = '门店名称'
                 end
                 object Label19: TLabel
                   Left = 288
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #25253#34920#31867#22411
+                  Caption = '报表类型'
                 end
                 object Label20: TLabel
                   Left = 288
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = #26174#31034#21333#20301
+                  Caption = '显示单位'
                 end
                 object Label11: TLabel
                   Left = 24
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = '门店群组'
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
@@ -826,7 +826,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'COMP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
+                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
                   KeyField = 'SHOP_ID'
                   ListField = 'SHOP_NAME'
                   Columns = <
@@ -834,13 +834,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -860,8 +860,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
+                    '主供应商'
+                    '品牌名称')
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
                   TabOrder = 3
                 end
@@ -872,9 +872,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
+                    '计量单位'
+                    '包装1'
+                    '包装2')
                   TabOrder = 4
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
@@ -900,13 +900,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -926,8 +926,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #34892#25919#21306#22495
-                    #31649#29702#32676#32452)
+                    '行政区域'
+                    '管理群组')
                   TabOrder = 6
                 end
                 object RzBitBtn2: TRzBitBtn
@@ -936,12 +936,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = #26597#35810
+                  Caption = '查询'
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -983,17 +983,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = #23435#20307
+                  FooterFont.Name = '宋体'
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
+                  ImeName = '极品五笔输入法'
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -1005,11 +1005,11 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = #23435#20307
+                  TitleFont.Name = '宋体'
                   TitleFont.Style = [fsBold]
                   TitleHeight = 22
                   IsDrawNullRow = False
-                  CurrencySymbol = #65509
+                  CurrencySymbol = '￥'
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh3DblClick
@@ -1021,21 +1021,21 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = #24207#21495
+                      Title.Caption = '序号'
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SORT_ID'
                       Footers = <>
-                      Title.Caption = #20998#31867#20195#30721
+                      Title.Caption = '分类代码'
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SORT_NAME'
                       Footers = <>
-                      Title.Caption = #20998#31867#21517#31216
+                      Title.Caption = '分类名称'
                       Width = 185
                     end
                     item
@@ -1043,7 +1043,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'AMOUNT'
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = '数量'
                       Width = 63
                     end
                     item
@@ -1051,7 +1051,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Caption = '均价'
                       Width = 65
                     end
                     item
@@ -1059,7 +1059,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = '零售金额'
                       Width = 84
                     end
                     item
@@ -1067,7 +1067,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = '进货成本'
                       Width = 80
                     end
                     item
@@ -1075,7 +1075,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
                       Footers = <>
-                      Title.Caption = #24046#39069#27611#21033
+                      Title.Caption = '差额毛利'
                       Width = 80
                     end>
                 end
@@ -1085,7 +1085,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #21830#21697#35843#25972#27719#24635#34920
+          Caption = '商品调整汇总表'
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -1120,49 +1120,49 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35843#25972#26085#26399
+                  Caption = '调整日期'
                 end
                 object RzLabel9: TRzLabel
                   Left = 171
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = #33267
+                  Caption = '至'
                 end
                 object Label21: TLabel
                   Left = 24
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#21517#31216
+                  Caption = '门店名称'
                 end
                 object Label24: TLabel
                   Left = 288
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#20998#31867
+                  Caption = '商品分类'
                 end
                 object Label25: TLabel
                   Left = 24
                   Top = 79
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#25351#26631
+                  Caption = '商品指标'
                 end
                 object Label26: TLabel
                   Left = 288
                   Top = 80
                   Width = 48
                   Height = 12
-                  Caption = #26174#31034#21333#20301
+                  Caption = '显示单位'
                 end
                 object Label12: TLabel
                   Left = 24
                   Top = 35
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = '门店群组'
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -1186,12 +1186,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = #26597#35810
+                  Caption = '查询'
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -1214,8 +1214,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
+                    '主供应商'
+                    '品牌名称')
                   TabOrder = 3
                 end
                 object fndP4_UNIT_ID: TcxComboBox
@@ -1225,9 +1225,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
+                    '计量单位'
+                    '包装1'
+                    '包装2')
                   TabOrder = 4
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
@@ -1253,13 +1253,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1310,13 +1310,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1352,13 +1352,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1378,8 +1378,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #34892#25919#21306#22495
-                    #31649#29702#32676#32452)
+                    '行政区域'
+                    '管理群组')
                   TabOrder = 9
                 end
               end
@@ -1407,17 +1407,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = #23435#20307
+                  FooterFont.Name = '宋体'
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
+                  ImeName = '极品五笔输入法'
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -1429,11 +1429,11 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = #23435#20307
+                  TitleFont.Name = '宋体'
                   TitleFont.Style = [fsBold]
                   TitleHeight = 22
                   IsDrawNullRow = False
-                  CurrencySymbol = #65509
+                  CurrencySymbol = '￥'
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh4DblClick
@@ -1445,35 +1445,35 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = #24207#21495
+                      Title.Caption = '序号'
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
-                      Title.Caption = #26465#30721
+                      Title.Caption = '条码'
                       Width = 95
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
-                      Title.Caption = #21830#21697#21517#31216
+                      Title.Caption = '商品名称'
                       Width = 153
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
-                      Title.Caption = #36135#21495
+                      Title.Caption = '货号'
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
-                      Title.Caption = #21333#20301
+                      Title.Caption = '单位'
                       Width = 32
                     end
                     item
@@ -1483,7 +1483,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = '数量'
                       Width = 63
                     end
                     item
@@ -1491,7 +1491,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #22343#20215
+                      Title.Caption = '均价'
                       Width = 65
                     end
                     item
@@ -1501,7 +1501,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = '零售金额'
                       Width = 84
                     end
                     item
@@ -1511,7 +1511,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = '进货成本'
                       Width = 80
                     end
                     item
@@ -1521,7 +1521,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24046#39069#27611#21033
+                      Title.Caption = '差额毛利'
                       Width = 80
                     end>
                 end
@@ -1531,7 +1531,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
         end
         object TabSheet5: TRzTabSheet
           Color = clCream
-          Caption = #35843#25972#21830#21697#26126#32454#34920
+          Caption = '调整商品明细表'
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
@@ -1566,42 +1566,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35843#25972#26085#26399
+                  Caption = '调整日期'
                 end
                 object RzLabel11: TRzLabel
                   Left = 167
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = #33267
+                  Caption = '至'
                 end
                 object Label17: TLabel
                   Left = 288
                   Top = 38
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#21517#31216
+                  Caption = '门店名称'
                 end
                 object Label18: TLabel
                   Left = 288
                   Top = 60
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#20998#31867
+                  Caption = '商品分类'
                 end
                 object Label22: TLabel
                   Left = 24
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#25351#26631
+                  Caption = '商品指标'
                 end
                 object Label23: TLabel
                   Left = 520
                   Top = 16
                   Width = 48
                   Height = 12
-                  Caption = #26174#31034#21333#20301
+                  Caption = '显示单位'
                   Visible = False
                 end
                 object Label28: TLabel
@@ -1609,7 +1609,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Top = 35
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = '门店群组'
                 end
                 object P5_D1: TcxDateEdit
                   Left = 80
@@ -1625,12 +1625,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = #26597#35810
+                  Caption = '查询'
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -1661,8 +1661,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
+                    '主供应商'
+                    '品牌名称')
                   TabOrder = 3
                 end
                 object fndP5_UNIT_ID: TcxComboBox
@@ -1672,9 +1672,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
+                    '计量单位'
+                    '包装1'
+                    '包装2')
                   TabOrder = 4
                   Visible = False
                 end
@@ -1701,13 +1701,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1758,13 +1758,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1800,13 +1800,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = #21517#31216
+                      Title.Caption = '名称'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = #20195#30721
+                      Title.Caption = '代码'
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1826,8 +1826,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    #34892#25919#21306#22495
-                    #31649#29702#32676#32452)
+                    '行政区域'
+                    '管理群组')
                   TabOrder = 9
                 end
               end
@@ -1855,17 +1855,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = #23435#20307
+                  Font.Name = '宋体'
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = #23435#20307
+                  FooterFont.Name = '宋体'
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
+                  ImeName = '极品五笔输入法'
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -1877,11 +1877,11 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = #23435#20307
+                  TitleFont.Name = '宋体'
                   TitleFont.Style = [fsBold]
                   TitleHeight = 22
                   IsDrawNullRow = False
-                  CurrencySymbol = #65509
+                  CurrencySymbol = '￥'
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
@@ -1892,55 +1892,55 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = #24207#21495
+                      Title.Caption = '序号'
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CHANGE_DATE'
                       Footers = <>
-                      Title.Caption = #26085#26399
+                      Title.Caption = '日期'
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GLIDE_NO'
                       Footers = <>
-                      Title.Caption = #21333#21495
+                      Title.Caption = '单号'
                       Width = 80
                     end
                     item
                       EditButtons = <>
                       FieldName = 'DEPT_ID'
                       Footers = <>
-                      Title.Caption = #37096#38376#21517#31216
+                      Title.Caption = '部门名称'
                       Width = 134
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
-                      Title.Caption = #26465#30721
+                      Title.Caption = '条码'
                       Width = 95
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
-                      Title.Caption = #21830#21697#21517#31216
+                      Title.Caption = '商品名称'
                       Width = 153
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
-                      Title.Caption = #36135#21495
+                      Title.Caption = '货号'
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
-                      Title.Caption = #21333#20301
+                      Title.Caption = '单位'
                       Width = 33
                     end
                     item
@@ -1950,7 +1950,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = '数量'
                       Width = 63
                     end
                     item
@@ -1958,7 +1958,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
-                      Title.Caption = #38646#21806#20215
+                      Title.Caption = '零售价'
                       Width = 66
                     end
                     item
@@ -1968,7 +1968,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38646#21806#37329#39069
+                      Title.Caption = '零售金额'
                       Width = 84
                     end
                     item
@@ -1978,7 +1978,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25104#26412#20215
+                      Title.Caption = '成本价'
                       Width = 80
                     end
                     item
@@ -1988,7 +1988,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #36827#36135#25104#26412
+                      Title.Caption = '进货成本'
                       Width = 80
                     end
                     item
@@ -1998,42 +1998,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24046#39069#27611#21033
+                      Title.Caption = '差额毛利'
                       Width = 80
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BATCH_NO'
                       Footers = <>
-                      Title.Caption = #25209#21495
+                      Title.Caption = '批号'
                       Width = 73
                     end
                     item
                       EditButtons = <>
                       FieldName = 'LOCUS_NO'
                       Footers = <>
-                      Title.Caption = #29289#27969#36319#36394#21495
+                      Title.Caption = '物流跟踪号'
                       Width = 74
                     end
                     item
                       EditButtons = <>
                       FieldName = 'IS_PRESENT'
                       Footers = <>
-                      Title.Caption = #36192#21697
+                      Title.Caption = '赠品'
                       Width = 35
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
-                      Title.Caption = #21046#21333#20154
+                      Title.Caption = '制单人'
                       Width = 45
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CREA_DATE'
                       Footers = <>
-                      Title.Caption = #21046#21333#26102#38388
+                      Title.Caption = '制单时间'
                       Width = 111
                     end>
                 end
@@ -2073,7 +2073,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
         Width = 72
-        Caption = #21830#21697#35843#25972#25253#34920
+        Caption = '商品调整报表'
       end
     end
   end

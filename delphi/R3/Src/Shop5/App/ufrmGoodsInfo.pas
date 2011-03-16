@@ -448,12 +448,9 @@ procedure TfrmGoodsInfo.Save;
         CurObj.Free;
       end;
    end;
-var i,j:integer;
-    CurObj: TRecord_;
-    CurType: TFieldType;
-    BARCODE_ID,BARCODECOMP_ID:string;
-    Params:TftParamList;
-    IsModifPrice: Boolean;
+var
+  BARCODE_ID:string;
+  Params:TftParamList;
 begin
   CheckGoodsFieldIsEmpty;  //检查商品非空字段是否为空?
   CheckGoodsNameIsExist;   //检查商品编码和商品名称是否在本地缓村中存在[]

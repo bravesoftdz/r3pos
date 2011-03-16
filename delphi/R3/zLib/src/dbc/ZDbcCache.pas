@@ -239,7 +239,10 @@ begin
   for I := 0 to FColumnCount - 1 do
   begin
     Current := TZColumnInfo(ColumnsInfo[I]);
-    FColumnNames[I] := Current.ColumnName;
+    if Current.ColumnName = '' then
+       FColumnNames[I] := Current.ColumnLabel
+    else
+       FColumnNames[I] := Current.ColumnName;
     FColumnCases[I] := Current.CaseSensitive;
     FColumnTypes[I] := Current.ColumnType;
     FColumnLengths[I] := GetColumnSize(Current);

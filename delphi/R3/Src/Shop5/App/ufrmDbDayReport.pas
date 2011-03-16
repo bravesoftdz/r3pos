@@ -963,7 +963,7 @@ procedure TfrmDbDayReport.fndP2_SORT_IDPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 begin
   if self.SelectGoodSortType(sid2,srid2,SortName) then
-    fndP1_SORT_ID.Text:=SortName;
+    fndP2_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmDbDayReport.fndP4_SORT_IDPropertiesButtonClick(

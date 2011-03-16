@@ -183,8 +183,11 @@ procedure TfrmPriceGradeInfo.ReadFrom(AObj: TRecord_);
         ID,Str_SORT:string;
     var tmp:TZQuery;
     begin
+      if not cds_GoodsPercent.Active then
+        cds_GoodsPercent.CreateDataSet;
+      if not cds_GoodsPercent.IsEmpty then
+        cds_GoodsPercent.EmptyDataSet;
 
-      cds_GoodsPercent.CreateDataSet;
       vList := TStringList.Create;
       try
         vList.CommaText := s;
@@ -241,7 +244,6 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsPRICEGRADE.Close;
     Factor.Open(cdsPRICEGRADE,'TPRICEGRADEInfo',Params);
-    //ClearTree(rzTree);
     CreateLevelTree(cdsPRICEGRADE,rzTree,'44444444','PRICE_ID','PRICE_NAME','LEVEL_ID',1,3);
     dbState := dsEdit;
     rzTree.SetFocus;
@@ -305,7 +307,10 @@ begin
     end;
     if AObj.FieldByName('AGIO_TYPE').AsString='2' then
       CheckPercent(AObj);
-    if cdsPRICEGRADE.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then cdsPRICEGRADE.Edit else cdsPRICEGRADE.Append;
+    if cdsPRICEGRADE.Locate('PRICE_ID',AObj.FieldbyName('PRICE_ID').AsString,[]) then
+      cdsPRICEGRADE.Edit
+    else
+      cdsPRICEGRADE.Append;
     AObj.WriteToDataSet(cdsPRICEGRADE);
     cdsPRICEGRADE.Post;
   end;
@@ -376,7 +381,7 @@ begin
      end;
   locked := true;
   try
-    //ReadFrom(AObj);
+    ReadFrom(AObj);
     edtINTE_TYPE.ItemIndex:=0;
     edtAGIO_TYPE.ItemIndex:=0;
     Label20.Visible:=False;
@@ -765,8 +770,6 @@ procedure TfrmPriceGradeInfo.edtMINIMUM_PERCENTPropertiesChange(
 begin
   inherited;
   if locked then exit;
-  if StrToFloatDef(edtMINIMUM_PERCENT.Value,0)<0 then
-    edtMINIMUM_PERCENT.EditValue:='0';
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
 end;

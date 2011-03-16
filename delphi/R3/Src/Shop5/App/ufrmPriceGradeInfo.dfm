@@ -400,7 +400,6 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Width = 75
             Height = 20
             Properties.MaxValue = 100.000000000000000000
-            Properties.MinValue = 50.000000000000000000
             Properties.ValueType = vtFloat
             Properties.OnChange = edtMINIMUM_PERCENTPropertiesChange
             TabOrder = 3

@@ -115,7 +115,7 @@ begin
     vParam.ParamByName('NEW_INPRICE1').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('SMALLTO_CALC').AsFloat;
     vParam.ParamByName('NEW_INPRICE2').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('BIGTO_CALC').AsFloat;
     Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                             ' Values (:TENANT_ID,:GODS_ID,,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+                             ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE0,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
     AGlobal.ExecSQL(Str, vParam);
   finally
     vParam.Free;
@@ -154,7 +154,7 @@ begin
       if AGlobal.ExecSQL(Str, vParam)=0 then
       begin
         Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                                 ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+                                 ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
         AGlobal.ExecSQL(Str, vParam);
       end;
     finally

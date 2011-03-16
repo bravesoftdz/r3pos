@@ -65,15 +65,18 @@ type
     procedure FormResize(Sender: TObject);
     procedure actFilterExecute(Sender: TObject);
   private
-    function RightStr(Str: string; vlen: integer): string;
-    function GetCmpNum(CmpName,BegName: string): string; //返回当前控件名中数序号
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);
-    procedure DoRBDate(Sender: TObject);   //
-    procedure DoCxDateOnCloseUp(Sender: TObject);
+    procedure DoRBDate(Sender: TObject);   //暂时没用
+    procedure DoCxDateOnCloseUp(Sender: TObject); //暂时没用
   public
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
+    //返回字符的右侧子串
+    function  RightStr(Str: string; vlen: integer): string;
+    //返回指定控件名中数序号如: ('fndP3_D1','fndP'); 返回: 3;
+    function  GetCmpNum(CmpName,BegName: string): string;
+
     {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[查询条件值] =======}
     procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel); //PageIndex=-1表示由Sender的序号确定PageIndex
     {=======  2011.03.02 Add TDBGridEh =======}
@@ -109,7 +112,7 @@ type
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
-    property DBGridEh: TDBGridEh read GetDBGridEh;
+    property  DBGridEh: TDBGridEh read GetDBGridEh;
   end;
 
 implementation
@@ -384,25 +387,21 @@ begin
       end;
     end;
 
-    if (Components[i] is TcxRadioButton) then
-    begin
-      CmpName:=trim(UpperCase(TcxRadioButton(Components[i]).Name));
-      if (Pos('WEEK',CmpName)>0) or (Pos('MONTH',CmpName)>0) or (Pos('QUARTER',CmpName)>0) or (Pos('YEAR',CmpName)>0) then
-        TcxRadioButton(Components[i]).OnClick:=self.DoRBDate;
-    end;
-
-    if (Components[i] is TcxDateEdit) then
-    begin
-      TcxDateEdit(Components[i]).Properties.OnCloseUp:=DoCxDateOnCloseUp;
-    end;
-
     //设置Dataset;
     if Components[i] is TzrComboBoxList then
     begin
       CmpName:=trim(UpperCase(TzrComboBoxList(Components[i]).Name));
-      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_SHOP_ID') then 
-        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');    
-    end;
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_SHOP_ID') then
+      begin
+        TzrComboBoxList(Components[i]).Buttons:=[zbNew,zbClear,zbFind];
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
+      end;
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_SHOP_VALUE') then
+      begin
+        TzrComboBoxList(Components[i]).Buttons:=[zbNew,zbClear,zbFind];
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
+      end;
+    end;   
 
     //设置颜色组、尺码组列是否显示
     if self.Components[i] is TDBGridEh then

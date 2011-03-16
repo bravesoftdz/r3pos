@@ -5,7 +5,6 @@ inherited frmRckMng: TfrmRckMng
   Height = 577
   Caption = #32467#36134#31649#29702
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel

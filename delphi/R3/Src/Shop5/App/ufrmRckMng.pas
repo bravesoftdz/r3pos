@@ -73,7 +73,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -94,8 +93,9 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
     locked:boolean;
+    { Public declarations }
+    procedure CheckCalc(b, e:integer); //开始月份| 结束月份
     procedure InitGrid;
     procedure Audit1;
     procedure Audit2;
@@ -109,7 +109,7 @@ type
 
 implementation
 uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmBatchCloseForDay,
-  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon;
+  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon, ufrmCostCalc;
 {$R *.dfm}
 
 procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -157,6 +157,8 @@ begin
         1:StrWhere := StrWhere + ' and CHK_DATE is null';
         2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
       end;
+      //检测是否计算
+      CheckCalc(strtoint(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoint(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
       strSql :=
       'select jd.*,d.BAL_MNY as BAL_MNY,d.RECV_MNY as RECV_MNY,d.PUSH_MNY as PUSH_MNY,d.PAY_MNY as PAY_MNY,d.IORO_OUT_MNY as IORO_OUT_MNY,d.IORO_IN_MNY as IORO_IN_MNY,d.TRN_OUT_MNY-d.TRN_IN_MNY as TRN_MNY,'+
@@ -339,12 +341,6 @@ begin
       frmShopMain.actfrmMonthClose.OnExecute(nil);
       Open;
     end;
-end;
-
-procedure TfrmRckMng.FormShow(Sender: TObject);
-begin
-  inherited;
-  Open;
 end;
 
 procedure TfrmRckMng.Cancel;
@@ -938,6 +934,23 @@ begin
   finally
     Db_CloseMonth.First;
     Db_CloseMonth.EnableControls;
+  end;
+end;
+
+procedure TfrmRckMng.CheckCalc(b, e: integer);
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE>=:CREA_DATE';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('CREA_DATE').AsInteger := e;
+    Factor.Open(rs);
+    if rs.Fields[0].AsInteger=0 then
+       TfrmCostCalc.StartCalc(self);
+  finally
+    rs.Free;
   end;
 end;
 

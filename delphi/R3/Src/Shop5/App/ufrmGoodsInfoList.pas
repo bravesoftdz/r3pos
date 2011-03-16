@@ -470,25 +470,27 @@ end;
 procedure TfrmGoodsInfoList.actNewExecute(Sender: TObject);
 var
   CurObj: TRecord_;
-  sid,sname:string;
+  SortID,SortName:string;
 begin
   inherited;
+  SortID:='';
+  SortName:='';
   if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   if rzTree.Selected=nil then Raise Exception.Create(' 商品分类没有节点，请先选择分类节点！');
   CurObj:=TRecord_(rzTree.Selected.Data);
   if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
-  if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then  // RELATION_FLAG=2 自主经营
+  if (trim(CurObj.FieldByName('RELATION_ID').AsString)='0') and (trim(CurObj.FieldByName('LEVEL_ID').AsString)<>'') then  // RELATION_FLAG=2 自主经营
   begin
     //Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
-    sid := CurObj.FieldbyName('SORT_ID').AsString;
-    sname := CurObj.FieldbyName('SORT_NAME').AsString;
+    SortID := CurObj.FieldbyName('SORT_ID').AsString;
+    SortName := CurObj.FieldbyName('SORT_NAME').AsString;
   end;
   
   with TfrmGoodsInfo.Create(self) do
   begin
     try
       OnSave := AddRecord;
-      Append(sid,sname,'');
+      Append(SortID,SortName,'');
       ShowModal;
     finally
       free;

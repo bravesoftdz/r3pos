@@ -98,6 +98,9 @@ type
     function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
+
+    //根据输入PageNo作为控件的No进行搜索报表表头条件
+    function  AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
     //判断最大结帐日期[传入]
@@ -399,7 +402,6 @@ begin
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_SHOP_VALUE') then
       begin
         TzrComboBoxList(Components[i]).Buttons:=[zbNew,zbClear,zbFind];
-        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
       end;
     end;   
 
@@ -502,59 +504,6 @@ begin
         result:=result+spaceStr+trim(TitleList.Strings[i]);
     end;
   end;
-  
-{var
-  StrList: TStringList;
-  LineStr,CurStr: string;
-  i,j,Idx,SigWidth: integer;
-begin
-  //格式化规则: 默认按设定Cols数，计算出每列长度为:PrintWidth / Cols=xx字节
-  result:='';
-  LineStr:='';
-  CurStr:='';
-  Idx:=0;
-  case Cols of
-   1: SigWidth:=78; //39个汉字
-   2: SigWidth:=40;
-   3: SigWidth:=27;                       
-   4: SigWidth:=20;
-   5: SigWidth:=16;
-  end;
-
-  try
-    StrList:=TStringList.Create;
-    for i:=TitleList.Count-1 downto 0 do //倒序过来
-    begin
-      StrList.Add(trim(TitleList.Strings[i])); 
-    end;
-
-    for i:=StrList.Count-1 downto 0 do
-    begin
-      CurStr:=trim(StrList.Strings[i]);
-      if (length(CurStr)>SigWidth) and (Cols-Idx>1) then
-      begin
-        Idx:=Idx+2;
-        if LineStr<>'' then LineStr:=LineStr+' ';
-        LineStr:=LineStr+CurStr;
-      end else
-      begin
-        inc(Idx);
-        if LineStr<>'' then LineStr:=LineStr+' ';
-        LineStr:=LineStr+CurStr+Copy('                                                            ',1,SigWidth-length(CurStr));
-      end;
-      if Idx=Cols then
-      begin
-        if result='' then result:=LineStr
-        else result:=result+#13+LineStr;
-        CurStr:='';
-        LineStr:='';
-        Idx:=0;
-      end;
-    end;
-  finally
-    StrList.Free;
-  end;
-  }  
 end;
 
 procedure TframeBaseReport.AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
@@ -1022,6 +971,69 @@ begin
     FindCmp:=FindComponent('fndP'+CmpNum+'_year');
     if (FindCmp<>nil) and (FindCmp is TcxRadioButton) and (TcxRadioButton(FindCmp).Checked) then
       TcxRadioButton(FindCmp).Checked:=False;
+  end;
+end;
+
+function TframeBaseReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
+var
+  i: integer;
+  CmpName: string;
+  Contrl: TWinControl;
+  FindCmp1,FindCmp2: TComponent;
+begin
+  // 1、管理群组：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_TYPE');
+  FindCmp2:=FindComponent('fndP'+PageNo+'_SHOP_VALUE');
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList)  and (TcxComboBox(FindCmp1).Visible) and
+     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'')  then
+  begin
+    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
+  end;
+  
+  // 2、门店名称：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
+  if (FindCmp1<>nil) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
+  begin
+    TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
+  end;
+  
+  // 3、商品指标：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');
+  FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
+     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'') then
+  begin
+    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
+  end;
+  // 4、商品分类
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
+  if (FindCmp1<>nil) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
+  begin
+    TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);
+  end;
+
+  // 5、计量单位
+  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
+  if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
+    TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
+
+  // 6、单据类型:[全部命名规则]
+  FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
+  if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
+  begin
+    Contrl:=TcxRadioButton(FindCmp1).Parent;
+    if (Contrl<>nil) and (Contrl.ControlCount>0) then  //根据[查询条件面板:Conrol 循环查询]
+    begin
+      for i:=0 to Contrl.ControlCount-1 do
+      begin
+        CmpName:=copy(trim(LowerCase(TComponent(Contrl.Controls[i]).Name)),1,5+length(PageNo));
+        if (Contrl.Controls[i] is TcxRadioButton) and (TcxRadioButton(Contrl.Controls[i]).Checked) and (CmpName='fndp'+PageNo+'_') then
+        begin
+          TitleList.Add('单据类型：'+TcxRadioButton(Contrl.Controls[i]).Caption);
+          Break; 
+        end;
+      end;
+    end;
   end;
 end;
 

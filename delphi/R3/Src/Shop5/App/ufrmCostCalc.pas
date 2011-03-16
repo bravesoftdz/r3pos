@@ -7,7 +7,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus,ZDataSet, RzButton, RzPrgres, StdCtrls,
-  ExtCtrls;
+  ExtCtrls, ZBase;
 
 type
   TfrmCostCalc = class(TfrmBasic)
@@ -51,6 +51,9 @@ type
     procedure Prepare;
     procedure CreateTempTable;
     procedure PrepareDataForRck;
+    procedure CheckForRck;
+    //自动缴银结账
+    procedure AutoPosReck;
     //移动平均成本核算<按开单时的平均加计算>
     procedure Calc0;
     //日加权移动平均成本核算
@@ -61,7 +64,9 @@ type
     procedure CalcMth;
     //生成结账记录
     procedure ClseRck;
-    //计算账户台账
+    //计算账户日台账
+    procedure CalcAcctDay;
+    //计算账户月台账
     procedure CalcAcctMth;
     //核算单位
     property cid:string read Fid write Setid;
@@ -80,6 +85,14 @@ type
     //结账类型 0 试算， 1 日结  2 月结
     property flag:integer read Fflag write Setflag;
     class function StartCalc(Owner:TForm):boolean;
+    //计算日账户台账
+    class function TryCalcDayAcct(Owner:TForm):boolean;
+    //计算日商品台账
+    class function TryCalcDayGods(Owner:TForm):boolean;
+    //计算月账户台账
+    class function TryCalcMthAcct(Owner:TForm):boolean;
+    //计算月商品台账
+    class function TryCalcMthGods(Owner:TForm):boolean;
     class function StartDayReck(Owner:TForm):boolean;
     class function StartMonthReck(Owner:TForm):boolean;
 
@@ -304,13 +317,15 @@ begin
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
   DBLock;
   try
-    Label11.Caption := '准备临时表...';
+    Label11.Caption := '核算前检测数据...';
     Label11.Update;
     RzProgressBar1.Percent := 1;
+    CheckForRck;
     CreateTempTable;
     Label11.Caption := '准备核算数据...';
     Label11.Update;
     //数据准备
+    CheckForRck;
     PrepareDataForRck;
     Label11.Caption := '正在核算成本...';
     Label11.Update;
@@ -324,10 +339,14 @@ begin
     Label11.Caption := '正在计算商品月台账...';
     Label11.Update;
     CalcMth;
+    Label11.Caption := '正在计算账户日台账...';
+    Label11.Update;
+    AutoPosReck;
+    CalcAcctDay;
     Label11.Caption := '正在计算账户月台账...';
     Label11.Update;
-    //月结时要算账户台账
-    if flag in [2] then CalcAcctMth;
+    CalcAcctMth;
+
     Label11.Caption := '输出数据中...';
     Label11.Update;
     ClseRck;
@@ -995,30 +1014,26 @@ begin
     SQL :=
       'insert into RCK_ACCT_MONTH('+
       'TENANT_ID,SHOP_ID,MONTH,ACCOUNT_ID,'+
-      'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,COMM,TIME_STAMP '+
+      'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY,COMM,TIME_STAMP '+
       ') '+
       'select '+
       'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMM',e)+',ACCOUNT_ID,'+
       'sum(ORG_MNY),sum(IN_MNY),sum(OUT_MNY),sum(ORG_MNY)+sum(IN_MNY)-sum(OUT_MNY),'+
+      'sum(PAY_MNY),sum(RECV_MNY),sum(POS_MNY),sum(TRN_IN_MNY),sum(TRN_OUT_MNY),sum(PUSH_MNY),sum(IORO_IN_MNY),sum(IORO_OUT_MNY),'+
       '''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
       'from('+
       'select '+
       'B.TENANT_ID,B.SHOP_ID,B.ACCOUNT_ID,'+
-      'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY '+
-      'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH='+formatDatetime('YYYYMM',incmonth(e,-1))+') A on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+      'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as POS_MNY,0 as TRN_IN_MNY,0 as TRN_OUT_MNY,0 as PUSH_MNY,0 as IORO_IN_MNY,0 as IORO_OUT_MNY '+
+      'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_MONTH where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH='+formatDatetime('YYYYMM',incmonth(e,-1))+') A '+
+      'on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
       'union all '+
       'select '+
       'TENANT_ID,SHOP_ID,ACCOUNT_ID,'+
-      '0 as ORG_MNY,IN_MNY,OUT_MNY,0 as BAL_MNY '+
-      'from VIW_ACCT_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
+      '0 as ORG_MNY,IN_MNY,OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
+      'from RCK_ACCT_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
       ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
     Factor.ExecSQL(SQL);
-    //==========
-
-    //计算客户收付账款
-
-    //==========
-
 
     if e>=eDate then break;
     b := b +round(e-(bDate+b))+1;
@@ -1033,6 +1048,167 @@ end;
 procedure TfrmCostCalc.DBUnLock;
 begin
   Factor.DBLock(false);
+end;
+
+procedure TfrmCostCalc.CalcAcctDay;
+var
+  i:integer;
+  SQL,u:string;
+begin
+  Factor.ExecSQL('delete from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate));
+  for i:= 1 to pt do
+    begin
+      RzProgressBar1.Percent := (i*100 div pt) div 3+5;
+      SQL :=
+        'insert into RCK_ACCT_DAYS('+
+        'TENANT_ID,SHOP_ID,CREA_DATE,ACCOUNT_ID,'+
+        'ORG_MNY,IN_MNY,OUT_MNY,BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY,COMM,TIME_STAMP '+
+        ') '+
+        'select '+
+        'TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+',ACCOUNT_ID,'+
+        'sum(ORG_MNY),sum(IN_MNY),sum(OUT_MNY),sum(ORG_MNY)+sum(IN_MNY)-sum(OUT_MNY),'+
+        'sum(PAY_MNY),sum(RECV_MNY),sum(POS_MNY),sum(TRN_IN_MNY),sum(TRN_OUT_MNY),sum(PUSH_MNY),sum(IORO_IN_MNY),sum(IORO_OUT_MNY),'+
+        '''00'' as COMM,'+GetTimeStamp(Factor.iDbType)+' '+
+        'from('+
+        'select '+
+        'B.TENANT_ID,B.SHOP_ID,B.ACCOUNT_ID,'+
+        'isnull(A.BAL_MNY,0)+isnull(B.ORG_MNY,0) as ORG_MNY,0 as IN_MNY,0 as OUT_MNY,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as POS_MNY,0 as TRN_IN_MNY,0 as TRN_OUT_MNY,0 as PUSH_MNY,0 as IORO_IN_MNY,0 as IORO_OUT_MNY '+
+        'from ACC_ACCOUNT_INFO B left outer join (select * from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+') A '+
+        'on B.TENANT_ID=A.TENANT_ID and B.ACCOUNT_ID=A.ACCOUNT_ID where B.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+        'union all '+
+        'select '+
+        'A.TENANT_ID,B.SHOP_ID,A.ACCOUNT_ID,'+
+        '0 as ORG_MNY,A.IN_MNY,B.OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
+        'from VIW_ACCT_DAYS A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.ACCOUNT_ID=B.ACCOUNT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
+        ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
+      Factor.ExecSQL(SQL);
+    end;
+end;
+
+procedure TfrmCostCalc.CheckForRck;
+var
+  rs:TZQuery;
+begin
+  if not (flag in [1,2]) then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text :=
+      'select B.SHOP_NAME,A.PRINT_DATE from STO_PRINTORDER A,CA_SHOP_INFO B '+
+      'where A.TENANT_ID=:TENANT_ID and A.PRINT_DATE>:PRINT_DATE and A.TENANT_ID=B.TENANT_ID and A.CHK_DATE is null';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('PRINT_DATE').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',bDate));
+    Factor.Open(rs);
+    if not rs.IsEmpty then Raise Exception.Create(rs.Fields[0].asString+'门店'+rs.Fields[1].asString+'号的盘点没有审核,不能结账.');
+  finally
+    rs.Free;
+  end;
+end;
+
+class function TfrmCostCalc.TryCalcDayAcct(Owner: TForm): boolean;
+begin
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
+        Show;
+        btnStartClick(nil);
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmCostCalc.TryCalcDayGods(Owner: TForm): boolean;
+begin
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
+        Show;
+        btnStartClick(nil);
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmCostCalc.TryCalcMthAcct(Owner: TForm): boolean;
+begin
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
+        Show;
+        btnStartClick(nil);
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmCostCalc.TryCalcMthGods(Owner: TForm): boolean;
+begin
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
+        Show;
+        btnStartClick(nil);
+      finally
+        free;
+      end;
+    end;
+end;
+
+procedure TfrmCostCalc.AutoPosReck;
+var
+  rs,sv:TZQuery;
+  Str:string;
+  AObj:TRecord_;
+begin
+  rs := TZQuery.Create(nil);
+  sv := TZQuery.Create(nil);
+  AObj := TRecord_.Create;
+  try
+    Str :=
+    'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
+    'sum(PAY_A) as PAY_A,'+
+    'sum(PAY_B) as PAY_B,'+
+    'sum(PAY_C) as PAY_C,'+
+    'sum(PAY_D) as PAY_D,'+
+    'sum(PAY_E) as PAY_E,'+
+    'sum(PAY_F) as PAY_F,'+
+    'sum(PAY_G) as PAY_G,'+
+    'sum(PAY_H) as PAY_H,'+
+    'sum(PAY_I) as PAY_I,'+
+    'sum(PAY_J) as PAY_J '+
+    ' from SAL_SALESORDER A'+
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SALES_DATE>=:D1 and SALES_DATE<=:D2 '+
+    ' and not exists('+
+    ' select * from ACC_CLOSE_FORDAY  where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
+    ' )group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
+    rs.SQL.Text := Str;
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',bDate));
+    rs.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',eDate));
+    Factor.Open(rs);
+    sv.Delta := rs.Delta;
+    rs.First;
+    while not rs.Eof do
+      begin
+        sv.Append;
+        AObj.ReadFromDataSet(rs); 
+        AObj.WriteToDataSet(sv);
+        sv.Post;
+        rs.Next;
+      end;
+    Factor.UpdateBatch(sv,'TCloseForDay');
+  finally
+    AObj.free;
+    sv.Free;
+    rs.Free;
+  end;
 end;
 
 end.

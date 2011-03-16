@@ -44,7 +44,8 @@ uses
   ObjTenant in '..\Shop5\Obj\ObjTenant.pas',
   ObjTransOrder in '..\Shop5\Obj\ObjTransOrder.pas',
   ObjUserRights in '..\Shop5\Obj\ObjUserRights.pas',
-  ObjUsers in '..\Shop5\Obj\ObjUsers.pas';
+  ObjUsers in '..\Shop5\Obj\ObjUsers.pas',
+  objRelation in '..\Shop5\Obj\objRelation.pas';
 
 {$R *.res}
 

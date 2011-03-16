@@ -7,6 +7,7 @@ type
   TTransOrder = class(TZFactory)
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     procedure InitClass; override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -67,6 +68,21 @@ begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   result := BeforeDeleteRecord(AGlobal);
   result := BeforeDeleteRecord(AGlobal);
+end;
+
+function TTransOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var
+   rs:TZQuery;
+begin
+   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
+      begin
+        Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('TRANS_DATE').AsString);
+        if FieldbyName('TRANS_DATE').AsOldString <> '' then
+           Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('TRANS_DATE').AsOldString);
+        result := true;
+      end
+   else
+      Result := true;
 end;
 
 function TTransOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;

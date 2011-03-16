@@ -143,9 +143,7 @@ end;
 
 function TfrmRckMng.EncodeSQL: string;
 var
-  strSql,shpSql,StrWhere:string;
-  rs:TZQuery;
-  Date:TDate;
+  strSql,StrWhere:string;
 begin
   if RzPage.TabIndex = 0 then
     begin
@@ -160,47 +158,28 @@ begin
         2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
       end;
 
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and END_DATE<='''+FormatDateTime('YYYY-MM-DD',P1_D1.Date)+'''';
-        Factor.Open(rs);
-//        if 
-      finally
-        rs.free;
-      end;
-
       strSql :=
-      'select jc.*,null as SHOP_ID_TEXT,0 as BAL_MNY,0 as PAY_MNY,0 as RECV_MNY,0 as IRIN_MNY,0 as IROT_MNY,0 as TRNIN_MNY,0 as TRNOT_MNY,0 as PUSH_MNY from ('+
-      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,'+
-      'CHK_DATE,CHK_USER,CREA_DATE,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ) jc '+
-      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ';
-
-      shpSql :=
+      'select jd.*,d.BAL_MNY as BAL_MNY,d.RECV_MNY as RECV_MNY,d.PUSH_MNY as PUSH_MNY,d.PAY_MNY as PAY_MNY,d.IORO_OUT_MNY as IORO_OUT_MNY,d.IORO_IN_MNY as IORO_IN_MNY,d.TRN_OUT_MNY-d.TRN_IN_MNY as TRN_MNY,'+
+      'd.BAL_MNY-d.IN_MNY+d.OUT_MNY as ORG_MNY '+
+      'from ('+
       'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from ('+
       'select 1 as FLAG,null as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
       'sum(PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as TOTAL_MNY,'+
       'sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
       'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,'+
-      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,max(CREA_USER) as CREA_USER '+
+      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,max(CREA_USER) as CREA_USER,0 as TIME_STAMP '+
       'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
-      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
+      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ) jd '+
+      'left outer join RCK_ACCT_DAYS d on jd.TENANT_ID=d.TENANT_ID and jd.SHOP_ID=d.SHOP_ID and jd.CLSE_DATE=d.CREA_DATE ';
 
-      //算出余额及其他收支
-      shpSql :=
-      'select j.*,s.BAL_MNY,s.PAY_MNY,s.RECV_MNY,s.IRIN_MNY,s.IROT_MNY,s.TRNIN_MNY,s.TRNOT_MNY,s.PUSH_MNY from ('+shpSql+') j left outer join ('+
-      'select A.TENANT_ID,A.SHOP_ID,B.CLSE_DATE,'+
-      'sum(A.IN_MNY-A.OUT_MNY) as BAL_MNY,'+
-      'sum(case when A.FLAG=1 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as PAY_MNY,'+
-      'sum(case when A.FLAG=2 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as RECV_MNY,'+
-      'sum(case when A.FLAG=3 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as IRIN_MNY,'+
-      'sum(case when A.FLAG=3 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as IROT_MNY,'+
-      'sum(case when A.FLAG=4 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as TRNIN_MNY,'+
-      'sum(case when A.FLAG=4 and A.CREA_DATE=B.CLSE_DATE then A.OUT_MNY else 0 end) as TRNOT_MNY,'+
-      'sum(case when A.FLAG=6 and A.CREA_DATE=B.CLSE_DATE then A.IN_MNY else 0 end) as PUSH_MNY '+
-      'from VIW_ACCT_FORPAY_A A,(select TENANT_ID,SHOP_ID,CLSE_DATE from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) B '+
-      'where A.CREA_DATE<B.CLSE_DATE and A.TENANT_ID=B.TENANT_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CLSE_DATE>='+FormatDateTime('YYYYMMDD',P1_D1.Date)+' and CLSE_DATE <='+FormatDateTime('YYYYMMDD',P1_D2.Date)+' '+
-      'group by A.TENANT_ID,A.SHOP_ID,B.CLSE_DATE ) s on j.TENANT_ID=s.TENANT_ID and j.SHOP_ID=s.SHOP_ID and j.CLSE_DATE=s.CLSE_DATE';
-      strSql := strSql + ' union all '+shpSql;
+      strSql := strSql + ' union all ';
+
+      strSql := strSql +
+      'select jc.*,null as SHOP_ID_TEXT,null as BAL_MNY,null as RECV_MNY,null as PUSH_MNY,null as PAY_MNY,null as IORO_OUT_MNY,null as IORO_IN_MNY,null as TRN_MNY,'+
+      'null as ORG_MNY from ('+
+      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,'+
+      'CHK_DATE,CHK_USER,CREA_DATE,CREA_USER,TIME_STAMP from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ) jc '+
+      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ';
 
       result :=
       'select je.*,case when flag=1 then ''小计'' else e.USER_NAME end as CREA_USER_TEXT from ('+
@@ -307,7 +286,7 @@ begin
       Column := DBGridEh1.Columns.Add;
       Column.FieldName := 'PAY_'+rs.FieldbyName('CODE_ID').AsString;
       Column.Width := 55;
-      Column.Title.Caption := rs.FieldbyName('CODE_NAME').AsString;
+      Column.Title.Caption := '零售业务|'+rs.FieldbyName('CODE_NAME').AsString;
       Column.Index := DBGridEh1.Columns.Count -4;
       rs.Next;
     end;
@@ -373,6 +352,7 @@ var rs: TZQuery;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('13200001',3) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
+  if cdsBrowser.FieldbyName('FLAG').asString='1' then Raise Exception.Create('请选择要撤消的收银员!');
   rs := TZQuery.Create(nil);
   try
     cdsBrowser.CommitUpdates;
@@ -422,13 +402,15 @@ begin
   //权限
   if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then
     begin
-      if Copy(cdsBrowser.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
+// 审核只是管理动作，不需检测上报
+//      if Copy(cdsBrowser.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
       if cdsBrowser.FieldByName('CHK_USER').AsString <> Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
       if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end
   else
     begin
-      if Copy(cdsBrowser.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
+// 审核只是管理动作，不需检测上报
+//      if Copy(cdsBrowser.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
       if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
     end;
 
@@ -438,7 +420,8 @@ begin
       Params.ParamByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
       Params.ParamByName('CHK_USER').AsString := Global.UserID;
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      Params.ParamByName('ROWS_ID').AsString := cdsBrowser.FieldbyName('ROWS_ID').AsString;
+      Params.ParamByName('SHOP_ID').AsString := cdsBrowser.FieldbyName('SHOP_ID').AsString;
+      Params.ParamByName('CLSE_DATE').AsInteger := cdsBrowser.FieldbyName('CLSE_DATE').AsInteger;
       if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
         begin
           try
@@ -461,7 +444,8 @@ begin
       Params.Free;
     end;
     MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
-    if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+    Open;
+{    if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
       begin
         cdsBrowser.Edit;
         cdsBrowser.FieldByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
@@ -476,8 +460,8 @@ begin
         cdsBrowser.FieldByName('CHK_USER').AsString := '';
         cdsBrowser.FieldByName('CHK_USER_TEXT').AsString := '';
         cdsBrowser.Post;
-      end;
-  Except
+      end;  }
+  except
     on E:Exception do
       begin
         Raise Exception.Create(E.Message);

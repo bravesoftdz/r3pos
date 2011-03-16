@@ -230,7 +230,7 @@ inherited frmRckMng: TfrmRckMng
                     FieldName = 'CREA_USER_TEXT'
                     Footers = <>
                     Title.Caption = #25910#38134#21592
-                    Width = 75
+                    Width = 52
                   end
                   item
                     DisplayFormat = '0000-00-00'
@@ -243,16 +243,65 @@ inherited frmRckMng: TfrmRckMng
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'BAL_CASH'
+                    FieldName = 'ORG_MNY'
+                    Footers = <>
+                    Title.Caption = #26152#26085#29616#37329
+                    Width = 56
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'PUSH_MNY'
+                    Footers = <>
+                    Title.Caption = #20805#20540#29616#37329
+                    Width = 57
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'RECV_MNY'
+                    Footers = <>
+                    Title.Caption = #25209#21457#29616#37329
+                    Width = 55
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'PAY_MNY'
+                    Footers = <>
+                    Title.Caption = #20184#27454#29616#37329
+                    Width = 57
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'OTH_IN_MNY'
+                    Footers = <>
+                    Title.Caption = #20854#20182#25910#20837
+                    Width = 56
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'OTH_OUT_MNY'
+                    Footers = <>
+                    Title.Caption = #20854#20182#25903#20986
+                    Width = 56
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'TRN_MNY'
+                    Footers = <>
+                    Title.Caption = #32564#27454#37329#39069
+                    Width = 58
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'BAL_MNY'
                     Footers = <>
                     Title.Caption = #32467#20313#29616#37329
-                    Width = 66
+                    Width = 57
                   end
                   item
                     EditButtons = <>
                     FieldName = 'TOTAL_MNY'
                     Footers = <>
-                    Title.Caption = #33829#19994#39069
+                    Title.Caption = #38646#21806#19994#21153'|'#23567#35745
                     Width = 70
                   end
                   item
@@ -287,8 +336,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 1262
-            Height = 665
+            Width = 757
+            Height = 466
             Align = alClient
             BorderInner = fsGroove
             BorderOuter = fsNone
@@ -297,8 +346,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel7: TRzPanel
               Left = 7
               Top = 81
-              Width = 1248
-              Height = 577
+              Width = 743
+              Height = 378
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -306,8 +355,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh2: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 1248
-                Height = 577
+                Width = 743
+                Height = 378
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseDay
@@ -336,7 +385,6 @@ inherited frmRckMng: TfrmRckMng
                 DecimalNumber = 2
                 DigitalNumber = 12
                 OnDrawColumnCell = DBGridEh2DrawColumnCell
-                OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
                   item
                     Color = clBtnFace
@@ -384,7 +432,7 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel10: TRzPanel
               Left = 7
               Top = 7
-              Width = 1248
+              Width = 743
               Height = 74
               Align = alTop
               BorderOuter = fsNone
@@ -524,8 +572,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 1262
-            Height = 665
+            Width = 757
+            Height = 466
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -534,8 +582,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel9: TRzPanel
               Left = 6
               Top = 79
-              Width = 1250
-              Height = 580
+              Width = 745
+              Height = 381
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -543,8 +591,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh3: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 1250
-                Height = 580
+                Width = 745
+                Height = 381
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -573,7 +621,6 @@ inherited frmRckMng: TfrmRckMng
                 DecimalNumber = 2
                 DigitalNumber = 12
                 OnDrawColumnCell = DBGridEh3DrawColumnCell
-                OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
                   item
                     Color = clBtnFace
@@ -636,7 +683,7 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel11: TRzPanel
               Left = 6
               Top = 6
-              Width = 1250
+              Width = 745
               Height = 73
               Align = alTop
               BorderOuter = fsNone

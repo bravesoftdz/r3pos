@@ -892,8 +892,7 @@ begin
   end;
 end;
 
-procedure TfrmChangeDayReport.fndP1_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+procedure TfrmChangeDayReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   if SelectGoodSortType(sid1,srid1,SortName) then
     fndP1_SORT_ID.Text:=SortName;
@@ -973,9 +972,9 @@ end;
 
 procedure TfrmChangeDayReport.fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
 begin
-  sid4 := '';
-  srid4 := '';
-  fndP4_SORT_ID.Text := '';
+  sid5 := '';
+  srid5 := '';
+  fndP5_SORT_ID.Text := '';
 end;
 
 function TfrmChangeDayReport.GetRCKFields: string;

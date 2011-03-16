@@ -15,10 +15,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 516
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -346,7 +344,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 676
+            Width = 675
             Height = 489
             Align = alClient
             BorderOuter = fsNone
@@ -355,7 +353,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 666
+              Width = 665
               Height = 479
               Align = alClient
               BevelOuter = bvNone
@@ -364,7 +362,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 666
+                Width = 665
                 Height = 85
                 Align = alTop
                 BorderOuter = fsGroove
@@ -594,7 +592,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 85
-                Width = 666
+                Width = 665
                 Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
@@ -603,7 +601,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 662
+                  Width = 661
                   Height = 390
                   Align = alClient
                   AllowedOperations = []

@@ -654,7 +654,7 @@ begin
   FCurrentRowsList := TList.Create;
 
   FRowAccessor := TZRowAccessor.Create(ColumnsInfo);
-  FOldRowAccessor := TZRowAccessor.Create(ColumnsInfo);
+  FOldRowAccessor := TZRowAccessor.Create(ColumnsInfo);        
   FNewRowAccessor := TZRowAccessor.Create(ColumnsInfo);
 
   FRowAccessor.AllocBuffer(FUpdatedRow);

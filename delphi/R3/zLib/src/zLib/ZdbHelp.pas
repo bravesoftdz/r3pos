@@ -965,6 +965,7 @@ end;
 procedure TZdbUpdate.SetFactory(const Value: TZFactory);
 begin
   FFactory := Value;
+  FColumnCount := 0;
 end;
 
 procedure TZdbUpdate.WriteData;

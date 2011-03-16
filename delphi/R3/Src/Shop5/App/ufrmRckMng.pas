@@ -89,6 +89,10 @@ type
     procedure AllSelect2Click(Sender: TObject);
     procedure NotSelect2Click(Sender: TObject);
     procedure InverserSelect2Click(Sender: TObject);
+    procedure Db_CloseDayAfterScroll(DataSet: TDataSet);
+    procedure Db_CloseMonthAfterScroll(DataSet: TDataSet);
+    procedure actPrintExecute(Sender: TObject);
+    procedure actPreviewExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -723,7 +727,35 @@ end;
 procedure TfrmRckMng.RzPageChange(Sender: TObject);
 begin
   inherited;
-  //actFindExecute(Sender);
+  case RzPage.ActivePageIndex of
+    0:begin
+      if cdsBrowser.IsEmpty then
+        actAudit.Caption:='…Û∫À'
+      else
+        if cdsBrowser.FieldByName('CHK_USER_TEXT').AsString<>'' then
+          actAudit.Caption:='∆˙…Û'
+        else
+          actAudit.Caption:='…Û∫À';
+    end;
+    1:begin
+      if Db_CloseDay.IsEmpty then
+        actAudit.Caption:='…Û∫À'
+      else
+        if Db_CloseDay.FieldByName('CHK_USER_TEXT').AsString<>'' then
+          actAudit.Caption:='∆˙…Û'
+        else
+          actAudit.Caption:='…Û∫À';
+    end;
+    2:begin
+      if Db_CloseMonth.IsEmpty then
+        actAudit.Caption:='…Û∫À'
+      else
+        if Db_CloseMonth.FieldByName('CHK_USER_TEXT').AsString<>'' then
+          actAudit.Caption:='∆˙…Û'
+        else
+          actAudit.Caption:='…Û∫À';
+    end;
+  end;
 end;
 
 procedure TfrmRckMng.AllSelectClick(Sender: TObject);
@@ -952,6 +984,36 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmRckMng.Db_CloseDayAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if Db_CloseDay.FieldByName('CHK_USER_TEXT').AsString<>'' then
+    actAudit.Caption:='∆˙…Û'
+  else
+    actAudit.Caption:='…Û∫À';
+end;
+
+procedure TfrmRckMng.Db_CloseMonthAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if Db_CloseMonth.FieldByName('CHK_USER_TEXT').AsString<>'' then
+    actAudit.Caption:='∆˙…Û'
+  else
+    actAudit.Caption:='…Û∫À';
+end;
+
+procedure TfrmRckMng.actPrintExecute(Sender: TObject);
+begin
+  inherited;
+//
+end;
+
+procedure TfrmRckMng.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+//
 end;
 
 end.

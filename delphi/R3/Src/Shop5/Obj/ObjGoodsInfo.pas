@@ -107,58 +107,40 @@ begin
                          ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
   AGlobal.ExecSQL(Str, self);
   //插入进货价扩展表:
-  try
-    vParam:=TftParamList.Create(nil);
-    vParam.ParamByName('TENANT_ID').AsInteger:=Fieldbyname('TENANT_ID').AsInteger;
-    vParam.ParamByName('GODS_ID').AsString:=Fieldbyname('GODS_ID').AsString;
-    vParam.ParamByName('NEW_INPRICE').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat;
-    vParam.ParamByName('NEW_INPRICE1').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('SMALLTO_CALC').AsFloat;
-    vParam.ParamByName('NEW_INPRICE2').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('BIGTO_CALC').AsFloat;
-    Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                             ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE0,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
-    AGlobal.ExecSQL(Str, vParam);
-  finally
-    vParam.Free;
-  end;
+  Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                           ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE * :SMALLTO_CALC,:NEW_INPRICE * :BIGTO_CALC,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+  AGlobal.ExecSQL(Str, self);
 end;
 
 function TGoodsInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
-  vParam: TftParamList;
 begin
   result:=true;
-  Str:=
-    'Update PUB_GOODSINFO Set GODS_CODE=:GODS_CODE,GODS_NAME=:GODS_NAME,GODS_SPELL=:GODS_SPELL,GODS_TYPE=:GODS_TYPE,SORT_ID1=:SORT_ID1,'+
-    'SORT_ID2=:SORT_ID2,SORT_ID3=:SORT_ID3,SORT_ID4=:SORT_ID4,SORT_ID5=:SORT_ID5,SORT_ID6=:SORT_ID6,SORT_ID7=:SORT_ID7,SORT_ID8=:SORT_ID8,'+
-    'BARCODE=:BARCODE,USING_PRICE=:USING_PRICE,HAS_INTEGRAL=:HAS_INTEGRAL,USING_BATCH_NO=:USING_BATCH_NO,USING_BARTER=:USING_BARTER,'+
-    'BARTER_INTEGRAL=:BARTER_INTEGRAL,REMARK=:REMARK,USING_LOCUS_NO=:USING_LOCUS_NO,'+
-    'CALC_UNITS=:CALC_UNITS,UNIT_ID=:UNIT_ID,SMALL_UNITS=:SMALL_UNITS,BIG_UNITS=:BIG_UNITS,SMALLTO_CALC=:SMALLTO_CALC,BIGTO_CALC=:BIGTO_CALC,'+
-    'NEW_INPRICE=:NEW_INPRICE,NEW_OUTPRICE=:RTL_OUTPRICE,NEW_LOWPRICE=:NEW_LOWPRICE,'+
-    'COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
-  AGlobal.ExecSQL(Str,self);
-
+  if trim(FieldByName('RELATION_ID').AsString)='0' then //自主创建才进行写条码
+  begin
+    Str:=
+      'Update PUB_GOODSINFO Set GODS_CODE=:GODS_CODE,GODS_NAME=:GODS_NAME,GODS_SPELL=:GODS_SPELL,GODS_TYPE=:GODS_TYPE,SORT_ID1=:SORT_ID1,'+
+      'SORT_ID2=:SORT_ID2,SORT_ID3=:SORT_ID3,SORT_ID4=:SORT_ID4,SORT_ID5=:SORT_ID5,SORT_ID6=:SORT_ID6,SORT_ID7=:SORT_ID7,SORT_ID8=:SORT_ID8,'+
+      'BARCODE=:BARCODE,USING_PRICE=:USING_PRICE,HAS_INTEGRAL=:HAS_INTEGRAL,USING_BATCH_NO=:USING_BATCH_NO,USING_BARTER=:USING_BARTER,'+
+      'BARTER_INTEGRAL=:BARTER_INTEGRAL,REMARK=:REMARK,USING_LOCUS_NO=:USING_LOCUS_NO,'+
+      'CALC_UNITS=:CALC_UNITS,UNIT_ID=:UNIT_ID,SMALL_UNITS=:SMALL_UNITS,BIG_UNITS=:BIG_UNITS,SMALLTO_CALC=:SMALLTO_CALC,BIGTO_CALC=:BIGTO_CALC,'+
+      'NEW_INPRICE=:NEW_INPRICE,NEW_OUTPRICE=:RTL_OUTPRICE,NEW_LOWPRICE=:NEW_LOWPRICE,'+
+      'COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+      ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+    AGlobal.ExecSQL(Str,self);
+  end;
+  
   //更新最新进价有变化时，更新到商品扩展表：
   if FieldbyName('NEW_INPRICE').AsFloat<>FieldbyName('NEW_INPRICE').AsOldFloat then
   begin
-    try
-      vParam:=TftParamList.Create(nil);
-      vParam.ParamByName('TENANT_ID').AsInteger:=Fieldbyname('TENANT_ID').AsInteger;
-      vParam.ParamByName('GODS_ID').AsString:=Fieldbyname('GODS_ID').AsString;
-      vParam.ParamByName('NEW_INPRICE').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat;
-      vParam.ParamByName('NEW_INPRICE1').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('SMALLTO_CALC').AsFloat;
-      vParam.ParamByName('NEW_INPRICE2').AsFloat:=Fieldbyname('NEW_INPRICE').AsFloat*Fieldbyname('BIGTO_CALC').AsFloat;
-      Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE1,NEW_INPRICE2=:NEW_INPRICE2,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-           ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
-      if AGlobal.ExecSQL(Str, vParam)=0 then
-      begin
-        Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                                 ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE1,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
-        AGlobal.ExecSQL(Str, vParam);
-      end;
-    finally
-      vParam.Free;
+    Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE * :SMALLTO_CALC,NEW_INPRICE2=:NEW_INPRICE * :BIGTO_CALC,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+         ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+    if AGlobal.ExecSQL(Str, self)=0 then
+    begin
+      Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                               ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE * :SMALLTO_CALC,:NEW_INPRICE * :BIGTO_CALC,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+      AGlobal.ExecSQL(Str, self);
     end;
   end;
 
@@ -218,7 +200,7 @@ begin
   inherited;
   case iDbType of
    0,5: //此语句在SQLITE下调试通过，MS SQL Server语法一样
-    Str:=
+    Str:=      
       'select RELATION_ID,J.TENANT_ID as TENANT_ID, '+
       ' J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
       ' case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end as NEW_INPRICE,'+

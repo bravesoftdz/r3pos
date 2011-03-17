@@ -25,7 +25,7 @@ begin
   try
     rs.SQL.Text := 'select count(*) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CLIENT_ID ';
     rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
@@ -43,7 +43,7 @@ begin
   try
     rs.SQL.Text := 'select CLIENT_ID,COMM from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_NAME=:CLIENT_NAME and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('CLIENT_NAME').AsString := FieldbyName('CLIENT_NAME').AsOldString;
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
@@ -64,7 +64,7 @@ begin
     'and CLIENT_ID<>:OLD_CLIENT_ID and CLIENT_TYPE=''1'' and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('CLIENT_NAME').AsString := FieldbyName('CLIENT_NAME').AsString;
     rs.ParamByName('OLD_CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
       if rs.Fields[0].AsInteger > 0 then

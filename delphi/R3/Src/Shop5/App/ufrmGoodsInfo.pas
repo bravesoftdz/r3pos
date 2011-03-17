@@ -669,6 +669,10 @@ begin
   uShopUtil.WriteToObject(AObj,self);
   edtPROFIT_RATE.Properties.ReadOnly:=False;
 
+  //刷新[小、大包装]最新进价
+  AObj.FieldByName('NEW_INPRICE1').AsFloat:=AObj.FieldByName('NEW_INPRICE').AsFloat*StrtoFloatDef(edtSMALLTO_CALC.Text,0);  //小包装最新进价
+  AObj.FieldByName('NEW_INPRICE2').AsFloat:=AObj.FieldByName('NEW_INPRICE').AsFloat*StrtoFloatDef(edtBIGTO_CALC.Text,0);    //大包装最新进价
+
   AObj.FieldByName('RTL_OUTPRICE').AsFloat:=StrtoFloatDef(edtNEW_OUTPRICE.Text,0);   //标准售价
   AObj.FieldByName('NEW_LOWPRICE').AsFloat:=StrtoFloatDef(edtNEW_LOWPRICE.Text,0);   //最低售价
   AObj.FieldByName('NEW_OUTPRICE').AsFloat:=StrtoFloatDef(edtMY_OUTPRICE.Text,0);    //本店售价

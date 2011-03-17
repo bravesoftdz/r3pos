@@ -83,7 +83,7 @@ var Params:TftParamList;
 begin
   Params := TftParamList.Create(nil);
   try
-    Params.ParamByName('RELATION_ID').AsString := CODE_ID;
+    Params.ParamByName('RELATION_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(Relation_Data,'TRelation',Params);
     if Relation_Data.FieldByName('RELATION_NAME').AsString <> '' then IsExist := True;
@@ -144,9 +144,9 @@ begin
   with TfrmRelationInfo.Create(Owner) do
     begin
       try
+        Append;
         if not IsExist then
           begin
-            Append;
             if ShowModal = mrOk then
               begin
                 Aobj.CopyTo(_Aobj);

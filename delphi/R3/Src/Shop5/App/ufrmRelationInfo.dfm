@@ -1,7 +1,7 @@
 inherited frmRelationInfo: TfrmRelationInfo
   Left = 443
   Top = 233
-  Caption = 'frmRelationInfo'
+  Caption = #20379#24212#38142
   ClientHeight = 314
   ClientWidth = 502
   OnCloseQuery = FormCloseQuery

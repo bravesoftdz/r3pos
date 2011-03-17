@@ -25,7 +25,7 @@ begin
   case AGlobal.iDbType of
   0:shopid := 'convert(varchar,:TENANT_ID)+''0001''';
   1:shopid := 'to_char(:TENANT_ID)||''0001''';
-  4:shopid := 'str(:TENANT_ID)||''0001''';
+  4:shopid := 'to_char(:TENANT_ID)||''0001''';
   5:shopid := 'cast(:TENANT_ID as varchar)||''0001''';
   end;
 //  改为由前台操作本地数据了
@@ -97,7 +97,7 @@ begin
   case AGlobal.iDbType of
   0:dutyid := 'convert(varchar,:TENANT_ID)+''001''';
   1:dutyid := 'to_char(:TENANT_ID)||''001''';
-  4:dutyid := 'str(:TENANT_ID)||''001''';
+  4:dutyid := 'to_char(:TENANT_ID)||''001''';
   5:dutyid := 'cast(:TENANT_ID as varchar)||''001''';
   end;
   //为企业初始化职务
@@ -107,7 +107,7 @@ begin
   case AGlobal.iDbType of
   0:dutyid := 'convert(varchar,:TENANT_ID)+''002''';
   1:dutyid := 'to_char(:TENANT_ID)||''002''';
-  4:dutyid := 'str(:TENANT_ID)||''002''';
+  4:dutyid := 'to_char(:TENANT_ID)||''002''';
   5:dutyid := 'cast(:TENANT_ID as varchar)||''002''';
   end;
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
@@ -116,7 +116,7 @@ begin
   case AGlobal.iDbType of
   0:dutyid := 'convert(varchar,:TENANT_ID)+''003''';
   1:dutyid := 'to_char(:TENANT_ID)||''003''';
-  4:dutyid := 'str(:TENANT_ID)||''003''';
+  4:dutyid := 'to_char(:TENANT_ID)||''003''';
   5:dutyid := 'cast(:TENANT_ID as varchar)||''003''';
   end;
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
@@ -125,7 +125,7 @@ begin
   case AGlobal.iDbType of
   0:dutyid := 'convert(varchar,:TENANT_ID)+''004''';
   1:dutyid := 'to_char(:TENANT_ID)||''004''';
-  4:dutyid := 'str(:TENANT_ID)||''004''';
+  4:dutyid := 'to_char(:TENANT_ID)||''004''';
   5:dutyid := 'cast(:TENANT_ID as varchar)||''004''';
   end;
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
@@ -136,7 +136,7 @@ begin
   case AGlobal.iDbType of
   0:dutyid := 'convert(varchar,:TENANT_ID)+''001''';
   1:dutyid := 'to_char(:TENANT_ID)||''001''';
-  4:dutyid := 'str(:TENANT_ID)||''001''';
+  4:dutyid := 'to_char(:TENANT_ID)||''001''';
   5:dutyid := 'cast(:TENANT_ID as varchar)||''001''';
   end;
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+

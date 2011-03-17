@@ -203,6 +203,7 @@ begin
   vList := TStringList.Create;
   try
     vList.Delimiter := ';';
+    vList.QuoteChar := '"';
     vList.DelimitedText := ConnStr;
     ConnMode := StrtoIntDef(vList.Values['connmode'],1);
     FConnStr := ConnStr;

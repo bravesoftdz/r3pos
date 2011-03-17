@@ -466,7 +466,7 @@ object frmDBSetup: TfrmDBSetup
             'Ms SQL Server'
             'Oracle'
             'SQLite-3'
-            'ODBC')
+            'DB2')
           TabOrder = 0
           OnClick = cbDbTypeChange
         end

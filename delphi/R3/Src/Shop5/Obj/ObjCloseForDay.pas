@@ -38,6 +38,7 @@ begin
   'COMM='+GetCommStr(iDbType)+
   ',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and PAYM_ID=''A'' ';
+
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
 
   Str := 'delete ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';

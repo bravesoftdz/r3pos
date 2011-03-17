@@ -153,7 +153,15 @@ procedure TfrmDBSetup.cbDbTypeChange(Sender: TObject);
 begin
   lbDBBaseName.Caption :='数据库名称：';
   edtDatabase.Enabled := true;
-  if Uppercase(cbDBType.Text)='ORACLE' then
+  case cbDbType.ItemIndex of
+  0:
+  begin
+    lbDBName.Left :=67;
+    edtDbName.Visible := True;
+    edtDBDir.Visible := False;
+    lbDBName.Caption :='数据库服务器：';
+  end;
+  1:
   begin
     edtDbName.Visible := True;
     edtDBDir.Visible := False;
@@ -161,39 +169,30 @@ begin
     lbDBName.Left :=85;
     lbDBName.Caption := '服务器SID：';
     lbDBBaseName.Caption :='连接驱动名：';
-  end
-  else
-  if  Uppercase(cbDBType.Text)= UpperCase('Ms SQL Server') then
-  begin
-    lbDBName.Left :=67;
-    edtDbName.Visible := True;
-    edtDBDir.Visible := False;
-    lbDBName.Caption :='数据库服务器：';
-  end
-  else
-  if  Uppercase(cbDBType.Text)= UpperCase('SQLite-3') then
+  end;
+  2:
   begin
     lbDBName.Left :=67;
     edtDBDir.Visible := True;
     edtDbName.Visible := False;
     lbDBName.Caption :='数据库服务器：';
     edtDatabase.Enabled := false;
-  end
-  else
-  if  Uppercase(cbDBType.Text)= 'DB2' then
+  end;
+  3:
   begin
     edtDBDir.Clear;
     edtDbName.Visible := True;
     edtDbDir.Visible := False;
     lbDBName.Left :=67;
     lbDBName.Caption :='DB2数据名称：';
-  end
+  end;
   else begin
     lbDBName.Left :=67;
     edtDbName.Visible := True;
     //cxBedit.Visible := False;
     edtDBDir.Visible := true;
     lbDBName.Caption :='数据库服务器：';
+  end;
   end;
 //  LoadParams;
 end;
@@ -291,6 +290,7 @@ end;
 
 function TfrmDBSetup.GetConnStr: string;
 var ConnStr:String;
+  vList:TStringList;
 begin
   try
     if cbConnMode.ItemIndex = 0 then
@@ -301,11 +301,11 @@ begin
             if Trim(edtDatabase.Text) = '' then Raise Exception.Create('');
             if Trim(edtUser.Text) = '' then Raise Exception.Create('');
             if Trim(edtUserPw.Text) = '' then Raise Exception.Create('');
-            ConnStr := 'provider=mssql;';
-            ConnStr := ConnStr + 'hostname=' + Trim(edtDbName.Text)+';';
-            ConnStr := ConnStr + 'databasename=' + Trim(edtDatabase.Text)+';';
-            ConnStr := ConnStr + 'uid=' + Trim(edtUser.Text)+';';
-            ConnStr := ConnStr + 'password=' + Trim(edtUserPw.Text);
+            ConnStr := 'provider=mssql';
+            ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
+            ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+            ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+            ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
            end;
           1:begin
             ConnStr := 'provider=oracle-9i';
@@ -315,18 +315,14 @@ begin
             ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
            end;
           2:begin
-            ConnStr := 'provider=sqlite-3;';
-            if Trim(edtDbDir.Text) = '' then Raise Exception.Create('sqlite-3');
-
-            //ConnStr := 'provider=mssql;';
-            ConnStr := ConnStr + 'databasename=' + Trim(edtDbDir.Text);
+            ConnStr := 'provider=sqlite-3';
+            ConnStr := ConnStr + ';databasename=' + Trim(edtDbDir.Text);
             if Trim(edtUser.Text) <> '' then ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
             if Trim(edtUserPw.Text) <> '' then ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
            end;
           3:begin
-            ConnStr := 'provider=ado;';
-            ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
-            ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+            ConnStr := 'provider=ado';
+            ConnStr := ConnStr + ';"databasename=Provider=IBMDADB2;Persist Security Info=True;Data Source='+Trim(edtDatabase.Text)+';Location='+Trim(edtDbName.Text)+'"';
             ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
             ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
            end;
@@ -371,12 +367,11 @@ begin
     begin
       Pro := GetIniParams('db'+IntToStr(DBID),'provider');
       if Pro='mssql' then cbDbType.ItemIndex := 0;
-      if Pro='oracle-9i' then cbDbType.ItemIndex := 1;
-      if Pro='sqlite-3' then cbDbType.ItemIndex := 2;
-      if Pro='ado' then cbDbType.ItemIndex := 3;
+      if Pro='oracle' then cbDbType.ItemIndex := 1;
+      if Pro='sqlite' then cbDbType.ItemIndex := 2;
+      if Pro='db2' then cbDbType.ItemIndex := 3;
       if cbDbType.ItemIndex = 0 then
         begin
-          if Pro <> 'mssql' then Exit;
           edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
           edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
           edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
@@ -384,7 +379,6 @@ begin
         end
       else if cbDbType.ItemIndex = 1 then
         begin
-          if Pro <> 'oracle-9i' then Exit;
           edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
           edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
           edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
@@ -392,7 +386,6 @@ begin
         end
       else if cbDbType.ItemIndex = 2 then
         begin
-          if Pro <> 'sqlite-3' then Exit;
           edtDbDir.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
           edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
           edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
@@ -400,7 +393,6 @@ begin
         end
       else if cbDbType.ItemIndex = 3 then
         begin
-          if Pro <> 'ado' then Exit;
           edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
           edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
           edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
@@ -438,9 +430,9 @@ begin
       SetIniParams('db'+IntToStr(DBID),'password',EncStr(Trim(edtUserPw.Text),ENC_KEY));
       case cbDbType.ItemIndex of
         0: Pro := 'mssql';
-        1: Pro := 'oracle-9i';
-        2: Pro := 'sqlite-3';
-        3: Pro := 'ado';
+        1: Pro := 'oracle';
+        2: Pro := 'sqlite';
+        3: Pro := 'db2';
       end;
       SetIniParams('db'+IntToStr(DBID),'provider',Pro);
       SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));

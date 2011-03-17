@@ -765,1209 +765,1210 @@ CREATE INDEX IX_PUB_CODE_INFO_TENANT_ID ON PUB_CODE_INFO(TENANT_ID)
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('15','职业','CODE_TYPE','00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','身份证','SFZ','11','1','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','身份证','SFZ','11',1,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','驾驶证','JSZ','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','驾驶证','JSZ','11',2,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','社保卡','SBK','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','社保卡','SBK','11',3,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','军官证','JGZ','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','军官证','JGZ','11',4,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','护照','HZ','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','护照','HZ','11',5,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','学生证','XSZ','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','学生证','XSZ','11',6,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','经营许可证','JYXKZ','11','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','经营许可证','JYXKZ','11',7,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','QT','11','2','00',5497000)
- GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','1000以下','','13','1','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','1000-2000','','13','2','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','2000-3000','','13','3','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','3000-4000','','13','4','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','4000-5000','','13','5','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','5000以上','','13','6','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','QT','11',8,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','小学','XX','14','1','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','1000以下','','13',1,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','初中','CZ','14','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','1000-2000','','13',2,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','高中','GZ','14','3','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','2000-3000','','13',3,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','专科','ZK','14','4','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','3000-4000','','13',4,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','本科','BK','14','5','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','4000-5000','','13',5,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','硕士','SS','14','6','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','博士','BS','14','7','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','5000以上','','13',6,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','金融','XX','15','1','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','小学','XX','14',1,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','地产','CZ','15','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','初中','CZ','14',2,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','汽车','GZ','15','3','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','高中','GZ','14',3,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','IT信息技术','ZK','15','4','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','专科','ZK','14',4,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','顾问咨询','BK','15','5','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','本科','BK','14',5,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','媒体出版','SS','15','6','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','硕士','SS','14',6,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','事业机关','BS','15','7','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('8','教育培训','BS','15','8','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('9','旅游休闲','BS','15','9','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('10','制造','BS','15','10','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('11','零售','BS','15','11','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('12','能源','BS','15','12','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('13','国际贸易','BS','15','13','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('14','物流','BS','15','14','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','BS','15','99','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','博士','BS','14',7,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100','北京市','BJS','8','1','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('1','金融','XX','15',1,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100100','北京市.西城区','BJSXCQ','8','2','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('2','地产','CZ','15',2,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100101','北京市.崇文区','BJSCWQ','8','3','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('3','汽车','GZ','15',3,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100102','北京市.海淀区','BJSHDQ','8','4','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('4','IT信息技术','ZK','15',4,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100103','北京市.门头沟区','BJSMTGQ','8','5','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('5','顾问咨询','BK','15',5,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100104','北京市.通县','BJSTX','8','6','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('6','媒体出版','SS','15',6,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100105','北京市.顺义县','BJSSYX','8','7','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('7','事业机关','BS','15',7,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100106','北京市.密云县','BJSMYX','8','8','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('8','教育培训','BS','15',8,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100107','北京市.昌平县','BJSCPX','8','9','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('9','旅游休闲','BS','15',9,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100108','北京市.东城区','BJSDCQ','8','10','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('10','制造','BS','15',10,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100109','北京市.宣武区','BJSXWQ','8','11','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('11','零售','BS','15',11,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100110','北京市.朝阳区','BJSCYQ','8','12','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('12','能源','BS','15',12,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100111','北京市.丰台区','BJSFTQ','8','13','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('13','国际贸易','BS','15',13,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100112','北京市.石景山区','BJSSJSQ','8','14','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('14','物流','BS','15',14,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100113','北京市.平觳县','BJSPZX','8','15','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100114','北京市.怀柔县','BJSHRX','8','16','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100115','北京市.延庆县','BJSYQX','8','17','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100116','北京市.大兴县','BJSDXX','8','18','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('99','其他','BS','15',99,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101','上海市','SHS','8','19','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100','北京市','BJS','8',1,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101100','上海市.卢湾区','SHSLWQ','8','20','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100100','北京市.西城区','BJSXCQ','8',2,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101101','上海市.吴松区','SHSWSQ','8','21','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100101','北京市.崇文区','BJSCWQ','8',3,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101102','上海市.闸北区','SHSZBQ','8','22','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100102','北京市.海淀区','BJSHDQ','8',4,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101103','上海市.虹口区','SHSHKQ','8','23','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100103','北京市.门头沟区','BJSMTGQ','8',5,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101104','上海市.黄浦区','SHSHPQ','8','24','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100104','北京市.通县','BJSTX','8',6,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101105','上海市.静安区','SHSJAQ','8','25','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100105','北京市.顺义县','BJSSYX','8',7,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101106','上海市.上海县','SHSSHX','8','26','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100106','北京市.密云县','BJSMYX','8',8,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101107','上海市.南汇县','SHSNHX','8','27','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100107','北京市.昌平县','BJSCPX','8',9,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101108','上海市.金山县','SHSJSX','8','28','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100108','北京市.东城区','BJSDCQ','8',10,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101109','上海市.青浦县','SHSQPX','8','29','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100109','北京市.宣武区','BJSXWQ','8',11,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101110','上海市.宝山县','SHSBSX','8','30','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100110','北京市.朝阳区','BJSCYQ','8',12,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101111','上海市.长宁区','SHSCNQ','8','31','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100111','北京市.丰台区','BJSFTQ','8',13,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101112','上海市.杨浦区','SHSYPQ','8','32','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100112','北京市.石景山区','BJSSJSQ','8',14,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101113','上海市.闵行区','SHSZXQ','8','33','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100113','北京市.平觳县','BJSPZX','8',15,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101114','上海市.南市区','SHSNSQ','8','34','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100114','北京市.怀柔县','BJSHRX','8',16,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101115','上海市.徐汇区','SHSXHQ','8','35','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100115','北京市.延庆县','BJSYQX','8',17,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101116','上海市.普陀区','SHSPTQ','8','36','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101117','上海市.嘉定县','SHSJDX','8','37','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101118','上海市.川沙县','SHSCSX','8','38','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101119','上海市.奉贤县','SHSFXX','8','39','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101120','上海市.松江县','SHSSJX','8','40','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101121','上海市.崇明县','SHSCMX','8','41','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('100116','北京市.大兴县','BJSDXX','8',18,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102','天津市','TJS','8','42','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101','上海市','SHS','8',19,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102100','天津市.河西区 ','TJSHXQ ','8','43','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101100','上海市.卢湾区','SHSLWQ','8',20,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102101','天津市.南开区 ','TJSNKQ ','8','44','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101101','上海市.吴松区','SHSWSQ','8',21,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102102','天津市.塘沽区','TJSTGQ','8','45','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101102','上海市.闸北区','SHSZBQ','8',22,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102103','天津市.东郊区','TJSDJQ','8','46','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101103','上海市.虹口区','SHSHKQ','8',23,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102104','天津市.西郊区 ','TJSXJQ ','8','47','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101104','上海市.黄浦区','SHSHPQ','8',24,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102105','天津市.大港区','TJSDGQ','8','48','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101105','上海市.静安区','SHSJAQ','8',25,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102106','天津市.河东区','TJSHDQ','8','49','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101106','上海市.上海县','SHSSHX','8',26,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102107','天津市.河北区','TJSHBQ','8','50','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101107','上海市.南汇县','SHSNHX','8',27,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102108','天津市.红桥区','TJSHQQ','8','51','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101108','上海市.金山县','SHSJSX','8',28,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102109','天津市.汉沽区 ','TJSHGQ ','8','52','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101109','上海市.青浦县','SHSQPX','8',29,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102110','天津市.南郊区','TJSNJQ','8','53','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101110','上海市.宝山县','SHSBSX','8',30,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102111','天津市.北郊区 ','TJSBJQ ','8','54','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101111','上海市.长宁区','SHSCNQ','8',31,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('103','重庆市','ZQS','8','55','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101112','上海市.杨浦区','SHSYPQ','8',32,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104','内蒙古自治区','NMGZZQ','8','56','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101113','上海市.闵行区','SHSZXQ','8',33,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104100','内蒙古.呼和浩特市','NMGHHHTS','8','57','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101114','上海市.南市区','SHSNSQ','8',34,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104101','内蒙古.二连浩特市','NMGELHTS','8','58','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101115','上海市.徐汇区','SHSXHQ','8',35,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104102','内蒙古.临河市','NMGLHS','8','59','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101116','上海市.普陀区','SHSPTQ','8',36,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104103','内蒙古.东胜市','NMGDSS','8','60','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101117','上海市.嘉定县','SHSJDX','8',37,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104104','内蒙古.满洲里市','NMGMZLS','8','61','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101118','上海市.川沙县','SHSCSX','8',38,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104105','内蒙古.赤峰市','NMGCFS','8','62','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101119','上海市.奉贤县','SHSFXX','8',39,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104106','内蒙古.乌兰浩特市','NMGWLHTS','8','63','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101120','上海市.松江县','SHSSJX','8',40,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104107','内蒙古.鄂尔多斯市','NMGEEDSS','8','64','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104108','内蒙古.兴安盟','NMGXAM','8','65','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104109','内蒙古.乌兰察布盟','NMGWLCBM','8','66','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104110','内蒙古.阿拉善盟','NMGALSM','8','67','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104111','内蒙古.集宁市','NMGJNS','8','68','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104112','内蒙古.包头市','NMGBTS','8','69','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104113','内蒙古.乌海市','NMGWHS','8','70','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104114','内蒙古.海拉尔市','NMGHLES','8','71','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104115','内蒙古.牙克石市','NMGYKSS','8','72','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104116','内蒙古.锡林浩特市','NMGXLHTS','8','73','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104117','内蒙古.通辽市','NMGTLS','8','74','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104118','内蒙古.呼伦贝尔市','NMGHLBES','8','75','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104119','内蒙古.锡林郭勒盟','NMGXLGLM','8','76','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104120','内蒙古.巴彦淖尔盟','NMGBYNEM','8','77','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('101121','上海市.崇明县','SHSCMX','8',41,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105','山西省','SXS','8','78','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102','天津市','TJS','8',42,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105100','山西省.太原市','SXSTYS','8','79','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102100','天津市.河西区 ','TJSHXQ ','8',43,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105101','山西省.忻州市','SXSXZS','8','80','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102101','天津市.南开区 ','TJSNKQ ','8',44,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105102','山西省.临汾市','SXSLFS','8','81','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102102','天津市.塘沽区','TJSTGQ','8',45,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105103','山西省.运城市','SXSYCS','8','82','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102103','天津市.东郊区','TJSDJQ','8',46,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105104','山西省.长治市','SXSCZS','8','83','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102104','天津市.西郊区 ','TJSXJQ ','8',47,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105105','山西省.朔州市','SXSSZS','8','84','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102105','天津市.大港区','TJSDGQ','8',48,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105106','山西省.吕梁地区','SXSLLDQ','8','85','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102106','天津市.河东区','TJSHDQ','8',49,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105107','山西省.榆次市','SXSYCS','8','86','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102107','天津市.河北区','TJSHBQ','8',50,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105108','山西省.大同市','SXSDTS','8','87','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102108','天津市.红桥区','TJSHQQ','8',51,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105109','山西省.侯马市','SXSHMS','8','88','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102109','天津市.汉沽区 ','TJSHGQ ','8',52,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105110','山西省.阳泉市','SXSYQS','8','89','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102110','天津市.南郊区','TJSNJQ','8',53,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105111','山西省.晋城市','SXSJCS','8','90','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105112','山西省.晋中市','SXSJZS','8','91','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('102111','天津市.北郊区 ','TJSBJQ ','8',54,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106','河北省','HBS','8','92','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106100','河北省.石家庄市','HBSSJZS','8','93','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106101','河北省.辛集市','HBSXJS','8','94','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106102','河北省.邢台市','HBSXTS','8','95','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106103','河北省.邯郸市','HBSHDS','8','96','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106104','河北省.泊头市','HBSBTS','8','97','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106105','河北省.唐山市','HBSTSS','8','98','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106106','河北省.北戴河','HBSBDH','8','99','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106107','河北省.保定市','HBSBDS','8','100','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106108','河北省.定州市','HBSDZS','8','101','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106109','河北省.廊坊市','HBSLFS','8','102','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106110','河北省.南宫市','HBSNGS','8','103','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106111','河北省.衡水市','HBSHSS','8','104','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106112','河北省.沙河市','HBSSHS','8','105','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106113','河北省.沧州市','HBSCZS','8','106','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106114','河北省.任丘市','HBSRQS','8','107','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106115','河北省.秦皇岛市','HBSQHDS','8','108','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106116','河北省.承德市','HBSCDS','8','109','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106117','河北省.涿州市','HBSZZS','8','110','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106118','河北省.张家口市','HBSZJKS','8','111','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('103','重庆市','ZQS','8',55,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107','辽宁省','LNS','8','112','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104','内蒙古自治区','NMGZZQ','8',56,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107100','辽宁省.沈阳市','LNSSYS','8','113','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104100','内蒙古.呼和浩特市','NMGHHHTS','8',57,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107101','辽宁省.铁岭市','LNSTLS','8','114','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104101','内蒙古.二连浩特市','NMGELHTS','8',58,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107102','辽宁省.抚顺市','LNSFSS','8','115','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104102','内蒙古.临河市','NMGLHS','8',59,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107103','辽宁省.海城市','LNSHCS','8','116','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104103','内蒙古.东胜市','NMGDSS','8',60,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107104','辽宁省.大连市','LNSDLS','8','117','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104104','内蒙古.满洲里市','NMGMZLS','8',61,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107105','辽宁省.本溪市','LNSBXS','8','118','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104105','内蒙古.赤峰市','NMGCFS','8',62,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107106','辽宁省.锦州市','LNSJZS','8','119','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104106','内蒙古.乌兰浩特市','NMGWLHTS','8',63,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107107','辽宁省.兴城市','LNSXCS','8','120','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104107','内蒙古.鄂尔多斯市','NMGEEDSS','8',64,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107108','辽宁省.北票市','LNSBPS','8','121','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104108','内蒙古.兴安盟','NMGXAM','8',65,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107109','辽宁省.盘锦市','LNSPJS','8','122','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104109','内蒙古.乌兰察布盟','NMGWLCBM','8',66,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107110','辽宁省.辽阳市','LNSLYS','8','123','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104110','内蒙古.阿拉善盟','NMGALSM','8',67,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107111','辽宁省.铁岭市','LNSTLS','8','124','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104111','内蒙古.集宁市','NMGJNS','8',68,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107112','辽宁省.鞍山市','LNSASS','8','125','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104112','内蒙古.包头市','NMGBTS','8',69,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107113','辽宁省.营口市','LNSYKS','8','126','00',5497000) 
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104113','内蒙古.乌海市','NMGWHS','8',70,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107114','辽宁省.瓦房店市','LNSWFDS','8','127','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104114','内蒙古.海拉尔市','NMGHLES','8',71,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107115','辽宁省.丹东市','LNSDDS','8','128','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104115','内蒙古.牙克石市','NMGYKSS','8',72,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107116','辽宁省.锦西市','LNSJXS','8','129','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104116','内蒙古.锡林浩特市','NMGXLHTS','8',73,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107117','辽宁省.朝阳市','LNSCYS','8','130','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104117','内蒙古.通辽市','NMGTLS','8',74,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107118','辽宁省.阜新市','LNSFXS','8','131','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104118','内蒙古.呼伦贝尔市','NMGHLBES','8',75,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107119','辽宁省.葫芦岛市','LNSHLDS','8','132','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104119','内蒙古.锡林郭勒盟','NMGXLGLM','8',76,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108','吉林省','JLS','8','133','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108100','吉林省.长春市 ','JLSCCS ','8','134','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108101','吉林省.吉林市 ','JLSJLS ','8','135','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108102','吉林省.延吉市 ','JLSYJS ','8','136','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108103','吉林省.龙井市 ','JLSLJS ','8','137','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108104','吉林省.通化市 ','JLSTHS ','8','138','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108105','吉林省.浑江市 ','JLSHJS ','8','139','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108106','吉林省.四平市 ','JLSSPS ','8','140','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108107','吉林省.辽源市 ','JLSLYS ','8','141','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108108','吉林省.洮南市 ','JLSZNS ','8','142','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108109','吉林省.松原市 ','JLSSYS ','8','143','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108110','吉林省.扶余市 ','JLSFYS ','8','144','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108111','吉林省.桦甸市 ','JLSZDS ','8','145','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108112','吉林省.图门市 ','JLSTMS ','8','146','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108113','吉林省.敦化市 ','JLSDHS ','8','147','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108114','吉林省.集安市 ','JLSJAS ','8','148','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108115','吉林省.梅河口市 ','JLSMHKS ','8','149','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108116','吉林省.公主岭市 ','JLSGZLS ','8','150','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108117','吉林省.白城市 ','JLSBCS ','8','151','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108118','吉林省.白山市','JLSBSS','8','152','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108119','吉林省.延边朝鲜族自治州','JLS.YBCXZZZZ','8','153','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('104120','内蒙古.巴彦淖尔盟','NMGBYNEM','8',77,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109','黑龙江省','HLJS','8','154','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105','山西省','SXS','8',78,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109100','黑龙江省.哈尔滨市 ','HLJSHEBS ','8','155','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105100','山西省.太原市','SXSTYS','8',79,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109101','黑龙江省.肇东市 ','HLJSZDS ','8','156','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105101','山西省.忻州市','SXSXZS','8',80,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109102','黑龙江省.伊春市 ','HLJSYCS ','8','157','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105102','山西省.临汾市','SXSLFS','8',81,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109103','黑龙江省.鹤岗市 ','HLJSHGS ','8','158','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105103','山西省.运城市','SXSYCS','8',82,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109104','黑龙江省.双鸭山市 ','HLJSSYSS ','8','159','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105104','山西省.长治市','SXSCZS','8',83,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109105','黑龙江省.牡丹江市 ','HLJSMDJS ','8','160','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105105','山西省.朔州市','SXSSZS','8',84,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109106','黑龙江省.鸡西市 ','HLJSJXS ','8','161','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105106','山西省.吕梁地区','SXSLLDQ','8',85,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109107','黑龙江省.大庆市 ','HLJSDQS ','8','162','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105107','山西省.榆次市','SXSYCS','8',86,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109108','黑龙江省.黑河市 ','HLJSHHS ','8','163','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105108','山西省.大同市','SXSDTS','8',87,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109109','黑龙江省.大兴安岭地区','HLJSDXALDQ','8','164','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105109','山西省.侯马市','SXSHMS','8',88,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109110','黑龙江省.阿城市 ','HLJSACS ','8','165','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105110','山西省.阳泉市','SXSYQS','8',89,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109111','黑龙江省.绥化市 ','HLJSSHS ','8','166','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105111','山西省.晋城市','SXSJCS','8',90,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109112','黑龙江省.佳木斯市 ','HLJSJMSS ','8','167','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109113','黑龙江省.七台河市 ','HLJSQTHS ','8','168','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109114','黑龙江省.同江市 ','HLJSTJS ','8','169','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109115','黑龙江省.绥汾河市 ','HLJSSFHS ','8','170','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109116','黑龙江省.齐齐哈尔市 ','HLJSQQHES ','8','171','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109117','黑龙江省.北安市 ','HLJSBAS ','8','172','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109118','黑龙江省.五大连池市 ','HLJSWDLCS ','8','173','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('105112','山西省.晋中市','SXSJZS','8',91,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110','江苏省','JSS','8','174','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106','河北省','HBS','8',92,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110100','江苏省.南京市 ','JSSNJS ','8','175','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106100','河北省.石家庄市','HBSSJZS','8',93,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110101','江苏省.镇江市','JSSZJS','8','176','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106101','河北省.辛集市','HBSXJS','8',94,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110102','江苏省.常州市 ','JSSCZS ','8','177','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106102','河北省.邢台市','HBSXTS','8',95,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110103','江苏省.宜兴市 ','JSSYXS ','8','178','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106103','河北省.邯郸市','HBSHDS','8',96,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110104','江苏省.苏州市 ','JSSSZS ','8','179','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106104','河北省.泊头市','HBSBTS','8',97,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110105','江苏省.徐州市 ','JSSXZS ','8','180','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106105','河北省.唐山市','HBSTSS','8',98,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110106','江苏省.淮阴市 ','JSSHYS ','8','181','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106106','河北省.北戴河','HBSBDH','8',99,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110107','江苏省.宿迁市 ','JSSSQS ','8','182','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106107','河北省.保定市','HBSBDS','8',100,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110108','江苏省.东台市 ','JSSDTS ','8','183','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106108','河北省.定州市','HBSDZS','8',101,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110109','江苏省.泰州市 ','JSSTZS ','8','184','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106109','河北省.廊坊市','HBSLFS','8',102,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110110','江苏省.南通市 ','JSSNTS ','8','185','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106110','河北省.南宫市','HBSNGS','8',103,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110111','江苏省.仪征市 ','JSSYZS ','8','186','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106111','河北省.衡水市','HBSHSS','8',104,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110112','江苏省.丹阳市 ','JSSDYS ','8','187','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106112','河北省.沙河市','HBSSHS','8',105,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110113','江苏省.无锡市 ','JSSWXS ','8','188','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106113','河北省.沧州市','HBSCZS','8',106,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110114','江苏省.江阴市 ','JSSJYS ','8','189','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106114','河北省.任丘市','HBSRQS','8',107,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110115','江苏省.常熟市 ','JSSCSS ','8','190','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106115','河北省.秦皇岛市','HBSQHDS','8',108,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110116','江苏省.连云港市 ','JSSLYGS ','8','191','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106116','河北省.承德市','HBSCDS','8',109,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110117','江苏省.淮安市 ','JSSHAS ','8','192','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106117','河北省.涿州市','HBSZZS','8',110,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110118','江苏省.盐城市 ','JSSYCS ','8','193','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110119','江苏省.扬州市 ','JSSYZS ','8','194','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110120','江苏省.兴化市 ','JSSXHS ','8','195','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('106118','河北省.张家口市','HBSZJKS','8',111,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111','安徽省','AHS','8','196','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107','辽宁省','LNS','8',112,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111100','安徽省.合肥市 ','AHSHFS ','8','197','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107100','辽宁省.沈阳市','LNSSYS','8',113,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111101','安徽省.蚌埠市 ','AHSBBS ','8','198','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107101','辽宁省.铁岭市','LNSTLS','8',114,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111102','安徽省.淮北市 ','AHSHBS ','8','199','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107102','辽宁省.抚顺市','LNSFSS','8',115,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111103','安徽省.毫州市 ','AHSHZS ','8','200','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107103','辽宁省.海城市','LNSHCS','8',116,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111104','安徽省.巢湖市 ','AHSCHS ','8','201','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107104','辽宁省.大连市','LNSDLS','8',117,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111105','安徽省.芜湖市 ','AHSWHS ','8','202','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107105','辽宁省.本溪市','LNSBXS','8',118,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111106','安徽省.黄山市 ','AHSHSS ','8','203','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107106','辽宁省.锦州市','LNSJZS','8',119,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111107','安徽省.铜陵市 ','AHSTLS ','8','204','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107107','辽宁省.兴城市','LNSXCS','8',120,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111108','安徽省.安庆市 ','AHSAQS ','8','205','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107108','辽宁省.北票市','LNSBPS','8',121,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111109','安徽省.淮南市 ','AHSHNS ','8','206','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107109','辽宁省.盘锦市','LNSPJS','8',122,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111110','安徽省.宿州市 ','AHSSZS ','8','207','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107110','辽宁省.辽阳市','LNSLYS','8',123,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111111','安徽省.阜阳市 ','AHSFYS ','8','208','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107111','辽宁省.铁岭市','LNSTLS','8',124,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111112','安徽省.六安市 ','AHSLAS ','8','209','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107112','辽宁省.鞍山市','LNSASS','8',125,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111113','安徽省.滁州市 ','AHSCZS ','8','210','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107113','辽宁省.营口市','LNSYKS','8',126,'00',5497000) 
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111114','安徽省.宣城市 ','AHSXCS ','8','211','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107114','辽宁省.瓦房店市','LNSWFDS','8',127,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111115','安徽省.马鞍山市 ','AHSMASS ','8','212','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107115','辽宁省.丹东市','LNSDDS','8',128,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111116','安徽省.池州市','AHSCZS','8','213','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107116','辽宁省.锦西市','LNSJXS','8',129,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112','山东省','SDS','8','214','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107117','辽宁省.朝阳市','LNSCYS','8',130,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112100','山东省.济南市 ','SDSJNS ','8','215','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107118','辽宁省.阜新市','LNSFXS','8',131,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112101','山东省.临清市 ','SDSLQS ','8','216','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112102','山东省.淄博市 ','SDSZBS ','8','217','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112103','山东省.东营市 ','SDSDYS ','8','218','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112104','山东省.诸城市 ','SDSZCS ','8','219','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112105','山东省.烟台市 ','SDSYTS ','8','220','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112106','山东省.青岛市 ','SDSQDS ','8','221','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112107','山东省.莱芜市 ','SDSLWS ','8','222','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112108','山东省.济宁市 ','JNS SDS','8','223','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112109','山东省.荷泽市 ','SDSHZS ','8','224','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112110','山东省.日照市 ','SDSRZS ','8','225','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112111','山东省.藤州市 ','SDSTZS ','8','226','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112112','山东省.聊城市 ','SDSLCS ','8','227','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112113','山东省.德州市 ','SDSDZS ','8','228','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112114','山东省.滨州市 ','SDSBZS ','8','229','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112115','山东省.潍坊市 ','SDSWFS ','8','230','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112116','山东省.青州市 ','SDSQZS ','8','231','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112117','山东省.威海市 ','SDSWHS ','8','232','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112118','山东省.泰安市 ','SDSTAS ','8','233','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112119','山东省.新泰市 ','SDSXTS ','8','234','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112120','山东省.曲阜市 ','SDSQFS ','8','235','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112121','山东省.临沂市 ','SDSLYS ','8','236','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112122','山东省.枣庄市 ','SDSZZS ','8','237','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('107119','辽宁省.葫芦岛市','LNSHLDS','8',132,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113','浙江省','ZJS','8','238','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108','吉林省','JLS','8',133,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113100','浙江省.杭州市 ','ZJSHZS ','8','239','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108100','吉林省.长春市 ','JLSCCS ','8',134,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113101','浙江省.下城区','ZJSXCQ','8','240','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108101','吉林省.吉林市 ','JLSJLS ','8',135,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113102','浙江省.江干区','ZJSJGQ','8','241','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108102','吉林省.延吉市 ','JLSYJS ','8',136,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113103','浙江省.绍兴市 ','ZJSSXS ','8','242','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108103','吉林省.龙井市 ','JLSLJS ','8',137,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113104','浙江省.嘉兴市 ','ZJSJXS ','8','243','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108104','吉林省.通化市 ','JLSTHS ','8',138,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113105','浙江省.宁波市 ','ZJSNBS ','8','244','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108105','吉林省.浑江市 ','JLSHJS ','8',139,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113106','浙江省.舟山市 ','ZJSZSS ','8','245','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108106','吉林省.四平市 ','JLSSPS ','8',140,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113107','浙江省.椒江市 ','ZJSJJS ','8','246','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108107','吉林省.辽源市 ','JLSLYS ','8',141,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113108','浙江省.兰溪市 ','ZJSLXS ','8','247','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108108','吉林省.洮南市 ','JLSZNS ','8',142,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113109','浙江省.衙州市 ','ZJSYZS ','8','248','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108109','吉林省.松原市 ','JLSSYS ','8',143,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113110','浙江省.温州市 ','ZJSWZS ','8','249','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108110','吉林省.扶余市 ','JLSFYS ','8',144,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113111','浙江省.东阳市 ','ZJSDYS ','8','250','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108111','吉林省.桦甸市 ','JLSZDS ','8',145,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113112','浙江省.乐清市','ZJSLQS','8','251','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108112','吉林省.图门市 ','JLSTMS ','8',146,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113113','浙江省.上城区','ZJSSCQ','8','252','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108113','吉林省.敦化市 ','JLSDHS ','8',147,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113114','浙江省.西湖区','ZJSXHQ','8','253','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108114','吉林省.集安市 ','JLSJAS ','8',148,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113115','浙江省.萧山市 ','ZJSXSS ','8','254','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108115','吉林省.梅河口市 ','JLSMHKS ','8',149,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113116','浙江省.湖州市 ','ZJSHZS ','8','255','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108116','吉林省.公主岭市 ','JLSGZLS ','8',150,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113117','浙江省.海宁市 ','ZJSHNS ','8','256','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108117','吉林省.白城市 ','JLSBCS ','8',151,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113118','浙江省.余姚市 ','ZJSYYS ','8','257','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108118','吉林省.白山市','JLSBSS','8',152,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113119','浙江省.临海市 ','ZJSLHS ','8','258','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113120','浙江省.金华市 ','ZJSJHS ','8','259','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113121','浙江省.丽水市 ','ZJSLSS ','8','260','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113122','浙江省.江山市 ','ZJSJSS ','8','261','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113123','浙江省.义乌市 ','ZJSYWS ','8','262','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113124','浙江省.瑞安市 ','ZJSRAS ','8','263','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113125','浙江省.台州市','ZJSTZS','8','264','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('108119','吉林省.延边朝鲜族自治州','JLS.YBCXZZZZ','8',153,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114','江西省','JXS','8','265','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109','黑龙江省','HLJS','8',154,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114100','江西省.南昌市','JXSNCS','8','266','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109100','黑龙江省.哈尔滨市 ','HLJSHEBS ','8',155,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114101','江西省.景德镇市','JXSJDZS','8','267','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109101','黑龙江省.肇东市 ','HLJSZDS ','8',156,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114102','江西省.鹰潭市','JXSYTS','8','268','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109102','黑龙江省.伊春市 ','HLJSYCS ','8',157,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114103','江西省.新余市','JXSXYS','8','269','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109103','黑龙江省.鹤岗市 ','HLJSHGS ','8',158,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114104','江西省.赣州市','JXSGZS','8','270','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109104','黑龙江省.双鸭山市 ','HLJSSYSS ','8',159,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114105','江西省.井冈山市','JXSJGSS','8','271','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109105','黑龙江省.牡丹江市 ','HLJSMDJS ','8',160,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114106','江西省.临川市','JXSLCS','8','272','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109106','黑龙江省.鸡西市 ','HLJSJXS ','8',161,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114107','江西省.九江市','JXSJJS','8','273','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109107','黑龙江省.大庆市 ','HLJSDQS ','8',162,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114108','江西省.上饶市','JXSSRS','8','274','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109108','黑龙江省.黑河市 ','HLJSHHS ','8',163,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114109','江西省.宜春市','JXSYCS','8','275','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109109','黑龙江省.大兴安岭地区','HLJS.DXALDQ','8',164,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114110','江西省.萍乡市','JXSPXS','8','276','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109110','黑龙江省.阿城市 ','HLJSACS ','8',165,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114111','江西省.吉安市','JXSJAS','8','277','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109111','黑龙江省.绥化市 ','HLJSSHS ','8',166,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114112','江西省.抚州市','JXSFZS','8','278','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109112','黑龙江省.佳木斯市 ','HLJSJMSS ','8',167,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115','福建省','FJS','8','279','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109113','黑龙江省.七台河市 ','HLJSQTHS ','8',168,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115100','福建省.福州市','FJSFZS','8','280','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109114','黑龙江省.同江市 ','HLJSTJS ','8',169,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115101','福建省.南平市','FJSNPS','8','281','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109115','黑龙江省.绥汾河市 ','HLJSSFHS ','8',170,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115102','福建省.厦门市','FJSXMS','8','282','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109116','黑龙江省.齐齐哈尔市 ','HLJS.QQHES ','8',171,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115103','福建省.石狮市','FJSSSS','8','283','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109117','黑龙江省.北安市 ','HLJSBAS ','8',172,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115104','福建省.龙岩市','FJSLYS','8','284','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115105','福建省.永安市','FJSYAS','8','285','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115106','福建省.莆田市','FJSPTS','8','286','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115107','福建省.邵武市','FJSSWS','8','287','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115108','福建省.泉州市','FJSQZS','8','288','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115109','福建省.漳州市','FJSZZS','8','289','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115110','福建省.三明市','FJSSMS','8','290','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115111','福建省.宁德市','FJSNDS','8','291','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('109118','黑龙江省.五大连池市 ','HLJS.WDLCS ','8',173,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116','湖南省','HNS','8','292','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110','江苏省','JSS','8',174,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116100','湖南省.长沙市','HNSCSS','8','293','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110100','江苏省.南京市 ','JSSNJS ','8',175,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116101','湖南省.湘乡市','HNSXXS','8','294','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110101','江苏省.镇江市','JSSZJS','8',176,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116102','湖南省.益阳市','HNSYYS','8','295','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110102','江苏省.常州市 ','JSSCZS ','8',177,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116103','湖南省.汨罗市','HNSZLS','8','296','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110103','江苏省.宜兴市 ','JSSYXS ','8',178,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116104','湖南省.津市市','HNSJSS','8','297','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110104','江苏省.苏州市 ','JSSSZS ','8',179,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116105','湖南省.大庸市','HNSDYS','8','298','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110105','江苏省.徐州市 ','JSSXZS ','8',180,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116106','湖南省.连源市','HNSLYS','8','299','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110106','江苏省.淮阴市 ','JSSHYS ','8',181,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116107','湖南省.怀化市','HNSHHS','8','300','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110107','江苏省.宿迁市 ','JSSSQS ','8',182,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116108','湖南省.衡阳市','HNSHYS','8','301','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110108','江苏省.东台市 ','JSSDTS ','8',183,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116109','湖南省.邵阳市','HNSSYS','8','302','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110109','江苏省.泰州市 ','JSSTZS ','8',184,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116110','湖南省.永州市','HNSYZS','8','303','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110110','江苏省.南通市 ','JSSNTS ','8',185,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116111','湖南省.张家界市','HNSZJJS','8','304','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110111','江苏省.仪征市 ','JSSYZS ','8',186,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116112','湖南省.湘潭市','HNSXTS','8','305','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110112','江苏省.丹阳市 ','JSSDYS ','8',187,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116113','湖南省.株洲市','HNSZZS','8','306','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110113','江苏省.无锡市 ','JSSWXS ','8',188,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116114','湖南省.岳阳市','HNSYYS','8','307','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110114','江苏省.江阴市 ','JSSJYS ','8',189,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116115','湖南省.常德市','HNSCDS','8','308','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110115','江苏省.常熟市 ','JSSCSS ','8',190,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116116','湖南省.吉首市','HNSJSS','8','309','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110116','江苏省.连云港市 ','JSSLYGS ','8',191,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116117','湖南省.娄底市','HNSLDS','8','310','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110117','江苏省.淮安市 ','JSSHAS ','8',192,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116118','湖南省.冷水江市','HNSLSJS','8','311','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110118','江苏省.盐城市 ','JSSYCS ','8',193,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116119','湖南省.洪江市','HNSHJS','8','312','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110119','江苏省.扬州市 ','JSSYZS ','8',194,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116120','湖南省.来阳市','HNSLYS','8','313','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116121','湖南省.彬州市','HNSBZS','8','314','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116122','湖南省.冷水滩市','HNSLSTS','8','315','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116123','湖南省.湘西土家族苗族自治州','HNS.XXTJZMZZZZ','8','316','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('110120','江苏省.兴化市 ','JSSXHS ','8',195,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117','湖北省','HBS','8','317','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111','安徽省','AHS','8',196,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117100','湖北省.武汉市','HBSWHS','8','318','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111100','安徽省.合肥市 ','AHSHFS ','8',197,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117101','湖北省.天门市','HBSTMS','8','319','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111101','安徽省.蚌埠市 ','AHSBBS ','8',198,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117102','湖北省.应城市','HBSYCS','8','320','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111102','安徽省.淮北市 ','AHSHBS ','8',199,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117103','湖北省.应城市','HBSYCS','8','321','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111103','安徽省.毫州市 ','AHSHZS ','8',200,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117104','湖北省.应城市','HBSYCS','8','322','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111104','安徽省.巢湖市 ','AHSCHS ','8',201,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117105','湖北省.应城市','HBSYCS','8','323','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111105','安徽省.芜湖市 ','AHSWHS ','8',202,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117106','湖北省.应城市','HBSYCS','8','324','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111106','安徽省.黄山市 ','AHSHSS ','8',203,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117107','湖北省.咸宁市','HBSXNS','8','325','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111107','安徽省.铜陵市 ','AHSTLS ','8',204,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117108','湖北省.蒲昕市','HBSPZS','8','326','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111108','安徽省.安庆市 ','AHSAQS ','8',205,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117109','湖北省.咸宁市','HBSXNS','8','327','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111109','安徽省.淮南市 ','AHSHNS ','8',206,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117110','湖北省.咸宁市','HBSXNS','8','328','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111110','安徽省.宿州市 ','AHSSZS ','8',207,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117111','湖北省.咸宁市','HBSXNS','8','329','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111111','安徽省.阜阳市 ','AHSFYS ','8',208,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117112','湖北省.利川市','HBSLCS','8','330','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111112','安徽省.六安市 ','AHSLAS ','8',209,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117113','湖北省.利川市','HBSLCS','8','331','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111113','安徽省.滁州市 ','AHSCZS ','8',210,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117114','湖北省.利川市','HBSLCS','8','332','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111114','安徽省.宣城市 ','AHSXCS ','8',211,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117115','湖北省.孝感市','HBSXGS','8','333','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111115','安徽省.马鞍山市 ','AHSMASS ','8',212,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117116','湖北省.安陆市','HBSALS','8','334','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117117','湖北省.洪湖市','HBSHHS','8','335','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117118','湖北省.石首市','HBSSSS','8','336','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117119','湖北省.黄石市','HBSHSS','8','337','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117120','湖北省.武穴市','HBSW穴S','8','338','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117121','湖北省.襄樊市','HBSXFS','8','339','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117122','湖北省.随州市','HBSSZS','8','340','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117123','湖北省.丹江口市','HBSDJKS','8','341','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117124','湖北省.宜昌市','HBSYCS','8','342','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117125','湖北省.恩施土家族苗族自治州','HBS.ESTJZMZZZZ','8','343','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117126','湖北省.利川市','HBSLCS','8','344','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('111116','安徽省.池州市','AHSCZS','8',213,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118','河南省','HNS','8','345','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112','山东省','SDS','8',214,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118100','河南省.郑州市','HNSZZS','8','346','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112100','山东省.济南市 ','SDSJNS ','8',215,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118101','河南省.焦作市','HNSJZS','8','347','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112101','山东省.临清市 ','SDSLQS ','8',216,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118102','河南省.鹤壁市','HNSHBS','8','348','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112102','山东省.淄博市 ','SDSZBS ','8',217,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118103','河南省.许昌市','HNSXCS','8','349','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112103','山东省.东营市 ','SDSDYS ','8',218,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118104','河南省.驻马店市','HNSZMDS','8','350','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112104','山东省.诸城市 ','SDSZCS ','8',219,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118105','河南省.周口市','HNSZKS','8','351','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112105','山东省.烟台市 ','SDSYTS ','8',220,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118106','河南省.洛阳市','HNSLYS','8','352','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112106','山东省.青岛市 ','SDSQDS ','8',221,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118107','河南省.义马市','HNSYMS','8','353','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112107','山东省.莱芜市 ','SDSLWS ','8',222,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118108','河南省.开封市','HNSKFS','8','354','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112108','山东省.济宁市 ','JNS SDS','8',223,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118109','河南省.新乡市','HNSXXS','8','355','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112109','山东省.荷泽市 ','SDSHZS ','8',224,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118110','河南省.安阳市','HNSAYS','8','356','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112110','山东省.日照市 ','SDSRZS ','8',225,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118111','河南省.濮阳市','HNSZYS','8','357','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112111','山东省.藤州市 ','SDSTZS ','8',226,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118112','河南省.缧河市','HNSZHS','8','358','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112112','山东省.聊城市 ','SDSLCS ','8',227,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118113','河南省.信阳市','HNSXYS','8','359','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112113','山东省.德州市 ','SDSDZS ','8',228,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118114','河南省.平顶山市','HNSPDSS','8','360','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112114','山东省.滨州市 ','SDSBZS ','8',229,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118115','河南省.三门峡市','HNSSMXS','8','361','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112115','山东省.潍坊市 ','SDSWFS ','8',230,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118116','河南省.南阳市','HNSNYS','8','362','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112116','山东省.青州市 ','SDSQZS ','8',231,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118117','河南省.商丘市','HNSSQS','8','363','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112117','山东省.威海市 ','SDSWHS ','8',232,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119','广东省','GDS','8','364','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112118','山东省.泰安市 ','SDSTAS ','8',233,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119100','广东省.广州市','GDSGZS','8','365','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112119','山东省.新泰市 ','SDSXTS ','8',234,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119101','广东省.东莞市','GDSDZS','8','366','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112120','山东省.曲阜市 ','SDSQFS ','8',235,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119102','广东省.梅州市','GDSMZS','8','367','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112121','山东省.临沂市 ','SDSLYS ','8',236,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119103','广东省.潮州市','GDSCZS','8','368','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119104','广东省.汕尾市','GDSSWS','8','369','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119105','广东省.深圳市','GDSSZS','8','370','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119106','广东省.茂名市','GDSMMS','8','371','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119107','广东省.佛山市','GDSFSS','8','372','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119108','广东省.江门市','GDSJMS','8','373','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119109','广东省.珠海市','GDSZHS','8','374','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119110','广东省.云浮市','GDSYFS','8','375','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119111','广东省.清远市','GDSQYS','8','376','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119112','广东省.韶关市','GDSSGS','8','377','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119113','广东省.汕头市','GDSSTS','8','378','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119114','广东省.惠州市','GDSHZS','8','379','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119115','广东省.河源市','GDSHYS','8','380','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119116','广东省.湛江市','GDSZJS','8','381','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119117','广东省.肇庆市','GDSZQS','8','382','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119118','广东省.中山市','GDSZSS','8','383','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119119','广东省.阳江市','GDSYJS','8','384','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119120','广东省.揭阳市','GDSJYS','8','385','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('112122','山东省.枣庄市 ','SDSZZS ','8',237,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120','海南省','HNS','8','386','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113','浙江省','ZJS','8',238,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120100','海南省.海口市','HNSHKS','8','387','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113100','浙江省.杭州市 ','ZJSHZS ','8',239,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120101','海南省.通什市','HNSTSS','8','388','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113101','浙江省.下城区','ZJSXCQ','8',240,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120102','海南省.三亚市','HNSSYS','8','389','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113102','浙江省.江干区','ZJSJGQ','8',241,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120103','海南省.海南省','HNSHNS','8','390','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113103','浙江省.绍兴市 ','ZJSSXS ','8',242,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121','广西壮族自治区','GXZZZZQ','8','391','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113104','浙江省.嘉兴市 ','ZJSJXS ','8',243,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121100','广西.南宁市','GXNNS','8','392','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113105','浙江省.宁波市 ','ZJSNBS ','8',244,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121101','广西.百色市','GXBSS','8','393','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113106','浙江省.舟山市 ','ZJSZSS ','8',245,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121102','广西.北海市','GXBHS','8','394','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113107','浙江省.椒江市 ','ZJSJJS ','8',246,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121103','广西.桂林市','GXGLS','8','395','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113108','浙江省.兰溪市 ','ZJSLXS ','8',247,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121104','广西.柳州市','GXLZS','8','396','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113109','浙江省.衙州市 ','ZJSYZS ','8',248,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121105','广西.河池市','GXHCS','8','397','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113110','浙江省.温州市 ','ZJSWZS ','8',249,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121106','广西.贵港市','GXGGS','8','398','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113111','浙江省.东阳市 ','ZJSDYS ','8',250,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121107','广西.凭祥市','GXPXS','8','399','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113112','浙江省.乐清市','ZJSLQS','8',251,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121108','广西.钦州市','GXQZS','8','400','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113113','浙江省.上城区','ZJSSCQ','8',252,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121109','广西.玉林市','GXYLS','8','401','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113114','浙江省.西湖区','ZJSXHQ','8',253,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121110','广西.梧州市','GXWZS','8','402','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113115','浙江省.萧山市 ','ZJSXSS ','8',254,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121111','广西.台山市','GXTSS','8','403','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113116','浙江省.湖州市 ','ZJSHZS ','8',255,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121112','广西.防城港市','GXFCGS','8','404','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113117','浙江省.海宁市 ','ZJSHNS ','8',256,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121113','广西.贺州市','GXHZS','8','405','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113118','浙江省.余姚市 ','ZJSYYS ','8',257,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122','贵州省','GZS','8','406','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113119','浙江省.临海市 ','ZJSLHS ','8',258,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122100','贵州省.贵阳市','GZSGYS','8','407','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113120','浙江省.金华市 ','ZJSJHS ','8',259,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122101','贵州省.铜仁市','GZSTRS','8','408','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113121','浙江省.丽水市 ','ZJSLSS ','8',260,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122102','贵州省.都匀市','GZSDYS','8','409','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113122','浙江省.江山市 ','ZJSJSS ','8',261,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122103','贵州省.兴义市','GZSXYS','8','410','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113123','浙江省.义乌市 ','ZJSYWS ','8',262,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122104','贵州省.赤水市','GZSCSS','8','411','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113124','浙江省.瑞安市 ','ZJSRAS ','8',263,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122105','贵州省.六盘水市','GZSLPSS','8','412','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122106','贵州省.凯里市','GZSKLS','8','413','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122107','贵州省.安顺市','GZSASS','8','414','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122108','贵州省.遵义市','GZSZYS','8','415','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122109','贵州省.毕节地区','GZSBJDQ','8','416','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122110','贵州省.黔东南苗族侗族自治州','GZS.QDNMZDZZZZ','8','417','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122111','贵州省.黔西南布依族苗族自治州 ','GZS.QXNBYZMZZZZ ','8','418','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122112','贵州省.黔南布依族苗族自治州','GZS.QNBYZMZZZZ','8','419','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('113125','浙江省.台州市','ZJSTZS','8',264,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123','四川省','SCS','8','420','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114','江西省','JXS','8',265,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123100','四川省.成都市','SCSCDS','8','421','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114100','江西省.南昌市','JXSNCS','8',266,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123101','四川省.温江县','SCSWJX','8','422','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114101','江西省.景德镇市','JXSJDZS','8',267,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123102','四川省.都江堰市','SCSDJYS','8','423','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114102','江西省.鹰潭市','JXSYTS','8',268,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123103','四川省.攀枝花市','SCSPZHS','8','424','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114103','江西省.新余市','JXSXYS','8',269,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123104','四川省.自贡市','SCSZGS','8','425','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114104','江西省.赣州市','JXSGZS','8',270,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123105','四川省.绵阳市','SCSMYS','8','426','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114105','江西省.井冈山市','JXSJGSS','8',271,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123106','四川省.南充市','SCSNCS','8','427','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114106','江西省.临川市','JXSLCS','8',272,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123107','四川省.达州市','SCSDZS','8','428','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114107','江西省.九江市','JXSJJS','8',273,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123108','四川省.遂宁市','SCSSNS','8','429','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114108','江西省.上饶市','JXSSRS','8',274,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123109','四川省.广安市','SCSGAS','8','430','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114109','江西省.宜春市','JXSYCS','8',275,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123110','四川省.巴中市','SCSBZS','8','431','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114110','江西省.萍乡市','JXSPXS','8',276,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123111','四川省.泸州市','SCSZZS','8','432','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114111','江西省.吉安市','JXSJAS','8',277,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123112','四川省.宜宾市','SCSYBS','8','433','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123113','四川省.内江市','SCSNJS','8','434','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123114','四川省.资阳市','SCSZYS','8','435','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123115','四川省.乐山市','SCSLSS','8','436','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123116','四川省.眉山市','SCSMSS','8','437','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123117','四川省.凉山彝族自治州','SCSLSYZZZZ','8','438','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123118','四川省.雅安市','SCSYAS','8','439','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123119','四川省.甘孜藏族自治州','SCSGZCZZZZ','8','440','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123120','四川省.阿坝藏族羌族自治州','SCS.ABCZQZZZZ','8','441','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123121','四川省.德阳市','SCSDYS','8','442','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123122','四川省.广元市','SCSGYS','8','443','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('114112','江西省.抚州市','JXSFZS','8',278,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124','云南省','YNS','8','444','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115','福建省','FJS','8',279,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124100','云南省.西双版纳傣族自治州','YNS.XSBNDZZZZ','8','445','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115100','福建省.福州市','FJSFZS','8',280,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124101','云南省.德宏傣族景颇族自治州','YNS.DHDZJPZZZZ','8','446','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115101','福建省.南平市','FJSNPS','8',281,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124102','云南省.昭通市','YNSZTS','8','447','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115102','福建省.厦门市','FJSXMS','8',282,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124103','云南省.昆明市','YNSKMS','8','448','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115103','福建省.石狮市','FJSSSS','8',283,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124104','云南省.大理市','YNSDLS','8','449','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115104','福建省.龙岩市','FJSLYS','8',284,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124105','云南省.大理白族自治州','YNSDLBZZZZ','8','450','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115105','福建省.永安市','FJSYAS','8',285,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124106','云南省.红河哈尼族彝族自治州','YNS.HHHNZYZZZZ','8','451','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115106','福建省.莆田市','FJSPTS','8',286,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124107','云南省.个旧市','YNSGJS','8','452','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115107','福建省.邵武市','FJSSWS','8',287,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124108','云南省.曲靖市','YNSQJS','8','453','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115108','福建省.泉州市','FJSQZS','8',288,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124109','云南省.保山市','YNSBSS','8','454','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115109','福建省.漳州市','FJSZZS','8',289,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124110','云南省.文山壮族苗族自治州','YNS.WSZZMZZZZ','8','455','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115110','福建省.三明市','FJSSMS','8',290,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124111','云南省.玉溪市','YNSYXS','8','456','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124112','云南省.楚雄彝族自治州','YNSCXYZZZZ','8','457','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124113','云南省.思茅地区','YNSSMDQ','8','458','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124114','云南省.临沧地区','YNSLCDQ','8','459','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124115','云南省.怒江傈僳族自治州','YNS.NJLSZZZZ','8','460','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124116','云南省.迪庆藏族自治州','YNSDQCZZZZ','8','461','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124117','云南省.丽江地区','YNSLJDQ','8','462','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124118','云南省.东川市','YNSDCS','8','463','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124119','云南省.开远市','YNSKYS','8','464','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('115111','福建省.宁德市','FJSNDS','8',291,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125','陕西省','SXS','8','465','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116','湖南省','HNS','8',292,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125100','陕西省.西安市','SXSXAS','8','466','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116100','湖南省.长沙市','HNSCSS','8',293,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125101','陕西省.咸阳市','SXSXYS','8','467','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116101','湖南省.湘乡市','HNSXXS','8',294,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125102','陕西省.延安市','SXSYAS','8','468','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116102','湖南省.益阳市','HNSYYS','8',295,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125103','陕西省.榆林市','SXSYLS','8','469','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116103','湖南省.汨罗市','HNSZLS','8',296,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125104','陕西省.渭南市','SXSWNS','8','470','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116104','湖南省.津市市','HNSJSS','8',297,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125105','陕西省.商洛市','SXSSLS','8','471','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116105','湖南省.大庸市','HNSDYS','8',298,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125106','陕西省.安康市','SXSAKS','8','472','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116106','湖南省.连源市','HNSLYS','8',299,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125107','陕西省.汉中市','SXSHZS','8','473','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116107','湖南省.怀化市','HNSHHS','8',300,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125108','陕西省.宝鸡市','SXSBJS','8','474','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116108','湖南省.衡阳市','HNSHYS','8',301,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125109','陕西省.铜川市','SXSTCS','8','475','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116109','湖南省.邵阳市','HNSSYS','8',302,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125110','陕西省.韩城市','SXSHCS','8','476','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116110','湖南省.永州市','HNSYZS','8',303,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126','甘肃省','GSS','8','477','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116111','湖南省.张家界市','HNSZJJS','8',304,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126100','甘肃省.兰州市','GSSLZS','8','478','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116112','湖南省.湘潭市','HNSXTS','8',305,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126101','甘肃省.临夏回族自治州','GSSLXHZZZZ','8','479','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116113','湖南省.株洲市','HNSZZS','8',306,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126102','甘肃省.定西地区','GSSDXDQ','8','480','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116114','湖南省.岳阳市','HNSYYS','8',307,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126103','甘肃省.平凉市','GSSPLS','8','481','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116115','湖南省.常德市','HNSCDS','8',308,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126104','甘肃省.庆阳市','GSSQYS','8','482','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116116','湖南省.吉首市','HNSJSS','8',309,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126105','甘肃省.西峰市','GSSXFS','8','483','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116117','湖南省.娄底市','HNSLDS','8',310,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126106','甘肃省.武威市','GSSWWS','8','484','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116118','湖南省.冷水江市','HNSLSJS','8',311,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126107','甘肃省.张掖市','GSSZYS','8','485','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116119','湖南省.洪江市','HNSHJS','8',312,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126108','甘肃省.嘉峪关市','GSSJYGS','8','486','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116120','湖南省.来阳市','HNSLYS','8',313,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126109','甘肃省.金昌市','GSSJCS','8','487','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116121','湖南省.彬州市','HNSBZS','8',314,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126110','甘肃省.酒泉市','GSSJQS','8','488','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116122','湖南省.冷水滩市','HNSLSTS','8',315,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126111','甘肃省.天水市','GSSTSS','8','489','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126112','甘肃省.陇南地区','GSSLNDQ','8','490','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126113','甘肃省.甘南藏族自治州','GSSGNCZZZZ','8','491','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126114','甘肃省.白银市','GSSBYS','8','492','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126115','甘肃省.玉门市','GSSYMS','8','493','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('116123','湖南省.湘西土家族苗族自治州','HNS.XXTJZMZZZZ','8',316,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127','宁夏回族自治区','NXHZZZQ','8','494','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117','湖北省','HBS','8',317,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127100','宁夏.银川市','NXYCS','8','495','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117100','湖北省.武汉市','HBSWHS','8',318,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127101','宁夏.石嘴山市','NXSZSS','8','496','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117101','湖北省.天门市','HBSTMS','8',319,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127102','宁夏.青铜峡市','NXQTXS','8','497','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117102','湖北省.应城市','HBSYCS','8',320,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127103','宁夏.吴忠市','NXWZS','8','498','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117103','湖北省.应城市','HBSYCS','8',321,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127104','宁夏.固原市','NXGYS','8','499','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117104','湖北省.应城市','HBSYCS','8',322,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128','青海省','QHS','8','500','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117105','湖北省.应城市','HBSYCS','8',323,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128100','青海省.西宁市','QHSXNS','8','501','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117106','湖北省.应城市','HBSYCS','8',324,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128101','青海省.海北藏族自治州','QHSHBCZZZZ','8','502','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117107','湖北省.咸宁市','HBSXNS','8',325,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128102','青海省.海东地区','QHSHDDQ','8','503','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117108','湖北省.蒲昕市','HBSPZS','8',326,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128103','青海省.黄南藏族自治州','QHSHNCZZZZ','8','504','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117109','湖北省.咸宁市','HBSXNS','8',327,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128104','青海省.海南藏族自治州','QHSHNCZZZZ','8','505','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117110','湖北省.咸宁市','HBSXNS','8',328,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128105','青海省.果洛藏族自治州','QHSGLCZZZZ','8','506','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117111','湖北省.咸宁市','HBSXNS','8',329,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128106','青海省.玉树藏族自治州','QHSYSCZZZZ','8','507','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117112','湖北省.利川市','HBSLCS','8',330,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128107','青海省.德令哈市','QHSDLHS','8','508','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117113','湖北省.利川市','HBSLCS','8',331,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128108','青海省.海西蒙古族藏族自治州','QHS.HXMGZCZZZZ','8','509','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117114','湖北省.利川市','HBSLCS','8',332,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128109','青海省.格尔木市','QHSGEMS','8','510','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117115','湖北省.孝感市','HBSXGS','8',333,'00',5497000)
  GO
-
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129','新疆维吾尔自治区','XJWWEZZQ','8','511','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117116','湖北省.安陆市','HBSALS','8',334,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129100','新疆.乌鲁木齐市','XJWLMQS','8','512','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117117','湖北省.洪湖市','HBSHHS','8',335,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129101','新疆.塔城地区','XJTCDQ','8','513','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117118','湖北省.石首市','HBSSSS','8',336,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129102','新疆.哈密地区','XJHMDQ','8','514','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117119','湖北省.黄石市','HBSHSS','8',337,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129103','新疆.和田地区','XJHTDQ','8','515','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117120','湖北省.武穴市','HBSW穴S','8',338,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129104','新疆.阿勒泰地区','XJALTDQ','8','516','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117121','湖北省.襄樊市','HBSXFS','8',339,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129105','新疆.克孜勒苏柯尔克孜自治州','XJ.KZLSKEKZZZZ','8','517','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117122','湖北省.随州市','HBSSZS','8',340,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129106','新疆.博乐塔拉蒙古族自治州','XJ.BLTLMGZZZZ','8','518','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117123','湖北省.丹江口市','HBSDJKS','8',341,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129107','新疆.克拉玛依市','XJKLMYS','8','519','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117124','湖北省.宜昌市','HBSYCS','8',342,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129108','新疆.伊犁哈萨克自治州','XJYLHSKZZZ','8','520','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117125','湖北省.恩施土家族苗族自治州','HBS.ESTJZMZZZZ','8',343,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129109','新疆.奎屯市','XJKTS','8','521','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129110','新疆.石河子市','XJSHZS','8','522','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129111','新疆.昌吉回族自治州','XJCJHZZZZ','8','523','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129112','新疆.吐鲁番市','XJTLFS','8','524','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129113','新疆.巴音郭楞蒙古自治州','XJBYGLMGZZZ','8','525','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129114','新疆.库尔勒市','XJKELS','8','526','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129115','新疆.阿克苏地区','XJAKSDQ','8','527','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129116','新疆.喀什地区','XJKSDQ','8','528','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129117','新疆.伊宁市','XJYNS','8','529','00',5497000)
- GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129118','新疆.阿图什市','XJATSS','8','530','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('117126','湖北省.利川市','HBSLCS','8',344,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130','西藏自治区','XCZZQ','8','531','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118','河南省','HNS','8',345,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130100','西藏.拉萨市','XCLSS','8','532','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118100','河南省.郑州市','HNSZZS','8',346,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130101','西藏.日喀则地区','XCRKZDQ','8','533','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118101','河南省.焦作市','HNSJZS','8',347,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130102','西藏.山南地区','XCSNDQ','8','534','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118102','河南省.鹤壁市','HNSHBS','8',348,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130103','西藏.林芝地区','XCLZDQ','8','535','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118103','河南省.许昌市','HNSXCS','8',349,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130104','西藏.昌都地区','XCCDDQ','8','536','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118104','河南省.驻马店市','HNSZMDS','8',350,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130105','西藏.那曲地区','XCNQDQ','8','537','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118105','河南省.周口市','HNSZKS','8',351,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130106','西藏.阿里地区','XCALDQ','8','538','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118106','河南省.洛阳市','HNSLYS','8',352,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118107','河南省.义马市','HNSYMS','8',353,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118108','河南省.开封市','HNSKFS','8',354,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118109','河南省.新乡市','HNSXXS','8',355,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118110','河南省.安阳市','HNSAYS','8',356,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118111','河南省.濮阳市','HNSZYS','8',357,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118112','河南省.缧河市','HNSZHS','8',358,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118113','河南省.信阳市','HNSXYS','8',359,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118114','河南省.平顶山市','HNSPDSS','8',360,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118115','河南省.三门峡市','HNSSMXS','8',361,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118116','河南省.南阳市','HNSNYS','8',362,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('118117','河南省.商丘市','HNSSQS','8',363,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131','台湾省','TWS','8','539','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119','广东省','GDS','8',364,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131100','台湾省.基隆','TWSJL','8','540','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119100','广东省.广州市','GDSGZS','8',365,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131101','台湾省.台北','TWSTB','8','541','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119101','广东省.东莞市','GDSDZS','8',366,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131102','台湾省.台中','TWSTZ','8','542','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119102','广东省.梅州市','GDSMZS','8',367,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131103','台湾省.台南','TWSTN','8','543','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119103','广东省.潮州市','GDSCZS','8',368,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131104','台湾省.高雄','TWSGX','8','544','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119104','广东省.汕尾市','GDSSWS','8',369,'00',5497000)
  GO
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131105','台湾省.台东','TWSTD','8','545','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119105','广东省.深圳市','GDSSZS','8',370,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119106','广东省.茂名市','GDSMMS','8',371,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119107','广东省.佛山市','GDSFSS','8',372,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119108','广东省.江门市','GDSJMS','8',373,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119109','广东省.珠海市','GDSZHS','8',374,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119110','广东省.云浮市','GDSYFS','8',375,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119111','广东省.清远市','GDSQYS','8',376,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119112','广东省.韶关市','GDSSGS','8',377,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119113','广东省.汕头市','GDSSTS','8',378,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119114','广东省.惠州市','GDSHZS','8',379,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119115','广东省.河源市','GDSHYS','8',380,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119116','广东省.湛江市','GDSZJS','8',381,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119117','广东省.肇庆市','GDSZQS','8',382,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119118','广东省.中山市','GDSZSS','8',383,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119119','广东省.阳江市','GDSYJS','8',384,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('119120','广东省.揭阳市','GDSJYS','8',385,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('132','香港特别行政区','XGTBXZQ','8','546','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120','海南省','HNS','8',386,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120100','海南省.海口市','HNSHKS','8',387,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120101','海南省.通什市','HNSTSS','8',388,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120102','海南省.三亚市','HNSSYS','8',389,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('120103','海南省.海南省','HNSHNS','8',390,'00',5497000)
  GO
 
- insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('133','澳门特别行政区','AMTBXZQ','8','547','00',5497000)
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121','广西壮族自治区','GXZZZZQ','8',391,'00',5497000)
  GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121100','广西.南宁市','GXNNS','8',392,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121101','广西.百色市','GXBSS','8',393,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121102','广西.北海市','GXBHS','8',394,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121103','广西.桂林市','GXGLS','8',395,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121104','广西.柳州市','GXLZS','8',396,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121105','广西.河池市','GXHCS','8',397,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121106','广西.贵港市','GXGGS','8',398,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121107','广西.凭祥市','GXPXS','8',399,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121108','广西.钦州市','GXQZS','8',400,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121109','广西.玉林市','GXYLS','8',401,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121110','广西.梧州市','GXWZS','8',402,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121111','广西.台山市','GXTSS','8',403,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121112','广西.防城港市','GXFCGS','8',404,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('121113','广西.贺州市','GXHZS','8',405,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122','贵州省','GZS','8',406,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122100','贵州省.贵阳市','GZSGYS','8',407,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122101','贵州省.铜仁市','GZSTRS','8',408,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122102','贵州省.都匀市','GZSDYS','8',409,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122103','贵州省.兴义市','GZSXYS','8',410,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122104','贵州省.赤水市','GZSCSS','8',411,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122105','贵州省.六盘水市','GZSLPSS','8',412,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122106','贵州省.凯里市','GZSKLS','8',413,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122107','贵州省.安顺市','GZSASS','8',414,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122108','贵州省.遵义市','GZSZYS','8',415,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122109','贵州省.毕节地区','GZSBJDQ','8',416,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122110','贵州省.黔东南苗族侗族自治州','GZS.QDNMZDZZZZ','8',417,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122111','贵州省.黔西南布依族苗族自治州 ','GZS.QXNBYZMZZZZ ','8',418,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('122112','贵州省.黔南布依族苗族自治州','GZS.QNBYZMZZZZ','8',419,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123','四川省','SCS','8',420,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123100','四川省.成都市','SCSCDS','8',421,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123101','四川省.温江县','SCSWJX','8',422,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123102','四川省.都江堰市','SCSDJYS','8',423,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123103','四川省.攀枝花市','SCSPZHS','8',424,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123104','四川省.自贡市','SCSZGS','8',425,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123105','四川省.绵阳市','SCSMYS','8',426,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123106','四川省.南充市','SCSNCS','8',427,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123107','四川省.达州市','SCSDZS','8',428,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123108','四川省.遂宁市','SCSSNS','8',429,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123109','四川省.广安市','SCSGAS','8',430,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123110','四川省.巴中市','SCSBZS','8',431,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123111','四川省.泸州市','SCSZZS','8',432,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123112','四川省.宜宾市','SCSYBS','8',433,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123113','四川省.内江市','SCSNJS','8',434,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123114','四川省.资阳市','SCSZYS','8',435,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123115','四川省.乐山市','SCSLSS','8',436,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123116','四川省.眉山市','SCSMSS','8',437,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123117','四川省.凉山彝族自治州','SCS.LSYZZZZ','8',438,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123118','四川省.雅安市','SCSYAS','8',439,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123119','四川省.甘孜藏族自治州','SCS.GZCZZZZ','8',440,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123120','四川省.阿坝藏族羌族自治州','SCS.ABCZQZZZZ','8',441,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123121','四川省.德阳市','SCSDYS','8',442,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('123122','四川省.广元市','SCSGYS','8',443,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124','云南省','YNS','8',444,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124100','云南省.西双版纳傣族自治州','YNS.XSBNDZZZZ','8',445,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124101','云南省.德宏傣族景颇族自治州','YNS.DHDZJPZZZZ','8',446,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124102','云南省.昭通市','YNSZTS','8',447,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124103','云南省.昆明市','YNSKMS','8',448,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124104','云南省.大理市','YNSDLS','8',449,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124105','云南省.大理白族自治州','YNS.DLBZZZZ','8',450,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124106','云南省.红河哈尼族彝族自治州','YNS.HHHNZYZZZZ','8',451,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124107','云南省.个旧市','YNSGJS','8',452,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124108','云南省.曲靖市','YNSQJS','8',453,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124109','云南省.保山市','YNSBSS','8',454,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124110','云南省.文山壮族苗族自治州','YNS.WSZZMZZZZ','8',455,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124111','云南省.玉溪市','YNSYXS','8',456,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124112','云南省.楚雄彝族自治州','YNS.CXYZZZZ','8',457,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124113','云南省.思茅地区','YNSSMDQ','8',458,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124114','云南省.临沧地区','YNSLCDQ','8',459,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124115','云南省.怒江傈僳族自治州','YNS.NJLSZZZZ','8',460,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124116','云南省.迪庆藏族自治州','YNS.DQCZZZZ','8',461,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124117','云南省.丽江地区','YNSLJDQ','8',462,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124118','云南省.东川市','YNSDCS','8',463,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('124119','云南省.开远市','YNSKYS','8',464,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125','陕西省','SXS','8',465,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125100','陕西省.西安市','SXSXAS','8',466,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125101','陕西省.咸阳市','SXSXYS','8',467,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125102','陕西省.延安市','SXSYAS','8',468,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125103','陕西省.榆林市','SXSYLS','8',469,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125104','陕西省.渭南市','SXSWNS','8',470,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125105','陕西省.商洛市','SXSSLS','8',471,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125106','陕西省.安康市','SXSAKS','8',472,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125107','陕西省.汉中市','SXSHZS','8',473,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125108','陕西省.宝鸡市','SXSBJS','8',474,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125109','陕西省.铜川市','SXSTCS','8',475,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('125110','陕西省.韩城市','SXSHCS','8',476,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126','甘肃省','GSS','8',477,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126100','甘肃省.兰州市','GSSLZS','8',478,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126101','甘肃省.临夏回族自治州','GSS.LXHZZZZ','8',479,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126102','甘肃省.定西地区','GSSDXDQ','8',480,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126103','甘肃省.平凉市','GSSPLS','8',481,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126104','甘肃省.庆阳市','GSSQYS','8',482,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126105','甘肃省.西峰市','GSSXFS','8',483,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126106','甘肃省.武威市','GSSWWS','8',484,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126107','甘肃省.张掖市','GSSZYS','8',485,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126108','甘肃省.嘉峪关市','GSSJYGS','8',486,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126109','甘肃省.金昌市','GSSJCS','8',487,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126110','甘肃省.酒泉市','GSSJQS','8',488,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126111','甘肃省.天水市','GSSTSS','8',489,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126112','甘肃省.陇南地区','GSSLNDQ','8',490,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126113','甘肃省.甘南藏族自治州','GSS.GNCZZZZ','8',491,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126114','甘肃省.白银市','GSSBYS','8',492,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('126115','甘肃省.玉门市','GSSYMS','8',493,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127','宁夏回族自治区','NXHZZZQ','8',494,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127100','宁夏.银川市','NXYCS','8',495,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127101','宁夏.石嘴山市','NXSZSS','8',496,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127102','宁夏.青铜峡市','NXQTXS','8',497,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127103','宁夏.吴忠市','NXWZS','8',498,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('127104','宁夏.固原市','NXGYS','8',499,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128','青海省','QHS','8',500,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128100','青海省.西宁市','QHSXNS','8',501,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128101','青海省.海北藏族自治州','QHS.HBCZZZZ','8',502,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128102','青海省.海东地区','QHSHDDQ','8',503,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128103','青海省.黄南藏族自治州','QHS.HNCZZZZ','8',504,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128104','青海省.海南藏族自治州','QHS.HNCZZZZ','8',505,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128105','青海省.果洛藏族自治州','QHS.GLCZZZZ','8',506,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128106','青海省.玉树藏族自治州','QHS.YSCZZZZ','8',507,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128107','青海省.德令哈市','QHSDLHS','8',508,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128108','青海省.海西蒙古族藏族自治州','QHS.HXMGZCZZZZ','8',509,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('128109','青海省.格尔木市','QHSGEMS','8',510,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129','新疆维吾尔自治区','XJWWEZZQ','8',511,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129100','新疆.乌鲁木齐市','XJWLMQS','8',512,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129101','新疆.塔城地区','XJTCDQ','8',513,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129102','新疆.哈密地区','XJHMDQ','8',514,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129103','新疆.和田地区','XJHTDQ','8',515,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129104','新疆.阿勒泰地区','XJALTDQ','8',516,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129105','新疆.克孜勒苏柯尔克孜自治州','XJ.KZLSKEKZZZZ','8',517,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129106','新疆.博乐塔拉蒙古族自治州','XJ.BLTLMGZZZZ','8',518,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129107','新疆.克拉玛依市','XJKLMYS','8',519,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129108','新疆.伊犁哈萨克自治州','XJ.YLHSKZZZ','8',520,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129109','新疆.奎屯市','XJKTS','8',521,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129110','新疆.石河子市','XJSHZS','8',522,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129111','新疆.昌吉回族自治州','XJCJHZZZZ','8',523,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129112','新疆.吐鲁番市','XJTLFS','8',524,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129113','新疆.巴音郭楞蒙古自治州','XJ.BYGLMGZZZ','8',525,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129114','新疆.库尔勒市','XJKELS','8',526,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129115','新疆.阿克苏地区','XJAKSDQ','8',527,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129116','新疆.喀什地区','XJKSDQ','8',528,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129117','新疆.伊宁市','XJYNS','8',529,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('129118','新疆.阿图什市','XJATSS','8',530,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130','西藏自治区','XCZZQ','8',531,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130100','西藏.拉萨市','XCLSS','8',532,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130101','西藏.日喀则地区','XCRKZDQ','8',533,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130102','西藏.山南地区','XCSNDQ','8',534,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130103','西藏.林芝地区','XCLZDQ','8',535,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130104','西藏.昌都地区','XCCDDQ','8',536,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130105','西藏.那曲地区','XCNQDQ','8',537,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('130106','西藏.阿里地区','XCALDQ','8',538,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131','台湾省','TWS','8',539,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131100','台湾省.基隆','TWSJL','8',540,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131101','台湾省.台北','TWSTB','8',541,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131102','台湾省.台中','TWSTZ','8',542,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131103','台湾省.台南','TWSTN','8',543,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131104','台湾省.高雄','TWSGX','8',544,'00',5497000)
+ GO
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('131105','台湾省.台东','TWSTD','8',545,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('132','香港特别行政区','XGTBXZQ','8',546,'00',5497000)
+ GO
+
+ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('133','澳门特别行政区','AMTBXZQ','8',547,'00',5497000)
+ GO
+
 
 --2011-01-19 张森荣设计
 --数据字典
@@ -3010,17 +3011,17 @@ select 0 as FLAG,[TENANT_ID],[CLIENT_ID],[LICENSE_CODE],[CLIENT_TYPE],[CLIENT_CO
 union all
 select 1 as FLAG,B.[TENANT_ID] as TENANT_ID,cast(A.[TENANT_ID] as varchar(36)) as CLIENT_ID,A.LICENSE_CODE,'2' as CLIENT_TYPE,A.LOGIN_NAME as CLIENT_CODE,A.TENANT_NAME as CLIENT_NAME,A.TENANT_SPELL as CLIENT_SPELL,
 '----' as [SORT_ID],A.[REGION_ID],'#' as SETTLE_CODE,A.[ADDRESS],A.[POSTALCODE],A.[LINKMAN],A.TELEPHONE as TELEPHONE3,A.TELEPHONE as TELEPHONE1,A.TELEPHONE as TELEPHONE2,
-A.[FAXES],A.[HOMEPAGE],null as EMAIL,A.QQ,A.MSN,null as BANK_ID,null as ACCOUNT,0 as INVOICE_FLAG,A.[REMARK],0 as TAX_RATE,'#' as PRICE_ID,'0' as SHOP_ID,'#' as UNION_ID,A.[COMM],A.[TIME_STAMP] 
+A.[FAXES],A.[HOMEPAGE],null as EMAIL,A.QQ,A.MSN,null as BANK_ID,null as ACCOUNT,'0' as INVOICE_FLAG,A.[REMARK],0 as TAX_RATE,'#' as PRICE_ID,'0' as SHOP_ID,'#' as UNION_ID,A.[COMM],A.[TIME_STAMP] 
 from CA_TENANT A,CA_RELATIONS B where A.TENANT_ID=B.RELATI_ID
 union all
 select 2 as FLAG,[TENANT_ID],[CUST_ID] as CLIENT_ID,ID_NUMBER as [LICENSE_CODE],'2' as CLIENT_TYPE,CUST_CODE as CLIENT_CODE,CUST_NAME as CLIENT_NAME,CUST_SPELL as CLIENT_SPELL,
 [SORT_ID],[REGION_ID],'#' as SETTLE_CODE,[FAMI_ADDR] as ADDRESS,[POSTALCODE],CUST_NAME as LINKMAN,FAMI_TELE as TELEPHONE3,OFFI_TELE as TELEPHONE1,MOVE_TELE as TELEPHONE2,
-null as FAXES,null as HOMEPAGE,EMAIL,QQ,MSN,null as BANK_ID,null as ACCOUNT,0 as INVOICE_FLAG,[REMARK],0 as TAX_RATE,PRICE_ID,SHOP_ID,'#' as UNION_ID,[COMM],[TIME_STAMP] 
+null as FAXES,null as HOMEPAGE,EMAIL,QQ,MSN,null as BANK_ID,null as ACCOUNT,'0' as INVOICE_FLAG,[REMARK],0 as TAX_RATE,PRICE_ID,SHOP_ID,'#' as UNION_ID,[COMM],[TIME_STAMP] 
 from PUB_CUSTOMER
 union all
 select 3 as FLAG,[TENANT_ID],cast([TENANT_ID] as varchar(36)) as CLIENT_ID,LICENSE_CODE,'2' as CLIENT_TYPE,LOGIN_NAME as CLIENT_CODE,TENANT_NAME as CLIENT_NAME,TENANT_SPELL as CLIENT_SPELL,
 '----' as [SORT_ID],[REGION_ID],'#' as SETTLE_CODE,[ADDRESS],[POSTALCODE],[LINKMAN],TELEPHONE as TELEPHONE3,TELEPHONE as TELEPHONE1,TELEPHONE as TELEPHONE2,
-[FAXES],[HOMEPAGE],null as EMAIL,QQ,MSN,null as BANK_ID,null as ACCOUNT,0 as INVOICE_FLAG,[REMARK],0 as TAX_RATE,'#' as PRICE_ID,'0' as SHOP_ID,'#' as UNION_ID,[COMM],[TIME_STAMP] 
+[FAXES],[HOMEPAGE],null as EMAIL,QQ,MSN,null as BANK_ID,null as ACCOUNT,'0' as INVOICE_FLAG,[REMARK],0 as TAX_RATE,'#' as PRICE_ID,'0' as SHOP_ID,'#' as UNION_ID,[COMM],[TIME_STAMP] 
 from CA_TENANT) j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.CLIENT_ID=ic.CLIENT_ID and j.UNION_ID=ic.UNION_ID
 GO
 
@@ -3643,19 +3644,19 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','付款方式','CODE_TYPE','00',5497000)
  GO
 
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('A','现金','XJ','1','1','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('A','现金','XJ','1',1,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('B','银联','YL','1','2','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('B','银联','YL','1',2,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('C','储值卡','CZK','1','3','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('C','储值卡','CZK','1',3,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('D','记账','JZ','1','4','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('D','记账','JZ','1',4,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','礼券','LQ','1','5','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','礼券','LQ','1',5,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1','6','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1',6,'00',5497000)
  GO
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','小额支付','XEZF','1','7','00',5497000)
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','小额支付','XEZF','1',7,'00',5497000)
  GO
 
 CREATE VIEW VIW_PAYMENT
@@ -4170,8 +4171,8 @@ select
    B.TENANT_ID,B.SHOP_ID,B.INDE_ID,B.INVOICE_FLAG,B.INDE_DATE,B.CLIENT_ID,A.BATCH_NO,A.LOCUS_NO,B.GUIDE_USER,
    A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.IS_PRESENT,A.UNIT_ID,B.CREA_USER,B.GLIDE_NO,
    A.CALC_AMOUNT,A.CALC_MONEY,A.AGIO_MONEY,A.AGIO_RATE,A.ORG_PRICE,A.AMOUNT,
-   round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as TAX_MONEY,
-   A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG=3 then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
+   round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG='3' then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG='3' then B.TAX_RATE else 0 end,2) as TAX_MONEY,
+   A.CALC_MONEY-round(A.CALC_MONEY/(1+case when B.INVOICE_FLAG='3' then B.TAX_RATE else 0 end)*case when B.INVOICE_FLAG='3' then B.TAX_RATE else 0 end,2) as NOTAX_MONEY
 from STK_INDENTDATA A,STK_INDENTORDER B where A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.INDE_ID and B.COMM not in ('02','12')
  GO
 
@@ -5679,7 +5680,7 @@ select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,BATCH_NO,
    0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,   
    0 as SALE_AMT,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,   
    0 as DBIN_AMT,0 as DBIN_RTL,0 as DBIN_CST,   
-   CALC_AMOUNT as DBOUT_AMT,RTL_MONEY as DBIN_RTL,
+   CALC_AMOUNT as DBOUT_AMT,RTL_MONEY as DBOUT_RTL,
    COST_MONEY as DBOUT_CST,
    0 as CHANGE1_AMT,0 as CHANGE1_RTL,0 as CHANGE1_CST,   
    0 as CHANGE2_AMT,0 as CHANGE2_RTL,0 as CHANGE2_CST,   

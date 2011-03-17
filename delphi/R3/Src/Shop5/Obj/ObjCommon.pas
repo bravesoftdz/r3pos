@@ -72,12 +72,12 @@ begin
      result := stringreplace(result,'NVL','isnull',[rfReplaceAll]);
     end;
   1,4:begin
-     result := stringreplace(SQL,'ifnull','nvl',[rfReplaceAll]);
-     result := stringreplace(result,'IfNull','nvl',[rfReplaceAll]);
-     result := stringreplace(result,'IFNULL','nvl',[rfReplaceAll]);
-     result := stringreplace(result,'isnull','nvl',[rfReplaceAll]);
-     result := stringreplace(result,'IsNull','nvl',[rfReplaceAll]);
-     result := stringreplace(result,'ISNULL','nvl',[rfReplaceAll]);
+     result := stringreplace(SQL,'ifnull','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'IfNull','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'IFNULL','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'isnull','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'IsNull','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'ISNULL','coalesce',[rfReplaceAll]);
     end;
   5:begin
      result := stringreplace(SQL,'nvl','ifnull',[rfReplaceAll]);

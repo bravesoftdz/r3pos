@@ -329,7 +329,8 @@ begin
   vList := TStringList.Create;
   try
     vList.Delimiter := ';';
-    vList.DelimitedText := lowercase(ConnStr);
+    vList.QuoteChar := '"';
+    vList.DelimitedText := ConnStr;
     ZConn.HostName := vList.Values['hostname'];
     ZConn.Database := vList.Values['databasename'];
     if vList.Values['uid']<>'' then ZConn.User := vList.Values['uid'];

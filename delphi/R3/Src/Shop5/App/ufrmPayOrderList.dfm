@@ -471,7 +471,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'CLIENT_ID_TEXT'
                     Footers = <>
-                    Title.Caption = #23458#25143#21517#31216
+                    Title.Caption = #20379#24212#21830#21517#31216
                     Width = 153
                   end
                   item

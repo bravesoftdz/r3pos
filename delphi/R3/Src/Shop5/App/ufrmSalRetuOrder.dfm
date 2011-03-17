@@ -1,6 +1,6 @@
 inherited frmSalRetuOrder: TfrmSalRetuOrder
-  Left = 222
-  Top = 108
+  Left = 308
+  Top = 239
   Width = 796
   Height = 552
   Caption = #36864#36135#21333
@@ -120,7 +120,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 51
         Width = 36
         Height = 12
-        Caption = #39044#20184#27454
+        Caption = #39044#25910#27454
       end
       object Label4: TLabel [14]
         Left = 564

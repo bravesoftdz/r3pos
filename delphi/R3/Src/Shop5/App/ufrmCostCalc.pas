@@ -991,7 +991,7 @@ begin
   b := 1;
   while true do
   begin
-    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+70;
+    if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+80;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -1033,7 +1033,7 @@ begin
       '0 as ORG_MNY,IN_MNY,OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
       'from RCK_ACCT_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+' '+
       ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
-    Factor.ExecSQL(SQL);
+    Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
 
     if e>=eDate then break;
     b := b +round(e-(bDate+b))+1;
@@ -1058,7 +1058,7 @@ begin
   Factor.ExecSQL('delete from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate));
   for i:= 1 to pt do
     begin
-      RzProgressBar1.Percent := (i*100 div pt) div 3+5;
+      RzProgressBar1.Percent := (i*100 div pt) div 3+60;
       SQL :=
         'insert into RCK_ACCT_DAYS('+
         'TENANT_ID,SHOP_ID,CREA_DATE,ACCOUNT_ID,'+

@@ -248,7 +248,8 @@ begin
       FUpdateObject.FreeNotification(Self);
     if Assigned(FUpdateObject) then
       FUpdateObject.DataSet := Self;
-    if Active and (CachedResultSet <> nil) then
+//    if Active and (CachedResultSet <> nil) then zhangsenrong modify
+    if (CachedResultSet <> nil) then
     begin
       if FUpdateObject <> nil then
         CachedResultSet.SetResolver(FUpdateObject)
@@ -358,21 +359,18 @@ end;
   Performs internal query closing.
 }
 procedure TZAbstractDataset.InternalClose;
-var
-  ds:TDataSource;
 begin
-  ds := DataSource;
-  try
-    ds := nil;
-    inherited InternalClose;
+  inherited InternalClose;
 
-    if Assigned(CachedResultSet) then
-       CachedResultSet.Close;
-    CachedResultSet := nil;
-    CachedResolver := nil;
-  finally
-    ds := ds;
+  if Assigned(CachedResultSet) then
+     CachedResultSet.Close;
+  try
+  CachedResultSet := nil;
+  except
+    on e:exception do
+      raise Exception.Create('CachedResultSet:'+e.Message);
   end;
+  CachedResolver := nil;
 end;
 
 {**

@@ -1,36 +1,38 @@
 inherited frmRecvDayReport: TfrmRecvDayReport
-  Left = 187
-  Top = 103
-  Width = 999
-  Height = 600
+  Left = 194
+  Top = 109
+  Width = 1022
+  Height = 611
   Caption = #25910#27454#26085#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 991
-    Height = 543
+    Width = 1014
+    Height = 554
     inherited RzPanel2: TRzPanel
-      Width = 981
-      Height = 533
+      Width = 1004
+      Height = 544
       inherited RzPage: TRzPageControl
-        Width = 776
-        Height = 527
+        Width = 799
+        Height = 538
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 774
-            Height = 500
+            Width = 797
+            Height = 511
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 764
-              Height = 490
+              Width = 787
+              Height = 501
               inherited w1: TRzPanel
-                Width = 764
-                Height = 65
+                Width = 787
+                Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -109,9 +111,9 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
-                  Left = 154
+                  Left = 156
                   Top = 32
-                  Width = 119
+                  Width = 117
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -151,12 +153,12 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 65
-                Width = 764
-                Height = 425
+                Top = 64
+                Width = 787
+                Height = 437
                 inherited DBGridEh1: TDBGridEh
-                  Width = 760
-                  Height = 421
+                  Width = 783
+                  Height = 433
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -171,28 +173,34 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'REGION_ID'
                       Footers = <>
                       Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'CODE_NAME'
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'RECV_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25910#27454#21512#35745
-                      Width = 72
+                      Width = 86
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#29616#37329
                       Width = 58
@@ -201,6 +209,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#38134#32852
                       Width = 58
@@ -209,6 +219,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#20648#20540#21345
                       Width = 58
@@ -217,14 +229,18 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#35760#36134
                       Width = 58
                     end
                     item
-                      DisplayFormat = '#0.00%'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#31036#21367
                       Width = 58
@@ -233,48 +249,71 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#25903#31080
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#23567#39069#25903#20184
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
-                      Width = 58
+                      Width = 78
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'TRN_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32564#38134#37329#39069
+                      Width = 90
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'TRN_REST_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#29616#37329
-                      Width = 63
+                      Width = 104
                     end>
                 end
               end
@@ -287,8 +326,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 774
-            Height = 500
+            Width = 797
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -296,8 +335,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 764
-              Height = 490
+              Width = 787
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -305,8 +344,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 764
-                Height = 65
+                Width = 787
+                Height = 64
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -433,9 +472,9 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 65
-                Width = 764
-                Height = 425
+                Top = 64
+                Width = 787
+                Height = 437
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -443,8 +482,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 760
-                  Height = 421
+                  Width = 783
+                  Height = 433
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -499,28 +538,34 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'SHOP_CODE'
                       Footers = <>
                       Title.Caption = #38376#24215#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'RECV_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25910#27454#21512#35745
-                      Width = 72
+                      Width = 80
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#29616#37329
                       Width = 58
@@ -529,6 +574,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#38134#32852
                       Width = 58
@@ -537,6 +584,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#20648#20540#21345
                       Width = 58
@@ -545,14 +594,18 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#35760#36134
                       Width = 58
                     end
                     item
-                      DisplayFormat = '#0.00%'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#31036#21367
                       Width = 58
@@ -561,48 +614,71 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#25903#31080
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#23567#39069#25903#20184
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'TRN_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32564#38134#37329#39069
+                      Width = 66
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'TRN_REST_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#29616#37329
-                      Width = 63
+                      Width = 94
                     end>
                 end
               end
@@ -615,8 +691,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 774
-            Height = 500
+            Width = 797
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -624,8 +700,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 764
-              Height = 490
+              Width = 787
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -633,8 +709,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 764
-                Height = 89
+                Width = 787
+                Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -810,9 +886,9 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 89
-                Width = 764
-                Height = 401
+                Top = 82
+                Width = 787
+                Height = 419
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -821,8 +897,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 760
-                  Height = 397
+                  Width = 783
+                  Height = 415
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -876,22 +952,26 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       Width = 30
                     end
                     item
+                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'RECV_DATE'
                       Footers = <>
                       Title.Caption = #26085#26399
                       Width = 99
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'RECV_MNY'
                       Footers = <>
                       Title.Caption = #25910#27454#21512#35745
-                      Width = 72
+                      Width = 80
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#29616#37329
                       Width = 58
@@ -900,6 +980,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#38134#32852
                       Width = 58
@@ -908,6 +990,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#20648#20540#21345
                       Width = 58
@@ -916,6 +1000,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#35760#36134
                       Width = 58
@@ -924,6 +1010,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'PAY_E'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#31036#21367
                       Width = 58
@@ -932,6 +1020,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#25903#31080
                       Width = 58
@@ -939,6 +1029,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       EditButtons = <>
                       FieldName = 'PAY_G'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#23567#39069#25903#20184
                       Width = 58
@@ -946,6 +1038,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       EditButtons = <>
                       FieldName = 'PAY_H'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
@@ -953,6 +1047,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       EditButtons = <>
                       FieldName = 'PAY_I'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
@@ -960,20 +1056,29 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       EditButtons = <>
                       FieldName = 'PAY_J'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'TRN_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32564#38134#37329#39069
+                      Width = 69
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'TRN_REST_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#29616#37329
-                      Width = 63
+                      Width = 84
                     end>
                 end
               end
@@ -986,8 +1091,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 774
-            Height = 500
+            Width = 797
+            Height = 511
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -995,8 +1100,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 764
-              Height = 490
+              Width = 787
+              Height = 501
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1004,8 +1109,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 764
-                Height = 89
+                Width = 787
+                Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1181,9 +1286,9 @@ inherited frmRecvDayReport: TfrmRecvDayReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 89
-                Width = 764
-                Height = 401
+                Top = 82
+                Width = 787
+                Height = 419
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1191,8 +1296,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 760
-                  Height = 397
+                  Width = 783
+                  Height = 415
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1246,28 +1351,34 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_ID'
+                      FieldName = 'ACCOUNT'
                       Footers = <>
                       Title.Caption = #24037#21495
                       Width = 62
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GROUP_NAME'
+                      FieldName = 'USER_NAME'
                       Footers = <>
                       Title.Caption = #22995#21517
                       Width = 99
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'RECV_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25910#27454#21512#35745
-                      Width = 72
+                      Width = 80
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#29616#37329
                       Width = 58
@@ -1276,6 +1387,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#38134#32852
                       Width = 58
@@ -1284,6 +1397,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#20648#20540#21345
                       Width = 58
@@ -1292,14 +1407,18 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#35760#36134
                       Width = 58
                     end
                     item
-                      DisplayFormat = '#0.00%'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#31036#21367
                       Width = 58
@@ -1308,43 +1427,61 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#25903#31080
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'#23567#39069#25903#20184
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20854#20013'|'
                       Width = 58
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'BALANCE'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#38646#38065
-                      Width = 60
+                      Width = 72
                     end>
                 end
               end
@@ -1353,16 +1490,16 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 779
-        Height = 527
+        Left = 802
+        Height = 538
         inherited Panel2: TPanel
-          Height = 477
+          Height = 488
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 362
+            Height = 373
             inherited rzShowColumns: TRzCheckList
-              Height = 358
+              Height = 369
             end
           end
         end
@@ -1370,15 +1507,15 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 991
+    Width = 1014
     inherited Image1: TImage
-      Width = 476
+      Width = 499
     end
     inherited Image14: TImage
-      Left = 982
+      Left = 1005
     end
     inherited Image3: TImage
-      Width = 476
+      Width = 499
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -1402,13 +1539,13 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     Left = 41
     Top = 354
   end
+  inherited adoReport1: TZQuery
+    Left = 41
+    Top = 321
+  end
   inherited PrintDBGridEh1: TPrintDBGridEh
     PageHeader.CenterText.Strings = (
       #25910#27454#27719#24635#34920)
-    PageHeader.Font.Charset = GB2312_CHARSET
-    PageHeader.Font.Height = -16
-    PageHeader.Font.Name = #23435#20307
-    PageHeader.Font.Style = [fsBold]
     BeforeGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
@@ -1417,10 +1554,15 @@ inherited frmRecvDayReport: TfrmRecvDayReport
       53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
       72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
       5C66733136200D0A5C706172207D0D0A00}
-  end
-  inherited adoReport1: TZQuery
-    Left = 41
-    Top = 321
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
   object dsadoReport2: TDataSource
     DataSet = adoReport2

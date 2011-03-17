@@ -127,7 +127,7 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
     { Public declarations }
     HasChild:boolean;
@@ -267,10 +267,12 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
-  Result :=  ParseSQL(Factor.iDbType,
+
+  strSql :=
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
-    );
+    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID ';
+
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmJxcTotalReport.GetRowType: integer;
@@ -407,10 +409,12 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
-  Result :=  ParseSQL(Factor.iDbType,
+
+  strSql :=
     'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
-    );
+    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmJxcTotalReport.GetSortSQL(chk:boolean=true): string;
@@ -745,16 +749,19 @@ begin
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
-  Result :=  ParseSQL(Factor.iDbType,
+  strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
-    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '
-    );
-  result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+result+') j '+
-            'left outer join VIW_BARCODE b '+
-            'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-            'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
-  result := result +  ' order by j.GODS_CODE';
+    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
+
+  strSql :=
+    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+    'left outer join VIW_BARCODE b '+
+    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+    ' order by j.GODS_CODE ';
+
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh1DblClick(Sender: TObject);
@@ -1060,32 +1067,8 @@ begin
      (TzrMonthEdit(FindCmp1).Visible) and (TzrMonthEdit(FindCmp2).Visible)  then
     TitleList.add('月份：'+TzrMonthEdit(FindCmp1).asString+' 至 '+TzrMonthEdit(FindCmp2).asString);
 
-  //2、门店名称：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
-  if (FindCmp1<>nil) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
-    TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
-
-  //3、管理群组：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_TYPE');
-  FindCmp2:=FindComponent('fndP'+PageNo+'_SHOP_VALUE');
-  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList)  and (TcxComboBox(FindCmp1).Visible) and
-     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'')  then
-    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
-
-  //4、商品指标：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');   
-  FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
-  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
-     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'') then
-    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
-  //5、商品分类
-  FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
-  if (FindCmp1<>nil) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
-    TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);
-  //6、计量单位
-  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
-  if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
-    TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
+  //继承基类
+  inherited AddReportReport(TitleList,PageNo);
 end;
 
 end.

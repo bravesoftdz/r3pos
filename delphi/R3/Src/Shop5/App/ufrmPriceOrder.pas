@@ -235,6 +235,8 @@ begin
   gid := '..新增..';//AObj.FieldbyName('GLIDE_NO').asString;
   edtBEGIN_DATE.Date := date();
   edtEND_DATE.Date := date()+7;
+  edtBEGIN_TIME.Text:='00:00:00';
+  edtEND_TIME.Text:='23:59:59';
   InitRecord;
   TabSheet.Caption := '..新建..';
   //促销门店默认为:当前登录门店

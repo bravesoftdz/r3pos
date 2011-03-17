@@ -3,8 +3,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   Top = 105
   Width = 927
   Height = 627
-  Caption = '进销存统计表'
-  OnDestroy = FormDestroy
+  Caption = #36827#38144#23384#32479#35745#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -21,7 +20,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = '地区进销存统计表'
+          Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
             Width = 702
             Height = 527
@@ -37,7 +36,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = '商品分类'
+                  Caption = #21830#21697#20998#31867
                 end
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -45,35 +44,35 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = '所属月份'
+                  Caption = #25152#23646#26376#20221
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = '至'
+                  Caption = #33267
                 end
                 object Label7: TLabel
                   Left = 24
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = '商品指标'
+                  Caption = #21830#21697#25351#26631
                 end
                 object Label8: TLabel
                   Left = 288
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = '显示单位'
+                  Caption = #26174#31034#21333#20301
                 end
                 object Label5: TLabel
                   Left = 24
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = '门店群组'
+                  Caption = #38376#24215#32676#32452
                 end
                 object btnOk: TRzBitBtn
                   Left = 476
@@ -81,12 +80,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = '查询'
+                  Caption = #26597#35810
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -141,13 +140,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -216,8 +215,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    '行政区域'
-                    '管理群组')
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 7
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
@@ -243,13 +242,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -278,21 +277,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = '序号'
+                      Title.Caption = #24207#21495
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'REGION_ID'
                       Footers = <>
-                      Title.Caption = '地区代码'
+                      Title.Caption = #22320#21306#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '地区名称'
+                      Title.Caption = #22320#21306#21517#31216
                       Width = 153
                     end
                     item
@@ -302,7 +301,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|数量'
+                      Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -312,7 +311,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|金额'
+                      Title.Caption = #26399#21021'|'#37329#39069
                       Width = 62
                     end
                     item
@@ -322,7 +321,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|可销售额'
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
@@ -332,7 +331,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|数量'
+                      Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
                     end
                     item
@@ -342,7 +341,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进货金额'
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
@@ -352,7 +351,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|未税金额'
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
                       Width = 68
                     end
                     item
@@ -362,7 +361,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进项税额'
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
                       Width = 59
                     end
                     item
@@ -372,7 +371,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|数量'
+                      Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -382,7 +381,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销售金额'
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
@@ -392,7 +391,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|未税金额'
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
@@ -402,7 +401,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销项税额'
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
                       Width = 67
                     end
                     item
@@ -412,7 +411,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|成本'
+                      Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
@@ -422,7 +421,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|毛利'
+                      Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
                     end
                     item
@@ -430,7 +429,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
                       Footers = <>
-                      Title.Caption = '销售|毛利率'
+                      Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
@@ -439,7 +438,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|数量'
+                      Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -449,7 +448,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|金额'
+                      Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -458,7 +457,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|数量'
+                      Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -468,7 +467,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|金额'
+                      Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -477,7 +476,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|数量'
+                      Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -487,7 +486,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|金额'
+                      Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
                     end
                     item
@@ -496,7 +495,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|可销售额'
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -505,7 +504,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = '门店进销存统计表'
+          Caption = #38376#24215#36827#38144#23384#32479#35745#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -539,14 +538,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Top = 35
                   Width = 48
                   Height = 12
-                  Caption = '门店群组'
+                  Caption = #38376#24215#32676#32452
                 end
                 object Label13: TLabel
                   Left = 288
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = '商品分类'
+                  Caption = #21830#21697#20998#31867
                 end
                 object RzLabel4: TRzLabel
                   Left = 24
@@ -554,28 +553,28 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = '所属月份'
+                  Caption = #25152#23646#26376#20221
                 end
                 object RzLabel5: TRzLabel
                   Left = 171
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = '至'
+                  Caption = #33267
                 end
                 object Label14: TLabel
                   Left = 24
                   Top = 56
                   Width = 48
                   Height = 12
-                  Caption = '商品指标'
+                  Caption = #21830#21697#25351#26631
                 end
                 object Label15: TLabel
                   Left = 288
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = '显示单位'
+                  Caption = #26174#31034#21333#20301
                 end
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -600,13 +599,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -625,12 +624,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = '查询'
+                  Caption = #26597#35810
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -685,13 +684,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -760,8 +759,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    '行政区域'
-                    '管理群组')
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 8
                 end
               end
@@ -789,17 +788,17 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = '宋体'
+                  FooterFont.Name = #23435#20307
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = '极品五笔输入法'
+                  ImeName = #26497#21697#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -811,12 +810,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = '宋体'
+                  TitleFont.Name = #23435#20307
                   TitleFont.Style = [fsBold]
                   TitleHeight = 30
                   UseMultiTitle = True
                   IsDrawNullRow = False
-                  CurrencySymbol = '￥'
+                  CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh2DblClick
@@ -828,21 +827,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = '序号'
+                      Title.Caption = #24207#21495
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_CODE'
                       Footers = <>
-                      Title.Caption = '门店代码'
+                      Title.Caption = #38376#24215#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = '门店名称'
+                      Title.Caption = #38376#24215#21517#31216
                       Width = 153
                     end
                     item
@@ -852,7 +851,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|数量'
+                      Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -862,7 +861,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|金额'
+                      Title.Caption = #26399#21021'|'#37329#39069
                       Width = 62
                     end
                     item
@@ -872,7 +871,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|可销售额'
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
@@ -882,7 +881,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|数量'
+                      Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
                     end
                     item
@@ -892,7 +891,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进货金额'
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
@@ -902,7 +901,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|未税金额'
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
                       Width = 68
                     end
                     item
@@ -912,7 +911,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进项税额'
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
                       Width = 59
                     end
                     item
@@ -922,7 +921,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|数量'
+                      Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -932,7 +931,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销售金额'
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
@@ -942,7 +941,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|未税金额'
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
@@ -952,7 +951,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销项税额'
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
                       Width = 67
                     end
                     item
@@ -962,7 +961,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|成本'
+                      Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
@@ -972,7 +971,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|毛利'
+                      Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
                     end
                     item
@@ -980,7 +979,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
                       Footers = <>
-                      Title.Caption = '销售|毛利率'
+                      Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
@@ -989,7 +988,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|数量'
+                      Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -999,7 +998,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|金额'
+                      Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -1008,7 +1007,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|数量'
+                      Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1018,7 +1017,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|金额'
+                      Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -1027,7 +1026,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|数量'
+                      Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1037,7 +1036,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|金额'
+                      Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
                     end
                     item
@@ -1046,7 +1045,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|可销售额'
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -1055,7 +1054,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = '分类进销存统计表'
+          Caption = #20998#31867#36827#38144#23384#32479#35745#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -1089,7 +1088,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = '门店名称'
+                  Caption = #38376#24215#21517#31216
                 end
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -1097,35 +1096,35 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = '所属月份'
+                  Caption = #25152#23646#26376#20221
                 end
                 object RzLabel7: TRzLabel
                   Left = 172
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = '至'
+                  Caption = #33267
                 end
                 object Label19: TLabel
                   Left = 288
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = '统计类型'
+                  Caption = #32479#35745#31867#22411
                 end
                 object Label20: TLabel
                   Left = 288
                   Top = 58
                   Width = 48
                   Height = 12
-                  Caption = '显示单位'
+                  Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
                   Left = 24
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = '门店群组'
+                  Caption = #38376#24215#32676#32452
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1150,13 +1149,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1175,12 +1174,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = '查询'
+                  Caption = #26597#35810
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -1203,8 +1202,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    '主供应商'
-                    '品牌名称')
+                    #20027#20379#24212#21830
+                    #21697#29260#21517#31216)
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
                   TabOrder = 3
                 end
@@ -1273,13 +1272,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1299,8 +1298,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    '行政区域'
-                    '管理群组')
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 7
                 end
               end
@@ -1329,17 +1328,17 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = '宋体'
+                  FooterFont.Name = #23435#20307
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = '极品五笔输入法'
+                  ImeName = #26497#21697#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -1351,12 +1350,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = '宋体'
+                  TitleFont.Name = #23435#20307
                   TitleFont.Style = [fsBold]
                   TitleHeight = 30
                   UseMultiTitle = True
                   IsDrawNullRow = False
-                  CurrencySymbol = '￥'
+                  CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh3DblClick
@@ -1368,21 +1367,21 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = '序号'
+                      Title.Caption = #24207#21495
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SORT_ID'
                       Footers = <>
-                      Title.Caption = '分类代码'
+                      Title.Caption = #20998#31867#20195#30721
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SORT_NAME'
                       Footers = <>
-                      Title.Caption = '分类名称'
+                      Title.Caption = #20998#31867#21517#31216
                       Width = 168
                     end
                     item
@@ -1392,7 +1391,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|数量'
+                      Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1402,7 +1401,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|金额'
+                      Title.Caption = #26399#21021'|'#37329#39069
                       Width = 62
                     end
                     item
@@ -1412,7 +1411,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|可销售额'
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
@@ -1420,7 +1419,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
                       Footers = <>
-                      Title.Caption = '进货|数量'
+                      Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
                     end
                     item
@@ -1428,7 +1427,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
                       Footers = <>
-                      Title.Caption = '进货|进货金额'
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
@@ -1436,7 +1435,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
                       Footers = <>
-                      Title.Caption = '进货|未税金额'
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
                       Width = 68
                     end
                     item
@@ -1444,7 +1443,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
                       Footers = <>
-                      Title.Caption = '进货|进项税额'
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
                       Width = 59
                     end
                     item
@@ -1452,7 +1451,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
                       Footers = <>
-                      Title.Caption = '销售|数量'
+                      Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1460,7 +1459,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
                       Footers = <>
-                      Title.Caption = '销售|销售金额'
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
@@ -1468,7 +1467,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
                       Footers = <>
-                      Title.Caption = '销售|未税金额'
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
@@ -1476,7 +1475,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
                       Footers = <>
-                      Title.Caption = '销售|销项税额'
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
                       Width = 67
                     end
                     item
@@ -1484,7 +1483,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_CST'
                       Footers = <>
-                      Title.Caption = '销售|成本'
+                      Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
@@ -1492,7 +1491,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
                       Footers = <>
-                      Title.Caption = '销售|毛利'
+                      Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
                     end
                     item
@@ -1500,14 +1499,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
                       Footers = <>
-                      Title.Caption = '销售|毛利率'
+                      Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
                       Footers = <>
-                      Title.Caption = '调入|数量'
+                      Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1515,14 +1514,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
                       Footers = <>
-                      Title.Caption = '调入|金额'
+                      Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
                       Footers = <>
-                      Title.Caption = '调出|数量'
+                      Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1530,14 +1529,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
                       Footers = <>
-                      Title.Caption = '调出|金额'
+                      Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
                       Footers = <>
-                      Title.Caption = '期未|数量'
+                      Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1545,14 +1544,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'BAL_CST'
                       Footers = <>
-                      Title.Caption = '期未|金额'
+                      Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
                       Footers = <>
-                      Title.Caption = '期未|可销售额'
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -1561,7 +1560,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = '商品进销存统计表'
+          Caption = #21830#21697#36827#38144#23384#32479#35745#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -1595,14 +1594,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Top = 57
                   Width = 48
                   Height = 12
-                  Caption = '门店名称'
+                  Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
                   Left = 288
                   Top = 56
                   Width = 48
                   Height = 12
-                  Caption = '商品分类'
+                  Caption = #21830#21697#20998#31867
                 end
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1610,35 +1609,35 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = '所属月份'
+                  Caption = #25152#23646#26376#20221
                 end
                 object RzLabel9: TRzLabel
                   Left = 175
                   Top = 14
                   Width = 12
                   Height = 12
-                  Caption = '至'
+                  Caption = #33267
                 end
                 object Label25: TLabel
                   Left = 24
                   Top = 79
                   Width = 48
                   Height = 12
-                  Caption = '商品指标'
+                  Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
                   Left = 288
                   Top = 80
                   Width = 48
                   Height = 12
-                  Caption = '显示单位'
+                  Caption = #26174#31034#21333#20301
                 end
                 object Label3: TLabel
                   Left = 24
                   Top = 35
                   Width = 48
                   Height = 12
-                  Caption = '门店群组'
+                  Caption = #38376#24215#32676#32452
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 480
@@ -1646,12 +1645,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 67
                   Height = 32
                   Action = actFind
-                  Caption = '查询'
+                  Caption = #26597#35810
                   Color = clSilver
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = [fsBold]
                   HighlightColor = 16026986
                   HotTrack = True
@@ -1706,13 +1705,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1763,13 +1762,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1839,13 +1838,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
                       Footers = <>
-                      Title.Caption = '名称'
+                      Title.Caption = #21517#31216
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CODE_ID'
                       Footers = <>
-                      Title.Caption = '代码'
+                      Title.Caption = #20195#30721
                       Width = 20
                     end>
                   DropWidth = 185
@@ -1865,8 +1864,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
-                    '行政区域'
-                    '管理群组')
+                    #34892#25919#21306#22495
+                    #31649#29702#32676#32452)
                   TabOrder = 9
                 end
               end
@@ -1894,17 +1893,17 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -12
-                  Font.Name = '宋体'
+                  Font.Name = #23435#20307
                   Font.Style = []
                   FooterColor = clWhite
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
-                  FooterFont.Name = '宋体'
+                  FooterFont.Name = #23435#20307
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = '极品五笔输入法'
+                  ImeName = #26497#21697#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                   ParentCtl3D = False
@@ -1916,12 +1915,12 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TitleFont.Charset = GB2312_CHARSET
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
-                  TitleFont.Name = '宋体'
+                  TitleFont.Name = #23435#20307
                   TitleFont.Style = [fsBold]
                   TitleHeight = 30
                   UseMultiTitle = True
                   IsDrawNullRow = False
-                  CurrencySymbol = '￥'
+                  CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
@@ -1932,34 +1931,34 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
-                      Title.Caption = '序号'
+                      Title.Caption = #24207#21495
                       Width = 30
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
-                      Title.Caption = '条码'
+                      Title.Caption = #26465#30721
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
-                      Title.Caption = '货号'
+                      Title.Caption = #36135#21495
                       Width = 62
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
-                      Title.Caption = '商品名称'
+                      Title.Caption = #21830#21697#21517#31216
                       Width = 153
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
-                      Title.Caption = '单位'
+                      Title.Caption = #21333#20301
                     end
                     item
                       DisplayFormat = '#0.0#'
@@ -1968,7 +1967,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|数量'
+                      Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -1978,7 +1977,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|金额'
+                      Title.Caption = #26399#21021'|'#37329#39069
                       Width = 62
                     end
                     item
@@ -1988,7 +1987,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期初|可销售额'
+                      Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
                     end
                     item
@@ -1998,7 +1997,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|数量'
+                      Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
                     end
                     item
@@ -2008,7 +2007,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进货金额'
+                      Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
                     end
                     item
@@ -2018,7 +2017,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|未税金额'
+                      Title.Caption = #36827#36135'|'#26410#31246#37329#39069
                       Width = 68
                     end
                     item
@@ -2028,7 +2027,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '进货|进项税额'
+                      Title.Caption = #36827#36135'|'#36827#39033#31246#39069
                       Width = 59
                     end
                     item
@@ -2038,7 +2037,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|数量'
+                      Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -2048,7 +2047,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销售金额'
+                      Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
                     end
                     item
@@ -2058,7 +2057,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|未税金额'
+                      Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
                     end
                     item
@@ -2068,7 +2067,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|销项税额'
+                      Title.Caption = #38144#21806'|'#38144#39033#31246#39069
                       Width = 67
                     end
                     item
@@ -2078,7 +2077,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|成本'
+                      Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
                     end
                     item
@@ -2088,7 +2087,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '销售|毛利'
+                      Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
                     end
                     item
@@ -2096,7 +2095,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
                       Footers = <>
-                      Title.Caption = '销售|毛利率'
+                      Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
                     end
                     item
@@ -2105,7 +2104,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|数量'
+                      Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -2115,7 +2114,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调入|金额'
+                      Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -2124,7 +2123,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|数量'
+                      Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -2134,7 +2133,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '调出|金额'
+                      Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
                     end
                     item
@@ -2143,7 +2142,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|数量'
+                      Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
                     end
                     item
@@ -2153,7 +2152,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|金额'
+                      Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
                     end
                     item
@@ -2162,7 +2161,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = '期未|可销售额'
+                      Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
                 end
               end
@@ -2201,7 +2200,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
         Width = 72
-        Caption = '进销存统计表'
+        Caption = #36827#38144#23384#32479#35745#34920
       end
     end
   end

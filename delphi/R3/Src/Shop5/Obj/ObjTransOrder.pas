@@ -67,7 +67,7 @@ function TTransOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   result := BeforeDeleteRecord(AGlobal);
-  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
 end;
 
 function TTransOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;

@@ -112,7 +112,7 @@ begin
        Tmp.Close;
        Tmp.SQL.Text := 'Select COMM From PUB_IC_INFO Where IC_CARDNO=:CUST_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
        Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('CUST_CODE').AsString;
-       Tmp.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+       Tmp.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
        Tmp.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsString;
        AGlobal.Open(Tmp);
        Tmp.First;
@@ -157,7 +157,7 @@ begin
         Tmp.SQL.Text := 'select COMM,CLIENT_ID from PUB_IC_INFO where IC_CARDNO=:CUST_CODE'+
         ' and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
         Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('CUST_CODE').AsString;
-        Tmp.ParamByName('OLD_TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+        Tmp.ParamByName('OLD_TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
         Tmp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
         AGlobal.Open(Tmp);
 

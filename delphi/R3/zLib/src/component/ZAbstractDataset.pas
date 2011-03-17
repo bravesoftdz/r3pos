@@ -64,7 +64,7 @@ uses
 {$ENDIF}
   SysUtils, DB, Classes, Contnrs, ZSqlUpdate, ZDbcIntfs, ZVariant,
   ZDbcCache, ZDbcCachedResultSet,ZDbcResultSet, ZAbstractRODataset,
-  ZCompatibility, ZSequence, ZConnection;
+  ZCompatibility, ZSequence, ZConnection,ZDbcGenericResolver;
 
 type
   {$IFDEF FPC}
@@ -248,8 +248,7 @@ begin
       FUpdateObject.FreeNotification(Self);
     if Assigned(FUpdateObject) then
       FUpdateObject.DataSet := Self;
-//    if Active and (CachedResultSet <> nil) then zhangsenrong modify
-    if (CachedResultSet <> nil) then
+    if Active and (CachedResultSet <> nil) then
     begin
       if FUpdateObject <> nil then
         CachedResultSet.SetResolver(FUpdateObject)
@@ -364,12 +363,7 @@ begin
 
   if Assigned(CachedResultSet) then
      CachedResultSet.Close;
-  try
   CachedResultSet := nil;
-  except
-    on e:exception do
-      raise Exception.Create('CachedResultSet:'+e.Message);
-  end;
   CachedResolver := nil;
 end;
 
@@ -951,11 +945,13 @@ begin
       //缓冲区对象
       if ResultSet.QueryInterface(IZCachedResultSet, FCachedResultSet) = 0 then
       begin
-        CachedResolver := CachedResultSet.GetResolver;
+        CachedResultSet := ResultSet as IZCachedResultSet;
+        CachedResolver := TZGenericCachedResolver.Create(nil,nil); 
         CachedResultSet.SetCachedUpdates(CachedUpdates);
-        CachedResultSet.SetCachedUpdates(True);
         if FUpdateObject <> nil then
-          CachedResultSet.SetResolver(FUpdateObject);
+          CachedResultSet.SetResolver(FUpdateObject)
+        else
+          CachedResultSet.SetResolver(CachedResolver);
       end;
       RowAccessor := TZRowAccessor.Create(ColumnList);
     finally
@@ -1047,11 +1043,13 @@ begin
       //缓冲区对象
       if ResultSet.QueryInterface(IZCachedResultSet, FCachedResultSet) = 0 then
       begin
-        CachedResolver := CachedResultSet.GetResolver;
+        CachedResultSet := ResultSet as IZCachedResultSet;
+        CachedResolver := TZGenericCachedResolver.Create(nil,nil); 
         CachedResultSet.SetCachedUpdates(CachedUpdates);
-        CachedResultSet.SetCachedUpdates(True);
         if FUpdateObject <> nil then
-           CachedResultSet.SetResolver(FUpdateObject);
+          CachedResultSet.SetResolver(FUpdateObject)
+        else
+          CachedResultSet.SetResolver(CachedResolver);
       end;
       RowAccessor := TZRowAccessor.Create(ColumnList);
     finally

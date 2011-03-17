@@ -27,7 +27,7 @@ begin
     rs.Close;
     rs.SQL.Text := 'select SORT_ID from PUB_GOODSINFO where TENANT_ID=:TENANT_ID and '+Sort_Id+'=:UNIT_ID and COMM not in (''02'',''12'')';;
     rs.ParamByName('UNIT_ID').AsString := FieldbyName('SORT_ID').AsString;
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);    
     if rs.Fields[0].AsString <> '' then
        Raise Exception.Create('"'+FieldbyName('SORT_NAME').AsOldString+'"已经在商品资料中使用不能删除.');

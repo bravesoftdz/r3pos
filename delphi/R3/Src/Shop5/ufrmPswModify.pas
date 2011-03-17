@@ -125,7 +125,7 @@ begin
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'USER_ID=''' + USERID + ''''
   else
-    sSqlTxt := 'update SYS_DEFINE set [VALUE]=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
+    sSqlTxt := 'update SYS_DEFINE set VALUE=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'DEFINE=''PASSWRD''';
   try

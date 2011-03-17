@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 274
-  Top = 116
+  Left = 167
+  Top = 108
   Height = 616
   Width = 819
   object SYS_DEFINE: TZQuery
@@ -27,10 +27,9 @@ inherited ShopGlobal: TShopGlobal
       end>
   end
   object CA_RIGHTS: TZQuery
+    Tag = 1
     FieldDefs = <>
     CachedUpdates = True
-    SQL.Strings = (
-      'select '#39'0'#39' as MID,'#39'0'#39' as CHK ')
     Params = <>
     Left = 136
     Top = 160
@@ -155,7 +154,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
-        'E_TYPE=8 and COMM not in ('#39'02'#39','#39'12'#39')')
+        'E_TYPE='#39'8'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <>
     Left = 240
     Top = 152
@@ -376,7 +375,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'4'#39
+        'T_TYPE=4'
       'order  by  4')
     Params = <
       item
@@ -429,7 +428,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'2'#39
+        'T_TYPE=2'
       'order  by  4')
     Params = <
       item
@@ -458,7 +457,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'5'#39
+        'T_TYPE=5'
       'order  by  4')
     Params = <
       item
@@ -487,7 +486,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'7'#39
+        'T_TYPE=7'
       'order  by  4')
     Params = <
       item
@@ -516,7 +515,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'8'#39
+        'T_TYPE=8'
       'order  by  4')
     Params = <
       item
@@ -545,7 +544,7 @@ inherited ShopGlobal: TShopGlobal
       'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO from VIW_GOODSSORT '
       
         'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') and SOR' +
-        'T_TYPE='#39'6'#39
+        'T_TYPE=6'
       'order  by  4')
     Params = <
       item
@@ -665,7 +664,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where TEN' +
-        'ANT_ID=:TENANT_ID and CODE_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39')')
+        'ANT_ID=:TENANT_ID and CODE_TYPE='#39'2'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown
@@ -687,8 +686,8 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
-        'E_TYPE=7 and TENANT_ID in (0,:TENANT_ID ) and COMM not in ('#39'02'#39',' +
-        #39'12'#39')')
+        'E_TYPE='#39'7'#39' and TENANT_ID in (0,:TENANT_ID ) and COMM not in ('#39'02' +
+        #39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown
@@ -710,12 +709,13 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
-        'Q_NO '
+        'Q_NO  from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
       'union all'
       
         'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO wh' +
-        'ere CODE_TYPE=5 and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39 +
-        '12'#39')'
+        'ere CODE_TYPE='#39'5'#39' and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39 +
+        ','#39'12'#39')'
       'order by SEQ_NO')
     Params = <
       item
@@ -966,12 +966,13 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select '#39'#'#39' as CODE_ID,'#39#26080#39' as CODE_NAME,'#39'W'#39' as CODE_SPELL,0 as SE' +
-        'Q_NO '
+        'Q_NO  from CA_TENANT'
+      'where TENANT_ID=:TENANT_ID'
       'union all'
       
         'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO wh' +
-        'ere CODE_TYPE=9 and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39','#39 +
-        '12'#39')'
+        'ere CODE_TYPE='#39'9'#39' and TENANT_ID=:TENANT_ID and COMM not in ('#39'02'#39 +
+        ','#39'12'#39')'
       'order by SEQ_NO')
     Params = <
       item

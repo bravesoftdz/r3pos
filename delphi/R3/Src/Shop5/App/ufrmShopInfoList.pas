@@ -129,9 +129,9 @@ begin
   begin
     if cdsBrowser.FieldbyName('SHOP_ID').AsString = Global.SHOP_ID then Raise Exception.Create('不能删当前登录的门店资料');
     try
+      UpdateToGlobal(cdsBrowser.FieldByName('SHOP_ID').AsString);
       cdsBrowser.Delete;
       Factor.UpdateBatch(cdsBrowser,'TShop');
-      UpdateToGlobal(cdsBrowser.FieldByName('SHOP_ID').AsString);
     Except
       cdsBrowser.CancelUpdates;
       Raise;

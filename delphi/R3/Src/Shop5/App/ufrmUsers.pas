@@ -101,7 +101,6 @@ procedure TfrmUsers.actDeleteExecute(Sender: TObject);
   var Tmp:TZQuery;
   begin
     Tmp := Global.GetZQueryFromName('CA_USERS');
-    Tmp.Filtered := false;
     if Tmp.Locate('USER_ID',Str,[]) then
     begin
       Tmp.Delete;
@@ -117,9 +116,9 @@ begin
   if i=6 then
   begin
     try
+      UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
       Cds_Users.Delete;
       Factor.UpdateBatch(Cds_Users,'TUsers');
-      UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
     Except
       Cds_Users.CancelUpdates;
       Raise;

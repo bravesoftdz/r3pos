@@ -228,6 +228,8 @@ type
     actfrmChange2DayReport: TAction;
     actfrmLockScreen: TAction;
     actfrmStorageDayReport: TAction;
+    actfrmRecvDayReport: TAction;
+    actfrmRckDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -302,6 +304,7 @@ type
     procedure actfrmChange2DayReportExecute(Sender: TObject);
     procedure actfrmLockScreenExecute(Sender: TObject);
     procedure actfrmStorageDayReportExecute(Sender: TObject);
+    procedure actfrmRckDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -2125,6 +2128,28 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmStorageDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmRckDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRckDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRckDayReport.Create(self);
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;

@@ -292,7 +292,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                 item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
-                  FieldName = 'SALES_DATE'
+                  FieldName = 'INDE_DATE'
                   Footers = <>
                   Title.Caption = #38144#21806#26085#26399
                   Width = 67

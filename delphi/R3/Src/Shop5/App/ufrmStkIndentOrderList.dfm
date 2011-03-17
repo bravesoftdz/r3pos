@@ -289,7 +289,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                 item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
-                  FieldName = 'STOCK_DATE'
+                  FieldName = 'INDE_DATE'
                   Footers = <>
                   Title.Caption = #35746#36135#26085#26399
                   Width = 68

@@ -1,6 +1,5 @@
 inherited frmShopMain: TfrmShopMain
-  Left = -71
-  Top = 221
+  Top = 186
   Width = 888
   Height = 568
   Caption = ''
@@ -6787,6 +6786,14 @@ inherited frmShopMain: TfrmShopMain
       Tag = 41900001
       Caption = #21830#21697#24211#23384#25253#34920
       OnExecute = actfrmStorageDayReportExecute
+    end
+    object actfrmRecvDayReport: TAction
+      Caption = #25910#38134#32467#36134#34920
+    end
+    object actfrmRckDayReport: TAction
+      Tag = 41300001
+      Caption = #25910#38134#32467#36134#25253#34920
+      OnExecute = actfrmRckDayReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

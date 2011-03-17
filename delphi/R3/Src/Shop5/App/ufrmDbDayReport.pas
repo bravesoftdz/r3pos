@@ -164,7 +164,7 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     //5、按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title    
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title    
   public
     { Public declarations }
     HasChild:boolean;
@@ -308,7 +308,7 @@ begin
 end;
 
 procedure TfrmDbDayReport.actFindExecute(Sender: TObject);
-var strSql: string;
+var strSql: widestring;
 begin
   case rzPage.ActivePageIndex of
     0: begin //按地区汇总表
@@ -335,6 +335,7 @@ begin
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
+        showmessage(strSql);
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
@@ -669,16 +670,19 @@ begin
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
     
-  Result :=  ParseSQL(Factor.iDbType,
+  strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
-    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '
-    );
-  result := 'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+result+') j '+
-            'left outer join VIW_BARCODE b '+
-            'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-            'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID ';
-  result := result +  ' order by j.GODS_CODE';
+    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
+
+  strSql :=
+    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+    'left outer join VIW_BARCODE b '+
+    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+    ' order by j.GODS_CODE ';
+
+  result := ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmDbDayReport.GetGlideSQL(chk:boolean=true): string;
@@ -782,9 +786,9 @@ begin
     'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.ASHOP_ID=c.SHOP_ID '+
     'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
-    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '
+    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+    ' order by j.MOVE_DATE,r.GODS_CODE'
     );
-  result := result +  ' order by j.MOVE_DATE,r.GODS_CODE';
 end;
 
 procedure TfrmDbDayReport.DBGridEh1DblClick(Sender: TObject);
@@ -1006,38 +1010,9 @@ begin
   if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
      (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
     TitleList.add('日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
- //门店名称：
- FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
- if (FindCmp1<>nil) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
-   TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
-  //管理群组：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_TYPE');  
-  FindCmp2:=FindComponent('fndP'+PageNo+'_SHOP_VALUE');   
-  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList)  and (TcxComboBox(FindCmp1).Visible) and
-     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'')  then
-    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
-  //商品指标：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');   
-  FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
-  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
-     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'') then
-    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
-  //商品分类
-  FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
-  if (FindCmp1<>nil) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
-    TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);   
-  //计量单位
-  FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID'); 
-  if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
-    TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
-  //单据类型:
-  if (trim(PageNo)='5') and (not fndP5_ALL.Checked) then
-  begin
-    if fndP5_DBIn.Checked then
-      TitleList.Add('单据类型：'+fndP5_DBIn.Caption)
-    else if fndP5_DBOut.Checked then
-      TitleList.Add('单据类型：'+fndP5_DBOut.Caption);
-  end;
+
+  //继承基类:
+  inherited AddReportReport(TitleList,PageNo);
 end;
 
 procedure TfrmDbDayReport.fndP5_SORT_IDKeyPress(Sender: TObject;

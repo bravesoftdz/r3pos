@@ -91,7 +91,11 @@ begin
      IsHeadShop := ' and (ACCT_NAME like ''%'+trim(edtKEY.Text)+'%'' or ACCT_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text :=
-  'select ja.*,ja.ACCT_NAME+''<''+a.SHOP_NAME+''>'' as ACCT_NAME_TEXT from '+
+  'select ja.*,'+
+  'case ja.PAYM_ID '+
+  'when ''A'' then ja.ACCT_NAME+''<''+a.SHOP_NAME+''>'' '+
+  'else  ja.ACCT_NAME '+
+  'end as ACCT_NAME_TEXT from '+
   '(select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
   'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop+
   ' ) ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID';

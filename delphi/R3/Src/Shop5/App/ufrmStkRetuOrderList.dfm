@@ -1,29 +1,29 @@
 inherited frmStkRetuOrderList: TfrmStkRetuOrderList
-  Left = 257
-  Top = 322
-  Width = 868
-  Height = 612
+  Left = 241
+  Top = 171
+  Width = 810
+  Height = 596
   Caption = #37319#36141#36864#36135#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 544
+    Width = 794
+    Height = 528
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 534
+      Width = 784
+      Height = 518
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 528
+        Width = 778
+        Height = 512
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37319#36141#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 501
+            Width = 776
+            Height = 485
             inherited RzPanel1: TRzPanel
-              Width = 824
+              Width = 766
               Height = 100
               object RzLabel2: TRzLabel
                 Left = 33
@@ -267,8 +267,8 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 105
-              Width = 824
-              Height = 391
+              Width = 766
+              Height = 375
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -370,17 +370,17 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
+    Width = 794
     inherited Image1: TImage
       Left = 792
-      Width = 51
+      Width = 3
     end
     inherited Image14: TImage
-      Left = 843
+      Left = 785
     end
     inherited Image3: TImage
       Left = 792
-      Width = 51
+      Width = 3
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

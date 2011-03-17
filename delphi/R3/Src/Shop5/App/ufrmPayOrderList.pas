@@ -119,7 +119,7 @@ begin
   D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   fndACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   fndITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
   fndPAY_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');

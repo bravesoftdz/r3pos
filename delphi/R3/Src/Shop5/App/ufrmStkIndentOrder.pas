@@ -32,7 +32,6 @@ type
     Label13: TLabel;
     edtADVA_MNY: TcxTextEdit;
     Label14: TLabel;
-    Label15: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     Label10: TLabel;

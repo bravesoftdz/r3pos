@@ -281,16 +281,16 @@ begin
   btnOk.Visible:=(dbState<>dsBrowse);
   case Value of
   dsInsert:begin
-     Caption := '收款单--(新增)';
+     Caption := '付款单--(新增)';
      Label14.Caption := '状态:新增';
   end;
   dsEdit:begin
-     Caption := '收款单--(修改)';
+     Caption := '付款单--(修改)';
      Label14.Caption := '状态:修改';
   end;
   else
       begin
-        Caption := '收款单';
+        Caption := '付款单';
         Label14.Caption := '状态:查看';
       end;
   end;

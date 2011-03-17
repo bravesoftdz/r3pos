@@ -76,11 +76,11 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Caption = #31185#30446#21517
               end
               object Label17: TLabel
-                Left = 24
+                Left = 13
                 Top = 53
-                Width = 48
+                Width = 60
                 Height = 12
-                Caption = #23458#25143#21517#31216
+                Caption = #20379#24212#21830#21517#31216
               end
               object Label1: TLabel
                 Left = 26

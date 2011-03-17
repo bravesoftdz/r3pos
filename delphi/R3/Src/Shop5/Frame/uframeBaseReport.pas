@@ -10,7 +10,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit,
-  cxRadioGroup;
+  cxRadioGroup, Buttons;
 
 
 type
@@ -78,7 +78,7 @@ type
     function  GetCmpNum(CmpName,BegName: string): string;
 
     {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[查询条件值] =======}
-    procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel); //PageIndex=-1表示由Sender的序号确定PageIndex
+    procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel; ExecteFind: Boolean=true); virtual; //PageIndex=-1表示由Sender的序号确定PageIndex
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
@@ -120,7 +120,8 @@ type
 
 implementation
 
-uses uGlobal,uShopGlobal,uShopUtil,ufrmEhLibReport,uCtrlUtil,
+uses
+  uGlobal,uShopGlobal,uShopUtil,ufrmEhLibReport,uCtrlUtil,
   ufrmSelectGoodSort;
 
 {$R *.dfm}
@@ -765,7 +766,7 @@ begin
   end;
 end;
 
-procedure TframeBaseReport.DoAssignParamsValue(SrcPnl, DestPnl: TRzPanel);
+procedure TframeBaseReport.DoAssignParamsValue(SrcPnl, DestPnl: TRzPanel; ExecteFind: Boolean=true);
  function FindDestComponent(DestPnl: TRzPanel; DestCmpName: string): TComponent;
  var i: integer; FindCmp: TComponent;
  begin
@@ -840,7 +841,8 @@ begin
     end else
       ParentCmp:=ParentCmp.Parent;
   end;
-  self.actFind.OnExecute(nil);
+  if ExecteFind then 
+    self.actFind.OnExecute(nil);
 end;
 
 function TframeBaseReport.CheckAccDate(BegDate, EndDate: integer; ShopID: string): integer;

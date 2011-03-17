@@ -27,7 +27,7 @@ begin
   try
     rs.SQL.Text := 'select count(*) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLIENT_ID=:CLIENT_ID';
     rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
@@ -35,7 +35,7 @@ begin
 
     rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and IC_CARDNO=:IC_CARDNO'+
     ' and TENANT_ID=:TENANT_ID ';
-    rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
     rs.ParamByName('IC_CARDNO').AsString := FieldbyName('CLIENT_CODE').AsOldString;
     AGlobal.Open(rs);
@@ -64,7 +64,7 @@ begin
     try                 
       Temp.SQL.Text := 'select COMM from PUB_IC_INFO where IC_CARDNO=:CLIENT_CODE and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
       Temp.ParamByName('CLIENT_CODE').AsString := FieldbyName('CLIENT_CODE').AsString;
-      Temp.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+      Temp.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
       Temp.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsString;
       AGlobal.Open(Temp);
       if not Temp.IsEmpty then
@@ -101,7 +101,7 @@ begin
       Temp.Close;
       Temp.SQL.Text := 'select CLIENT_ID,COMM from PUB_IC_INFO where IC_CARDNO=:CLIENT_CODE and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID ';
       Temp.ParamByName('CLIENT_CODE').AsString := FieldbyName('CLIENT_CODE').AsString;
-      Temp.ParamByName('OLD_TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+      Temp.ParamByName('OLD_TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
       Temp.ParamByName('OLD_UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
       AGlobal.Open(Temp);
       if not Temp.IsEmpty then

@@ -234,9 +234,9 @@ begin
   if MessageBox(Handle,Pchar('È·¶¨ÒªÉ¾³ýÂð?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
   begin
     try
+      UpdateToGlobal(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
       cdsBrowser.Delete;
       Factor.UpdateBatch(cdsBrowser,'TAccount');
-      UpdateToGlobal(cdsBrowser.FieldByName('ACCOUNT_ID').AsString);
     Except
       cdsBrowser.CancelUpdates;
       Raise;

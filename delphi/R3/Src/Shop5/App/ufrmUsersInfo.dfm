@@ -824,7 +824,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       OnAddClick = edtDEPT_IDAddClick
       ShowButton = True
       LocateStyle = lsDark
-      Buttons = []
+      Buttons = [zbNew]
       DropListStyle = lsFixed
       MultiSelect = False
     end

@@ -118,6 +118,12 @@ begin
       edtDUTY_IDS.KeyValue:= edtDUTY_IDS.DataSet.FieldByName(edtDUTY_IDS.KeyField).AsString;
       edtDUTY_IDS.Text:= edtDUTY_IDS.DataSet.FieldByName(edtDUTY_IDS.ListField).AsString;
     end;
+  if (edtDEPT_ID.DataSet.Active) and (not edtDEPT_ID.DataSet.IsEmpty) then
+    begin
+      edtDEPT_ID.DataSet.First;
+      edtDEPT_ID.KeyValue:= edtDEPT_ID.DataSet.FieldByName(edtDEPT_ID.KeyField).AsString;
+      edtDEPT_ID.Text:= edtDEPT_ID.DataSet.FieldByName(edtDEPT_ID.ListField).AsString;
+    end;
   edtIDN_TYPE.ItemIndex := 0;
 end;
 
@@ -210,6 +216,11 @@ begin
   begin
     if edtDUTY_IDS.CanFocus then edtDUTY_IDS.SetFocus;
     raise Exception.Create('职务不能为空！');
+  end;
+  if trim(edtDEPT_ID.AsString)='' then
+  begin
+    if edtDEPT_ID.CanFocus then edtDEPT_ID.SetFocus;
+    raise Exception.Create('部门不能为空！');
   end;
   if trim(edtSHOP_ID.AsString)='' then
   begin

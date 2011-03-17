@@ -52,10 +52,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select CODE_ID,COMM,SEQ_NO from PUB_CODE_INFO where CODE_NAME=:CODE_NAME and CODE_TYPE=:CODE_TYPE and TENANT_ID=:TENANT_ID ';
-    AGlobal.Open(rs);
     rs.ParamByName('CODE_TYPE').AsString := Fieldbyname('CODE_TYPE').AsString;
     rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
     rs.ParamByName('CODE_NAME').AsString := Fieldbyname('CODE_NAME').AsString;
+    AGlobal.Open(rs);
     rs.First;
     while not rs.Eof do
       begin
@@ -82,11 +82,11 @@ begin
   try
     rs.SQL.Text := 'select CODE_ID from PUB_CODE_INFO where COMM not in (''02'',''12'') and CODE_TYPE=:CODE_TYPE '+
     'and CODE_NAME=:CODE_NAME and CODE_ID<>:CODE_ID and TENANT_ID=:TENANT_ID ';
-    AGlobal.Open(rs);
     rs.ParamByName('CODE_TYPE').AsString := Fieldbyname('CODE_TYPE').AsString;
     rs.ParamByName('CODE_ID').AsString := Fieldbyname('CODE_ID').AsOldString;
     rs.ParamByName('TENANT_ID').AsInteger := Fieldbyname('TENANT_ID').AsInteger;
     rs.ParamByName('CODE_NAME').AsString := Fieldbyname('CODE_NAME').AsString;
+    AGlobal.Open(rs);
     if rs.Fields[0].AsString <> '' then Raise Exception.Create('"'+FieldbyName('CODE_NAME').AsString+'"类别名称不能重复设置');
   finally
     rs.Free;

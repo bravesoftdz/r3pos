@@ -55,6 +55,7 @@ type
     RzPanel1: TRzPanel;
     btnAdd: TRzBitBtn;
     btnDetele: TRzBitBtn;
+    Label10: TLabel;
     procedure edtAGIO_TYPEPropertiesChange(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure rzTreeChanging(Sender: TObject; Node: TTreeNode;
@@ -106,7 +107,8 @@ var
   frmPriceGradeInfo: TfrmPriceGradeInfo;
 
 implementation
-uses uGlobal,uTreeutil,uShopUtil,uFnUtil,ufrmSelectGoodSort,uShopGlobal,uDsUtil,Math;
+uses uGlobal,uTreeutil,uShopUtil,uFnUtil,ufrmSelectGoodSort,uShopGlobal,uDsUtil,Math,
+  ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmPriceGradeInfo.edtAGIO_TYPEPropertiesChange(Sender: TObject);
@@ -296,6 +298,7 @@ begin
       raise Exception.Create('等级名称不能为空!');
     if TRecord_(rzTree.Items[i].Data).FieldbyName('PRICE_SPELL').AsString = '' then
       raise Exception.Create('等级名称'+TRecord_(rzTree.Items[i].Data).FieldbyName('PRICE_NAME').AsString+'的拼音码不能为空!');
+
     if AObj.FieldByName('AGIO_TYPE').AsString='1' then
     begin
       if AObj.FieldByName('AGIO_PERCENT').AsFloat<AObj.FieldByName('MINIMUM_PERCENT').AsFloat then
@@ -315,6 +318,7 @@ begin
     cdsPRICEGRADE.Post;
   end;
   //以上判断必填项是否为空及折扣率，并写入 cdsPRICEGRADE 数据集
+
 
   try
     Factor.UpdateBatch(cdsPRICEGRADE,'TPRICEGRADEInfo');
@@ -427,7 +431,7 @@ var i:integer;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
-  
+
   if rzTree.Selected<>nil then WriteTo(TRecord_(rzTree.Selected.Data));
   for i:=0 to rzTree.Items.Count -1 do
   begin
@@ -758,9 +762,27 @@ end;
 
 procedure TfrmPriceGradeInfo.DBGridEh1Columns2UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Currency;
 begin
   inherited;
   if locked then exit;
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+    if (r>100) or (r<0) then
+    begin
+      Text := '100';
+      Value := 100;
+      Raise Exception.Create('输入的数值无效');
+    end;
+  except
+    Text := '100';
+    Value := 100;
+    Raise Exception.Create('输入无效数值型');
+  end;
+
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
 end;

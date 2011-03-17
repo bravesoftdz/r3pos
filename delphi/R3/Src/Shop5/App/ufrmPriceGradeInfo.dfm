@@ -140,6 +140,20 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Height = 12
             Caption = '%'
           end
+          object Label10: TLabel
+            Left = 527
+            Top = 16
+            Width = 6
+            Height = 12
+            Alignment = taRightJustify
+            Caption = '*'
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clRed
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object rzTree: TRzTreeView
             Left = 5
             Top = 5
@@ -240,6 +254,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
                   Top = 76
                   Width = 90
                   Height = 20
+                  Properties.MaxValue = 100.000000000000000000
                   Properties.ValueType = vtFloat
                   Properties.OnChange = edtAGIO_PERCENTPropertiesChange
                   TabOrder = 0

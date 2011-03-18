@@ -55,9 +55,6 @@ type
     class function ShowDialog(Owner:TForm;Code_id:String):Boolean;
   end;
 
-var
-  frmRelationInfo: TfrmRelationInfo;
-
 implementation
 uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uShopGlobal, ufrmBasic;
 {$R *.dfm}
@@ -83,7 +80,10 @@ var Params:TftParamList;
 begin
   Params := TftParamList.Create(nil);
   try
-    Params.ParamByName('RELATION_ID').AsInteger := Global.TENANT_ID;
+    if CODE_ID <> '' then
+      Params.ParamByName('RELATION_ID').AsInteger := StrToInt(CODE_ID)
+    else
+      Params.ParamByName('RELATION_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(Relation_Data,'TRelation',Params);
     if Relation_Data.FieldByName('RELATION_NAME').AsString <> '' then IsExist := True;
@@ -297,6 +297,7 @@ begin
       try
         Relation_Data.Delete;
         Factor.UpdateBatch(Relation_Data,'TRelation');
+        ModalResult := mrOk;
       except
         Relation_Data.CancelUpdates;
         Raise;

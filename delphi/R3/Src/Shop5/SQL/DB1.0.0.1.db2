@@ -1390,7 +1390,7 @@ CREATE INDEX IX_CA_MODULE_TIME_STAMP ON CA_MODULE(TIME_STAMP);
 --权限控制表
 CREATE TABLE CA_RIGHTS (
     --行号 guid值
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
     --企业代码
 	TENANT_ID int NOT NULL ,
         --模块代码
@@ -1630,7 +1630,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --商品资料
 CREATE TABLE PUB_GOODSINFO (
         --货号编码,系统自编唯一号
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --企业代码 0 为中心维护
 	TENANT_ID int NOT NULL ,
         --货号<店内识别码>
@@ -1731,13 +1731,13 @@ CREATE INDEX IX_PUB_GOODSINFO_TIME_STAMP ON PUB_GOODSINFO(TENANT_ID,TIME_STAMP);
 --向下发布的供应链与商品
 CREATE TABLE PUB_GOODS_RELATION (
         --行号ID <guid>
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
         --企业代码 
 	TENANT_ID int NOT NULL ,
         --供应链
 	RELATION_ID int NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL , 
+	GODS_ID char (36) NOT NULL , 
         --行业内码<第三方系统内码>
 	SECOND_ID varchar (36) , 
         --货号<识别码>
@@ -1791,11 +1791,11 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --条码表
 CREATE TABLE PUB_BARCODE (
         --行号ID
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
         --企业代码
 	TENANT_ID int NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL , 
+	GODS_ID char (36) NOT NULL , 
         --尺码ID
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色ID
@@ -1863,7 +1863,7 @@ CREATE TABLE PUB_PRICEGRADE (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --编码
-	PRICE_ID varchar (36) NOT NULL ,
+	PRICE_ID char (36) NOT NULL ,
         --名称
 	PRICE_NAME varchar (30) NOT NULL ,
         --拼音码
@@ -2006,7 +2006,7 @@ CREATE TABLE PUB_CLIENTINFO (
         --进项税率
 	TAX_RATE decimal(18, 3) ,
         --客户等级
-	PRICE_ID varchar (36) ,
+	PRICE_ID char (36) ,
         --所属门店
 	SHOP_ID varchar (11) NOT NULL ,
         --通讯标志
@@ -2066,7 +2066,7 @@ CREATE TABLE PUB_CUSTOMER (
         --会员分类
 	SORT_ID varchar (36) ,
         --客户等级
-	PRICE_ID varchar (36) ,
+	PRICE_ID char (36) ,
         --地区编码
 	REGION_ID varchar (21) NOT NULL ,
 	      --月收入
@@ -2092,7 +2092,7 @@ CREATE INDEX IX_PUB_CUSTOMER_TIME_STAMP ON PUB_CUSTOMER(TENANT_ID,TIME_STAMP);
 --商盟资料收集档案
 CREATE TABLE PUB_CUSTOMER_EXT (
         --编号
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
         --企业号
 	TENANT_ID int NOT NULL ,
         --商盟编码
@@ -2220,11 +2220,11 @@ CREATE TABLE PUB_GOODSPRICE (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --客户类型 # 号为所有客户
-	PRICE_ID varchar (36) NOT NULL , 
+	PRICE_ID char (36) NOT NULL , 
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --货号编码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --定价方式<变价方式>
 	PRICE_METHOD varchar (1) NOT NULL ,
         --计量单位售价
@@ -2270,7 +2270,7 @@ CREATE TABLE PUB_GOODSINFOEXT (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --货号编码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --计量单位最新进价
 	NEW_INPRICE decimal(18, 3) ,
         --包装1单位最新进价
@@ -2336,7 +2336,7 @@ as
 --变价记录
 CREATE TABLE LOG_PRICING_INFO (
         --行号ID
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
         --变价日期 20080101
 	PRICING_DATE int NOT NULL , 
         --操作员
@@ -2344,11 +2344,11 @@ CREATE TABLE LOG_PRICING_INFO (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --客户类型 # 号为所有客户
-	PRICE_ID varchar (36) NOT NULL , 
+	PRICE_ID char (36) NOT NULL , 
         --门店代码 0 时代码所有门店
 	SHOP_ID varchar (11) NOT NULL ,
         --货号编码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --定价方式
 	PRICE_METHOD varchar (1) NOT NULL ,
         --计量单位售价
@@ -2419,7 +2419,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --促销单表头<单据都以表头COMM,TIME_STAMP通讯标志为准>
 CREATE TABLE SAL_PRICEORDER (
         --记录ID号
-	PROM_ID varchar (36) NOT NULL ,
+	PROM_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --企业代码
@@ -2431,7 +2431,7 @@ CREATE TABLE SAL_PRICEORDER (
         --结束时间 yyyy-mm-dd hh:mm:ss
 	END_DATE varchar (25) NOT NULL ,
         --会员等级#号时对所有客户
-	PRICE_ID varchar (36) ,
+	PRICE_ID char (36) ,
         --审核日期
 	CHK_DATE varchar (10) ,
         --审核人员
@@ -2478,7 +2478,7 @@ CREATE TABLE SAL_PRICEDATA (
         --序号
 	SEQNO int NOT NULL ,
         --商品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --计量单位售价
 	NEW_OUTPRICE decimal(18, 3) ,
         --包装1单位售价
@@ -2524,7 +2524,7 @@ CREATE TABLE STK_STOCKORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --入库单号
-	STOCK_ID varchar (36) NOT NULL ,
+	STOCK_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --单据类型
@@ -2540,11 +2540,11 @@ CREATE TABLE STK_STOCKORDER (
         --审核人员
 	CHK_USER varchar (36) ,
         --订货单号
-	FROM_ID varchar (36) ,
+	FROM_ID char (36) ,
         --配货单号
-	FIG_ID varchar (36) ,
+	FIG_ID char (36) ,
         --调拨单号
-	DBOUT_ID varchar (36) ,
+	DBOUT_ID char (36) ,
         --预付款
 	ADVA_MNY decimal(18, 3) ,
         --入库数量
@@ -2588,11 +2588,11 @@ CREATE TABLE STK_STOCKDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --入库单号
-	STOCK_ID varchar (36) NOT NULL ,
+	STOCK_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
 	PROPERTY_01 varchar (20) NOT NULL ,
         --颜色<不分时用 # 号>
@@ -2670,7 +2670,7 @@ CREATE TABLE SAL_SALESORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --销售单号
-	SALES_ID varchar (36) NOT NULL ,
+	SALES_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --销售日期
@@ -2688,9 +2688,9 @@ CREATE TABLE SAL_SALESORDER (
         --审核人员
 	CHK_USER varchar (36) ,
         --订货单号
-	FROM_ID varchar (36) ,
+	FROM_ID char (36) ,
         --配货单号
-	FIG_ID varchar (36) ,
+	FIG_ID char (36) ,
         --预付款
 	ADVA_MNY decimal(18, 3) ,
         --销售数量
@@ -2783,11 +2783,11 @@ CREATE TABLE SAL_SALESDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --销售单号
-	SALES_ID varchar (36) NOT NULL ,
+	SALES_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --货品
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色<不分时用 # 号>
@@ -2868,7 +2868,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --储值卡流水记录
 CREATE TABLE SAL_IC_GLIDE (
         --流水ID号
-	GLIDE_ID varchar (36) NOT NULL ,
+	GLIDE_ID char (36) NOT NULL ,
         --企业代码
 	TENANT_ID int NOT NULL ,
         --门店代码
@@ -2878,7 +2878,7 @@ CREATE TABLE SAL_IC_GLIDE (
         --IC卡号
 	IC_CARDNO varchar (36) NOT NULL ,
         --销售单号
-	SALES_ID varchar (36) ,
+	SALES_ID char (36) ,
         --操作员
 	CREA_USER varchar (36) NOT NULL ,
         --日期
@@ -2928,7 +2928,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','
 --积分对换
 CREATE TABLE SAL_INTEGRAL_GLIDE (
         --流水ID号
-	GLIDE_ID varchar (36) NOT NULL ,
+	GLIDE_ID char (36) NOT NULL ,
         --企业代码
 	TENANT_ID int NOT NULL ,
         --门店代码
@@ -2994,7 +2994,7 @@ CREATE TABLE STO_CHANGEORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号
-	CHANGE_ID varchar (36) NOT NULL ,
+	CHANGE_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --调整日期
@@ -3018,7 +3018,7 @@ CREATE TABLE STO_CHANGEORDER (
         --审核人员
 	CHK_DATE varchar (10) ,
         --来源单号,对盘点单时对应盘点表的ID号
-	FROM_ID varchar (36) ,
+	FROM_ID char (36) ,
         --操作时间
 	CREA_DATE varchar (30) ,
         --操作人员
@@ -3045,11 +3045,11 @@ CREATE TABLE STO_CHANGEDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号
-	CHANGE_ID varchar (36) NOT NULL ,
+	CHANGE_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码 不分的用 #号
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色 不分的用 #号
@@ -3061,7 +3061,7 @@ CREATE TABLE STO_CHANGEDATA (
         --物流跟踪号
 	LOCUS_NO varchar (36) ,
         --礼盒跟踪号
-	BOM_ID varchar (36)  ,
+	BOM_ID char (36)  ,
         --批号
 	BATCH_NO varchar (36) ,
         --数量
@@ -3122,7 +3122,7 @@ CREATE TABLE STK_INDENTORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号
-	INDE_ID varchar (36) NOT NULL ,
+	INDE_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --订货日期
@@ -3144,7 +3144,7 @@ CREATE TABLE STK_INDENTORDER (
         --审核人员
 	CHK_USER varchar (36) ,
         --配货单号
-	FIG_ID varchar (36) ,
+	FIG_ID char (36) ,
         --预付款
 	ADVA_MNY decimal(18, 3) ,
         --订货数量
@@ -3185,9 +3185,9 @@ CREATE TABLE STK_INDENTDATA (
         --序号
 	SEQNO int NOT NULL ,
         --订单号
-	INDE_ID varchar (36) NOT NULL ,
+	INDE_ID char (36) NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色
@@ -3195,7 +3195,7 @@ CREATE TABLE STK_INDENTDATA (
         --物流跟踪号
 	LOCUS_NO varchar (36) ,
         --礼盒跟踪号
-	BOM_ID varchar (36)  ,
+	BOM_ID char (36)  ,
         --批号
 	BATCH_NO varchar (36) ,
         --单位
@@ -3253,7 +3253,7 @@ CREATE TABLE SAL_INDENTORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号
-	INDE_ID varchar (36) NOT NULL ,
+	INDE_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --订货日期
@@ -3287,7 +3287,7 @@ CREATE TABLE SAL_INDENTORDER (
         --审核人员
 	CHK_USER varchar (36) ,
         --配货单号
-	FIG_ID varchar (36) ,
+	FIG_ID char (36) ,
         --发票类型
 	INVOICE_FLAG varchar (1) ,
         --销项税率
@@ -3322,9 +3322,9 @@ CREATE TABLE SAL_INDENTDATA (
         --序号
 	SEQNO int NOT NULL ,
         --订单号
-	INDE_ID varchar (36) NOT NULL ,
+	INDE_ID char (36) NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色
@@ -3449,9 +3449,9 @@ CREATE TABLE STO_PRINTDATA (
         --物流跟踪号
 	LOCUS_NO varchar (36) ,
         --礼盒跟踪号
-	BOM_ID varchar (36) ,
+	BOM_ID char (36) ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码 不分的用 #号
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色 不分的用 #号
@@ -3486,7 +3486,7 @@ CREATE TABLE STO_CHECKDATA (
         --序号
 	SEQNO int NOT NULL ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --尺码
 	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色
@@ -3496,7 +3496,7 @@ CREATE TABLE STO_CHECKDATA (
         --物流跟踪号
 	LOCUS_NO varchar (36) ,
         --礼盒跟踪号
-	BOM_ID varchar (36)  ,
+	BOM_ID char (36)  ,
         --批号
 	BATCH_NO varchar (36) ,
         --帐面库存
@@ -3523,7 +3523,7 @@ CREATE TABLE ACC_ACCOUNT_INFO (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --帐户代码
-	ACCOUNT_ID varchar (36) NOT NULL ,
+	ACCOUNT_ID char (36) NOT NULL ,
         --所属门店<为每个门店自动创建一个<现金账户>
 	SHOP_ID varchar (11) NOT NULL ,
         --帐户名称
@@ -3576,7 +3576,7 @@ CREATE TABLE ACC_RECVABLE_INFO (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --序号
-	ABLE_ID varchar (36) NOT NULL ,
+	ABLE_ID char (36) NOT NULL ,
         --客户
 	CLIENT_ID varchar (36) NOT NULL ,
         --摘要
@@ -3629,7 +3629,7 @@ CREATE TABLE ACC_PAYABLE_INFO (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --序号
-	ABLE_ID varchar (36) NOT NULL ,
+	ABLE_ID char (36) NOT NULL ,
         --供应商
 	CLIENT_ID varchar (36) NOT NULL ,
         --摘要
@@ -3677,13 +3677,13 @@ CREATE TABLE ACC_PAYORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	PAY_ID varchar (36) NOT NULL ,
+	PAY_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --供应商
 	CLIENT_ID varchar (36) NOT NULL ,
         --帐户代码
-	ACCOUNT_ID varchar (36) NOT NULL ,
+	ACCOUNT_ID char (36) NOT NULL ,
         --付款方式
 	PAYM_ID varchar (1) NOT NULL ,
         --收支项目
@@ -3726,11 +3726,11 @@ CREATE TABLE ACC_PAYDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	PAY_ID varchar (36) NOT NULL ,
+	PAY_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --帐款ID号
-	ABLE_ID varchar (36) NOT NULL ,
+	ABLE_ID char (36) NOT NULL ,
         --类型
 	ABLE_TYPE varchar (1) NOT NULL ,
         --支付金额
@@ -3758,13 +3758,13 @@ CREATE TABLE ACC_RECVORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	RECV_ID varchar (36) NOT NULL ,
+	RECV_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --供应商
 	CLIENT_ID varchar (36) NOT NULL ,
         --帐户代码
-	ACCOUNT_ID varchar (36) NOT NULL ,
+	ACCOUNT_ID char (36) NOT NULL ,
         --付款方式
 	PAYM_ID varchar (1) NOT NULL ,
         --收支项目
@@ -3807,11 +3807,11 @@ CREATE TABLE ACC_RECVDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	RECV_ID varchar (36) NOT NULL ,
+	RECV_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --帐款ID号
-	ABLE_ID varchar (36) NOT NULL ,
+	ABLE_ID char (36) NOT NULL ,
         --类型
 	RECV_TYPE varchar (1) NOT NULL ,
         --支付金额
@@ -3842,7 +3842,7 @@ CREATE TABLE ACC_IOROORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	IORO_ID varchar (36) NOT NULL ,
+	IORO_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --客户名称
@@ -3891,11 +3891,11 @@ CREATE TABLE ACC_IORODATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	IORO_ID varchar (36) NOT NULL ,
+	IORO_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --收支账户
-	ACCOUNT_ID varchar (36) NOT NULL ,
+	ACCOUNT_ID char (36) NOT NULL ,
         --摘要
 	IORO_INFO varchar (255) NOT NULL ,
         --收支金额
@@ -3920,7 +3920,7 @@ from ACC_IORODATA A,ACC_IOROORDER B where A.TENANT_ID=B.TENANT_ID and A.IORO_ID=
 --交班结账表
 CREATE TABLE ACC_CLOSE_FORDAY (
         --行号
-	ROWS_ID varchar (36) NOT NULL ,
+	ROWS_ID char (36) NOT NULL ,
         --企业代码
 	TENANT_ID int NOT NULL ,
         --门店代码
@@ -3970,13 +3970,13 @@ CREATE TABLE ACC_TRANSORDER (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	TRANS_ID varchar (36) NOT NULL ,
+	TRANS_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --转入账号
-	IN_ACCOUNT_ID varchar (36) NOT NULL ,
+	IN_ACCOUNT_ID char (36) NOT NULL ,
         --转出账号
-	OUT_ACCOUNT_ID varchar (36) NOT NULL ,
+	OUT_ACCOUNT_ID char (36) NOT NULL ,
         --日期
 	TRANS_DATE int NOT NULL ,
         --负责人
@@ -4015,7 +4015,7 @@ CREATE TABLE SAL_BOMORDER (
         --门店代码<发布门店>
 	SHOP_ID varchar (11) NOT NULL ,
         --单号序号
-	BOM_ID varchar (36) NOT NULL ,
+	BOM_ID char (36) NOT NULL ,
         --流水号
 	GLIDE_NO varchar (20) NOT NULL ,
         --礼盒编号
@@ -4065,7 +4065,7 @@ CREATE TABLE SAL_BOMDATA (
         --门店代码
 	SHOP_ID varchar (11) NOT NULL ,
         --单号
-	BOM_ID varchar (36) NOT NULL ,
+	BOM_ID char (36) NOT NULL ,
         --序号
 	SEQNO int NOT NULL,
         --批号，没批号用 #号
@@ -4073,7 +4073,7 @@ CREATE TABLE SAL_BOMDATA (
         --物流跟踪号
 	LOCUS_NO varchar (36) ,
         --货品代码
-	GODS_ID varchar (36) NOT NULL ,
+	GODS_ID char (36) NOT NULL ,
         --计量单位
 	UNIT_ID varchar (36) NOT NULL ,
         --尺码 不分的用 #号
@@ -4105,7 +4105,7 @@ CREATE TABLE SAL_INVOICE_BOOK (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --流水ID号
-	INVH_ID varchar (36) NOT NULL ,
+	INVH_ID char (36) NOT NULL ,
         --领用门店
 	SHOP_ID varchar (11) NOT NULL ,
         --领用人
@@ -4151,7 +4151,7 @@ CREATE TABLE SAL_INVOICE_INFO (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --流水ID号
-	INVH_ID varchar (36) NOT NULL ,
+	INVH_ID char (36) NOT NULL ,
         --领用门店
 	SHOP_ID varchar (11) NOT NULL ,
         --开票人
@@ -4167,7 +4167,7 @@ CREATE TABLE SAL_INVOICE_INFO (
         --发票状态
 	INVOICE_STATUS varchar (1) NOT NULL ,
         --销售单号
-	SALES_ID varchar (36) ,
+	SALES_ID char (36) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
@@ -4247,7 +4247,7 @@ CREATE TABLE RCK_GOODS_DAYS (
         --日期
 	CREA_DATE int NOT NULL ,
         --客户编码
-	GODS_ID varchar (36)  NOT NULL ,
+	GODS_ID char (36)  NOT NULL ,
         --批号
 	BATCH_NO varchar (36) NOT NULL ,
 
@@ -4413,7 +4413,7 @@ CREATE TABLE RCK_GOODS_MONTH (
         --月份
 	MONTH int NOT NULL ,
         --客户编码
-	GODS_ID varchar (36)  NOT NULL ,
+	GODS_ID char (36)  NOT NULL ,
         --批号
 	BATCH_NO varchar (36) NOT NULL ,
 	
@@ -4596,7 +4596,7 @@ CREATE TABLE RCK_ACCT_DAYS (
         --日期
 	CREA_DATE int NOT NULL ,
         --账户代码
-	ACCOUNT_ID varchar (36)  NOT NULL ,
+	ACCOUNT_ID char (36)  NOT NULL ,
 
 --期初类台账		
         --期初金额
@@ -4655,7 +4655,7 @@ CREATE TABLE RCK_ACCT_MONTH (
         --月份
 	MONTH int NOT NULL ,
         --账户代码
-	ACCOUNT_ID varchar (36)  NOT NULL ,
+	ACCOUNT_ID char (36)  NOT NULL ,
 
 --期初类台账		
         --期初金额

@@ -1394,7 +1394,7 @@ CREATE INDEX IX_CA_MODULE_TIME_STAMP ON CA_MODULE(TIME_STAMP);
 --权限控制表
 CREATE TABLE [CA_RIGHTS] (
     --行号 guid值
-	[ROWS_ID] [varchar] (36) NOT NULL ,
+	[ROWS_ID] [char] (36) NOT NULL ,
     --企业代码
 	[TENANT_ID] int NOT NULL ,
         --模块代码
@@ -1634,7 +1634,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --商品资料
 CREATE TABLE [PUB_GOODSINFO] (
         --货号编码,系统自编唯一号
-	[GODS_ID] [varchar] (36) NOT NULL ,
+	[GODS_ID] [char] (36) NOT NULL ,
         --企业代码 0 为中心维护
 	[TENANT_ID] int NOT NULL ,
         --货号<店内识别码>
@@ -1735,13 +1735,13 @@ CREATE INDEX IX_PUB_GOODSINFO_TIME_STAMP ON PUB_GOODSINFO(TENANT_ID,TIME_STAMP);
 --向下发布的供应链与商品
 CREATE TABLE [PUB_GOODS_RELATION] (
         --行号ID <guid>
-	[ROWS_ID] [varchar] (36) NOT NULL ,
+	[ROWS_ID] [char] (36) NOT NULL ,
         --企业代码 
 	[TENANT_ID] int NOT NULL ,
         --供应链
 	[RELATION_ID] int NOT NULL ,
         --货品代码
-	[GODS_ID] [varchar] (36) NOT NULL , 
+	[GODS_ID] [char] (36) NOT NULL , 
         --行业内码<第三方系统内码>
 	[SECOND_ID] [varchar] (36) NULL , 
         --货号<识别码>
@@ -1795,11 +1795,11 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','
 --条码表
 CREATE TABLE [PUB_BARCODE] (
         --行号ID
-	[ROWS_ID] [varchar] (36) NOT NULL ,
+	[ROWS_ID] [char] (36) NOT NULL ,
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --货品代码
-	[GODS_ID] [varchar] (36) NOT NULL , 
+	[GODS_ID] [char] (36) NOT NULL , 
         --尺码ID
 	[PROPERTY_01] [varchar] (36) NOT NULL ,
         --颜色ID
@@ -1867,7 +1867,7 @@ CREATE TABLE [PUB_PRICEGRADE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --编码
-	[PRICE_ID] [varchar] (36) NOT NULL ,
+	[PRICE_ID] [char] (36) NOT NULL ,
         --名称
 	[PRICE_NAME] [varchar] (30) NOT NULL ,
         --拼音码
@@ -2070,7 +2070,7 @@ CREATE TABLE [PUB_CUSTOMER] (
         --会员分类
 	[SORT_ID] [varchar] (36) NULL ,
         --客户等级
-	[PRICE_ID] [varchar] (36) NULL ,
+	[PRICE_ID] [char] (36) NULL ,
         --地区编码
 	[REGION_ID] [varchar] (21) NOT NULL ,
 	      --月收入
@@ -2096,7 +2096,7 @@ CREATE INDEX IX_PUB_CUSTOMER_TIME_STAMP ON PUB_CUSTOMER(TENANT_ID,TIME_STAMP);
 --商盟资料收集档案
 CREATE TABLE [PUB_CUSTOMER_EXT] (
         --编号
-	[ROWS_ID] [varchar] (36) NOT NULL ,
+	[ROWS_ID] [char] (36) NOT NULL ,
         --企业号
 	[TENANT_ID] int NOT NULL ,
         --商盟编码

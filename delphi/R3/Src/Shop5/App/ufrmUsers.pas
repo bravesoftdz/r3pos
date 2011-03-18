@@ -110,12 +110,14 @@ procedure TfrmUsers.actDeleteExecute(Sender: TObject);
 var i:integer;
 begin
   inherited;
-  if (Not Cds_Users.Active) or (Cds_Users.RecordCount = 0) then Exit;
+  if (Not Cds_Users.Active) then Exit;
+  if (Cds_Users.RecordCount = 0) then Exit;
   if not ShopGlobal.GetChkRight('31500001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
     try
+      Cds_Users.CommitUpdates;
       UpdateToGlobal(Cds_Users.FieldByName('USER_ID').AsString);
       Cds_Users.Delete;
       Factor.UpdateBatch(Cds_Users,'TUsers');

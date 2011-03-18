@@ -80,9 +80,14 @@ end;
 
 procedure TfrmAccount.actFindExecute(Sender: TObject);
 var IsHeadShop:String;
+    Sc:String;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21100001',1) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  case Factor.iDbType of
+  0:Sc:='+';
+  1,4,5:Sc:='||';
+  end;
   if Global.SHOP_ID = IntToStr(Global.TENANT_ID)+'0001' then
     IsHeadShop := ''
   else
@@ -93,7 +98,7 @@ begin
   cdsBrowser.SQL.Text :=
   'select ja.*,'+
   'case ja.PAYM_ID '+
-  'when ''A'' then ja.ACCT_NAME+''<''+a.SHOP_NAME+''>'' '+
+  'when ''A'' then ja.ACCT_NAME'+Sc+'''<'''+Sc+'a.SHOP_NAME'+Sc+'''>'' '+
   'else  ja.ACCT_NAME '+
   'end as ACCT_NAME_TEXT from '+
   '(select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
@@ -144,20 +149,19 @@ procedure TfrmAccount.AddRecord(AObj: TRecord_);
 begin
   if not cdsBrowser.Active  then exit;
   if cdsBrowser.Locate('ACCOUNT_ID',AObj.FieldByName('ACCOUNT_ID').AsString,[]) then
-  begin
-     cdsBrowser.Edit;
-     AObj.WriteToDataSet(cdsBrowser,false);
-     cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString;
-     cdsBrowser.Post;
-  end
+    begin
+      cdsBrowser.Edit;
+      AObj.WriteToDataSet(cdsBrowser,false);
+      cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString;
+      cdsBrowser.Post;
+    end
   else
-  begin
-     cdsBrowser.Append;
-     AObj.WriteToDataSet(cdsBrowser,false);
-     cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString;
-     cdsBrowser.Post;
-  end;
-  if cdsBrowser.Locate('ACCOUNT_ID',AObj.FieldByName('ACCOUNT_ID').AsString,[]) then;
+    begin
+      cdsBrowser.Append;
+      AObj.WriteToDataSet(cdsBrowser,false);
+      cdsBrowser.FieldByName('ACCT_NAME_TEXT').AsString := cdsBrowser.FieldbyName('ACCT_NAME').AsString;
+      cdsBrowser.Post;
+    end;
 end;
 
 procedure TfrmAccount.edtKeyKeyDown(Sender: TObject; var Key: Word;

@@ -106,6 +106,7 @@ begin
   KeyFields := 'TENANT_ID;TRANS_ID';
 
   Str :=
+  'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
   'select jd.*,d.USER_NAME as TRANS_USER_TEXT from ('+
   'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT,c.BALANCE as OUT_BALANCE from ('+
   'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
@@ -115,7 +116,8 @@ begin
   'left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
   'left outer join VIW_ACCOUNT_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.IN_ACCOUNT_ID=b.ACCOUNT_ID) jc '+
   'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.OUT_ACCOUNT_ID=c.ACCOUNT_ID) jd '+
-  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID';
+  'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.TRANS_USER=d.USER_ID) jf '+
+  'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ';
   SelectSQL.Text := Str;
   IsSQLUpdate := True;
 

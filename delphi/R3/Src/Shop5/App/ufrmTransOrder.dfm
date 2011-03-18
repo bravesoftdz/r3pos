@@ -27,8 +27,6 @@ inherited frmTransOrder: TfrmTransOrder
         Color = clWhite
         Caption = #23384#21462#27454#35814#24773
         inherited RzPanel2: TRzPanel
-          Width = 1266
-          Height = 406
           BorderColor = clWhite
           Color = clWhite
         end

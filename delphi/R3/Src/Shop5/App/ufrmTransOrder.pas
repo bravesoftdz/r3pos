@@ -169,9 +169,12 @@ begin
   if Trim(edtTRANS_MNY.Text) = '' then Raise Exception.Create('«Î ‰»ÎΩ∂Ó');
 
   WriteToObject(AObj,Self);
-  
-  AObj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',Now);
-  AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  if dbState = dsInsert then
+    begin
+      AObj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',Now);
+      AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+      AObj.FieldByName('CREA_USER_TEXT').AsString := Global.UserName;
+    end;
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.Post;

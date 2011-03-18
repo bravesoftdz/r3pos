@@ -2088,7 +2088,7 @@ begin
         if not zIsNull then
         begin
            Stream.read(w,SizeOf(Integer));
-           setlength(s1,w*2);
+           setlength(s2,w*2);
            Stream.read(pchar(s2)^,w*2);
            RowAccessor.SetUnicodeString(i,s2);
         end

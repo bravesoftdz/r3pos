@@ -96,7 +96,7 @@ inherited frmUsers: TfrmUsers
                     FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
                     Title.Caption = #25152#23646#38376#24215
-                    Width = 94
+                    Width = 140
                   end
                   item
                     EditButtons = <>

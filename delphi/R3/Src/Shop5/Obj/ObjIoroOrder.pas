@@ -97,6 +97,7 @@ begin
   inherited;
   case Params.ParamByName('IORO_TYPE').AsInteger of
   1:SelectSQL.Text :=
+    'select jg.*,g.USER_NAME as CREA_USER_TEXT from ('+
     'select jf.*,f.SHOP_NAME as SHOP_ID_TEXT from ('+
     'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
     'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
@@ -105,8 +106,10 @@ begin
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
     'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
     'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID) jf '+
-    'left outer join CA_SHOP_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.SHOP_ID=f.SHOP_ID';
+    'left outer join CA_SHOP_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.SHOP_ID=f.SHOP_ID) jg '+
+    'left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.CREA_USER=g.USER_ID ';
   2:SelectSQL.Text :=  //Ö§³ö
+    'select jg.*,g.USER_NAME as CREA_USER_TEXT from ('+
     'select jf.*,f.SHOP_NAME as SHOP_ID_TEXT from ('+
     'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
     'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
@@ -115,7 +118,8 @@ begin
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
     'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
     'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID) jf '+
-    'left outer join CA_SHOP_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.SHOP_ID=f.SHOP_ID';
+    'left outer join CA_SHOP_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.SHOP_ID=f.SHOP_ID ) jg '+
+    'left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.CREA_USER=g.USER_ID ';    
   end;
 
   Str := 'insert into ACC_IOROORDER(TENANT_ID,SHOP_ID,IORO_ID,GLIDE_NO,CLIENT_ID,ITEM_ID,DEPT_ID,IORO_TYPE,IORO_DATE,IORO_USER,IORO_MNY,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '

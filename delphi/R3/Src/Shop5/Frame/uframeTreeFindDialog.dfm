@@ -83,6 +83,7 @@ inherited frameTreeFindDialog: TframeTreeFindDialog
                 TabOrder = 1
                 TextStyle = tsRaised
                 ThemeAware = False
+                OnClick = RzBitBtn4Click
                 NumGlyphs = 2
                 Spacing = 5
               end
@@ -111,6 +112,9 @@ inherited frameTreeFindDialog: TframeTreeFindDialog
     inherited btPanel: TRzPanel
       Top = 327
       Width = 351
+      DesignSize = (
+        351
+        40)
       object btnOk: TRzBitBtn
         Left = 164
         Top = 9

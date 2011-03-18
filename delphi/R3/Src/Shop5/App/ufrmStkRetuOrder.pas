@@ -30,8 +30,6 @@ type
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     Label12: TLabel;
-    Label13: TLabel;
-    edtADVA_MNY: TcxTextEdit;
     Label14: TLabel;
     edtFROM_ID: TcxButtonEdit;
     Label19: TLabel;
@@ -278,6 +276,7 @@ begin
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cid := edtSHOP_ID.asString;
+  AObj.FieldByName('ADVA_MNY').AsFloat := 0;
   AObj.FieldByName('STOCK_TYPE').AsInteger := 3;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
@@ -872,7 +871,6 @@ begin
       self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
       self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
       self.edtFROM_ID.Text := AObj.FieldbyName('STOCK_ID').AsString;
-      self.edtADVA_MNY.Text := edtADVA_MNY.Text;
       self.edtREMARK.Text := edtREMARK.Text;
       self.Locked := true;
       try

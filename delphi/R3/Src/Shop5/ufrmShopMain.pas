@@ -306,6 +306,7 @@ type
     procedure actfrmLockScreenExecute(Sender: TObject);
     procedure actfrmStorageDayReportExecute(Sender: TObject);
     procedure actfrmRckDayReportExecute(Sender: TObject);
+    procedure actfrmRelationExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -354,7 +355,7 @@ uses
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
-  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport;
+  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport, ufrmRelation;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2151,6 +2152,28 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmRckDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmRelationExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRelation);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRelation.Create(self);
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;

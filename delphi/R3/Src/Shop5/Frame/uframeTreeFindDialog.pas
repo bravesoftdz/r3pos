@@ -26,6 +26,7 @@ type
     procedure edtSearchKeyPress(Sender: TObject; var Key: Char);
     procedure edtSearchEnter(Sender: TObject);
     procedure RzTreeDblClick(Sender: TObject);
+    procedure RzBitBtn4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -143,6 +144,14 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TframeTreeFindDialog.RzBitBtn4Click(Sender: TObject);
+var Key:Char;
+begin
+  inherited;
+  Key := #13;
+  edtSearchKeyPress(Sender,Key);
 end;
 
 end.

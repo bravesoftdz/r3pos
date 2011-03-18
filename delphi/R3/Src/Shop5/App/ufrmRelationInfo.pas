@@ -43,6 +43,7 @@ type
     { Public declarations }
     IsExist:Boolean;
     Aobj:TRecord_;
+    procedure RefreshTable;
     procedure GetParam;
     procedure Open(CODE_ID:String);
     procedure Append;
@@ -84,11 +85,13 @@ begin
       Params.ParamByName('RELATION_ID').AsInteger := StrToInt(CODE_ID)
     else
       Params.ParamByName('RELATION_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+//    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(Relation_Data,'TRelation',Params);
     if Relation_Data.FieldByName('RELATION_NAME').AsString <> '' then IsExist := True;
     Aobj.ReadFromDataSet(Relation_Data);
     ReadFromObject(Aobj,Self);
+    GetParam;
+    IsExist := not Relation_Data.IsEmpty;
     dbState := dsBrowse;
   finally
     Params.Free;
@@ -198,7 +201,6 @@ begin
         Open(Code_id);
         if IsExist then
           begin
-            GetParam;
             btnOk.Visible := False;
             ShowModal;
             Result := True;
@@ -270,7 +272,6 @@ begin
         Open(Code_id);
         if IsExist then
           begin
-            GetParam;
             btnDelete.Left := 289;
             btnDelete.Visible := true;
             btnOk.Visible := False;
@@ -332,6 +333,16 @@ procedure TfrmRelationInfo.btnCloseClick(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmRelationInfo.RefreshTable;
+begin
+  Global.RefreshTable('PUB_GOODSSORT');
+  Global.RefreshTable('PUB_GOODSINFO');
+  Global.RefreshTable('PUB_MEAUNITS');
+  Global.RefreshTable('PUB_CLIENTINFO');
+  Global.RefreshTable('PUB_CUSTOMER');
+  Global.RefreshTable('PUB_BARCODE');
 end;
 
 end.

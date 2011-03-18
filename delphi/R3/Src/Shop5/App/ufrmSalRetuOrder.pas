@@ -51,8 +51,6 @@ type
     Label11: TLabel;
     Label21: TLabel;
     edtFROM_ID: TcxButtonEdit;
-    Label22: TLabel;
-    edtADVA_MNY: TcxTextEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     Label4: TLabel;
@@ -384,6 +382,7 @@ begin
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cid := edtSHOP_ID.AsString;
+  AObj.FieldByName('ADVA_MNY').AsFloat := 0;
   AObj.FieldByName('SALES_TYPE').AsInteger := 3;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
@@ -1374,7 +1373,6 @@ begin
       self.edtTELEPHONE.Text := edtTELEPHONE.Text;
       self.edtLINKMAN.Text := edtLINKMAN.Text;
       self.edtSALE_STYLE.KeyValue := edtSALE_STYLE.KeyValue;
-      self.edtADVA_MNY.Text := edtADVA_MNY.Text;
       self.edtSALE_STYLE.Text := edtSALE_STYLE.Text;
       self.edtSEND_ADDR.Text := edtSEND_ADDR.Text;
       self.edtPLAN_DATE.Date := edtPLAN_DATE.Date;

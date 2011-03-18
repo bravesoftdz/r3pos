@@ -62,21 +62,14 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Height = 12
         Caption = #35746#36135#21333#21495
       end
-      object Label13: TLabel [7]
-        Left = 409
-        Top = 51
-        Width = 36
-        Height = 12
-        Caption = #39044#20184#27454
-      end
-      object Label14: TLabel [8]
+      object Label14: TLabel [7]
         Left = 563
         Top = 51
         Width = 48
         Height = 12
         Caption = #36827#39033#31246#29575
       end
-      object Label4: TLabel [9]
+      object Label4: TLabel [8]
         Left = 563
         Top = 72
         Width = 48
@@ -93,7 +86,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
       inherited RzPanel4: TRzPanel
         Top = 5
         Height = 76
-        TabOrder = 9
+        TabOrder = 8
         inherited Image1: TImage
           Left = 103
           Top = 31
@@ -107,14 +100,14 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Top = 5
         Width = 121
         Height = 20
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
         Left = 250
         Top = 68
         Width = 287
         Height = 20
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtGUIDE_USER: TzrComboBoxList
         Left = 456
@@ -165,7 +158,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-        TabOrder = 7
+        TabOrder = 6
       end
       object edtTAX_RATE: TcxSpinEdit
         Left = 623
@@ -174,7 +167,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         Properties.ValueType = vtFloat
-        TabOrder = 8
+        TabOrder = 7
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 250
@@ -291,13 +284,6 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
       end
-      object edtADVA_MNY: TcxTextEdit
-        Left = 456
-        Top = 47
-        Width = 81
-        Height = 20
-        TabOrder = 4
-      end
       object edtFROM_ID: TcxButtonEdit
         Left = 250
         Top = 47
@@ -323,7 +309,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Style.Font.Height = -12
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
-        TabOrder = 10
+        TabOrder = 9
       end
     end
     inherited RzPanel3: TRzPanel

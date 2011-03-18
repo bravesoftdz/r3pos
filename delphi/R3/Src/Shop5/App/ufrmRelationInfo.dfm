@@ -3,35 +3,36 @@ inherited frmRelationInfo: TfrmRelationInfo
   Top = 233
   Caption = #20379#24212#38142
   ClientHeight = 314
-  ClientWidth = 502
+  ClientWidth = 461
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 502
+    Width = 461
     Height = 314
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
       Top = 153
-      Width = 492
+      Width = 451
       Height = 116
       Color = clWhite
       ParentColor = False
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
+        Caption = #20854#20182#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 488
+          Width = 447
           Height = 89
           BorderSides = [sdLeft, sdRight, sdBottom]
           BorderWidth = 1
           Color = clWhite
           object Label1: TLabel
-            Left = 11
-            Top = 38
+            Left = -7
+            Top = 27
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -45,8 +46,8 @@ inherited frmRelationInfo: TfrmRelationInfo
             ParentFont = False
           end
           object Label2: TLabel
-            Left = 238
-            Top = 38
+            Left = 188
+            Top = 27
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -60,16 +61,16 @@ inherited frmRelationInfo: TfrmRelationInfo
             ParentFont = False
           end
           object edtTENANT_NUM: TcxTextEdit
-            Left = 117
-            Top = 34
+            Left = 99
+            Top = 23
             Width = 118
             Height = 20
             Enabled = False
             TabOrder = 0
           end
           object edtGOODS_NUM: TcxTextEdit
-            Left = 343
-            Top = 34
+            Left = 293
+            Top = 23
             Width = 118
             Height = 20
             Enabled = False
@@ -80,10 +81,10 @@ inherited frmRelationInfo: TfrmRelationInfo
     end
     inherited btPanel: TRzPanel
       Top = 269
-      Width = 492
+      Width = 451
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 298
+        Left = 257
         Top = 9
         Width = 67
         Height = 26
@@ -110,7 +111,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 383
+        Left = 342
         Top = 9
         Width = 67
         Height = 26
@@ -137,7 +138,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         Spacing = 5
       end
       object btnDelete: TRzBitBtn
-        Left = 211
+        Left = 258
         Top = 9
         Width = 67
         Height = 26
@@ -168,7 +169,7 @@ inherited frmRelationInfo: TfrmRelationInfo
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 492
+      Width = 451
       Height = 148
       Align = alTop
       BorderOuter = fsNone
@@ -177,7 +178,7 @@ inherited frmRelationInfo: TfrmRelationInfo
       Color = clWhite
       TabOrder = 2
       object labRELATION_ID: TLabel
-        Left = -5
+        Left = -13
         Top = 13
         Width = 100
         Height = 12
@@ -192,7 +193,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object labRELATION_NAME: TLabel
-        Left = -5
+        Left = -13
         Top = 42
         Width = 100
         Height = 12
@@ -207,9 +208,9 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object Label3: TLabel
-        Left = 237
+        Left = 224
         Top = 42
-        Width = 100
+        Width = 73
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
@@ -222,7 +223,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object Label4: TLabel
-        Left = -5
+        Left = -13
         Top = 73
         Width = 100
         Height = 12
@@ -237,7 +238,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 220
+        Left = 212
         Top = 42
         Width = 6
         Height = 12
@@ -251,7 +252,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 462
+        Left = 422
         Top = 42
         Width = 6
         Height = 12
@@ -265,7 +266,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         ParentFont = False
       end
       object edtRELATION_ID: TcxTextEdit
-        Left = 101
+        Left = 93
         Top = 9
         Width = 118
         Height = 20
@@ -273,7 +274,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         TabOrder = 0
       end
       object edtRELATION_NAME: TcxTextEdit
-        Left = 101
+        Left = 93
         Top = 38
         Width = 118
         Height = 20
@@ -281,16 +282,16 @@ inherited frmRelationInfo: TfrmRelationInfo
         TabOrder = 1
       end
       object edtRELATION_SPELL: TcxTextEdit
-        Left = 343
+        Left = 303
         Top = 38
         Width = 118
         Height = 20
         TabOrder = 2
       end
       object edtREMARK: TcxMemo
-        Left = 101
+        Left = 93
         Top = 68
-        Width = 360
+        Width = 328
         Height = 67
         TabOrder = 3
       end
@@ -301,14 +302,14 @@ inherited frmRelationInfo: TfrmRelationInfo
     Top = 304
   end
   inherited actList: TActionList
-    Left = 480
-    Top = 304
+    Left = 32
+    Top = 96
   end
   object Relation_Data: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 449
-    Top = 304
+    Left = 1
+    Top = 96
   end
 end

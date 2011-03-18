@@ -8,36 +8,36 @@ inherited frmRelation: TfrmRelation
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 948
-    Height = 571
+    Width = 940
+    Height = 560
     inherited RzPanel2: TRzPanel
-      Width = 938
-      Height = 561
+      Width = 930
+      Height = 550
       inherited RzPage: TRzPageControl
-        Width = 932
-        Height = 555
+        Width = 924
+        Height = 544
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#38142#31649#29702
           inherited RzPanel3: TRzPanel
-            Width = 930
-            Height = 528
+            Width = 922
+            Height = 517
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 482
+              Height = 471
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 920
+              Width = 912
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                920
+                912
                 36)
               object Panel3: TPanel
                 Left = 0
@@ -125,7 +125,7 @@ inherited frmRelation: TfrmRelation
               Left = 5
               Top = 41
               Width = 176
-              Height = 482
+              Height = 471
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -141,15 +141,15 @@ inherited frmRelation: TfrmRelation
             object Panel1: TPanel
               Left = 184
               Top = 41
-              Width = 741
-              Height = 482
+              Width = 733
+              Height = 471
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object stbPanel: TPanel
                 Left = 1
-                Top = 462
-                Width = 739
+                Top = 451
+                Width = 731
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -171,8 +171,8 @@ inherited frmRelation: TfrmRelation
               object Grid_RelationAndGoods: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 739
-                Height = 461
+                Width = 731
+                Height = 450
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_RelationAndGoods
@@ -295,17 +295,17 @@ inherited frmRelation: TfrmRelation
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 948
+    Width = 940
     inherited Image1: TImage
-      Left = 789
-      Width = 150
+      Left = 573
+      Width = 358
     end
     inherited Image14: TImage
-      Left = 939
+      Left = 931
     end
     inherited Image3: TImage
-      Left = 789
-      Width = 150
+      Left = 573
+      Width = 358
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -314,46 +314,42 @@ inherited frmRelation: TfrmRelation
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 613
+      Width = 397
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 613
+          MinHeight = 397
           Width = 30
         end>
       inherited ToolBar1: TToolBar
-        Width = 613
+        Width = 397
         ButtonHeight = 30
-        ButtonWidth = 67
+        ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0
           Top = 0
           Action = actNew
-          Caption = #30003#35831#20379#24212#38142
         end
         object ToolButton4: TToolButton
-          Left = 67
+          Left = 43
           Top = 0
           Action = actEdit
-          Caption = #20462#25913#20379#24212#38142
         end
         object ToolButton1: TToolButton
-          Left = 134
+          Left = 86
           Top = 0
           Action = actInfo
-          Caption = #20379#24212#38142#35814#32454
         end
         object ToolButton5: TToolButton
-          Left = 201
+          Left = 129
           Top = 0
           Action = actDelete
-          Caption = #21024#38500#20379#24212#38142
         end
         object ToolButton7: TToolButton
-          Left = 268
+          Left = 172
           Top = 0
           Width = 10
           Caption = 'ToolButton7'
@@ -361,27 +357,27 @@ inherited frmRelation: TfrmRelation
           Style = tbsDivider
         end
         object ToolButton3: TToolButton
-          Left = 278
+          Left = 182
           Top = 0
           Action = actSave
         end
         object ToolButton6: TToolButton
-          Left = 345
+          Left = 225
           Top = 0
           Action = actCancel
         end
         object ToolButton8: TToolButton
-          Left = 412
+          Left = 268
           Top = 0
           Action = actPrint
         end
         object ToolButton9: TToolButton
-          Left = 479
+          Left = 311
           Top = 0
           Action = actPreview
         end
         object ToolButton10: TToolButton
-          Left = 546
+          Left = 354
           Top = 0
           Action = actExit
         end
@@ -396,12 +392,14 @@ inherited frmRelation: TfrmRelation
     Left = 136
     Top = 224
     inherited actNew: TAction
+      Caption = #30003#35831
       OnExecute = actNewExecute
     end
     inherited actDelete: TAction
       OnExecute = actDeleteExecute
     end
     inherited actEdit: TAction
+      Caption = #21019#24314
       OnExecute = actEditExecute
     end
     inherited actSave: TAction

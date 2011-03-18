@@ -31,7 +31,7 @@ begin
       Raise Exception.Create('本企业供应链下面已经有加盟商,不能删除.');
 
     rs.Close;
-    rs.SQL.Text := 'select count(*) from  PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'') ';
+    rs.SQL.Text := 'select count(*) from PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'') ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsOldInteger;
     rs.ParamByName('RELATION_ID').AsInteger := FieldByName('RELATION_ID').AsOldInteger;
     AGlobal.Open(rs);
@@ -75,7 +75,7 @@ var Str:String;
 begin
   inherited;
   KeyFields:='RELATION_ID';
-  Str := ' select RELATION_ID,TENANT_ID,RELATION_NAME,RELATION_SPELL,REMARK,COMM from CA_RELATION where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'') ';
+  Str := ' select RELATION_ID,TENANT_ID,RELATION_NAME,RELATION_SPELL,REMARK,COMM from CA_RELATION where RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'') ';
   SelectSQL.Text := Str;
   IsSQLUpdate := True;
   Str := ' insert into CA_RELATION(RELATION_ID,TENANT_ID,RELATION_NAME,RELATION_SPELL,REMARK,COMM,TIME_STAMP) '

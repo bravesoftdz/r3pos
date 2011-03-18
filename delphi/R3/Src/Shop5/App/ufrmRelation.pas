@@ -73,6 +73,8 @@ type
     IsEnd: boolean;
     MaxId:string;
     FIsRel: Boolean;
+    RNAME,RID:string;
+    procedure Prepare;
     procedure LoadTree;
     procedure InitGrid;
     function IsRelation:Boolean;
@@ -200,13 +202,15 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if w<>rs.FieldByName('RELATION_ID').AsInteger then
+      if (w<>rs.FieldByName('RELATION_ID').AsInteger) and not((rs.FieldbyName('RELATION_ID').AsInteger=0) and (RNAME='')) then
          begin
            AObj := TRecord_.Create;
            AObj.ReadFromDataSet(rs);
            AObj.FieldByName('LEVEL_ID').AsString:='';
+           if rs.FieldbyName('RELATION_ID').AsInteger=0 then
+           AObj.FieldByName('SORT_NAME').AsString:= RNAME else
            AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
-           rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+           rzTree.Items.AddObject(nil,AObj.FieldByName('SORT_NAME').AsString,AObj);
            w := rs.FieldByName('RELATION_ID').AsInteger;
          end;
       rs.Next;
@@ -363,7 +367,9 @@ end;
 procedure TfrmRelation.actNewExecute(Sender: TObject);
 begin
   inherited;
-  TfrmJoinRelation.AddDialog(Self);
+  if TfrmJoinRelation.AddDialog(Self) then
+     begin
+     end;
 end;
 
 procedure TfrmRelation.actEditExecute(Sender: TObject);
@@ -375,16 +381,19 @@ begin
   try
     if ToolButton4.Tag = 1 then
       begin
-        if TfrmRelationInfo.EditDialog(Self,IntToStr(Global.TENANT_ID),Aobj1) then
+        if TfrmRelationInfo.EditDialog(Self,RID,Aobj1) then
           begin
             for i:=rzTree.Items.Count-1 downto 0 do
               begin
                 if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
                   begin
-                    rzTree.TopItem.Text := Aobj1.FieldByName('RELATION_NAME').AsString;
+                    Prepare;
+                    LoadTree;
                     Break;
                   end;
               end;
+            RID := Aobj1.FieldByName('RELATION_ID').AsString;
+            RNAME := Aobj1.FieldByName('RELATION_NAME').AsString;
           end;
       end
     else
@@ -395,10 +404,13 @@ begin
               begin
                 if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
                   begin
-                    rzTree.TopItem.Text := Aobj1.FieldByName('RELATION_NAME').AsString;
+                    Prepare;
+                    LoadTree;
                     Break;
                   end;
               end;
+            RID := Aobj1.FieldByName('RELATION_ID').AsString;
+            RNAME := Aobj1.FieldByName('RELATION_NAME').AsString;
             IsRel := True;
           end;
       end;
@@ -411,40 +423,54 @@ procedure TfrmRelation.actInfoExecute(Sender: TObject);
 begin
   inherited;
   if rzTree.Selected <> nil then
-    TfrmRelationInfo.ShowDialog(Self,TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString);
+     begin
+       if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
+          TfrmRelationInfo.ShowDialog(Self,RID)
+       else
+          TfrmRelationInfo.ShowDialog(Self,TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString);
+     end
+  else
+     MessageBox(Handle,'请选择供应链名称，再查询详细资料','友情提示..',MB_OK+MB_ICONINFORMATION);
 
 end;
 
 procedure TfrmRelation.actDeleteExecute(Sender: TObject);
-var i:Integer;
+var
+  i:Integer;
+  cid:string;
 begin
   inherited;
-  if TfrmRelationInfo.DeleteDialog(Self,IntToStr(Global.TENANT_ID)) then
+  if rzTree.Selected <> nil then
+     begin
+       if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
+          cid := RID
+       else
+          cid := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+     end
+  else
+     MessageBox(Handle,'请选择供应链名称，再执行删除操作','友情提示..',MB_OK+MB_ICONINFORMATION);
+  if TfrmRelationInfo.DeleteDialog(Self,cid) then
     begin
       for i:=rzTree.Items.Count-1 downto 0 do
         begin
           if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
             begin
-              rzTree.TopItem.Text := '自主经营';
+              Prepare;
+              LoadTree;
               Break;
             end;
         end;
       IsRel := False;
-    end;
+     end
+  else
+     MessageBox(Handle,'请选择供应链名称，删除供应链','友情提示..',MB_OK+MB_ICONINFORMATION);
     
 end;
 
 function TfrmRelation.IsRelation: Boolean;
-var rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select count(*) from CA_RELATION where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-    Factor.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then Result := True else Result := False;
-  finally
-    rs.Free;
-  end;
+  Prepare;
+  result := RID<>'';
 end;
 
 procedure TfrmRelation.FormCreate(Sender: TObject);
@@ -459,11 +485,11 @@ begin
   if Value then
     begin
       ToolButton4.Tag := 1;
-      ToolButton4.Caption := '修改供应链';
+      ToolButton4.Caption := '更名';
     end
   else
     begin
-      ToolButton4.Caption := '新增供应链';
+      ToolButton4.Caption := '创建';
       ToolButton4.Tag := 0;
     end;
 end;
@@ -490,6 +516,31 @@ procedure TfrmRelation.actPreviewExecute(Sender: TObject);
 begin
   inherited;
 //
+end;
+
+procedure TfrmRelation.Prepare;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from CA_RELATION where TENANT_ID=:TENANT_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs);
+    RName := rs.FieldbyName('RELATION_NAME').AsString;
+    RID := rs.FieldbyName('RELATION_ID').AsString;
+    if rs.IsEmpty then
+       begin
+         ToolButton4.Tag := 1;
+         actEdit.Caption := '修改';
+       end
+    else
+       begin
+         ToolButton4.Tag := 0;
+         actEdit.Caption := '创建';
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

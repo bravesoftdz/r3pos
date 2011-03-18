@@ -505,7 +505,6 @@ procedure TfrmRckDayReport.CheckCalc(EndDate: integer);
 var
   rs:TZQuery;
 begin
-  Exit;
   if IsOnDblClick then
   begin
     IsOnDblClick:=False; //重置标记位

@@ -1,6 +1,6 @@
 inherited frmShopInfoList: TfrmShopInfoList
-  Left = 315
-  Top = 285
+  Left = 372
+  Top = 156
   Width = 901
   Height = 516
   Caption = #38376#24215#26723#26696#31649#29702
@@ -160,7 +160,7 @@ inherited frmShopInfoList: TfrmShopInfoList
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = DBGridEh1DblClick
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 OnKeyPress = DBGridEh1KeyPress

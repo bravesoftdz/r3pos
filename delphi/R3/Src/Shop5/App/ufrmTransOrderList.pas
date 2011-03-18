@@ -80,13 +80,32 @@ uses uCtrlUtil,uFnUtil,uGlobal,uShopGlobal,uShopUtil,ufrmBasic,ufrmTransOrder,
 {$R *.dfm}
 
 procedure TfrmTransOrderList.AddRecord(AObj: TRecord_);
+var rs:TZQuery;
 begin
+  if not cdsList.Active  then exit;
   if cdsList.Locate('TRANS_ID',Aobj.FieldByName('TRANS_ID').AsString,[]) then
-    cdsList.Edit
+    begin
+      cdsList.Edit;
+      AObj.WriteToDataSet(cdsList,false);
+      cdsList.Post;
+    end
   else
-    cdsList.Append;
-  Aobj.WriteToDataset(cdsList,false);
-  cdsList.Post;
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select GLIDE_NO from ACC_TRANSORDER where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and TRANS_ID=:TRANS_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rs.ParamByName('TRANS_ID').AsString := AObj.FieldbyName('TRANS_ID').AsString;
+        Factor.Open(rs);
+        cdsList.Append;
+        AObj.WriteToDataSet(cdsList,false);
+        cdsList.FieldByName('GLIDE_NO').AsString := rs.FieldbyName('GLIDE_NO').AsString;
+        cdsList.Post;
+      finally
+        rs.Free;
+      end;
+    end;
+
 end;
 
 procedure TfrmTransOrderList.ChangeButton;

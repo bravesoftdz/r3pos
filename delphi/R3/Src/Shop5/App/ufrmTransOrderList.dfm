@@ -329,6 +329,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 Columns = <
                   item
@@ -387,7 +388,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                     FieldName = 'TRANS_USER_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
-                    Title.Caption = #36127#36131#20154
+                    Title.Caption = #32463#25163#20154
                     Width = 70
                   end
                   item

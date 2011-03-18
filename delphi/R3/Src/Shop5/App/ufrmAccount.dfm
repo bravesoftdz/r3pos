@@ -166,20 +166,21 @@ inherited frmAccount: TfrmAccount
                   FieldName = 'ACCT_NAME_TEXT'
                   Footers = <>
                   Title.Caption = #36134#25143#21517#31216
-                  Width = 125
+                  Width = 160
                 end
                 item
                   EditButtons = <>
                   FieldName = 'ACCT_SPELL'
                   Footers = <>
                   Title.Caption = #25340#38899#30721
-                  Width = 76
+                  Width = 80
                 end
                 item
                   EditButtons = <>
                   FieldName = 'PAYM_ID'
                   Footers = <>
                   Title.Caption = #25903#20184#26041#24335
+                  Width = 70
                 end
                 item
                   EditButtons = <>

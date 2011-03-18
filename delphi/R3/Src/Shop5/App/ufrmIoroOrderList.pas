@@ -83,7 +83,8 @@ type
   end;
 
 implementation
-uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil,ufrmIoroOrder;
+uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil,ufrmIoroOrder,
+  ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmIoroOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -274,13 +275,31 @@ begin
 end;
 
 procedure TfrmIoroOrderList.AddRecord(AObj: TRecord_);
+var rs:TZQuery;
 begin
   if cdsBrowser.Locate('IORO_ID',AObj.FieldbyName('IORO_ID').AsString,[]) then
-     cdsBrowser.Edit
+    begin
+      cdsBrowser.Edit;
+      AObj.WriteToDataSet(cdsBrowser,false);
+      cdsBrowser.Post;
+    end
   else
-     cdsBrowser.Append;
-  AObj.WriteToDataSet(cdsBrowser,false);
-  cdsBrowser.Post;
+    begin
+      try
+        rs := TZQuery.Create(nil);
+        rs.SQL.Text := ' select GLIDE_NO from ACC_IOROORDER where  TENANT_ID=:TENANT_ID and IORO_ID=:IORO_ID ';
+        rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rs.Params.ParamByName('IORO_ID').AsString := AObj.FieldbyName('IORO_ID').AsString;
+        Factor.Open(rs);
+
+        cdsBrowser.Append;
+        AObj.WriteToDataSet(cdsBrowser,false);
+        cdsBrowser.FieldByName('GLIDE_NO').AsString := rs.FieldbyName('GLIDE_NO').AsString;
+        cdsBrowser.Post;
+      finally
+        rs.Free;
+      end;
+    end;
 end;
 
 function TfrmIoroOrderList.PrintSQL(id: string): string;
@@ -544,6 +563,7 @@ begin
   1:begin
      fndCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
      Label17.Caption := '客户名称';
+     DBGridEh1.Columns[3].Title.Caption := '客户名称';
      Caption := '其他收入';
      lblToolCaption.Caption := '当前位置->'+Caption;
      fndCLIENT_ID.DataSet := Global.GeTZQueryFromName('PUB_CUSTOMER');
@@ -552,6 +572,7 @@ begin
   2:begin
      fndCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
      Label17.Caption := '供应商名称';
+     DBGridEh1.Columns[3].Title.Caption := '供应商名称';
      Caption := '其他支出';
      lblToolCaption.Caption := '当前位置->'+Caption;
      fndCLIENT_ID.DataSet := Global.GeTZQueryFromName('PUB_CLIENTINFO');

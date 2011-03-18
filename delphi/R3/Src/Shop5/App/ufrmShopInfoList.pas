@@ -151,8 +151,19 @@ begin
   if edtKey.Text<>'' then
      IsHeadShop := ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
-  cdsBrowser.SQL.Text:='select SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REGION_ID,SHOP_TYPE'+
-  ',REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+IsHeadShop+' order by SEQ_NO';
+  cdsBrowser.SQL.Text :=
+  'select jb.*,b.SHOP_NAME as SHOP_ID_TEXT from( '+
+  'select ja.*,a.DEPT_NAME as DEPT_ID_TEXT from( '+
+  'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
+  'ROLE_IDS,ROLE_NAMES as ROLE_IDS_TEXT,SEX,BIRTHDAY,DEGREES,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,'+
+  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK from CA_USERS '+
+  'where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and '+IsHeadShop+' order by SEQ_NO ) ja '+
+  'left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID) jb '+
+  'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID';
+
+
+{  cdsBrowser.SQL.Text:='select SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REGION_ID,SHOP_TYPE'+
+  ',REMARK,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+IsHeadShop+' order by SEQ_NO';}
   Factor.Open(cdsBrowser);
 end;
 

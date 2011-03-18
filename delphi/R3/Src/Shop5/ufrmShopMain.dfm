@@ -6795,6 +6795,9 @@ inherited frmShopMain: TfrmShopMain
       Caption = #25910#38134#32467#36134#25253#34920
       OnExecute = actfrmRckDayReportExecute
     end
+    object actfrmRelation: TAction
+      Caption = #20379#24212#38142#31649#29702
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

@@ -57,7 +57,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #25910' '#27454' '#20154
+                Caption = #20184' '#27454' '#20154
               end
               object Label5: TLabel
                 Left = 210

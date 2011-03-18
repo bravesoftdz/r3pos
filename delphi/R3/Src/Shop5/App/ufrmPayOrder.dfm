@@ -1,6 +1,6 @@
 inherited frmPayOrder: TfrmPayOrder
-  Left = 189
-  Top = 214
+  Left = 545
+  Top = 165
   ActiveControl = edtCLIENT_ID
   Caption = #20184#27454#21333
   ClientHeight = 465
@@ -133,7 +133,7 @@ inherited frmPayOrder: TfrmPayOrder
                 Footers = <>
                 ReadOnly = True
                 Tag = 1
-                Title.Caption = #27424#25910#37329#39069
+                Title.Caption = #27424#20184#37329#39069
                 Width = 63
               end
               item
@@ -155,7 +155,7 @@ inherited frmPayOrder: TfrmPayOrder
                 Footers = <>
                 ReadOnly = True
                 Tag = 1
-                Title.Caption = #32467#20313#24212#25910
+                Title.Caption = #32467#20313#24212#20184
                 Width = 62
               end
               item

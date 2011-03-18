@@ -119,6 +119,7 @@ begin
       end;
       AObj.ReadFromDataSet(cdsHeader);
       ReadFromObject(AObj,self);
+      isAudit := (AObj.FieldByName('CHK_DATE').AsString<>''); 
       dbState := dsBrowse;
     finally
       Params.Free;

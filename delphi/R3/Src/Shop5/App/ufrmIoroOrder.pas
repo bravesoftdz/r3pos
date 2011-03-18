@@ -179,6 +179,7 @@ begin
     finally
        cdsDetail.EnableControls;
     end;
+    isAudit := (AObj.FieldByName('CHK_DATE').AsString<>''); 
     dbState := dsBrowse;
     btnOk.Enabled := false;
   finally

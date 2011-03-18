@@ -230,6 +230,7 @@ type
     actfrmStorageDayReport: TAction;
     actfrmRecvDayReport: TAction;
     actfrmRckDayReport: TAction;
+    actfrmRelation: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -353,7 +354,7 @@ uses
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
-  ufrmChangeDayReport,ufrmStorageDayReport;
+  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);

@@ -296,6 +296,7 @@ begin
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
       try
+        cdsList.CommitUpdates;
         cdsList.Delete;
         Factor.UpdateBatch(cdsList,'TTransOrder');
       except

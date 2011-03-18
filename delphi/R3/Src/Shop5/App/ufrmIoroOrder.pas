@@ -248,8 +248,12 @@ begin
   if edtIORO_USER.AsString = '' then Raise Exception.Create('负责人不能为空');
   Check;
   WriteToObject(AObj,self);
-  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-  AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  if dbState = dsInsert then
+    begin
+      AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+      AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+      AObj.FieldByName('CREA_USER_TEXT').AsString := Global.UserName;
+    end;
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;

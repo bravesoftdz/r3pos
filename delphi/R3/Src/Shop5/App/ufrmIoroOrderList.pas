@@ -124,7 +124,7 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
   //日期
-  strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='+inttostr(IoroType)+' and A.IORO_DATE>=' + QuotedStr(FormatDateTime('YYYYMMDD', P1_D1.Date))+ ' and A.IORO_DATE<=' + QuotedStr(FormatDateTime('YYYYMMDD', P1_D2.Date));
+  strWhere := strWhere + 'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_TYPE='''+inttostr(IoroType)+''' and A.IORO_DATE>=' + FormatDateTime('YYYYMMDD', P1_D1.Date)+ ' and A.IORO_DATE<=' + FormatDateTime('YYYYMMDD', P1_D2.Date);
   if fndSHOP_ID.AsString <> '' then
      strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
 

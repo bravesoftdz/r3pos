@@ -140,7 +140,7 @@ Begin
 
         case Factor.iDbType of
         0,3:SQL.Add('Select Max('+FieldName+') From '+TableName+' Where '+FieldName+' Like '''+FlagText+'%'' and Len('+FieldName+')='+Inttostr(TmpLen));
-        1,5:SQL.Add('Select Max('+FieldName+') From '+TableName+' Where '+FieldName+' Like '''+FlagText+'%'' and Length('+FieldName+')='+Inttostr(TmpLen));
+        1,4,5:SQL.Add('Select Max('+FieldName+') From '+TableName+' Where '+FieldName+' Like '''+FlagText+'%'' and Length('+FieldName+')='+Inttostr(TmpLen));
         end;
 
         if CondiStr<>'' then

@@ -202,7 +202,7 @@ begin
   try
   //rs := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   rs := TZQuery.Create(nil);
-  rs.SQL.Text := 'select * from VIW_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and (PAYM_ID<>''A''  or SHOP_ID='+Global.SHOP_ID+') and COMM not in (''02'',''12'') order by PAYM_ID';
+  rs.SQL.Text := 'select * from VIW_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and (PAYM_ID<>''A''  or SHOP_ID='+QuotedStr(Global.SHOP_ID)+') and COMM not in (''02'',''12'') order by PAYM_ID';
   Factor.Open(rs);
   Column := FindColumn('IN_ACCOUNT_ID');
   if Column <> nil then

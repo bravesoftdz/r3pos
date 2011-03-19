@@ -241,10 +241,6 @@ uses
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
   ufrmSupplierInfo;
 
-  //ufrmGoodsSort, ufrmBrandInfo, ufrmColorInfo, ufrmClientInfo,ufrmSizeInfo ,
-  //ufrmGoodsColorDialog,ufrmGoodsSizeDialog
-
-
 {$R *.dfm}
 
 procedure TfrmGoodsInfo.Append(Sort_ID,Sort_Name,GODS_ID:string);
@@ -2651,10 +2647,10 @@ begin
       end;
     end;
   end;
-
+  
 end;
 
-procedure TfrmGoodsInfo.UpdateUNITSData;
+procedure tfrmGoodsInfo.UpdateUNITSData;
 var
   Rs: TZQuery;
 begin

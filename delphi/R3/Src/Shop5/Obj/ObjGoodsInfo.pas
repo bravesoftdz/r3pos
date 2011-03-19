@@ -3,7 +3,7 @@ unit ObjGoodsInfo;
 interface
 
 uses
-  SysUtils, zBase, Classes, AdoDb, ZIntf, ObjCommon, ZDataset;
+  SysUtils, zBase, Classes, AdoDb, ZIntf, ObjCommon, ZDataset, DB;
 
 type
   {== 商品资料 ==}
@@ -89,8 +89,9 @@ end;
 
 function TGoodsInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
-  r:integer;
-  Str:string; 
+  i,r:integer;
+  s,Str:string;
+  vType: TFieldType;
   vParam: TftParamList;
 begin
   result := true;
@@ -100,6 +101,7 @@ begin
     ' Values (:GODS_ID,:TENANT_ID,:GODS_CODE,:GODS_NAME,:GODS_SPELL,:GODS_TYPE,:SORT_ID1,:SORT_ID2,:SORT_ID3,:SORT_ID4,'+
     ':SORT_ID5,:SORT_ID6,:SORT_ID7,:SORT_ID8,:BARCODE,:CALC_UNITS,:UNIT_ID,:SMALL_UNITS,:BIG_UNITS,:SMALLTO_CALC,:BIGTO_CALC,:NEW_INPRICE,'+
     ':RTL_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_LOCUS_NO,:USING_BARTER,:BARTER_INTEGRAL,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
+
   AGlobal.ExecSQL(Str, self);
 
   //插入门店单价
@@ -199,7 +201,7 @@ var
 begin
   inherited;
   case iDbType of
-   0,5: //此语句在SQLITE下调试通过，MS SQL Server语法一样
+   0,4,5: //此语句在SQLITE下调试通过，MS SQL Server语法一样
     Str:=      
       'select RELATION_ID,J.TENANT_ID as TENANT_ID, '+
       ' J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
@@ -222,7 +224,7 @@ begin
       ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID '+
       ' where J.COMM not in (''02'',''12'') order by J.GODS_CODE ';
    1: Str:='';
-   4: Str:='';
+   //4: Str:='';
   end;
   SelectSQL.Text:=Str;
 end;
@@ -254,7 +256,7 @@ begin
     if AGlobal.ExecSQL(Str, self)=0 then
     begin
       Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
-        ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
+           ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
       AGlobal.ExecSQL(Str,self);
     end;
   end;

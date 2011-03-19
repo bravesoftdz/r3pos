@@ -271,7 +271,7 @@ begin
        if Temp.IsEmpty then
           begin
             Result := FLAG_TEXT+FormatFloat(GetFormat,1);
-            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('''+TENANT_ID+''','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''',1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
           end
        else
        if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then

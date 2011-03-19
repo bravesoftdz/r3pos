@@ -159,7 +159,7 @@ begin
 end;
 
 procedure TfrmShopInfoList.InitGrid;
-var rs,temp:TZQuery;
+var rs:TZQuery;
   Column:TColumnEh;
 begin
   rs := Global.GetZQueryFromName('PUB_REGION_INFO');
@@ -174,27 +174,20 @@ begin
           rs.Next;
         end;
     end;
-    try
-      temp := TZQuery.Create(nil);
-      temp.Close;
-      temp.SQL.Text := 'select * from(select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where CODE_TYPE=''12'' '+
-                       'union all '+
-                       'select ''#'' as CODE_ID,''нч'' as CODE_NAME,''W'' as CODE_SPELL) A';
-      Factor.Open(temp);
-      Column := FindColumn('SHOP_TYPE');
-      if Column <> nil then
+
+  rs := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  Column := FindColumn('SHOP_TYPE');
+  if Column <> nil then
+    begin
+      rs.First;
+      while not rs.Eof do
         begin
-          temp.First;
-          while not temp.Eof do
-            begin
-              Column.KeyList.Add(temp.Fields[0].AsString);
-              Column.PickList.Add(temp.Fields[1].AsString );
-              temp.Next;
-            end;
+          Column.KeyList.Add(rs.Fields[0].AsString);
+          Column.PickList.Add(rs.Fields[1].AsString );
+          rs.Next;
         end;
-    finally
-      temp.Free;
     end;
+
 end;
 
 procedure TfrmShopInfoList.FormShow(Sender: TObject);

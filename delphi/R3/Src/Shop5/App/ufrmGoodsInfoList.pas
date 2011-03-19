@@ -507,14 +507,41 @@ end;
 procedure TfrmGoodsInfoList.actDeleteExecute(Sender: TObject);
 var
   i,n:integer;
+  IsChoice: Boolean; //判断是否有选择商品
   tmpGlobal: TZQuery;
 begin
   inherited;
+{
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
   if cdsBrowser.State=dsEdit then cdsBrowser.Post;
-
   if not ShopGlobal.GetChkRight('32600001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+
+  //2011.03.18 Add 判断是否选择非自主经营的商品:
+  cdsBrowser.DisableControls;
+  try
+    cdsBrowser.Filtered := false;
+    cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
+    cdsBrowser.Filtered := true;
+
+    cdsBrowser.First;
+    while cdsBrowser.Eof of
+    begin
+
+      if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
+
+      cdsBrowser.Next;
+    end;
+    IsChoice:
+
+
+  //2011.03.18 Add 判断是否有选择要删除商品:
+  cdsBrowser.Filtered := false;
+  cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
+  cdsBrowser.Filtered := true;
+  if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
+
+
 
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i=6 then
@@ -524,11 +551,6 @@ begin
     cdsBrowser.CommitUpdates;
     cdsBrowser.DisableControls;
     try
-      cdsBrowser.Filtered := false;
-      cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
-      cdsBrowser.Filtered := true;
-      if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
-
       try
         n := 0;
         tmpGlobal.CommitUpdates;
@@ -547,7 +569,7 @@ begin
         try
           Factor.UpdateBatch(cdsBrowser,'TGoodsInfo');
           rcAmt := rcAmt - n;
-          tmpGlobal.CommitUpdates;          
+          tmpGlobal.CommitUpdates;
         except
           cdsBrowser.CancelUpdates;
           tmpGlobal.CancelUpdates;
@@ -563,6 +585,7 @@ begin
   end;
   GetNo;
   //删除代码别做，要支持批量删除，同时也要删除条码库
+  }
 end;
 
 procedure TfrmGoodsInfoList.DBGridEh1DblClick(Sender: TObject);
@@ -1047,7 +1070,8 @@ begin
       '(select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
       ' union all '+
       ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
-      ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
+      ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and '+
+      ' A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
 
     str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b '+
          ' where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';

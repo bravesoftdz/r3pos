@@ -41,6 +41,8 @@ IdbHelp = Interface(IUnknown)
     //返回执行影响记录数
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;stdcall;
 
+    //数据集执行Query 返回执行影响记录数    
+    function ExecQuery(DataSet:TDataSet):Integer;stdcall;
    end;
    
 IZFactory= interface(IUnknown)

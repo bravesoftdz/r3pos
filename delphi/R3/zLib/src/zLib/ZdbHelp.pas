@@ -43,6 +43,8 @@ type
     function UpdateBatch(DataSet:TDataSet):boolean;OverLoad;stdcall;
     //返回执行影响记录数
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;stdcall;
+    //数据集执行Query 返回执行影响记录数    
+    function ExecQuery(DataSet:TDataSet):Integer;stdcall;
   public
     constructor Create;
     destructor Destroy;override;
@@ -257,6 +259,24 @@ begin
   ZConn.Disconnect;
 end;
 
+function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
+var ZQuery:TZQuery;
+begin
+  try
+    result := -1;
+    ZQuery := TZQuery(DataSet);
+    ZQuery.Connection := ZConn;
+    ZQuery.ExecSQL;
+    result := ZQuery.RowsAffected;
+  except
+    on E:Exception do
+      begin
+        if CheckError(E.Message) then ZConn.Disconnect;
+        Raise;
+      end;
+  end;
+end;
+
 function TdbHelp.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
 var
@@ -278,9 +298,15 @@ begin
            for i:=0 to ZQuery.Params.Count -1 do
               begin
                 if copy(ZQuery.Params[i].Name,1,4)='OLD_' then
-                   ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue
+                   begin
+                     ZQuery.Params[i].DataType := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).DataType;
+                     ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(copy(ZQuery.Params[i].Name,5,50)).OldValue;
+                   end
                 else
-                   ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).NewValue;
+                   begin
+                     ZQuery.Params[i].DataType := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).DataType;
+                     ZQuery.Params[i].Value := TZFactory(ObjectFactory).FieldbyName(ZQuery.Params[i].Name).NewValue;
+                   end;
               end;
            end;
        end;
@@ -900,7 +926,7 @@ begin
           Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetDouble(i+1, WasNull);
         stBigDecimal:
           Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetBigDecimal(i+1, WasNull);
-        stString, stUnicodeString:
+        stString, stUnicodeString,stUnicodeStream,stAsciiStream,stBinaryStream:
           Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetString(i+1, WasNull);
         stBytes:
           Factory.Fields[idx[i]].NewValue := FNewRowAccessor.GetBytes(i+1, WasNull);
@@ -931,7 +957,7 @@ begin
                 Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetDouble(i+1, WasNull);
               stBigDecimal:
                 Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetBigDecimal(i+1, WasNull);
-              stString, stUnicodeString:
+              stString, stUnicodeString,stUnicodeStream,stAsciiStream,stBinaryStream:
                 Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetString(i+1, WasNull);
               stBytes:
                 Factory.Fields[idx[i]].OldValue := FOldRowAccessor.GetBytes(i+1, WasNull);
@@ -996,7 +1022,7 @@ begin
           FNewRowAccessor.SetDouble(i+1,Factory.Fields[idx[i]].NewValue);
         stBigDecimal:
           FNewRowAccessor.SetBigDecimal(i+1,Factory.Fields[idx[i]].NewValue);
-        stString, stUnicodeString:
+        stString, stUnicodeString,stUnicodeStream,stAsciiStream,stBinaryStream:
           FNewRowAccessor.SetString(i+1,Factory.Fields[idx[i]].NewValue);
         stBytes:
           FNewRowAccessor.SetBytes(i+1,Factory.Fields[idx[i]].NewValue);

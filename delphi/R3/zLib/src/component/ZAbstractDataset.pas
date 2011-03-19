@@ -104,6 +104,8 @@ type
     function GetData: OleVariant;
     function GetDelta: OleVariant;
     procedure SetDelta(const Value: OleVariant);
+    function GetSyncDelta: OleVariant;
+    procedure SetSyncDelta(const Value: OleVariant);
 
   private
     function GetUpdatesPending: Boolean;
@@ -156,14 +158,15 @@ type
     procedure RevertRecord;
 
     procedure SaveToStream(Stream:TStream;Modified:boolean=false);
-    procedure LoadFromStream(Stream:TStream);
-    procedure AddFromStream(Stream:TStream);
+    procedure LoadFromStream(Stream:TStream;forSync:boolean=false);
+    procedure AddFromStream(Stream:TStream;forSync:boolean=false);
     procedure CreateDataSet;
 
     function Changed:boolean;
 
     property Data:OleVariant read GetData write SetData;
     property Delta:OleVariant read GetDelta write SetDelta;
+    property SyncDelta:OleVariant read GetSyncDelta write SetSyncDelta;
 
     procedure EmptyDataSet; {bangfauzan addition}
 
@@ -868,7 +871,7 @@ end;
 {========================end of bangfauzan addition================}
 
 
-procedure TZAbstractDataset.LoadFromStream(Stream: TStream);
+procedure TZAbstractDataset.LoadFromStream(Stream: TStream;forSync:boolean=false);
 procedure ReadHeader;
 var
   w,i:integer;
@@ -967,7 +970,7 @@ begin
     GetFieldList(IndexFields, LinkedFields); {renamed by bangfauzan}
 
     FetchCount := 0;
-    rowcount := CachedResultSet.ReadStream(Stream);
+    rowcount := CachedResultSet.ReadStream(Stream,forSync);
     Active := true;
     { Performs sorting. }
     if SortedFields <> '' then
@@ -1074,7 +1077,7 @@ begin
  end;
 end;
 
-procedure TZAbstractDataset.AddFromStream(Stream: TStream);
+procedure TZAbstractDataset.AddFromStream(Stream: TStream;forSync:boolean=false);
 procedure ReadHeader;
 var
   w,i:integer;
@@ -1116,7 +1119,7 @@ begin
      end;
   Stream.Position := 0;
   ReadHeader;
-  self.CachedResultSet.ReadStream(Stream);
+  self.CachedResultSet.ReadStream(Stream,forSync);
   { Performs sorting. }
   if SortedFields <> '' then
       InternalSort;
@@ -1247,6 +1250,42 @@ begin
        if result then break;
        ResultSet.Next;
      end;
+end;
+
+function TZAbstractDataset.GetSyncDelta: OleVariant;
+begin
+  result := Data;
+end;
+
+procedure TZAbstractDataset.SetSyncDelta(const Value: OleVariant);
+var
+  Stream :TMemoryStream;
+  P: Pointer;
+  Size: Integer;
+begin
+  Close;
+  if VarIsNull(Value) then Exit;
+  if VarIsArray(Value) and (VarType(Value) and varTypeMask = varByte) then
+  begin
+    Size := VarArrayHighBound(Value, 1) - VarArrayLowBound(Value, 1) + 1;
+    if Size > 0 then
+    begin
+      Stream := TMemoryStream.Create;
+      try
+        P := VarArrayLock(Value);
+        try
+          Stream.Write(P^,Size);
+        finally
+          VarArrayUnlock(Value);
+        end;
+        LoadFromStream(Stream,true);
+      finally
+        Stream.Free;
+      end;
+    end;
+  end
+  else
+    Raise Exception.Create('无效数据包');
 end;
 
 end.

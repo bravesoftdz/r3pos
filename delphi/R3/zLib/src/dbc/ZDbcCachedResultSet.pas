@@ -111,7 +111,7 @@ type
 
     //zhangsenrong  2011-02-24 add
     procedure WriteStream(Stream:TStream;Modified:boolean);
-    function ReadStream(Stream:TStream):integer;
+    function ReadStream(Stream:TStream;forSync:boolean=false):integer;
   end;
 
   {** Implements cached ResultSet. }
@@ -261,7 +261,7 @@ type
 
     //zhangsenrong  2011-02-24 add
     procedure WriteStream(Stream:TStream;Modified:boolean);
-    function ReadStream(Stream:TStream):integer;
+    function ReadStream(Stream:TStream;forSync:boolean=false):integer;
 
   end;
 
@@ -1994,7 +1994,7 @@ begin
   Statement := Value;
 end;
 
-function TZAbstractCachedResultSet.ReadStream(Stream: TStream):integer;
+function TZAbstractCachedResultSet.ReadStream(Stream: TStream;forSync:boolean=false):integer;
 procedure ReadBuffer;
 var
   s1:string;
@@ -2088,9 +2088,9 @@ begin
         if not zIsNull then
         begin
            Stream.read(w,SizeOf(Integer));
-           setlength(s2,w*2);
-           Stream.read(pchar(s2)^,w*2);
-           RowAccessor.SetUnicodeString(i,s2);
+           setlength(s1,w);
+           Stream.read(pchar(s1)^,w);
+           RowAccessor.SetUnicodeString(i,s1);
         end
         else
            RowAccessor.SetNull(i);
@@ -2117,7 +2117,7 @@ begin
         if not zIsNull then
         begin
            Stream.read(s11,SizeOf(s11));
-           RowAccessor.SetDate(i,s11);
+           RowAccessor.SetTimestamp(i,s11);
         end
         else
            RowAccessor.SetNull(i);
@@ -2165,6 +2165,7 @@ begin
       inc(result);
       Stream.Read(r,SizeOf(r));
       Stream.Read(us,SizeOf(us));
+      if forSync and (us=utUnmodified) then us := utInserted;
       //∑÷≈‰“ª––
       case us of
       utUnmodified:
@@ -2284,14 +2285,14 @@ begin
         end;
       stUnicodeString,stUnicodeStream:
         begin
-          s2 := GetUnicodeString(i);
+          s1 := GetUnicodeString(i);
           zIsNull := WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then
           begin
-             w := length(s2);
+             w := length(s1);
              Stream.Write(w,SizeOf(Integer));
-             Stream.Write(pchar(s2)^,w*2);
+             Stream.Write(pchar(s1)^,w);
           end;
         end;
       stBytes:
@@ -2309,7 +2310,7 @@ begin
         end;
       stDate,stTime,stTimestamp:
         begin
-          s11 := GetDate(i);
+          s11 := GetTimeStamp(i);
           zIsNull := WasNull;
           Stream.Write(zIsNull,SizeOf(zIsNull));
           if not zIsNull then

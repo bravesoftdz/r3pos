@@ -214,6 +214,8 @@ type
       read FAfterInsertSQLStatement write FAfterInsertSQLStatement;
     property AfterModifySQLStatement: TZAfterSQLStatementEvent
       read FAfterModifySQLStatement write FAfterModifySQLStatement;
+    property ZOldRowAccessor:TZRowAccessor read FOldRowAccessor;
+    property ZNewRowAccessor:TZRowAccessor read FNewRowAccessor;
   end;
 
 implementation

@@ -74,6 +74,7 @@ type
     property Handle: THandle read GetHandle;
     property Interpreter: TZCustomDataBlockInterpreter read GetInterpreter;
   protected
+    crUserId,crUserName:string;
     procedure DoSKTParameter;
   public
     constructor Create;
@@ -1117,6 +1118,7 @@ begin
     begin
        Connect;
        DoSKTParameter;
+       if crUserId<>'' then GqqLogin(crUserId,crUserName);
     end;
 end;
 
@@ -1146,7 +1148,8 @@ begin
     R := FInterpreter.CallInvoke(Ord(SKTLogin),0,0,DispParams,nil, @ExcepInfo,nil);
     if R = DISP_E_EXCEPTION then
        Raise Exception.Create(ExcepInfo.bstrDescription);
-    LocalInTransaction := true;
+    crUserId := UserId;
+    crUserName := UserName;
   finally
     if DispParams.rgdispidNamedArgs <> nil then
       FreeMem(DispParams.rgdispidNamedArgs);

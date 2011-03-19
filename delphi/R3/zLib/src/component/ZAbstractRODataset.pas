@@ -1019,7 +1019,7 @@ begin
             Statement.SetLong(I + 1, StrToInt64(Param.AsString));
           ftCurrency:
             Statement.SetBigDecimal(I + 1, Param.AsCurrency);
-          ftString:
+          ftString,ftWideString,ftFixedChar:
             Statement.SetString(I + 1, Param.AsString);
           ftBytes:
             Statement.SetString(I + 1, Param.AsString);

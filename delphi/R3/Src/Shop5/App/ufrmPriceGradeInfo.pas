@@ -805,7 +805,7 @@ begin
     Aobj_1 := TRecord_.Create;
     If TfrmSelectGoodSort.FindDialog(Self,Aobj_1) then
       begin
-        if cds_GoodsPercent.Locate('SORT_ID',cds_GoodsPercent.FieldByName('SORT_ID').AsString,[]) then
+        if cds_GoodsPercent.Locate('SORT_ID',Aobj_1.FieldByName('SORT_ID').AsString,[]) then
           begin
             MessageBox(Handle,pchar('此商品已经添加到列表.'),pchar('友情提示..'),MB_OK+MB_ICONINFORMATION);
           end

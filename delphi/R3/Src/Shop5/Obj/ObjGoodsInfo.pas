@@ -101,22 +101,33 @@ begin
     ' Values (:GODS_ID,:TENANT_ID,:GODS_CODE,:GODS_NAME,:GODS_SPELL,:GODS_TYPE,:SORT_ID1,:SORT_ID2,:SORT_ID3,:SORT_ID4,'+
     ':SORT_ID5,:SORT_ID6,:SORT_ID7,:SORT_ID8,:BARCODE,:CALC_UNITS,:UNIT_ID,:SMALL_UNITS,:BIG_UNITS,:SMALLTO_CALC,:BIGTO_CALC,:NEW_INPRICE,'+
     ':RTL_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_LOCUS_NO,:USING_BARTER,:BARTER_INTEGRAL,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
-
   AGlobal.ExecSQL(Str, self);
 
   //插入门店单价
   Str:='insert Into PUB_GOODSPRICE(TENANT_ID,PRICE_ID,SHOP_ID,GODS_ID,PRICE_METHOD,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,COMM,TIME_STAMP) '+
                          ' Values (:TENANT_ID,''#'',:SHOP_ID,:GODS_ID,''1'',:NEW_OUTPRICE,:NEW_OUTPRICE1,:NEW_OUTPRICE2,''00'','+GetTimeStamp(iDbType)+') ';
   AGlobal.ExecSQL(Str, self);
+
   //插入进货价扩展表:
-  Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                           ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE * :SMALLTO_CALC,:NEW_INPRICE * :BIGTO_CALC,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
-  AGlobal.ExecSQL(Str, self);
+  try
+    vParam :=TftParamList.Create(nil);
+    vParam.ParamByName('TENANT_ID').AsString:=FieldbyName('TENANT_ID').AsString;
+    vParam.ParamByName('GODS_ID').AsString:=FieldbyName('GODS_ID').AsString;
+    vParam.ParamByName('NEW_INPRICE').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat;
+    vParam.ParamByName('NEW_INPRICE1').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('SMALLTO_CALC').AsFloat;
+    vParam.ParamByName('NEW_INPRICE2').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('BIGTO_CALC').AsFloat;     
+    Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                             ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+    AGlobal.ExecSQL(Str, vParam);
+  finally
+    vParam.Free;    
+  end;
 end;
 
 function TGoodsInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
+  vParam : TftParamList; 
 begin
   result:=true;
   if trim(FieldByName('RELATION_ID').AsString)='0' then //自主创建才进行写条码
@@ -136,13 +147,24 @@ begin
   //更新最新进价有变化时，更新到商品扩展表：
   if FieldbyName('NEW_INPRICE').AsFloat<>FieldbyName('NEW_INPRICE').AsOldFloat then
   begin
-    Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE * :SMALLTO_CALC,NEW_INPRICE2=:NEW_INPRICE * :BIGTO_CALC,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-         ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
-    if AGlobal.ExecSQL(Str, self)=0 then
-    begin
-      Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
-                               ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE * :SMALLTO_CALC,:NEW_INPRICE * :BIGTO_CALC,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
-      AGlobal.ExecSQL(Str, self);
+    //插入进货价扩展表:
+    try
+      vParam :=TftParamList.Create(nil);
+      vParam.ParamByName('TENANT_ID').AsString:=FieldbyName('TENANT_ID').AsString;
+      vParam.ParamByName('GODS_ID').AsString:=FieldbyName('GODS_ID').AsString;
+      vParam.ParamByName('NEW_INPRICE').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat;
+      vParam.ParamByName('NEW_INPRICE1').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('SMALLTO_CALC').AsFloat;
+      vParam.ParamByName('NEW_INPRICE2').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('BIGTO_CALC').AsFloat;     
+      Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE1,NEW_INPRICE2=:NEW_INPRICE2,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+           ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+      if AGlobal.ExecSQL(Str, vParam)=0 then
+      begin
+        Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+
+                                 ' Values (:TENANT_ID,:GODS_ID,:NEW_INPRICE,:NEW_INPRICE1,:NEW_INPRICE2,0,0,0,0,''00'','+GetTimeStamp(iDbType)+') ';
+        AGlobal.ExecSQL(Str, vParam);
+      end;
+    finally
+      vParam.Free;
     end;
   end;
 

@@ -23,8 +23,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where (CALC_UNITS=:OLD_UNIT_ID) or (SMALL_UNITS=:OLD_UNIT_ID)'+
-    ' or (BIG_UNITS=:OLD_UNIT_ID) and COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := 'select count(*) from PUB_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and'+
+    ' (CALC_UNITS=:OLD_UNIT_ID) or (SMALL_UNITS=:OLD_UNIT_ID) or (BIG_UNITS=:OLD_UNIT_ID) ';
     rs.ParamByName('OLD_UNIT_ID').AsString := FieldbyName('UNIT_ID').AsOldString;
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     AGlobal.Open(rs);

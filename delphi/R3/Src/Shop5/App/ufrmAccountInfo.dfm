@@ -305,7 +305,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         Properties.OnChange = edtORG_MNYPropertiesChange
-        TabOrder = 1
+        TabOrder = 2
         OnExit = edtORG_MNYExit
       end
       object edtACCT_SPELL: TcxTextEdit
@@ -314,14 +314,14 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         TabStop = False
-        TabOrder = 2
+        TabOrder = 3
       end
       object edtPAYM_ID: TcxComboBox
         Left = 101
         Top = 54
         Width = 118
         Height = 20
-        TabOrder = 3
+        TabOrder = 1
       end
     end
   end

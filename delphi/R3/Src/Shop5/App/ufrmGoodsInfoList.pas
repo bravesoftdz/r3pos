@@ -507,50 +507,38 @@ end;
 procedure TfrmGoodsInfoList.actDeleteExecute(Sender: TObject);
 var
   i,n:integer;
-  IsChoice: Boolean; //判断是否有选择商品
   tmpGlobal: TZQuery;
 begin
   inherited;
-{
+
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
   if cdsBrowser.State=dsEdit then cdsBrowser.Post;
   if not ShopGlobal.GetChkRight('32600001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
 
   //2011.03.18 Add 判断是否选择非自主经营的商品:
-  cdsBrowser.DisableControls;
-  try
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
-    cdsBrowser.Filtered := true;
-
-    cdsBrowser.First;
-    while cdsBrowser.Eof of
-    begin
-
-      if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
-
-      cdsBrowser.Next;
-    end;
-    IsChoice:
-
-
-  //2011.03.18 Add 判断是否有选择要删除商品:
   cdsBrowser.Filtered := false;
-  cdsBrowser.Filter := '(selFlag=''1'') and (RELATION_ID=''0'')';
+  cdsBrowser.Filter := 'selFlag=''1'' '; //and (RELATION_ID=''0'')
   cdsBrowser.Filtered := true;
   if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
-
-
-
-  i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
-  if i=6 then
+  cdsBrowser.First;
+  while not cdsBrowser.Eof do
   begin
-    tmpGlobal := Global.GetZQueryFromName('PUB_GOODSINFO');
-    tmpGlobal.Filtered :=false;
-    cdsBrowser.CommitUpdates;
-    cdsBrowser.DisableControls;
-    try
+    if trim(cdsBrowser.FieldByName('RELATION_ID').AsString)<>'0' then //只有等于0才能删除
+    begin
+      Raise Exception.Create('商品 "'+cdsBrowser.FieldByName('GODS_NAME').AsString+'"'+'是加盟经营不删除！ ');
+    end;
+    cdsBrowser.Next;
+  end;
+
+  try
+    i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
+    if i=6 then
+    begin
+      tmpGlobal := Global.GetZQueryFromName('PUB_GOODSINFO');
+      tmpGlobal.Filtered :=false;
+      cdsBrowser.CommitUpdates;
+      cdsBrowser.DisableControls;
       try
         n := 0;
         tmpGlobal.CommitUpdates;
@@ -578,14 +566,13 @@ begin
       finally
         cdsBrowser.EnableControls;
       end;
-    finally
-      cdsBrowser.Filtered := false;
-      cdsBrowser.EnableControls;
     end;
+  finally
+    cdsBrowser.Filtered := false;
+    cdsBrowser.EnableControls;
   end;
   GetNo;
   //删除代码别做，要支持批量删除，同时也要删除条码库
-  }
 end;
 
 procedure TfrmGoodsInfoList.DBGridEh1DblClick(Sender: TObject);

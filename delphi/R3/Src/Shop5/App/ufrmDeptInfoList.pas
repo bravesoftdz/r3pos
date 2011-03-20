@@ -74,7 +74,7 @@ type
   private
     procedure SetRecNo;  //设置记录序号
     function  FindNode(ID: string): TTreeNode;
-    procedure DeptTreeSort(SortType: string); //职务树型排序
+    procedure DeptTreeSort(SortType: string); //部门树型排序
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function  CheckCanExport:boolean; override;
   public

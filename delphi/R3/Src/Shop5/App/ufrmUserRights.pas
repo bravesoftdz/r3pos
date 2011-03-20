@@ -134,18 +134,14 @@ begin
   try
     RsRight:=TZQuery.Create(nil);
     case Factor.iDbType of
-     0,5:
+     0,4,5:
       begin //SQLITE环境下通过，Ms SQL Server语法一样
-        Str:='select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
+        Str:='select MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
           ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(ROLE_IDS,',',''',''',[rfReplaceAll])+''') '+
           ' union all '+
-          ' select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
+          ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
       end;
      1:
-      begin
-        Str:='';
-      end;
-     4:
       begin
         Str:='';
       end;
@@ -158,6 +154,7 @@ begin
       RsRight.ParamByName('USER_ID').AsString:=User_ID;
     Factor.Open(RsRight);
 
+    locked:=true;
     for i:=0 to rzCheckTree.Items.Count -1 do
     begin
       SEQUNo:=TRecord_(rzCheckTree.Items[i].Data).FieldbyName('SEQNo').AsInteger;
@@ -171,6 +168,7 @@ begin
       end;
     end;
   finally
+    locked:=false;
     FLastRole_IDS:=ROLE_IDS;
     RsRight.Free;
   end;
@@ -280,6 +278,8 @@ end;
 function TfrmUserRights.GetROLE_IDS: string;
 begin
   result:='';
+  if not RoleList.Active then exit;
+  if RoleList.State = dsEdit then RoleList.Post; //判断是否编辑状态并Post
   if (not RoleList.Active) or (RoleList.IsEmpty) then Exit;
   try
     RoleList.DisableControls;

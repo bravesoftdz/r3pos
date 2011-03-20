@@ -46,7 +46,7 @@ type
   private
     function  GetLevelID(oldLevelID: string): string;
     function  IsEdit(Aobj:TRecord_; cdsTable: TZQuery):Boolean; virtual; //判断是Aobj对象与与数据集Value是否改变
-    procedure CheckDEPTNameIsExists;  //判断职务是否存在
+    procedure CheckDEPTNameIsExists;  //判断部门是否存在
   public
     AObj:TRecord_;
     Saved:Boolean;
@@ -172,7 +172,7 @@ begin
   if trim(edtDEPT_NAME.Text)='' then
   begin
     if not edtDEPT_NAME.CanFocus then edtDEPT_NAME.SetFocus;
-    Raise Exception.Create('职务名称不能为空！'); 
+    Raise Exception.Create('名称不能为空！'); 
   end;
   if trim(edtDEPT_SPELL.Text)='' then
   begin
@@ -180,7 +180,7 @@ begin
     Raise Exception.Create('拼音码不能为空！');
   end;
 
-  CheckDEPTNameIsExists; //判断职务是否存在
+  CheckDEPTNameIsExists; //判断部门是否存在
 
   WriteTo(Aobj);  //写入Obj记录对象
   //判断档案是否有修改
@@ -280,11 +280,11 @@ begin
   Label6.Visible:=True;
   btnOk.Visible := (Value<>dsBrowse);
   case dbState of
-  dsInsert:Caption:='职务档案--(新增)';
-  dsEdit:Caption:='职务档案--(修改)';
+  dsInsert:Caption:='部门档案--(新增)';
+  dsEdit:Caption:='部门档案--(修改)';
   else
     begin
-      Caption:='职务档案';
+      Caption:='部门档案';
       Label2.Visible:=False;
       Label4.Visible:=False;
       Label6.Visible:=False;
@@ -302,7 +302,7 @@ begin
    begin
     WriteTo(AObj);
     if not IsEdit(Aobj,cdsTable) then Exit;
-    i:=MessageBox(Handle,'职务档案有修改，是否保存修改信息？',pchar(Application.Title),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONINFORMATION);
+    i:=MessageBox(Handle,'部门档案有修改，是否保存修改信息？',pchar(Application.Title),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONINFORMATION);
     if i=6 then
        begin
          Save;
@@ -327,8 +327,8 @@ end;
 class function TfrmDeptInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;
 begin
   //新R3内ShopGlobal没有此方法:
-  //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能修改职务!');
-  if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改职务的权限,请和管理员联系.');
+  //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能修改部门!');
+  if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有修改部门的权限,请和管理员联系.');
   with TfrmDEPTInfo.Create(Owner) do
   begin
     try
@@ -349,8 +349,8 @@ class function TfrmDeptInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
    //新R3内ShopGlobal没有此方法:
-   //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能新增职务!');
-  if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
+   //if not ShopGlobal.GetIsCompany(Global.UserID) then raise Exception.Create('不是总店，不能新增部门!');
+  if not ShopGlobal.GetChkRight('100010') then Raise Exception.Create('你没有新增部门的权限,请和管理员联系.');
   with TfrmDEPTInfo.Create(Owner) do
   begin
     try

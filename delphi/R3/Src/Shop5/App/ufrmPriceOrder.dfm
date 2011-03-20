@@ -93,7 +93,7 @@ inherited frmPriceOrder: TfrmPriceOrder
         Top = 28
         Width = 81
         Height = 20
-        EditValue = '23:59:59'
+        EditValue = 0.999988425925926d
         TabOrder = 3
       end
       object edtPRICE_ID: TcxComboBox

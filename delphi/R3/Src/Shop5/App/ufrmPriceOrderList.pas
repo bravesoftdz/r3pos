@@ -82,7 +82,7 @@ begin
   case Factor.iDbType of
    0,3:result:='select top 600 A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID';
    1: result:='  ';
-   4: result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+') order by A.PROM_ID) tp fetch first 600  rows only ';
+   4: result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID) tp fetch first 600  rows only ';
    5: result:='select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From ('+viwName+') order by A.PROM_ID LIMIT 600 ';
   end; 
 end;

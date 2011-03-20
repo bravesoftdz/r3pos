@@ -307,7 +307,7 @@ begin
     while not cdsDetail.Eof do
        begin
          cdsDetail.Edit;
-         cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+         cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
          cdsDetail.FieldByName('PROM_ID').AsString := cdsHeader.FieldbyName('PROM_ID').AsString;
          cdsDetail.Post;
          cdsDetail.Next;
@@ -317,7 +317,7 @@ begin
     while not cdsShopList.Eof do
     begin
       cdsShopList.Edit;
-      cdsShopList.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+      cdsShopList.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
       cdsShopList.FieldByName('PROM_ID').AsString := cdsHeader.FieldbyName('PROM_ID').AsString;
       cdsShopList.Post;
       cdsShopList.Next;

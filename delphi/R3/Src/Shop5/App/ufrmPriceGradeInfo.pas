@@ -598,6 +598,7 @@ var str:string;
 begin
   inherited;
   if locked then exit;
+  if (edtINTE_TYPE.ItemIndex=-1) or (TRecord_(edtINTE_TYPE.Properties.Items.Objects[edtINTE_TYPE.ItemIndex])=nil) then Exit;
   str:=TRecord_(edtINTE_TYPE.Properties.Items.Objects[edtINTE_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
   if  str='0' then
   begin

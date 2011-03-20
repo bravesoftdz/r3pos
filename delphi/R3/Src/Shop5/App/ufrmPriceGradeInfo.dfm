@@ -1,6 +1,6 @@
 inherited frmPriceGradeInfo: TfrmPriceGradeInfo
-  Left = 663
-  Top = 223
+  Left = 417
+  Top = 163
   Caption = #23458#25143#31561#32423#31649#29702
   ClientHeight = 435
   ClientWidth = 603

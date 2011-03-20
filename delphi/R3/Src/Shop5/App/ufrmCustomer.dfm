@@ -520,11 +520,6 @@ inherited frmCustomer: TfrmCustomer
                     ReadOnly = True
                     Title.Caption = #22320#22336
                     Width = 279
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CUST_ID'
-                    Footers = <>
                   end>
               end
               object stbPanel: TPanel

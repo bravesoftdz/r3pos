@@ -434,13 +434,6 @@ begin
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
      Str_Where:=Str_Where+' and BIRTHDAY>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))+' and BIRTHDAY<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date));
 
-{  if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));
-  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date));
-  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and substring(BIRTHDAY,6,5)>='+QuotedStr(FormatDateTime('MM-DD',edtDate1.Date))+' and substring(BIRTHDAY,6,5)<='+QuotedStr(FormatDateTime('MM-DD',edtDate2.Date));}
-
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
      Str_Where:=Str_Where+' and SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
@@ -470,7 +463,7 @@ begin
   0:result := 'select top 600 * from ('+Str_Sql+') jp order by CUST_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+Str_Sql+') order by CUST_ID) tp fetch first 600  rows only';
+       'select * from ('+Str_Sql+') B order by CUST_ID) tp fetch first 600  rows only';
   5:result := 'select * from ('+Str_Sql+') order by CUST_ID limit 600';
   else
     result := 'select * from ('+Str_Sql+') order by CUST_ID';

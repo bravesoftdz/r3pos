@@ -52,7 +52,7 @@ type
     { Private declarations }
   protected
     procedure SetdbState(const Value: TDataSetState);
-    function CheckCanExport:boolean;    
+    function CheckCanExport:boolean;
   public
     procedure Open;
     procedure Save;
@@ -77,7 +77,7 @@ end;
 procedure TfrmMeaUnits.btnAppendClick(Sender: TObject);
 begin
   inherited;
-  if not (ShopGlobal.GetChkRight('32200001',2) or ShopGlobal.GetChkRight('32200001',3)) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');  
+  if not (ShopGlobal.GetChkRight('32200001',2) or ShopGlobal.GetChkRight('32200001',3)) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
   if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
   if not cdsUnit.IsEmpty then
   begin
@@ -219,8 +219,8 @@ begin
   try
     Factor.UpdateBatch(cdsUnit,'TMeaUnits');
   except
-    cdsUnit.Close;
-    Open;
+    //cdsUnit.Close;
+    //Open;
     if not cdsUnit.IsEmpty then
     begin
       if i=0 then i:=1;

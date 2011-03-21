@@ -24,7 +24,7 @@ const
 implementation
 
 const
-  STR_UNIQUE    = '{2BE6D96E-827F-4BF9-B33E-8740412CDE96}';
+  STR_UNIQUE    = '{A16ABE7C-AEEA-4BAB-B2E0-DB9D097D5676}';
   MI_ACTIVEAPP  = 1;  //激活应用程序
   MI_GETHANDLE  = 2;  //取得句柄
 

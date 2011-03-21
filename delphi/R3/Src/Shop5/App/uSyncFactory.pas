@@ -7,8 +7,9 @@ type
   PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
     tbname:string;//表名
+    tbtitle:string;//说明
     keyFields:string;//关健字段
-    synFlag:integer;//0简单表 1主从单据表
+    synFlag:integer;
   end;
   TSyncFactory=class
   private
@@ -21,6 +22,8 @@ type
     constructor Create;
     destructor Destroy;override;
 
+    function GetFactoryName(node:PSynTableInfo):string;
+
     //检测数据库版本.
     function CheckDBVersion:boolean;
     //初始化同步队列
@@ -29,7 +32,9 @@ type
     function GetSynTimeStamp(tbName:string):int64;
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64);
     //双同同步
-    procedure SyncSingleTable(tbName,KeyFields:string);
+    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string);
+    //开始同步数据
+    procedure SyncAll;
 
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
@@ -77,6 +82,17 @@ begin
   inherited;
 end;
 
+function TSyncFactory.GetFactoryName(node: PSynTableInfo): string;
+begin
+  case node^.synFlag of
+  1:result := 'TSyncCaRelations';
+  2:result := 'TSyncCaRelationInfo';
+  3:result := 'TSyncPubBarcode';
+  else
+    result := 'TSyncSingleTable';
+  end;
+end;
+
 function TSyncFactory.GetSynTimeStamp(tbName: string): int64;
 var
   rs:TZQuery;
@@ -96,7 +112,10 @@ end;
 procedure TSyncFactory.InitList;
 var
   n:PSynTableInfo;
+  i:integer;
 begin
+  for i:=0 to FList.Count -1 do Dispose(FList[i]);
+  FList.Clear;
   new(n);
   n^.tbname := 'CA_TENANT';
   n^.keyFields := 'TENANT_ID';
@@ -128,14 +147,14 @@ begin
   n^.synFlag := 0;
   FList.Add(n);
   new(n);
-  n^.tbname := 'CA_RELATION';
-  n^.keyFields := 'TENANT_ID;RELATION_ID';
-  n^.synFlag := 0;
-  FList.Add(n);
-  new(n);
   n^.tbname := 'CA_RELATIONS';
   n^.keyFields := 'TENANT_ID;RELATIONS_ID';
-  n^.synFlag := 0;
+  n^.synFlag := 1;
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'CA_RELATION';
+  n^.keyFields := 'TENANT_ID;RELATION_ID';
+  n^.synFlag := 2;
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_CODE_INFO';
@@ -158,11 +177,21 @@ begin
   n^.synFlag := 0;
   FList.Add(n);
   new(n);
+  n^.tbname := 'PUB_GOODSSORT';
+  n^.keyFields := 'TENANT_ID;SORT_ID;SORT_TYPE';
+  n^.synFlag := 2;
+  FList.Add(n);
+  new(n);
   n^.tbname := 'PUB_COLOR_INFO';
   n^.keyFields := 'TENANT_ID;COLOR_ID';
   n^.synFlag := 0;
   FList.Add(n);
   new(n);
+  n^.tbname := 'PUB_COLOR_INFO';
+  n^.keyFields := 'TENANT_ID;COLOR_ID';
+  n^.synFlag := 2;
+  FList.Add(n);
+  new(n);
   n^.tbname := 'PUB_SIZE_INFO';
   n^.keyFields := 'TENANT_ID;SIZE_ID';
   n^.synFlag := 0;
@@ -170,7 +199,17 @@ begin
   new(n);
   n^.tbname := 'PUB_SIZE_INFO';
   n^.keyFields := 'TENANT_ID;SIZE_ID';
+  n^.synFlag := 2;
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'PUB_SIZE_INFO';
+  n^.keyFields := 'TENANT_ID;SIZE_ID';
   n^.synFlag := 0;
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'PUB_SIZE_INFO';
+  n^.keyFields := 'TENANT_ID;SIZE_ID';
+  n^.synFlag := 2;
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_MEAUNITS';
@@ -183,14 +222,29 @@ begin
   n^.synFlag := 0;
   FList.Add(n);
   new(n);
+  n^.tbname := 'PUB_GOODSINFO';
+  n^.keyFields := 'TENANT_ID;GODS_ID';
+  n^.synFlag := 2;
+  FList.Add(n);
+  new(n);
   n^.tbname := 'PUB_GOODS_RELATION';
+  n^.keyFields := 'TENANT_ID;ROWS_ID';
+  n^.synFlag := 0;
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'PUB_GOODS_RELATION';
+  n^.keyFields := 'TENANT_ID;ROWS_ID';
+  n^.synFlag := 2;
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'PUB_BARCODE';
   n^.keyFields := 'TENANT_ID;ROWS_ID';
   n^.synFlag := 0;
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_BARCODE';
   n^.keyFields := 'TENANT_ID;ROWS_ID';
-  n^.synFlag := 0;
+  n^.synFlag := 3;
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_PRICEGRADE';
@@ -248,7 +302,29 @@ begin
      Global.LocalFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,COMM,TIME_STAMP,VALUE_TYPE) values('+inttostr(Global.TENANT_ID)+',''SYN_'+tbName+''','''+inttostr(TimeStamp)+''',''00'','+GetTimeStamp(Global.LocalFactory.iDbType)+',0)');
 end;
 
-procedure TSyncFactory.SyncSingleTable(tbName, KeyFields: string);
+procedure TSyncFactory.SyncAll;
+var
+  i:integer;
+begin
+  frmLogo.Show;
+  try
+  SyncFactory.InitList;
+  frmLogo.ProgressBar1.Max := FList.Count;
+  for i:=0 to FList.Count -1 do
+    begin
+      frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      frmLogo.Label1.Update;
+      case PSynTableInfo(FList[i])^.synFlag of
+      0,1,2,3:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      end;
+      frmLogo.ProgressBar1.Position := i;
+    end;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string);
 var
   cs,rs:TZQuery;
 begin
@@ -261,14 +337,14 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     //以服务器为优先下载
-    Global.RemoteFactory.Open(rs,'TSyncSingleTable',Params);
+    Global.RemoteFactory.Open(rs,ZClassName,Params);
     cs.Delta := rs.SyncDelta;
-    Global.LocalFactory.UpdateBatch(cs,'TSyncSingleTable',Params);
+    Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
     Params.ParamByName('SYN_COMM').AsBoolean := true;
     //上传本机数据
-    Global.LocalFactory.Open(cs,'TSyncSingleTable',Params);
+    Global.LocalFactory.Open(cs,ZClassName,Params);
     rs.Delta := cs.SyncDelta;
-    Global.RemoteFactory.UpdateBatch(rs,'TSyncSingleTable',Params);
+    Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
     SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
     rs.Free;

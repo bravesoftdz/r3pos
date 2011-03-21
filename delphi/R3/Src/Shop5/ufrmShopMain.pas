@@ -129,43 +129,17 @@ type
     Image5: TImage;
     Image6: TImage;
     Panel2: TPanel;
-    Panel6: TPanel;
-    Image7: TImage;
-    Image8: TImage;
     Image4: TImage;
     Label1: TLabel;
-    rzToolButton: TPanel;
-    Image1: TImage;
-    Image10: TImage;
-    Panel3: TPanel;
-    Image9: TImage;
-    Label2: TLabel;
-    toolButton: TRzBmpButton;
+    rzTool: TPanel;
     Panel7: TPanel;
-    Image11: TImage;
     Panel8: TPanel;
-    Image12: TImage;
-    Image14: TImage;
     Panel10: TPanel;
-    Image2: TImage;
-    Image13: TImage;
     Panel11: TPanel;
-    Label3: TLabel;
-    RzBmpButton8: TRzBmpButton;
-    RzBmpButton9: TRzBmpButton;
-    RzBmpButton10: TRzBmpButton;
     Image15: TImage;
-    Image16: TImage;
-    Image17: TImage;
     ImageList1: TImageList;
-    Panel9: TPanel;
     Image19: TImage;
-    RzTab: TRzTabControl;
     RzGroupBar1: TRzGroupBar;
-    Image18: TImage;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    lblLogin: TLabel;
     ImageList2: TImageList;
     actfrmMeaUnits: TAction;
     actfrmDutyInfoList: TAction;
@@ -231,6 +205,67 @@ type
     actfrmRecvDayReport: TAction;
     actfrmRckDayReport: TAction;
     actfrmRelation: TAction;
+    Label2: TLabel;
+    Panel12: TPanel;
+    Panel13: TPanel;
+    Image1: TImage;
+    Panel14: TPanel;
+    Image9: TImage;
+    Image14: TImage;
+    Panel15: TPanel;
+    Image10: TImage;
+    Image11: TImage;
+    Panel3: TPanel;
+    Panel16: TPanel;
+    Panel6: TPanel;
+    Panel19: TPanel;
+    Image20: TImage;
+    Panel18: TPanel;
+    Panel17: TPanel;
+    Image7: TImage;
+    Image8: TImage;
+    RzBmpButton10: TRzBmpButton;
+    RzBmpButton9: TRzBmpButton;
+    RzBmpButton8: TRzBmpButton;
+    Image17: TImage;
+    Image21: TImage;
+    Panel20: TPanel;
+    Image12: TImage;
+    Panel21: TPanel;
+    Image2: TImage;
+    Panel22: TPanel;
+    Image13: TImage;
+    Image22: TImage;
+    Panel23: TPanel;
+    Image23: TImage;
+    Image24: TImage;
+    Image25: TImage;
+    ImageList3: TImageList;
+    Image16: TImage;
+    rzToolButton: TPanel;
+    Image27: TImage;
+    Panel25: TPanel;
+    Image18: TImage;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    RzBmpButton5: TRzBmpButton;
+    toolButton: TRzBmpButton;
+    rzChildTitle: TRzLabel;
+    RzBmpButton3: TRzBmpButton;
+    RzBmpButton6: TRzBmpButton;
+    Page1: TRzBmpButton;
+    Page2: TRzBmpButton;
+    Page3: TRzBmpButton;
+    Page4: TRzBmpButton;
+    Page5: TRzBmpButton;
+    RzLabel1: TRzLabel;
+    lblLogin: TLabel;
+    Panel24: TPanel;
+    Image26: TImage;
+    Panel26: TPanel;
+    Image28: TImage;
+    Panel9: TPanel;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -247,7 +282,7 @@ type
     procedure RzTabChange(Sender: TObject);
     procedure Image19Click(Sender: TObject);
     procedure RzBmpButton9Click(Sender: TObject);
-    procedure RzBmpButton1Click(Sender: TObject);
+    procedure toolButtonClick(Sender: TObject);
     procedure actfrmMeaUnitsExecute(Sender: TObject);
     procedure actfrmDutyInfoListExecute(Sender: TObject);
     procedure actfrmRoleInfoListExecute(Sender: TObject);
@@ -307,6 +342,9 @@ type
     procedure actfrmStorageDayReportExecute(Sender: TObject);
     procedure actfrmRckDayReportExecute(Sender: TObject);
     procedure actfrmRelationExecute(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure Page1Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -355,7 +393,7 @@ uses
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
-  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport, ufrmRelation;
+  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -426,7 +464,8 @@ begin
   FList.Add(button);
   SortToolButton;
   button.Down := true;
-  TfrmBasic(Form).OnFreeForm := DoFreeForm;
+  TfrmBasic(Form).OnFreeForm := DoFreeForm;     
+  rzChildTitle.Caption := '当前位置->'+form.Caption;
 end;
 
 procedure TfrmShopMain.RemoveFrom(form: TForm);
@@ -460,8 +499,11 @@ begin
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
-      button.Top := 9;
-      button.Left := i*(button.Width+1)+rzLeft.Width+150;
+      button.Top := 0;
+      if i=0 then
+         button.Left := 0
+      else
+         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+5;
     end;
 end;
 
@@ -474,6 +516,7 @@ begin
       if TrzBmpButton(FList[i]).tag=integer(pointer(screen.ActiveForm)) then
          begin
            TrzBmpButton(FList[i]).Down := true;
+           rzChildTitle.Caption := '当前位置->'+Screen.ActiveForm.Caption;
            break;
          end;
     end;
@@ -490,6 +533,7 @@ begin
            TrzBmpButton(FList[i]).Tag := 0;
            TObject(FList[i]).Free;
            FList.Delete(i);
+           SortToolButton;
            break;
          end;
     end;
@@ -821,21 +865,21 @@ begin
     end;
 end;
 procedure CreatePageMenu;
-var tab:TRzTabCollectionItem;
+//var tab:TRzTabCollectionItem;
 begin
-  RzTab.Tabs.Clear;
-  CA_MODULE.First;
+//  RzTab.Tabs.Clear;
+//  CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
       if CA_MODULE.FieldbyName('LEVEL').AsInteger =1 then
       begin
-        tab := RzTab.Tabs.Add;
-        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))-1;
-        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))+10-1;
+//        tab := RzTab.Tabs.Add;
+//        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))-1;
+//        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))+10-1;
       end;
       CA_MODULE.Next;
     end;
-  if RzTab.Tabs.Count >0 then RzTab.TabIndex := 0;
+//  if RzTab.Tabs.Count >0 then RzTab.TabIndex := 0;
 end;
 var
   rs:TZQuery;
@@ -864,9 +908,12 @@ begin
          begin
            g := TrzGroup.Create(RzGroupBar1);
            g.Caption := rs.FieldbyName('MODU_NAME').AsString;
-           g.CaptionColor := $00E4D2AD;
-           g.CaptionHeight := 25;
+           g.CaptionColor := clWhite;
+           g.Color := clWhite;
+//           g.CaptionColor := $00E4D2AD;
+           g.CaptionHeight := 35;
            g.DividerVisible := true;
+           g.CaptionImageIndex := 0;
            RzGroupBar1.AddGroup(g);
            inc(r);
            // if r>3 then g.Close;
@@ -880,7 +927,7 @@ begin
              b.Caption := rs.FieldbyName('MODU_NAME').AsString;
              b.Action := FindAction(rs.FieldbyName('ACTION_NAME').AsString);
              TAction(b.Action).Caption := rs.FieldbyName('MODU_NAME').AsString;
-             b.ImageIndex := 0;
+             b.ImageIndex := 1;
            end;
          end;
       rs.Next;
@@ -901,18 +948,18 @@ end;
 procedure TfrmShopMain.RzTabChange(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 28 then rzLeft.Width := 147;
+  if rzLeft.Width = 33 then rzLeft.Width := 172;
   if Logined then LoadMenu;
 end;
 
 procedure TfrmShopMain.Image19Click(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 28 then
-     rzLeft.Width := 147
+  if rzLeft.Width = 33 then
+     rzLeft.Width := 172
   else
-     rzLeft.Width := 28;
-  frmDesk.OnResize(nil);
+     rzLeft.Width := 33;
+  frmMain.OnResize(nil);
 end;
 
 procedure TfrmShopMain.RzBmpButton9Click(Sender: TObject);
@@ -931,7 +978,7 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.RzBmpButton1Click(Sender: TObject);
+procedure TfrmShopMain.toolButtonClick(Sender: TObject);
 begin
   inherited;
   frmDesk.ForeBringtoFront;
@@ -1889,9 +1936,27 @@ end;
 
 procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
+function GetFlag:integer;
+begin
+  result := 0;
+  if Page1.Down then
+     result := 1
+  else
+  if Page2.Down then
+     result := 2
+  else
+  if Page3.Down then
+     result := 3
+  else
+  if Page4.Down then
+     result := 4
+  else
+  if Page5.Down then
+     result := 5;
+end;
 begin
   inherited;
-  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(RzTab.Tabs[RzTab.TabIndex].ImageIndex+1);
+  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(GetFlag);
 end;
 
 procedure TfrmShopMain.actfrmIoroOrderList1Execute(Sender: TObject);
@@ -2178,6 +2243,27 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  if rzLeft.Width = 33 then rzLeft.Width := 172;
+  frmMain.OnResize(nil);
+  frmShopDesk.Locked := true;
+  frmShopDesk.BringToFront;
+end;
+
+procedure TfrmShopMain.Page1Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu;
+end;
+
+procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  SyncFactory.SyncAll;
 end;
 
 end.

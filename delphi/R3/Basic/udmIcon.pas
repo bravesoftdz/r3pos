@@ -70,7 +70,6 @@ uses
 type
   TdmIcon = class(TDataModule)
     ImgLst16: TImageList;
-    ImgLst12: TImageList;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
@@ -99,283 +98,227 @@ begin
     //Index 0  新增
     HsResOpr.GetDllIcoRes(Icon, 'New',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 1  修改
     HsResOpr.GetDllIcoRes(Icon, 'Edit',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 2  删除
     HsResOpr.GetDllIcoRes(Icon, 'Delete',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 3  定义
     HsResOpr.GetDllIcoRes(Icon, 'Define',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 4  导出
     HsResOpr.GetDllIcoRes(Icon, 'Export',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 5  第一条
     HsResOpr.GetDllIcoRes(Icon, 'First',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 6  帮助
     HsResOpr.GetDllIcoRes(Icon, 'Help',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 7  最后一条
     HsResOpr.GetDllIcoRes(Icon, 'Last',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 8  下一条
     HsResOpr.GetDllIcoRes(Icon, 'Next',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 9  预览
     HsResOpr.GetDllIcoRes(Icon, 'Preview',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 10  打印
     HsResOpr.GetDllIcoRes(Icon, 'Print',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 11  前一条
     HsResOpr.GetDllIcoRes(Icon, 'Prior',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 12  查找
     HsResOpr.GetDllIcoRes(Icon, 'Search',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 13  退出
     HsResOpr.GetDllIcoRes(Icon, 'Exit',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 14  保存
     HsResOpr.GetDllIcoRes(Icon, 'Save',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 15  取消
     HsResOpr.GetDllIcoRes(Icon, 'Cancel',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 16  提交
     HsResOpr.GetDllIcoRes(Icon, 'Commit',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 17  刷新
     HsResOpr.GetDllIcoRes(Icon, 'Refresh',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 18  定位
     HsResOpr.GetDllIcoRes(Icon, 'Locate',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 19  上移
     HsResOpr.GetDllIcoRes(Icon, 'Up',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 20  下移
     HsResOpr.GetDllIcoRes(Icon, 'Down',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 21  不选
     HsResOpr.GetDllIcoRes(Icon, 'UnSel',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 22  专项
     HsResOpr.GetDllIcoRes(Icon, 'Special',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 23  余额
     HsResOpr.GetDllIcoRes(Icon, 'Balance',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 24  催款
     HsResOpr.GetDllIcoRes(Icon, 'Hurry',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 25  全消
     HsResOpr.GetDllIcoRes(Icon, 'UnSelAll',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 26  全选
     HsResOpr.GetDllIcoRes(Icon, 'SelAll',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 27  删行
     HsResOpr.GetDllIcoRes(Icon, 'DelRow',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 28  凭证
     HsResOpr.GetDllIcoRes(Icon, 'Voucher',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
 
     //Index 29  增行
     HsResOpr.GetDllIcoRes(Icon, 'AddRow',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 30  勾对
     HsResOpr.GetDllIcoRes(Icon, 'ChkRgt',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 31  对账
     HsResOpr.GetDllIcoRes(Icon, 'ChkLgr',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 32  总帐
     HsResOpr.GetDllIcoRes(Icon, 'Ledger',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 33  方向
     HsResOpr.GetDllIcoRes(Icon, 'Way',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 34  明细
     HsResOpr.GetDllIcoRes(Icon, 'Detail',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 35  检查
     HsResOpr.GetDllIcoRes(Icon, 'Check',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 36  试算
     HsResOpr.GetDllIcoRes(Icon, 'TryCount',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 37  转帐
     HsResOpr.GetDllIcoRes(Icon, 'Trans',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 38  还原
     HsResOpr.GetDllIcoRes(Icon, 'Revert',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 39  输出
     HsResOpr.GetDllIcoRes(Icon, 'OutPut',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 40  设置
     HsResOpr.GetDllIcoRes(Icon, 'Setup',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 41  转换
     HsResOpr.GetDllIcoRes(Icon, 'Convert',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 42  辅助
     HsResOpr.GetDllIcoRes(Icon, 'Assistant',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 43  过滤
     HsResOpr.GetDllIcoRes(Icon, 'Filter',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 44  选中
     HsResOpr.GetDllIcoRes(Icon, 'Select',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 45   签字
     HsResOpr.GetDllIcoRes(Icon, 'Cashier',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 46   审核
     HsResOpr.GetDllIcoRes(Icon, 'Audit',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 47   标错
     HsResOpr.GetDllIcoRes(Icon, 'Flag',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 48   昨天
     HsResOpr.GetDllIcoRes(Icon, 'Yesterday',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 49   上步
     HsResOpr.GetDllIcoRes(Icon, 'btnBack',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 50   下步
     HsResOpr.GetDllIcoRes(Icon, 'btnNext',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 51   下级
     HsResOpr.GetDllIcoRes(Icon, 'Low',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 52   辅助1
     HsResOpr.GetDllIcoRes(Icon, 'assistant1',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 53   辅助帐薄联查
     HsResOpr.GetDllIcoRes(Icon, 'assistant2',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 54   下级科目联查
     HsResOpr.GetDllIcoRes(Icon, 'SubCode',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
 
     //Index 55   详细
     HsResOpr.GetDllIcoRes(Icon, 'Detail1',sDllName);
     imgLst16.AddIcon(Icon);
-    imgLst12.AddIcon(Icon);
   finally
     Icon.Free;
   end;

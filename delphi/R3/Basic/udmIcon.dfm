@@ -10,9 +10,4 @@ object dmIcon: TdmIcon
     Left = 48
     Top = 24
   end
-  object ImgLst12: TImageList
-    Height = 11
-    Left = 48
-    Top = 80
-  end
 end

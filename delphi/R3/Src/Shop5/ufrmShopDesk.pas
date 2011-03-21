@@ -5,19 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmDesk, ImgList, ExtCtrls, StdCtrls, Buttons, jpeg, RzPanel,
-  RzBmpBtn, RzLine, RzLabel, Menus,ShlObj,ComObj,ShellApi,ActiveX;
+  RzBmpBtn, RzLine, RzLabel, Menus,ShlObj,ComObj,ShellApi,ActiveX,
+  RzGroupBar;
 
 type
   TfrmShopDesk = class(TfrmDesk)
     RzPanel1: TRzPanel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    Panel1: TPanel;
-    Image14: TImage;
-    Image1: TImage;
-    Image2: TImage;
-    lblToolCaption: TRzLabel;
-    RzLine54: TRzLine;
     RzBmpButton15: TRzBmpButton;
     RzBmpButton17: TRzBmpButton;
     RzBmpButton18: TRzBmpButton;
@@ -25,8 +20,11 @@ type
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
     RzLine2: TRzLine;
-    Shape1: TShape;
     RzBmpButton3: TRzBmpButton;
+    RzGroupBar1: TRzGroupBar;
+    RzGroup1: TRzGroup;
+    ImageList1: TImageList;
+    RzGroup2: TRzGroup;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);

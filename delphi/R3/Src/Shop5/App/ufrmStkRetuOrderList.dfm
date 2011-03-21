@@ -9,19 +9,19 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 794
-    Height = 528
+    Height = 522
     inherited RzPanel2: TRzPanel
       Width = 784
-      Height = 518
+      Height = 512
       inherited RzPage: TRzPageControl
         Width = 778
-        Height = 512
+        Height = 506
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37319#36141#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 776
-            Height = 485
+            Height = 479
             inherited RzPanel1: TRzPanel
               Width = 766
               Height = 100
@@ -268,7 +268,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 105
               Width = 766
-              Height = 375
+              Height = 369
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -372,17 +372,15 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
   inherited RzPanel4: TRzPanel
     Width = 794
     inherited Image1: TImage
-      Left = 792
-      Width = 3
-    end
-    inherited Image14: TImage
-      Left = 785
+      Left = 636
+      Width = 158
     end
     inherited Image3: TImage
-      Left = 792
-      Width = 3
+      Left = 636
+      Width = 158
     end
     inherited rzPanel5: TPanel
+      Left = 636
       inherited lblToolCaption: TRzLabel
         Width = 132
         Caption = #24403#21069#20301#32622'->'#37319#36141#36864#36135#20837#24211
@@ -397,7 +395,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 616
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 616

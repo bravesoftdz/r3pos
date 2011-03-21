@@ -125,7 +125,7 @@ Var
   //产品编码
   ProductID:string;
 implementation
-uses Forms,IniFiles;
+uses Forms,IniFiles,ufrmLogo;
 {$R *.dfm}
 var
   whKeyboard: HHook;
@@ -263,8 +263,10 @@ var i:Integer;
     S,SQL:String;
 begin
   S := '正在初始化基础资料....';
+  frmLogo.ProgressBar1.Max := ComponentCount;
   for i:=0 to ComponentCount -1 do
     begin
+      frmLogo.ProgressBar1.Position := i;
       if Components[i] Is TZQuery then
          begin
            Sleep(0);

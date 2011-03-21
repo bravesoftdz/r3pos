@@ -16,13 +16,13 @@ type
     RzPanel4: TRzPanel;
     Image2: TImage;
     Image1: TImage;
-    Image14: TImage;
     Image3: TImage;
     rzPanel5: TPanel;
     Image4: TImage;
     lblToolCaption: TRzLabel;
     CoolBar1: TCoolBar;
     ToolBar1: TToolBar;
+    Image14: TImage;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);

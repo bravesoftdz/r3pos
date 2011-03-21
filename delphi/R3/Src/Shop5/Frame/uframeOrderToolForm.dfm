@@ -89,15 +89,12 @@ inherited frameOrderToolForm: TframeOrderToolForm
   inherited RzPanel4: TRzPanel
     Width = 846
     inherited Image1: TImage
-      Left = 698
-      Width = 139
-    end
-    inherited Image14: TImage
-      Left = 837
+      Left = 546
+      Width = 300
     end
     inherited Image3: TImage
-      Left = 698
-      Width = 139
+      Left = 546
+      Width = 300
     end
     inherited CoolBar1: TCoolBar
       Width = 522

@@ -165,7 +165,8 @@ uses
   ufrmJoinRelation in 'App\ufrmJoinRelation.pas' {frmJoinRelation},
   ufrmRelation in 'App\ufrmRelation.pas' {frmRelation},
   ufrmRelationInfo in 'App\ufrmRelationInfo.pas' {frmRelationInfo},
-  objRelation in 'Obj\objRelation.pas';
+  objRelation in 'Obj\objRelation.pas',
+  ObjSyncFactory in 'Obj\ObjSyncFactory.pas';
 
 {$R *.res}
 var

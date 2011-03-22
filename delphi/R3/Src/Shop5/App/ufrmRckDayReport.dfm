@@ -15,10 +15,10 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 538
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -162,6 +162,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -181,6 +182,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -527,6 +529,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -546,6 +549,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -942,6 +946,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -955,6 +960,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'RECV_DATE'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #26085#26399
                       Width = 99
@@ -1340,6 +1346,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1359,6 +1366,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                     item
                       EditButtons = <>
                       FieldName = 'USER_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22995#21517
                       Width = 99

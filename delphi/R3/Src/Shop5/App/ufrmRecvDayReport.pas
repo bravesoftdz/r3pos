@@ -51,7 +51,6 @@ type
     P4_D2: TcxDateEdit;
     RzBitBtn3: TRzBitBtn;
     RzPanel15: TRzPanel;
-    DBGridEh4: TDBGridEh;
     dsadoReport4: TDataSource;
     Label5: TLabel;
     fndP1_SHOP_TYPE: TcxComboBox;
@@ -73,6 +72,7 @@ type
     adoReport4: TZQuery;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP3_SHOP_ID: TzrComboBoxList;
+    DBGridEh4: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -81,19 +81,16 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
-    //计算日台账:
-    procedure CheckCalc(EndDate: integer); //开始月份| 结束月份
+
     //按管理收款汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店收款汇总表
     function GetShopSQL(chk:boolean=true): string;
     //按日期分类汇总表
-    function GetSortSQL(chk:boolean=true): string;
-    //按商品收款汇总表
-    function GetGodsSQL(chk:boolean=true): string;
+    function GetRecvDaySQL(chk:boolean=true): string;
+    //应收款流水
+    function GetRecvGlideSQL(chk:boolean=true): string;
 
-    //输入查询条件最大值日期，返回台帐表的最大结帐日期
-    function GetRckMaxDate(EndDate: integer): Integer;
     function GetShopIDCnd(ShopID: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
     function GetDateCnd(BegDate,EndDate: TcxDateEdit; FieldName: string): string;  //时间条件
     function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
@@ -138,39 +135,32 @@ end;
 
 function TfrmRecvDayReport.GetGroupSQL(chk:boolean=true): string;
 var
-  EndDate,MaxDate: integer;
-  strSql,ViwSql,RCKRData,strWhere: string;
+  strSql: string;
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
-  EndDate:=strtoInt(FormatDatetime('YYYYMMDD',P1_D2.Date));
-  //测试计算日台账:
-  CheckCalc(EndDate);
-  //试算之后运行取台帐表中最大值
-  MaxDate:=GetRckMaxDate(EndDate);
-  //按根据条件门店汇总:
-  ViwSql:=
-     'select B.REGION_ID as REGION_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
-     'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RECVALLDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P1_D1,P1_D2,'RECV_DATE')+
-     ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
-     ' group by B.REGION_ID,A.SHOP_ID ';
 
-  //台账表
-  RCKRData:='select SHOP_ID,isnull(TRN_IN_MNY,0)-isnull(TRN_OUT_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  //按根据条件门店汇总:
+  strSql:=
+     'select B.REGION_ID as REGION_ID'+
+     ',sum(ACCT_MNY) as ACCT_MNY '+
+     ',sum(RECV_MNY) as RECV_MNY '+
+     ',sum(RECK_MNY) as RECK_MNY '+
+     ',sum(REVE_MNY) as REVE_MNY '+
+     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+
+     ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
+     ' group by B.REGION_ID ';
+
   //关联
   strSql:=
-    'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
-    'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
-    '('+ViwSql+') j left outer join ('+RCKRData+')c on j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
-
-  Result := ParseSQL(Factor.iDbType,
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
-    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r '+
-    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID '
-    );
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
+    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID ';
+
+  Result := ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmRecvDayReport.GetRowType: integer;
@@ -198,14 +188,14 @@ begin
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
-        strSql := GetSortSQL;
+        strSql := GetRecvDaySQL;
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
-        strSql := GetGodsSQL;
+        strSql := GetRecvGlideSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
@@ -215,99 +205,90 @@ end;
 
 function TfrmRecvDayReport.GetShopSQL(chk:boolean=true): string;
 var
-  EndDate,MaxDate: integer;
-  strSql,ViwSql,RCKRData,strWhere: string;
+  strSql: string;
 begin
   if P2_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
-  EndDate:=strtoInt(FormatDatetime('YYYYMMDD',P1_D2.Date));
-  //测试计算日台账:
-  CheckCalc(EndDate);
-  //试算之后运行取台帐表中最大值
-  MaxDate:=GetRckMaxDate(EndDate);
+
   //按根据条件门店汇总:
-  ViwSql:=
-     'select A.TENANT_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
-     ' sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J, sum(RECV_MNY) as RECV_MNY from VIW_RECVALLDATA A,CA_SHOP_INFO B '+
+  strSql:=
+     'select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID'+
+     ',sum(ACCT_MNY) as ACCT_MNY '+
+     ',sum(RECV_MNY) as RECV_MNY '+
+     ',sum(RECK_MNY) as RECK_MNY '+
+     ',sum(REVE_MNY) as REVE_MNY '+
+     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P2_D1,P2_D2,'RECV_DATE')+
+     ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
-  //台账表
-  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_IN_MNY,0)-isnull(TRN_OUT_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
   //关联
   strSql:=
-    'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY from ('+ViwSql+') j left outer join ('+RCKRData+')c '+
-    ' on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID ';
-
-  Result := ParseSQL(Factor.iDbType,
     'select jp.*,r.SEQ_NO as SHOP_CODE,r.SHOP_NAME as SHOP_NAME '+
-    ' from ('+strSql+')jp left outer join CA_SHOP_INFO r on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO '
-    );
+    ' from ('+strSql+')jp '+
+    ' left outer join CA_SHOP_INFO r '+
+    ' on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+ 
+  Result := ParseSQL(Factor.iDbType, strSql);
 end;
 
-function TfrmRecvDayReport.GetSortSQL(chk:boolean=true): string;
+function TfrmRecvDayReport.GetRecvDaySQL(chk:boolean=true): string;
 var
-  EndDate,MaxDate: integer;
-  strSql,ViwSql,RCKRData,strWhere: string;
+  strSql: string;
 begin
   if P3_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
-  EndDate:=strtoInt(FormatDatetime('YYYYMMDD',P1_D2.Date));
-  //测试计算日台账:
-  CheckCalc(EndDate);
-  //按根据条件门店查询:
-  ViwSql:=
-     'select A.RECV_DATE as RECV_DATE,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
-     ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RECVALLDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P3_D1,P3_D2,'RECV_DATE')+
-     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
-     ' group by A.RECV_DATE ';
 
-  //台账表
-  RCKRData:='select CREA_DATE,isnull(sum(TRN_IN_MNY),0)-isnull(sum(TRN_OUT_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
-  //关联
   strSql:=
-    'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY '+
-    ' from ('+ViwSql+')j '+
-    ' left outer join ('+RCKRData+')c '+
-    ' on j.RECV_DATE=c.CREA_DATE order by j.RECV_DATE ';  
+     'select ABLE_DATE as RECV_DATE '+
+     ',sum(ACCT_MNY) as ACCT_MNY '+
+     ',sum(RECV_MNY) as RECV_MNY '+
+     ',sum(RECK_MNY) as RECK_MNY '+
+     ',sum(REVE_MNY) as REVE_MNY '+
+     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+
+     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
+     ' group by ABLE_DATE ';
+     
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
-function TfrmRecvDayReport.GetGodsSQL(chk:boolean=true): string;
+function TfrmRecvDayReport.GetRecvGlideSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,ViwSql,RMNYData: string;
+  strSql,strWhere: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //按根据条件门店查询:
-  ViwSql:=
-     'select a.TENANT_ID as TENANT_ID,A.CREA_USER as CREA_USER,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
-     ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RECVALLDATA A,CA_SHOP_INFO B '+
+  strSql:=
+     'select A.TENANT_ID as TENANT_ID'+
+     ',ABLE_DATE'+
+     ',CLIENT_ID'+
+     ',RECV_TYPE'+
+     ',ACCT_INFO'+
+     ',ACCT_MNY'+
+     ',RECV_MNY'+
+     ',RECK_MNY'+
+     ',REVE_MNY'+
+     ',NEAR_DATE'+
+     ',CREA_USER'+
+     ',B.SHOP_NAME as SHOP_ID_TEXT '+
+     ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P4_D1,P4_D2,'RECV_DATE')+
-     ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+
-     ' group by A.TENANT_ID,A.CREA_USER ';
+     ' '+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE')+
+     ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' ';
 
-  //收银员最后一天的零钱
-  RMNYData:=
-    ' select AA.CREA_USER as CREA_USER,isnull(BALANCE,0) as BALANCE from ACC_CLOSE_FORDAY AA, '+
-    '(select max(CLSE_DATE) as CLSE_DATE,CREA_USER from ACC_CLOSE_FORDAY where CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by CREA_USER) BB '+
-    ' where AA.CREA_USER=BB.CREA_USER and AA.CLSE_DATE=BB.CLSE_DATE and AA.CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' ';
   //关联
   strSql:=
-    'select jc.*,u.ACCOUNT as ACCOUNT,u.USER_NAME as USER_NAME from'+
-    ' (select j.*,BALANCE from ('+ViwSql+')j '+
-    '  left outer join ('+RMNYData+')c on j.CREA_USER=c.CREA_USER)jc '+
-    ' left outer join VIW_Users u on jc.TENANT_ID=u.TENANT_ID and jc.CREA_USER=u.USER_ID '+
-    ' order by jc.CREA_USER '; 
+    'select jb.*,D.CLIENT_NAME from ('+strSql+') jb '+
+    ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID '+
+    ' order by jb.ABLE_DATE ';
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -478,50 +459,6 @@ begin
       0: result:=' and '+AName+'REGION_ID='''+TYPE_VALUE.AsString+''' ';
       1: result:=' and '+AName+'SHOP_TYPE='''+TYPE_VALUE.AsString+''' ';
     end;
-  end;
-end;
-
-
-function TfrmRecvDayReport.GetRckMaxDate(EndDate: integer): integer;
-var
-  rs:TZQuery;
-begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select max(CREA_DATE) as CREA_DATE from RCK_ACCT_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE ';
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('CREA_DATE').AsInteger := EndDate;
-    Factor.Open(rs);
-    if rs.Fields[0].AsString='' then
-      result := EndDate
-    else
-      result := rs.Fields[0].AsInteger;
-  finally
-    rs.Free;
-  end;
-end;
-
-procedure TfrmRecvDayReport.CheckCalc(EndDate: integer);
-var
-  rs:TZQuery;
-begin
-  Exit;
-  if IsOnDblClick then
-  begin
-    IsOnDblClick:=False; //重置标记位
-    Exit; //若是双点击[DBGridEh连带查询则不在试算台帐]
-  end;
-
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select count(*) from RCK_ACCT_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE>=:CREA_DATE';
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('CREA_DATE').AsInteger := EndDate;
-    Factor.Open(rs);
-    if rs.Fields[0].AsInteger=0 then
-      TfrmCostCalc.TryCalcDayAcct(self);
-  finally
-    rs.Free;
   end;
 end;
 

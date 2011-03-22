@@ -1,9 +1,9 @@
 inherited frmRecvDayReport: TfrmRecvDayReport
-  Left = 194
-  Top = 109
+  Left = 192
+  Top = 102
   Width = 1022
   Height = 611
-  Caption = #25910#27454#26085#25253#34920
+  Caption = #24212#25910#27454#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -15,14 +15,12 @@ inherited frmRecvDayReport: TfrmRecvDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 538
-        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#25910#27454#27719#24635#34920
+          Caption = #22320#21306#24212#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 797
             Height = 511
@@ -188,132 +186,44 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'ACCT_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #21512#35745#37329#39069
+                      Width = 91
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
                       FieldName = 'RECV_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25910#27454#21512#35745
-                      Width = 86
+                      Title.Caption = #24050#25910#37329#39069
+                      Width = 112
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'REVE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #20914#24080#37329#39069
+                      Width = 106
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAY_A'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#29616#37329
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_B'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#38134#32852
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_C'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#20648#20540#21345
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_D'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#35760#36134
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_E'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#31036#21367
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_F'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#25903#31080
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_G'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#23567#39069#25903#20184
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_H'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_I'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_J'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 78
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 90
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 104
+                      Title.Caption = #32467#20313#37329#39069
+                      Width = 143
                     end>
                 end
               end
@@ -322,7 +232,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #38376#24215#25910#27454#27719#24635#34920
+          Caption = #38376#24215#24212#25910#27454#27719#24635#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -553,132 +463,44 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
+                      FieldName = 'ACCT_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #21512#35745#37329#39069
+                      Width = 91
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
                       FieldName = 'RECV_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25910#27454#21512#35745
-                      Width = 80
+                      Title.Caption = #24050#25910#37329#39069
+                      Width = 112
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'REVE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #20914#24080#37329#39069
+                      Width = 106
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAY_A'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#29616#37329
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_B'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#38134#32852
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_C'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#20648#20540#21345
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_D'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#35760#36134
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_E'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#31036#21367
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_F'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#25903#31080
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_G'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#23567#39069#25903#20184
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_H'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_I'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_J'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 66
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 94
+                      Title.Caption = #32467#20313#37329#39069
+                      Width = 143
                     end>
                 end
               end
@@ -687,7 +509,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #27599#26085#25910#27454#27719#24635#34920
+          Caption = #27599#26085#24212#25910#27454#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -960,125 +782,46 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                       Width = 99
                     end
                     item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'ACCT_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #21512#35745#37329#39069
+                      Width = 91
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25910#27454#21512#35745
-                      Width = 80
+                      Title.Caption = #24050#25910#37329#39069
+                      Width = 112
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'REVE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #20914#24080#37329#39069
+                      Width = 106
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAY_A'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#29616#37329
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_B'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#38134#32852
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_C'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#20648#20540#21345
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_D'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#35760#36134
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00%'
-                      EditButtons = <>
-                      FieldName = 'PAY_E'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#31036#21367
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_F'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#25903#31080
-                      Width = 58
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PAY_G'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#23567#39069#25903#20184
-                      Width = 58
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PAY_H'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PAY_I'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PAY_J'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'TRN_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32564#38134#37329#39069
-                      Width = 69
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'TRN_REST_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#29616#37329
-                      Width = 84
+                      Title.Caption = #32467#20313#37329#39069
+                      Width = 143
                     end>
                 end
               end
@@ -1087,7 +830,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #25910#38134#21592#25910#27454#27719#24635#34920
+          Caption = #24212#25910#27454#26126#32454#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -1300,17 +1043,9 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   Height = 415
                   Align = alClient
                   AllowedOperations = []
-                  BorderStyle = bsNone
-                  Color = clWhite
-                  Ctl3D = True
                   DataSource = dsadoReport4
                   Flat = True
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clWindowText
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  FooterColor = clWhite
+                  FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
                   FooterFont.Height = -12
@@ -1318,12 +1053,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-                  ParentCtl3D = False
-                  ParentFont = False
-                  ReadOnly = True
                   RowHeight = 20
                   SumList.Active = True
                   TabOrder = 0
@@ -1331,8 +1062,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   TitleFont.Color = clWindowText
                   TitleFont.Height = -12
                   TitleFont.Name = #23435#20307
-                  TitleFont.Style = [fsBold]
-                  TitleHeight = 22
+                  TitleFont.Style = []
+                  TitleHeight = 20
                   UseMultiTitle = True
                   IsDrawNullRow = False
                   CurrencySymbol = #65509
@@ -1342,146 +1073,166 @@ inherited frmRecvDayReport: TfrmRecvDayReport
                   OnGetCellParams = DBGridEh1GetCellParams
                   Columns = <
                     item
-                      Alignment = taCenter
+                      Color = clBtnFace
                       EditButtons = <>
                       FieldName = 'SEQNO'
                       Footers = <>
+                      ReadOnly = True
                       Title.Caption = #24207#21495
-                      Width = 30
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 32
+                    end
+                    item
+                      DisplayFormat = '0000-00-00'
+                      EditButtons = <>
+                      FieldName = 'ABLE_DATE'
+                      Footer.Value = #21512'   '#35745#65306
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #36134#27454#26085#26399
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 70
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'ACCOUNT'
+                      FieldName = 'CLIENT_NAME'
                       Footers = <>
-                      Title.Caption = #24037#21495
-                      Width = 62
+                      ReadOnly = True
+                      Title.Caption = #23458#25143#21517#31216
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 139
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'USER_NAME'
+                      FieldName = 'RECV_TYPE'
                       Footers = <>
-                      Title.Caption = #22995#21517
-                      Width = 99
+                      ReadOnly = True
+                      Title.Caption = #36134#27454#31867#22411
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 63
                     end
                     item
+                      EditButtons = <>
+                      FieldName = 'ACCT_INFO'
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #25688#35201
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 208
+                    end
+                    item
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'ACCT_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #21512#35745#37329#39069
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 61
+                    end
+                    item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25910#27454#21512#35745
-                      Width = 80
+                      ReadOnly = True
+                      Title.Caption = #24050#25910#37329#39069
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 61
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'REVE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #20914#24080#37329#39069
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 61
                     end
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAY_A'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#29616#37329
-                      Width = 58
+                      ReadOnly = True
+                      Title.Caption = #32467#20313#37329#39069
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 61
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
                       EditButtons = <>
-                      FieldName = 'PAY_B'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
+                      FieldName = 'NEAR_DATE'
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#38134#32852
-                      Width = 58
+                      ReadOnly = True
+                      Title.Caption = #26368#26032#25910#27454#26085#26399
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 105
                     end
                     item
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAY_C'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
+                      FieldName = 'SHOP_ID_TEXT'
                       Footers = <>
-                      Title.Caption = #20854#20013'|'#20648#20540#21345
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_D'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#35760#36134
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_E'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#31036#21367
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_F'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#25903#31080
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_G'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'#23567#39069#25903#20184
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_H'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_I'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PAY_J'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #20854#20013'|'
-                      Width = 58
-                    end
-                    item
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'BALANCE'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#38646#38065
-                      Width = 72
+                      ReadOnly = True
+                      Title.Caption = #25152#23646#38376#24215
+                      Title.Font.Charset = GB2312_CHARSET
+                      Title.Font.Color = clWindowText
+                      Title.Font.Height = -12
+                      Title.Font.Name = #23435#20307
+                      Title.Font.Style = [fsBold]
+                      Width = 97
                     end>
                 end
               end
@@ -1520,7 +1271,7 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
         Width = 60
-        Caption = #25910#27454#26085#25253#34920
+        Caption = #24212#25910#27454#25253#34920
       end
     end
   end
@@ -1539,6 +1290,10 @@ inherited frmRecvDayReport: TfrmRecvDayReport
     Left = 41
     Top = 354
   end
+  inherited SaveDialog1: TSaveDialog
+    Left = 157
+    Top = 196
+  end
   inherited adoReport1: TZQuery
     Left = 41
     Top = 321
@@ -1552,8 +1307,8 @@ inherited frmRecvDayReport: TfrmRecvDayReport
       5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
       635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
       53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
-      72645C71725C6C616E67323035325C66305C6673323420255B7768725D5C6631
-      5C66733136200D0A5C706172207D0D0A00}
+      72645C6C616E67323035325C66305C6673323420255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
     AfterGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B

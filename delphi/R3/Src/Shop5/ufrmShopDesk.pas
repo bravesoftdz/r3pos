@@ -19,12 +19,13 @@ type
     RzBmpButton24: TRzBmpButton;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
-    RzLine2: TRzLine;
     RzBmpButton3: TRzBmpButton;
     RzGroupBar1: TRzGroupBar;
     RzGroup1: TRzGroup;
     ImageList1: TImageList;
     RzGroup2: TRzGroup;
+    Image1: TImage;
+    Image2: TImage;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);

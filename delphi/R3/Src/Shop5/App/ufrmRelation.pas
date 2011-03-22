@@ -128,10 +128,13 @@ begin
       if w<>'' then w := w + ' and ';
       w := w + 'j.GODS_ID>=:MAXID';
      end;
-  if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
+  if (rzTree.Selected<>nil) then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID ';
+      if (rzTree.Selected.Level>0) then
+         w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+      else
+         w := w + 'b.RELATION_ID=:RELATION_ID ';
      end;
   if trim(edtKey.Text)<>'' then
      begin

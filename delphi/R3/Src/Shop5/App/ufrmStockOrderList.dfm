@@ -373,16 +373,18 @@ inherited frmStockOrderList: TfrmStockOrderList
     Width = 852
     inherited Image1: TImage
       Left = 636
-      Width = 216
+      Width = 196
     end
     inherited Image3: TImage
       Left = 636
-      Width = 216
+      Width = 196
+    end
+    inherited Image14: TImage
+      Left = 832
     end
     inherited rzPanel5: TPanel
       Left = 636
       inherited lblToolCaption: TRzLabel
-        Width = 108
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end

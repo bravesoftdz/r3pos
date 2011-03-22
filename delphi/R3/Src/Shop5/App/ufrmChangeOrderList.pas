@@ -99,10 +99,10 @@ begin
   0:result := 'select top 600 * from ('+result+') jp order by CHANGE_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by CHANGE_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+result+') order by CHANGE_ID limit 600';
+       'select * from ('+result+') j order by CHANGE_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by CHANGE_ID limit 600';
   else
-    result := 'select * from ('+result+') order by CHANGE_ID';
+    result := 'select * from ('+result+') j order by CHANGE_ID';
   end;
 end;
 

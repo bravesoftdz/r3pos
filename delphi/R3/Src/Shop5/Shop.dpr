@@ -166,7 +166,11 @@ uses
   ufrmRelation in 'App\ufrmRelation.pas' {frmRelation},
   ufrmRelationInfo in 'App\ufrmRelationInfo.pas' {frmRelationInfo},
   objRelation in 'Obj\objRelation.pas',
-  ObjSyncFactory in 'Obj\ObjSyncFactory.pas';
+  ObjSyncFactory in 'Obj\ObjSyncFactory.pas',
+  ufrmPayDayReport in 'App\ufrmPayDayReport.pas' {frmPayDayReport},
+  ufrmRecvDayReport in 'App\ufrmRecvDayReport.pas' {frmRecvDayReport},
+  ufrmRecvAbleReport in 'App\ufrmRecvAbleReport.pas' {frmRecvAbleReport},
+  ufrmPayAbleReport in 'App\ufrmPayAbleReport.pas' {frmPayAbleReport};
 
 {$R *.res}
 var

@@ -163,15 +163,15 @@ begin
         'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
         'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
         'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-        '0,0,0,0,0,0,0,0,'+
-        '0,0,0,0,0,0,0,0,0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0 '+
+        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
+        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
+        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
+        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
+        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
+        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
+        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
+        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
         'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
         'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+' '+
         ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
@@ -180,7 +180,7 @@ begin
       //计算成本
       SQL :=
         'update RCK_GOODS_DAYS set '+
-        'COST_PRICE=(select case when sum(ORG_AMT+STOCK_AMT)<>0 then round(sum(ORG_CST+STOCK_MNY)/(sum(ORG_AMT+STOCK_AMT)*1.0),6) else 0 end '+
+        'COST_PRICE=(select case when sum(ORG_AMT+STOCK_AMT)<>0 then round(cast(sum(ORG_CST+STOCK_MNY) as decmail(18,3)/(cast(sum(ORG_AMT+STOCK_AMT) as decmail(18,3))*1.0),6) else 0 end '+
         'from RCK_GOODS_DAYS A where A.TENANT_ID=RCK_GOODS_DAYS.TENANT_ID and A.GODS_ID=RCK_GOODS_DAYS.GODS_ID and A.BATCH_NO=RCK_GOODS_DAYS.BATCH_NO and A.CREA_DATE=RCK_GOODS_DAYS.CREA_DATE) '+
         'where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+'';
       Factor.ExecSQL(SQL);
@@ -412,7 +412,7 @@ begin
     //计算成本
     SQL :=
       'update '+tempTableName+' set '+
-      'COST_PRICE=(select case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0))/(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))*1.0),6) else 0 end '+
+      'COST_PRICE=(select case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0)) as decmail(18,3))/(cast(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0)) as decmail(18,3))*1.0),6) else 0 end '+
       'from '+tempTableName+' A where A.TENANT_ID='+tempTableName+'.TENANT_ID and A.GODS_ID='+tempTableName+'.GODS_ID and A.BATCH_NO='+tempTableName+'.BATCH_NO and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+') '+
       'where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',e)+'';
     Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
@@ -472,15 +472,15 @@ begin
           'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
           'A.NEW_INPRICE,A.NEW_OUTPRICE,'+
           'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-          '0,0,0,0,0,0,0,0,'+
-          '0,0,0,0,0,0,0,0,0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0,'+
-          '0,0,0,0 '+
+          '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+          '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
+          '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
+          '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
+          '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
+          '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
+          '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
+          '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
+          '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
           'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
           'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i-1)+' '+
           ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
@@ -634,15 +634,15 @@ begin
         'A.TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
         'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
         'A.BAL_AMT as ORG_AMT,A.BAL_MNY as ORG_MNY,A.BAL_RTL as ORG_RTL,A.BAL_CST as ORG_CST,'+
-        '0,0,0,0,0,0,0,0,'+
-        '0,0,0,0,0,0,0,0,0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0,'+
-        '0,0,0,0 '+
+        '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+        '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
+        '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
+        '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
+        '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
+        '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
+        '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
+        '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
+        '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
         'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
         'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+' '+
         ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
@@ -792,36 +792,36 @@ begin
       'union all '+
       'select '+
       'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-      '0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,0,0,0,0,'+
-      '0,0,0,0,0,0,0,0,0,0,0,0,'+
+      '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
+      '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
+      '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+      '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
       'SALE_AMT as PRIOR_YEAR_AMT,SALE_MNY as PRIOR_YEAR_MNY,SALE_TAX as PRIOR_YEAR_TAX,SALE_CST as PRIOR_YEAR_CST,0 as PRIOR_MONTH_AMT,0 as PRIOR_MONTH_MNY,0 as PRIOR_MONTH_TAX,0 as PRIOR_MONTH_CST,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0 '+
+      '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
+      '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
+      '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
+      '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
+      '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
+      '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
+      '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
+      '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
       'from RCK_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(bDate+b,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(e,-12))+' '+
       'union all '+
       'select '+
       'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
-      '0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,0,0,0,0,'+
-      '0,0,0,0,0,0,0,0,0,0,0,0,'+
+      '0 as NEW_INPRICE,0 as NEW_OUTPRICE,'+
+      '0 as ORG_AMT,0 as ORG_MNY,0 as ORG_RTL,0 as ORG_CST,'+
+      '0 as STOCK_AMT,0 as STOCK_MNY,0 as STOCK_TAX,0 as STOCK_RTL,0 as STOCK_AGO,0 as STKRT_AMT,0 as STKRT_MNY,0 as STKRT_TAX,'+
+      '0 as SALE_AMT,0 as SALE_RTL,0 as SALE_AGO,0 as SALE_MNY,0 as SALE_TAX,0 as SALE_CST,0 as COST_PRICE,0 as SALE_PRF,0 as SALRT_AMT,0 as SALRT_MNY,0 as SALRT_TAX,0 as SALRT_CST,'+
       '0 as PRIOR_YEAR_AMT,0 as PRIOR_YEAR_MNY,0 as PRIOR_YEAR_TAX,0 as PRIOR_YEAR_CST,SALE_AMT as PRIOR_MONTH_AMT,SALE_MNY as PRIOR_MONTH_MNY,SALE_TAX as PRIOR_MONTH_TAX,SALE_CST as PRIOR_MONTH_CST,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0,'+
-      '0,0,0,0 '+
+      '0 as DBIN_AMT,0 as DBIN_MNY,0 as DBIN_RTL,0 as DBIN_CST,'+
+      '0 as DBOUT_AMT,0 as DBOUT_MNY,0 as DBOUT_RTL,0 as DBOUT_CST,'+
+      '0 as CHANGE1_AMT,0 as CHANGE1_MNY,0 as CHANGE1_RTL,0 as CHANGE1_CST,'+
+      '0 as CHANGE2_AMT,0 as CHANGE2_MNY,0 as CHANGE2_RTL,0 as CHANGE2_CST,'+
+      '0 as CHANGE3_AMT,0 as CHANGE3_MNY,0 as CHANGE3_RTL,0 as CHANGE3_CST,'+
+      '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
+      '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST,'+
+      '0 as BAL_AMT,0 as BAL_MNY,0 as BAL_RTL,0 as BAL_CST '+
       'from RCK_GOODS_DAYS A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(bDate+b,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(e,-1))+' '+
       ') j group by TENANT_ID,SHOP_ID,GODS_ID,BATCH_NO';
     Factor.ExecSQL(SQL);
@@ -912,9 +912,11 @@ var
 begin
   case Factor.iDbType of
   0:tempTableName := '#TMP_GOODS_DAYS';
-  1,4,5:begin tempTableName := 'TMP_GOODS_DAYS';exit;end;
+  1,5:begin tempTableName := 'TMP_GOODS_DAYS';exit;end;
+  4:tempTableName := 'session.TMP_GOODS_DAYS';
   end;
-
+  case Factor.iDbType of
+  0:begin
   SQL :=
   'if OBJECT_ID(N''tempdb..'+tempTableName+''') is null '+
   'CREATE TABLE '+tempTableName+' ('+
@@ -977,9 +979,75 @@ begin
   '	CHANGE5_MNY decimal(18, 3) NULL ,'+
   '	CHANGE5_RTL decimal(18, 3) NULL ,'+
   '	CHANGE5_CST decimal(18, 3) NULL '+
-  ')';
-  Factor.ExecSQL(SQL); 
-  Factor.ExecSQL('truncate table '+tempTableName); 
+  ')'
+  end;
+  4:begin
+  SQL :=
+  'declare global temporary table '+tempTableName+' ('+
+  '	TENANT_ID int NOT NULL ,'+
+  '	SHOP_ID varchar (11) NOT NULL ,'+
+  '	CREA_DATE int NOT NULL ,'+
+  '	GODS_ID varchar (36)  NOT NULL ,'+
+  '	BATCH_NO varchar (36) NOT NULL ,'+
+  '	NEW_INPRICE decimal(18, 3) ,'+
+  '	NEW_OUTPRICE decimal(18, 3) ,'+
+  '	ORG_AMT decimal(18, 3) ,'+
+  '	ORG_MNY decimal(18, 3) ,'+
+  '	ORG_RTL decimal(18, 3) ,'+
+  '	ORG_CST decimal(18, 3) ,'+
+  '	STOCK_AMT decimal(18, 3) ,'+
+  '	STOCK_MNY decimal(18, 3) ,'+
+  '	STOCK_TAX decimal(18, 3) ,'+
+  '	STOCK_RTL decimal(18, 3) ,'+
+  '	STOCK_AGO decimal(18, 3) ,'+
+  '	STKRT_AMT decimal(18, 3) ,'+
+  '	STKRT_MNY decimal(18, 3) ,'+
+  '	STKRT_TAX decimal(18, 3) ,'+
+  '	SALE_AMT decimal(18, 3) ,'+
+  '	SALE_RTL decimal(18, 3) ,'+
+  '	SALE_AGO decimal(18, 3) ,'+
+  '	SALE_MNY decimal(18, 3) ,'+
+  '	SALE_TAX decimal(18, 3) ,'+
+  '	SALE_CST decimal(18, 3) ,'+
+  '	COST_PRICE decimal(18, 6) ,'+
+  '	SALE_PRF decimal(18, 3) ,'+
+  '	SALRT_AMT decimal(18, 3) ,'+
+  '	SALRT_MNY decimal(18, 3) ,'+
+  '	SALRT_TAX decimal(18, 3) ,'+
+  '	SALRT_CST decimal(18, 3) ,'+
+  '	DBIN_AMT decimal(18, 3) ,'+
+  '	DBIN_MNY decimal(18, 3) ,'+
+  '	DBIN_RTL decimal(18, 3) ,'+
+  '	DBIN_CST decimal(18, 3) ,'+
+  '	DBOUT_AMT decimal(18, 3) ,'+
+  '	DBOUT_MNY decimal(18, 3) ,'+
+  '	DBOUT_RTL decimal(18, 3) ,'+
+  '	DBOUT_CST decimal(18, 3) ,'+
+  '	CHANGE1_AMT decimal(18, 3) ,'+
+  '	CHANGE1_MNY decimal(18, 3) ,'+
+  '	CHANGE1_RTL decimal(18, 3) ,'+
+  '	CHANGE1_CST decimal(18, 3) ,'+
+  '	CHANGE2_AMT decimal(18, 3) ,'+
+  '	CHANGE2_MNY decimal(18, 3) ,'+
+  '	CHANGE2_RTL decimal(18, 3) ,'+
+  '	CHANGE2_CST decimal(18, 3) ,'+
+  '	CHANGE3_AMT decimal(18, 3) ,'+
+  '	CHANGE3_MNY decimal(18, 3) ,'+
+  '	CHANGE3_RTL decimal(18, 3) ,'+
+  '	CHANGE3_CST decimal(18, 3) ,'+
+  '	CHANGE4_AMT decimal(18, 3) ,'+
+  '	CHANGE4_MNY decimal(18, 3) ,'+
+  '	CHANGE4_RTL decimal(18, 3) ,'+
+  '	CHANGE4_CST decimal(18, 3) ,'+
+  '	CHANGE5_AMT decimal(18, 3) ,'+
+  '	CHANGE5_MNY decimal(18, 3) ,'+
+  '	CHANGE5_RTL decimal(18, 3) ,'+
+  '	CHANGE5_CST decimal(18, 3) '+
+  ') NOT LOGGED WITH REPLACE '
+  end;
+  end;
+  Factor.ExecSQL(SQL);
+  if Factor.iDbType=0 then Factor.ExecSQL('truncate table '+tempTableName);
 end;
 
 procedure TfrmCostCalc.CalcAcctMth;

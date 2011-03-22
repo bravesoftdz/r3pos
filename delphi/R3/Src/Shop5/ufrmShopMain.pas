@@ -266,6 +266,9 @@ type
     Panel26: TPanel;
     Image28: TImage;
     Panel9: TPanel;
+    actfrmPayDayReport: TAction;
+    actfrmPayAbleReport: TAction;
+    actfrmRecvAbleReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -345,9 +348,15 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
     procedure Page1Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure actfrmRecvDayReportExecute(Sender: TObject);
+    procedure actfrmPayDayReportExecute(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
+    procedure actfrmRecvAbleReportExecute(Sender: TObject);
+    procedure actfrmPayAbleReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
+    PageList:TList;
     FLogined: boolean;
     frmInstall:TfrmInstall;
     FLoging: boolean;
@@ -393,7 +402,8 @@ uses
   ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
-  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory;
+  ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
+  ufrmRecvAbleReport,ufrmPayAbleReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -413,6 +423,7 @@ procedure TfrmShopMain.FormCreate(Sender: TObject);
 var F:TextFile;
 begin
   inherited;
+  PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
   if not FileExists(Global.InstallPath+'data\R3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\R3.db'),false);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
@@ -444,6 +455,7 @@ begin
   for i:=0 to FList.Count - 1 do TObject(FList[i]).Free;
   inherited;
   FList.Free;
+  PageList.Free;
 end;
 
 procedure TfrmShopMain.AddFrom(form: TForm);
@@ -865,21 +877,43 @@ begin
     end;
 end;
 procedure CreatePageMenu;
-//var tab:TRzTabCollectionItem;
 begin
-//  RzTab.Tabs.Clear;
-//  CA_MODULE.First;
+  Page1.Visible := false;
+  Page2.Visible := false;
+  Page3.Visible := false;
+  Page4.Visible := false;
+  Page5.Visible := false;
+  CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
       if CA_MODULE.FieldbyName('LEVEL').AsInteger =1 then
       begin
-//        tab := RzTab.Tabs.Add;
-//        tab.ImageIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))-1;
-//        tab.DisabledIndex := strtoint(copy(CA_MODULE.Fields[0].asString,1,1))+10-1;
+        case strtoint(copy(CA_MODULE.Fields[0].asString,1,1)) of
+        1:begin
+            PageList.Add(Page1);
+            Page1.Visible := true;
+          end;
+        2:begin
+            PageList.Add(Page2);
+            Page2.Visible := true;
+          end;
+        3:begin
+            PageList.Add(Page3);
+            Page3.Visible := true;
+          end;
+        4:begin
+            PageList.Add(Page4);
+            Page4.Visible := true;
+          end;
+        9:begin
+            PageList.Add(Page5);
+            Page5.Visible := true;
+          end;
+        end;
       end;
       CA_MODULE.Next;
     end;
-//  if RzTab.Tabs.Count >0 then RzTab.TabIndex := 0;
+  if PageList.Count >0 then TrzBmpButton(PageList[0]).down := true;
 end;
 var
   rs:TZQuery;
@@ -955,10 +989,10 @@ end;
 procedure TfrmShopMain.Image19Click(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 33 then
+  if rzLeft.Width = 29 then
      rzLeft.Width := 172
   else
-     rzLeft.Width := 33;
+     rzLeft.Width := 29;
   frmMain.OnResize(nil);
 end;
 
@@ -1952,7 +1986,7 @@ begin
      result := 4
   else
   if Page5.Down then
-     result := 5;
+     result := 9;
 end;
 begin
   inherited;
@@ -2248,7 +2282,7 @@ end;
 procedure TfrmShopMain.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 33 then rzLeft.Width := 172;
+  if rzLeft.Width = 29 then rzLeft.Width := 172;
   frmMain.OnResize(nil);
   frmShopDesk.Locked := true;
   frmShopDesk.BringToFront;
@@ -2264,6 +2298,101 @@ procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
   SyncFactory.SyncAll;
+end;
+
+procedure TfrmShopMain.actfrmRecvDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRecvDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmPayDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPayDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmPayDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
+begin
+  inherited;
+  if not actfrmXsmBrowser.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...'); 
+  actfrmXsmBrowser.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.actfrmRecvAbleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRecvAbleReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvAbleReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmPayAbleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmPayAbleReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmPayAbleReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

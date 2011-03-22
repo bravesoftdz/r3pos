@@ -373,11 +373,14 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
     Width = 794
     inherited Image1: TImage
       Left = 636
-      Width = 158
+      Width = 138
     end
     inherited Image3: TImage
       Left = 636
-      Width = 158
+      Width = 138
+    end
+    inherited Image14: TImage
+      Left = 774
     end
     inherited rzPanel5: TPanel
       Left = 636

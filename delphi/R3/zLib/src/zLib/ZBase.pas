@@ -202,13 +202,11 @@ TZFactory=Class(TRecord_,IZFactory)
     FKeyFields: String;
     FZClassName: string;
     FZParamWStr: widestring;
-    FUpdateObject: TZUpdateSQL;
     procedure SetIsSQLUpdate(const Value: Boolean);
     procedure SetDLLHandle(const Value: THandle);
     procedure SetKeyFields(const Value: String);
     procedure SetZClassName(const Value: string);
     procedure SetZParamWStr(const Value: widestring);
-    procedure SetUpdateObject(const Value: TZUpdateSQL);
   protected
     //初始化对象
     procedure PSInitialize;stdcall;
@@ -264,7 +262,6 @@ TZFactory=Class(TRecord_,IZFactory)
 
     property ZClassName:string read FZClassName write SetZClassName;
     property ZParamWStr:widestring read FZParamWStr write SetZParamWStr;
-    property UpdateObject:TZUpdateSQL read FUpdateObject write SetUpdateObject;
   end;
 
 TZFactoryClass= class of TZFactory;
@@ -1055,7 +1052,6 @@ begin
   begin
      SelectSQL.Text := TZTable(ADataSet).TableName;
   end;
-  UpdateObject := nil;
 end;
 
 procedure TZFactory.CreateNew(AOwner: TComponent);
@@ -1079,7 +1075,6 @@ begin
   FUpdateSQL.Free;
   FInsertSQL.Free;
   FParams.Free;
-  UpdateObject := nil;
   inherited;
 end;
 
@@ -1165,11 +1160,6 @@ end;
 procedure TZFactory.SetKeyFields(const Value: String);
 begin
   FKeyFields := Value;
-end;
-
-procedure TZFactory.SetUpdateObject(const Value: TZUpdateSQL);
-begin
-  FUpdateObject := Value;
 end;
 
 procedure TZFactory.SetZClassName(const Value: string);

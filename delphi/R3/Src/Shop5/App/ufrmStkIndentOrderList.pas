@@ -105,10 +105,10 @@ begin
   0:result := 'select top 600 * from ('+result+') jp order by INDE_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by INDE_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+result+') order by INDE_ID limit 600';
+       'select * from ('+result+') j order by INDE_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by INDE_ID limit 600';
   else
-    result := 'select * from ('+result+') order by INDE_ID';
+    result := 'select * from ('+result+') j order by INDE_ID';
   end;
 end;
 

@@ -176,7 +176,12 @@ begin
      begin
       if w<>'' then w := w + ' and ';
       case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      1:w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID ';
+      1:begin
+          if rzTree.Selected.Level>0 then
+             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+          else
+             w := w + 'b.RELATION_ID=:RELATION_ID ';
+        end;
       else
         w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
       end;

@@ -14,6 +14,7 @@ type
     procedure InitSQL(AGlobal: IdbHelp);
     function GetRowAccessor: TZRowAccessor;
   public
+    function CheckUnique(s:string):boolean;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -114,6 +115,7 @@ var
   WasNull:boolean;
   Comm:string;
 begin
+  InitSQL(AGlobal);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -121,8 +123,16 @@ begin
        try
          AGlobal.ExecQuery(InsertQuery);
        except
-         FillParams(UpdateQuery);
-         AGlobal.ExecQuery(UpdateQuery);
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
        end;
      end
   else
@@ -132,9 +142,18 @@ begin
        if r=0 then
           begin
             FillParams(InsertQuery);
-            AGlobal.ExecQuery(InsertQuery);
+            try
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
           end;
      end;
+
 end;
 
 function TSyncSingleTable.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
@@ -149,9 +168,20 @@ begin
   SelectSQL.Text := Str;
 end;
 
+function TSyncSingleTable.CheckUnique(s: string): boolean;
+begin
+  result :=
+    (pos('unique',lowercase(s))>0)
+    or
+    (pos('primary',lowercase(s))>0);
+end;
+
 function TSyncSingleTable.GetRowAccessor: TZRowAccessor;
 begin
-  result := UpdateObject.ZNewRowAccessor;
+  if assigned(DataSet) and assigned(TZQuery(DataSet).UpdateObject) then
+     result := TZQuery(DataSet).UpdateObject.ZNewRowAccessor
+  else
+     Raise Exception.Create('没有指定同步对像，不能完成同步操作.');
 end;
 
 procedure TSyncSingleTable.InitClass;
@@ -175,22 +205,8 @@ begin
       InsertFld := InsertFld+RowAccessor.GetColumnName(i);
       if ValueFld<>'' then ValueFld := ValueFld + ',';
       ValueFld := ValueFld+':'+RowAccessor.GetColumnName(i);
-//      if (RowAccessor.GetColumnName(i)<>'COMM') then
-//         begin
-//           if UpdateFld<>'' then UpdateFld := UpdateFld + ',';
-//           UpdateFld := UpdateFld+RowAccessor.GetColumnName(i)+'='+GetCommStr(AGlobal.iDbType);
-//         end
-//      else
-//      if (RowAccessor.GetColumnName(i)<>'TIME_STAMP') then
-//         begin
-//           if UpdateFld<>'' then UpdateFld := UpdateFld + ',';
-//           UpdateFld := UpdateFld+RowAccessor.GetColumnName(i)+'='+GetTimeStamp(AGlobal.iDbType);
-//         end
-//      else
-//         begin
       if UpdateFld<>'' then UpdateFld := UpdateFld + ',';
       UpdateFld := UpdateFld+RowAccessor.GetColumnName(i)+'=:'+RowAccessor.GetColumnName(i);
-//         end;
       if RowAccessor.GetColumnName(i)='COMM' then
          COMMIdx := i;
       if RowAccessor.GetColumnName(i)='TIME_STAMP' then
@@ -199,7 +215,7 @@ begin
   KeyFields:=TStringList.Create;
   try
     KeyFields.Delimiter := ';';
-    KeyFields.DelimitedText := Params.ParambyName('KEY_FIELD').AsString;
+    KeyFields.DelimitedText := Params.ParambyName('KEY_FIELDS').AsString;
     for i:=0 to KeyFields.Count -1 do
       begin
         if WhereStr<>'' then WhereStr := WhereStr + ' and ';

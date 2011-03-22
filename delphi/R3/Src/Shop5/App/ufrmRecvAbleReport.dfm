@@ -7,14 +7,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1014
-    Height = 554
+    Width = 1006
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 1004
-      Height = 544
+      Width = 996
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 799
-        Height = 538
+        Width = 791
+        Height = 521
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           Color = clCream
           Caption = #22320#21306#24212#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 797
-            Height = 511
+            Width = 789
+            Height = 494
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 787
-              Height = 501
+              Width = 779
+              Height = 484
               inherited w1: TRzPanel
-                Width = 787
+                Width = 779
                 Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -152,11 +152,11 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 64
-                Width = 787
-                Height = 437
+                Width = 779
+                Height = 420
                 inherited DBGridEh1: TDBGridEh
-                  Width = 783
-                  Height = 433
+                  Width = 775
+                  Height = 416
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1241,8 +1241,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 802
-        Height = 538
+        Left = 794
+        Height = 521
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1258,15 +1258,15 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1014
+    Width = 1006
     inherited Image1: TImage
-      Width = 499
-    end
-    inherited Image14: TImage
-      Left = 1005
+      Width = 632
     end
     inherited Image3: TImage
-      Width = 499
+      Width = 632
+    end
+    inherited Image14: TImage
+      Left = 986
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

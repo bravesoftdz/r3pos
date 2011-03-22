@@ -8,19 +8,19 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 820
-    Height = 539
+    Height = 533
     inherited RzPanel2: TRzPanel
       Width = 810
-      Height = 529
+      Height = 523
       inherited RzPage: TRzPageControl
         Width = 804
-        Height = 523
+        Height = 517
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 802
-            Height = 496
+            Height = 490
             inherited RzPanel1: TRzPanel
               Width = 792
               Height = 102
@@ -268,7 +268,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 107
               Width = 792
-              Height = 384
+              Height = 378
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -395,17 +395,18 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   inherited RzPanel4: TRzPanel
     Width = 820
     inherited Image1: TImage
-      Left = 784
-      Width = 27
-    end
-    inherited Image14: TImage
-      Left = 811
+      Left = 628
+      Width = 172
     end
     inherited Image3: TImage
-      Left = 784
-      Width = 27
+      Left = 628
+      Width = 172
+    end
+    inherited Image14: TImage
+      Left = 800
     end
     inherited rzPanel5: TPanel
+      Left = 628
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#20986#36135
       end
@@ -419,7 +420,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 608
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 608

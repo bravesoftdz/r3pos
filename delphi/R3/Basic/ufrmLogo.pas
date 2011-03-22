@@ -16,11 +16,18 @@ type
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
     { Public declarations }
+    procedure Show;
   end;
 var frmLogo:TfrmLogo;
 implementation
 
 {$R *.DFM}
+
+procedure TfrmLogo.Show;
+begin
+  inherited Show;
+  Update;
+end;
 
 procedure TfrmLogo.ShowPostion(Postion: Integer; Caption: String);
 begin

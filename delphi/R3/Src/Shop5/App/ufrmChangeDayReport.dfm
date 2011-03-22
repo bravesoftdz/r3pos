@@ -262,6 +262,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   TitleHeight = 22
                   UseMultiTitle = False
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -281,6 +282,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -645,6 +647,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -664,6 +667,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -1015,6 +1019,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1034,6 +1039,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'SORT_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
                       Width = 185
@@ -1439,6 +1445,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   OnDblClick = DBGridEh4DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1458,6 +1465,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
@@ -1886,6 +1894,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1911,6 +1920,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'DEPT_ID'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #37096#38376#21517#31216
                       Width = 134

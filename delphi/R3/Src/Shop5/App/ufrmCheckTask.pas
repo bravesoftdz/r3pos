@@ -58,7 +58,7 @@ begin
      Temp.SQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
      if Temp.Params.FindParam('SHOP_ID')<>nil then Temp.ParamByName('SHOP_ID').AsString:=SHOP_ID;
-     if Temp.Params.FindParam('PRINT_DATE')<>nil then Temp.ParamByName('PRINT_DATE').AsString:=formatDatetime('YYYYMMDD',date());
+     if Temp.Params.FindParam('PRINT_DATE')<>nil then Temp.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(formatDatetime('YYYYMMDD',date()),0);
      Factor.Open(Temp);
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
 
@@ -133,7 +133,7 @@ begin
   rs:= TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2';
+    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2 ';
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=SHOP_ID;
     Factor.Open(rs);
@@ -179,7 +179,7 @@ begin
     try
       //生成结帐表头
       Str:='insert into STO_PRINTORDER (TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) values '+
-           '('+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','''+CurDate+''',1,'+Check_Type+','''+CurDateTime+''','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+')';
+           '('+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+',1,'+Check_Type+','''+CurDateTime+''','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+')';
       Factor.ExecSQL(Str);
       if (rs.Active) and (not rs.IsEmpty) then
       begin
@@ -192,7 +192,7 @@ begin
           PROPERTY_02:=AObj.fieldbyName('PROPERTY_02').AsString;            
           //生成结帐数据
           Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','''+CurDate+''',''#'',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,1)';
+               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+',''#'',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,''1'')';
           Factor.ExecSQL(Str);
           rs.Next;
         end;
@@ -236,7 +236,7 @@ begin
     Rs.SQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
     if Rs.Params.FindParam('TENANT_ID')<>nil then Rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     if Rs.Params.FindParam('SHOP_ID')<>nil then Rs.ParamByName('SHOP_ID').AsString:=self.SHOP_ID;
-    if Rs.Params.FindParam('PRINT_DATE')<>nil then Rs.ParamByName('PRINT_DATE').AsString:=FormatDatetime('YYYYMMDD',date());
+    if Rs.Params.FindParam('PRINT_DATE')<>nil then Rs.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(FormatDatetime('YYYYMMDD',date()),0);
     Factor.Open(Rs);
     result:=(not Rs.IsEmpty);
   finally

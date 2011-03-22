@@ -186,7 +186,7 @@ begin
     ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
     ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
     ',isnull(B.NEW_INPRICE,0) as NEW_INPRICE '+      //--成本价
-    ',isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE '+    //--零售价  
+    ',isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE '+    //--零售价
     ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_INPRICE,0))/'+CalcFields+' end) as PAL_INAMONEY ' +    //--损益成本金额
     ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_OUTPRICE,0))/'+CalcFields+' end) as PAL_OUTAMONEY ' +  //--损益销售金额
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +

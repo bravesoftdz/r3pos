@@ -41,7 +41,7 @@ begin
   rs:= TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and CHECK_STATUS<3';
+    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and CHECK_STATUS<3 ';
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=InShop_ID;
     if rs.Params.FindParam('PRINT_DATE')<>nil then rs.ParamByName('PRINT_DATE').AsString:=InPrint_Date;

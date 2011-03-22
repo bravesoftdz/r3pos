@@ -142,6 +142,26 @@ type
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -274,7 +294,11 @@ begin
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    end;
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
@@ -312,7 +336,9 @@ begin
     'group by A.TENANT_ID,B.REGION_ID';
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
+    ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
     );
 end;
 
@@ -452,14 +478,14 @@ begin
     'group by A.TENANT_ID,B.SHOP_ID';
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
-    );
-
+    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+    ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
+    );  
 end;
 
 function TfrmChangeDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc,JoinCnd: string;  //单位计算关系
   strSql,strCnd,strWhere,lv,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -544,6 +570,12 @@ begin
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
+       case Factor.iDbType of
+        4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
+        else
+           JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+       end;
+       
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
@@ -556,8 +588,8 @@ begin
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
           'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' '+
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
           ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
@@ -570,7 +602,8 @@ begin
           ',sum(COST_MONEY) as COST_MONEY '+  //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
           ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME '+
-        ' from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
+        ' from ('+strSql+') j left outer join VIW_CLIENTINFO r '+
+        ' on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
     else
@@ -585,7 +618,7 @@ begin
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j '+
           ' left outer join ('+
-          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='''+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+''') r '+
+          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+') r '+
           ' on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID '+
           ' group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
          );
@@ -651,7 +684,11 @@ begin
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    end;
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
@@ -747,7 +784,11 @@ begin
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid5+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    end;
     if trim(sid5)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
@@ -1019,6 +1060,50 @@ begin
   
   //继承基类:
   inherited AddReportReport(TitleList,PageNo);
+end;
+
+procedure TfrmChangeDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'DEPT_ID' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

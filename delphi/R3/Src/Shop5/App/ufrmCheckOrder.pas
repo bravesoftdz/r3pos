@@ -35,8 +35,7 @@ type
     LblCount: TLabel;
     LblMm: TLabel;
     procedure FormCreate(Sender: TObject);
-    procedure DBGridEh1Columns4EditButtonClick(Sender: TObject;
-      var Handled: Boolean);
+    procedure DBGridEh1Columns4EditButtonClick(Sender: TObject; var Handled: Boolean);
     procedure edtCREA_USERSaveValue(Sender: TObject);
     procedure actImportFromPrintExecute(Sender: TObject);
     procedure edtCREA_USERAddClick(Sender: TObject);
@@ -46,8 +45,7 @@ type
     procedure Lbl_LinkCheckGoodMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure Lbl_LinkCheckGoodMouseLeave(Sender: TObject);
     procedure edtTableAfterDelete(DataSet: TDataSet);
-    procedure DBGridEh1Columns6UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns6UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure Lbl_LinkCheckGoodClick(Sender: TObject);
   private
     { Private declarations }
@@ -124,23 +122,23 @@ begin
     cdsDetail.CancelUpdates;
     Raise;
   end;
-    AObj.ReadFromDataSet(cdsHeader);
-    ReadFromObject(AObj,self);
-    ReadFrom(cdsDetail);
-    //读取计算PrintQry；
-    GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,trim(AObj.fieldbyName('PRINT_DATE').AsString)) ;
-    if (PrintQry.Active) and (edtTable.Active) then
-    begin
-      IsCalcRecordCount:=true;
-      SetRecordCount(PrintQry.RecordCount-edtTable.RecordCount); 
-      Lbl_LinkCheckGoodMouseLeave(nil);
-    end;
-    //判断审核：
-    IsAudit :=(trim(AObj.FieldbyName('CHECK_STATUS').AsString)='3');
-    //oid := AObj.FieldbyName('PRINT_DATE').asString;
-    gid := AObj.FieldbyName('PRINT_DATE').asString;    //盘点单号
-    cid := AObj.FieldbyName('SHOP_ID').asString;
-    dbState := dsBrowse;
+  AObj.ReadFromDataSet(cdsHeader);
+  ReadFromObject(AObj,self);
+  ReadFrom(cdsDetail);
+  //读取计算PrintQry；
+  GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,inttoStr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
+  if (PrintQry.Active) and (edtTable.Active) then
+  begin
+    IsCalcRecordCount:=true;
+    SetRecordCount(PrintQry.RecordCount-edtTable.RecordCount); 
+    Lbl_LinkCheckGoodMouseLeave(nil);
+  end;
+  //判断审核：
+  IsAudit :=(AObj.FieldbyName('CHECK_STATUS').AsInteger=3);
+  //oid := AObj.FieldbyName('PRINT_DATE').asString;
+  gid := InttoStr(AObj.FieldbyName('PRINT_DATE').AsInteger);    //盘点单号
+  cid := AObj.FieldbyName('SHOP_ID').asString;
+  dbState := dsBrowse;
 end;
 
 procedure TfrmCheckOrder.EditOrder;
@@ -180,7 +178,7 @@ begin
   //AObj.FieldbyName('PRINT_DATE').asString :=FormatDatetime('YYYYMMDD',Date());  // TSequence.NewId();
   //AObj.FieldbyName('GLIDE_NO').asString := '..新增..';
   // oid := AObj.FieldbyName('PRINT_DATE').asString;   //单据GUID号
-  gid := AObj.FieldbyName('PRINT_DATE').asString;
+  gid := inttostr(AObj.FieldbyName('PRINT_DATE').AsInteger);
   edtCREA_DATE.Date := Date();
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
@@ -215,7 +213,7 @@ begin
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
-    Params.ParamByName('PRINT_DATE').AsString:=ID;    
+    Params.ParamByName('PRINT_DATE').AsInteger:=StrtointDef(ID,0);    
     Factor.BeginBatch;
     try
       Factor.AddBatch(cdsHeader,'TPrintOrder',Params);
@@ -229,7 +227,7 @@ begin
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
     //读取计算PrintQry；
-    GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,trim(AObj.fieldbyName('PRINT_DATE').AsString)) ;
+    GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,inttostr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
     if (PrintQry.Active) and (edtTable.Active) then
     begin
       IsCalcRecordCount:=true;
@@ -237,9 +235,9 @@ begin
       Lbl_LinkCheckGoodMouseLeave(nil);
     end;
     //判断审核：
-    IsAudit :=(trim(AObj.FieldbyName('CHECK_STATUS').AsString)='3');
+    IsAudit :=(AObj.FieldbyName('CHECK_STATUS').AsInteger=3);
     //oid := AObj.FieldbyName('PRINT_DATE').asString;
-    gid := AObj.FieldbyName('PRINT_DATE').asString;    //盘点单号
+    gid := inttostr(AObj.FieldbyName('PRINT_DATE').AsInteger);    //盘点单号
     cid := AObj.FieldbyName('SHOP_ID').asString;
     dbState := dsBrowse;
   finally
@@ -256,10 +254,10 @@ procedure TfrmCheckOrder.SaveOrder;
       rs.SQL.Text:='select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE and CHECK_STATUS<3 ';
       if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
       if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=trim(edtSHOP_ID.AsString);
-      if rs.Params.FindParam('PRINT_DATE')<>nil then rs.ParamByName('PRINT_DATE').AsString:=formatDatetime('YYYYMMDD',edtCREA_DATE.Date);
+      if rs.Params.FindParam('PRINT_DATE')<>nil then rs.ParamByName('PRINT_DATE').AsInteger:=strtoint(formatDatetime('YYYYMMDD',edtCREA_DATE.Date));
       Factor.Open(rs);
       if rs.IsEmpty then
-        Raise Exception.Create(' 没有盘点任务单,不能录入盘点单！ '); 
+        Raise Exception.Create(' 没有盘点任务单,不能录入盘点单！ ');
     finally
       rs.Free;
     end;
@@ -297,7 +295,7 @@ begin
       cdsDetail.FieldByName('ROWS_ID').AsString := TSequence.NewId();
       cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
       cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-      cdsDetail.FieldByName('PRINT_DATE').AsString := cdsHeader.FieldbyName('PRINT_DATE').AsString;
+      cdsDetail.FieldByName('PRINT_DATE').AsInteger := cdsHeader.FieldbyName('PRINT_DATE').AsInteger;
       cdsDetail.Post;
       cdsDetail.Next;
     end;
@@ -331,7 +329,7 @@ var
 begin
   inherited;
   if not cdsHeader.Active then Raise Exception.Create('  不能审核空单据！ ');
-  PRINT_DATE:=trim(cdsHeader.FieldByName('PRINT_DATE').AsString);
+  PRINT_DATE:=InttoStr(cdsHeader.FieldByName('PRINT_DATE').AsInteger);
   if PRINT_DATE = '' then Raise Exception.Create(' 不能审核空单据！ ');
   if (not IsAudit) and (cdsDetail.IsEmpty) then Raise Exception.Create(' 不能审核（没有录入盘点数量商品的）空单据！ ');
   if dbState <> dsBrowse then SaveOrder;
@@ -343,7 +341,7 @@ begin
         rs.SQL.Text:= 'select CHK_USER from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and FROM_ID=:FROM_ID and CHANGE_CODE=''1''';
         if rs.Params.ParamByName('TENANT_ID')<>nil then rs.Params.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
         if rs.Params.ParamByName('SHOP_ID')<>nil then rs.Params.ParamByName('SHOP_ID').AsString:=edtSHOP_ID.AsString;
-        if rs.Params.ParamByName('FROM_ID')<>nil then rs.Params.ParamByName('FROM_ID').AsString:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
+        if rs.Params.ParamByName('FROM_ID')<>nil then rs.Params.ParamByName('FROM_ID').AsString:=inttostr(cdsHeader.fieldbyName('PRINT_DATE').AsInteger);
         Factor.Open(rs);
         if not rs.IsEmpty then
         if (rs.FieldByName('CHK_USER').AsString<>Global.UserID) then Raise Exception.Create('只有审核人才能对当前盘点任务单执行弃审');
@@ -362,7 +360,7 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Params.ParamByName('SHOP_ID').AsString := edtSHOP_ID.AsString;
-      Params.ParamByName('PRINT_DATE').asString :=PRINT_DATE;
+      Params.ParamByName('PRINT_DATE').AsInteger :=StrtoInt(PRINT_DATE);
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
       Params.ParamByName('CHK_USER').asString := Global.UserID;
       Params.ParamByName('AUDIT_FLAG').asInteger := op;
@@ -471,7 +469,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2';
+    rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2 ';
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;      
     Factor.Open(rs);
@@ -487,7 +485,7 @@ begin
       if TfrmCheckTask.StartTask(edtSHOP_ID.AsString) then
       begin
         rs.Close;
-        rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2';
+        rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2 ';
         if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
         if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
         Factor.Open(rs);
@@ -539,7 +537,7 @@ var
   PRINT_DATE: string;
   SourceScale:real;
 begin
-    PRINT_DATE:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
+    PRINT_DATE:=InttoStr(cdsHeader.fieldbyName('PRINT_DATE').AsInteger);
     if PRINT_DATE='' then PRINT_DATE:=FormatDatetime('YYYYMMDD',Date());
     rs := Global.GetZQueryFromName('PUB_GOODSINFO');
     if not rs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('在经营商品中没有找到"'+GODS_ID+'"'); 
@@ -581,7 +579,7 @@ begin
   PrintQry.SQL.Text:='select GODS_ID,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
   if PrintQry.Params.FindParam('TENANT_ID')<>nil then PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
   if PrintQry.Params.FindParam('SHOP_ID')<>nil then PrintQry.ParamByName('SHOP_ID').AsString:=SHOP_ID;
-  if PrintQry.Params.FindParam('PRINT_DATE')<>nil then PrintQry.ParamByName('PRINT_DATE').AsString:=PRINT_ID;
+  if PrintQry.Params.FindParam('PRINT_DATE')<>nil then PrintQry.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(PRINT_ID,0);
   Factor.Open(PrintQry);
 end;
 
@@ -771,7 +769,7 @@ var Print_ID,GODE_ID,BatchNo: string; CurObj: TRecord_;
 begin
   if not cdsHeader.Active then exit;
   if trim(LblCount.Caption)='0' then Raise Exception.Create('  没有未录入的的商品！  '); 
-  Print_ID:=trim(cdsHeader.fieldbyName('PRINT_DATE').AsString);
+  Print_ID:=InttoStr(cdsHeader.fieldbyName('PRINT_DATE').AsInteger);
   if Print_ID='' then Exit;
   with TfrmSelectCheckGoods.Create(self) do
   begin

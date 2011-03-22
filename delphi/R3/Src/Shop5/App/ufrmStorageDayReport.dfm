@@ -15,10 +15,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
-        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -260,6 +258,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TitleHeight = 22
                   UseMultiTitle = False
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -279,6 +278,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -634,6 +634,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -653,6 +654,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 146
@@ -991,6 +993,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1010,6 +1013,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       EditButtons = <>
                       FieldName = 'SORT_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
                       Width = 171
@@ -1413,6 +1417,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1432,6 +1437,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153

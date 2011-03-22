@@ -147,6 +147,26 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -260,7 +280,11 @@ begin
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    end;
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
@@ -302,7 +326,7 @@ begin
   strSql :=
     'select j.* '+
     ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
-    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID';
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID';
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
@@ -404,7 +428,11 @@ begin
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    end;
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
@@ -453,7 +481,7 @@ end;
 
 function TfrmStockDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc, JoinCnd: string;  //单位计算关系
   strSql,strCnd,strWhere,GoodTab,SQLData,lv: widestring;
 begin
   result:='';
@@ -531,47 +559,57 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100.00/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
+       case Factor.iDbType of
+        4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
+        else
+          JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+       end;
+
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
           ',sum(STOCK_AGO) as STOCK_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
           'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
+          ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
     3:begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
           ',sum(STOCK_AGO) as STOCK_AGO '+
-        ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
+        ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j '+
+        ' left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID '+
+        ' group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
     else
@@ -579,17 +617,17 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+    //DB2此字段计算报错
           ',sum(STOCK_AGO) as STOCK_AGO '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
-          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='''+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+''''+
+          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+' '+
         ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
          );
       end;
@@ -645,7 +683,11 @@ begin
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    end;
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
@@ -743,7 +785,11 @@ begin
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid5+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    end;
     if trim(sid5)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
@@ -1034,6 +1080,51 @@ begin
   sid5 := '';
   srid5 :='';
   fndP5_SORT_ID.Text := '';
+end;
+
+procedure TfrmStockDayReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmStockDayReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmStockDayReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmStockDayReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmStockDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

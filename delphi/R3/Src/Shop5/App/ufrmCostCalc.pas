@@ -1081,7 +1081,7 @@ begin
         '0 as ORG_MNY,A.IN_MNY,B.OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
         'from VIW_ACCT_DAYS A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.ACCOUNT_ID=B.ACCOUNT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
         ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
-      Factor.ExecSQL(SQL);
+      Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
     end;
 end;
 

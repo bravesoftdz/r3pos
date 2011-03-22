@@ -49,13 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = tabProperty
+      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 3
+      TabIndex = 2
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -571,7 +571,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Caption = #21830#21697#36873#39033
         object Label27: TLabel
           Left = 273
-          Top = 53
+          Top = 51
           Width = 84
           Height = 12
           Alignment = taRightJustify
@@ -579,7 +579,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label18: TLabel
           Left = 31
-          Top = 55
+          Top = 53
           Width = 72
           Height = 12
           Alignment = taRightJustify
@@ -587,7 +587,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label45: TLabel
           Left = 31
-          Top = 154
+          Top = 151
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -603,7 +603,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label14: TLabel
           Left = 32
-          Top = 104
+          Top = 102
           Width = 84
           Height = 12
           Alignment = taRightJustify
@@ -611,7 +611,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object Label21: TLabel
           Left = 275
-          Top = 104
+          Top = 102
           Width = 72
           Height = 12
           Alignment = taRightJustify
@@ -619,7 +619,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtHAS_INTEGRAL: TRadioGroup
           Left = 273
-          Top = 115
+          Top = 113
           Width = 210
           Height = 34
           Columns = 2
@@ -643,7 +643,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtUSING_PRICE: TRadioGroup
           Left = 272
-          Top = 66
+          Top = 65
           Width = 210
           Height = 34
           Columns = 2
@@ -654,7 +654,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtUSING_BATCH_NO: TRadioGroup
           Left = 30
-          Top = 66
+          Top = 65
           Width = 210
           Height = 34
           Columns = 2
@@ -665,7 +665,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtUSING_BARTER: TGroupBox
           Left = 29
-          Top = 166
+          Top = 163
           Width = 458
           Height = 36
           TabOrder = 4
@@ -723,7 +723,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         end
         object edtUSING_LOCUS_NO: TRadioGroup
           Left = 30
-          Top = 115
+          Top = 113
           Width = 210
           Height = 34
           Columns = 2

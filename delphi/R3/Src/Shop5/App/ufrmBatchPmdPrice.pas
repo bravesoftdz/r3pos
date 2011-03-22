@@ -260,7 +260,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text:='select SORT_ID,SORT_NAME,null as PID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and SORT_TYPE=''4'' order by SORT_ID ';
+    rs.SQL.Text:='select SORT_ID,SORT_NAME,null as PID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and SORT_TYPE=4 order by SORT_ID ';
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;  
     Factor.Open(rs);
     rzChkTree.Items.Clear;

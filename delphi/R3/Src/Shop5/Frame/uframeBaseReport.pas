@@ -90,6 +90,8 @@ type
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
     //选择商品类别[带供应链] 返回名称[类别名称]
     function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
+    //不同数据库类型转换：输入字段名称，返回转化后表达式:
+    function IntToVarchar(FieldName: string): string;
 
     {=======  2011.03.03 Add 商品统计单位换算关系   =======}
     //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
@@ -98,7 +100,6 @@ type
     function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
-
     //根据输入PageNo作为控件的No进行搜索报表表头条件
     function  AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
@@ -213,16 +214,16 @@ begin
 end;
 
 procedure TframeBaseReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var ARect:TRect;
 begin
   if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and (not
-    (gdFocused in State) or not Column.Grid.Focused) then
+     (gdFocused in State) or not Column.Grid.Focused) then
   begin
     Column.Grid.Canvas.Brush.Color := clAqua;
   end;
   Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
@@ -359,6 +360,8 @@ var
   Column:TColumnEh;
 begin
   inherited;
+  RzPage.ActivePageIndex:=0;
+  
   //初始化参数:
   for i:=0 to self.ComponentCount -1 do
   begin
@@ -1036,6 +1039,15 @@ begin
         end;
       end;
     end;
+  end;
+end;
+
+function TframeBaseReport.IntToVarchar(FieldName: string): string;
+begin
+  result:=trim(FieldName);
+  case Factor.iDbType of
+   0,5: result:='cast('+FieldName+' as varchar)';
+   4:   result:='trim(char('+FieldName+'))';
   end;
 end;
 

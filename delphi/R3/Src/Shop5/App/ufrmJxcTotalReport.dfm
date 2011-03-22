@@ -1,35 +1,37 @@
 inherited frmJxcTotalReport: TfrmJxcTotalReport
   Left = 194
   Top = 105
-  Width = 927
-  Height = 627
+  Width = 959
+  Height = 625
   Caption = #36827#38144#23384#32479#35745#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 919
-    Height = 570
+    Width = 951
+    Height = 568
     inherited RzPanel2: TRzPanel
-      Width = 909
-      Height = 560
+      Width = 941
+      Height = 558
       inherited RzPage: TRzPageControl
-        Width = 704
-        Height = 554
+        Width = 736
+        Height = 552
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
-            Width = 702
-            Height = 527
+            Width = 734
+            Height = 525
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 692
-              Height = 517
+              Width = 724
+              Height = 515
               inherited w1: TRzPanel
-                Width = 692
+                Width = 724
                 Height = 83
                 object Label6: TLabel
                   Left = 288
@@ -264,13 +266,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 83
-                Width = 692
-                Height = 434
+                Width = 724
+                Height = 432
                 inherited DBGridEh1: TDBGridEh
-                  Width = 688
-                  Height = 430
+                  Width = 720
+                  Height = 428
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -290,9 +293,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
-                      Width = 153
+                      Width = 156
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -508,8 +512,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 702
-            Height = 527
+            Width = 734
+            Height = 525
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -517,8 +521,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 692
-              Height = 517
+              Width = 724
+              Height = 515
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -526,7 +530,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 692
+                Width = 724
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -767,8 +771,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 692
-                Height = 436
+                Width = 724
+                Height = 434
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -776,8 +780,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 688
-                  Height = 432
+                  Width = 720
+                  Height = 430
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -820,7 +824,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DigitalNumber = 12
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
-                  OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -840,6 +844,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -1058,8 +1063,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 702
-            Height = 527
+            Width = 734
+            Height = 525
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1067,8 +1072,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 692
-              Height = 517
+              Width = 724
+              Height = 515
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1076,7 +1081,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 692
+                Width = 724
                 Height = 84
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1306,8 +1311,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 84
-                Width = 692
-                Height = 433
+                Width = 724
+                Height = 431
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1316,8 +1321,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 688
-                  Height = 429
+                  Width = 720
+                  Height = 427
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1360,7 +1365,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DigitalNumber = 12
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
-                  OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1380,6 +1385,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       EditButtons = <>
                       FieldName = 'SORT_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #20998#31867#21517#31216
                       Width = 168
@@ -1564,8 +1570,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 702
-            Height = 527
+            Width = 734
+            Height = 525
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1573,8 +1579,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 692
-              Height = 517
+              Width = 724
+              Height = 515
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1582,7 +1588,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 692
+                Width = 724
                 Height = 105
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1872,8 +1878,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 105
-                Width = 692
-                Height = 412
+                Width = 724
+                Height = 410
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1881,8 +1887,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 688
-                  Height = 408
+                  Width = 720
+                  Height = 406
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1924,7 +1930,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
-                  OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1950,6 +1956,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
@@ -2170,16 +2177,16 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 707
-        Height = 554
+        Left = 739
+        Height = 552
         inherited Panel2: TPanel
-          Height = 504
+          Height = 502
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 389
+            Height = 387
             inherited rzShowColumns: TRzCheckList
-              Height = 385
+              Height = 383
             end
           end
         end
@@ -2187,15 +2194,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 919
+    Width = 951
     inherited Image1: TImage
-      Width = 404
+      Width = 436
     end
     inherited Image14: TImage
-      Left = 910
+      Left = 942
     end
     inherited Image3: TImage
-      Width = 404
+      Width = 436
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -2218,6 +2225,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   inherited dsadoReport1: TDataSource
     Left = 41
     Top = 354
+  end
+  inherited SaveDialog1: TSaveDialog
+    Left = 333
+    Top = 196
   end
   inherited adoReport1: TZQuery
     Left = 41

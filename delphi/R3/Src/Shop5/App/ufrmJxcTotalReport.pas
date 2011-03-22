@@ -112,6 +112,22 @@ type
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     sid1,sid2,sid4:string;
     srid1,srid2,srid4:string;
@@ -218,7 +234,11 @@ begin
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then   //and (trim(sid1)<>'') 
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    end;
     if  trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
@@ -270,7 +290,8 @@ begin
 
   strSql :=
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID ';
+    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID ';
 
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
@@ -360,7 +381,12 @@ begin
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    end;
+
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
@@ -420,7 +446,7 @@ end;
 function TfrmJxcTotalReport.GetSortSQL(chk:boolean=true): string;
 var
   strSql,strWhere,GoodTab,lv:widestring;
-  mx:string;
+  JoinCnd,mx:string;
 begin
   result:='';
   if P3_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
@@ -507,6 +533,12 @@ begin
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
+       case Factor.iDbType of
+        4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
+        else
+          JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+       end;
+
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           'sum(ORG_AMT) as ORG_AMT '+
@@ -547,9 +579,9 @@ begin
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
-          'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' '+
+          'union all '+                            
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
           ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
@@ -591,7 +623,8 @@ begin
         ',sum(BAL_RTL) as BAL_RTL '+
         ',sum(BAL_CST) as BAL_CST '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME '+
-        ' from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
+        ' from ('+strSql+') j left outer join VIW_CLIENTINFO r '+
+        ' on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
     else
@@ -633,9 +666,10 @@ begin
         ',sum(BAL_RTL) as BAL_RTL '+
         ',sum(BAL_CST) as BAL_CST '+
         ',isnull(r.SORT_ID,''#'') as SID '+
-        ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
-        'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='''+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+''''+
-        ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
+        ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j '+
+        ' left outer join (select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+') r '+
+        ' on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID '+
+        ' group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
          );
       end;
   end;
@@ -659,16 +693,6 @@ begin
   else
      Raise Exception.Create('结束月结不能小于开始月份...');
 
-  //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
-  begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
-    if trim(sid4)<>'' then
-      strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
-  end else
-    GoodTab:='VIW_GOODSINFO';
-
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
     begin
@@ -678,7 +702,6 @@ begin
       end;
     end;
   //商品指标:
-
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -689,13 +712,18 @@ begin
       6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
       end;
      end;
+
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    end;
     if trim(sid4)<>'' then
-      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
@@ -704,7 +732,7 @@ begin
     begin
       strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
     end;
-    
+
   //检测是否计算
   CheckCalc(strtoInt(P4_D1.asString),StrtoInt(P4_D2.asString));
   mx := GetMaxMonth(StrtoInt(P4_D2.asString));
@@ -1024,7 +1052,7 @@ begin
     rs.ParamByName('END_MONTH').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-       TfrmCostCalc.StartCalc(self);
+    //   TfrmCostCalc.StartCalc(self);
   finally
     rs.Free;
   end;
@@ -1069,6 +1097,42 @@ begin
 
   //继承基类
   inherited AddReportReport(TitleList,PageNo);
+end;
+                              
+procedure TfrmJxcTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmJxcTotalReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmJxcTotalReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmJxcTotalReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

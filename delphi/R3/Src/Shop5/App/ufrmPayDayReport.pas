@@ -51,6 +51,7 @@ type
     P4_D2: TcxDateEdit;
     RzBitBtn3: TRzBitBtn;
     RzPanel15: TRzPanel;
+    DBGridEh4: TDBGridEh;
     dsadoReport4: TDataSource;
     Label5: TLabel;
     fndP1_SHOP_TYPE: TcxComboBox;
@@ -72,40 +73,85 @@ type
     adoReport4: TZQuery;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP3_SHOP_ID: TzrComboBoxList;
-    DBGridEh4: TDBGridEh;
+    TabSheet5: TRzTabSheet;
+    RzPanel16: TRzPanel;
+    RzLabel1: TRzLabel;
+    RzLabel10: TRzLabel;
+    Label4: TLabel;
+    Label6: TLabel;
+    P5_D1: TcxDateEdit;
+    P5_D2: TcxDateEdit;
+    RzBitBtn4: TRzBitBtn;
+    fndP5_SHOP_VALUE: TzrComboBoxList;
+    fndP5_SHOP_TYPE: TcxComboBox;
+    fndP5_SHOP_ID: TzrComboBoxList;
+    RzPanel17: TRzPanel;
+    DBGridEh5: TDBGridEh;
+    adoReport5: TZQuery;
+    dsadoReport5: TDataSource;
+    lblCLIENT_ID: TLabel;
+    fndP5_CLIENT_ID: TzrComboBoxList;
+    Label7: TLabel;
+    fndP5_PayMan: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
+    procedure DBGridEh4DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
 
-    //按管理收款汇总表
+    //返回基础数据的报表
+    function GetRcevBaseData(fndBegDate,fndEndDate: TcxDateEdit): string;
+    //按管理付款汇总表
     function GetGroupSQL(chk:boolean=true): string;
-    //按门店收款汇总表
+    //按门店付款汇总表
     function GetShopSQL(chk:boolean=true): string;
     //按日期分类汇总表
-    function GetRecvDaySQL(chk:boolean=true): string;
-    //应收款流水
-    function GetRecvGlideSQL(chk:boolean=true): string;
+    function GetSortSQL(chk:boolean=true): string;
+    //按供应商付款汇总表
+    function GetRecvSupplieSQL(chk:boolean=true): string;
+    //按付款流水查询
+    function GetGuideSQl(chk:boolean=true): string;
 
+    //输入查询条件最大值日期，返回台帐表的最大结帐日期
+    function GetRckMaxDate(EndDate: integer): Integer;
     function GetShopIDCnd(ShopID: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
+    function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string;
     function GetDateCnd(BegDate,EndDate: TcxDateEdit; FieldName: string): string;  //时间条件
-    function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
-    HasChild: boolean;   
+    HasChild: boolean;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,
-  ufrmCostCalc;
+uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmPayDayReport.FormCreate(Sender: TObject);
@@ -124,43 +170,58 @@ begin
 
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  
+  P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+
+  fndP5_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  fndP5_PAYMan.DataSet := Global.GetZQueryFromName('CA_USERS');  
 
   HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
   rzPage.Pages[0].TabVisible := HasChild;
   rzPage.Pages[1].TabVisible := HasChild;
-  
+
   InitGrid;
   RefreshColumn;
 end;
 
 function TfrmPayDayReport.GetGroupSQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql,RecvData,strWhere: string;
 begin
-  if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P1_D1.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+
+  //返回基础表：
+  RecvData:=GetRcevBaseData(P1_D1,P1_D2);
 
   //按根据条件门店汇总:
   strSql:=
      'select B.REGION_ID as REGION_ID'+
-     ',sum(ACCT_MNY) as ACCT_MNY '+
-     ',sum(PAYM_MNY) as PAYM_MNY '+
-     ',sum(RECK_MNY) as RECK_MNY '+
-     ',sum(REVE_MNY) as REVE_MNY '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+
+     ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
+     ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
+     ',sum(ALL_MNY) as ALL_MNY '+
+     ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
+     ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
+     ',sum(ADVA_MNY) as ADVA_MNY '+
+     ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
+     ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
+     ',sum(PAY_MNY) as PAY_MNY '+
+     ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
+     ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
+     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ' from ('+RecvData+') A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by B.REGION_ID ';
 
-  //关联
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
-    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID ';
+    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID ';   
 
-  Result := ParseSQL(Factor.iDbType, strSql);
+  Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
 function TfrmPayDayReport.GetRowType: integer;
@@ -188,107 +249,138 @@ begin
       end;
     2: begin //按分类汇总表
         if adoReport3.Active then adoReport3.Close;
-        strSql := GetRecvDaySQL;
+        strSql := GetSortSQL;
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
-    3: begin //按商品汇总表
+    3: begin //按供应商汇总表
         if adoReport4.Active then adoReport4.Close;
-        strSql := GetRecvGlideSQL;
+        strSql := GetRecvSupplieSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+      end;
+    4:
+      begin //付款流水
+        if adoReport5.Active then adoReport5.Close;
+        strSql := GetGuideSQl;
+        if strSql='' then Exit;
+        adoReport5.SQL.Text := strSql;
+        Factor.Open(adoReport5);
       end;
   end;
 end;
 
 function TfrmPayDayReport.GetShopSQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql,RecvData,strWhere: string;
 begin
-  if P2_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P2_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P2_D1.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P2_D2.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+
+  //返回基础表：
+  RecvData:=GetRcevBaseData(P2_D1,P2_D2);
 
   //按根据条件门店汇总:
   strSql:=
      'select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID'+
-     ',sum(ACCT_MNY) as ACCT_MNY '+
-     ',sum(PAYM_MNY) as PAYM_MNY '+
-     ',sum(RECK_MNY) as RECK_MNY '+
-     ',sum(REVE_MNY) as REVE_MNY '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+
+     ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
+     ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
+     ',sum(ALL_MNY) as ALL_MNY '+
+     ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
+     ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
+     ',sum(ADVA_MNY) as ADVA_MNY '+
+     ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
+     ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
+     ',sum(PAY_MNY) as PAY_MNY '+
+     ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
+     ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
+     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ' from ('+RecvData+') A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
-  //关联
-  strSql:=
-    'select jp.*,r.SEQ_NO as SHOP_CODE,r.SHOP_NAME as SHOP_NAME '+
-    ' from ('+strSql+')jp '+
-    ' left outer join CA_SHOP_INFO r '+
-    ' on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
- 
-  Result := ParseSQL(Factor.iDbType, strSql);
+  strSql :=
+    'select j.* '+
+    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+    ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+  Result := ParseSQL(Factor.iDbType,strSql); 
 end;
 
-function TfrmPayDayReport.GetRecvDaySQL(chk:boolean=true): string;
+function TfrmPayDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql,RecvData,strWhere: string;
 begin
-  if P3_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P3_D1.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P3_D2.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
+  //返回基础表：
+  RecvData:=GetRcevBaseData(P3_D1,P3_D2);
+
+  //按根据条件门店汇总:
   strSql:=
-     'select ABLE_DATE as RECV_DATE '+
-     ',sum(ACCT_MNY) as ACCT_MNY '+
-     ',sum(PAYM_MNY) as PAYM_MNY '+
-     ',sum(RECK_MNY) as RECK_MNY '+
-     ',sum(REVE_MNY) as REVE_MNY '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+
-     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
-     ' group by ABLE_DATE ';
-     
+     'select A.TENANT_ID as TENANT_ID,A.ABLE_DATE as ABLE_DATE '+
+     ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
+     ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
+     ',sum(ALL_MNY) as ALL_MNY '+
+     ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
+     ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
+     ',sum(ADVA_MNY) as ADVA_MNY '+
+     ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
+     ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
+     ',sum(PAY_MNY) as PAY_MNY '+
+     ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
+     ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
+     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ' from ('+RecvData+') A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+     ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' '+
+     ' group by A.TENANT_ID,A.ABLE_DATE ';
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
-function TfrmPayDayReport.GetRecvGlideSQL(chk:boolean=true): string;
+function TfrmPayDayReport.GetRecvSupplieSQL(chk:boolean=true): string;
 var
-  strSql,strWhere: string;
+  strSql,RecvData,strWhere: string;
 begin
-  if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P4_D1.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P4_D2.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
-  //按根据条件门店查询:
-  strSql:=
-     'select A.TENANT_ID as TENANT_ID'+
-     ',ABLE_DATE'+
-     ',CLIENT_ID'+
-     ',ABLE_TYPE'+
-     ',ACCT_INFO'+
-     ',ACCT_MNY'+
-     ',REVE_MNY'+
-     ',PAYM_MNY'+
-     ',RECK_MNY'+
-     ',NEAR_DATE'+
-     ',CREA_USER'+
-     ',B.SHOP_NAME as SHOP_ID_TEXT '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE')+
-     ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' ';
+  //返回基础表：
+  RecvData:=GetRcevBaseData(P4_D1,P4_D2);
 
-  //关联
+  //按根据条件门店汇总:
   strSql:=
-    'select jb.*,D.CLIENT_NAME from ('+strSql+') jb '+
-    ' left outer join VIW_CLIENTINFO D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID '+
-    ' order by jb.ABLE_DATE ';
+     'select A.TENANT_ID as TENANT_ID,A.CLIENT_ID as CLIENT_ID '+
+     ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
+     ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
+     ',sum(ALL_MNY) as ALL_MNY '+
+     ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
+     ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
+     ',sum(ADVA_MNY) as ADVA_MNY '+
+     ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
+     ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
+     ',sum(PAY_MNY) as PAY_MNY '+
+     ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
+     ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
+     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ' from ('+RecvData+') A,CA_SHOP_INFO B '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
+     ' group by A.TENANT_ID,A.CLIENT_ID ';
+
+  //关联操作员:
+  strSql :=
+    ' select j.*,r.CLIENT_CODE,r.CLIENT_NAME from ('+strSql+') j '+
+    ' left outer join VIW_CLIENTINFO r on '+
+    ' j.TENANT_ID=r.TENANT_ID and j.CLIENT_ID=r.CLIENT_ID order by r.ACCOUNT ';  
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -335,7 +427,7 @@ begin
   inherited;
   if adoReport3.IsEmpty then Exit;
   IsOnDblClick:=true; //设置标记位
-  CurDate:=trim(adoReport3.fieldbyName('RECV_DATE').AsString);
+  CurDate:=trim(adoReport3.fieldbyName('ABLE_DATE').AsString);
   CurDate:=Copy(CurDate,1,4)+'-'+Copy(CurDate,5,2)+'-'+Copy(CurDate,7,2);
   P4_D1.Date:=StrtoDate(CurDate);
   P4_D2.Date:=P4_D1.Date;
@@ -422,7 +514,7 @@ begin
   FindCmp2:=FindComponent('P'+PageNo+'_D2');
   if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
      (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
-    TitleList.add('收款日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
+    TitleList.add('付款日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
 
   inherited AddReportReport(TitleList,PageNo);
 end;
@@ -444,8 +536,6 @@ begin
     result:=' and ('+FieldName+'>='+FormatDatetime('YYYYMMDD',BegDate.Date)+' and '+FieldName+'<='+FormatDatetime('YYYYMMDD',EndDate.Date)+')';
 end;
 
-
-
 function TfrmPayDayReport.GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string;
 var
   AName: string;
@@ -460,6 +550,173 @@ begin
       1: result:=' and '+AName+'SHOP_TYPE='''+TYPE_VALUE.AsString+''' ';
     end;
   end;
+end;  
+
+function TfrmPayDayReport.GetRckMaxDate(EndDate: integer): integer;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select max(CREA_DATE) as CREA_DATE from RCK_ACCT_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE ';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('CREA_DATE').AsInteger := EndDate;
+    Factor.Open(rs);
+    if rs.Fields[0].AsString='' then
+      result := EndDate
+    else
+      result := rs.Fields[0].AsInteger;
+  finally
+    rs.Free;
+  end;
+end;
+
+{ '4': 应付款; '5': 应退款; '6':预付款 }
+
+function TfrmPayDayReport.GetRcevBaseData(fndBegDate, fndEndDate: TcxDateEdit): string;
+var
+  vBegDate,vEndDate,Str: string; //开始日期|结束日期
+begin
+  if fndBegDate.Date=fndEndDate.Date then
+  begin
+    vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,CLIENT_ID '+
+       ',(case when ABLE_DATE<>'+vBegDate+' then PAY_MNY else 0 end) as ORG_ALL_MNY '+   //付款合计:往日
+       ',(case when ABLE_DATE='+vBegDate+'  then PAY_MNY else 0 end) as NEW_ALL_MNY '+   //付款合计:本期
+       ', PAY_MNY as ALL_MNY '+                                                         //付款小计
+       ',(case when (ABLE_TYPE=''6'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_ADVA_MNY '+   //预付款往日
+       ',(case when (ABLE_TYPE=''6'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_ADVA_MNY '+   //预付款本期
+       ',(case when  ABLE_TYPE=''6'' then PAY_MNY else 0 end) as ADVA_MNY '+                                     //预付款小计
+       ',(case when (ABLE_TYPE=''4'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_PAY_MNY '+   //应付往日
+       ',(case when (ABLE_TYPE=''4'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_PAY_MNY '+   //应付本期
+       ',(case when  ABLE_TYPE=''4'' then PAY_MNY else 0 end) as PAY_MNY '+                                     //应付小计
+       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //应退往日
+       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //应退本日
+       ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //应退小计
+       ' from VIW_SUPPAYDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE='+vBegDate;
+  end else
+  if fndBegDate.Date<fndEndDate.Date then
+  begin
+    vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
+    vEndDate:=FormatDatetime('YYYYMMDD',fndEndDate.Date);
+    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,CLIENT_ID '+
+      ',(case when (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_ALL_MNY '+   //付款合计:往日
+      ',(case when (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_ALL_MNY '+   //付款合计:本期
+      ', PAY_MNY as ALL_MNY '+                                                         //付款小计
+      ',(case when (ABLE_TYPE=''3'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_ADVA_MNY '+   //预付款往日
+      ',(case when (ABLE_TYPE=''3'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then PAY_MNY else 0 end) as NEW_ADVA_MNY '+   //预付款本期
+      ',(case when  ABLE_TYPE=''3'' then PAY_MNY else 0 end) as ADVA_MNY '+                                     //预付款小计
+      ',(case when (ABLE_TYPE=''1'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_PAY_MNY '+   //付款往日
+      ',(case when (ABLE_TYPE=''1'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+')  then PAY_MNY else 0 end) as NEW_PAY_MNY '+   //付款本期
+      ',(case when  ABLE_TYPE=''1'' then PAY_MNY else 0 end) as PAY_MNY '+                                     //付款小计
+      ',(case when (ABLE_TYPE=''2'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
+      ',(case when (ABLE_TYPE=''2'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
+      ',(case when  ABLE_TYPE=''2'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+      ' from VIW_SUPPAYDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE>='+vBegDate+' and ABLE_DATE<='+vEndDate+' ';
+  end;
+  result:=str;
+end;
+
+function TfrmPayDayReport.GetGuideSQl(chk: boolean): string;
+var
+  strSql,strWhere: string;
+begin
+  if P5_D1.EditValue = null then Raise Exception.Create(' 付款开始日期条件不能为空！');
+  if P5_D2.EditValue = null then Raise Exception.Create(' 付款结束日期条件不能为空！');
+  if P5_D1.Date>P5_D2.Date then Raise Exception.Create(' 付款开始日期不能大于结束日期！ ');
+  // if round(PP5_D2.date-P5_D1.Date)>62 then Raise Exception.Create(' 您查询的时间段太长了，软件只能查询两个月内的流水单据 ');
+  strWhere:='';
+
+  //付款查询条件
+  strWhere:=GetDateCnd(P5_D1, P5_D2, 'ABLE_DATE');
+  //门店管理群组
+  strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'');
+  //门店名称查询条件
+  strWhere:=strWhere+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID');
+  //供应商查询条件
+  if fndP5_CLIENT_ID.AsString<>'' then
+    strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
+  //收款人查询条件
+  if fndP5_PayMan.AsString<>'' then
+    strWhere:=strWhere+' and A.PAY_USER='''+fndP5_PayMan.AsString+''' ';
+
+  //关联语句
+  strSql:=
+    'select jp.*,r.USER_NAME as USER_NAME from '+
+    '(select jb.*,D.CLIENT_NAME as CUST_NAME from  '+
+    '(select A.*,B.SHOP_NAME from VIW_SUPPAYDATA A,CA_SHOP_INFO B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+    ' '+strWhere+') jb '+
+    ' left outer join VIW_CLIENTINFO D '+
+    ' on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID)jp '+
+    ' left outer join viw_users r on '+
+    ' jp.TENANT_ID=r.TENANT_ID and jp.PAY_USER=r.USER_ID order by jp.PAY_USER ';
+    
+  Result := ParseSQL(Factor.iDbType,strSql);
+end;
+
+
+procedure TfrmPayDayReport.DBGridEh4DblClick(Sender: TObject);
+begin
+  if adoReport4.IsEmpty then Exit;
+  IsOnDblClick:=true; //设置标记位
+  P5_D1.Date:=P4_D1.Date;
+  P5_D2.Date:=P4_D2.Date;
+  fndP5_SHOP_TYPE.ItemIndex:=fndP4_SHOP_TYPE.ItemIndex;
+  fndP5_SHOP_VALUE.KeyValue:=fndP4_SHOP_VALUE.KeyValue;
+  fndP5_SHOP_VALUE.Text:=fndP4_SHOP_VALUE.Text;
+  fndP5_SHOP_ID.KeyValue:=fndP4_SHOP_ID.KeyValue;
+  fndP5_SHOP_ID.Text:=fndP4_SHOP_ID.Text;
+  if RzPage.ActivePageIndex+1<=RzPage.PageCount then
+  begin
+    RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
+    actFind.OnExecute(nil);
+  end;
+end;
+
+procedure TfrmPayDayReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayDayReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayDayReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'ABLE_DATE' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayDayReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+end;
+      
+procedure TfrmPayDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
 end;
 
 end.

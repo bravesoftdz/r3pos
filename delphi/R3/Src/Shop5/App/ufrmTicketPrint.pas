@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ZDataset, uGlobal,uShopGlobal, uDevFactory,
-  ComCtrls;
+  ComCtrls,ObjCommon;
 
 type
   TfrmTicketPrint = class(TfrmBasic)
@@ -82,19 +82,20 @@ begin
       begin
         rs := TZQuery.Create(nil);
         rs.SQL.Text :=
+        ParseSQL(Factor.iDbType,
+        'select je.*,isnull(e.BARCODE,je.CALC_BARCODE) as BARCODE from ('+
         'select jd.*,d.COLOR_NAME as PROPERTY_02_TEXT from ('+
         'select jc.*,c.SIZE_NAME as PROPERTY_01_TEXT from ('+
-        'select jb.TENANT_ID,jb.SHOP_ID,jb.SALES_DATE,jb.GODS_ID,jb.UNIT_ID,jb.UNIT_NAME,'+
-        'jb.CALC_AMOUNT/case when jb.UNIT_ID=b.SMALL_UNITS then b.SMALLTO_CALC when jb.UNIT_ID=b.BIG_UNITS then b.BIGTO_CALC else 1 end as CALC_AMOUNT,'+
-        'jb.CALC_MONEY,b.GODS_NAME,b.GODS_CODE,b.BARCODE,jb.PROPERTY_01,jb.PROPERTY_02 from('+
+        'select jb.*,b.GODS_NAME,b.GODS_CODE,b.BARCODE as CALC_BARCODE from('+
         'select ja.*,a.UNIT_NAME from('+
-        'select B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY,A.PROPERTY_01,A.PROPERTY_02 '+
+        'select A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02,sum(A.AMOUNT) as AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
         'from SAL_SALESDATA A,SAL_SALESORDER B where A.SALES_ID=B.SALES_ID and A.TENANT_ID=B.TENANT_ID '+
-        'and B.SALES_TYPE=''1'' and SALES_DATE=:SALES_DATE and '+WhereStr+' group by B.TENANT_ID,B.SHOP_ID,B.CREA_USER,B.SALES_DATE,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02) ja '+
+        'and B.SALES_TYPE=4 and SALES_DATE=:SALES_DATE and '+WhereStr+' group by A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02) ja '+
         'left outer join PUB_MEAUNITS a on a.UNIT_ID=ja.UNIT_ID and a.TENANT_ID=ja.TENANT_ID) jb '+
-        'left outer join VIW_GOODSPRICEEXT b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID) jc '+
-        'left outer join  VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
-        'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and  jd.PROPERTY_02=d.COLOR_ID  order by jd.SALES_DATE ';
+        'left outer join VIW_GOODSINFO b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID) jc '+
+        'left outer join VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
+        'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.PROPERTY_02=d.COLOR_ID ) je ';
+        'left outer join VIW_BARCODE e on je.TENANT_ID=e.TENANT_ID and je.PROPERTY_02=e.PROPERTY_02 and je.PROPERTY_01=e.PROPERTY_01 and je.GODS_ID=e.GODS_ID and je.UNIT_ID=e.UNIT_ID ');
 
         case QueryType of
           1:begin
@@ -125,9 +126,9 @@ begin
         rs.First;
         while not rs.Eof do
           begin
-            Sum_Goods := Sum_Goods + rs.FieldbyName('CALC_AMOUNT').AsFloat;
+            Sum_Goods := Sum_Goods + rs.FieldbyName('AMOUNT').AsFloat;
             Sum_Money := Sum_Money + rs.FieldbyName('CALC_MONEY').AsFloat;
-            FormatGoodsAndMoney(GetTicketGodsName(rs),rs.FieldbyName('CALC_AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
+            FormatGoodsAndMoney(GetTicketGodsName(rs),rs.FieldbyName('AMOUNT').AsString,rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('CALC_MONEY').AsString);
             rs.Next;
           end;
         DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));

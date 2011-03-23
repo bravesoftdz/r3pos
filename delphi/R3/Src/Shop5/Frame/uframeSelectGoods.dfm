@@ -95,6 +95,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Height = 301
               Align = alClient
               AllowedOperations = [alopUpdateEh]
+              AutoFitColWidths = True
               DataSource = dsList
               Flat = True
               FooterColor = clWindow

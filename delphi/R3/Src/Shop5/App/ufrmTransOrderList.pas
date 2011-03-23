@@ -55,6 +55,8 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure ToolButton8Click(Sender: TObject);
+    procedure frfTransOrderGetValue(const ParName: String;
+      var ParValue: Variant);
   private
     procedure ChangeButton;
     function CheckCanExport:boolean;
@@ -247,11 +249,15 @@ begin
   ',jb.ACCT_NAME as OUT_ACCOUNT_ID_TEXT '+
   ',jc.USER_NAME as TRANS_USER_TEXT '+
   ',jd.USER_NAME as CREA_USER_TEXT '+
+  ',je.USER_NAME as CHK_USER_TEXT '+
+  ',jf.SHOP_NAME '+
   'from ACC_TRANSORDER j '+
   'left outer join VIW_ACCOUNT_INFO ja on j.TENANT_id=ja.TENANT_ID and j.IN_ACCOUNT_ID=ja.ACCOUNT_ID '+
   'left outer join VIW_ACCOUNT_INFO jb on j.TENANT_id=jb.TENANT_ID and j.OUT_ACCOUNT_ID=jb.ACCOUNT_ID '+
   'left outer join VIW_USERS jc on j.TENANT_id=jc.TENANT_ID and j.TRANS_USER=jc.USER_ID '+
-  'left outer join VIW_USERS jc on j.TENANT_id=jc.TENANT_ID and j.CREA_USER=jc.USER_ID '+
+  'left outer join VIW_USERS jd on j.TENANT_id=jd.TENANT_ID and j.CREA_USER=jd.USER_ID '+
+  'left outer join VIW_USERS je on j.TENANT_id=je.TENANT_ID and j.CHK_USER=je.USER_ID '+
+  'left outer join CA_SHOP_INFO jf on j.TENANT_id=jf.TENANT_ID and j.SHOP_ID=jf.SHOP_ID '+
   'where j.TENANT_ID='+tenantid+' and j.TRANS_ID='''+id+'''';
   ;
 end;
@@ -468,6 +474,20 @@ end;
 function TfrmTransOrderList.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('21700001',7);
+end;
+
+procedure TfrmTransOrderList.frfTransOrderGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if trim(UpperCase(ParName))='TENANT_NAME' then
+    ParValue := Global.SHORT_TENANT_NAME;
+  if trim(UpperCase(ParName))='TENANT_NAME' then
+    ParValue := Global.SHORT_TENANT_NAME;
+  if trim(UpperCase(ParName))='TENANT_NAME' then
+    ParValue := Global.SHORT_TENANT_NAME;
+  if trim(UpperCase(ParName))='TENANT_NAME' then
+    ParValue := Global.SHORT_TENANT_NAME;            
 end;
 
 end.

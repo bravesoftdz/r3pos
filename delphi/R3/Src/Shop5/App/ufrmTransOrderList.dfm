@@ -1,6 +1,6 @@
 inherited frmTransOrderList: TfrmTransOrderList
-  Left = 775
-  Top = 161
+  Left = 492
+  Top = 144
   Width = 906
   Height = 587
   Caption = #23384#21462#27454#21333

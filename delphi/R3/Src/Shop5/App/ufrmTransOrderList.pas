@@ -482,12 +482,6 @@ begin
   inherited;
   if trim(UpperCase(ParName))='TENANT_NAME' then
     ParValue := Global.SHORT_TENANT_NAME;
-  if trim(UpperCase(ParName))='TENANT_NAME' then
-    ParValue := Global.SHORT_TENANT_NAME;
-  if trim(UpperCase(ParName))='TENANT_NAME' then
-    ParValue := Global.SHORT_TENANT_NAME;
-  if trim(UpperCase(ParName))='TENANT_NAME' then
-    ParValue := Global.SHORT_TENANT_NAME;            
 end;
 
 end.

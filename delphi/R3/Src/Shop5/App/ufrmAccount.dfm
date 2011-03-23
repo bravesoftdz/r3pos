@@ -1,5 +1,5 @@
 inherited frmAccount: TfrmAccount
-  Left = 370
+  Left = 333
   Top = 159
   Width = 706
   Height = 520

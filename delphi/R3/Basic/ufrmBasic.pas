@@ -6,7 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes,DB, Graphics, Controls, Forms,
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
   cxContainer, cxEdit, cxTextEdit, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
-  ComCtrls,RzTreeVw, StdCtrls, RzButton, ShellApi, cxCalendar;
+  ComCtrls,RzTreeVw, StdCtrls, RzButton, ShellApi, cxCalendar,DBGrids;
+const
+  RowSelectColor=clAqua;
 type
   TfrmBasic = class(TForm)
     mmMenu: TMainMenu;
@@ -137,6 +139,7 @@ begin
       if Components[i] is TDBGridEh then
          begin
            TDBGridEh(Components[i]).OptionsEh := TDBGridEh(Components[i]).OptionsEh + [dghDialogFind];
+           TDBGridEh(Components[i]).Options := TDBGridEh(Components[i]).Options - [dgRowSelect];
            if TDBGridEh(Components[i]).AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh, alopAppendEh] then
               TDBGridEh(Components[i]).AllowedOperations := [alopUpdateEh, alopAppendEh];
          end;

@@ -661,15 +661,20 @@ var
   bal:real;
   rs:TZQuery;
 begin
+  Raise Exception.Create('对不起，您没有开通储值卡支付功能...');
   if ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
   if MainRecord.FieldByName('CLIENT_ID').AsString = '' then
      begin
        s := TfrmCardNoInput.GetCardNo(self);
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select CLIENT_ID,CLIENT_NAME,IC_CARDNO,PASSWRD,BALANCE from VIW_CUSTOMER where IC_CARDNO='''+s+''' or CLIENT_CODE='''+s+''' and COMM not in (''02'',''12'')';
+         rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE,IC_STATUS from PUB_IC_INFO where TENANT_ID=:TENANT_ID and IC_CARDNO='''+s+''' and UNION_ID=''#'' and COMM not in (''02'',''12'')';
          Factor.Open(rs);
          if rs.IsEmpty then Raise Exception.Create('你输入的会员卡号无效...');
+         case rs.FieldbyName('IC_STATUS').asInteger of
+         2:Raise Exception.Create('当前会员卡号在挂失状态,无法完成支付...');
+         9:Raise Exception.Create('当前会员卡号在注销状态,无法完成支付...');
+         end;
          MainRecord.FieldByName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
          MainRecord.FieldByName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CLIENT_ID_TEXT').AsString;
          cardno := rs.FieldbyName('IC_CARDNO').AsString;

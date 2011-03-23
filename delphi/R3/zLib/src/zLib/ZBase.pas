@@ -149,7 +149,7 @@ TRecord_=class(TComponent)
     procedure AddField(Field:TField_);overload;
     procedure AddField(AFieldName:string;AFieldValue:Variant;AFieldType:TFieldType=ftString);overload;
     procedure CopyTo(Records:TRecord_);
-
+    procedure CopyToParams(Params:TParams;ForOldValue:boolean=false);
     //从数据集中读入各字段，但不包括字段值
     procedure ReadField(ADataSet:TDataSet);
     //从数据集中读入各字段及值
@@ -1002,6 +1002,25 @@ procedure TRecord_.CreateNew(AOwner: TComponent);
 begin
   inherited Create(nil);
   FList := TList.Create;
+end;
+
+procedure TRecord_.CopyToParams(Params: TParams;ForOldValue:boolean=false);
+var
+  i:integer;
+  Field:TField_;
+begin
+  for i:=0 to Params.Count -1 do
+    begin
+      Field := FindField(Params[i].Name);
+      if Field<>nil then
+         begin
+           Params[i].DataType := Field.DataType;
+           if ForOldValue then
+              Params[i].Value := Field.OldValue
+           else
+              Params[i].Value := Field.NewValue;
+         end;
+    end;
 end;
 
 { TZFactory }

@@ -9,25 +9,25 @@ inherited frmTransOrderList: TfrmTransOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 898
-    Height = 530
+    Width = 890
+    Height = 513
     inherited RzPanel2: TRzPanel
-      Width = 888
-      Height = 520
+      Width = 880
+      Height = 503
       inherited RzPage: TRzPageControl
-        Width = 882
-        Height = 514
+        Width = 874
+        Height = 497
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23384#21462#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 880
-            Height = 487
+            Width = 872
+            Height = 470
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 870
+              Width = 862
               Height = 117
               Align = alTop
               BorderOuter = fsNone
@@ -293,8 +293,8 @@ inherited frmTransOrderList: TfrmTransOrderList
             object RzPanel6: TRzPanel
               Left = 5
               Top = 122
-              Width = 870
-              Height = 360
+              Width = 862
+              Height = 343
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -302,8 +302,8 @@ inherited frmTransOrderList: TfrmTransOrderList
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 870
-                Height = 360
+                Width = 862
+                Height = 343
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Dsc_1
@@ -439,19 +439,20 @@ inherited frmTransOrderList: TfrmTransOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 898
+    Width = 890
     inherited Image1: TImage
-      Left = 530
-      Width = 359
-    end
-    inherited Image14: TImage
-      Left = 889
+      Left = 374
+      Width = 496
     end
     inherited Image3: TImage
-      Left = 530
-      Width = 359
+      Left = 374
+      Width = 496
+    end
+    inherited Image14: TImage
+      Left = 870
     end
     inherited rzPanel5: TPanel
+      Left = 374
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#23384#21462#27454#21333
       end
@@ -465,11 +466,10 @@ inherited frmTransOrderList: TfrmTransOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 354
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 354
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0
@@ -515,6 +515,7 @@ inherited frmTransOrderList: TfrmTransOrderList
           Left = 268
           Top = 0
           Action = actPreview
+          OnClick = ToolButton8Click
         end
         object ToolButton9: TToolButton
           Left = 311

@@ -19,6 +19,7 @@ type
     RzGroup2: TRzGroup;
     dgdesk: TPanel;
     Image1: TImage;
+    RzBmpButton1: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);

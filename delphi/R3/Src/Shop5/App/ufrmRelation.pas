@@ -8,15 +8,13 @@ uses
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,ADODB,
   cxContainer, cxEdit, cxTextEdit, RzButton, zBase, DB, DBClient, RzTreeVw,
   FR_Class, PrnDbgeh, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  DBGrids, Buttons;
+  DBGrids, Buttons, cxRadioGroup;
 
 type
   TfrmRelation = class(TframeToolForm)
     RzPanel1: TRzPanel;
     Panel3: TPanel;
     Panel4: TPanel;
-    Label2: TLabel;
-    edtKey: TcxTextEdit;
     Ds_RelationAndGoods: TDataSource;
     rzTree: TRzTreeView;
     Splitter1: TSplitter;
@@ -32,7 +30,6 @@ type
     AllSelect: TMenuItem;
     InverserSelect: TMenuItem;
     NotSelect: TMenuItem;
-    btnOk: TRzBitBtn;
     Panel1: TPanel;
     stbPanel: TPanel;
     Label1: TLabel;
@@ -48,11 +45,11 @@ type
     Grid_RelationAndGoods: TDBGridEh;
     ToolButton3: TToolButton;
     ToolButton6: TToolButton;
+    rb1: TcxRadioButton;
+    rb2: TcxRadioButton;
     procedure actFindExecute(Sender: TObject);
     procedure ShowAllClick(Sender: TObject);
     procedure Cds_RelationAndGoodsAfterScroll(DataSet: TDataSet);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure rzTreeChange(Sender: TObject;
       Node: TTreeNode);
     procedure AllSelectClick(Sender: TObject);
@@ -135,11 +132,6 @@ begin
          w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
       else
          w := w + 'b.RELATION_ID=:RELATION_ID ';
-     end;
-  if trim(edtKey.Text)<>'' then
-     begin
-      if w<>'' then w := w + ' and ';
-      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or BARCODE like ''%'''+sc+':KEYVALUE )';
      end;
   case Factor.iDbType of
   0:
@@ -244,8 +236,6 @@ begin
     rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
     if rs.Params.FindParam('MAXID')<>nil then
        rs.Params.ParamByName('MAXID').AsString := MaxId;
-    if rs.Params.FindParam('KEYVALUE')<>nil then
-       rs.Params.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
     if rs.Params.FindParam('LEVEL_ID')<>nil then
        rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
     if rs.Params.FindParam('RELATION_ID')<>nil then
@@ -282,16 +272,6 @@ begin
   if IsEnd or not DataSet.Eof then Exit;
   if Cds_RelationAndGoods.ControlsDisabled then Exit;
   Open(MaxId);
-end;
-
-procedure TfrmRelation.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if (Key<>VK_RETURN) and (Key<>VK_ESCAPE) and (Key<>VK_TAB) and (Key<>VK_SPACE) and (KEY<>VK_DOWN) and (KEY<>VK_UP) and (KEY<>VK_LEFT) and (KEY<>VK_RIGHT) and (Key<>0) AND (KEY<>VK_CONTROL) then
-     edtKey.SetFocus;
-  inherited;
-  if Key = VK_F5 then
-     Open('');
 end;
 
 procedure TfrmRelation.rzTreeChange(Sender: TObject;
@@ -372,6 +352,8 @@ begin
   inherited;
   if TfrmJoinRelation.AddDialog(Self) then
      begin
+       Prepare;
+       LoadTree;
      end;
 end;
 
@@ -386,15 +368,8 @@ begin
       begin
         if TfrmRelationInfo.EditDialog(Self,RID,Aobj1) then
           begin
-            for i:=rzTree.Items.Count-1 downto 0 do
-              begin
-                if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
-                  begin
-                    Prepare;
-                    LoadTree;
-                    Break;
-                  end;
-              end;
+            Prepare;
+            LoadTree;
             RID := Aobj1.FieldByName('RELATION_ID').AsString;
             RNAME := Aobj1.FieldByName('RELATION_NAME').AsString;
           end;
@@ -403,18 +378,10 @@ begin
       begin
         if TfrmRelationInfo.AddDialog(Self,Aobj1) then
           begin
-            for i:=rzTree.Items.Count-1 downto 0 do
-              begin
-                if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
-                  begin
-                    Prepare;
-                    LoadTree;
-                    Break;
-                  end;
-              end;
+            Prepare;
+            LoadTree;
             RID := Aobj1.FieldByName('RELATION_ID').AsString;
             RNAME := Aobj1.FieldByName('RELATION_NAME').AsString;
-            IsRel := True;
           end;
       end;
   finally
@@ -454,16 +421,8 @@ begin
      MessageBox(Handle,'请选择供应链名称，再执行删除操作','友情提示..',MB_OK+MB_ICONINFORMATION);
   if TfrmRelationInfo.DeleteDialog(Self,cid) then
     begin
-      for i:=rzTree.Items.Count-1 downto 0 do
-        begin
-          if (TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString = '0') then
-            begin
-              Prepare;
-              LoadTree;
-              Break;
-            end;
-        end;
-      IsRel := False;
+      Prepare;
+      LoadTree;
      end
   else
      MessageBox(Handle,'请选择供应链名称，删除供应链','友情提示..',MB_OK+MB_ICONINFORMATION);

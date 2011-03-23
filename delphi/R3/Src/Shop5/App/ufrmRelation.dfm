@@ -1,6 +1,5 @@
 inherited frmRelation: TfrmRelation
-  Left = 305
-  Top = 147
+  Left = 137
   Width = 956
   Height = 628
   Caption = #20379#24212#38142#31649#29702
@@ -24,29 +23,29 @@ inherited frmRelation: TfrmRelation
             Height = 511
             object Splitter1: TSplitter
               Left = 181
-              Top = 41
-              Height = 465
+              Top = 47
+              Height = 459
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
               Width = 912
-              Height = 36
+              Height = 42
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
                 912
-                36)
+                42)
               object Panel3: TPanel
                 Left = 0
                 Top = 0
                 Width = 178
-                Height = 30
+                Height = 36
                 Alignment = taRightJustify
                 BevelInner = bvLowered
-                Caption = #26597#35810#20851#20581#23383'   '
+                Caption = #20379#24212#38142#32463#33829#21830#21697#31649#29702'  '
                 Color = 12698049
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWindowText
@@ -59,73 +58,38 @@ inherited frmRelation: TfrmRelation
               object Panel4: TPanel
                 Left = 176
                 Top = 0
-                Width = 748
-                Height = 30
+                Width = 736
+                Height = 36
                 Alignment = taLeftJustify
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 BevelInner = bvLowered
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
                 ParentColor = True
-                ParentFont = False
                 TabOrder = 1
-                object Label2: TLabel
-                  Left = 298
-                  Top = 10
-                  Width = 247
-                  Height = 12
-                  Caption = #25903#25345#65288#21697#21517#12289#25340#38899#30721#12289#36135#21495#12289#26465#24418#30721#65289#26597#35810
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  ParentFont = False
-                end
-                object edtKey: TcxTextEdit
-                  Left = 9
-                  Top = 5
-                  Width = 196
-                  Height = 20
+                object rb1: TcxRadioButton
+                  Left = 16
+                  Top = 11
+                  Width = 89
+                  Height = 17
+                  Caption = #24050#32463#33829#21830#21697
+                  Checked = True
                   TabOrder = 0
+                  TabStop = True
                 end
-                object btnOk: TRzBitBtn
-                  Left = 218
-                  Top = 3
-                  Width = 67
-                  Height = 24
-                  Action = actFind
-                  Caption = #26597#35810
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
+                object rb2: TcxRadioButton
+                  Left = 120
+                  Top = 11
+                  Width = 87
+                  Height = 17
+                  Caption = #26410#32463#33829#21830#21697
                   TabOrder = 1
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  ImageIndex = 12
-                  NumGlyphs = 2
-                  Spacing = 5
                 end
               end
             end
             object rzTree: TRzTreeView
               Left = 5
-              Top = 41
+              Top = 47
               Width = 176
-              Height = 465
+              Height = 459
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -140,15 +104,15 @@ inherited frmRelation: TfrmRelation
             end
             object Panel1: TPanel
               Left = 184
-              Top = 41
+              Top = 47
               Width = 733
-              Height = 465
+              Height = 459
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object stbPanel: TPanel
                 Left = 1
-                Top = 445
+                Top = 439
                 Width = 731
                 Height = 19
                 Align = alBottom
@@ -172,7 +136,7 @@ inherited frmRelation: TfrmRelation
                 Left = 1
                 Top = 1
                 Width = 731
-                Height = 444
+                Height = 438
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_RelationAndGoods

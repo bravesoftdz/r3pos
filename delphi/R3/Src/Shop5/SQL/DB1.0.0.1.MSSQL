@@ -442,6 +442,10 @@ CREATE TABLE [CA_RELATION](
 	[TENANT_ID] int NOT NULL,
 	  --供应链名称
 	[RELATION_NAME] varchar(50) NOT NULL,
+	  --拼音码
+	[RELATION_SPELL] varchar(50) NOT NULL,
+	  --说明
+	[REMARK] varchar(255) NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	[COMM] [varchar](2) NOT NULL CONSTRAINT [DF_CA_RELATION_COMM] DEFAULT ('00'),
     --更新时间 从2011-01-01开始的秒数  

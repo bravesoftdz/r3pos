@@ -587,7 +587,7 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='''+IntToStr(Global.TENANT_ID)+''' and DEFINE like ''BUIK%''';
+    rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE like ''BUIK%''';
     Factor.Open(rs);
     if rs.Locate('DEFINE','BUIK_FLAG',[]) then
        edtFlag.Text := rs.FieldbyName('VALUE').asString

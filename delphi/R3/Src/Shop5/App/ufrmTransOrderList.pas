@@ -54,9 +54,9 @@ type
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure ToolButton8Click(Sender: TObject);
     procedure frfTransOrderGetValue(const ParName: String;
       var ParValue: Variant);
+    procedure actPreviewExecute(Sender: TObject);
   private
     procedure ChangeButton;
     function CheckCanExport:boolean;
@@ -456,20 +456,6 @@ begin
     end;
 end;
 
-procedure TfrmTransOrderList.ToolButton8Click(Sender: TObject);
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
-  with TfrmFastReport.Create(Self) do
-    begin
-      try
-         ShowReport(PrintSQL2(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('TRANS_ID').AsString),frfTransOrder);
-      finally
-         free;
-      end;
-    end;
-end;
-
 function TfrmTransOrderList.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('21700001',7);
@@ -481,6 +467,20 @@ begin
   inherited;
   if trim(UpperCase(ParName))='TENANT_NAME' then
     ParValue := Global.SHORT_TENANT_NAME;
+end;
+
+procedure TfrmTransOrderList.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         ShowReport(PrintSQL2(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('TRANS_ID').AsString),frfTransOrder);
+      finally
+         free;
+      end;
+    end;
 end;
 
 end.

@@ -190,7 +190,7 @@ type
     actfrmDevFactory: TAction;
     actfrmIntfSetup: TAction;
     CA_MODULE: TZQuery;
-    actfrmStorageInfo: TAction;
+    actfrmStorageTracking: TAction;
     actfrmRckMng: TAction;
     actfrmCheckTablePrint: TAction;
     actfrmJxcTotalReport: TAction;

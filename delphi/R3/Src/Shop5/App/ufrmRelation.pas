@@ -34,8 +34,6 @@ type
     stbPanel: TPanel;
     Label1: TLabel;
     ShowAll: TMenuItem;
-    actCopyNew: TAction;
-    actPrintBarCode: TAction;
     PrintDBGridEh1: TPrintDBGridEh;
     Cds_RelationAndGoods: TZQuery;
     AddSortTree: TPopupMenu;
@@ -64,6 +62,8 @@ type
     procedure actCancelExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure rb1Click(Sender: TObject);
+    procedure rb2Click(Sender: TObject);
   private
     { Private declarations }
 
@@ -74,6 +74,7 @@ type
     procedure Prepare;
     procedure LoadTree;
     procedure InitGrid;
+    procedure ChangeButton;
     function IsRelation:Boolean;
     function EncodeSql(Id:String):String;
     procedure Open(Id:String);
@@ -279,6 +280,7 @@ procedure TfrmRelation.rzTreeChange(Sender: TObject;
 begin
   inherited;
   Open('');
+  ChangeButton;
 end;
 
 procedure TfrmRelation.AllSelectClick(Sender: TObject);
@@ -447,11 +449,11 @@ begin
   if Value then
     begin
       ToolButton4.Tag := 1;
-      ToolButton4.Caption := '更名';
+      actEdit.Caption := '更名';
     end
   else
     begin
-      ToolButton4.Caption := '创建';
+      actEdit.Caption := '创建';
       ToolButton4.Tag := 0;
     end;
 end;
@@ -471,12 +473,27 @@ end;
 procedure TfrmRelation.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',7) then
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  PrintDBGridEh1.DBGridEh := Grid_RelationAndGoods;
+  PrintDBGridEh1.Print;
 //
 end;
 
 procedure TfrmRelation.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',7) then
+    Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
+  PrintDBGridEh1.DBGridEh := Grid_RelationAndGoods;
+  with TfrmEhLibReport.Create(self) do
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
 //
 end;
 
@@ -485,24 +502,48 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from CA_RELATION where TENANT_ID=:TENANT_ID';
+    rs.SQL.Text := 'select * from CA_RELATION where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);
     RName := rs.FieldbyName('RELATION_NAME').AsString;
     RID := rs.FieldbyName('RELATION_ID').AsString;
-    if rs.IsEmpty then
-       begin
-         ToolButton4.Tag := 1;
-         actEdit.Caption := '修改';
-       end
-    else
-       begin
-         ToolButton4.Tag := 0;
-         actEdit.Caption := '创建';
-       end;
+    IsRel := not rs.IsEmpty;
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmRelation.ChangeButton;
+begin
+  if rzTree.Selected=nil then Exit;
+  if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
+     begin
+       if rb1.Checked then
+          actSave.Caption := '撤消'
+       else
+          actSave.Caption := '发布';
+     end
+  else
+     begin
+       if rb1.Checked then
+          actSave.Caption := '启用'
+       else
+          actSave.Caption := '禁用';
+     end;
+end;
+
+procedure TfrmRelation.rb1Click(Sender: TObject);
+begin
+  inherited;
+  Open('');
+  ChangeButton;
+end;
+
+procedure TfrmRelation.rb2Click(Sender: TObject);
+begin
+  inherited;
+  Open('');
+  ChangeButton;
 end;
 
 end.

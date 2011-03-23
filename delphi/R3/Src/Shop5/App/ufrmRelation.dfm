@@ -1,5 +1,6 @@
 inherited frmRelation: TfrmRelation
   Left = 137
+  Top = 171
   Width = 956
   Height = 628
   Caption = #20379#24212#38142#31649#29702
@@ -74,6 +75,7 @@ inherited frmRelation: TfrmRelation
                   Checked = True
                   TabOrder = 0
                   TabStop = True
+                  OnClick = rb1Click
                 end
                 object rb2: TcxRadioButton
                   Left = 120
@@ -82,6 +84,7 @@ inherited frmRelation: TfrmRelation
                   Height = 17
                   Caption = #26410#32463#33829#21830#21697
                   TabOrder = 1
+                  OnClick = rb2Click
                 end
               end
             end
@@ -367,6 +370,7 @@ inherited frmRelation: TfrmRelation
       OnExecute = actEditExecute
     end
     inherited actSave: TAction
+      Caption = #21457#24067
       OnExecute = actSaveExecute
     end
     inherited actCancel: TAction
@@ -383,12 +387,6 @@ inherited frmRelation: TfrmRelation
     end
     inherited actInfo: TAction
       OnExecute = actInfoExecute
-    end
-    object actCopyNew: TAction
-      Caption = #22797#21046#26032#22686
-    end
-    object actPrintBarCode: TAction
-      Caption = #25171#21360#26465#30721
     end
   end
   object Ds_RelationAndGoods: TDataSource

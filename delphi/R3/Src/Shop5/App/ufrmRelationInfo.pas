@@ -272,7 +272,6 @@ begin
         Open(Code_id);
         if IsExist then
           begin
-            btnDelete.Left := 289;
             btnDelete.Visible := true;
             btnOk.Visible := False;
             if ShowModal = mrOk then
@@ -312,14 +311,14 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select count(*) from  CA_RELATIONS where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID';
+    rs.SQL.Text := 'select count(*) from  CA_RELATIONS where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := Aobj.Fieldbyname('TENANT_ID').AsInteger;;
     rs.ParamByName('RELATION_ID').AsInteger := Aobj.Fieldbyname('RELATION_ID').AsInteger;
     Factor.Open(rs);
     edtTENANT_NUM.Text := rs.Fields[0].AsString;
 
     rs.Close;
-    rs.SQL.Text := ' select count(*) from  PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID ';
+    rs.SQL.Text := ' select count(*) from  PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'') ';
     rs.ParamByName('TENANT_ID').AsInteger := Aobj.Fieldbyname('TENANT_ID').AsInteger;;
     rs.ParamByName('RELATION_ID').AsInteger := Aobj.Fieldbyname('RELATION_ID').AsInteger;
     Factor.Open(rs);

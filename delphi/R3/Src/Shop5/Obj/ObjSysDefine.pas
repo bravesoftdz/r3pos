@@ -54,30 +54,30 @@ begin
 end;
 
 procedure TSysDefine.InitClass;
-var Str: string;  //,l,r
+var Str,l,r: string;  //
 begin
   inherited;
   KeyFields := 'TENANT_ID;DEFINE';
 
   IsSQLUpdate := True;
-  {case iDbType of
+  case iDbType of
   0,3:begin l:='[';r:=']';end;
   1:begin l:='"';r:='"';end;
-  end;}
+  else
+    begin
+      l:='"';r:='"';
+    end;
+  end;
+  Str := 'select TENANT_ID,DEFINE,'+l+'VALUE'+r+',VALUE_TYPE from SYS_DEFINE where TENANT_ID=:TENANT_ID';
+  SelectSQL.Text := Str;
 
-  //SelectSQL.Text := 'select TENANT_ID,DEFINE,'+l+'VALUE'+r+',VALUE_TYPE from SYS_DEFINE where TENANT_ID=:TENANT_ID';
-  SelectSQL.Text := 'select TENANT_ID,DEFINE,[VALUE],VALUE_TYPE from SYS_DEFINE where TENANT_ID=:TENANT_ID';
-
-  Str := 'insert into SYS_DEFINE(TENANT_ID,DEFINE,[VALUE],VALUE_TYPE,COMM,TIME_STAMP) '+
+  Str := 'insert into SYS_DEFINE(TENANT_ID,DEFINE,'+l+'VALUE'+r+',VALUE_TYPE,COMM,TIME_STAMP) '+
   'values(:TENANT_ID,:DEFINE,:VALUE,:VALUE_TYPE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update SYS_DEFINE set TENANT_ID=:TENANT_ID,DEFINE=:DEFINE,[VALUE]=:VALUE,VALUE_TYPE=:VALUE_TYPE,'+
+  Str := 'update SYS_DEFINE set TENANT_ID=:TENANT_ID,DEFINE=:DEFINE,'+l+'VALUE'+r+'=:VALUE,VALUE_TYPE=:VALUE_TYPE,'+
   'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and DEFINE=:OLD_DEFINE';
   UpdateSQL.Text := Str;
-  {case iDbType of
-  0,1: Str := 'delete SYS_DEFINE where COMP_ID=:OLD_COMP_ID and DEFINE=:OLD_DEFINE';
-    3: Str := 'delete from SYS_DEFINE where COMP_ID=:OLD_COMP_ID and DEFINE=:OLD_DEFINE';
-  end;}
+
   Str := 'delete SYS_DEFINE where TENANT_ID=:OLD_TENANT_ID and DEFINE=:OLD_DEFINE';
   DeleteSQL.Text := Str;
 end;

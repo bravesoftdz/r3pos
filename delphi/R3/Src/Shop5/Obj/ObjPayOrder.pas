@@ -191,11 +191,11 @@ begin
     + 'VALUES(:TENANT_ID,:SHOP_ID,:PAY_ID,:SEQNO,:ABLE_ID,:ABLE_TYPE,:PAY_MNY)';
   AGlobal.ExecSQL(Str,self);
   case AGlobal.iDbType of
-  0:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',PAYM_MNY=isnull(PAYM_MNY,0)+isnull(:PAY_MNY,0),'+
+  0:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=isnull(PAYM_MNY,0)+isnull(:PAY_MNY,0),'+
         'RECK_MNY=isnull(RECK_MNY,0)-isnull(:PAY_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID',self);
-  4:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',PAYM_MNY=nvl(PAYM_MNY,0)+nvl(:PAY_MNY,0),'+
+  4:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=nvl(PAYM_MNY,0)+nvl(:PAY_MNY,0),'+
         'RECK_MNY=nvl(RECK_MNY,0)-nvl(:PAY_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID',self);
-  5:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',PAYM_MNY=ifnull(PAYM_MNY,0)+ifnull(:PAY_MNY,0),'+
+  5:AGlobal.ExecSQL('update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=ifnull(PAYM_MNY,0)+ifnull(:PAY_MNY,0),'+
         'RECK_MNY=ifnull(RECK_MNY,0)-ifnull(:PAY_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID',self);
   end;
   case AGlobal.iDbType of

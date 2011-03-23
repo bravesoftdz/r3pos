@@ -34,6 +34,8 @@ var Str:String;
 begin
   Result := False;
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
+
+  Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('CLSE_DATE').AsOldString);
   Str := 'update ACC_ACCOUNT_INFO set IN_MNY=-:OLD_PAY_A+isnull(IN_MNY,0),BALANCE=-:OLD_PAY_A+isnull(BALANCE,0),'+
   'COMM='+GetCommStr(iDbType)+
   ',TIME_STAMP='+GetTimeStamp(iDbType)+

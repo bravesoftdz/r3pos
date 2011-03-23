@@ -13,22 +13,16 @@ type
     RzPanel1: TRzPanel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    RzBmpButton15: TRzBmpButton;
-    RzBmpButton17: TRzBmpButton;
-    RzBmpButton18: TRzBmpButton;
-    RzBmpButton24: TRzBmpButton;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    RzBmpButton3: TRzBmpButton;
-    RzGroupBar1: TRzGroupBar;
+    rzTaskBar: TRzGroupBar;
     RzGroup1: TRzGroup;
     ImageList1: TImageList;
     RzGroup2: TRzGroup;
+    dgdesk: TPanel;
     Image1: TImage;
-    Image2: TImage;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
@@ -145,6 +139,13 @@ end;
 procedure TfrmShopDesk.SetHookLocked(const Value: boolean);
 begin
   FHookLocked := Value;
+end;
+
+procedure TfrmShopDesk.FormResize(Sender: TObject);
+begin
+  inherited;
+  dgDesk.Top := (Height-dgDesk.Height) div 2-50;
+  dgDesk.Left := (Width-dgDesk.Width-rzTaskBar.Width) div 2-50;
 end;
 
 end.

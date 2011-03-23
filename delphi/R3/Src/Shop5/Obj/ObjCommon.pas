@@ -317,7 +317,7 @@ begin
   case iDbType of
    0:Result := 'convert(varchar(19),getdate(),120)';
    3:Result := 'format(now(),''YYYY-MM-DD HH:NN:SS'')';
-   4:Result := 'format(now(),''YYYY-MM-DD HH:NN:SS'')';
+   4:Result := 'TO_CHAR(CURRENT TIMESTAMP,''YYYY-MM-DD HH24:MI:SS'')';
    5:Result := 'strftime(''%Y-%m-%d %H:%M:%S'',''now'',''localtime'')';
    else Result := 'convert(varchar(19),getdate(),120)';
   end;

@@ -5,29 +5,30 @@ inherited frmRckMng: TfrmRckMng
   Height = 577
   Caption = #32467#36134#31649#29702
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 783
-    Height = 520
+    Width = 775
+    Height = 503
     inherited RzPanel2: TRzPanel
-      Width = 773
-      Height = 510
+      Width = 765
+      Height = 493
       inherited RzPage: TRzPageControl
-        Width = 767
-        Height = 504
+        Width = 759
+        Height = 487
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 765
-            Height = 477
+            Width = 757
+            Height = 460
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 753
+              Width = 745
               Height = 70
               Align = alTop
               BorderOuter = fsNone
@@ -165,21 +166,21 @@ inherited frmRckMng: TfrmRckMng
             object Panel1: TPanel
               Left = 6
               Top = 76
-              Width = 753
-              Height = 395
+              Width = 745
+              Height = 378
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 751
-                Height = 393
+                Width = 743
+                Height = 376
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
                 Flat = True
-                FooterColor = clWindow
+                FooterColor = clWhite
                 FooterFont.Charset = GB2312_CHARSET
                 FooterFont.Color = clWindowText
                 FooterFont.Height = -12
@@ -197,7 +198,6 @@ inherited frmRckMng: TfrmRckMng
                 TitleFont.Name = #23435#20307
                 TitleFont.Style = []
                 TitleHeight = 20
-                UseMultiTitle = True
                 IsDrawNullRow = False
                 CurrencySymbol = #65509
                 DecimalNumber = 2
@@ -241,6 +241,22 @@ inherited frmRckMng: TfrmRckMng
                     Width = 80
                   end
                   item
+                    DisplayFormat = '#0.00'
+                    EditButtons = <>
+                    FieldName = 'TOTAL_MNY'
+                    Footers = <>
+                    Title.Caption = #38144#21806#37329#39069
+                    Width = 70
+                  end
+                  item
+                    DisplayFormat = '#0.00'
+                    EditButtons = <>
+                    FieldName = 'PAY_A'
+                    Footers = <>
+                    Title.Caption = #33829#19994#29616#37329
+                  end
+                  item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'ORG_MNY'
                     Footers = <>
@@ -248,6 +264,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 56
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PUSH_MNY'
                     Footers = <>
@@ -255,6 +272,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 57
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'RECV_MNY'
                     Footers = <>
@@ -262,6 +280,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 55
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PAY_MNY'
                     Footers = <>
@@ -269,6 +288,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 57
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'OTH_IN_MNY'
                     Footers = <>
@@ -276,6 +296,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 56
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'OTH_OUT_MNY'
                     Footers = <>
@@ -283,6 +304,7 @@ inherited frmRckMng: TfrmRckMng
                     Width = 56
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'TRN_MNY'
                     Footers = <>
@@ -290,18 +312,12 @@ inherited frmRckMng: TfrmRckMng
                     Width = 58
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'BAL_MNY'
                     Footers = <>
                     Title.Caption = #32467#20313#29616#37329
                     Width = 57
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'TOTAL_MNY'
-                    Footers = <>
-                    Title.Caption = #38646#21806#19994#21153'|'#23567#35745
-                    Width = 70
                   end
                   item
                     EditButtons = <>
@@ -839,19 +855,20 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 783
+    Width = 775
     inherited Image1: TImage
-      Left = 444
-      Width = 330
-    end
-    inherited Image14: TImage
-      Left = 774
+      Left = 288
+      Width = 467
     end
     inherited Image3: TImage
-      Left = 444
-      Width = 330
+      Left = 288
+      Width = 467
+    end
+    inherited Image14: TImage
+      Left = 755
     end
     inherited rzPanel5: TPanel
+      Left = 288
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#32467#36134#31649#29702
       end
@@ -865,11 +882,10 @@ inherited frmRckMng: TfrmRckMng
           FixedSize = True
           ImageIndex = -1
           MinHeight = 268
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 268
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0

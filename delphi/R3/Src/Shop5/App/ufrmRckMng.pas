@@ -93,11 +93,13 @@ type
     procedure Db_CloseMonthAfterScroll(DataSet: TDataSet);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
 
   private
     { Private declarations }
   public
     locked:boolean;
+    VPay:TStringList;
     { Public declarations }
     procedure CheckCalc(b, e:integer); //开始月份| 结束月份
     procedure InitGrid;
@@ -119,7 +121,9 @@ uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUti
 procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
-var ARect:TRect;
+var
+  ARect:TRect;
+  s:string;
 begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
@@ -134,6 +138,86 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsBrowser.RecNo)),length(Inttostr(cdsBrowser.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+  if cdsBrowser.FieldByName('flag').AsInteger = 2 then
+  begin
+  if Column.FieldName = 'CLSE_DATE' then
+    begin
+      ARect := Rect;
+      s := '';
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'TOTAL_MNY' then
+    begin
+      ARect := Rect;
+      s := '销售金额';
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'PAY_A' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['A'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'ORG_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['B'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'PUSH_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['C'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'RECV_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['D'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'PAY_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['E'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'OTH_IN_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['F'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'OTH_OUT_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['G'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'TRN_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['H'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  if Column.FieldName = 'BAL_MNY' then
+    begin
+      ARect := Rect;
+      s := VPay.Values['I'];
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  end;
 end;
 
 procedure TfrmRckMng.DBGridEh1GetCellParams(Sender: TObject;
@@ -143,6 +227,10 @@ begin
   inherited;
   if cdsBrowser.FieldByName('flag').AsInteger=1 then
      Background := clBtnFace;
+  if cdsBrowser.FieldByName('flag').AsInteger=2 then
+     Background := $00EAF7F7;
+  if Column.FieldName='PAY_A' then
+     AFont.Color := clRed;
 end;
 
 function TfrmRckMng.EncodeSQL: string;
@@ -162,6 +250,7 @@ begin
         2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
       end;
       //检测是否计算
+      if not locked then
       CheckCalc(strtoint(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoint(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
       strSql :=
@@ -169,29 +258,32 @@ begin
       'd.BAL_MNY-d.IN_MNY+d.OUT_MNY as ORG_MNY '+
       'from ('+
       'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from ('+
-      'select 1 as FLAG,null as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
+      'select 1 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
       'sum(PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as TOTAL_MNY,'+
-      'sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
-      'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,'+
+      'sum(PAY_A) as PAY_A,'+
       'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,max(CREA_USER) as CREA_USER,0 as TIME_STAMP '+
       'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
       'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ) jd '+
       'left outer join RCK_ACCT_DAYS d on jd.TENANT_ID=d.TENANT_ID and jd.SHOP_ID=d.SHOP_ID and jd.CLSE_DATE=d.CREA_DATE ';
 
       strSql := strSql + ' union all ';
+      strSql := strSql +
+        'select 2 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,0 as TOTAL_MNY,0 as PAY_A,'''' AS CHK_DATE,'''' as CHK_USER,'''' as CREA_DATE,'''' as CREA_USER,0 as TIME_STAMP,'''' as SHOP_ID_TEXT '+
+        ',0 as BAL_MNY,0 as RECV_MNY,0 as PUSH_MNY,0 as PAY_MNY,0 as IORO_OUT_MNY,0 as IORO_IN_MNY,0 as TRN_MNY,0 as ORG_MNY '+
+        'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE';
+
+      strSql := strSql + ' union all ';
 
       strSql := strSql +
-      'select jc.*,null as SHOP_ID_TEXT,null as BAL_MNY,null as RECV_MNY,null as PUSH_MNY,null as PAY_MNY,null as IORO_OUT_MNY,null as IORO_IN_MNY,null as TRN_MNY,'+
-      'null as ORG_MNY from ('+
-      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,'+
-      'CHK_DATE,CHK_USER,CREA_DATE,CREA_USER,TIME_STAMP from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ) jc '+
-      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ';
+      'select 3 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,CHK_DATE,CHK_USER,CREA_DATE,CREA_USER,TIME_STAMP,'''' as SHOP_ID_TEXT '+
+      ',PAY_I as BAL_MNY,PAY_D as RECV_MNY,PAY_C as PUSH_MNY,PAY_E as PAY_MNY,PAY_G as IORO_OUT_MNY,PAY_F as IORO_IN_MNY,PAY_H as TRN_MNY,PAY_B as ORG_MNY '+
+      ' from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ';
 
       result :=
-      'select je.*,case when flag=1 then ''小计'' else e.USER_NAME end as CREA_USER_TEXT from ('+
+      'select je.*,case when flag=1 then '''' when flag=2 then ''标题'' else e.USER_NAME end as CREA_USER_TEXT from ('+
       'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+StrSql+') jd '+
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
-      'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag desc';
+      'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag';
     end
   else if RzPage.TabIndex = 1 then
     begin
@@ -289,11 +381,7 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      Column := DBGridEh1.Columns.Add;
-      Column.FieldName := 'PAY_'+rs.FieldbyName('CODE_ID').AsString;
-      Column.Width := 55;
-      Column.Title.Caption := '零售业务|'+rs.FieldbyName('CODE_NAME').AsString;
-      Column.Index := DBGridEh1.Columns.Count -4;
+      VPay.Add(rs.FieldbyName('CODE_ID').AsString+'='+rs.FieldbyName('CODE_NAME').AsString);
       rs.Next;
     end;
 end;
@@ -302,6 +390,7 @@ procedure TfrmRckMng.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self);
+  VPay := TStringList.Create;
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
@@ -352,7 +441,7 @@ var rs: TZQuery;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('13200001',3) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
-  if cdsBrowser.FieldbyName('FLAG').asString='1' then Raise Exception.Create('请选择要撤消的收银员!');
+  if cdsBrowser.FieldbyName('FLAG').asString<>'3' then Raise Exception.Create('请选择要撤消的收银员!');
   rs := TZQuery.Create(nil);
   try
     cdsBrowser.CommitUpdates;
@@ -367,6 +456,7 @@ begin
       Factor.UpdateBatch(cdsBrowser,'TCloseForDay');
     except
       cdsBrowser.CancelUpdates;
+      Raise;
     end;
   finally
     rs.Free;
@@ -444,7 +534,12 @@ begin
       Params.Free;
     end;
     MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
-    Open;
+    locked := true;
+    try
+      Open;
+    finally
+      locked := false;
+    end;
 {    if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
       begin
         cdsBrowser.Edit;
@@ -1014,6 +1109,13 @@ procedure TfrmRckMng.actPreviewExecute(Sender: TObject);
 begin
   inherited;
 //
+end;
+
+procedure TfrmRckMng.FormDestroy(Sender: TObject);
+begin
+  VPay.Free;
+  inherited;
+
 end;
 
 end.

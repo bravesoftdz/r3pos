@@ -194,7 +194,11 @@ begin
     ps.Free;
     rs.Free;
   end;
-  SelectSQL.Text := 'select '+formatFloat('#0.000',V_ORG_PRICE)+' as V_ORG_PRICE,'+inttostr(V_POLICY_TYPE)+' as V_POLICY_TYPE,'+inttostr(V_HAS_INTEGRAL)+' as V_HAS_INTEGRAL,'+formatFloat('#0.000',V_APRICE)+' as V_APRICE';
+  case AGlobal.iDbType of
+  0,5:SelectSQL.Text := 'select '+formatFloat('#0.000',V_ORG_PRICE)+' as V_ORG_PRICE,'+inttostr(V_POLICY_TYPE)+' as V_POLICY_TYPE,'+inttostr(V_HAS_INTEGRAL)+' as V_HAS_INTEGRAL,'+formatFloat('#0.000',V_APRICE)+' as V_APRICE';
+  4:SelectSQL.Text := 'select '+formatFloat('#0.000',V_ORG_PRICE)+' as V_ORG_PRICE,'+inttostr(V_POLICY_TYPE)+' as V_POLICY_TYPE,'+inttostr(V_HAS_INTEGRAL)+' as V_HAS_INTEGRAL,'+formatFloat('#0.000',V_APRICE)+' as V_APRICE from SYSIBM.SYSDUMMY1';
+  1:SelectSQL.Text := 'select '+formatFloat('#0.000',V_ORG_PRICE)+' as V_ORG_PRICE,'+inttostr(V_POLICY_TYPE)+' as V_POLICY_TYPE,'+inttostr(V_HAS_INTEGRAL)+' as V_HAS_INTEGRAL,'+formatFloat('#0.000',V_APRICE)+' as V_APRICE from DUAL';
+  end;
 end;
 
 procedure TGetSalesPrice.InitClass;

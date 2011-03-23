@@ -44,7 +44,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               FrozenCols = 1
-              Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
               RowHeight = 20
               TabOrder = 0

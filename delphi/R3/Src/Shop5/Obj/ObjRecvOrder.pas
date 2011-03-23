@@ -206,7 +206,7 @@ begin
   AGlobal.ExecSQL(Str,self);
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType ,
-     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',RECV_MNY=isnull(RECV_MNY,0)+isnull(:RECV_MNY,0),'+
+     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',RECV_MNY=isnull(RECV_MNY,0)+isnull(:RECV_MNY,0),'+
      'RECK_MNY=isnull(RECK_MNY,0)-isnull(:RECV_MNY,0),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID')
      ,self);
 

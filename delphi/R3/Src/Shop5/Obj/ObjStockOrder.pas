@@ -178,7 +178,7 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.close;
-     Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='''+FieldbyName('TENANT_ID').AsString+''' and DEFINE=''ZERO_OUT''';
+     Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and DEFINE=''ZERO_OUT''';
      AGlobal.Open(Temp);
      IsZeroOut := (Temp.Fields[0].AsString = '1');
   finally
@@ -265,6 +265,7 @@ begin
 end;
 
 function TStockOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
   begin
@@ -273,10 +274,23 @@ begin
      if (FieldbyName('STOCK_MNY').AsFloat <> 0) then
      begin
        if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
-       AGlobal.ExecSQL(
-           'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,NEAR_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-         + 'VALUES('''+newid(FieldbyName('SHOP_ID').asString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'进货货款:【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',4,:STOCK_MNY,0,:ADVA_MNY,:STOCK_MNY - :ADVA_MNY,:STOCK_DATE,null,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
-      ,self);
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text :=
+           'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+         + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'进货货款【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''4'',:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+         CopyToParams(rs.Params);
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
+         AGlobal.ExecQuery(rs);
+//       修改成支持 DB2模式         
+//         AGlobal.ExecSQL(
+//           'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,NEAR_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+//         + 'VALUES('''+newid(FieldbyName('SHOP_ID').asString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'进货货款【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',4,:STOCK_MNY,0,:ADVA_MNY,:STOCK_MNY - :ADVA_MNY,:STOCK_DATE,null,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+//      ,self);
+       finally
+         rs.Free;
+       end;
      end;
   end;
   result := true;

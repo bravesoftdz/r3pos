@@ -312,8 +312,8 @@ begin
      begin
        if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
        AGlobal.ExecSQL(
-           'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,NEAR_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-         + 'VALUES('''+newid(FieldbyName('SHOP_ID').asString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'销售退款:【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',2,:PAY_D,0,-:ADVA_MNY,-:PAY_D + :ADVA_MNY,:SALES_DATE,null,:SALES_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+           'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+         + 'VALUES('''+newid(FieldbyName('SHOP_ID').asString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'销售退款【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''2'',:PAY_D,0,-:ADVA_MNY,-:PAY_D,:SALES_DATE,:SALES_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
       ,self);
      end;
      {

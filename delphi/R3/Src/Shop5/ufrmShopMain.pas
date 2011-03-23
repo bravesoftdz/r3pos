@@ -143,14 +143,12 @@ type
     ImageList2: TImageList;
     actfrmMeaUnits: TAction;
     actfrmDutyInfoList: TAction;
-    RzGroup1: TRzGroup;
     actfrmRoleInfoList: TAction;
     actfrmDeptInfoList: TAction;
     actfrmUsers: TAction;
     actfrmBrandInfo: TAction;
     actfrmFactoryInfo: TAction;
     actfrmStockOrderList: TAction;
-    RzGroup2: TRzGroup;
     actfrmSalesOrderList: TAction;
     actfrmChangeOrderList1: TAction;
     actfrmChangeOrderList2: TAction;

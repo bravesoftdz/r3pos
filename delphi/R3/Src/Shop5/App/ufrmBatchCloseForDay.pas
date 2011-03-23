@@ -55,12 +55,23 @@ uses uGlobal,uShopGlobal,ufrmBasic;
 { TfrmBatchCloseForDay }
 
 procedure TfrmBatchCloseForDay.Open;
-var Str: String;
+var
+  Str: String;
+  rs:TZQuery;
+  minDate:integer;
 begin
+  rs := TZQuery.Create(nil);
   try
+
+    rs.SQL.Text :=
+         'select max(CREA_DATE) from ('+
+         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+         ') j';
+    Factor.Open(rs);
+    minDate := rs.Fields[0].AsInteger;
     Str :=
     'select 0 as selflag,TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,sum(PAY_A) as PAY_A,sum(SALE_MNY) as SALE_MNY from SAL_SALESORDER A'+
-    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE<=:SALES_DATE'+
+    ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE>=:MIN_DATE and SALES_DATE<=:SALES_DATE'+
     ' and not exists('+
     ' select * from ACC_CLOSE_FORDAY  where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
     ' )group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
@@ -68,10 +79,11 @@ begin
     DbCloseForDay.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     DbCloseForDay.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     DbCloseForDay.ParamByName('SALES_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Date));
+    DbCloseForDay.ParamByName('MIN_DATE').AsInteger := minDate;
     Factor.Open(DbCloseForDay);
     Btn_Save.Visible := not DbCloseForDay.IsEmpty;
   finally
-
+    rs.Close;
   end;
 end;
 
@@ -286,7 +298,7 @@ begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
   begin
-    DBGridEh1.Canvas.Brush.Color := clAqua;
+    DBGridEh1.Canvas.Brush.Color := RowSelectColor;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 

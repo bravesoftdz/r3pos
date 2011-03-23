@@ -259,7 +259,6 @@ begin
   'left outer join VIW_USERS je on j.TENANT_id=je.TENANT_ID and j.CHK_USER=je.USER_ID '+
   'left outer join CA_SHOP_INFO jf on j.TENANT_id=jf.TENANT_ID and j.SHOP_ID=jf.SHOP_ID '+
   'where j.TENANT_ID='+tenantid+' and j.TRANS_ID='''+id+'''';
-  ;
 end;
 
 procedure TfrmTransOrderList.actNewExecute(Sender: TObject);

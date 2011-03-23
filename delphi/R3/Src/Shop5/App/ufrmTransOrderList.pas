@@ -138,8 +138,8 @@ begin
   'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
   'select je.*,e.USER_NAME as CHK_USER_TEXT from ('+
   'select jd.*,d.USER_NAME as TRANS_USER_TEXT from ('+
-  'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT,c.BALANCE as OUT_BALANCE from ('+
-  'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT,b.BALANCE as IN_BALANCE from ('+
+  'select jc.*,c.ACCT_NAME as OUT_ACCOUNT_ID_TEXT from ('+
+  'select jb.*,b.ACCT_NAME as IN_ACCOUNT_ID_TEXT from ('+
   'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from ('+
   'select TENANT_ID,SHOP_ID,TRANS_ID,GLIDE_NO,IN_ACCOUNT_ID,OUT_ACCOUNT_ID,TRANS_DATE,TRANS_USER,TRANS_MNY,CHK_DATE,CHK_USER,'+
   'REMARK,CREA_DATE,CREA_USER,COMM from ACC_TRANSORDER where COMM not in (''02'',''12'') and '+StrWhere+' ) ja '+
@@ -194,42 +194,8 @@ begin
 end;
 
 procedure TfrmTransOrderList.InitGrid;
-var rs:TZQuery;
-    Column: TColumnEh;
 begin
   InitGridPickList(DBGridEh1);
-
-  try
-  //rs := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  rs := TZQuery.Create(nil);
-  rs.SQL.Text := 'select * from VIW_ACCOUNT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and (PAYM_ID<>''A''  or SHOP_ID='+QuotedStr(Global.SHOP_ID)+') and COMM not in (''02'',''12'') order by PAYM_ID';
-  Factor.Open(rs);
-  Column := FindColumn('IN_ACCOUNT_ID');
-  if Column <> nil then
-    begin
-      rs.First;
-      while not rs.Eof do
-        begin
-          Column.KeyList.Add(rs.FieldByName('ACCOUNT_ID').AsString);
-          Column.PickList.Add(rs.FieldByName('ACCT_NAME').AsString);
-          rs.Next;
-        end;
-    end;
-
-  Column := FindColumn('OUT_ACCOUNT_ID');
-  if Column <> nil then
-    begin
-      rs.First;
-      while not rs.Eof do
-        begin
-          Column.KeyList.Add(rs.FieldByName('ACCOUNT_ID').AsString);
-          Column.PickList.Add(rs.FieldByName('ACCT_NAME').AsString);
-          rs.Next;
-        end;
-    end;
-  finally
-    rs.Free;
-  end;
 end;
 
 procedure TfrmTransOrderList.Open2(Id: string);

@@ -361,7 +361,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'IN_ACCOUNT_ID'
+                    FieldName = 'IN_ACCOUNT_ID_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #23384#27454#36134#21495
@@ -369,7 +369,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'OUT_ACCOUNT_ID'
+                    FieldName = 'OUT_ACCOUNT_ID_TEXT'
                     Footers = <>
                     Title.Alignment = taCenter
                     Title.Caption = #21462#27454#36134#21495

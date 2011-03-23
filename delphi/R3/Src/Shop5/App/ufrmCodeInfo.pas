@@ -246,8 +246,8 @@ begin
   try
     Factor.UpdateBatch(cdsCODE_INFO,'TCodeInfo');
   except
-    cdsCODE_INFO.Close;
-    Open;
+    //cdsCODE_INFO.Close;
+    //Open;
     if not cdsCODE_INFO.IsEmpty then
     begin
       if i=0 then i:=1;

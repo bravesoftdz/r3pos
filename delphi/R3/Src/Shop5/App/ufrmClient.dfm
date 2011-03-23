@@ -1,6 +1,6 @@
 inherited frmClient: TfrmClient
-  Left = 242
-  Top = 153
+  Left = 353
+  Top = 149
   Width = 742
   Height = 490
   Caption = #23458#25143#31649#29702

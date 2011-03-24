@@ -313,7 +313,11 @@ end;
 procedure TfrmStorageTracking.AddGoodsIDItems;
 var Item_Index:Integer;
 begin
-  if Trim(edtGoods_ID.Text)<>'' then edtGoods_ID.Text := '';
+  if Trim(edtGoods_ID.Text)<>'' then
+    begin
+      edtGoods_ID.Text := '';
+      edtGoods_ID.KeyValue := '';
+    end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
   if Item_Index = 3 then
     begin

@@ -41,6 +41,8 @@ type
     edtSHOP_TYPE: TcxComboBox;
     Label2: TLabel;
     edtGoodsName: TzrComboBoxList;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -209,14 +211,16 @@ begin
   if edtGoodsName.Text <> '' then
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
   StrSql :=
-  'select * from( '+
   'SELECT A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMONEY,A.AMOUNT,A.COST_PRICE, '+
-  ' B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_NAME')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
+  ' B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_NAME')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
   ' from STO_STORAGE A,CA_SHOP_INFO B,VIW_GOODSINFO_SORTEXT C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
-  ' and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+
-  ' )j order by j.SHOP_ID,j.BATCH_NO';
+  ' and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
 
-  Result := StrSql;
+  Result :=
+  'select jb.*,b.COLOR_NAME as PROPERTY_02_TEXT from ('+
+  'select ja.*,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
+  'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
+  'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID order by jb.SHOP_ID,jb.BATCH_NO  ';
 end;
 
 procedure TfrmStorageTracking.Open(ID: String);
@@ -309,15 +313,18 @@ end;
 procedure TfrmStorageTracking.AddGoodsIDItems;
 var Item_Index:Integer;
 begin
+  if Trim(edtGoods_ID.Text)<>'' then edtGoods_ID.Text := '';
   Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
   if Item_Index = 3 then
     begin
+      edtGoods_ID.Columns[0].FieldName := 'CLIENT_NAME';
       edtGoods_ID.KeyField := 'CLIENT_ID';
       edtGoods_ID.ListField := 'CLIENT_NAME';
       edtGoods_ID.FilterFields := 'CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
     end
   else
     begin
+      edtGoods_ID.Columns[0].FieldName := 'SORT_NAME';
       edtGoods_ID.KeyField := 'SORT_ID';
       edtGoods_ID.ListField := 'SORT_NAME';
       edtGoods_ID.FilterFields := 'SORT_ID;SORT_NAME;SORT_SPELL';

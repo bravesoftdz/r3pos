@@ -215,7 +215,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'PROPERTY_01'
+                        FieldName = 'PROPERTY_01_TEXT'
                         Footers = <>
                         Title.Caption = #23610#30721
                         Title.Color = clWhite
@@ -223,7 +223,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'PROPERTY_02'
+                        FieldName = 'PROPERTY_02_TEXT'
                         Footers = <>
                         Title.Caption = #39068#33394
                         Title.Color = clWhite
@@ -263,9 +263,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Width = 178
                   Height = 66
                   Align = alLeft
-                  Alignment = taRightJustify
                   BevelInner = bvLowered
-                  Caption = #24211#23384#26597#35810' '
+                  Caption = #24211#23384#26597#35810#21450#36319#36394#39044#35686
                   Color = 12698049
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
@@ -426,13 +425,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'CODE_NAME'
                         Footers = <>
                         Title.Caption = #21517#31216
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'CODE_ID'
-                        Footers = <>
-                        Title.Caption = #20195#30721
-                        Width = 20
                       end>
                     DropWidth = 185
                     DropHeight = 180
@@ -469,13 +461,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'SHOP_NAME'
                         Footers = <>
                         Title.Caption = #21517#31216
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'SEQ_NO'
-                        Footers = <>
-                        Title.Caption = #20195#30721
-                        Width = 20
+                        Width = 145
                       end>
                     DropWidth = 185
                     DropHeight = 180
@@ -512,13 +498,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'CODE_NAME'
                         Footers = <>
                         Title.Caption = #21517#31216
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'CODE_ID'
-                        Footers = <>
-                        Title.Caption = #20195#30721
-                        Width = 20
+                        Width = 115
                       end>
                     DropWidth = 185
                     DropHeight = 180
@@ -544,12 +524,11 @@ inherited frmStorageTracking: TfrmStorageTracking
                     TabOrder = 6
                   end
                   object edtGoodsName: TzrComboBoxList
-                    Tag = -1
                     Left = 323
                     Top = 36
-                    Width = 119
+                    Width = 149
                     Height = 20
-                    ParentFont = False
+                    TabStop = False
                     Properties.AutoSelect = False
                     Properties.Buttons = <
                       item
@@ -557,9 +536,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end>
                     Properties.ReadOnly = False
                     TabOrder = 7
-                    InGrid = False
+                    InGrid = True
                     KeyValue = Null
-                    FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL'
+                    FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
                     KeyField = 'GODS_ID'
                     ListField = 'GODS_NAME'
                     Columns = <
@@ -567,22 +546,30 @@ inherited frmStorageTracking: TfrmStorageTracking
                         EditButtons = <>
                         FieldName = 'GODS_NAME'
                         Footers = <>
-                        Title.Caption = #21517#31216
+                        Title.Caption = #21830#21697#21517#31216
+                        Width = 150
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'GODS_ID'
+                        FieldName = 'GODS_CODE'
                         Footers = <>
-                        Title.Caption = #20195#30721
-                        Width = 20
+                        Title.Caption = #36135#21495
+                        Width = 50
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'BARCODE'
+                        Footers = <>
+                        Title.Caption = #26465#30721
+                        Width = 65
                       end>
-                    DropWidth = 185
-                    DropHeight = 180
+                    DropWidth = 380
+                    DropHeight = 250
                     ShowTitle = True
                     AutoFitColWidth = True
                     ShowButton = True
                     LocateStyle = lsDark
-                    Buttons = [zbClear]
+                    Buttons = []
                     DropListStyle = lsFixed
                     MultiSelect = False
                   end
@@ -597,44 +584,56 @@ inherited frmStorageTracking: TfrmStorageTracking
   inherited RzPanel4: TRzPanel
     Width = 1065
     inherited Image1: TImage
-      Left = 106
-      Width = 939
+      Left = 192
+      Width = 853
     end
     inherited Image3: TImage
-      Left = 106
-      Width = 939
+      Left = 192
+      Width = 853
     end
     inherited Image14: TImage
       Left = 1045
     end
     inherited rzPanel5: TPanel
-      Left = 106
+      Left = 192
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#24211#23384#26597#35810
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 86
+      Width = 172
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 86
+          MinHeight = 172
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 86
+        Width = 172
         ButtonWidth = 43
-        object ToolButton1: TToolButton
+        object ToolButton4: TToolButton
           Left = 0
+          Top = 0
+          Caption = #26597#35810
+          ImageIndex = 15
+        end
+        object ToolButton1: TToolButton
+          Left = 43
           Top = 0
           Caption = #25171#21360
           ImageIndex = 0
         end
+        object ToolButton3: TToolButton
+          Left = 86
+          Top = 0
+          Caption = #39044#35272
+          ImageIndex = 14
+        end
         object ToolButton2: TToolButton
-          Left = 43
+          Left = 129
           Top = 0
           Action = actExit
         end

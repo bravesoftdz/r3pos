@@ -117,7 +117,8 @@ begin
     rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
     Factor.Open(rs);
-    Is_Print := rs.Fields[0].AsString<>'';
+    if rs.Fields[0].AsString<>'' then
+      Is_Print := True;
     edtPAY_MNY.Text := rs.Fields[0].AsString;
 
     //获得批发金额
@@ -125,7 +126,8 @@ begin
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
     Factor.Open(rs);
-    Is_Print := rs.Fields[0].AsString<>'';
+    if rs.Fields[0].AsString<>'' then
+      Is_Print := True;
     edtRECV_MNY.Text := rs.Fields[0].AsString;
 
     ShowFee;
@@ -351,7 +353,6 @@ begin
   inherited;
   fndCREA_USER.Text := Global.UserName;
   fndCLSE_DATE.Text := FormatDateTime('YYYY-MM-DD',Date);
-  Open;
 
 end;
 
@@ -516,7 +517,7 @@ begin
     ' from SAL_SALESORDER A '+
     ' where SALES_TYPE=4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE>:LAST_SALES_DATE and SALES_DATE <=:SALES_DATE '+
     ' and not exists('+
-    ' select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CLSE_DATE=A.SALES_DATE'+
+    ' select * from ACC_CLOSE_FORDAY B where B.TENANT_ID=A.TENANT_ID and B.SHOP_ID=A.SHOP_ID and B.CREA_USER=A.CREA_USER and B.CLSE_DATE=A.SALES_DATE'+
     ' )';
     rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

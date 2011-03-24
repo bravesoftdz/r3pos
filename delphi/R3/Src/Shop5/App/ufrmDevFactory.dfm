@@ -1,6 +1,6 @@
 object frmDevFactory: TfrmDevFactory
-  Left = 344
-  Top = 287
+  Left = 547
+  Top = 243
   BorderStyle = bsDialog
   Caption = #25910#38134#35774#22791#21442#25968
   ClientHeight = 244
@@ -48,7 +48,7 @@ object frmDevFactory: TfrmDevFactory
     Top = 0
     Width = 337
     Height = 193
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alTop
     TabOrder = 2
     object TabSheet4: TTabSheet
@@ -61,6 +61,13 @@ object frmDevFactory: TfrmDevFactory
         Height = 159
         Shape = bsFrame
       end
+      object Label1: TLabel
+        Left = 20
+        Top = 105
+        Width = 48
+        Height = 12
+        Caption = #23567#31080#35828#26126
+      end
       object edtAutoRunPos: TcxCheckBox
         Left = 16
         Top = 18
@@ -72,23 +79,53 @@ object frmDevFactory: TfrmDevFactory
       end
       object chkCloseDayPrinted: TcxCheckBox
         Left = 16
-        Top = 43
+        Top = 44
         Width = 108
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #20445#23384#26102#26159#21542#25171#21360
+        Properties.Caption = #32467#36134#26102#26159#21542#25171#21360
         TabOrder = 1
       end
       object edtCloseDayPrintFlag: TcxComboBox
-        Left = 131
-        Top = 43
-        Width = 63
+        Left = 125
+        Top = 44
+        Width = 79
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #25171#21360#37329#39069
           #25171#21360#26126#32454)
         TabOrder = 2
+      end
+      object cxSavePrint: TcxCheckBox
+        Left = 16
+        Top = 71
+        Width = 108
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #20445#23384#26102#26159#21542#25171#21360
+        TabOrder = 3
+      end
+      object cxPrintFormat: TcxComboBox
+        Left = 125
+        Top = 71
+        Width = 79
+        Height = 20
+        Enabled = False
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #23567#31080
+          #21333#25454)
+        TabOrder = 4
+      end
+      object edtFOOTER: TcxMemo
+        Left = 76
+        Top = 101
+        Width = 223
+        Height = 43
+        Lines.Strings = (
+          #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
+        TabOrder = 5
       end
     end
     object TabSheet1: TTabSheet
@@ -103,95 +140,67 @@ object frmDevFactory: TfrmDevFactory
       end
       object Label9: TLabel
         Left = 176
-        Top = 36
+        Top = 33
         Width = 60
         Height = 12
         Caption = #36208#32440#34917#31354#34892
       end
       object Label10: TLabel
         Left = 17
-        Top = 56
+        Top = 61
         Width = 48
         Height = 12
         Caption = #25171#21360#32440#23485
       end
       object Label4: TLabel
         Left = 18
-        Top = 36
+        Top = 33
         Width = 60
         Height = 12
         Caption = #25171#21360#26426#31471#21475
       end
-      object Label1: TLabel
-        Left = 16
-        Top = 116
-        Width = 48
-        Height = 12
-        Caption = #23567#31080#35828#26126
-      end
       object Label3: TLabel
         Left = 187
-        Top = 57
+        Top = 62
         Width = 48
         Height = 12
         Caption = #22797#21046#25171#21360
       end
       object Label6: TLabel
         Left = 17
-        Top = 96
+        Top = 117
         Width = 48
         Height = 12
         Caption = #25171#21360#21697#21517
       end
       object Label11: TLabel
         Left = 17
-        Top = 76
+        Top = 89
         Width = 48
         Height = 12
         Caption = #25171#21360#26631#39064
       end
-      object cxSavePrint: TcxCheckBox
-        Left = 13
-        Top = 11
-        Width = 108
-        Height = 21
-        Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #20445#23384#26102#26159#21542#25171#21360
-        TabOrder = 0
-      end
-      object cxPrintFormat: TcxComboBox
-        Left = 128
-        Top = 11
-        Width = 63
-        Height = 20
-        Enabled = False
-        Properties.DropDownListStyle = lsFixedList
-        Properties.Items.Strings = (
-          #23567#31080
-          #21333#25454)
-        TabOrder = 1
-      end
       object cxNullRow: TcxSpinEdit
         Left = 244
-        Top = 32
+        Top = 29
         Width = 51
         Height = 20
-        TabOrder = 2
+        TabOrder = 0
       end
       object edtPRINTERWIDTH: TcxComboBox
         Left = 72
-        Top = 52
+        Top = 57
         Width = 89
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           '57.5'#177'0.5mm'
           '79.5'#177'0.5mm')
-        TabOrder = 3
+        TabOrder = 1
       end
       object edtTicketPrintComm: TcxComboBox
         Left = 83
-        Top = 32
+        Top = 29
         Width = 78
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -227,27 +236,18 @@ object frmDevFactory: TfrmDevFactory
           'COM24'
           'COM25'
           #35843#35797#27169#24335)
-        TabOrder = 4
-      end
-      object edtFOOTER: TcxMemo
-        Left = 72
-        Top = 112
-        Width = 223
-        Height = 43
-        Lines.Strings = (
-          #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
-        TabOrder = 5
+        TabOrder = 2
       end
       object edtTicketCopy: TcxSpinEdit
         Left = 244
-        Top = 53
+        Top = 58
         Width = 51
         Height = 20
-        TabOrder = 6
+        TabOrder = 3
       end
       object edtTICKET_PRINT_NAME: TcxComboBox
         Left = 72
-        Top = 92
+        Top = 113
         Width = 137
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -258,14 +258,14 @@ object frmDevFactory: TfrmDevFactory
           #21697#21517'+'#35268#26684
           #21697#21517'+'#35268#26684'+'#36135#21495
           #21697#21517'+'#35268#26684'+'#26465#30721)
-        TabOrder = 7
+        TabOrder = 4
       end
       object edtTitle: TcxTextEdit
         Left = 72
-        Top = 72
+        Top = 85
         Width = 137
         Height = 20
-        TabOrder = 8
+        TabOrder = 5
         Text = 'edtTitle'
       end
     end

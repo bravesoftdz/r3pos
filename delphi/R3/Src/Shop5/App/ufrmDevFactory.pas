@@ -16,8 +16,6 @@ type
     TabSheet1: TTabSheet;
     Bevel2: TBevel;
     Label9: TLabel;
-    cxSavePrint: TcxCheckBox;
-    cxPrintFormat: TcxComboBox;
     cxNullRow: TcxSpinEdit;
     edtPRINTERWIDTH: TcxComboBox;
     Label10: TLabel;
@@ -35,8 +33,6 @@ type
     cxCashBoxRate: TcxComboBox;
     Bevel1: TBevel;
     Bevel3: TBevel;
-    Label1: TLabel;
-    edtFOOTER: TcxMemo;
     TabSheet4: TTabSheet;
     edtAutoRunPos: TcxCheckBox;
     Bevel4: TBevel;
@@ -48,6 +44,10 @@ type
     edtTitle: TcxTextEdit;
     chkCloseDayPrinted: TcxCheckBox;
     edtCloseDayPrintFlag: TcxComboBox;
+    cxSavePrint: TcxCheckBox;
+    cxPrintFormat: TcxComboBox;
+    edtFOOTER: TcxMemo;
+    Label1: TLabel;
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);

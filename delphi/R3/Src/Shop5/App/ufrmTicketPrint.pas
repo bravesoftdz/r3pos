@@ -44,7 +44,7 @@ begin
   ForDay_rs := TZQuery.Create(nil);
   try
     case QueryType of
-        1:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER ';
+        1:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER  ';
         2:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by SHOP_ID ';
       else
         WhereStr := ' TENANT_ID=:TENANT_ID group by TENANT_ID ';
@@ -80,18 +80,18 @@ begin
       1:begin
       DevFactory.WritePrint('');
       DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
-      DevFactory.WritePrint(FormatText('收银:'+ForDay_rs.FieldbyName('USER_NAME').AsString,DevFactory.Width-16)+'日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-16)+'日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
       end;
       2:begin
       DevFactory.WritePrint('');
       DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
-      DevFactory.WritePrint('日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      DevFactory.WritePrint('日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID ';
       end;
       else begin
       DevFactory.WritePrint('');
-      DevFactory.WritePrint('日期:'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,1,4)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,5,2)+'-'+Copy(ForDay_rs.FieldbyName('CLSE_DATE').AsString,7,2));
+      DevFactory.WritePrint('日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID ';
       end;
     end;

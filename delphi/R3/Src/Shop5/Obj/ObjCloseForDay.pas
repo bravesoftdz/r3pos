@@ -43,7 +43,7 @@ begin
 
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
 
-  Str := 'delete ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
+  Str := 'delete from ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
   AGlobal.ExecSQL(Str,self);
   Result := True;
 end;

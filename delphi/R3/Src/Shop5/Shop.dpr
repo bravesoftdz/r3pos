@@ -170,7 +170,9 @@ uses
   ufrmPayDayReport in 'App\ufrmPayDayReport.pas' {frmPayDayReport},
   ufrmRecvDayReport in 'App\ufrmRecvDayReport.pas' {frmRecvDayReport},
   ufrmRecvAbleReport in 'App\ufrmRecvAbleReport.pas' {frmRecvAbleReport},
-  ufrmPayAbleReport in 'App\ufrmPayAbleReport.pas' {frmPayAbleReport};
+  ufrmPayAbleReport in 'App\ufrmPayAbleReport.pas' {frmPayAbleReport},
+  ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
+  ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder};
 
 {$R *.res}
 var

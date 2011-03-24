@@ -310,6 +310,7 @@ begin
 end;
 
 function TStockOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
    if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
       begin
@@ -320,6 +321,21 @@ begin
       end
    else
       Result := true;
+  //检测订单是否重复入库
+  if FieldbyName('FROM_ID').asString<>'' then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select count(*) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and STOCK_ID<>:STOCK_ID';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+         rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsInteger<>0 then Raise Exception.Create('当前订单已经入库了，不能重复入库了');  
+       finally
+         rs.Free;
+       end;
+     end;
 end;
 
 function TStockOrder.CheckTimeStamp(aGlobal:IdbHelp;s:string): boolean;
@@ -342,6 +358,7 @@ var
 begin
   inherited;
   SelectSQL.Text :=
+               'select jg.*,g.GLIDE_NO as INDE_GLIDE_NO from ('+
                'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
                'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
@@ -353,7 +370,8 @@ begin
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_SHOP_INFO e on  je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
-               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID';
+               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+               ' left outer join STK_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID';
   IsSQLUpdate := True;
   Str := 'insert into STK_STOCKORDER(TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,STOCK_MNY,STOCK_AMT,ADVA_MNY,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:STOCK_ID,:GLIDE_NO,:STOCK_TYPE,:STOCK_DATE,:GUIDE_USER,:CLIENT_ID,:STOCK_MNY,:STOCK_AMT,:ADVA_MNY,:CHK_DATE,:CHK_USER,:FROM_ID,:FIG_ID,:INVOICE_FLAG,:TAX_RATE / 100.0,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';

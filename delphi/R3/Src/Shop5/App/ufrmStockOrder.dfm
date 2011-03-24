@@ -1,6 +1,6 @@
 inherited frmStockOrder: TfrmStockOrder
-  Left = 194
-  Top = 103
+  Left = 198
+  Top = 101
   Width = 786
   Height = 542
   Caption = #36827#36135#21333
@@ -298,7 +298,7 @@ inherited frmStockOrder: TfrmStockOrder
         Height = 20
         TabOrder = 4
       end
-      object edtFROM_ID: TcxButtonEdit
+      object edtINDE_GLIDE_NO: TcxButtonEdit
         Left = 250
         Top = 47
         Width = 131
@@ -308,6 +308,7 @@ inherited frmStockOrder: TfrmStockOrder
             Default = True
             Kind = bkEllipsis
           end>
+        Properties.OnButtonClick = edtFROM_IDPropertiesButtonClick
         TabOrder = 3
       end
       object edtTAX_MONEY: TcxTextEdit

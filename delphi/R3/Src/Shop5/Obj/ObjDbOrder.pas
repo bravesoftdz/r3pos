@@ -157,6 +157,7 @@ end;
 function TDbData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
+  rs:TZQuery;
 begin
   try
   if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
@@ -178,10 +179,20 @@ begin
 
   if FieldbyName('PLAN_DATE').AsString <> '' then
      begin
-       Str := 'insert into STK_STOCKDATA(TENANT_ID,SHOP_ID,SEQNO,STOCK_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) '
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text :=
+              'insert into STK_STOCKDATA(TENANT_ID,SHOP_ID,SEQNO,STOCK_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) '
             + 'VALUES(:TENANT_ID,:CLIENT_ID,:SEQNO,:SALES_ID,:GODS_ID,:BATCH_NO,:LOCUS_NO,:BOM_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:AMOUNT,:APRICE,:IS_PRESENT,'+
-              'round(:CALC_AMOUNT*:COST_PRICE,2)/:AMOUNT,round(:CALC_AMOUNT*:COST_PRICE,2),0,0,:CALC_AMOUNT,round(:CALC_AMOUNT*:COST_PRICE,2),:REMARK)';
-       AGlobal.ExecSQL(Str,self); 
+              ':STK_APRICE,:STK_AMONEY,0,0,:CALC_AMOUNT,:STK_AMONEY,:REMARK)';
+         CopyToParams(rs.Params,false);
+         rs.ParamByName('STK_APRICE').AsFloat := roundTo(FieldbyName('CALC_AMOUNT').AsFloat*FieldbyName('COST_PRICE').AsFloat,-2)/FieldbyName('AMOUNT').AsFloat;
+         rs.ParamByName('STK_AMONEY').AsFloat := roundTo(FieldbyName('CALC_AMOUNT').AsFloat*FieldbyName('COST_PRICE').AsFloat,-2);
+         AGlobal.ExecQuery(rs); 
+       finally
+         rs.Free;
+       end;
+//       AGlobal.ExecSQL(Str,self);
        IncStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('CLIENT_ID').asString,
                   FieldbyName('GODS_ID').asString,
                   FieldbyName('PROPERTY_01').asString,
@@ -301,7 +312,7 @@ begin
   if FieldbyName('PLAN_DATE').AsString <> '' then
   begin
     Str := 'insert into STK_STOCKORDER(TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,STOCK_MNY,STOCK_AMT,ADVA_MNY,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
-      + 'VALUES(:TENANT_ID,:CLIENT_ID,:SALES_ID,:GLIDE_NO,:SALES_TYPE,'+formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString))+',:STOCK_USER,:SHOP_ID,:STOCK_MNY,:SALE_AMT,0,:CHK_DATE,:CHK_USER,:SALES_ID,:FIG_ID,1,0,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
+      + 'VALUES(:TENANT_ID,:CLIENT_ID,:SALES_ID,:GLIDE_NO,:SALES_TYPE,'+formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString))+',:STOCK_USER,:SHOP_ID,:STOCK_MNY,:SALE_AMT,0,:CHK_DATE,:CHK_USER,:SALES_ID,:FIG_ID,''1'',0,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
     AGlobal.ExecSQL(Str,self);
   end;
   result := true;

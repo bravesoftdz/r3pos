@@ -54,7 +54,7 @@ type
     N4: TMenuItem;
     Label11: TLabel;
     Label21: TLabel;
-    edtFROM_ID: TcxButtonEdit;
+    edtINDE_GLIDE_NO: TcxButtonEdit;
     Label22: TLabel;
     edtADVA_MNY: TcxTextEdit;
     cdsHeader: TZQuery;
@@ -88,6 +88,8 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actCustomerExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
+    procedure edtFROM_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     { Private declarations }
     //进位法则
@@ -152,7 +154,7 @@ type
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
    ,uframeSelectCustomer,ufrmSalIndentOrder,
-   ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain;
+   ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain,ufrmFindOrder;
 {$R *.dfm}
 
 procedure TfrmSalesOrder.ReadHeader;
@@ -1273,7 +1275,8 @@ begin
       self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
       self.edtTELEPHONE.Text := edtTELEPHONE.Text;
       self.edtLINKMAN.Text := edtLINKMAN.Text;
-      self.edtFROM_ID.Text := AObj.FieldbyName('INDE_ID').AsString;
+      self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('INDE_ID').AsString;
+      self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtSALE_STYLE.KeyValue := edtSALE_STYLE.KeyValue;
       self.edtADVA_MNY.Text := edtADVA_MNY.Text;
       self.edtSALE_STYLE.Text := edtSALE_STYLE.Text;
@@ -1364,6 +1367,51 @@ begin
   else
      PresentToCalc(0);
   end;
+end;
+
+procedure TfrmSalesOrder.edtFROM_IDPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+var
+  s:string;
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+  inherited;
+  if not IsNull then Raise Exception.Create('已经输入商品了，不能导入订单.');
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入订单.');  
+  s := TfrmFindOrder.FindDialog(self,2,edtCLIENT_ID.asString,edtSHOP_ID.asString);
+  if s<>'' then
+     begin
+       h := TZQuery.Create(nil);
+       d := TZQuery.Create(nil);
+       Params := TftParamList.Create(nil);
+       HObj := TRecord_.Create;
+       try
+          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+          Params.ParamByName('INDE_ID').asString := s;
+          Factor.BeginBatch;
+          try
+            Factor.AddBatch(h,'TSalIndentOrder',Params);
+            Factor.AddBatch(d,'TSalIndentData',Params);
+            Factor.OpenBatch;
+            HObj.ReadFromDataSet(h);
+            ReadFromObject(HObj,self);
+            AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
+            edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+            edtSALES_DATE.Date := Global.SysDate;
+            ReadFrom(d);
+          except
+            Factor.CancelBatch;
+            Raise;
+          end;
+       finally
+         HObj.Free;
+         Params.Free;
+         h.Free;
+         d.Free;
+       end;
+     end;
 end;
 
 end.

@@ -9,19 +9,19 @@ inherited frmDbOrderList: TfrmDbOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 829
-    Height = 468
+    Height = 462
     inherited RzPanel2: TRzPanel
       Width = 819
-      Height = 458
+      Height = 452
       inherited RzPage: TRzPageControl
         Width = 813
-        Height = 452
+        Height = 446
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25320#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 811
-            Height = 425
+            Height = 419
             inherited RzPanel1: TRzPanel
               Width = 801
               Height = 102
@@ -241,7 +241,7 @@ inherited frmDbOrderList: TfrmDbOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 107
               Width = 801
-              Height = 313
+              Height = 307
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -347,17 +347,18 @@ inherited frmDbOrderList: TfrmDbOrderList
   inherited RzPanel4: TRzPanel
     Width = 829
     inherited Image1: TImage
-      Left = 741
-      Width = 79
-    end
-    inherited Image14: TImage
-      Left = 820
+      Left = 585
+      Width = 224
     end
     inherited Image3: TImage
-      Left = 741
-      Width = 79
+      Left = 585
+      Width = 224
+    end
+    inherited Image14: TImage
+      Left = 809
     end
     inherited rzPanel5: TPanel
+      Left = 585
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#35843#25320#20986#36135
       end
@@ -371,7 +372,7 @@ inherited frmDbOrderList: TfrmDbOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 565
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 565
@@ -595,7 +596,7 @@ inherited frmDbOrderList: TfrmDbOrderList
       00FFFFFF1F2E020000000000010009005B424152434F44455D00000000FFFF00
       000000000200000001000000000400CBCECCE5000A0000000000000000000800
       00000100020000000000FFFFFF00000000020000000000000000003815000006
-      004D656D6F3539000200C00200005C000000180000002A010000030000000100
+      004D656D6F3539000200C00200005C000000180000004E010000030000000100
       0000000000000000FFFFFF1F2E02000000000007000D00B0D7C1AAA3BAB5F7B3
       F6B7BD200D00000D1E0020202020202020202020202020202020202020202020
       20202020202020200D0E00BAECC1AAA3BAB5F7C8EBB7BD20200D00000D140020

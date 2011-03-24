@@ -31,7 +31,7 @@ type
     cdsDetail: TZQuery;
     Label12: TLabel;
     Label14: TLabel;
-    edtFROM_ID: TcxButtonEdit;
+    edtSTK_GLIDE_NO: TcxButtonEdit;
     Label19: TLabel;
     Label7: TLabel;
     Label8: TLabel;
@@ -68,6 +68,8 @@ type
     procedure edtGUIDE_USERAddClick(Sender: TObject);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
+    procedure edtSTK_GLIDE_NOPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     { Private declarations }
     //结算金额
@@ -105,7 +107,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrder
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrder,ufrmFindOrder
   ;
 {$R *.dfm}
 
@@ -870,7 +872,8 @@ begin
       self.edtSHOP_ID.Text := edtSHOP_ID.Text;
       self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
       self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
-      self.edtFROM_ID.Text := AObj.FieldbyName('STOCK_ID').AsString;
+      self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('STOCK_ID').AsString;
+      self.edtSTK_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtREMARK.Text := edtREMARK.Text;
       self.Locked := true;
       try
@@ -929,6 +932,51 @@ end;
 function TfrmStkRetuOrder.CheckInput: boolean;
 begin
   result := not (pos(inttostr(InputFlag),'124')>0);
+end;
+
+procedure TfrmStkRetuOrder.edtSTK_GLIDE_NOPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+var
+  s:string;
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+  inherited;
+  if not IsNull then Raise Exception.Create('已经输入商品了，不能导入销售单.');
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入销售单.');  
+  s := TfrmFindOrder.FindDialog(self,3,edtCLIENT_ID.asString,edtSHOP_ID.asString);
+  if s<>'' then
+     begin
+       h := TZQuery.Create(nil);
+       d := TZQuery.Create(nil);
+       Params := TftParamList.Create(nil);
+       HObj := TRecord_.Create;
+       try
+          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+          Params.ParamByName('STOCK_ID').asString := s;
+          Factor.BeginBatch;
+          try
+            Factor.AddBatch(h,'TStockOrder',Params);
+            Factor.AddBatch(d,'TStkRetuData',Params);
+            Factor.OpenBatch;
+            HObj.ReadFromDataSet(h);
+            ReadFromObject(HObj,self);
+            AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('STOCK_ID').AsString;
+            edtSTK_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+            edtSTOCK_DATE.Date := Global.SysDate;
+            ReadFrom(d);
+          except
+            Factor.CancelBatch;
+            Raise;
+          end;
+       finally
+         HObj.Free;
+         Params.Free;
+         h.Free;
+         d.Free;
+       end;
+     end;
 end;
 
 end.

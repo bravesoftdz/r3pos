@@ -421,6 +421,21 @@ begin
            end;
         Result := true;
       end;
+  //检测订单是否重复入库
+  if FieldbyName('FROM_ID').asString<>'' then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select count(*) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and SALES_ID<>:SALES_ID';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+         rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsInteger<>0 then Raise Exception.Create('当前订单已经出库了，不能重复出库了');  
+       finally
+         rs.Free;
+       end;
+     end;
 end;
 
 function TSalesOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
@@ -451,6 +466,7 @@ begin
   inherited;
   lock := false;
   SelectSQL.Text :=
+               'select jg.*,g.GLIDE_NO as INDE_GLIDE_NO from ('+
                'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
                'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
@@ -463,7 +479,8 @@ begin
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
-               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID';
+               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID ) jg '+
+               ' left outer join SAL_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESORDER(TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,ADVA_MNY,PAY_A,PAY_B,PAY_C,'+
       'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,BARTER_INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,IC_CARDNO,UNION_ID) '

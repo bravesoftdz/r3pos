@@ -351,6 +351,7 @@ type
     procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmRecvAbleReportExecute(Sender: TObject);
     procedure actfrmPayAbleReportExecute(Sender: TObject);
+    procedure actfrmStorageTrackingExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -401,7 +402,7 @@ uses
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
-  ufrmRecvAbleReport,ufrmPayAbleReport;
+  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2387,6 +2388,28 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmPayAbleReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStorageTrackingExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStorageTracking);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmStorageTracking.Create(self);
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;

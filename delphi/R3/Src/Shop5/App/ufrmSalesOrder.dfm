@@ -409,7 +409,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Height = 20
         TabOrder = 11
       end
-      object edtFROM_ID: TcxButtonEdit
+      object edtINDE_GLIDE_NO: TcxButtonEdit
         Left = 251
         Top = 47
         Width = 131
@@ -419,6 +419,7 @@ inherited frmSalesOrder: TfrmSalesOrder
             Default = True
             Kind = bkEllipsis
           end>
+        Properties.OnButtonClick = edtFROM_IDPropertiesButtonClick
         TabOrder = 3
       end
       object edtADVA_MNY: TcxTextEdit

@@ -360,7 +360,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Height = 20
         TabOrder = 9
       end
-      object edtFROM_ID: TcxButtonEdit
+      object edtSAL_GLIDE_NO: TcxButtonEdit
         Left = 251
         Top = 47
         Width = 131
@@ -370,6 +370,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
             Kind = bkEllipsis
           end>
+        Properties.OnButtonClick = edtSAL_GLIDE_NOPropertiesButtonClick
         TabOrder = 2
       end
       object edtTAX_MONEY: TcxTextEdit

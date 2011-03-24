@@ -284,7 +284,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
       end
-      object edtFROM_ID: TcxButtonEdit
+      object edtSTK_GLIDE_NO: TcxButtonEdit
         Left = 250
         Top = 47
         Width = 131
@@ -294,6 +294,8 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
             Default = True
             Kind = bkEllipsis
           end>
+        Properties.ReadOnly = True
+        Properties.OnButtonClick = edtSTK_GLIDE_NOPropertiesButtonClick
         TabOrder = 3
       end
       object edtTAX_MONEY: TcxTextEdit

@@ -145,10 +145,10 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                     Caption = #24050#23457#26680
                   end
                   item
-                    Caption = #26410#32467#36134
+                    Caption = #26410#20986#24211
                   end
                   item
-                    Caption = #24050#32467#36134
+                    Caption = #24050#20986#24211
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -370,7 +370,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #39044#25910#27454'|'#27424#27454
+                  Title.Caption = #39044#25910#27454'|'#27424#25910
                   Width = 59
                 end
                 item

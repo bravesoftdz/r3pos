@@ -214,10 +214,10 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                     Caption = #24050#23457#26680
                   end
                   item
-                    Caption = #26410#32467#36134
+                    Caption = #26410#20837#24211
                   end
                   item
-                    Caption = #24050#32467#36134
+                    Caption = #24050#20837#24211
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -347,7 +347,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#27424#27454
+                  Title.Caption = #39044#20184#27454'|'#27424#20184
                   Width = 63
                 end
                 item

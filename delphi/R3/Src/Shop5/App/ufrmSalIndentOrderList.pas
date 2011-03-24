@@ -88,8 +88,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w1 := w1 +' where RECK_MNY<>0';
-       4:w1 := w1 +' where RECK_MNY=0';
+       3:w := w +' and not Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
+       4:w := w +' and Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
        end;
      end;
   if id<>'' then

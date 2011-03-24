@@ -50,7 +50,7 @@ type
     N1: TMenuItem;
     Label11: TLabel;
     Label21: TLabel;
-    edtFROM_ID: TcxButtonEdit;
+    edtSAL_GLIDE_NO: TcxButtonEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     Label4: TLabel;
@@ -81,6 +81,8 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actCustomerExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
+    procedure edtSAL_GLIDE_NOPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     { Private declarations }
     //进位法则
@@ -144,7 +146,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer, ufrmShopMain, ufrmSalesOrder;
+   ,uframeSelectCustomer, ufrmShopMain, ufrmSalesOrder, ufrmFindOrder;
 {$R *.dfm}
 
 procedure TfrmSalRetuOrder.ReadHeader;
@@ -1376,7 +1378,8 @@ begin
       self.edtSALE_STYLE.Text := edtSALE_STYLE.Text;
       self.edtSEND_ADDR.Text := edtSEND_ADDR.Text;
       self.edtPLAN_DATE.Date := edtPLAN_DATE.Date;
-      self.edtFROM_ID.Text := AObj.FieldbyName('SALES_ID').AsString;
+      self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('SALES_ID').AsString;
+      self.edtSAL_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtREMARK.Text := edtREMARK.Text;
       self.Locked := true;
       try
@@ -1440,6 +1443,51 @@ begin
   else
      PresentToCalc(0);
   end;
+end;
+
+procedure TfrmSalRetuOrder.edtSAL_GLIDE_NOPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+var
+  s:string;
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+  inherited;
+  if not IsNull then Raise Exception.Create('已经输入商品了，不能导入销售单.');
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入销售单.');  
+  s := TfrmFindOrder.FindDialog(self,4,edtCLIENT_ID.asString,edtSHOP_ID.asString);
+  if s<>'' then
+     begin
+       h := TZQuery.Create(nil);
+       d := TZQuery.Create(nil);
+       Params := TftParamList.Create(nil);
+       HObj := TRecord_.Create;
+       try
+          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+          Params.ParamByName('SALES_ID').asString := s;
+          Factor.BeginBatch;
+          try
+            Factor.AddBatch(h,'TSalesOrder',Params);
+            Factor.AddBatch(d,'TSalRetuData',Params);
+            Factor.OpenBatch;
+            HObj.ReadFromDataSet(h);
+            ReadFromObject(HObj,self);
+            AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('SALES_ID').AsString;
+            edtSAL_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+            edtSALES_DATE.Date := Global.SysDate;
+            ReadFrom(d);
+          except
+            Factor.CancelBatch;
+            Raise;
+          end;
+       finally
+         HObj.Free;
+         Params.Free;
+         h.Free;
+         d.Free;
+       end;
+     end;
 end;
 
 end.

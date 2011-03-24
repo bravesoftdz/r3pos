@@ -16167,6 +16167,7 @@ inherited frmShopMain: TfrmShopMain
     object actfrmStorageTracking: TAction
       Tag = 14500001
       Caption = #24211#23384#26597#35810
+      OnExecute = actfrmStorageTrackingExecute
     end
     object actfrmRckMng: TAction
       Caption = #32467#36134#31649#29702

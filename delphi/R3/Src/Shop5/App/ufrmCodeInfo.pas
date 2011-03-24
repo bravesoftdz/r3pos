@@ -530,7 +530,10 @@ procedure TfrmCodeInfo.cdsCODE_INFOBeforeInsert(DataSet: TDataSet);
 begin
   inherited;
   btnSave.Enabled:=True;
-
+  if cdsCODE_INFO.RecordCount <= 0 then
+    btnDelete.Enabled := False
+  else
+    btnDelete.Enabled := True;
 end;
 
 procedure TfrmCodeInfo.RefreshTable;

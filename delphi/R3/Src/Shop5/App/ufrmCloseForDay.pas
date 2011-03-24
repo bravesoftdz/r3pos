@@ -226,7 +226,7 @@ begin
     begin
       try
         GetLastDate;
-        if not ((LastTime = 0) and not GetBalance) then
+        if not ((LastTime = 0) and GetBalance) then
           begin
             Open;
             if (IntToStr(LastTime) = FormatDateTime('YYYYMMDD',Date())) then  //打印当天已经结账汇总

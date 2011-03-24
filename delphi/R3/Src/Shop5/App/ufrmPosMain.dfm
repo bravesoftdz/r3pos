@@ -426,6 +426,93 @@ inherited frmPosMain: TfrmPosMain
           TabOrder = 11
           OnEnter = fndCLIENT_CODEEnter
         end
+        object Panel1: TPanel
+          Left = 1
+          Top = 13
+          Width = 398
+          Height = 7
+          Align = alTop
+          BevelOuter = bvNone
+          ParentColor = True
+          TabOrder = 12
+        end
+        object DBGridEh2: TDBGridEh
+          Left = 1
+          Top = 20
+          Width = 398
+          Height = 167
+          Align = alClient
+          AllowedOperations = [alopUpdateEh]
+          AutoFitColWidths = True
+          Color = clBlack
+          DataSource = dsGodsInfo
+          Enabled = False
+          FixedColor = clBlack
+          Flat = True
+          FooterColor = clBlack
+          FooterFont.Charset = GB2312_CHARSET
+          FooterFont.Color = clWhite
+          FooterFont.Height = -12
+          FooterFont.Name = #23435#20307
+          FooterFont.Style = []
+          FrozenCols = 1
+          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+          RowHeight = 23
+          TabOrder = 13
+          TitleFont.Charset = GB2312_CHARSET
+          TitleFont.Color = clWhite
+          TitleFont.Height = -12
+          TitleFont.Name = #23435#20307
+          TitleFont.Style = []
+          UseMultiTitle = True
+          Visible = False
+          IsDrawNullRow = False
+          CurrencySymbol = #65509
+          DecimalNumber = 2
+          DigitalNumber = 12
+          Columns = <
+            item
+              EditButtons = <>
+              FieldName = 'GODS_CODE'
+              Footer.Value = #35760#24405#25968#65306
+              Footer.ValueType = fvtStaticText
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #36135#21495
+              Width = 50
+            end
+            item
+              EditButtons = <>
+              FieldName = 'GODS_NAME'
+              Footer.ValueType = fvtCount
+              Footers = <>
+              ReadOnly = True
+              Title.Caption = #21830#21697#21517#31216
+              Width = 122
+            end
+            item
+              EditButtons = <>
+              FieldName = 'BARCODE'
+              Footers = <>
+              Title.Caption = #26465#30721
+              Width = 83
+            end
+            item
+              EditButtons = <>
+              FieldName = 'NEW_OUTPRICE'
+              Footers = <>
+              Title.Caption = #26631#20934#21806#20215
+              Width = 54
+            end
+            item
+              EditButtons = <>
+              FieldName = 'NEW_LOWPRICE'
+              Footers = <>
+              Title.Caption = #26368#20302#21806#20215
+              Width = 52
+            end>
+        end
       end
       object RzPanel5: TRzPanel
         Left = 405
@@ -636,6 +723,7 @@ inherited frmPosMain: TfrmPosMain
             Width = 138
             Height = 27
             ParentFont = False
+            Properties.OnChange = edtInputPropertiesChange
             Style.BorderStyle = ebsThick
             Style.Color = 16777088
             Style.Font.Charset = GB2312_CHARSET
@@ -1356,5 +1444,9 @@ inherited frmPosMain: TfrmPosMain
     Params = <>
     Left = 144
     Top = 218
+  end
+  object dsGodsInfo: TDataSource
+    Left = 198
+    Top = 392
   end
 end

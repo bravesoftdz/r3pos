@@ -125,6 +125,9 @@ type
     cdsHeader: TZQuery;
     cdsTable: TZQuery;
     RzStatusPane3: TRzStatusPane;
+    Panel1: TPanel;
+    DBGridEh2: TDBGridEh;
+    dsGodsInfo: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -153,6 +156,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzStatusPane3Click(Sender: TObject);
+    procedure edtInputPropertiesChange(Sender: TObject);
+    procedure BasInfoFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -313,7 +319,8 @@ var
   s:string;
 begin
   inherited;
-  basInfo := Global.GetZQueryFromName('PUB_GOODSINFO'); 
+  basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
+  dsGodsInfo.DataSet := basInfo;
   DBGridEh1.Columns[4].Visible := (CLVersion='FIG');
   DBGridEh1.Columns[5].Visible := (CLVersion='FIG');
   SaveAObj := TRecord_.Create;
@@ -1270,9 +1277,20 @@ begin
 
 
   if (Shift = []) and (Key=VK_DOWN) then
-     cdsTable.Next;
+      begin
+      if (InputFlag=0) and (InputMode=1) and DBGridEh2.Visible then
+        basInfo.Next
+      else
+        cdsTable.Next;
+      end;
+      
   if (Shift = []) and (Key=VK_UP) then
-     cdsTable.Prior;
+      begin
+      if (InputFlag=0) and (InputMode=1) and DBGridEh2.Visible then
+        basInfo.Prior
+      else
+        cdsTable.Prior;
+      end;
 
   if (Shift = []) and (Key=VK_ESCAPE) then
      begin
@@ -1297,6 +1315,24 @@ begin
   if Key=#13 then
     begin
       if (dbState = dsBrowse) then NewOrder;
+      if (InputFlag=0) and (InputMode=1) then
+         begin
+           if DBGridEh2.Visible then
+              begin
+                if basInfo.isEmpty then Raise Exception.Create('您输入的货号"'+edtInput.Text+'"无效...');
+                AObj := TRecord_.Create;
+                try
+                   AObj.ReadFromDataSet(BasInfo);
+                   AddFromDialog(AObj);
+                   edtInput.Text := '';
+                   edtInput.SetFocus;
+                   Key := #0;
+                finally
+                   AObj.Free;
+                end;
+                Exit;
+              end;
+         end;
       s := trim(edtInput.Text);
       try
       edtInput.Text := '';
@@ -3335,6 +3371,37 @@ begin
   inherited;
   if MessageBox(Handle,'是否执行取单操作.','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   PickUp;
+end;
+
+procedure TfrmPosMain.edtInputPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if (InputFlag=0) and (InputMode=1) then
+     begin
+       DBGridEh2.Visible := trim(edtInput.Text)<>'';
+       if not DBGridEh2.Visible then Exit;
+       basInfo.OnFilterRecord := BasInfoFilterRecord;
+       try
+         basInfo.Filtered := false;
+         basInfo.Filtered := true;
+       finally
+       end;
+     end;
+end;
+
+procedure TfrmPosMain.BasInfoFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  inherited;
+  Accept :=
+    (pos(edtInput.Text,DataSet.FieldbyName('GODS_CODE').AsString)>0)
+    or
+    (pos(edtInput.Text,DataSet.FieldbyName('BARCODE').AsString)>0)
+    or
+    (pos(edtInput.Text,DataSet.FieldbyName('GODS_NAME').AsString)>0)
+    or
+    (pos(lowercase(edtInput.Text),lowercase(DataSet.FieldbyName('GODS_SPELL').AsString))>0)
+
 end;
 
 end.

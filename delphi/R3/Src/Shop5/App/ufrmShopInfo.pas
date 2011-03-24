@@ -353,7 +353,7 @@ procedure TfrmShopInfo.WriteTo(AObj: TRecord_);
 begin
   WriteToObject(AObj,self);
   Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.Text;
-  Aobj.FieldByName('SEQ_NO').AsInteger:=StrToInt(copy(AObj.FieldByName('SHOP_ID').AsString,8,4))+1000;
+  Aobj.FieldByName('SEQ_NO').AsInteger:=StrToInt(copy(AObj.FieldByName('SHOP_ID').AsString,Length(AObj.FieldByName('SHOP_ID').AsString)-3,4))+1000;
 end;
 
 procedure TfrmShopInfo.FormShow(Sender: TObject);

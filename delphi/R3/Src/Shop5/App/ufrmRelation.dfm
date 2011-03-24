@@ -1,43 +1,43 @@
 inherited frmRelation: TfrmRelation
-  Left = 137
-  Top = 171
-  Width = 956
-  Height = 628
+  Left = 143
+  Top = 161
+  Width = 844
+  Height = 544
   Caption = #20379#24212#38142#31649#29702
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 940
-    Height = 554
+    Width = 828
+    Height = 470
     inherited RzPanel2: TRzPanel
-      Width = 930
-      Height = 544
+      Width = 818
+      Height = 460
       inherited RzPage: TRzPageControl
-        Width = 924
-        Height = 538
+        Width = 812
+        Height = 454
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#38142#31649#29702
           inherited RzPanel3: TRzPanel
-            Width = 922
-            Height = 511
+            Width = 810
+            Height = 427
             object Splitter1: TSplitter
               Left = 181
               Top = 47
-              Height = 459
+              Height = 375
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 912
+              Width = 800
               Height = 42
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                912
+                800
                 42)
               object Panel3: TPanel
                 Left = 0
@@ -59,7 +59,7 @@ inherited frmRelation: TfrmRelation
               object Panel4: TPanel
                 Left = 176
                 Top = 0
-                Width = 736
+                Width = 624
                 Height = 36
                 Alignment = taLeftJustify
                 Anchors = [akLeft, akTop, akRight, akBottom]
@@ -92,7 +92,7 @@ inherited frmRelation: TfrmRelation
               Left = 5
               Top = 47
               Width = 176
-              Height = 459
+              Height = 375
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -108,15 +108,15 @@ inherited frmRelation: TfrmRelation
             object Panel1: TPanel
               Left = 184
               Top = 47
-              Width = 733
-              Height = 459
+              Width = 621
+              Height = 375
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object stbPanel: TPanel
                 Left = 1
-                Top = 439
-                Width = 731
+                Top = 355
+                Width = 619
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -138,8 +138,8 @@ inherited frmRelation: TfrmRelation
               object Grid_RelationAndGoods: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 731
-                Height = 438
+                Width = 619
+                Height = 354
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_RelationAndGoods
@@ -166,6 +166,7 @@ inherited frmRelation: TfrmRelation
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
+                OnDrawColumnCell = Grid_RelationAndGoodsDrawColumnCell
                 Columns = <
                   item
                     Checkboxes = True
@@ -180,8 +181,7 @@ inherited frmRelation: TfrmRelation
                       '1')
                     Tag = -1
                     Title.Caption = #36873#25321
-                    Title.Color = clWhite
-                    Width = 21
+                    Width = 22
                   end
                   item
                     EditButtons = <>
@@ -191,7 +191,6 @@ inherited frmRelation: TfrmRelation
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #36135#21495
-                    Title.Color = clWhite
                     Width = 60
                   end
                   item
@@ -201,7 +200,6 @@ inherited frmRelation: TfrmRelation
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
-                    Title.Color = clWhite
                     Width = 122
                   end
                   item
@@ -209,17 +207,7 @@ inherited frmRelation: TfrmRelation
                     FieldName = 'BARCODE'
                     Footers = <>
                     Title.Caption = #26465#30721
-                    Title.Color = clWhite
                     Width = 100
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'AMOUNT'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #24211#23384#37327
-                    Title.Color = clWhite
-                    Width = 60
                   end
                   item
                     EditButtons = <>
@@ -227,7 +215,6 @@ inherited frmRelation: TfrmRelation
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #35745#37327#21333#20301
-                    Title.Color = clWhite
                     Width = 60
                   end
                   item
@@ -235,7 +222,6 @@ inherited frmRelation: TfrmRelation
                     FieldName = 'NEW_OUTPRICE'
                     Footers = <>
                     Title.Caption = #26631#20934#21806#20215
-                    Title.Color = clWhite
                     Width = 80
                   end
                   item
@@ -243,7 +229,6 @@ inherited frmRelation: TfrmRelation
                     FieldName = 'NEW_INPRICE'
                     Footers = <>
                     Title.Caption = #26631#20934#36827#20215
-                    Title.Color = clWhite
                     Width = 80
                   end
                   item
@@ -251,8 +236,21 @@ inherited frmRelation: TfrmRelation
                     FieldName = 'NEW_LOWPRICE'
                     Footers = <>
                     Title.Caption = #26368#20302#21806#20215
-                    Title.Color = clWhite
                     Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SECOND_ID'
+                    Footers = <>
+                    Title.Caption = #21830#21697#23545#29031#30721
+                    Width = 108
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SECOND_CODE'
+                    Footers = <>
+                    Title.Caption = #21830#21697#35782#21035#30721
+                    Width = 69
                   end>
               end
             end
@@ -262,38 +260,38 @@ inherited frmRelation: TfrmRelation
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 940
+    Width = 828
     inherited Image1: TImage
-      Left = 417
-      Width = 503
+      Left = 516
+      Width = 292
     end
     inherited Image3: TImage
-      Left = 417
-      Width = 503
+      Left = 516
+      Width = 292
     end
     inherited Image14: TImage
-      Left = 920
+      Left = 808
     end
     inherited rzPanel5: TPanel
-      Left = 417
+      Left = 516
       inherited lblToolCaption: TRzLabel
         Width = 60
         Caption = #20379#24212#38142#26723#26696
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 397
+      Width = 496
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 397
+          MinHeight = 496
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 397
+        Width = 496
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0
@@ -333,18 +331,37 @@ inherited frmRelation: TfrmRelation
           Top = 0
           Action = actCancel
         end
-        object ToolButton8: TToolButton
+        object ToolButton12: TToolButton
           Left = 268
+          Top = 0
+          Action = actAudit
+          Caption = #23545#29031
+        end
+        object ToolButton13: TToolButton
+          Left = 311
+          Top = 0
+          Action = actModify
+        end
+        object ToolButton11: TToolButton
+          Left = 354
+          Top = 0
+          Width = 13
+          Caption = 'ToolButton11'
+          ImageIndex = 14
+          Style = tbsDivider
+        end
+        object ToolButton8: TToolButton
+          Left = 367
           Top = 0
           Action = actPrint
         end
         object ToolButton9: TToolButton
-          Left = 311
+          Left = 410
           Top = 0
           Action = actPreview
         end
         object ToolButton10: TToolButton
-          Left = 354
+          Left = 453
           Top = 0
           Action = actExit
         end
@@ -360,6 +377,7 @@ inherited frmRelation: TfrmRelation
     Top = 224
     inherited actNew: TAction
       Caption = #30003#35831
+      ImageIndex = 16
       OnExecute = actNewExecute
     end
     inherited actDelete: TAction
@@ -367,6 +385,7 @@ inherited frmRelation: TfrmRelation
     end
     inherited actEdit: TAction
       Caption = #21019#24314
+      ImageIndex = 0
       OnExecute = actEditExecute
     end
     inherited actSave: TAction
@@ -374,6 +393,8 @@ inherited frmRelation: TfrmRelation
       OnExecute = actSaveExecute
     end
     inherited actCancel: TAction
+      Caption = #19979#36733
+      ImageIndex = 39
       OnExecute = actCancelExecute
     end
     inherited actPrint: TAction
@@ -387,6 +408,13 @@ inherited frmRelation: TfrmRelation
     end
     inherited actInfo: TAction
       OnExecute = actInfoExecute
+    end
+    inherited actAudit: TAction
+      ImageIndex = 31
+    end
+    object actModify: TAction
+      Caption = #20462#25913
+      ImageIndex = 47
     end
   end
   object Ds_RelationAndGoods: TDataSource

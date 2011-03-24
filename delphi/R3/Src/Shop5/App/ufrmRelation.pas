@@ -45,6 +45,10 @@ type
     ToolButton6: TToolButton;
     rb1: TcxRadioButton;
     rb2: TcxRadioButton;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    actModify: TAction;
+    ToolButton13: TToolButton;
     procedure actFindExecute(Sender: TObject);
     procedure ShowAllClick(Sender: TObject);
     procedure Cds_RelationAndGoodsAfterScroll(DataSet: TDataSet);
@@ -64,6 +68,9 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure rb1Click(Sender: TObject);
     procedure rb2Click(Sender: TObject);
+    procedure Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+      State: TGridDrawState);
   private
     { Private declarations }
 
@@ -80,11 +87,13 @@ type
     procedure Open(Id:String);
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure SetIsRel(const Value: Boolean);
+    function getflag: integer;
   public
     { Public declarations }
     property IsRel:Boolean read FIsRel write SetIsRel;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    property flag:integer read getflag;
   end;
 
 implementation
@@ -120,37 +129,87 @@ begin
   0:sc := '+';
   1,4,5: sc := '||';
   end;
-  w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
-  if Id<>'' then
-     begin
-      if w<>'' then w := w + ' and ';
-      w := w + 'j.GODS_ID>=:MAXID';
-     end;
-  if (rzTree.Selected<>nil) then
-     begin
-      if w<>'' then w := w + ' and ';
-      if (rzTree.Selected.Level>0) then
-         w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
-      else
-         w := w + 'b.RELATION_ID=:RELATION_ID ';
-     end;
+  case flag of
+  0:begin
+      w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+      if Id<>'' then
+         begin
+          if w<>'' then w := w + ' and ';
+          w := w + 'j.GODS_ID>=:MAXID';
+         end;
+      if (rzTree.Selected<>nil) then
+         begin
+          if (rzTree.Selected.Level>0) then
+             w := w + ' and b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' '
+         end;
+      result :=
+         'select 0 as A,:RELATION_ID as RELATION_ID,j.TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,c.SECOND_ID,c.GODS_CODE as SECOND_CODE '+
+         'from PUB_GOODSINFO j,PUB_GOODSSORT b,PUB_GOODS_RELATION c where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and c.RELATION_ID=:TENANT_ID and c.COMM not in (''02'',''12'') '+w;
+    end;
+  1:begin
+      w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+      if Id<>'' then
+         begin
+          if w<>'' then w := w + ' and ';
+          w := w + 'j.GODS_ID>=:MAXID';
+         end;
+      if (rzTree.Selected<>nil) then
+         begin
+          if (rzTree.Selected.Level>0) then
+             w := w + 'and b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' '
+         end;
+      result :=
+         'select 0 as A,:RELATION_ID as RELATION_ID,j.TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.GODS_ID as SECOND_ID,j.GODS_CODE as SECOND_CODE '+
+         'from PUB_GOODSINFO j,PUB_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and not Exists(select * from PUB_GOODS_RELATION where TENANT_ID=j.TENANT_ID and GODS_ID=j.GODS_ID and RELATION_ID=:TENANT_ID and COMM not in (''02'',''12'')) '+w;
+    end;
+  2:begin
+      w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+      if Id<>'' then
+         begin
+          if w<>'' then w := w + ' and ';
+          w := w + 'j.GODS_ID>=:MAXID';
+         end;
+      if (rzTree.Selected<>nil) then
+         begin
+          if w<>'' then w := w + ' and ';
+          if (rzTree.Selected.Level>0) then
+             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+          else
+             w := w + 'b.RELATION_ID=:RELATION_ID ';
+         end;
+      result :=
+         'select 0 as A,:RELATION_ID as RELATION_ID,j.TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.SECOND_ID,j.SECOND_CODE '+
+         'from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w;
+    end;
+  3:begin
+      w := 'and j.TENANT_ID=:P_TENANT_ID and j.COMM not in (''02'',''12'') ';
+      if Id<>'' then
+         begin
+          if w<>'' then w := w + ' and ';
+          w := w + 'j.GODS_ID>=:MAXID';
+         end;
+      if (rzTree.Selected<>nil) then
+         begin
+          if w<>'' then w := w + ' and ';
+          if (rzTree.Selected.Level>0) then
+             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+          else
+             w := w + 'b.RELATION_ID=:RELATION_ID ';
+         end;
+      result :=
+        'select 0 as A,:RELATION_ID as RELATION_ID,:TENANT_ID as TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.SECOND_ID,j.SECOND_CODE '+
+        'from VIW_GOODSINFO j,VIW_GOODSSORT b,PUB_GOODS_RELATION c where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and c.RELATION_ID=:RELATION_ID and c.COMM not in (''02'',''12'') '+w+
+        ' and not Exists(select * from PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and GODS_ID=j.GODS_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12''))';
+    end;
+  end;
   case Factor.iDbType of
-  0:
-  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
-            'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
-  4:
-  result := 'select tp.* from ('+
-            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
-            'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
-  5:
-  result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
-            'left outer join '+
-            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';
+  0:result := 'select top 600 * from ('+result+') j order by GODS_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by GODS_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by GODS_ID limit 600';
+  else
+    result := 'select * from ('+result+') j order by GODS_ID';
   end;
 end;
 
@@ -177,8 +236,8 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      Grid_RelationAndGoods.Columns[5].KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
-      Grid_RelationAndGoods.Columns[5].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
+      Grid_RelationAndGoods.Columns[4].KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
+      Grid_RelationAndGoods.Columns[4].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
 
@@ -219,9 +278,26 @@ begin
       rs.SortedFields := 'LEVEL_ID';
       CreateLevelTree(rs,rzTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
     end;
+  if rzTree.TopItem<>nil then rzTree.TopItem.Selected := true;
 end;
 
 procedure TfrmRelation.Open(Id: String);
+function GetRelationPid:integer;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TENANT_ID from CA_RELATIONS where RELATI_ID=:TENANT_ID and RELATION_ID=:RELATION_ID';
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    if rs.Params.FindParam('RELATION_ID')<>nil then
+       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    Factor.open(rs);
+    result := rs.Fields[0].asInteger;
+  finally
+    rs.free;
+  end;
+end;
 var
   rs:TZQuery;
   sm:TMemoryStream;
@@ -234,13 +310,17 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
+    if rs.Params.FindParam('P_TENANT_ID')<>nil then
+       rs.Params.ParamByName('P_TENANT_ID').AsInteger := GetRelationPid;
     if rs.Params.FindParam('MAXID')<>nil then
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('LEVEL_ID')<>nil then
        rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
     if rs.Params.FindParam('RELATION_ID')<>nil then
-       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+       begin
+         rs.Params.ParamByName('RELATION_ID').AsInteger := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsInteger;
+         if rs.Params.ParamByName('RELATION_ID').AsInteger = 0 then rs.Params.ParamByName('RELATION_ID').AsInteger := strtoint(RID);
+       end;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
@@ -352,11 +432,11 @@ end;
 procedure TfrmRelation.actNewExecute(Sender: TObject);
 begin
   inherited;
-  if TfrmJoinRelation.AddDialog(Self) then
-     begin
-       Prepare;
-       LoadTree;
-     end;
+//  if TfrmJoinRelation.AddDialog(Self) then
+//     begin
+//       Prepare;
+//       LoadTree;
+//     end;
 end;
 
 procedure TfrmRelation.actEditExecute(Sender: TObject);
@@ -459,8 +539,34 @@ begin
 end;
 
 procedure TfrmRelation.actSaveExecute(Sender: TObject);
+var Params:TftParamList;
 begin
   inherited;
+  Cds_RelationAndGoods.CommitUpdates;
+  Cds_RelationAndGoods.DisableControls;
+  Params := TftParamList.Create(nil);
+  try
+    Cds_RelationAndGoods.Filtered := false;
+    Cds_RelationAndGoods.Filter := 'A=1';
+    Cds_RelationAndGoods.Filtered := true;
+    try
+      Cds_RelationAndGoods.First;
+      while not Cds_RelationAndGoods.Eof do Cds_RelationAndGoods.Delete;
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+      case flag of
+      0,2:Factor.UpdateBatch(Cds_RelationAndGoods,'TDelFromRelation',Params);
+      1,3:Factor.UpdateBatch(Cds_RelationAndGoods,'TAddToRelation',Params);
+      end;
+    except
+      Cds_RelationAndGoods.CancelUpdates;
+      Raise;
+    end;
+  finally
+    Params.Free;
+    Cds_RelationAndGoods.Filtered := false;
+    Cds_RelationAndGoods.EnableControls;
+  end;
 //
 end;
 
@@ -515,21 +621,12 @@ end;
 
 procedure TfrmRelation.ChangeButton;
 begin
-  if rzTree.Selected=nil then Exit;
-  if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
-     begin
-       if rb1.Checked then
-          actSave.Caption := '撤消'
-       else
-          actSave.Caption := '发布';
-     end
-  else
-     begin
-       if rb1.Checked then
-          actSave.Caption := '启用'
-       else
-          actSave.Caption := '禁用';
-     end;
+  case flag of
+  0:actSave.Caption := '撤消';
+  1:actSave.Caption := '发布';
+  2:actSave.Caption := '启用';
+  3:actSave.Caption := '禁用';
+  end;
 end;
 
 procedure TfrmRelation.rb1Click(Sender: TObject);
@@ -544,6 +641,40 @@ begin
   inherited;
   Open('');
   ChangeButton;
+end;
+
+function TfrmRelation.getflag: integer;
+begin
+  result := 0;
+  if rzTree.Selected=nil then Exit;
+  if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
+     begin
+       if rb1.Checked then
+          result := 0
+       else
+          result := 1;
+     end
+  else
+     begin
+       if rb1.Checked then
+          result := 2
+       else
+          result := 3;
+     end;
+end;
+
+procedure TfrmRelation.Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (Rect.Top = Grid_RelationAndGoods.CellRect(Grid_RelationAndGoods.Col, Grid_RelationAndGoods.Row).Top) and (not
+    (gdFocused in State) or not Grid_RelationAndGoods.Focused) then
+  begin
+    Grid_RelationAndGoods.Canvas.Brush.Color := rowSelectColor;
+  end;
+  Grid_RelationAndGoods.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
 end;
 
 end.

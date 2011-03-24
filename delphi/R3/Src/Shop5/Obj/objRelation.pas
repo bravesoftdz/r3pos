@@ -11,6 +11,14 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  TAddToRelation=class(TZFactory)
+  public
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TDelFromRelation=class(TZFactory)
+  public
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 
 
 implementation
@@ -89,9 +97,30 @@ begin
 end;
 
 
+{ TDelFromRelation }
+
+function TDelFromRelation.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+begin
+  r := AGlobal.ExecSQL('update PUB_GOODS_RELATION set COMM=''00'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and RELATION_ID=:RELATION_ID',self);
+  if r=0 then Raise Exception.Create('撤消商品失败，已经被其他用户撤消...');  
+end;
+
+{ TAddToRelation }
+
+function TAddToRelation.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('insert into PUB_GOODS_RELATION(ROWS_ID,TENANT_ID,RELATION_ID,GODS_ID,COMM,TIME_STAMP) values('''+newid(Params.ParambyName('SHOP_ID').asString)+''',:TENANT_ID,:RELATION_ID,:GODS_ID,''00'','+GetTimeStamp(AGlobal.iDbType)+')',self);
+end;
+
 initialization
   RegisterClass(TRelation);
+  RegisterClass(TAddToRelation);
+  RegisterClass(TDelFromRelation);
 finalization
   RegisterClass(TRelation);
+  RegisterClass(TAddToRelation);
+  RegisterClass(TDelFromRelation);
 
 end.

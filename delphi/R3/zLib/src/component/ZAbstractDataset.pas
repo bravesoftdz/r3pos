@@ -1013,7 +1013,7 @@ begin
  if State in [dsEdit,dsInsert] then Post;
  DisableControls;
  try
-   FetchRows(0);
+   FetchAll;
    Stream.Size := 0;
    Stream.Position := 0;
    WriteHeader;

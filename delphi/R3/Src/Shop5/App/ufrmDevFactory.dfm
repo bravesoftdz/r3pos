@@ -48,7 +48,7 @@ object frmDevFactory: TfrmDevFactory
     Top = 0
     Width = 337
     Height = 193
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alTop
     TabOrder = 2
     object TabSheet4: TTabSheet
@@ -80,14 +80,14 @@ object frmDevFactory: TfrmDevFactory
       object chkCloseDayPrinted: TcxCheckBox
         Left = 16
         Top = 44
-        Width = 108
+        Width = 157
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #32467#36134#26102#26159#21542#25171#21360
+        Properties.Caption = #20132#29677#32467#36134#26102#26159#21542#25171#21360#23567#31080
         TabOrder = 1
       end
       object edtCloseDayPrintFlag: TcxComboBox
-        Left = 125
+        Left = 174
         Top = 44
         Width = 79
         Height = 20
@@ -100,14 +100,14 @@ object frmDevFactory: TfrmDevFactory
       object cxSavePrint: TcxCheckBox
         Left = 16
         Top = 71
-        Width = 108
+        Width = 155
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #20445#23384#26102#26159#21542#25171#21360
+        Properties.Caption = #38144#21806#32467#36134#26102#26159#21542#25171#21360#23567#31080
         TabOrder = 3
       end
       object cxPrintFormat: TcxComboBox
-        Left = 125
+        Left = 174
         Top = 71
         Width = 79
         Height = 20

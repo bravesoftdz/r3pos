@@ -41,17 +41,36 @@ var rs,ForDay_rs:TZQuery;
 begin
   if DevFactory.LPT < 0 then Exit;
 
+  ForDay_rs := TZQuery.Create(nil);
   try
-    ForDay_rs := TZQuery.Create(nil);
-    ForDay_rs.SQL.Text := 'select jb.*,b.USER_NAME from ('+
-                   'select ja.*,A.SHOP_NAME from ( '+
-                   'select CLSE_DATE,SHOP_ID,CREA_USER,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J'+
-                   ' from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER) ja '+
-                   'left outer join CA_SHOP_INFO A on ja.SHOP_ID=A.SHOP_ID) jb '+
-                   'left outer join VIW_USERS B on jb.CREA_USER=B.USER_ID';
-    ForDay_rs.ParamByName('CLSE_DATE').AsString := QueryDate;
-    ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    ForDay_rs.ParamByName('CREA_USER').AsString := Global.UserID;
+    case QueryType of
+        1:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER ';
+        2:WhereStr := ' TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by SHOP_ID ';
+      else
+        WhereStr := ' TENANT_ID=:TENANT_ID group by TENANT_ID ';
+    end;
+    ForDay_rs.SQL.Text :=
+    'select sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,'+
+    'sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J '+
+    ' from ACC_CLOSE_FORDAY where CLSE_DATE=:CLSE_DATE and '+WhereStr;
+    case QueryType of
+      1:begin
+        ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
+        ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        ForDay_rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+        ForDay_rs.ParamByName('CREA_USER').AsString := Global.UserID;
+      end;
+      2:begin
+        ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
+        ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        ForDay_rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+      end;
+      else begin
+        ForDay_rs.ParamByName('CLSE_DATE').AsInteger := StrToInt(QueryDate);
+        ForDay_rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      end;
+    end;
+
     Factor.Open(ForDay_rs);
 
     //开始打印小票

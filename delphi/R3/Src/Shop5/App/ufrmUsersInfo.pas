@@ -101,7 +101,7 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, ufrmshopinfo, ufrmDeptInfo, ufrmDutyInfo, uShopGlobal;//
+uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,ufrmshopinfo,ufrmDeptInfo,EncDec,ufrmDutyInfo,uShopGlobal;//
 {$R *.dfm}
 
 procedure TfrmUsersInfo.Append;
@@ -277,6 +277,7 @@ begin
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Aobj.FieldByName('ROLE_IDS').AsString := '#';
     Aobj.FieldByName('ROLE_IDS_TEXT').AsString := '#';
+    Aobj.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
   end;
   if dbState=dsInsert then
     cdsTable.Append

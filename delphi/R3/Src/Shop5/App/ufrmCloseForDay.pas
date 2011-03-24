@@ -242,7 +242,7 @@ begin
             end;
           end
         else
-          Result := 0;
+          Result := 2;
 
       finally
         Free;

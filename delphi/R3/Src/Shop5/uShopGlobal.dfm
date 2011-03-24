@@ -312,8 +312,9 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select UNIT_ID,UNIT_NAME,UNIT_SPELL from VIW_MEAUNITS where COMM' +
-        ' not in ('#39'02'#39','#39'12'#39') and TENANT_ID=:TENANT_ID  order by SEQ_NO')
+        'select UNIT_ID,UNIT_NAME,UNIT_SPELL,RELATION_FLAG from VIW_MEAUN' +
+        'ITS where COMM not in ('#39'02'#39','#39'12'#39') and TENANT_ID=:TENANT_ID  orde' +
+        'r by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

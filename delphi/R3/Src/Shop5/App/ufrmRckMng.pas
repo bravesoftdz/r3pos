@@ -28,7 +28,6 @@ type
     btnOk: TRzBitBtn;
     fndP1_STATUS: TcxRadioGroup;
     ToolButton3: TToolButton;
-    ToolButton6: TToolButton;
     cdsBrowser: TZQuery;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
@@ -92,7 +91,6 @@ type
     procedure Db_CloseDayAfterScroll(DataSet: TDataSet);
     procedure Db_CloseMonthAfterScroll(DataSet: TDataSet);
     procedure actPrintExecute(Sender: TObject);
-    procedure actPreviewExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
 
   private
@@ -115,7 +113,7 @@ type
 
 implementation
 uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmBatchCloseForDay,
-  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon, ufrmCostCalc;
+  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon, ufrmCostCalc, ufrmTicketPrint;
 {$R *.dfm}
 
 procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -391,7 +389,7 @@ begin
   inherited;
   TDbGridEhSort.InitForm(self);
   VPay := TStringList.Create;
-  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
@@ -411,7 +409,7 @@ end;
 procedure TfrmRckMng.actFindExecute(Sender: TObject);
 begin
   inherited;
-  Open
+  Open;
 end;
 
 procedure TfrmRckMng.actNewExecute(Sender: TObject);
@@ -831,6 +829,7 @@ begin
           actAudit.Caption:='弃审'
         else
           actAudit.Caption:='审核';
+      ToolButton3.Enabled := True;
     end;
     1:begin
       if Db_CloseDay.IsEmpty then
@@ -840,6 +839,7 @@ begin
           actAudit.Caption:='弃审'
         else
           actAudit.Caption:='审核';
+      ToolButton3.Enabled := False;
     end;
     2:begin
       if Db_CloseMonth.IsEmpty then
@@ -849,6 +849,7 @@ begin
           actAudit.Caption:='弃审'
         else
           actAudit.Caption:='审核';
+      ToolButton3.Enabled := False;          
     end;
   end;
 end;
@@ -1102,13 +1103,21 @@ end;
 procedure TfrmRckMng.actPrintExecute(Sender: TObject);
 begin
   inherited;
-//
-end;
+  if not cdsBrowser.Active then Exit;
+  if cdsBrowser.IsEmpty then Exit;
 
-procedure TfrmRckMng.actPreviewExecute(Sender: TObject);
-begin
-  inherited;
-//
+  if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
+  if cdsBrowser.FieldByName('FLAG').AsInteger = 1 then
+    begin
+      if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+         TfrmTicketPrint.ShowTicketPrint(Self,2,cdsBrowser.FieldbyName('CLSE_DATE').AsString);
+    end
+  else if cdsBrowser.FieldByName('FLAG').AsInteger = 3 then
+    begin
+      if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
+         TfrmTicketPrint.ShowTicketPrint(Self,1,cdsBrowser.FieldbyName('CLSE_DATE').AsString);
+    end;
+
 end;
 
 procedure TfrmRckMng.FormDestroy(Sender: TObject);

@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 224
-  Top = 129
+  Left = 397
+  Top = 124
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -9,26 +9,26 @@ inherited frmRckMng: TfrmRckMng
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 775
-    Height = 503
+    Width = 783
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 765
-      Height = 493
+      Width = 773
+      Height = 504
       inherited RzPage: TRzPageControl
-        Width = 759
-        Height = 487
+        Width = 767
+        Height = 498
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 757
-            Height = 460
+            Width = 765
+            Height = 471
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 745
+              Width = 753
               Height = 70
               Align = alTop
               BorderOuter = fsNone
@@ -166,16 +166,16 @@ inherited frmRckMng: TfrmRckMng
             object Panel1: TPanel
               Left = 6
               Top = 76
-              Width = 745
-              Height = 378
+              Width = 753
+              Height = 389
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 743
-                Height = 376
+                Width = 751
+                Height = 387
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -352,7 +352,7 @@ inherited frmRckMng: TfrmRckMng
             Left = 0
             Top = 0
             Width = 765
-            Height = 477
+            Height = 471
             Align = alClient
             BorderInner = fsGroove
             BorderOuter = fsNone
@@ -362,7 +362,7 @@ inherited frmRckMng: TfrmRckMng
               Left = 7
               Top = 81
               Width = 751
-              Height = 389
+              Height = 383
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -371,7 +371,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 0
                 Top = 0
                 Width = 751
-                Height = 389
+                Height = 383
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseDay
@@ -588,7 +588,7 @@ inherited frmRckMng: TfrmRckMng
             Left = 0
             Top = 0
             Width = 765
-            Height = 477
+            Height = 471
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -598,7 +598,7 @@ inherited frmRckMng: TfrmRckMng
               Left = 6
               Top = 79
               Width = 753
-              Height = 392
+              Height = 386
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -607,7 +607,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 0
                 Top = 0
                 Width = 753
-                Height = 392
+                Height = 386
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -855,37 +855,37 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 775
+    Width = 783
     inherited Image1: TImage
-      Left = 288
-      Width = 467
+      Left = 245
+      Width = 518
     end
     inherited Image3: TImage
-      Left = 288
-      Width = 467
+      Left = 245
+      Width = 518
     end
     inherited Image14: TImage
-      Left = 755
+      Left = 763
     end
     inherited rzPanel5: TPanel
-      Left = 288
+      Left = 245
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#32467#36134#31649#29702
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 268
+      Width = 225
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 268
+          MinHeight = 225
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 268
+        Width = 225
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0
@@ -915,13 +915,8 @@ inherited frmRckMng: TfrmRckMng
           Top = 0
           Action = actPrint
         end
-        object ToolButton6: TToolButton
-          Left = 182
-          Top = 0
-          Action = actPreview
-        end
         object ToolButton10: TToolButton
-          Left = 225
+          Left = 182
           Top = 0
           Action = actExit
         end
@@ -945,9 +940,6 @@ inherited frmRckMng: TfrmRckMng
     end
     inherited actPrint: TAction
       OnExecute = actPrintExecute
-    end
-    inherited actPreview: TAction
-      OnExecute = actPreviewExecute
     end
     inherited actFind: TAction
       OnExecute = actFindExecute

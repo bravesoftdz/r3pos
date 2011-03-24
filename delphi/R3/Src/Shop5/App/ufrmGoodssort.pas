@@ -276,8 +276,6 @@ begin
   if Flag=1 then
   begin
     btnAppendClick(nil);
-    btnAppend.Enabled:=False;
-    btnDelete.Enabled:=False;
   end;
 end;
 

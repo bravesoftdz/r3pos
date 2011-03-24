@@ -225,8 +225,8 @@ begin
   try
     Factor.UpdateBatch(cdsGoodsSort,'TGoodsSort');
   except
-    cdsGoodsSort.Close;
-    Open;
+    //cdsGoodsSort.Close;
+    //Open;
     if not cdsGoodsSort.IsEmpty then
     begin
       if i=0 then i:=1;

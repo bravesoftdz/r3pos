@@ -119,10 +119,6 @@ type
     fndP5_SHOP_ID: TzrComboBoxList;
     fndP5_SHOP_VALUE: TzrComboBoxList;
     fndP5_SHOP_TYPE: TcxComboBox;
-    Label29: TLabel;
-    fndP5_ALL: TcxRadioButton;
-    fndP5_DBIn: TcxRadioButton;
-    fndP5_DBOut: TcxRadioButton;
     adoReport2: TZQuery;
     adoReport5: TZQuery;
     adoReport3: TZQuery;
@@ -693,7 +689,7 @@ end;
 function TfrmDbDayReport.GetGlideSQL(chk:boolean=true): string;
 var
   JoinChar: string;
-  strSql,StrCnd,strWhere,GoodTab,SQLData: string;
+  strSql,StrCnd,strWhere,GoodTab: string;
 begin
   JoinChar:=GetStrJoin(Factor.iDbType);
   if P5_D1.EditValue = null then Raise Exception.Create('调拨日期条件不能为空');
@@ -746,18 +742,11 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //单据类型[入库单|退货单]
-  if fndP5_DBIn.Checked then
-    strWhere:=strWhere+' and MOVE_TYPE=1 '
-  else if fndP5_DBOut.Checked then
-    strWhere:=strWhere+' and MOVE_TYPE=2 ';
-    
-  SQLData := 'VIW_MOVEDATA';
-
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GLIDE_NO '+
+    ',A.SALES_ID '+
     ',A.GODS_ID '+
     ',A.BATCH_NO '+
     ',A.LOCUS_NO '+
@@ -768,36 +757,42 @@ begin
     ',A.IS_PRESENT '+
     ',A.CREA_DATE '+
     ',A.CREA_USER '+
-    ',A.SHOP_ID '+
-    ',A.ASHOP_ID '+
-    ',A.GUIDE_USER '+
-    ',A.MOVE_TYPE '+
-    ',A.DBIN_AMT '+
-    ',A.DBIN_PRC '+
-    ',A.DBIN_CST '+
-    ',A.DBIN_RTL '+
-    ',A.DBOUT_AMT '+
-    ',A.DBOUT_PRC '+
-    ',A.DBOUT_CST '+
-    ',B.SHOP_NAME '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
-    
-  Result :=  ParseSQL(Factor.iDbType,
+    ',A.SHOP_ID '+        //调出门店
+    ',A.CLIENT_ID '+      //调入门店
+    ',A.GUIDE_USER '+     //导购员
+    ',A.AMOUNT as DB_AMT '+      //数量
+    ',A.APRICE as DB_PRC '+      //单价
+    ',A.RTL_MONEY as DB_RTL '+   //零售金额
+    ',A.COST_MONEY as DB_CST '+  //成本
+    ',B.SHOP_NAME '+             //调出门店
+    ',D.STOCK_DATE as PLAN_DATE '+   //到货日期
+    ',D.GUIDE_USER as SEND_USER '+   //发货人
+    ',C.BARCODE as BARCODE '+
+    ',C.GODS_CODE as GODS_CODE '+
+    ',C.GODS_NAME as GODS_NAME '+   //关联商品表
+    'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C,STK_STOCKORDER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+    ' and A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.STOCK_ID  '+
+    ' '+ strWhere + ' ';
+
+  strSql :=
     'select j.* '+
-    ',e.USER_NAME as CREA_USER_TEXT '+
-    ',d.USER_NAME as GUIDE_USER_TEXT '+
-    ',(case when MOVE_TYPE=1 then j.SHOP_NAME '+JoinChar+''' —> '''+JoinChar+' C.SHOP_NAME else j.SHOP_NAME '+JoinChar+''' < — '''+JoinChar+' C.SHOP_NAME end) as SHOP_NAME '+
+    ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
     ',u.UNIT_NAME as UNIT_NAME '+
-    ',isnull(b.BARCODE,r.BARCODE) as BARCODE,r.GODS_CODE as GODS_CODE,r.GODS_NAME as GODS_NAME '+
-    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+    ',c.SHOP_NAME as OUTSHOP_NAME '+
+    ',d.USER_NAME as GUIDE_USER_TEXT '+
+    ',e.USER_NAME as CREA_USER_TEXT '+
+    ',f.USER_NAME as SEND_USER_TEXT '+
+    'from ('+strSql+') j '+
     'left outer join VIW_BARCODE b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.ASHOP_ID=c.SHOP_ID '+
+    'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
     'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
     'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
-    ' order by j.MOVE_DATE,r.GODS_CODE'
-    );
+    'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
+    ' order by j.MOVE_DATE,j.GODS_CODE';
+    
+  Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
 procedure TfrmDbDayReport.DBGridEh1DblClick(Sender: TObject);
@@ -911,7 +906,6 @@ begin
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
   sid5:=sid4;
   srid5:=srid4;
-  fndP5_ALL.Checked:=true;
   DoAssignParamsValue(RzPanel14, RzPanel17);
 end;
 

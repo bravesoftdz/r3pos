@@ -1023,12 +1023,12 @@ end;
 function TfrmChangeDayReport.GetRCKFields: string;
 begin
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,CREA_DATE,CHANGE'+CodeId+'_AMT,CHANGE'+CodeId+'_RTL,CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CREA_DATE,-CHANGE'+CodeId+'_AMT,-CHANGE'+CodeId+'_RTL,-CHANGE'+CodeId+'_CST ';
 end;
 
 function TfrmChangeDayReport.GetVIWFields: string;
 begin
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE_DATE as CREA_DATE,PARM'+CodeId+'_AMOUNT as CHANGE'+CodeId+'_AMT,PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE_DATE as CREA_DATE,-PARM'+CodeId+'_AMOUNT as CHANGE'+CodeId+'_AMT,-PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,-PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
 end;
 
 procedure TfrmChangeDayReport.fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);

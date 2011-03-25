@@ -17,11 +17,6 @@ type
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
     btnOk: TRzBitBtn;
-    Label7: TLabel;
-    Label8: TLabel;
-    fndP1_TYPE_ID: TcxComboBox;
-    fndP1_UNIT_ID: TcxComboBox;
-    fndP1_STAT_ID: TzrComboBoxList;
     Label5: TLabel;
     fndP1_SHOP_TYPE: TcxComboBox;
     fndP1_SHOP_VALUE: TzrComboBoxList;
@@ -41,8 +36,6 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
        var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     function  GetGoodDetailSQL(chk:boolean=true): widestring;
     procedure AddBillTypeItems; //添加帐单类型Items
@@ -109,18 +102,6 @@ begin
     end;
   end;
 
-  //商品指标:
-  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
-  begin
-    case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
-     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
-     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP1_STAT_ID.AsString+''' ';
-     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
-     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
-    end;
-  end;
-
   //供应商+客户+企业资料
   case Factor.iDbType of
    0,5: CLIENT_Tab:=' select cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
@@ -167,7 +148,8 @@ begin
     ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+                         //供应商  //j.BATCH_NO=bar.BATCH_NO and
     ' left outer join VIW_BARCODE i on j.TENANT_ID=i.TENANT_ID and j.GODS_ID=i.GODS_ID and j.PROPERTY_01=i.PROPERTY_01 and j.PROPERTY_02=i.PROPERTY_02 and j.UNIT_ID=i.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID ';
+    ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+    ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
 
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
@@ -318,12 +300,6 @@ begin
     end;
   end;
 end;                                                      
-
-procedure TfrmGodsRunningReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-begin
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
 
 end.
 

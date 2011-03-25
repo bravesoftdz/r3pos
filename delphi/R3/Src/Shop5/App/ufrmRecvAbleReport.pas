@@ -326,15 +326,11 @@ begin
 end;
 
 procedure TfrmRecvAbleReport.DBGridEh3DblClick(Sender: TObject);
-var
-  CurDate: string;
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
   IsOnDblClick:=true; //设置标记位
-  CurDate:=trim(adoReport3.fieldbyName('RECV_DATE').AsString);
-  CurDate:=Copy(CurDate,1,4)+'-'+Copy(CurDate,5,2)+'-'+Copy(CurDate,7,2);
-  P4_D1.Date:=StrtoDate(CurDate);
+  P4_D1.Date:=fnTime.fnStrtoDate(adoReport3.fieldbyName('RECV_DATE').AsString);
   P4_D2.Date:=P4_D1.Date;
   fndP4_SHOP_TYPE.ItemIndex:=fndP3_SHOP_TYPE.ItemIndex;
   fndP4_SHOP_VALUE.KeyValue:=fndP3_SHOP_VALUE.KeyValue;

@@ -15,10 +15,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
-        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -288,7 +286,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMT'
+                      FieldName = 'BAL_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -298,7 +296,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_PRC'
+                      FieldName = 'BAL_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 91
@@ -306,7 +304,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_CST'
+                      FieldName = 'BAL_CST'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -316,7 +314,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_OUTPRC'
+                      FieldName = 'BAL_OUTPRC'
                       Footers = <>
                       Title.Caption = #38646#21806#22343#20215
                       Width = 79
@@ -324,7 +322,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_RTL'
+                      FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -664,7 +662,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMT'
+                      FieldName = 'BAL_AMT'
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
@@ -672,7 +670,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_PRC'
+                      FieldName = 'BAL_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 91
@@ -680,7 +678,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_CST'
+                      FieldName = 'BAL_CST'
                       Footer.DisplayFormat = '#0.00'
                       Footers = <>
                       Title.Caption = #24211#23384#25104#26412
@@ -689,7 +687,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_OUTPRC'
+                      FieldName = 'BAL_OUTPRC'
                       Footers = <>
                       Title.Caption = #38646#21806#22343#20215
                       Width = 79
@@ -697,7 +695,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_RTL'
+                      FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
@@ -1023,7 +1021,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMT'
+                      FieldName = 'BAL_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1033,7 +1031,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_PRC'
+                      FieldName = 'BAL_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 91
@@ -1041,7 +1039,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_CST'
+                      FieldName = 'BAL_CST'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1051,7 +1049,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_OUTPRC'
+                      FieldName = 'BAL_OUTPRC'
                       Footers = <>
                       Title.Caption = #38646#21806#20215
                       Width = 79
@@ -1059,7 +1057,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_RTL'
+                      FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1461,7 +1459,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_AMT'
+                      FieldName = 'BAL_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1471,7 +1469,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_PRC'
+                      FieldName = 'BAL_PRC'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 91
@@ -1479,7 +1477,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_CST'
+                      FieldName = 'BAL_CST'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1489,7 +1487,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_OUTPRC'
+                      FieldName = 'BAL_OUTPRC'
                       Footers = <>
                       Title.Caption = #38646#21806#20215
                       Width = 79
@@ -1497,7 +1495,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_RTL'
+                      FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>

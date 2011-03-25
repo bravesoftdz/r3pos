@@ -30,7 +30,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
               Height = 515
               inherited w1: TRzPanel
                 Width = 724
-                Height = 102
+                Height = 83
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -46,52 +46,37 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Height = 12
                   Caption = #33267
                 end
-                object Label7: TLabel
-                  Left = 24
-                  Top = 57
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#25351#26631
-                end
-                object Label8: TLabel
-                  Left = 316
-                  Top = 9
-                  Width = 48
-                  Height = 12
-                  Caption = #26174#31034#21333#20301
-                  Visible = False
-                end
                 object Label5: TLabel
-                  Left = 24
+                  Left = 301
                   Top = 36
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label3: TLabel
-                  Left = 293
-                  Top = 59
+                  Left = 22
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#21517#31216
                 end
                 object Label4: TLabel
-                  Left = 292
-                  Top = 36
+                  Left = 301
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label6: TLabel
-                  Left = 24
-                  Top = 79
+                  Left = 23
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #26465' '#24418' '#30721
                 end
                 object btnOk: TRzBitBtn
-                  Left = 515
-                  Top = 63
+                  Left = 582
+                  Top = 42
                   Width = 73
                   Height = 32
                   Action = actFind
@@ -109,74 +94,15 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 0
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object fndP1_TYPE_ID: TcxComboBox
-                  Left = 79
-                  Top = 54
-                  Width = 76
-                  Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 0
-                end
-                object fndP1_UNIT_ID: TcxComboBox
-                  Left = 364
-                  Top = 4
-                  Width = 133
-                  Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 2
-                  Visible = False
-                end
-                object fndP1_STAT_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 156
-                  Top = 54
-                  Width = 127
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 1
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
                 object fndP1_SHOP_TYPE: TcxComboBox
-                  Left = 79
+                  Left = 352
                   Top = 32
                   Width = 76
                   Height = 20
@@ -184,11 +110,11 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 1
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
-                  Left = 156
+                  Left = 429
                   Top = 32
                   Width = 127
                   Height = 20
@@ -198,7 +124,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -234,7 +160,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Width = 90
                   Height = 20
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 3
                 end
                 object P1_D2: TcxDateEdit
                   Left = 193
@@ -242,12 +168,12 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Width = 90
                   Height = 20
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 4
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Left = 345
-                  Top = 54
-                  Width = 151
+                  Left = 79
+                  Top = 32
+                  Width = 204
                   Height = 20
                   TabStop = False
                   Properties.AutoSelect = False
@@ -256,7 +182,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 5
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -295,27 +221,27 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   MultiSelect = False
                 end
                 object fndP1_BarType_ID: TcxComboBox
-                  Left = 79
-                  Top = 75
+                  Left = 78
+                  Top = 54
                   Width = 76
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #29289#27969#36319#36394#21495
                     #25209#21495)
-                  TabOrder = 9
+                  TabOrder = 6
                 end
                 object fndP1_BarCode: TcxTextEdit
-                  Left = 156
-                  Top = 75
-                  Width = 127
+                  Left = 155
+                  Top = 54
+                  Width = 128
                   Height = 20
-                  TabOrder = 10
+                  TabOrder = 7
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
-                  Left = 345
-                  Top = 32
-                  Width = 151
+                  Left = 352
+                  Top = 54
+                  Width = 205
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -323,7 +249,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 11
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -355,12 +281,12 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 102
+                Top = 83
                 Width = 724
-                Height = 413
+                Height = 432
                 inherited DBGridEh1: TDBGridEh
                   Width = 720
-                  Height = 409
+                  Height = 428
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -379,21 +305,21 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21333#25454#26085#26399
-                      Width = 78
+                      Width = 72
                     end
                     item
                       EditButtons = <>
                       FieldName = 'ORDER_TYPE'
                       Footers = <>
                       Title.Caption = #21333#25454#31867#22411
-                      Width = 59
+                      Width = 58
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 81
+                      Width = 76
                     end
                     item
                       EditButtons = <>
@@ -401,35 +327,21 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #23458#25143'/'#20379#24212#21830
-                      Width = 119
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SHOP_NAME'
-                      Footers = <>
-                      Title.Caption = #32463#25163#38376#24215
-                      Width = 79
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_USER_TXT'
-                      Footers = <>
-                      Title.Caption = #32463#25163#20154
-                      Width = 53
+                      Width = 112
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 76
+                      Width = 69
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
-                      Width = 153
+                      Width = 128
                     end
                     item
                       EditButtons = <>
@@ -487,6 +399,20 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 104
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_NAME'
+                      Footers = <>
+                      Title.Caption = #32463#25163#38376#24215
+                      Width = 79
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CREA_USER_TXT'
+                      Footers = <>
+                      Title.Caption = #32463#25163#20154
+                      Width = 53
                     end>
                 end
               end
@@ -545,8 +471,8 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
     Top = 354
   end
   inherited SaveDialog1: TSaveDialog
-    Left = 325
-    Top = 252
+    Left = 229
+    Top = 340
   end
   inherited adoReport1: TZQuery
     Left = 41

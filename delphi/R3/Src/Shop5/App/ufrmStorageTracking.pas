@@ -8,7 +8,7 @@ uses
   RzLabel, ExtCtrls, jpeg, RzTabs, RzPanel, Grids, DBGridEh, RzTreeVw, ZBase,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxMaskEdit,
-  cxDropDownEdit, cxButtonEdit, zrComboBoxList;
+  cxDropDownEdit, cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh;
 
 type
   TfrmStorageTracking = class(TframeToolForm)
@@ -43,6 +43,8 @@ type
     edtGoodsName: TzrComboBoxList;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
+    PrintDBGridEh1: TPrintDBGridEh;
+    ToolButton5: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -56,6 +58,8 @@ type
     procedure GridGetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure CdsStorageAfterScroll(DataSet: TDataSet);
+    procedure actPreviewExecute(Sender: TObject);
+    procedure actPrintExecute(Sender: TObject);
   private
     { Private declarations }
     IsEnd: boolean;
@@ -63,6 +67,8 @@ type
     procedure GetNo;
     procedure LoadTree;
     procedure InitGrid;
+    procedure PrintView;
+    function FormatString(TextStr:String;SpaceNum:Integer):String;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
     function TransCalcRate(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransUnit(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
@@ -80,7 +86,7 @@ var
   frmStorageTracking: TfrmStorageTracking;
 
 implementation
-uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,
+uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,
   ObjCommon,ufrmBasic, Math;
 {$R *.dfm}
 
@@ -102,7 +108,39 @@ begin
 end;
 
 procedure TfrmStorageTracking.InitGrid;
+var rs:TZQuery;
+    Column:TColumnEh;
 begin
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtGoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtUNIT_ID.ItemIndex := 0;
+  edtGoods_Type.ItemIndex := 0;
+  edtSHOP_TYPE.ItemIndex := 0;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
+
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  Column := FindColumn(Grid,'UNIT_ID');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      rs.Next;
+    end;
+    
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select REGION_ID from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
+    Factor.Open(rs);
+    if rs.FieldByName('REGION_ID').AsString <> '' then
+      begin
+        edtSHOP_VALUE.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',rs.FieldByName('REGION_ID').AsString);
+        edtSHOP_VALUE.KeyValue := rs.FieldByName('REGION_ID').AsString;
+      end;
+  finally
+    rs.Free;
+  end;
   LoadTree;
 end;
 
@@ -145,13 +183,7 @@ begin
   AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);
   InitGrid;
-  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  edtGoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
-  edtUNIT_ID.ItemIndex := 0;
-  edtGoods_Type.ItemIndex := 0;
-  edtSHOP_TYPE.ItemIndex := 0;
-  edtSHOP_ID.KeyValue := Global.SHOP_ID;
-  edtSHOP_ID.Text := Global.SHOP_NAME;
+
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);
@@ -217,8 +249,8 @@ begin
   if edtSHOP_ID.AsString<>'' then
     StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
   StrSql :=
-  'SELECT A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/'+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as AMOUNT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+', '+
-  ' B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/'+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as AMOUNT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
+  ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
   ' from STO_STORAGE A,CA_SHOP_INFO B,VIW_GOODSPRICE_SORTEXT C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
   ' and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
 
@@ -475,6 +507,63 @@ begin
   end;
   if AliasFileName<>'' then
     result:=result+' as '+AliasFileName+' ';
+end;
+
+procedure TfrmStorageTracking.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  if Grid = nil then Exit;
+  PrintView;
+  with TfrmEhLibReport.Create(Self) do
+    begin
+      try
+        Preview(PrintDBGridEh1);
+      finally
+        Free;
+      end;
+    end;
+end;
+
+procedure TfrmStorageTracking.actPrintExecute(Sender: TObject);
+begin
+  inherited;
+  if Grid = nil then Exit;
+  PrintView;
+  PrintDBGridEh1.Print;
+end;
+
+procedure TfrmStorageTracking.PrintView;
+var HeaderText: String;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := Global.SHOP_NAME+'库存查询及跟踪预警';
+
+  HeaderText := FormatString(edtSHOP_TYPE.Text+':'+edtSHOP_VALUE.Text,25);
+  HeaderText := HeaderText + FormatString(edtGoods_Type.Text+':'+edtGoods_ID.Text,25);
+  HeaderText := HeaderText + FormatString('统计单位:'+edtUNIT_ID.Text,25);
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]',HeaderText]);
+  Grid.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := Grid;
+end;
+
+function TfrmStorageTracking.FormatString(TextStr: String;
+  SpaceNum: Integer): String;
+var Len,i:Integer;
+    SpaceStr:String;
+begin
+  Len := length(TextStr);
+  if Len >= SpaceNum then
+    begin
+      Result := copy(TextStr,1,SpaceNum);
+    end
+  else
+    begin
+      for i:=0 to SpaceNum-Len-1 do
+        begin
+          SpaceStr := SpaceStr + ' ';
+        end;
+      Result := TextStr + SpaceStr;
+    end;
 end;
 
 end.

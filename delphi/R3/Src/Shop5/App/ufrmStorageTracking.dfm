@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 94
-  Top = 138
+  Left = 242
+  Top = 123
   Width = 1073
   Height = 604
   Caption = #24211#23384#26597#35810
@@ -9,25 +9,25 @@ inherited frmStorageTracking: TfrmStorageTracking
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1057
-    Height = 530
+    Width = 1065
+    Height = 541
     inherited RzPanel2: TRzPanel
-      Width = 1047
-      Height = 520
+      Width = 1055
+      Height = 531
       inherited RzPage: TRzPageControl
-        Width = 1041
-        Height = 514
+        Width = 1049
+        Height = 525
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 1039
-            Height = 487
+            Width = 1047
+            Height = 498
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 1029
-              Height = 477
+              Width = 1037
+              Height = 488
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -35,13 +35,13 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Splitter1: TSplitter
                 Left = 182
                 Top = 73
-                Height = 399
+                Height = 410
               end
               object RzPanel7: TRzPanel
                 Left = 5
                 Top = 73
                 Width = 177
-                Height = 399
+                Height = 410
                 Align = alLeft
                 BorderOuter = fsNone
                 TabOrder = 0
@@ -49,7 +49,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Left = 0
                   Top = 0
                   Width = 177
-                  Height = 399
+                  Height = 410
                   SelectionPen.Color = clBtnShadow
                   Align = alClient
                   FrameStyle = fsGroove
@@ -65,23 +65,23 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel6: TRzPanel
                 Left = 185
                 Top = 73
-                Width = 839
-                Height = 399
+                Width = 847
+                Height = 410
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 1
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 839
-                  Height = 399
+                  Width = 847
+                  Height = 410
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
                   object stbPanel: TPanel
                     Left = 1
-                    Top = 379
-                    Width = 837
+                    Top = 390
+                    Width = 845
                     Height = 19
                     Align = alBottom
                     BevelOuter = bvNone
@@ -103,8 +103,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
-                    Width = 837
-                    Height = 378
+                    Width = 845
+                    Height = 389
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = DsStorage
@@ -246,7 +246,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel9: TRzPanel
                 Left = 5
                 Top = 5
-                Width = 1019
+                Width = 1027
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -272,7 +272,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel2: TPanel
                   Left = 179
                   Top = 1
-                  Width = 839
+                  Width = 847
                   Height = 66
                   Align = alClient
                   Alignment = taLeftJustify
@@ -280,7 +280,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentColor = True
                   TabOrder = 1
                   object Label20: TLabel
-                    Left = 480
+                    Left = 472
                     Top = 15
                     Width = 48
                     Height = 12
@@ -293,7 +293,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentFont = False
                   end
                   object Label21: TLabel
-                    Left = 271
+                    Left = 263
                     Top = 13
                     Width = 48
                     Height = 12
@@ -332,7 +332,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentFont = False
                   end
                   object Label2: TLabel
-                    Left = 271
+                    Left = 263
                     Top = 41
                     Width = 48
                     Height = 12
@@ -345,7 +345,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentFont = False
                   end
                   object btnOk: TRzBitBtn
-                    Left = 586
+                    Left = 558
                     Top = 34
                     Width = 67
                     Height = 24
@@ -372,9 +372,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Spacing = 5
                   end
                   object edtUNIT_ID: TcxComboBox
-                    Left = 532
+                    Left = 524
                     Top = 10
-                    Width = 121
+                    Width = 101
                     Height = 20
                     ParentFont = False
                     Properties.DropDownListStyle = lsEditFixedList
@@ -433,7 +433,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object edtSHOP_ID: TzrComboBoxList
                     Tag = -1
-                    Left = 323
+                    Left = 315
                     Top = 10
                     Width = 149
                     Height = 20
@@ -499,9 +499,9 @@ inherited frmStorageTracking: TfrmStorageTracking
                     DropHeight = 180
                     ShowTitle = True
                     AutoFitColWidth = True
-                    ShowButton = False
+                    ShowButton = True
                     LocateStyle = lsDark
-                    Buttons = [zbNew, zbClear, zbFind]
+                    Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
                   end
@@ -519,7 +519,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     TabOrder = 6
                   end
                   object edtGoodsName: TzrComboBoxList
-                    Left = 323
+                    Left = 315
                     Top = 36
                     Width = 149
                     Height = 20
@@ -577,58 +577,60 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1057
+    Width = 1065
     inherited Image1: TImage
-      Left = 192
-      Width = 845
+      Left = 235
+      Width = 810
     end
     inherited Image3: TImage
-      Left = 192
-      Width = 845
+      Left = 235
+      Width = 810
     end
     inherited Image14: TImage
-      Left = 1037
+      Left = 1045
     end
     inherited rzPanel5: TPanel
-      Left = 192
+      Left = 235
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#24211#23384#26597#35810
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 172
+      Width = 215
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 172
+          MinHeight = 215
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 172
+        Width = 215
         ButtonWidth = 43
         object ToolButton4: TToolButton
           Left = 0
           Top = 0
-          Caption = #26597#35810
-          ImageIndex = 15
+          Action = actFind
         end
-        object ToolButton1: TToolButton
+        object ToolButton5: TToolButton
           Left = 43
           Top = 0
-          Caption = #25171#21360
-          ImageIndex = 0
-        end
-        object ToolButton3: TToolButton
-          Left = 86
-          Top = 0
-          Caption = #39044#35272
           ImageIndex = 14
         end
-        object ToolButton2: TToolButton
+        object ToolButton1: TToolButton
+          Left = 86
+          Top = 0
+          Action = actPrint
+        end
+        object ToolButton3: TToolButton
           Left = 129
+          Top = 0
+          Action = actPreview
+        end
+        object ToolButton2: TToolButton
+          Left = 172
           Top = 0
           Action = actExit
         end
@@ -642,6 +644,12 @@ inherited frmStorageTracking: TfrmStorageTracking
   inherited actList: TActionList
     Left = 128
     Top = 472
+    inherited actPrint: TAction
+      OnExecute = actPrintExecute
+    end
+    inherited actPreview: TAction
+      OnExecute = actPreviewExecute
+    end
     inherited actFind: TAction
       OnExecute = actFindExecute
     end
@@ -652,11 +660,46 @@ inherited frmStorageTracking: TfrmStorageTracking
     CachedUpdates = True
     Params = <>
     Left = 326
-    Top = 413
+    Top = 410
   end
   object DsStorage: TDataSource
     DataSet = CdsStorage
     Left = 295
     Top = 410
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 2.000000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.Font.Charset = ANSI_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -24
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 359
+    Top = 410
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B5365636F6E645469746C
+      655D5C66315C66733136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7D0D0A5C766965776B696E64345C7563315C706172645C7172
+      5C6C616E67323035325C66305C667332305C2762345C2766325C2764335C2761
+      315C2763615C2762315C2762635C2765340D0A5C706172207D0D0A00}
   end
 end

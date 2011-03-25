@@ -814,7 +814,7 @@ inherited frmPosMain: TfrmPosMain
       AllowedOperations = [alopUpdateEh]
       AutoFitColWidths = True
       BorderStyle = bsNone
-      Color = clBlack
+      Color = 8404992
       DataSource = DataSource1
       Enabled = False
       FixedColor = clBlack
@@ -995,7 +995,7 @@ inherited frmPosMain: TfrmPosMain
     object RzStatusPane2: TRzStatusPane
       Left = 101
       Top = 1
-      Width = 579
+      Width = 485
       Height = 25
       Align = alClient
       Font.Charset = GB2312_CHARSET
@@ -1007,7 +1007,7 @@ inherited frmPosMain: TfrmPosMain
       Alignment = taCenter
     end
     object RzClockStatus1: TRzClockStatus
-      Left = 680
+      Left = 586
       Top = 1
       Width = 121
       Height = 25
@@ -1018,6 +1018,40 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+    end
+    object RzStatusPane5: TRzStatusPane
+      Left = 754
+      Top = 1
+      Width = 47
+      Height = 25
+      Cursor = crHandPoint
+      Align = alRight
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+      OnClick = RzStatusPane5Click
+      Alignment = taCenter
+      Caption = #36864#20986
+    end
+    object RzStatusPane7: TRzStatusPane
+      Left = 707
+      Top = 1
+      Width = 47
+      Height = 25
+      Cursor = crHandPoint
+      Align = alRight
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+      OnClick = RzStatusPane7Click
+      Alignment = taCenter
+      Caption = #26368#23567#21270
     end
   end
   object RzPanel8: TRzPanel [3]
@@ -1096,7 +1130,7 @@ inherited frmPosMain: TfrmPosMain
     Align = alBottom
     BorderOuter = fsFlat
     BorderSides = [sdLeft, sdRight, sdBottom]
-    Color = clBlack
+    Color = clTeal
     TabOrder = 4
     object h2: TLabel
       Left = 137

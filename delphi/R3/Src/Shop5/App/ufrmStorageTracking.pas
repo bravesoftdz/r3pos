@@ -64,7 +64,9 @@ type
     procedure LoadTree;
     procedure InitGrid;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
+    function TransCalcRate(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransUnit(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
+    function TransPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function EncodeSql(ID:String):String;
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
     procedure AddGoodsIDItems;
@@ -147,7 +149,9 @@ begin
   edtGoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
   edtUNIT_ID.ItemIndex := 0;
   edtGoods_Type.ItemIndex := 0;
-  edtSHOP_TYPE.ItemIndex := 0;  
+  edtSHOP_TYPE.ItemIndex := 0;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);
@@ -164,9 +168,9 @@ begin
     0: StrJoin := '+';
     1,4,5: StrJoin := '||';
   end;
-  StrWhere := ' and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''12'',''02'') ';
+  StrWhere := ' and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
   if ID <> '' then
-    StrWhere := StrWhere + ' and C.GODS_ID>='+QuotedStr(ID);
+    StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
   if edtSHOP_TYPE.ItemIndex = 0 then
     begin
       if edtSHOP_VALUE.Text <> '' then
@@ -208,19 +212,24 @@ begin
         StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtGoods_ID.AsString);
     end;
   end;
-  if edtGoodsName.Text <> '' then
+  if edtGoodsName.AsString<>'' then
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
+  if edtSHOP_ID.AsString<>'' then
+    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
   StrSql :=
-  'SELECT A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMONEY,A.AMOUNT,A.COST_PRICE, '+
-  ' B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_NAME')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
-  ' from STO_STORAGE A,CA_SHOP_INFO B,VIW_GOODSINFO_SORTEXT C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
-  ' and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
+  'SELECT A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/'+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as AMOUNT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+', '+
+  ' B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
+  ' from STO_STORAGE A,CA_SHOP_INFO B,VIW_GOODSPRICE_SORTEXT C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+  ' and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
 
   Result :=
+  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE from ('+
   'select jb.*,b.COLOR_NAME as PROPERTY_02_TEXT from ('+
-  'select ja.*,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
+  'select ja.*,ja.NEW_OUTPRICE*ja.AMOUNT as SALE_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
   'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
-  'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID order by jb.SHOP_ID,jb.BATCH_NO  ';
+  'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID) jc '+
+  'left outer join PUB_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'order by jc.SHOP_ID,jc.GODS_CODE ';
 end;
 
 procedure TfrmStorageTracking.Open(ID: String);
@@ -233,7 +242,7 @@ begin
   rs := TZQuery.Create(nil);
   rm := TMemoryStream.Create;
   try
-    rs.SQL.Text := EncodeSql(ID);
+    rs.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
@@ -360,23 +369,16 @@ end;
 
 function TfrmStorageTracking.TransUnit(CalcIdx: Integer;
   AliasTabName, AliasFileName: string): string;
-var str,AliasTab,SmallCalc,BigCalc: string;
+var
+  AliasTab: string;
 begin
   AliasTab:='';
   if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
-  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
-  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
-
-  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
-       ' else 1.0 end ';
-
   case CalcIdx of
-   0: result:=str;       //默认单位
-   1: result:=' 1.0 ';   //计量单位
-   2: result:=SmallCalc; //小包装单位
-   3: result:=BigCalc;   //大包装单位
+   0: result:='(case when isnull('+AliasTab+'UNIT_ID,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'UNIT_ID end) ';  //若[默认单位]为空则 取 [计量单位]
+   1: result:=' '+AliasTab+'CALC_UNITS ';   //[计量单位]  不能为空
+   2: result:='(case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'SMALL_UNITS end) ';  //小包装单位
+   3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'CALC_UNITS else '+AliasTab+'BIG_UNITS end) ';      //大包装单位
   end;
   if AliasFileName<>'' then
     result:=result+' as '+AliasFileName+' ';
@@ -421,9 +423,6 @@ procedure TfrmStorageTracking.CdsStorageAfterScroll(DataSet: TDataSet);
 begin
   inherited;
   GetNo;
-  if IsEnd or not CdsStorage.Eof then Exit;
-  if CdsStorage.ControlsDisabled then Exit;
-  Open(MaxId);
 end;
 
 procedure TfrmStorageTracking.GetNo;
@@ -434,6 +433,48 @@ begin
   else
     Str := IntToStr(CdsStorage.RecNo);
   stbPanel.Caption := '第'+Str+'条/共'+IntToStr(CdsStorage.RecordCount)+'条';
+end;
+
+function TfrmStorageTracking.TransPrice(CalcIdx: Integer;
+  AliasTabName: string; AliasFileName: string=''): string;
+var
+  AliasTab: string;
+begin
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  case CalcIdx of
+   0: result:='(case when isnull('+AliasTab+'UNIT_ID,'''')='''' then '+AliasTab+'NEW_OUTPRICE else '+AliasTab+'NEW_OUTPRICE end) ';  //若[默认单位]为空则 取 [计量单位]
+   1: result:=' '+AliasTab+'NEW_OUTPRICE ';   //[计量单位]  不能为空
+   2: result:='(case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'NEW_OUTPRICE else '+AliasTab+'NEW_OUTPRICE1 end) ';  //小包装单位
+   3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'NEW_OUTPRICE else '+AliasTab+'NEW_OUTPRICE2 end) ';      //大包装单位
+  end;
+  if AliasFileName<>'' then
+    result:=result+' as '+AliasFileName+' ';
+end;
+
+function TfrmStorageTracking.TransCalcRate(CalcIdx: Integer; AliasTabName,
+  AliasFileName: string): string;
+var
+  str,AliasTab,SmallCalc,BigCalc: string;
+begin
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
+  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
+
+  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
+       ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
+       ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
+       ' else 1.0 end ';
+
+  case CalcIdx of
+   0: result:=str;       //默认单位
+   1: result:=' 1.0 ';   //计量单位
+   2: result:=SmallCalc; //小包装单位
+   3: result:=BigCalc;   //大包装单位
+  end;
+  if AliasFileName<>'' then
+    result:=result+' as '+AliasFileName+' ';
 end;
 
 end.

@@ -126,8 +126,10 @@ type
     cdsTable: TZQuery;
     RzStatusPane3: TRzStatusPane;
     Panel1: TPanel;
-    DBGridEh2: TDBGridEh;
     dsGodsInfo: TDataSource;
+    RzStatusPane5: TRzStatusPane;
+    RzStatusPane7: TRzStatusPane;
+    DBGridEh2: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -159,6 +161,8 @@ type
     procedure edtInputPropertiesChange(Sender: TObject);
     procedure BasInfoFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
+    procedure RzStatusPane5Click(Sender: TObject);
+    procedure RzStatusPane7Click(Sender: TObject);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -3402,6 +3406,21 @@ begin
     or
     (pos(lowercase(edtInput.Text),lowercase(DataSet.FieldbyName('GODS_SPELL').AsString))>0)
 
+end;
+
+procedure TfrmPosMain.RzStatusPane5Click(Sender: TObject);
+begin
+  inherited;
+  case TfrmCloseForDay.ShowClDy(self) of
+    1:Close;
+    2:Close;
+  end;
+end;
+
+procedure TfrmPosMain.RzStatusPane7Click(Sender: TObject);
+begin
+  inherited;
+  self.WindowState := wsMinimized;
 end;
 
 end.

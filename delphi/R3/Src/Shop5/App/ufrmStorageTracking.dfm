@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 249
-  Top = 148
+  Left = 94
+  Top = 138
   Width = 1073
   Height = 604
   Caption = #24211#23384#26597#35810
@@ -9,25 +9,25 @@ inherited frmStorageTracking: TfrmStorageTracking
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1065
-    Height = 541
+    Width = 1057
+    Height = 530
     inherited RzPanel2: TRzPanel
-      Width = 1055
-      Height = 531
+      Width = 1047
+      Height = 520
       inherited RzPage: TRzPageControl
-        Width = 1049
-        Height = 525
+        Width = 1041
+        Height = 514
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 1047
-            Height = 498
+            Width = 1039
+            Height = 487
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 1037
-              Height = 488
+              Width = 1029
+              Height = 477
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -35,13 +35,13 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Splitter1: TSplitter
                 Left = 182
                 Top = 73
-                Height = 410
+                Height = 399
               end
               object RzPanel7: TRzPanel
                 Left = 5
                 Top = 73
                 Width = 177
-                Height = 410
+                Height = 399
                 Align = alLeft
                 BorderOuter = fsNone
                 TabOrder = 0
@@ -49,7 +49,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Left = 0
                   Top = 0
                   Width = 177
-                  Height = 410
+                  Height = 399
                   SelectionPen.Color = clBtnShadow
                   Align = alClient
                   FrameStyle = fsGroove
@@ -65,23 +65,23 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel6: TRzPanel
                 Left = 185
                 Top = 73
-                Width = 847
-                Height = 410
+                Width = 839
+                Height = 399
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 1
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 847
-                  Height = 410
+                  Width = 839
+                  Height = 399
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
                   object stbPanel: TPanel
                     Left = 1
-                    Top = 390
-                    Width = 845
+                    Top = 379
+                    Width = 837
                     Height = 19
                     Align = alBottom
                     BevelOuter = bvNone
@@ -103,8 +103,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
-                    Width = 845
-                    Height = 389
+                    Width = 837
+                    Height = 378
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = DsStorage
@@ -146,7 +146,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                           '1')
                         Tag = -1
                         Title.Caption = #36873#25321
-                        Title.Color = clWhite
                         Visible = False
                         Width = 21
                       end
@@ -155,8 +154,14 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'SEQ_NO'
                         Footers = <>
                         Title.Caption = #24207#21495
-                        Title.Color = clWhite
-                        Width = 40
+                        Width = 27
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'SHOP_NAME'
+                        Footers = <>
+                        Title.Caption = #38376#24215#21517#31216
+                        Width = 83
                       end
                       item
                         EditButtons = <>
@@ -166,7 +171,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #36135#21495
-                        Title.Color = clWhite
                         Width = 60
                       end
                       item
@@ -176,7 +180,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #21830#21697#21517#31216
-                        Title.Color = clWhite
                         Width = 122
                       end
                       item
@@ -184,7 +187,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'BARCODE'
                         Footers = <>
                         Title.Caption = #26465#30721
-                        Title.Color = clWhite
                         Width = 100
                       end
                       item
@@ -193,7 +195,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #35745#37327#21333#20301
-                        Title.Color = clWhite
                         Width = 55
                       end
                       item
@@ -201,24 +202,13 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'BATCH_NO'
                         Footers = <>
                         Title.Caption = #25209#21495
-                        Title.Color = clWhite
-                        Width = 80
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'AMOUNT'
-                        Footers = <>
-                        ReadOnly = True
-                        Title.Caption = #24211#23384#37327
-                        Title.Color = clWhite
-                        Width = 60
+                        Width = 102
                       end
                       item
                         EditButtons = <>
                         FieldName = 'PROPERTY_01_TEXT'
                         Footers = <>
                         Title.Caption = #23610#30721
-                        Title.Color = clWhite
                         Width = 50
                       end
                       item
@@ -226,24 +216,29 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'PROPERTY_02_TEXT'
                         Footers = <>
                         Title.Caption = #39068#33394
-                        Title.Color = clWhite
                         Width = 50
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'AMONEY'
+                        FieldName = 'AMOUNT'
                         Footers = <>
-                        Title.Caption = #25104#26412#37329#39069
-                        Title.Color = clWhite
-                        Width = 80
+                        ReadOnly = True
+                        Title.Caption = #24211#23384#37327
+                        Width = 60
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'COST_PRICE'
+                        FieldName = 'NEW_OUTPRICE'
                         Footers = <>
-                        Title.Caption = #25104#26412#21333#20215
-                        Title.Color = clWhite
-                        Width = 80
+                        Title.Caption = #24403#21069#21806#20215
+                        Width = 66
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'SALE_MNY'
+                        Footers = <>
+                        Title.Caption = #38144#21806#37329#39069
+                        Width = 67
                       end>
                   end
                 end
@@ -251,7 +246,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel9: TRzPanel
                 Left = 5
                 Top = 5
-                Width = 1027
+                Width = 1019
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -277,7 +272,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel2: TPanel
                   Left = 179
                   Top = 1
-                  Width = 847
+                  Width = 839
                   Height = 66
                   Align = alClient
                   Alignment = taLeftJustify
@@ -569,7 +564,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     AutoFitColWidth = True
                     ShowButton = True
                     LocateStyle = lsDark
-                    Buttons = []
+                    Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
                   end
@@ -582,17 +577,17 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1065
+    Width = 1057
     inherited Image1: TImage
       Left = 192
-      Width = 853
+      Width = 845
     end
     inherited Image3: TImage
       Left = 192
-      Width = 853
+      Width = 845
     end
     inherited Image14: TImage
-      Left = 1045
+      Left = 1037
     end
     inherited rzPanel5: TPanel
       Left = 192

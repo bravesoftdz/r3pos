@@ -11,23 +11,23 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 940
-    Height = 560
+    Height = 554
     inherited RzPanel2: TRzPanel
       Width = 930
-      Height = 550
+      Height = 544
       inherited RzPage: TRzPageControl
         Width = 924
-        Height = 544
+        Height = 538
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21830#21697#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 922
-            Height = 517
+            Height = 511
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 471
+              Height = 465
             end
             object RzPanel1: TRzPanel
               Left = 5
@@ -129,7 +129,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               Left = 5
               Top = 41
               Width = 176
-              Height = 471
+              Height = 465
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -146,7 +146,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               Left = 184
               Top = 41
               Width = 733
-              Height = 471
+              Height = 465
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
@@ -154,7 +154,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 Left = 1
                 Top = 1
                 Width = 731
-                Height = 450
+                Height = 444
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -334,7 +334,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 451
+                Top = 445
                 Width = 731
                 Height = 19
                 Align = alBottom
@@ -363,17 +363,18 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   inherited RzPanel4: TRzPanel
     Width = 940
     inherited Image1: TImage
-      Left = 487
-      Width = 444
-    end
-    inherited Image14: TImage
-      Left = 931
+      Left = 331
+      Width = 589
     end
     inherited Image3: TImage
-      Left = 487
-      Width = 444
+      Left = 331
+      Width = 589
+    end
+    inherited Image14: TImage
+      Left = 920
     end
     inherited rzPanel5: TPanel
+      Left = 331
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #21830#21697#26723#26696
@@ -388,11 +389,10 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 311
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 311
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0

@@ -166,8 +166,6 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title    
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
   end;
@@ -198,14 +196,7 @@ begin
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-    rzPage.ActivePageIndex := 2
-  else
-    rzPage.ActivePageIndex := 0;
-
+  SetRzPageActivePage; //设置活动RzPage.Acitve
   RefreshColumn;
 end;
 

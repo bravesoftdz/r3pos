@@ -351,7 +351,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SALE_AGO'
+                      FieldName = 'SALE_ALLPRF'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -773,7 +773,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SALE_AGO'
+                      FieldName = 'SALE_ALLPRF'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1658,7 +1658,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                     item
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SALE_AGO'
+                      FieldName = 'SALE_ALLPRF'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>

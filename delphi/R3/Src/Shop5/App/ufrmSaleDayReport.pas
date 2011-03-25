@@ -313,7 +313,7 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
-    // ',sum(SALE_PRF)/ as SALE_PRF '+  //毛利
+    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
@@ -326,6 +326,7 @@ begin
     ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
     );
+  showmessage(Result);
 end;
 
 function TfrmSaleDayReport.GetRowType: integer;
@@ -476,7 +477,7 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
-    // ',sum(SALE_PRF)/ as SALE_PRF '+  //毛利
+    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
@@ -491,8 +492,7 @@ begin
     );
 end;
 
-procedure TfrmSaleDayReport.fndP2_TYPE_IDPropertiesChange(
-  Sender: TObject);
+procedure TfrmSaleDayReport.fndP2_TYPE_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   fndP2_STAT_ID.KeyValue := null;
@@ -583,7 +583,7 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+   //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+   //税额
     ',sum(SALE_RTL) as SALE_RTL '+   //暂时没使用
-    ',sum(SALE_PRF) as SALE_PRF '+
+    ',sum(SALE_PRF) as SALE_PRF '+   //毛利
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -604,6 +604,7 @@ begin
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
+          ',sum(SALE_PRF) as SALE_ALLPRF '+   //毛利
           ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
           ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
@@ -627,6 +628,7 @@ begin
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
+          ',sum(SALE_PRF) as SALE_ALLPRF '+   //毛利          
           ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
           ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
@@ -644,6 +646,7 @@ begin
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
+          ',sum(SALE_PRF) as SALE_ALLPRF '+   //毛利          
           ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
           ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
@@ -759,6 +762,7 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
+    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利    
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+

@@ -15,8 +15,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 513
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -954,7 +956,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = [zbClear]
+                  Buttons = []
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -1783,7 +1785,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   EditValue = 0d
                 end
                 object RzBitBtn4: TRzBitBtn
-                  Left = 469
+                  Left = 488
                   Top = 41
                   Width = 67
                   Height = 32
@@ -2081,7 +2083,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh5DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <

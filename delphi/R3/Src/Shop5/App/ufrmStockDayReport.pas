@@ -144,8 +144,6 @@ type
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -167,6 +165,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -188,8 +188,6 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title    
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
   end;
@@ -220,13 +218,8 @@ begin
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-    rzPage.ActivePageIndex := 2
-  else
-    rzPage.ActivePageIndex := 0;
+
+  SetRzPageActivePage(false);
 
   RefreshColumn;
 end;
@@ -265,6 +258,7 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
       end;
     end;
+
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
      begin
@@ -306,21 +300,22 @@ begin
       ') ';
   end;
 
-  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT/'+UnitCalc+') else 0 end as STOCK_PRC '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0)-isnull(sum(STOCK_AGO),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
@@ -412,8 +407,8 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
       end;
     end;
-  //商品指标:
 
+  //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -460,13 +455,13 @@ begin
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT/'+UnitCalc+') else 0 end as STOCK_PRC '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
@@ -476,7 +471,7 @@ begin
     ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
     ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
 
-  Result :=  ParseSQL(Factor.iDbType, strSql); 
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmStockDayReport.GetSortSQL(chk:boolean=true): string;
@@ -518,7 +513,7 @@ begin
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
     begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+      strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
     end;
 
   //商品指标:
@@ -555,12 +550,12 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
     ',sum(STOCK_AMT/'+UnitCalc+') as STOCK_AMT '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100.00/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -577,13 +572,13 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
           ',sum(STOCK_AGO) as STOCK_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
@@ -599,13 +594,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
           ',sum(STOCK_AGO) as STOCK_AGO '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j '+
         ' left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID '+
@@ -617,13 +612,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_TTL)*1.00/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
           ',sum(STOCK_TTL) as STOCK_TTL '+
           ',sum(STOCK_MNY) as STOCK_MNY '+
           ',sum(STOCK_TAX) as STOCK_TAX '+
           ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then (sum(STOCK_TTL)-sum(STOCK_AGO))*100.00/sum(STOCK_TTL) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)*1.00/sum(STOCK_AMT) else 0 end as AVG_AGIO '+    //DB2此字段计算报错
+          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+    //DB2此字段计算报错
           ',sum(STOCK_AGO) as STOCK_AGO '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
@@ -667,8 +662,13 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
       end;
     end;
-  //商品指标:
+  //门店条件
+  if trim(fndP4_SHOP_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' ';
 
+
+
+  //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -715,13 +715,13 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
     ',sum(STOCK_AMT) as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX))/sum(STOCK_AMT) else 0 end as STOCK_PRC '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then (sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO))*100/(sum(STOCK_MNY)+sum(STOCK_TAX)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then sum(STOCK_AGO)/sum(STOCK_AMT) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100/cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
@@ -770,6 +770,10 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
       end;
     end;
+  //门店条件
+  if trim(fndP5_SHOP_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' ';
+
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
      begin
@@ -828,7 +832,7 @@ begin
     ',A.TAX_MONEY '+
     ',A.AGIO_MONEY '+
     ',A.AGIO_RATE '+
-    ',A.CALC_MONEY+A.AGIO_MONEY as RTL_MONEY '+
+    ',A.CALC_MONEY+isnull(A.AGIO_MONEY,0) as RTL_MONEY '+
     ',B.SHOP_NAME '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
@@ -1052,14 +1056,6 @@ begin
   Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
 end;
 
-procedure TfrmStockDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 function TfrmStockDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
   FindCmp1,FindCmp2: TComponent;
@@ -1125,6 +1121,13 @@ procedure TfrmStockDayReport.DBGridEh5GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmStockDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 end.

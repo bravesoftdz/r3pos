@@ -146,8 +146,6 @@ type
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -168,10 +166,12 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
-    vBegDate,          //查询开始日期
-    vEndDate: integer; //查询结束日期
-    RckMaxDate: integer;  //台帐最大日期
+    vBegDate,            //查询开始日期
+    vEndDate: integer;   //查询结束日期
+    RckMaxDate: integer; //台帐最大日期
 
     GodsID: string;   //商品编码ID;
     SortName: string; //临时变量
@@ -189,9 +189,7 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function GetUnitIDIdx: integer;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
-  public
-    { Public declarations }
-    HasChild:boolean;
+  public                                  
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
@@ -220,10 +218,8 @@ begin
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-    
+  SetRzPageActivePage; //设置PzPage.Activepage
+
   RefreshColumn;
 end;
 
@@ -272,27 +268,37 @@ begin
       6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
       end;
      end;
+
   //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'')  and (trim(sid1)<>'') and (trim(srid1)<>'') then
+  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid1+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    end;
+    if trim(sid1)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  begin
+    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+             ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  end else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
   //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+      ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
 
@@ -302,20 +308,23 @@ begin
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
-    ',sum(SALE_MNY) as SALE_MNY '+
-    ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_RTL) as SALE_RTL '+
-    ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
-    ',sum(SALE_CST) as SALE_CST '+ //    
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
+    ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
+    ',sum(SALE_TAX) as SALE_TAX '+  //税额
+    ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
+    // ',sum(SALE_PRF)/ as SALE_PRF '+  //毛利
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
+    ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
+
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
     );
 end;
 
@@ -422,50 +431,63 @@ begin
       6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
       end;
      end;
+
   //商品分类:
-  if (trim(fndP2_SORT_ID.Text)<>'')  and (trim(sid2)<>'') and (trim(srid2)<>'') then
+  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' and C.RELATION_ID='''+srid2+''' ';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid2+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    end;
+    if trim(sid2)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  begin
+    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+             ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  end else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
   //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+      ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
 
-  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');  
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
-    ',sum(SALE_MNY) as SALE_MNY '+
-    ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_RTL) as SALE_RTL '+
-    ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
+    ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
+    ',sum(SALE_TAX) as SALE_TAX '+  //税额
+    ',sum(SALE_RTL) as SALE_RTL '+  //暂时没使用
+    // ',sum(SALE_PRF)/ as SALE_PRF '+  //毛利
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
+
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
+    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+    ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
     );
 end;
 
@@ -493,7 +515,7 @@ begin
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
   begin
-    strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
     StrCnd:=' and SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
   end;
 
@@ -529,37 +551,39 @@ begin
       lv := ',C.LEVEL_ID';
     end;
   else
-  GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSINFO';
   end;
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  begin
+    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+             ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  end else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
   //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+      ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
 
-  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');
+  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');     
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
-    ',sum(SALE_MNY) as SALE_MNY '+
-    ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_RTL) as SALE_RTL '+
-    ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+  //销售数量
+    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税金额
+    ',sum(SALE_MNY) as SALE_MNY '+   //未税金额
+    ',sum(SALE_TAX) as SALE_TAX '+   //税额
+    ',sum(SALE_RTL) as SALE_RTL '+   //暂时没使用
+    ',sum(SALE_PRF) as SALE_PRF '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -575,13 +599,13 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_TTL)/sum(SALE_AMT) else 0 end as SALE_PRC '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
-          ',case when sum(SALE_TTL)<>0 then (sum(SALE_TTL)-sum(SALE_AGO))*100/sum(SALE_TTL) else 0 end as SALE_RATE '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+          ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
@@ -589,7 +613,7 @@ begin
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
           'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID') +' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
           ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
@@ -598,13 +622,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_TTL)/sum(SALE_AMT) else 0 end as SALE_PRC '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
-          ',case when sum(SALE_TTL)<>0 then (sum(SALE_TTL)-sum(SALE_AGO))*100/sum(SALE_TTL) else 0 end as SALE_RATE '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+          ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
@@ -615,13 +639,13 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_TTL)/sum(SALE_AMT) else 0 end as SALE_PRC '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_MNY) as SALE_MNY '+
           ',sum(SALE_TAX) as SALE_TAX '+
           ',sum(SALE_RTL) as SALE_RTL '+
-          ',case when sum(SALE_TTL)<>0 then (sum(SALE_TTL)-sum(SALE_AGO))*100/sum(SALE_TTL) else 0 end as SALE_RATE '+
-          ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT) else 0 end as SALE_PRF '+
+          ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
+          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_AGO) as SALE_AGO '+
           ',isnull(r.SORT_ID,''#'') as SID '+
@@ -675,8 +699,12 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
       end;
     end;
-  //商品指标:
 
+  //门店条件
+  if (fndP4_SHOP_ID.AsString<>'') then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
+
+  //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -688,26 +716,35 @@ begin
       end;
      end;
   //商品分类:
-  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(sid4)<>'') and (trim(srid4)<>'') then
+  if (trim(fndP4_SORT_ID.Text)<>'')  and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' and C.RELATION_ID='''+srid4+''' ';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid4+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    end;
+    if trim(sid4)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  begin
+    SQLData:='(select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+             ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+  end else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
   //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select TENANT_ID,SHOP_ID,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
+      ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
 
@@ -716,19 +753,19 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
-    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+
-    ',case when sum(SALE_AMT)<>0 then (sum(SALE_MNY)+sum(SALE_TAX))/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRC '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
-    ',sum(SALE_MNY) as SALE_MNY '+
-    ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_RTL) as SALE_RTL '+
-    ',case when (sum(SALE_MNY)+sum(SALE_TAX))<>0 then (sum(SALE_MNY)+sum(SALE_TAX)-sum(SALE_AGO))*100/(sum(SALE_MNY)+sum(SALE_TAX)) else 0 end as SALE_RATE '+
-    ',case when sum(SALE_AMT)<>0 then sum(SALE_AGO)/sum(SALE_AMT/'+UnitCalc+') else 0 end as SALE_PRF '+
-    ',sum(SALE_CST) as SALE_CST '+    
+    ',sum(SALE_AMT/'+UnitCalc+') as SALE_AMT '+    //销售数量
+    ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
+    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+   //价税合计
+    ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
+    ',sum(SALE_TAX) as SALE_TAX '+  //税额
+    ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
+    ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
-    
+
   strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
@@ -754,7 +791,7 @@ begin
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
   if fndP5_SHOP_ID.AsString<>'' then
-    strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
     
   //GodsID不为空：
   if trim(GodsID)<>'' then
@@ -789,12 +826,19 @@ begin
       end;
      end;
   //商品分类:
-  if (trim(fndP5_SORT_ID.Text)<>'')  and (trim(sid1)<>'') and (trim(srid1)<>'') then
+  if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' and C.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid5+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    end;
+    if trim(sid5)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';
+
 
   if fndP5_SALEORDER.Checked then //销售单:1
     strWhere := strWhere+' and SALES_TYPE=1 '
@@ -824,16 +868,16 @@ begin
     ',A.GUIDE_USER '+
     ',A.SALES_TYPE '+
     ',A.AMOUNT '+
-    ',A.ORG_PRICE as APRICE '+  //
-    ',A.CALC_MONEY as AMONEY '+
+    ',A.ORG_PRICE as APRICE '+   //销售时间成本价
+    ',A.CALC_MONEY as AMONEY '+ 
     ',A.NOTAX_MONEY '+  //不含税
     ',A.TAX_MONEY '+    //税项
     ',A.AGIO_MONEY '+   //折扣金额
     ',A.AGIO_RATE '+    //折扣率（让利率）
     ',A.COST_MONEY '+   //销售成本
     ',A.NOTAX_MONEY-A.COST_MONEY as PROFIT_MONEY'+  //毛利 = 不含税金额-销售成本
-    ',(case when A.NOTAX_MONEY>0 then (A.NOTAX_MONEY-A.COST_MONEY)*100/A.NOTAX_MONEY else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
-    ',(case when A.NOTAX_MONEY*A.AMOUNT>0 then (A.NOTAX_MONEY-A.COST_MONEY)*100/(A.NOTAX_MONEY*A.AMOUNT) else 0 end) as AVG_PROFIT'+    //--单位毛利
+    ',(case when A.NOTAX_MONEY<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.NOTAX_MONEY as decimal(18,3)) else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
+    ',(case when A.NOTAX_MONEY*A.AMOUNT<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/A.AMOUNT else 0 end) as AVG_PROFIT'+    //--单位毛利
     ',B.SHOP_NAME '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
     
@@ -885,7 +929,6 @@ begin
 end;
 
 procedure TfrmSaleDayReport.DBGridEh2DblClick(Sender: TObject);
-//var rs:TADODataSet;
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
@@ -1106,14 +1149,6 @@ begin
   Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
 end;
 
-procedure TfrmSaleDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 function TfrmSaleDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
   FindCmp1,FindCmp2: TComponent;
@@ -1172,6 +1207,13 @@ procedure TfrmSaleDayReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 end.

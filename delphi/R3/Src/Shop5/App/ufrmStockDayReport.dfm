@@ -2067,8 +2067,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh5DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <

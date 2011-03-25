@@ -15,8 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 549
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

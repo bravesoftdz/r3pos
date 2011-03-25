@@ -145,8 +145,6 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title
     procedure DoReckTypeOnChange(Sender: TObject); //
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
   end;
@@ -176,19 +174,14 @@ begin
     end;
   end;
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-    rzPage.ActivePageIndex := 2
-  else
-    rzPage.ActivePageIndex := 0;
+  SetRzPageActivePage; //设置PzPage.Activepage
 
   RefreshColumn;
 end;
 
 function TfrmStorageDayReport.GetGroupSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
@@ -227,6 +220,7 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //日期条件
   if fndP1_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
@@ -234,14 +228,14 @@ begin
       'select '+
       ' TENANT_ID'+
       ',REGION_ID'+
-      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_AMT) as ORG_AMT'+
       ',sum(ORG_CST) as ORG_CST'+
       ',sum(ORG_RTL) as ORG_RTL'+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_OUTPRC '+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,B.REGION_ID,AMOUNT as ORG_AMT '+     //库存数量
+       ' A.TENANT_ID,B.REGION_ID,AMOUNT/'+UnitCalc+' as ORG_AMT '+     //库存数量
        ',AMONEY as ORG_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -250,7 +244,8 @@ begin
     Result :=  ParseSQL(Factor.iDbType,
       'select j.* '+
       ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
-      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+      ' left outer join '+
+      ' (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
       );
   end else
   if fndP1_ReckType.ItemIndex=1 then
@@ -265,17 +260,22 @@ begin
       'SELECT '+
       ' A.TENANT_ID '+
       ',B.REGION_ID '+
-      ',sum(ORG_AMT) as ORG_AMT '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_AMT/'+UnitCalc+') as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as ORG_PRC '+
       ',sum(ORG_CST) as ORG_CST '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as ORG_OUTPRC '+
       ',sum(ORG_RTL) as ORG_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
-    Result :=  ParseSQL(Factor.iDbType,
+
+    strSql :=
       'select j.* '+
-      ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
-      );
+      ',isnull(r.CODE_NAME,''无'') as CODE_NAME '+
+      ' from ('+strSql+') j '+
+      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO '+
+      ' where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID';
+
+    Result := ParseSQL(Factor.iDbType, strSql);
   end;
 end;
 
@@ -321,6 +321,7 @@ end;
 
 function TfrmStorageDayReport.GetShopSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;  //单位计算关系
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
@@ -360,6 +361,7 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');    
   //日期条件
   if fndP2_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
@@ -367,14 +369,14 @@ begin
       'select '+
       ' TENANT_ID'+
       ',SHOP_ID'+
-      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_AMT) as ORG_AMT'+
       ',sum(ORG_CST) as ORG_CST'+
       ',sum(ORG_RTL) as ORG_RTL'+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(19,3)) else 0 end as ORG_OUTPRC '+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,B.SHOP_ID,AMOUNT as ORG_AMT '+     //库存数量
+       ' A.TENANT_ID,B.SHOP_ID,AMOUNT/'+UnitCalc+' as ORG_AMT '+     //库存数量
        ',AMONEY as ORG_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -397,22 +399,31 @@ begin
       'SELECT '+
       ' A.TENANT_ID '+
       ',A.SHOP_ID '+
-      ',sum(ORG_AMT) as ORG_AMT '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_AMT/'+UnitCalc+') as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT/'+UnitCalc+') else 0 end as ORG_PRC '+
       ',sum(ORG_CST) as ORG_CST '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT/'+UnitCalc+') else 0 end as ORG_OUTPRC '+
       ',sum(ORG_RTL) as ORG_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
-    Result :=  ParseSQL(Factor.iDbType,
-      'select j.* '+
-      ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
-      );
+
+    strSql :=
+      'select j.TENANT_ID'+
+      ',j.SHOP_ID '+
+      ',j.SHOP_ID '+
+      ',j.SHOP_ID '+
+      ',j.SHOP_ID '+
+      ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME '+
+      ' from ('+strSql+') j '+
+      ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO';
+
+    result:=ParseSQL(Factor.iDbType, strSql);
   end;
 end;
 
 function TfrmStorageDayReport.GetSortSQL(chk:boolean=true): string;
 var
+  UnitCalc,JoinCnd: string;
   strSql,strWhere,GoodTab,lv,lv1: string;
 begin
   lv:='';
@@ -449,6 +460,8 @@ begin
     GoodTab:='VIW_GOODSINFO';
   end;
 
+  //单位换算
+  UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');
   //日期条件
   if fndP3_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
@@ -456,20 +469,20 @@ begin
       'select '+
       ' TENANT_ID'+
       ',GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID '+
-      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_AMT) as ORG_AMT'+
       ',sum(ORG_CST) as ORG_CST'+
       ',sum(ORG_RTL) as ORG_RTL'+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-       ',AMOUNT as ORG_AMT '+     //库存数量
-       ',AMONEY as ORG_CST '+     //库存金额
+       ',AMOUNT/'+UnitCalc+' as ORG_AMT '+    //库存数量
+       ',AMONEY as ORG_CST '+                 //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
   end else
-  if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:  
+  if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:
   begin
     //检测是否计算
     if P3_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');    
@@ -479,7 +492,7 @@ begin
       'SELECT '+
       ' A.TENANT_ID '+
       ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-      ',sum(ORG_AMT) as ORG_AMT '+
+      ',sum(ORG_AMT/'+UnitCalc+') as ORG_AMT '+
       ',sum(ORG_CST) as ORG_CST '+
       ',sum(ORG_RTL) as ORG_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -489,29 +502,35 @@ begin
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
+      //报表类型关联
+       case Factor.iDbType of
+        4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
+        else
+           JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+       end;
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(ORG_AMT) as ORG_AMT '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
           ',sum(ORG_CST) as ORG_CST '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_OUTPRC '+
           ',sum(ORG_RTL) as ORG_RTL '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
-          'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          'union all '+            
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
     3:begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(ORG_AMT) as ORG_AMT '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_TTL)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_TTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
           ',sum(ORG_CST) as ORG_CST '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_OUTPRC '+
           ',sum(ORG_RTL) as ORG_RTL '+
           ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
@@ -521,9 +540,9 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(ORG_AMT) as ORG_AMT '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_TTL)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_TTL) as decimal(18,3))/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
           ',sum(ORG_CST) as ORG_CST '+
-          ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+          ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_OUTPRC '+
           ',sum(ORG_RTL) as ORG_RTL '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
@@ -536,6 +555,7 @@ end;
 
 function TfrmStorageDayReport.GetGodsSQL(chk:boolean=true): string;
 var
+  UnitCalc: string;
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
@@ -575,22 +595,23 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   //日期条件
   if fndP4_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
       ' TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID  '+
-      ',sum(ORG_AMT)as ORG_AMT'+
+      ',sum(ORG_AMT) as ORG_AMT'+
       ',sum(ORG_CST) as ORG_CST'+
       ',sum(ORG_RTL) as ORG_RTL'+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_PRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT) as decimal(18,3)) else 0 end as ORG_OUTPRC '+
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
        ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
-       ',AMOUNT as ORG_AMT '+     //库存数量
+       ',AMOUNT/'+UnitCalc+' as ORG_AMT '+     //库存数量
        ',AMONEY as ORG_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as ORG_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -618,10 +639,10 @@ begin
       ' A.TENANT_ID '+
       ',A.GODS_ID '+
       ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
-      ',sum(ORG_AMT) as ORG_AMT '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_CST)/sum(ORG_AMT) else 0 end as ORG_PRC '+
+      ',sum(ORG_AMT/'+UnitCalc+') as ORG_AMT '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_CST) as decimal(18,3))*1.00/cast(sum(ORG_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as ORG_PRC '+
       ',sum(ORG_CST) as ORG_CST '+
-      ',case when sum(ORG_AMT)<>0 then sum(ORG_RTL)/sum(ORG_AMT) else 0 end as ORG_OUTPRC '+
+      ',case when sum(ORG_AMT)<>0 then cast(sum(ORG_RTL) as decimal(18,3))*1.00/cast(sum(ORG_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as ORG_OUTPRC '+
       ',sum(ORG_RTL) as ORG_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,CALC_UNITS ';

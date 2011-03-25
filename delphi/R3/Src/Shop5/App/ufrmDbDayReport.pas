@@ -705,9 +705,9 @@ begin
 
   //月份日期:
   if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
-     strWhere:=strWhere+' and A.MOVE_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+     strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
   else if P5_D1.Date<P5_D2.Date then
-     strWhere:=strWhere+' and A.MOVE_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.MOVE_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
+     strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
@@ -751,7 +751,7 @@ begin
     ',A.BATCH_NO '+
     ',A.LOCUS_NO '+
     ',A.UNIT_ID '+
-    ',A.MOVE_DATE '+
+    ',A.SALES_DATE as MOVE_DATE '+
     ',A.PROPERTY_01 '+
     ',A.PROPERTY_02 '+
     ',A.IS_PRESENT '+

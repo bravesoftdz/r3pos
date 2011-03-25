@@ -1,6 +1,5 @@
 inherited frmCheckTablePrint: TfrmCheckTablePrint
   Left = 198
-  Top = 107
   Width = 1078
   Height = 625
   Caption = #30424#28857#23545#29031#34920

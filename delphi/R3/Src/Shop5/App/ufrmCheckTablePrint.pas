@@ -116,7 +116,7 @@ begin
     fndP1_PRINT_DATE.Text := fndP1_PRINT_DATE.DataSet.FieldbyName('PRINT_DATE').asString;
   end;
   
-  rzPage.ActivePageIndex := 0;
+  SetRzPageActivePage(false);
   RefreshColumn;
   //TDbGridEhSort.InitForm(self);
   TDbGridEhSort.InitForm(self);

@@ -86,7 +86,8 @@ type
   end;
 
 implementation
-uses uGlobal, uFnUtil, ufrmEhLibReport, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmPayOrder;
+uses uGlobal, uFnUtil, ufrmEhLibReport, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmPayOrder,
+  ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmPayOrderList.InitGrid;
@@ -156,6 +157,7 @@ begin
   inherited;
   if cdsList.IsEmpty then Exit;
   if not ShopGlobal.GetChkRight('21400001',3) then Raise Exception.Create('你没有修改付款单的权限,请和管理员联系.');
+  if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('此单已经审核,不能执行修改操作.');  
   with TfrmPayOrder.Create(self) do
     begin
       try
@@ -451,6 +453,7 @@ begin
   inherited;
    if cdsList.IsEmpty then Exit;
    if not ShopGlobal.GetChkRight('21400001',4) then Raise Exception.Create('你没有删除付款单的权限,请和管理员联系.');
+   if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('此单已经审核,不能执行删除操作.');
    if MessageBox(Handle,'确认删除当前选中的付款单？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmPayOrder.Create(self) do
       begin
@@ -467,13 +470,29 @@ begin
 end;
 
 procedure TfrmPayOrderList.AddRecord(AObj: TRecord_);
+var rs:TZQuery;
 begin
   if cdsList.Locate('PAY_ID',AObj.FieldbyName('PAY_ID').AsString,[]) then
-     cdsList.Edit
+    begin
+      cdsList.Edit;
+      AObj.WriteToDataSet(cdsList,false);
+      cdsList.Post;
+    end
   else
-     cdsList.Append;
-  AObj.WriteToDataSet(cdsList,false);
-  cdsList.Post;
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select GLIDE_NO from ACC_PAYORDER where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PAY_ID='+QuotedStr(AObj.FieldbyName('PAY_ID').AsString);
+        Factor.Open(rs);
+        AObj.FieldByName('GLIDE_NO').AsString := rs.FieldByName('GLIDE_NO').AsString;
+        cdsList.Append;
+        AObj.WriteToDataSet(cdsList,False);
+        cdsList.Post;
+      finally
+        rs.Free;
+      end;
+    end;
+
 end;
 
 function TfrmPayOrderList.FindColumn(FieldName: string): TColumnEh;

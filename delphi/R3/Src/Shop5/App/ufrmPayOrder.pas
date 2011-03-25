@@ -238,7 +238,6 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
-  Open(AObj.FieldbyName('PAY_ID').asString);
   dbState := dsBrowse;
   if Assigned(OnSave) then OnSave(AObj);
 end;

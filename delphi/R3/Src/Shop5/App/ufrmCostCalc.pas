@@ -1044,7 +1044,7 @@ begin
   '	CHANGE5_MNY decimal(18, 3) ,'+
   '	CHANGE5_RTL decimal(18, 3) ,'+
   '	CHANGE5_CST decimal(18, 3) '+
-  ') NOT LOGGED WITH REPLACE '
+  ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE '
   end;
   end;
   Factor.ExecSQL(SQL);

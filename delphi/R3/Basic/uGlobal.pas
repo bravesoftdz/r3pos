@@ -260,9 +260,9 @@ end;
 
 procedure TGlobal.LoadBasic(Saveed:Boolean=false;Opened:Boolean=true);
 var i:Integer;
-    S,SQL:String;
 begin
-  S := '正在初始化基础资料....';
+  frmLogo.Label1.Caption := '初始化数据,请稍候...';
+  frmLogo.Label1.Update;
   frmLogo.ProgressBar1.Max := ComponentCount;
   for i:=0 to ComponentCount -1 do
     begin

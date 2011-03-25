@@ -96,7 +96,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP,COMM from RCK_RECVORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and RECV_ID='''+FieldbyName('RECV_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_RECVORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and RECV_ID='''+FieldbyName('RECV_ID').AsString+'''';
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
   finally
@@ -124,7 +124,7 @@ begin
     + 'VALUES(:TENANT_ID,:RECV_ID,:SHOP_ID,:GLIDE_NO,:ACCOUNT_ID,:PAYM_ID,:RECV_MNY,:CLIENT_ID,:ITEM_ID,:RECV_DATE,:RECV_USER,:CHK_DATE,:CHK_USER,''00'','+GetSysDateFormat(iDbType)+',:CREA_USER,:REMARK,'+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update ACC_RECVORDER set TENANT_ID=:TENANT_ID,RECV_ID=:RECV_ID,SHOP_ID=:SHOP_ID,GLIDE_NO=:GLIDE_NO,ACCOUNT_ID=:ACCOUNT_ID,PAYM_ID=:PAYM_ID,CLIENT_ID=:CLIENT_ID,ITEM_ID=:ITEM_ID,'+
-      'RECV_DATE=:RECV_DATE,RECV_USER=:RECV_USER,RECV_MNY=:RECV_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER '
+      'RECV_DATE=:RECV_DATE,RECV_USER=:RECV_USER,RECV_MNY=:RECV_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where RECV_ID=:OLD_RECV_ID and TENANT_ID=:OLD_TENANT_ID';
@@ -180,7 +180,7 @@ begin
   AGlobal.ExecSQL(Str,self);
   if (FieldbyName('RECV_MNY').AsOldFloat=0)  then Exit;
   AGlobal.ExecSQL(
-    ParseSQL(AGlobal.iDbType,'update RCK_RECVABLE_INFO set RECV_MNY=isnull(RECV_MNY,0)-isnull(:OLD_RECV_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:OLD_RECV_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID')
+    ParseSQL(AGlobal.iDbType,'update ACC_RECVABLE_INFO set RECV_MNY=isnull(RECV_MNY,0)-isnull(:OLD_RECV_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:OLD_RECV_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID')
     ,self);
 
   AGlobal.ExecSQL(
@@ -188,7 +188,7 @@ begin
       'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)- :OLD_RECV_MNY,BALANCE=isnull(BALANCE,0)- :OLD_RECV_MNY,'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
-      + 'where ACCOUNT_ID=:OLD_ACCOUNT and TENANT_ID=:OLD_TENANT_ID')
+      + 'where ACCOUNT_ID=:OLD_ACCOUNT_ID and TENANT_ID=:OLD_TENANT_ID')
       ,self);
   result := true;
 end;

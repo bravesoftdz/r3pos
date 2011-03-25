@@ -111,7 +111,7 @@ begin
     + 'VALUES(:PAY_ID,:TENANT_ID,:SHOP_ID,:GLIDE_NO,:ACCOUNT_ID,:PAYM_ID,:PAY_MNY,:CLIENT_ID,:ITEM_ID,:PAY_DATE,:PAY_USER,:CHK_DATE,:CHK_USER,''00'',:CREA_DATE,:CREA_USER,:REMARK,'+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update ACC_PAYORDER set PAY_ID=:PAY_ID,TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,GLIDE_NO=:GLIDE_NO,ACCOUNT_ID=:ACCOUNT_ID,PAYM_ID=:PAYM_ID,CLIENT_ID=:CLIENT_ID,ITEM_ID=:ITEM_ID,PAY_DATE=:PAY_DATE,'+
-         'PAY_USER=:PAY_USER,PAY_MNY=:PAY_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER '
+         'PAY_USER=:PAY_USER,PAY_MNY=:PAY_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where PAY_ID=:OLD_PAY_ID and TENANT_ID=:OLD_TENANT_ID';
@@ -160,7 +160,7 @@ function TPayData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:string;
 begin
   result := true;
-  Str := 'delete from RCK_PAYDATA where PAY_ID=:OLD_PAY_ID and TENANT_ID=:OLD_TENANT_ID and SEQNO=:OLD_SEQNO';
+  Str := 'delete from ACC_PAYDATA where PAY_ID=:OLD_PAY_ID and TENANT_ID=:OLD_TENANT_ID and SEQNO=:OLD_SEQNO';
   AGlobal.ExecSQL(Str,self);
   if (FieldbyName('PAY_MNY').AsOldFloat=0) then Exit;
   case AGlobal.iDbType of

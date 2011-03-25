@@ -140,6 +140,8 @@ type
     function GetRecvUserSQL(chk:boolean=true): string;
     //按收款流水查询
     function GetGuideSQl(chk:boolean=true): string;
+    //SQLITE计算逾期天数
+    procedure CaclOverDays(Report:TZQuery; BegField,EndField: string);
 
     //输入查询条件最大值日期，返回台帐表的最大结帐日期
     function GetRckMaxDate(EndDate: integer): Integer;
@@ -150,7 +152,6 @@ type
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override;  //添加Title    
   public
-    HasChild: boolean;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
   end;
@@ -182,10 +183,8 @@ begin
   fndP5_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP5_RecvMan.DataSet := Global.GetZQueryFromName('CA_USERS');
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  
+  SetRzPageActivePage; //设置PzPage.Activepage  
+
   InitGrid;
   RefreshColumn;
 end;
@@ -234,6 +233,24 @@ begin
   result :=0;  // DBGridEh.DataSource.DataSet.FieldbyName('grp0').AsInteger;
 end;
 
+procedure TfrmRecvDayReport.CaclOverDays(Report: TZQuery; BegField, EndField: string);
+var
+  IdxBeg,IdxEnd,IdxDay: integer;
+begin
+  if not Report.Active then Exit;
+  IdxBeg:=RePort.fieldbyName(BegField).Index;
+  IdxEnd:=RePort.fieldbyName(EndField).Index;
+  IdxDay:=RePort.fieldbyName('OVERDAYS').Index;
+  Report.First;
+  while not Report.Eof do
+  begin
+    Report.Edit;
+    Report.Fields[IdxDay].AsFloat:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+    Report.Post;
+    Report.Next;
+  end;
+end;
+
 procedure TfrmRecvDayReport.actFindExecute(Sender: TObject);
 var strSql: string;
 begin
@@ -273,6 +290,8 @@ begin
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
+        if (adoReport5.Active) and (Factor.iDbType=5) then
+          CaclOverDays(adoReport5,'ABLE_DATE','RECV_DATE');
       end;
   end;
 end;
@@ -621,7 +640,7 @@ begin
        ',(case when (RECV_TYPE=''2'') and (ACC_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
        ',(case when (RECV_TYPE=''2'') and (ACC_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
        ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-       ' from VIW_CUSTRECVALLDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate;
+       ' from VIW_CUSTRECVDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate;
   end else
   if fndBegDate.Date<fndEndDate.Date then
   begin
@@ -640,7 +659,7 @@ begin
       ',(case when (RECV_TYPE=''2'') and (ACC_DATE<'+vBegDate+' or ACC_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (RECV_TYPE=''2'') and (ACC_DATE>='+vBegDate+') and (ACC_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-      ' from VIW_CUSTRECVALLDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE>='+vBegDate+' and RECV_DATE<='+vEndDate+' ';
+      ' from VIW_CUSTRECVDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE>='+vBegDate+' and RECV_DATE<='+vEndDate+' ';
   end;
   result:=str;
 end;
@@ -680,7 +699,7 @@ begin
   strSql:=
     'select jp.*,r.USER_NAME as USER_NAME from '+
     '(select jb.*,D.CLIENT_NAME as CUST_NAME from  '+
-    '(select A.*,B.SHOP_NAME as SHOP_NAME from VIW_CUSTRECVALLDATA A,CA_SHOP_INFO B '+
+    '(select A.*,B.SHOP_NAME as SHOP_NAME from VIW_CUSTRECVDATA A,CA_SHOP_INFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
     ' '+strWhere+') jb '+
     ' left outer join VIW_CUSTOMER D '+

@@ -60,10 +60,7 @@ begin
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的等级，重新启动原有编码
            begin
              FieldbyName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
-             case iDbType of
-             0: AGlobal.ExecSQL('delete PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
-             3,4: AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
-             end;
+             AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
            end
         else
            Raise Exception.Create('"'+FieldbyName('PRICE_NAME').AsString+'"等级名不能重复设置');
@@ -101,10 +98,7 @@ begin
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的等级，重新启动原有编码
            begin
              FieldbyName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
-             case iDbType of
-             0: AGlobal.ExecSQL('delete PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
-             3: AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
-             end;
+             AGlobal.ExecSQL('delete from PUB_PRICEGRADE where PRICE_ID=:PRICE_ID and TENANT_ID=:OLD_TENANT_ID ',self);
            end
         else
            Raise Exception.Create('"'+FieldbyName('PRICE_NAME').AsString+'"等级名不能重复设置');

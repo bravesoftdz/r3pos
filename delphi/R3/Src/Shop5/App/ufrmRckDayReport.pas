@@ -117,7 +117,6 @@ type
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
-    HasChild: boolean;   
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
   end;
@@ -144,10 +143,8 @@ begin
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  
+  SetRzPageActivePage; //设置PzPage.Activepage
+
   InitGrid;
   RefreshColumn;
 end;
@@ -181,12 +178,12 @@ begin
     'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
     'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
     '('+ViwSql+') j left outer join ('+RCKRData+')c on j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
-
-  Result := ParseSQL(Factor.iDbType,
+  strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
-    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r '+
-    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID '
-    );
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
+    ' on jp.REGION_ID=r.CODE_ID order by jp.REGION_ID ';
+
+  Result := ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmRckDayReport.GetRowType: integer;
@@ -258,10 +255,13 @@ begin
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY from ('+ViwSql+') j left outer join ('+RCKRData+')c '+
     ' on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID ';
 
-  Result := ParseSQL(Factor.iDbType,
+  //关联门店
+  strSql:=
     'select jp.*,r.SEQ_NO as SHOP_CODE,r.SHOP_NAME as SHOP_NAME '+
-    ' from ('+strSql+')jp left outer join CA_SHOP_INFO r on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO '
-    );
+    ' from ('+strSql+')jp left outer join CA_SHOP_INFO r '+
+    ' on jp.TENANT_ID=r.TENANT_ID and jp.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+
+  Result := ParseSQL(Factor.iDbType, strSql);    
 end;
 
 function TfrmRckDayReport.GetSortSQL(chk:boolean=true): string;
@@ -291,7 +291,8 @@ begin
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY '+
     ' from ('+ViwSql+')j '+
     ' left outer join ('+RCKRData+')c '+
-    ' on j.RECV_DATE=c.CREA_DATE order by j.RECV_DATE ';  
+    ' on j.RECV_DATE=c.CREA_DATE order by j.RECV_DATE ';
+    
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -534,7 +535,7 @@ begin
     rs.ParamByName('CREA_DATE').AsInteger := EndDate;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-      TfrmCostCalc.TryCalcDayAcct(self);
+    //  TfrmCostCalc.TryCalcDayAcct(self);
   finally
     rs.Free;
   end;

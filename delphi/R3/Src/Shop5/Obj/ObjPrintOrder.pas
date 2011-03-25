@@ -84,7 +84,7 @@ begin
   if ReRun=0 then  //没有更新到记录;
   begin
     Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_CALC_AMOUNT,:CALC_AMOUNT,2)';
+         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_CALC_AMOUNT,:CALC_AMOUNT,''2'')';
     AGlobal.ExecSQL(str, self);
   end;
   result := true;
@@ -115,7 +115,7 @@ begin
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_OUTPRICE,0) as PAL_OUTAMONEY  '+
     ' from STO_PRINTDATA j '+
     ' left outer join VIW_GOODSPRICEEXT b on j.TENANT_ID=b.TENANT_ID and j.SHOP_ID=b.SHOP_ID and j.GODS_ID=b.GODS_ID '+
-    ' where j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.PRINT_DATE=:PRINT_DATE and CHECK_STATUS=2 '+
+    ' where j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.PRINT_DATE=:PRINT_DATE and CHECK_STATUS=''2'' '+
     ' order by b.GODS_CODE');
 end;
 
@@ -212,7 +212,6 @@ begin
    5:SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE limit 1';
   end;
 end;
-
 
 { TPrintOrderAudit }
 

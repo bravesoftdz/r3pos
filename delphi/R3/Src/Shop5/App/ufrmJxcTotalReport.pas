@@ -145,8 +145,6 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure CreateGrid;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
@@ -180,13 +178,7 @@ begin
   P4_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
   fndP4_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-    rzPage.ActivePageIndex := 2
-  else
-    rzPage.ActivePageIndex := 0;
+  SetRzPageActivePage; //设置默认分页
   CreateGrid;
   RefreshColumn;
 end;
@@ -251,22 +243,22 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
+    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
-    ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+    ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
     ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
@@ -281,12 +273,13 @@ begin
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
     ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
+    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
-    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,B.REGION_ID';
+    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
     'select j.* '+
@@ -304,7 +297,6 @@ end;
 procedure TfrmJxcTotalReport.actFindExecute(Sender: TObject);
 var
   strSql: string;
-  rs:TADODataSet;
 begin
   case rzPage.ActivePageIndex of
     0:begin //按地区汇总表
@@ -399,22 +391,22 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
+    ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
-    ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+    ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
     ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
@@ -429,7 +421,7 @@ begin
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
     ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
+    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
@@ -438,7 +430,8 @@ begin
 
   strSql :=
     'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+    ' ,r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+    ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
 
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
@@ -495,19 +488,19 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
+    ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
     ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
     ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
@@ -524,11 +517,12 @@ begin
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
     ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
+    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
-    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -556,7 +550,7 @@ begin
           ',sum(SALE_TTL) as SALE_TTL '+
           ',sum(SALE_CST) as SALE_CST '+
           ',sum(SALE_PRF) as SALE_PRF '+
-          ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+          ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
           ',sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -603,7 +597,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/cast(sum(SALE_CST)as decimal(18,3))*100 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -646,7 +640,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -740,7 +734,7 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
-    ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
+    ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
     ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
@@ -752,16 +746,16 @@ begin
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
-    ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
-    ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/sum(SALE_CST)*100 else 0 end SALE_RATE '+
+    ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
     ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',-sum(CHANGE1_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
-    ',-sum(CHANGE1_CST)+sum(ADJ_CST) as CHANGE1_CST '+
+    ',-isnull(sum(CHANGE1_CST),0)+isnull(sum(ADJ_CST),0) as CHANGE1_CST '+
     ',-sum(CHANGE2_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
     ',-sum(CHANGE2_CST) as CHANGE2_CST '+
     ',-sum(CHANGE3_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
@@ -770,7 +764,7 @@ begin
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
     ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
+    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
@@ -998,45 +992,72 @@ begin
         Column.Title.Caption := rs.Fields[1].AsString+'|数量';
         Column.Width := 61;
         Column.Index := DBGridEh1.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
         Column.Title.Caption := rs.Fields[1].AsString+'|金额';
         Column.Width := 74;
         Column.Index := DBGridEh1.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';        
 
         Column := DBGridEh2.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
         Column.Title.Caption := rs.Fields[1].AsString+'|数量';
         Column.Width := 61;
         Column.Index := DBGridEh2.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';        
+
         Column := DBGridEh2.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
         Column.Title.Caption := rs.Fields[1].AsString+'|金额';
         Column.Width := 74;
         Column.Index := DBGridEh2.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';        
 
         Column := DBGridEh3.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
         Column.Title.Caption := rs.Fields[1].AsString+'|数量';
         Column.Width := 61;
         Column.Index := DBGridEh3.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+
         Column := DBGridEh3.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
         Column.Title.Caption := rs.Fields[1].AsString+'|金额';
         Column.Width := 74;
         Column.Index := DBGridEh3.Columns.Count -4;
-
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+        
         Column := DBGridEh4.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
         Column.Title.Caption := rs.Fields[1].AsString+'|数量';
         Column.Width := 61;
         Column.Index := DBGridEh4.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+
         Column := DBGridEh4.Columns.Add;
         Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
         Column.Title.Caption := rs.Fields[1].AsString+'|金额';
         Column.Width := 74;
         Column.Index := DBGridEh4.Columns.Count -4;
-
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';   
         rs.Next;
       end;
 end;
@@ -1052,7 +1073,7 @@ begin
     rs.ParamByName('END_MONTH').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-    //   TfrmCostCalc.StartCalc(self);
+      TfrmCostCalc.StartCalc(self);
   finally
     rs.Free;
   end;

@@ -59,6 +59,7 @@ begin
   AddBillTypeItems; //添加单据类型
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  fndP1_BarType_ID.ItemIndex:=0;
 
   SetRzPageActivePage(false); //设置默认分页
   RefreshColumn;
@@ -131,8 +132,8 @@ begin
      ',BATCH_NO'+
      ',LOCUS_NO'+
      ',APRICE'+
-     ',AMOUNT'+
-     ',CALC_MONEY as AMONEY '+
+     ',(case when ORDER_TYPE in (11,12,21,22,24) then AMOUNT else -AMOUNT end) as AMOUNT'+
+     ',(case when ORDER_TYPE in (11,12,21,22,24) then CALC_MONEY else -CALC_MONEY end) as AMONEY '+
     'from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
     ' '+ strWhere + ' ';
@@ -215,7 +216,7 @@ var
   Title: TStringList;
 begin
   inherited;
-  PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
+  PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption+#13+#13+trim(fndP1_GODS_ID.Text);
   try
     Title:=TStringList.Create;
     case rzPage.ActivePageIndex of
@@ -272,19 +273,20 @@ procedure TfrmGodsRunningReport.AddBillTypeItems;
   end;
 var
   rs: TZQuery;
+  CurName: string;
   SetCol: TColumnEh;
 begin
   SetCol:=FindColumn(DBGridEh1,'ORDER_TYPE');
   if SetCol=nil then Exit;
   SetCol.KeyList.Clear;
-  SetCol.PickList.Clear;
+  SetCol.PickList.Clear;   
   //入库单据:
   AddSingeItems(SetCol,'11','入库单');
-  AddSingeItems(SetCol,'12','调拨单');
+  AddSingeItems(SetCol,'12','调入单');
   AddSingeItems(SetCol,'13','退货单');
   //销售单据:
   AddSingeItems(SetCol,'21','销售单');
-  AddSingeItems(SetCol,'22','调拨单');
+  AddSingeItems(SetCol,'22','调出单');
   AddSingeItems(SetCol,'23','退货单');
   AddSingeItems(SetCol,'24','零售单');
   //调整单据:
@@ -294,8 +296,10 @@ begin
     rs.First;
     while not rs.Eof do
     begin
-      SetCol.KeyList.Add('3'+trim(rs.fieldbyName('CHANGE_CODE').AsString)); 
-      SetCol.PickList.Add(trim(rs.fieldbyName('CHANGE_NAME').AsString)); 
+      SetCol.KeyList.Add('3'+trim(rs.fieldbyName('CHANGE_CODE').AsString));
+      CurName:=trim(rs.fieldbyName('CHANGE_NAME').AsString);
+      if not (pos('单',CurName)>0) then CurName:=CurName+'单'; 
+      SetCol.PickList.Add(CurName);
       rs.Next;
     end;
   end;

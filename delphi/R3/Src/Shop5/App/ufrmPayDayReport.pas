@@ -268,8 +268,9 @@ begin
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
-        if (adoReport5.Active) and (Factor.iDbType=5) then
-          CaclOverDays(adoReport5,'ABLE_DATE','PAY_DATE');
+        //统一计算不在分类型
+        //if (adoReport5.Active) and (Factor.iDbType=5) then
+        CaclOverDays(adoReport5,'ABLE_DATE','PAY_DATE');
       end;
   end;
 end;

@@ -1,3 +1,5 @@
+{--   cast(1.123 as decimal(18,3))  --}
+
 unit uframeBaseReport;
 
 interface
@@ -66,9 +68,10 @@ type
     procedure actFilterExecute(Sender: TObject);
   private
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
-    procedure Dofnd_TYPE_IDChange(Sender: TObject);
+    procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品统计指标OnChange
     procedure DoRBDate(Sender: TObject);   //暂时没用
     procedure DoCxDateOnCloseUp(Sender: TObject); //暂时没用
+    function  GetHasChild: Boolean;
   public
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
@@ -92,6 +95,8 @@ type
     function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
     //不同数据库类型转换：输入字段名称，返回转化后表达式:
     function IntToVarchar(FieldName: string): string;
+    //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
+    procedure SetRzPageActivePage(IsGroupReport: Boolean=true); //
 
     {=======  2011.03.03 Add 商品统计单位换算关系   =======}
     //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
@@ -104,11 +109,12 @@ type
     function  AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
+    //DrawGrid [奇偶数行]
+    procedure DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState; FieldName: string);
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
-    procedure DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
-       Column: TColumnEh; State: TGridDrawState; DrawField: string);
+
     procedure LoadFormat;override;
     procedure PrintBefore;virtual;
     function  GetRowType:integer;virtual;
@@ -116,6 +122,7 @@ type
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
+    property  HasChild: Boolean read GetHasChild;  //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;
   end;
 
@@ -217,18 +224,21 @@ procedure TframeBaseReport.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var ARect:TRect;
 begin
-  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and (not
-     (gdFocused in State) or not Column.Grid.Focused) then
+  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
+  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
+
+  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
+     (not (gdFocused in State) or not Column.Grid.Focused) then
   begin
-    Column.Grid.Canvas.Brush.Color := clAqua;
+    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
   end;
   Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-  
+
   if Column.FieldName = 'SEQNO' then
-    begin
-      ARect := Rect;
-      DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
+  begin
+    ARect := Rect;
+    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
 end;
 
 procedure TframeBaseReport.ClearSortMark;
@@ -355,13 +365,11 @@ end;
 procedure TframeBaseReport.FormCreate(Sender: TObject);
 var
   i:integer;
-  CmpName,FName: string;
+  CmpName,FName,vName: string;
   Cbx: TcxComboBox;
   Column:TColumnEh;
 begin
   inherited;
-  RzPage.ActivePageIndex:=0;
-  
   //初始化参数:
   for i:=0 to self.ComponentCount -1 do
   begin
@@ -394,20 +402,37 @@ begin
       end;
     end;
 
-    //设置Dataset;
+    //设置TzrComboBoxList属性:
     if Components[i] is TzrComboBoxList then
     begin
       CmpName:=trim(UpperCase(TzrComboBoxList(Components[i]).Name));
+      //门店名称
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_SHOP_ID') then
       begin
-        TzrComboBoxList(Components[i]).Buttons:=[zbNew,zbClear,zbFind];
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
         TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
       end;
+      //商品统计指标
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_SHOP_VALUE') then
       begin
-        TzrComboBoxList(Components[i]).Buttons:=[zbNew,zbClear,zbFind];
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
       end;
-    end;   
+      //商品名称
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_GODS_ID') then
+      begin
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;        
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('PUB_GOODSINFO');
+      end;
+    end;
 
     //设置颜色组、尺码组列是否显示
     if self.Components[i] is TDBGridEh then
@@ -641,15 +666,15 @@ begin
   BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
 
   str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
-       ' else 1.0 end ';
+            ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
+            ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
+            ' else 1.0 end ';
 
-  case CalcIdx of
-   0: result:=str;       //默认单位
+  case CalcIdx of 
+   0: result:=' '+str+' ';       //默认单位
    1: result:=' 1.0 ';   //计量单位
-   2: result:=SmallCalc; //小包装单位
-   3: result:=BigCalc;   //大包装单位
+   2: result:=' '+SmallCalc+' '; //小包装单位
+   3: result:=' '+BigCalc+' ';   //大包装单位
   end;
   if AliasFileName<>'' then
     result:=result+' as '+AliasFileName+' ';
@@ -752,7 +777,6 @@ begin
     end;
   end;
 end;
-
 
 procedure TframeBaseReport.Dofnd_TYPE_IDChange(Sender: TObject);
 var
@@ -904,27 +928,6 @@ begin
   end;
 end;
 
-
-procedure TframeBaseReport.DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
-  Column: TColumnEh; State: TGridDrawState; DrawField: string);
-var
-  ARect:TRect;
-  CurID: string;
-  GridDs: TDataSet;
-begin
-{  GridDs:=TDBGridEh(Sender).DataSource.DataSet;
-  if (not GridDs.active) or (GridDs.FindField(DrawField)=nil) then Exit;
-  CurID:=trim(GridDs.FieldbyName(DrawField).AsString);
-  if CurID='' then Exit;
-  CurID:=copy(CurID,length(CurID),1);
-  if StrtoIntDef(CurID,0) mod 2=1 then
-    TDBGridEh(Sender).Canvas.Brush.Color := $00FDECDB
-  else
-    TDBGridEh(Sender).Canvas.Brush.Color := clWhite;
-  TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-}
-end;
-
 procedure TframeBaseReport.DoRBDate(Sender: TObject);
 var
   CmpName: string;
@@ -1017,12 +1020,19 @@ begin
     TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);
   end;
 
-  // 5、计量单位
+  // 5、商品名称：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_GODS_ID');
+  if (FindCmp1<>nil) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
+  begin
+    TitleList.Add('商品名称：'+TzrComboBoxList(FindCmp1).Text);
+  end;
+
+  // 6、计量单位
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 
-  // 6、单据类型:[全部命名规则]
+  // 7、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin
@@ -1050,5 +1060,59 @@ begin
    4:   result:='trim(char('+FieldName+'))';
   end;
 end;
+
+function TframeBaseReport.GetHasChild: Boolean;
+begin
+  result:=(ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
+end;
+
+procedure TframeBaseReport.SetRzPageActivePage(IsGroupReport: Boolean);
+var i: integer;
+begin
+  if (IsGroupReport) and (RzPage.PageCount>1) then
+  begin
+    rzPage.Pages[0].TabVisible := HasChild;
+    rzPage.Pages[1].TabVisible := HasChild;
+  end;
+  for i:=0 to rzPage.PageCount -1 do
+  begin
+    if rzPage.Pages[i].TabVisible then
+    begin
+      rzPage.ActivePageIndex:=i;
+      Break;
+    end;
+  end;
+end;
+
+procedure TframeBaseReport.DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
+  Column: TColumnEh; State: TGridDrawState; FieldName: string);
+var
+  ARect:TRect; GridDs: TDataSet;
+begin
+  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
+  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
+  GridDs:=TDBGridEh(Sender).DataSource.DataSet;
+
+  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
+     (not (gdFocused in State) or not Column.Grid.Focused) then
+  begin
+    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
+  end else
+  begin
+    if (Column.FieldName<>'SEQNO') and (GridDs.FindField(FieldName)<>nil) then
+    begin
+      if RightStr(GridDs.FieldByName(FieldName).AsString,1)='1' then //奇数行
+        Column.Grid.Canvas.Brush.Color := $00F7F1BD;
+    end;
+  end;
+  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+end;
+
 
 end.

@@ -326,7 +326,6 @@ begin
     ',isnull(r.CODE_NAME,''нч'') as CODE_NAME from ('+strSql+') j '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
     );
-  showmessage(Result);
 end;
 
 function TfrmSaleDayReport.GetRowType: integer;

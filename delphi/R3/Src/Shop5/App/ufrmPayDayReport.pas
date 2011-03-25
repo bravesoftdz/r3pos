@@ -135,6 +135,9 @@ type
     function GetRecvSupplieSQL(chk:boolean=true): string;
     //按付款流水查询
     function GetGuideSQl(chk:boolean=true): string;
+    //SQLITE计算逾期天数
+    procedure CaclOverDays(Report:TZQuery; BegField,EndField: string);
+
 
     //输入查询条件最大值日期，返回台帐表的最大结帐日期
     function GetRckMaxDate(EndDate: integer): Integer;
@@ -145,7 +148,6 @@ type
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
-    HasChild: boolean;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
   end;
@@ -177,9 +179,7 @@ begin
   fndP5_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   fndP5_PAYMan.DataSet := Global.GetZQueryFromName('CA_USERS');  
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
+  SetRzPageActivePage; //设置PzPage.Activepage
 
   InitGrid;
   RefreshColumn;
@@ -268,6 +268,8 @@ begin
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
+        if (adoReport5.Active) and (Factor.iDbType=5) then
+          CaclOverDays(adoReport5,'ABLE_DATE','PAY_DATE');
       end;
   end;
 end;
@@ -642,16 +644,14 @@ begin
 
   //关联语句
   strSql:=
-    'select jp.*,r.USER_NAME as USER_NAME from '+
-    '(select jb.*,D.CLIENT_NAME as CUST_NAME from  '+
-    '(select A.*,B.SHOP_NAME from VIW_SUPPAYDATA A,CA_SHOP_INFO B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-    ' '+strWhere+') jb '+
-    ' left outer join VIW_CLIENTINFO D '+
-    ' on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID)jp '+
-    ' left outer join viw_users r on '+
-    ' jp.TENANT_ID=r.TENANT_ID and jp.PAY_USER=r.USER_ID order by jp.PAY_USER ';
-    
+    'select je.*,r.USER_NAME as USER_NAME from '+
+    '(select jd.*,E.ACCT_NAME as ACC_NAME from '+
+    '(select j.*,D.CLIENT_NAME as CUST_NAME from  '+
+    ' (select A.*,B.SHOP_NAME from VIW_SUPPAYDATA A,CA_SHOP_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
+    '  left outer join VIW_CLIENTINFO D on j.TENANT_ID=D.TENANT_ID and j.CLIENT_ID=D.CLIENT_ID)jd '+
+    '  left outer join ACC_ACCOUNT_INFO E on jd.ACCOUNT_ID=E.ACCOUNT_ID)je '+
+    '  left outer join viw_users r on je.TENANT_ID=r.TENANT_ID and je.PAY_USER=r.USER_ID order by je.PAY_USER ';
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -717,6 +717,24 @@ procedure TfrmPayDayReport.DBGridEh5GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayDayReport.CaclOverDays(Report: TZQuery; BegField, EndField: string);
+var
+  IdxBeg,IdxEnd,IdxDay: integer;
+begin
+  if not Report.Active then Exit;
+  IdxBeg:=RePort.fieldbyName(BegField).Index;
+  IdxEnd:=RePort.fieldbyName(EndField).Index;
+  IdxDay:=RePort.fieldbyName('OVERDAYS').Index;
+  Report.First;
+  while not Report.Eof do
+  begin
+    Report.Edit;
+    Report.Fields[IdxDay].AsFloat:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+    Report.Post;
+    Report.Next;
+  end;
 end;
 
 end.

@@ -808,7 +808,7 @@ inherited frmClientInfo: TfrmClientInfo
         Width = 121
         Height = 20
         TabStop = False
-        TabOrder = 5
+        TabOrder = 6
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 98
@@ -863,7 +863,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 4
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -949,7 +949,7 @@ inherited frmClientInfo: TfrmClientInfo
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'

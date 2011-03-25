@@ -17,6 +17,8 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 767
         Height = 498
+        ActivePage = TabSheet2
+        TabIndex = -1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -346,244 +348,8 @@ inherited frmRckMng: TfrmRckMng
             end
           end
         end
-        object TabSheet2: TRzTabSheet
-          Caption = #36130#21153#26085#32467#36134
-          object RzPanel6: TRzPanel
-            Left = 0
-            Top = 0
-            Width = 765
-            Height = 471
-            Align = alClient
-            BorderInner = fsGroove
-            BorderOuter = fsNone
-            BorderWidth = 5
-            TabOrder = 0
-            object RzPanel7: TRzPanel
-              Left = 7
-              Top = 81
-              Width = 751
-              Height = 383
-              Align = alClient
-              BorderOuter = fsNone
-              Color = clWhite
-              TabOrder = 0
-              object DBGridEh2: TDBGridEh
-                Left = 0
-                Top = 0
-                Width = 751
-                Height = 383
-                Align = alClient
-                AllowedOperations = [alopUpdateEh]
-                DataSource = Ds_CloseDay
-                Flat = True
-                FooterColor = clWindow
-                FooterFont.Charset = GB2312_CHARSET
-                FooterFont.Color = clWindowText
-                FooterFont.Height = -12
-                FooterFont.Name = #23435#20307
-                FooterFont.Style = []
-                FrozenCols = 1
-                Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-                OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
-                RowHeight = 20
-                SumList.Active = True
-                TabOrder = 0
-                TitleFont.Charset = GB2312_CHARSET
-                TitleFont.Color = clWindowText
-                TitleFont.Height = -12
-                TitleFont.Name = #23435#20307
-                TitleFont.Style = []
-                TitleHeight = 20
-                UseMultiTitle = True
-                IsDrawNullRow = False
-                CurrencySymbol = #65509
-                DecimalNumber = 2
-                DigitalNumber = 12
-                OnDrawColumnCell = DBGridEh2DrawColumnCell
-                Columns = <
-                  item
-                    Color = clBtnFace
-                    EditButtons = <>
-                    FieldName = 'SEQNO'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #24207#21495
-                    Width = 28
-                  end
-                  item
-                    DisplayFormat = '0000-00-00'
-                    EditButtons = <>
-                    FieldName = 'CREA_DATE'
-                    Footers = <>
-                    Title.Caption = #32467#36134#26085#26399
-                    Width = 84
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER_TEXT'
-                    Footers = <>
-                    Title.Caption = #32467#36134#20154
-                    Width = 75
-                  end
-                  item
-                    DisplayFormat = '0000-00-00'
-                    EditButtons = <>
-                    FieldName = 'CHK_USER_TEXT'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #23457#26680#20154
-                    Width = 75
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CHK_DATE'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #23457#26680#26085#26399
-                    Width = 83
-                  end>
-              end
-            end
-            object RzPanel10: TRzPanel
-              Left = 7
-              Top = 7
-              Width = 751
-              Height = 74
-              Align = alTop
-              BorderOuter = fsNone
-              Color = clWhite
-              TabOrder = 1
-              object RzLabel1: TRzLabel
-                Left = 24
-                Top = 15
-                Width = 48
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #32467#36134#26085#26399
-              end
-              object RzLabel4: TRzLabel
-                Left = 186
-                Top = 15
-                Width = 12
-                Height = 12
-                Caption = #33267
-              end
-              object Label1: TLabel
-                Left = 38
-                Top = 42
-                Width = 36
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #32467#36134#20154
-              end
-              object P2_D1: TcxDateEdit
-                Left = 80
-                Top = 11
-                Width = 97
-                Height = 20
-                Properties.DateButtons = [btnToday]
-                TabOrder = 0
-              end
-              object P2_D2: TcxDateEdit
-                Left = 205
-                Top = 11
-                Width = 98
-                Height = 20
-                Properties.DateButtons = [btnToday]
-                TabOrder = 1
-              end
-              object RzBitBtn1: TRzBitBtn
-                Left = 443
-                Top = 33
-                Width = 67
-                Height = 32
-                Action = actFind
-                Caption = #26597#35810
-                Color = clSilver
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = [fsBold]
-                HighlightColor = 16026986
-                HotTrack = True
-                HotTrackColor = 3983359
-                HotTrackColorType = htctActual
-                ParentFont = False
-                TextShadowColor = clWhite
-                TextShadowDepth = 4
-                TabOrder = 2
-                TextStyle = tsRaised
-                ThemeAware = False
-                ImageIndex = 12
-                NumGlyphs = 2
-                Spacing = 5
-              end
-              object fndP2_STATUS: TcxRadioGroup
-                Left = 316
-                Top = 2
-                Width = 105
-                Height = 63
-                ItemIndex = 0
-                Properties.Items = <
-                  item
-                    Caption = #20840#37096
-                  end
-                  item
-                    Caption = #24453#23457#26680
-                  end
-                  item
-                    Caption = #24050#23457#26680
-                  end>
-                TabOrder = 3
-                Caption = ''
-              end
-              object fndP2_CREA_USER: TzrComboBoxList
-                Left = 80
-                Top = 38
-                Width = 114
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 4
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'ACCOUNT;USER_NAME'
-                KeyField = 'USER_ID'
-                ListField = 'USER_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCOUNT'
-                    Footers = <>
-                    Title.Caption = #24080#21495
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'USER_NAME'
-                    Footers = <>
-                    Title.Caption = #22995#21517
-                    Width = 130
-                  end>
-                DropWidth = 180
-                DropHeight = 150
-                ShowTitle = True
-                AutoFitColWidth = True
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = [zbClear]
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
-            end
-          end
-        end
         object TabSheet3: TRzTabSheet
-          Caption = #36130#21153#26376#32467#36134
+          Caption = #36130#21153#26376#26411#32467#36134
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -847,6 +613,243 @@ inherited frmRckMng: TfrmRckMng
                 Month = 0
                 asString = '000000'
                 asFormatString = '0000-00'
+              end
+            end
+          end
+        end
+        object TabSheet2: TRzTabSheet
+          TabVisible = False
+          Caption = #36130#21153#26085#32467#36134
+          object RzPanel6: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 765
+            Height = 471
+            Align = alClient
+            BorderInner = fsGroove
+            BorderOuter = fsNone
+            BorderWidth = 5
+            TabOrder = 0
+            object RzPanel7: TRzPanel
+              Left = 7
+              Top = 81
+              Width = 751
+              Height = 383
+              Align = alClient
+              BorderOuter = fsNone
+              Color = clWhite
+              TabOrder = 0
+              object DBGridEh2: TDBGridEh
+                Left = 0
+                Top = 0
+                Width = 751
+                Height = 383
+                Align = alClient
+                AllowedOperations = [alopUpdateEh]
+                DataSource = Ds_CloseDay
+                Flat = True
+                FooterColor = clWindow
+                FooterFont.Charset = GB2312_CHARSET
+                FooterFont.Color = clWindowText
+                FooterFont.Height = -12
+                FooterFont.Name = #23435#20307
+                FooterFont.Style = []
+                FrozenCols = 1
+                Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                RowHeight = 20
+                SumList.Active = True
+                TabOrder = 0
+                TitleFont.Charset = GB2312_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -12
+                TitleFont.Name = #23435#20307
+                TitleFont.Style = []
+                TitleHeight = 20
+                UseMultiTitle = True
+                IsDrawNullRow = False
+                CurrencySymbol = #65509
+                DecimalNumber = 2
+                DigitalNumber = 12
+                OnDrawColumnCell = DBGridEh2DrawColumnCell
+                Columns = <
+                  item
+                    Color = clBtnFace
+                    EditButtons = <>
+                    FieldName = 'SEQNO'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #24207#21495
+                    Width = 28
+                  end
+                  item
+                    DisplayFormat = '0000-00-00'
+                    EditButtons = <>
+                    FieldName = 'CREA_DATE'
+                    Footers = <>
+                    Title.Caption = #32467#36134#26085#26399
+                    Width = 84
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CREA_USER_TEXT'
+                    Footers = <>
+                    Title.Caption = #32467#36134#20154
+                    Width = 75
+                  end
+                  item
+                    DisplayFormat = '0000-00-00'
+                    EditButtons = <>
+                    FieldName = 'CHK_USER_TEXT'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #23457#26680#20154
+                    Width = 75
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CHK_DATE'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #23457#26680#26085#26399
+                    Width = 83
+                  end>
+              end
+            end
+            object RzPanel10: TRzPanel
+              Left = 7
+              Top = 7
+              Width = 751
+              Height = 74
+              Align = alTop
+              BorderOuter = fsNone
+              Color = clWhite
+              TabOrder = 1
+              object RzLabel1: TRzLabel
+                Left = 24
+                Top = 15
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #32467#36134#26085#26399
+              end
+              object RzLabel4: TRzLabel
+                Left = 186
+                Top = 15
+                Width = 12
+                Height = 12
+                Caption = #33267
+              end
+              object Label1: TLabel
+                Left = 38
+                Top = 42
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #32467#36134#20154
+              end
+              object P2_D1: TcxDateEdit
+                Left = 80
+                Top = 11
+                Width = 97
+                Height = 20
+                Properties.DateButtons = [btnToday]
+                TabOrder = 0
+              end
+              object P2_D2: TcxDateEdit
+                Left = 205
+                Top = 11
+                Width = 98
+                Height = 20
+                Properties.DateButtons = [btnToday]
+                TabOrder = 1
+              end
+              object RzBitBtn1: TRzBitBtn
+                Left = 443
+                Top = 33
+                Width = 67
+                Height = 32
+                Action = actFind
+                Caption = #26597#35810
+                Color = clSilver
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                HotTrackColorType = htctActual
+                ParentFont = False
+                TextShadowColor = clWhite
+                TextShadowDepth = 4
+                TabOrder = 2
+                TextStyle = tsRaised
+                ThemeAware = False
+                ImageIndex = 12
+                NumGlyphs = 2
+                Spacing = 5
+              end
+              object fndP2_STATUS: TcxRadioGroup
+                Left = 316
+                Top = 2
+                Width = 105
+                Height = 63
+                ItemIndex = 0
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 3
+                Caption = ''
+              end
+              object fndP2_CREA_USER: TzrComboBoxList
+                Left = 80
+                Top = 38
+                Width = 114
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 4
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'ACCOUNT;USER_NAME'
+                KeyField = 'USER_ID'
+                ListField = 'USER_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCOUNT'
+                    Footers = <>
+                    Title.Caption = #24080#21495
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                    Title.Caption = #22995#21517
+                    Width = 130
+                  end>
+                DropWidth = 180
+                DropHeight = 150
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
               end
             end
           end

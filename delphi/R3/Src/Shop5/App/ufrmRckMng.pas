@@ -283,7 +283,7 @@ begin
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
       'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag';
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       if P2_D1.EditValue = null then Exception.Create('结账日期不能为空!');
       if P2_D2.EditValue = null then Exception.Create('结账日期不能为空!');
@@ -303,7 +303,7 @@ begin
       ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by CREA_DATE desc';
       result := StrSql;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       if P3_M1.asString = '' then Exception.Create('结账月份不能为空!');
       if P3_M2.asString = '' then Exception.Create('结账月份不能为空!');
@@ -420,13 +420,13 @@ begin
       if TfrmBatchCloseForDay.EditDialog(Self) then
         Open;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       if not frmShopMain.actfrmDaysClose.Enabled then Raise Exception.Create('你没有日结账权限，不能完成操作此功能.');
       frmShopMain.actfrmDaysClose.OnExecute(nil);
       Open;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       if not frmShopMain.actfrmMonthClose.Enabled then Raise Exception.Create('你没有月结账权限，不能完成操作此功能.');
       frmShopMain.actfrmMonthClose.OnExecute(nil);
@@ -469,11 +469,11 @@ begin
       if cdsBrowser.IsEmpty and (not cdsBrowser.Active) then Exit;
       Cancel;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       CancelD;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       CancelM;
     end;
@@ -707,11 +707,11 @@ begin
     begin
       Audit1;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       Audit2;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       Audit3;
     end;

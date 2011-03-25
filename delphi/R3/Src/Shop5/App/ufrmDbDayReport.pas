@@ -142,9 +142,9 @@ type
     procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -286,20 +286,24 @@ begin
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
     ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then (sum(DBIN_CST))/sum(DBIN_AMT/'+UnitCalc+') else 0 end as DBIN_PRC '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then (sum(DBOUT_CST))/sum(DBOUT_AMT/'+UnitCalc+') else 0 end as DBOUT_PRC '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
-  Result :=  ParseSQL(Factor.iDbType,
+
+  strSql :=
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=8 and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
-    );
+    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
+    ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID ';
+
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmDbDayReport.GetRowType: integer;
@@ -335,7 +339,6 @@ begin
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetGodsSQL;
-        showmessage(strSql);
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
@@ -428,25 +431,27 @@ begin
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
     ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then (sum(DBIN_CST))/sum(DBIN_AMT/'+UnitCalc+') else 0 end as DBIN_PRC '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then (sum(DBOUT_CST))/sum(DBOUT_AMT/'+UnitCalc+') else 0 end as DBOUT_PRC '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
-  Result :=  ParseSQL(Factor.iDbType,
-    'select j.* '+
-    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO'
-    );
 
+  strSql :=    
+    'select j.* '+
+    ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME from ('+strSql+') j '+
+    ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO ';
+
+  Result :=  ParseSQL(Factor.iDbType, StrSql);
 end;
 
 function TfrmDbDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc,JoinCnd: string;  //单位计算关系
   strSql,strCnd,strWhere,GoodTab,SQLData,lv: widestring;
 begin
   result:='';
@@ -530,23 +535,28 @@ begin
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
     1:begin
+       case Factor.iDbType of
+        4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
+        else
+          JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+       end;    
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then (sum(DBIN_CST))/sum(DBIN_AMT) else 0 end as DBIN_PRC '+
+          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIN_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
-          ',case when sum(DBOUT_AMT)<>0 then (sum(DBOUT_CST))/sum(DBOUT_AMT) else 0 end as DBOUT_PRC '+
+          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
           'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 '+
-          'union all '+
-          'select distinct RELATION_ID,cast(RELATION_ID as varchar) as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
+          'union all '+             
+          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 ) j '+
           'left outer join ('+strSql+') r '+
-          ' on j.RELATION_ID=r.RELATION_ID and r.LEVEL_ID like j.LEVEL_ID'+GetStrJoin(Factor.iDbType)+'''%'' '+
+          ' on j.RELATION_ID=r.RELATION_ID '+JoinCnd+' '+
           ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
        );
       end;
@@ -555,11 +565,11 @@ begin
         'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then sum(DBIN_CST)/sum(DBIN_AMT) else 0 end as DBIN_PRC '+
+          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIN_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
-          ',case when sum(DBOUT_AMT)<>0 then sum(DBOUT_CST)/sum(DBOUT_AMT) else 0 end as DBOUT_CST '+
+          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_CST '+
         ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
@@ -569,11 +579,11 @@ begin
         'select '+
           ' sum(DBIN_AMT) as DBIN_AMT '+
           ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then sum(DBIN_CST)/sum(DBIN_AMT) else 0 end as DBIN_PRC '+
+          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
           ',sum(DBIN_RTL) as DBIn_RTL '+
           ',sum(DBOUT_AMT) as DBOUT_AMT '+
           ',sum(DBOUT_CST) as DBOUT_CST '+
-          ',case when sum(DBOUT_AMT)<>0 then sum(DBOUT_CST)/sum(DBOUT_AMT) else 0 end as DBOUT_PRC '+
+          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j '+
           'left outer join '+
@@ -633,7 +643,11 @@ begin
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid4+''' ';
+    end;
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
@@ -661,11 +675,11 @@ begin
     ',A.GODS_ID '+
     ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',case when sum(DBIN_AMT)<>0 then sum(DBIN_CST)/sum(DBIN_AMT/'+UnitCalc+') else 0 end as DBIN_PRC '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
     ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',case when sum(DBOUT_AMT)<>0 then sum(DBOUT_CST)/sum(DBOUT_AMT/'+UnitCalc+') else 0 end as DBOUT_PRC '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
@@ -731,7 +745,11 @@ begin
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid5+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    end;
     if trim(sid5)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
@@ -992,14 +1010,6 @@ begin
   Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
 end;
 
-procedure TfrmDbDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 function TfrmDbDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
   FindCmp1,FindCmp2: TComponent;
@@ -1022,6 +1032,14 @@ begin
   sid5 := '';
   srid5 :='';
   fndP5_SORT_ID.Text := '';
+end;
+
+procedure TfrmDbDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 end.

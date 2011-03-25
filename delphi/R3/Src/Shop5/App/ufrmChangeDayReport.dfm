@@ -15,8 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 516
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1048,6 +1050,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
@@ -1064,6 +1068,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 84
@@ -1072,6 +1078,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25104#26412
                       Width = 80
@@ -1080,6 +1088,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
@@ -1892,7 +1902,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh5DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <

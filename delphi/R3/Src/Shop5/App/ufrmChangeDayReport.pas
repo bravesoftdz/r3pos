@@ -140,8 +140,6 @@ type
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -162,6 +160,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -190,8 +190,6 @@ type
     function  GetVIWFields: string;  //根据CodeId返回Change视图的查询字段:
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
-    { Public declarations }
-    HasChild:boolean;
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property CodeId:string read FCodeId write SetCodeId;
@@ -229,15 +227,10 @@ begin
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  HasChild := (ShopGlobal.GetZQueryFromName('CA_SHOP_INFO').RecordCount>1);
-  rzPage.Pages[0].TabVisible := HasChild;
-  rzPage.Pages[1].TabVisible := HasChild;
-  if not HasChild then
-     rzPage.ActivePageIndex := 2
-  else
-     rzPage.ActivePageIndex := 0;
+
+  SetRzPageActivePage;  //设置默认RzPage
   RefreshColumn;
-  
+
   //添加DeptID
   rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
   if (rs<>nil) and (rs.Active) and (not rs.IsEmpty) then
@@ -327,19 +320,21 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
     ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
-  Result :=  ParseSQL(Factor.iDbType,
+
+  //关联行政区域
+  strSql:=
     'select j.* '+
     ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
-    ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
-    );
+    ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID ';
+  Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmChangeDayReport.GetRowType: integer;
@@ -441,7 +436,11 @@ begin
   if (trim(fndP2_SORT_ID.Text)<>'')  and (trim(srid2)<>'') then
   begin
     GoodTab:='VIW_GOODSINFO_SORTEXT';
-    strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
+     else
+       strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    end;
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
@@ -470,7 +469,7 @@ begin
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
     ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -561,7 +560,7 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
     ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -716,7 +715,7 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ',A.GODS_ID as GODS_ID '+
     ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then sum(CHANGE'+CodeId+'_RTL)/sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') else 0 end as APRICE '+  //--均价
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -1037,14 +1036,6 @@ begin
   Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
 end;
 
-procedure TfrmChangeDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 function TfrmChangeDayReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
   FindCmp1,FindCmp2: TComponent;
@@ -1104,6 +1095,14 @@ procedure TfrmChangeDayReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 end.

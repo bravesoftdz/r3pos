@@ -2652,6 +2652,7 @@ end;
 
 procedure tfrmGoodsInfo.UpdateUNITSData;
 var
+  i: integer;
   Rs: TZQuery;
 begin
   if DropUNITS_Ds=nil then
@@ -2662,7 +2663,7 @@ begin
     edtBIG_UNITS.DataSet:=DropUNITS_Ds;
   end;
   
-  Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+  {Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
   if (Rs<>nil) and (Rs.Active) then
   begin
     DropUNITS_Ds.Close;
@@ -2672,6 +2673,21 @@ begin
       DropUNITS_Ds.Filtered:=False;
       DropUNITS_Ds.Filter:=' RELATION_FLAG=''2'' ';
       DropUNITS_Ds.Filtered:=true;
+    end;
+  end;}
+  
+  Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+  if (Rs<>nil) and (Rs.Active) then
+  begin
+    DropUNITS_Ds.Close;
+    DropUNITS_Ds.Data:=Rs.Data;
+    for i:=DropUNITS_Ds.RecordCount downto 1 do
+    begin
+      if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)='2' then //判断到非自主创建的
+      begin
+        DropUNITS_Ds.RecNo:=i;
+        DropUNITS_Ds.Delete;
+      end;
     end;
   end;
 end;

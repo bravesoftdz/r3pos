@@ -36,13 +36,14 @@ type
     Label7: TLabel;
     Label6: TLabel;
     edtSHOP_SPELL: TcxTextEdit;
-    Label25: TLabel;
-    edtREGION_ID: TzrComboBoxList;
     cdsTable: TZQuery;
     edtLICENSE_CODE: TcxTextEdit;
     Label2: TLabel;
     Label9: TLabel;
     edtSHOP_TYPE: TzrComboBoxList;
+    Label25: TLabel;
+    edtREGION_ID: TzrComboBoxList;
+    Label10: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -81,8 +82,6 @@ begin
   dbState := dsInsert;
   edtSHOP_ID.Text := TSequence.GetMaxID(inttostr(Global.TENANT_ID),Factor,'SHOP_ID','CA_SHOP_INFO','0000','TENANT_ID='+inttostr(Global.TENANT_ID));
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  edtREGION_ID.KeyValue:='#';
-  edtREGION_ID.Text:='无区域';
   edtSHOP_TYPE.KeyValue := '#';
   edtSHOP_TYPE.Text := '无';
   if Visible and edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
@@ -121,13 +120,7 @@ begin
     Factor.Open(cdsTable,'TShop',Params);
     AObj.ReadFromDataSet(cdsTable);
     ReadFromObject(AObj,self);
-    
-    if Aobj.FieldByName('REGION_ID').AsString = '#' then
-      begin
-        edtREGION_ID.Text:='无区域';
-        edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
-      end
-    else
+    if Aobj.FieldByName('REGION_ID').AsString <> '' then
       begin
         edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
         edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
@@ -178,6 +171,11 @@ begin
   begin
     if edtSHOP_TYPE.CanFocus then edtSHOP_TYPE.SetFocus;
     raise Exception.Create('管理群组不能为空!');
+  end;
+  if trim(edtREGION_ID.Text)='' then
+  begin
+    if edtREGION_ID.CanFocus then edtREGION_ID.SetFocus;
+    raise Exception.Create('所属区域不能为空!');
   end;
   if trim(edtLICENSE_CODE.Text)='' then
   begin

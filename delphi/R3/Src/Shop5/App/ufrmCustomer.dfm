@@ -11,19 +11,19 @@ inherited frmCustomer: TfrmCustomer
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 797
-    Height = 477
+    Height = 471
     inherited RzPanel2: TRzPanel
       Width = 787
-      Height = 467
+      Height = 461
       inherited RzPage: TRzPageControl
         Width = 781
-        Height = 461
+        Height = 455
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20250#21592#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 779
-            Height = 434
+            Height = 428
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -328,7 +328,7 @@ inherited frmCustomer: TfrmCustomer
                 DropHeight = 160
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
@@ -339,7 +339,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 5
               Top = 113
               Width = 769
-              Height = 316
+              Height = 310
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -348,7 +348,7 @@ inherited frmCustomer: TfrmCustomer
                 Left = 5
                 Top = 5
                 Width = 759
-                Height = 287
+                Height = 281
                 Align = alClient
                 DataSource = Ds_Customer
                 Flat = True
@@ -524,7 +524,7 @@ inherited frmCustomer: TfrmCustomer
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 292
+                Top = 286
                 Width = 759
                 Height = 19
                 Align = alBottom
@@ -553,17 +553,18 @@ inherited frmCustomer: TfrmCustomer
   inherited RzPanel4: TRzPanel
     Width = 797
     inherited Image1: TImage
-      Left = 622
-      Width = 166
-    end
-    inherited Image14: TImage
-      Left = 788
+      Left = 466
+      Width = 311
     end
     inherited Image3: TImage
-      Left = 622
-      Width = 166
+      Left = 466
+      Width = 311
+    end
+    inherited Image14: TImage
+      Left = 777
     end
     inherited rzPanel5: TPanel
+      Left = 466
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #20250#21592#26723#26696
@@ -578,11 +579,10 @@ inherited frmCustomer: TfrmCustomer
           FixedSize = True
           ImageIndex = -1
           MinHeight = 446
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 446
-        ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0

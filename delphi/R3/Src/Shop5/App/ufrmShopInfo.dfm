@@ -1,6 +1,6 @@
 inherited frmShopInfo: TfrmShopInfo
   Left = 581
-  Top = 263
+  Top = 248
   Caption = #38376#24215#26723#26696
   ClientHeight = 348
   ClientWidth = 534
@@ -17,21 +17,21 @@ inherited frmShopInfo: TfrmShopInfo
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 95
+      Top = 113
       Width = 524
-      Height = 203
+      Height = 185
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #35814#32454#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 520
-          Height = 176
+          Height = 158
           BorderColor = clWhite
           Color = clWhite
           object Label18: TLabel
             Left = 15
-            Top = 9
+            Top = 13
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -39,8 +39,8 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #36127#36131#20154
           end
           object Label16: TLabel
-            Left = 15
-            Top = 57
+            Left = 265
+            Top = 37
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -48,8 +48,8 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #20256#30495
           end
           object Label17: TLabel
-            Left = 15
-            Top = 33
+            Left = 265
+            Top = 13
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -58,7 +58,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object Label22: TLabel
             Left = 15
-            Top = 81
+            Top = 61
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -67,7 +67,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object Label26: TLabel
             Left = 15
-            Top = 105
+            Top = 85
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -75,105 +75,55 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #22791#27880
           end
           object Label20: TLabel
-            Left = 265
-            Top = 57
+            Left = 15
+            Top = 37
             Width = 80
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
             Caption = #37038#32534
           end
-          object Label25: TLabel
-            Left = 265
-            Top = 33
-            Width = 80
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #22320#21306
-          end
           object edtLINKMAN: TcxTextEdit
             Left = 106
-            Top = 5
+            Top = 9
             Width = 120
             Height = 20
             TabOrder = 0
           end
           object edtFAXES: TcxTextEdit
-            Left = 106
-            Top = 53
+            Left = 356
+            Top = 33
+            Width = 120
+            Height = 20
+            TabOrder = 3
+          end
+          object edtTELEPHONE: TcxTextEdit
+            Left = 356
+            Top = 9
             Width = 120
             Height = 20
             TabOrder = 2
           end
-          object edtTELEPHONE: TcxTextEdit
-            Left = 106
-            Top = 29
-            Width = 120
-            Height = 20
-            TabOrder = 1
-          end
           object edtADDRESS: TcxTextEdit
             Left = 106
-            Top = 77
+            Top = 57
             Width = 370
-            Height = 20
-            TabOrder = 5
-          end
-          object edtREMARK: TcxMemo
-            Left = 106
-            Top = 101
-            Width = 370
-            Height = 68
-            TabOrder = 6
-          end
-          object edtPOSTALCODE: TcxTextEdit
-            Left = 356
-            Top = 53
-            Width = 120
             Height = 20
             TabOrder = 4
           end
-          object edtREGION_ID: TzrComboBoxList
-            Left = 356
-            Top = 29
+          object edtREMARK: TcxMemo
+            Left = 106
+            Top = 81
+            Width = 370
+            Height = 68
+            TabOrder = 5
+          end
+          object edtPOSTALCODE: TcxTextEdit
+            Left = 106
+            Top = 33
             Width = 120
             Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            TabOrder = 3
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-            KeyField = 'CODE_ID'
-            ListField = 'CODE_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CODE_NAME'
-                Footers = <>
-                Title.Caption = #21517#31216
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CODE_ID'
-                Footers = <>
-                Title.Caption = #32534#30721
-                Width = 36
-              end>
-            DropWidth = 170
-            DropHeight = 228
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbClear]
-            DropListStyle = lsFixed
-            MultiSelect = False
+            TabOrder = 1
           end
         end
       end
@@ -246,7 +196,7 @@ inherited frmShopInfo: TfrmShopInfo
       Left = 5
       Top = 5
       Width = 524
-      Height = 90
+      Height = 108
       Align = alTop
       BorderOuter = fsNone
       Color = clWhite
@@ -382,6 +332,29 @@ inherited frmShopInfo: TfrmShopInfo
         Font.Style = []
         ParentFont = False
       end
+      object Label25: TLabel
+        Left = 14
+        Top = 83
+        Width = 80
+        Height = 12
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = #25152#23646#22320#21306
+      end
+      object Label10: TLabel
+        Left = 227
+        Top = 83
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = '*'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtSHOP_ID: TcxTextEdit
         Tag = 1
         Left = 106
@@ -405,14 +378,14 @@ inherited frmShopInfo: TfrmShopInfo
         Width = 120
         Height = 20
         TabStop = False
-        TabOrder = 4
+        TabOrder = 5
       end
       object edtLICENSE_CODE: TcxTextEdit
         Left = 356
         Top = 54
         Width = 120
         Height = 20
-        TabOrder = 3
+        TabOrder = 4
       end
       object edtSHOP_TYPE: TzrComboBoxList
         Left = 106
@@ -447,6 +420,47 @@ inherited frmShopInfo: TfrmShopInfo
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew, zbClear]
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
+      object edtREGION_ID: TzrComboBoxList
+        Left = 106
+        Top = 79
+        Width = 120
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 3
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+        KeyField = 'CODE_ID'
+        ListField = 'CODE_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'CODE_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end
+          item
+            EditButtons = <>
+            FieldName = 'CODE_ID'
+            Footers = <>
+            Title.Caption = #32534#30721
+            Width = 36
+          end>
+        DropWidth = 170
+        DropHeight = 228
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbClear]
         DropListStyle = lsFixed
         MultiSelect = False
       end

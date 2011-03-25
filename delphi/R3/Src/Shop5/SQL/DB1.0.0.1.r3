@@ -464,9 +464,9 @@ insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,tim
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('B','银联','YL','1',2,'00',5497000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('C','储值卡','CZK','1',3,'00',5497000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('D','记账','JZ','1',4,'00',5497000);
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','礼券','LQ','1',5,'00',5497000);
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','转账','LQ','1',5,'00',5497000);
 insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1',6,'00',5497000);
-insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','小额支付','XEZF','1',7,'00',5497000);
+insert into PUB_CODE_INFO(code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','礼券','XEZF','1',7,'00',5497000);
 
 --销售单明细
 CREATE TABLE [SAL_SALESDATA] (

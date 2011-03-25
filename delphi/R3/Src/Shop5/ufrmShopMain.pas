@@ -267,6 +267,8 @@ type
     actfrmPayDayReport: TAction;
     actfrmPayAbleReport: TAction;
     actfrmRecvAbleReport: TAction;
+    actfrmDbDayReport: TAction;
+    actfrmGodsRunningReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -352,6 +354,8 @@ type
     procedure actfrmRecvAbleReportExecute(Sender: TObject);
     procedure actfrmPayAbleReportExecute(Sender: TObject);
     procedure actfrmStorageTrackingExecute(Sender: TObject);
+    procedure actfrmDbDayReportExecute(Sender: TObject);
+    procedure actfrmGodsRunningReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -386,7 +390,7 @@ type
     procedure RemoveFrom(form:TForm);
     property Logined:boolean read FLogined write SetLogined;
     property Loging:boolean read FLoging write SetLoging;
-    property SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;    
+    property SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;
   end;
 
 var
@@ -402,7 +406,7 @@ uses
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
-  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking;
+  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2410,6 +2414,50 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmStorageTracking.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDbDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmDbDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmDbDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmGodsRunningReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmGodsRunningReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmGodsRunningReport.Create(self);
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;

@@ -16241,6 +16241,16 @@ inherited frmShopMain: TfrmShopMain
       Caption = #24212#25910#36134#27454#25253#34920
       OnExecute = actfrmRecvAbleReportExecute
     end
+    object actfrmDbDayReport: TAction
+      Tag = 41600001
+      Caption = #21830#21697#35843#25320#25253#34920
+      OnExecute = actfrmDbDayReportExecute
+    end
+    object actfrmGodsRunningReport: TAction
+      Tag = 42200001
+      Caption = #21830#21697#27969#27700#25253#34920
+      OnExecute = actfrmGodsRunningReportExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

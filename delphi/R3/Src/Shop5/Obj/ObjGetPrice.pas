@@ -119,7 +119,8 @@ begin
        'from VIW_GOODSPRICE  where GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID and PRICE_ID=''#''';
     rs.Params.AssignValues(Params);
     AGlobal.Open(rs);
-    if rs.IsEmpty or (rs.FieldbyName('POLICY_TYPE').AsInteger=1) then  //没有门店定价取总店定价
+//视图已改为会智能判断了    
+{    if rs.IsEmpty or (rs.FieldbyName('POLICY_TYPE').AsInteger=1) then  //没有门店定价取总店定价
        begin
         rs.Close;
         rs.SQL.Text :=
@@ -128,7 +129,7 @@ begin
         rs.Params.AssignValues(Params);
         rs.ParamByName('SHOP_ID_ROOT').AsString := Params.ParambyName('TENANT_ID').AsString+'0001';
         AGlobal.Open(rs);
-       end;
+       end;  }
     if Params.ParamByName('UNIT_ID').asString=rs.FieldbyName('SMALL_UNITS').AsString then
        uFlag := '1'
     else

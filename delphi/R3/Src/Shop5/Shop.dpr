@@ -172,7 +172,9 @@ uses
   ufrmRecvAbleReport in 'App\ufrmRecvAbleReport.pas' {frmRecvAbleReport},
   ufrmPayAbleReport in 'App\ufrmPayAbleReport.pas' {frmPayAbleReport},
   ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
-  ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder};
+  ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder},
+  ufrmDbDayReport in 'App\ufrmDbDayReport.pas' {frmDbDayReport},
+  ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport};
 
 {$R *.res}
 var

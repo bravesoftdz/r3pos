@@ -129,6 +129,7 @@ type
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
   private
+    IsOnDblClick: Boolean;  //是双击DBGridEh标记位  
     sid1,sid2,sid4:string;
     srid1,srid2,srid4:string;
 
@@ -157,6 +158,7 @@ uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort, ufrmCostCalc;
 procedure TfrmJxcTotalReport.FormCreate(Sender: TObject);
 begin
   inherited;
+  IsOnDblClick:=False;
   TDbGridEhSort.InitForm(self,false);
 
   //初始化Items下拉参数:
@@ -246,12 +248,12 @@ begin
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
-    ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
+    ',sum(STOCK_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
-    ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
+    ',sum(SALE_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
@@ -259,19 +261,19 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
     ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
-    ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',-sum(CHANGE1_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
+    ',-sum(CHANGE1_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
     ',-sum(CHANGE1_CST)+sum(ADJ_CST) as CHANGE1_CST '+
-    ',-sum(CHANGE2_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
+    ',-sum(CHANGE2_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
     ',-sum(CHANGE2_CST) as CHANGE2_CST '+
-    ',-sum(CHANGE3_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
+    ',-sum(CHANGE3_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
     ',-sum(CHANGE3_CST) as CHANGE3_CST '+
-    ',-sum(CHANGE4_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
+    ',-sum(CHANGE4_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
-    ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
+    ',-sum(CHANGE5_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
@@ -394,12 +396,12 @@ begin
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P2_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
-    ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
+    ',sum(STOCK_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
-    ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
+    ',sum(SALE_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
@@ -407,19 +409,19 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
     ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
-    ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',-sum(CHANGE1_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
+    ',-sum(CHANGE1_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
     ',-sum(CHANGE1_CST)+sum(ADJ_CST) as CHANGE1_CST '+
-    ',-sum(CHANGE2_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
+    ',-sum(CHANGE2_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
     ',-sum(CHANGE2_CST) as CHANGE2_CST '+
-    ',-sum(CHANGE3_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
+    ',-sum(CHANGE3_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
     ',-sum(CHANGE3_CST) as CHANGE3_CST '+
-    ',-sum(CHANGE4_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
+    ',-sum(CHANGE4_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
-    ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
+    ',-sum(CHANGE5_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
@@ -491,31 +493,31 @@ begin
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P3_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
-    ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
+    ',sum(STOCK_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+
-    ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
+    ',sum(SALE_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
-    ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',-sum(CHANGE1_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
+    ',-sum(CHANGE1_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
     ',-sum(CHANGE1_CST)+sum(ADJ_CST) as CHANGE1_CST '+
-    ',-sum(CHANGE2_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
+    ',-sum(CHANGE2_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
     ',-sum(CHANGE2_CST) as CHANGE2_CST '+
-    ',-sum(CHANGE3_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
+    ',-sum(CHANGE3_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
     ',-sum(CHANGE3_CST) as CHANGE3_CST '+
-    ',-sum(CHANGE4_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
+    ',-sum(CHANGE4_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
-    ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
+    ',-sum(CHANGE5_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
@@ -597,7 +599,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/cast(sum(SALE_CST)as decimal(18,3))*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST)as decimal(18,3))*100 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -640,7 +642,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then sum(SALE_PRF)/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -737,12 +739,12 @@ begin
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+
-    ',sum(STOCK_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
+    ',sum(STOCK_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as STOCK_AMT '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
-    ',sum(SALE_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
+    ',sum(SALE_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as SALE_AMT '+
     ',sum(SALE_RTL) as SALE_RTL '+
     ',sum(SALE_MNY) as SALE_MNY '+
     ',sum(SALE_TAX) as SALE_TAX '+
@@ -750,19 +752,19 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
     ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
-    ',sum(DBIN_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',sum(DBOUT_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',-sum(CHANGE1_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
+    ',-sum(CHANGE1_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE1_AMT '+
     ',-isnull(sum(CHANGE1_CST),0)+isnull(sum(ADJ_CST),0) as CHANGE1_CST '+
-    ',-sum(CHANGE2_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
+    ',-sum(CHANGE2_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE2_AMT '+
     ',-sum(CHANGE2_CST) as CHANGE2_CST '+
-    ',-sum(CHANGE3_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
+    ',-sum(CHANGE3_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE3_AMT '+
     ',-sum(CHANGE3_CST) as CHANGE3_CST '+
-    ',-sum(CHANGE4_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
+    ',-sum(CHANGE4_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE4_AMT '+
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
-    ',-sum(CHANGE5_AMT/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
+    ',-sum(CHANGE5_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
@@ -790,6 +792,7 @@ procedure TfrmJxcTotalReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
+  IsOnDblClick:=true;
   P2_D1.asString := P1_D1.asString;
   P2_D2.asString := P1_D2.asString;
   fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
@@ -810,6 +813,7 @@ procedure TfrmJxcTotalReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
+  IsOnDblClick:=true;  
   P3_D1.asString := P2_D1.asString;
   P3_D2.asString := P2_D2.asString;
   fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
@@ -833,6 +837,7 @@ var
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
+  IsOnDblClick:=true;
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
@@ -1066,6 +1071,12 @@ procedure TfrmJxcTotalReport.CheckCalc(b, e: integer);
 var
   rs:TZQuery;
 begin
+  if IsOnDblClick then
+  begin
+    IsOnDblClick:=False; //重置标记位
+    Exit; //若是双点击[DBGridEh连带查询则不在试算台帐]
+  end;
+
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH>=:END_MONTH';
@@ -1073,7 +1084,7 @@ begin
     rs.ParamByName('END_MONTH').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-      TfrmCostCalc.StartCalc(self);
+      TfrmCostCalc.TryCalcMthAcct(self);
   finally
     rs.Free;
   end;

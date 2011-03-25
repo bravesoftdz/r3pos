@@ -1985,13 +1985,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
+                      Width = 123
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 62
+                      Width = 70
                     end
                     item
                       EditButtons = <>
@@ -2006,6 +2007,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
+                      Width = 27
                     end
                     item
                       DisplayFormat = '#0.0#'

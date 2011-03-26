@@ -7,29 +7,31 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1006
-    Height = 537
+    Width = 1014
+    Height = 548
     inherited RzPanel2: TRzPanel
-      Width = 996
-      Height = 527
+      Width = 1004
+      Height = 538
       inherited RzPage: TRzPageControl
-        Width = 791
-        Height = 521
+        Width = 799
+        Height = 532
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#24212#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 789
-            Height = 494
+            Width = 797
+            Height = 505
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 779
-              Height = 484
+              Width = 787
+              Height = 495
               inherited w1: TRzPanel
-                Width = 779
+                Width = 787
                 Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -152,11 +154,11 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 64
-                Width = 779
-                Height = 420
+                Width = 787
+                Height = 431
                 inherited DBGridEh1: TDBGridEh
-                  Width = 775
-                  Height = 416
+                  Width = 783
+                  Height = 427
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -190,8 +192,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Title.Caption = #36134#27454#37329#39069
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -201,8 +203,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24050#25910#37329#39069
-                      Width = 112
+                      Title.Caption = #24050#32467#31639#37329#39069
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -212,8 +214,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Title.Caption = #20914#36134#37329#39069
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -222,8 +224,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Title.Caption = #26410#32467#31639#37329#39069
+                      Width = 110
                     end>
                 end
               end
@@ -237,7 +239,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -246,7 +248,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -384,7 +386,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 64
                 Width = 787
-                Height = 437
+                Height = 431
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -393,7 +395,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 433
+                  Height = 427
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -467,8 +469,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Title.Caption = #36134#27454#37329#39069
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -478,8 +480,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24050#25910#37329#39069
-                      Width = 112
+                      Title.Caption = #24050#32467#31639#37329#39069
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -489,8 +491,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Title.Caption = #20914#36134#37329#39069
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -499,8 +501,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Title.Caption = #26410#32467#31639#37329#39069
+                      Width = 110
                     end>
                 end
               end
@@ -514,7 +516,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -523,7 +525,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -710,7 +712,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 82
                 Width = 787
-                Height = 419
+                Height = 413
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -720,7 +722,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 415
+                  Height = 409
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -788,8 +790,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Title.Caption = #36134#27454#37329#39069
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -799,8 +801,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24050#25910#37329#39069
-                      Width = 112
+                      Title.Caption = #24050#32467#31639#37329#39069
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -810,8 +812,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Title.Caption = #20914#36134#37329#39069
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -820,8 +822,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Title.Caption = #26410#32467#31639#37329#39069
+                      Width = 110
                     end>
                 end
               end
@@ -830,12 +832,319 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
+          Caption = #21046#21333#20154#24212#25910#27454#27719#24635#34920
+          object RzPanel16: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 797
+            Height = 82
+            Align = alTop
+            BorderOuter = fsGroove
+            BorderSides = [sdLeft, sdTop, sdRight]
+            Color = clWhite
+            TabOrder = 0
+            object RzLabel1: TRzLabel
+              Left = 24
+              Top = 14
+              Width = 48
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #25910#27454#26085#26399
+            end
+            object RzLabel10: TRzLabel
+              Left = 170
+              Top = 14
+              Width = 12
+              Height = 12
+              Caption = #33267
+            end
+            object Label4: TLabel
+              Left = 24
+              Top = 36
+              Width = 48
+              Height = 12
+              Caption = #38376#24215#32676#32452
+            end
+            object Label6: TLabel
+              Left = 24
+              Top = 58
+              Width = 48
+              Height = 12
+              Caption = #38376#24215#21517#31216
+            end
+            object P4_D1: TcxDateEdit
+              Left = 80
+              Top = 10
+              Width = 85
+              Height = 20
+              Properties.DateButtons = [btnToday]
+              TabOrder = 0
+            end
+            object P4_D2: TcxDateEdit
+              Left = 186
+              Top = 10
+              Width = 87
+              Height = 20
+              Properties.DateButtons = [btnToday]
+              TabOrder = 1
+            end
+            object RzBitBtn4: TRzBitBtn
+              Left = 294
+              Top = 41
+              Width = 67
+              Height = 32
+              Action = actFind
+              Caption = #26597#35810
+              Color = clSilver
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              HighlightColor = 16026986
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 2
+              TextStyle = tsRaised
+              ThemeAware = False
+              ImageIndex = 12
+              NumGlyphs = 2
+              Spacing = 5
+            end
+            object fndP4_SHOP_VALUE: TzrComboBoxList
+              Tag = -1
+              Left = 154
+              Top = 32
+              Width = 119
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 3
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+              KeyField = 'CODE_ID'
+              ListField = 'CODE_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CODE_ID'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Width = 20
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = [zbNew, zbClear, zbFind]
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object fndP4_SHOP_TYPE: TcxComboBox
+              Left = 80
+              Top = 32
+              Width = 73
+              Height = 20
+              Properties.DropDownListStyle = lsEditFixedList
+              Properties.Items.Strings = (
+                #34892#25919#21306#22495
+                #31649#29702#32676#32452)
+              TabOrder = 4
+            end
+            object fndP4_SHOP_ID: TzrComboBoxList
+              Tag = -1
+              Left = 80
+              Top = 54
+              Width = 193
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 5
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
+              KeyField = 'SHOP_ID'
+              ListField = 'SHOP_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQ_NO'
+                  Footers = <>
+                  Title.Caption = #20195#30721
+                  Width = 20
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+          end
+          object RzPanel17: TRzPanel
+            Left = 0
+            Top = 82
+            Width = 797
+            Height = 423
+            Align = alClient
+            BorderOuter = fsGroove
+            Color = clWhite
+            TabOrder = 1
+            object DBGridEh4: TDBGridEh
+              Tag = 1
+              Left = 2
+              Top = 2
+              Width = 793
+              Height = 419
+              Align = alClient
+              AllowedOperations = []
+              BorderStyle = bsNone
+              Color = clWhite
+              Ctl3D = True
+              DataSource = dsadoReport4
+              Flat = True
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              FooterColor = clWhite
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clWindowText
+              FooterFont.Height = -12
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 3
+              ImeName = #26497#21697#20116#31508#36755#20837#27861
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+              ParentCtl3D = False
+              ParentFont = False
+              ReadOnly = True
+              RowHeight = 20
+              SumList.Active = True
+              TabOrder = 0
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = [fsBold]
+              TitleHeight = 22
+              UseMultiTitle = True
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDblClick = DBGridEh4DblClick
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
+              OnGetCellParams = DBGridEh1GetCellParams
+              Columns = <
+                item
+                  Alignment = taCenter
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Width = 30
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ACCOUNT'
+                  Footers = <>
+                  Title.Caption = #24037#21495
+                  Width = 79
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'USER_NAME'
+                  Footers = <>
+                  Title.Caption = #21046#21333#20154
+                  Width = 121
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'ACCT_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #36134#27454#37329#39069
+                  Width = 120
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'RECV_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #24050#32467#31639#37329#39069
+                  Width = 110
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'REVE_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #20914#36134#37329#39069
+                  Width = 110
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'RECK_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #26410#32467#31639#37329#39069
+                  Width = 110
+                end>
+            end
+          end
+        end
+        object TabSheet5: TRzTabSheet
+          Color = clCream
           Caption = #24212#25910#27454#26126#32454#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -844,7 +1153,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -888,7 +1197,15 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
-                object P4_D1: TcxDateEdit
+                object Label7: TLabel
+                  Left = 289
+                  Top = 59
+                  Width = 36
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #21046#21333#20154
+                end
+                object P5_D1: TcxDateEdit
                   Left = 80
                   Top = 10
                   Width = 85
@@ -896,7 +1213,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
-                object P4_D2: TcxDateEdit
+                object P5_D2: TcxDateEdit
                   Left = 187
                   Top = 10
                   Width = 86
@@ -905,8 +1222,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   TabOrder = 1
                 end
                 object RzBitBtn3: TRzBitBtn
-                  Left = 294
-                  Top = 41
+                  Left = 427
+                  Top = 44
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -931,7 +1248,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object fndP4_SHOP_VALUE: TzrComboBoxList
+                object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -973,7 +1290,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP4_SHOP_TYPE: TcxComboBox
+                object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
@@ -984,7 +1301,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                     #31649#29702#32676#32452)
                   TabOrder = 4
                 end
-                object fndP4_SHOP_ID: TzrComboBoxList
+                object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 54
@@ -1026,24 +1343,65 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP5_USER_ID: TzrComboBoxList
+                  Left = 328
+                  Top = 55
+                  Width = 89
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = True
+                  TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+                  KeyField = 'USER_ID'
+                  ListField = 'USER_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'ACCOUNT'
+                      Footers = <>
+                      Title.Caption = #24080#21495
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'USER_NAME'
+                      Footers = <>
+                      Title.Caption = #22995#21517
+                      Width = 130
+                    end>
+                  DropWidth = 180
+                  DropHeight = 150
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 82
                 Width = 787
-                Height = 419
+                Height = 413
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
                 TabOrder = 1
-                object DBGridEh4: TDBGridEh
+                object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 415
+                  Height = 409
                   Align = alClient
                   AllowedOperations = []
-                  DataSource = dsadoReport4
+                  DataSource = dsadoReport5
                   Flat = True
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
@@ -1149,13 +1507,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       ReadOnly = True
-                      Title.Caption = #21512#35745#37329#39069
+                      Title.Caption = #36134#27454#37329#39069
                       Title.Font.Charset = GB2312_CHARSET
                       Title.Font.Color = clWindowText
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = [fsBold]
-                      Width = 61
+                      Width = 72
                     end
                     item
                       Alignment = taRightJustify
@@ -1166,13 +1524,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       ReadOnly = True
-                      Title.Caption = #24050#25910#37329#39069
+                      Title.Caption = #24050#32467#31639#37329#39069
                       Title.Font.Charset = GB2312_CHARSET
                       Title.Font.Color = clWindowText
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = [fsBold]
-                      Width = 61
+                      Width = 72
                     end
                     item
                       Alignment = taRightJustify
@@ -1183,13 +1541,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       ReadOnly = True
-                      Title.Caption = #20914#24080#37329#39069
+                      Title.Caption = #20914#36134#37329#39069
                       Title.Font.Charset = GB2312_CHARSET
                       Title.Font.Color = clWindowText
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = [fsBold]
-                      Width = 61
+                      Width = 72
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -1199,13 +1557,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       ReadOnly = True
-                      Title.Caption = #32467#20313#37329#39069
+                      Title.Caption = #26410#32467#31639#37329#39069
                       Title.Font.Charset = GB2312_CHARSET
                       Title.Font.Color = clWindowText
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = [fsBold]
-                      Width = 61
+                      Width = 72
                     end
                     item
                       Alignment = taRightJustify
@@ -1241,8 +1599,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 794
-        Height = 521
+        Left = 802
+        Height = 532
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1258,15 +1616,15 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1006
+    Width = 1014
     inherited Image1: TImage
-      Width = 632
+      Width = 644
     end
     inherited Image3: TImage
-      Width = 632
+      Width = 644
     end
     inherited Image14: TImage
-      Left = 986
+      Left = 994
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel
@@ -1354,5 +1712,17 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
     Params = <>
     Left = 185
     Top = 321
+  end
+  object adoReport5: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 225
+    Top = 321
+  end
+  object dsadoReport5: TDataSource
+    DataSet = adoReport5
+    Left = 225
+    Top = 354
   end
 end

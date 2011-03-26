@@ -43,14 +43,6 @@ type
     DBGridEh3: TDBGridEh;
     dsadoReport3: TDataSource;
     RzPanel13: TRzPanel;
-    Panel6: TPanel;
-    RzPanel14: TRzPanel;
-    RzLabel8: TRzLabel;
-    RzLabel9: TRzLabel;
-    P4_D1: TcxDateEdit;
-    P4_D2: TcxDateEdit;
-    RzBitBtn3: TRzBitBtn;
-    RzPanel15: TRzPanel;
     dsadoReport4: TDataSource;
     Label5: TLabel;
     fndP1_SHOP_TYPE: TcxComboBox;
@@ -62,23 +54,52 @@ type
     Label11: TLabel;
     fndP3_SHOP_VALUE: TzrComboBoxList;
     fndP3_SHOP_TYPE: TcxComboBox;
-    Label12: TLabel;
-    fndP4_SHOP_VALUE: TzrComboBoxList;
-    fndP4_SHOP_TYPE: TcxComboBox;
     Label9: TLabel;
-    Label3: TLabel;
     adoReport2: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
-    fndP4_SHOP_ID: TzrComboBoxList;
     fndP3_SHOP_ID: TzrComboBoxList;
+    TabSheet5: TRzTabSheet;
+    RzPanel14: TRzPanel;
+    RzLabel8: TRzLabel;
+    RzLabel9: TRzLabel;
+    Label12: TLabel;
+    Label3: TLabel;
+    P5_D1: TcxDateEdit;
+    P5_D2: TcxDateEdit;
+    RzBitBtn3: TRzBitBtn;
+    fndP5_SHOP_VALUE: TzrComboBoxList;
+    fndP5_SHOP_TYPE: TcxComboBox;
+    fndP5_SHOP_ID: TzrComboBoxList;
+    Panel6: TPanel;
+    RzPanel15: TRzPanel;
+    DBGridEh5: TDBGridEh;
+    RzPanel16: TRzPanel;
+    RzLabel1: TRzLabel;
+    RzLabel10: TRzLabel;
+    Label4: TLabel;
+    Label6: TLabel;
+    P4_D1: TcxDateEdit;
+    P4_D2: TcxDateEdit;
+    RzBitBtn4: TRzBitBtn;
+    fndP4_SHOP_VALUE: TzrComboBoxList;
+    fndP4_SHOP_TYPE: TcxComboBox;
+    fndP4_SHOP_ID: TzrComboBoxList;
+    RzPanel17: TRzPanel;
     DBGridEh4: TDBGridEh;
+    adoReport5: TZQuery;
+    dsadoReport5: TDataSource;
+    Label7: TLabel;
+    fndP5_USER_ID: TzrComboBoxList;
+    Label8: TLabel;
+    zrComboBoxList1: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure DBGridEh4DblClick(Sender: TObject);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
 
@@ -88,6 +109,8 @@ type
     function GetShopSQL(chk:boolean=true): string;
     //按日期分类汇总表
     function GetRecvDaySQL(chk:boolean=true): string;
+    //按制单人分类汇总表
+    function GetRecvUserSQL(chk:boolean=true): string;
     //应收款流水
     function GetRecvGlideSQL(chk:boolean=true): string;
 
@@ -132,11 +155,12 @@ end;
 
 function TfrmPayAbleReport.GetGroupSQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql, strWhere: string;
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+ 
 
   //按根据条件门店汇总:
   strSql:=
@@ -192,6 +216,13 @@ begin
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
+        strSql := GetRecvUserSQL;
+        if strSql='' then Exit;
+        adoReport4.SQL.Text := strSql;
+        Factor.Open(adoReport4);
+      end;
+    4: begin //按商品汇总表
+        if adoReport5.Active then adoReport5.Close;
         strSql := GetRecvGlideSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
@@ -202,11 +233,20 @@ end;
 
 function TfrmPayAbleReport.GetShopSQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql,strWhere: string;
 begin
   if P2_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+
+  //时间条件:
+  strWhere:=strWhere+' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE');
+
+  //门店群组条件
+  strWhere:=strWhere+' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'');
 
   //按根据条件门店汇总:
   strSql:=
@@ -216,9 +256,8 @@ begin
      ',sum(RECK_MNY) as RECK_MNY '+
      ',sum(REVE_MNY) as REVE_MNY '+
      ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+
-     ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+     ' '+strWhere+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
   //关联
@@ -233,23 +272,31 @@ end;
 
 function TfrmPayAbleReport.GetRecvDaySQL(chk:boolean=true): string;
 var
-  strSql: string;
+  strSql,strWhere: string;
 begin
   if P3_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+
+  //日期条件:
+  strWhere:=strWhere+' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE');
+
+  //门店管理群组:
+  strWhere:=strWhere+' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'');
+
   strSql:=
-     'select ABLE_DATE as RECV_DATE '+
-     ',sum(ACCT_MNY) as ACCT_MNY '+
-     ',sum(PAYM_MNY) as PAYM_MNY '+
-     ',sum(RECK_MNY) as RECK_MNY '+
-     ',sum(REVE_MNY) as REVE_MNY '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+
-     ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
-     ' group by ABLE_DATE ';
+    'select ABLE_DATE as RECV_DATE '+
+    ',sum(ACCT_MNY) as ACCT_MNY '+
+    ',sum(PAYM_MNY) as PAYM_MNY '+
+    ',sum(RECK_MNY) as RECK_MNY '+
+    ',sum(REVE_MNY) as REVE_MNY '+
+    ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' '+strWhere+' '+
+    ' group by ABLE_DATE ';
      
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
@@ -258,34 +305,53 @@ function TfrmPayAbleReport.GetRecvGlideSQL(chk:boolean=true): string;
 var
   strSql,strWhere: string;
 begin
-  if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  if P5_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P5_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+
+  //企业ID
+  strWhere:='and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  //日期：
+  strWhere:=strWhere+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' ';
+  //门店管理群组
+  strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+'  ';  
+
+
 
   //按根据条件门店查询:
   strSql:=
-     'select A.TENANT_ID as TENANT_ID'+
-     ',ABLE_DATE'+
-     ',CLIENT_ID'+
-     ',ABLE_TYPE'+
-     ',ACCT_INFO'+
-     ',ACCT_MNY'+
-     ',REVE_MNY'+
-     ',PAYM_MNY'+
-     ',RECK_MNY'+
-     ',NEAR_DATE'+
-     ',CREA_USER'+
-     ',B.SHOP_NAME as SHOP_ID_TEXT '+
-     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE')+
-     ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' ';
+    'select A.TENANT_ID as TENANT_ID'+
+    ',CREA_USER'+  //制单人
+    ',ABLE_DATE'+
+    ',CLIENT_ID'+
+    ',ABLE_TYPE'+
+    ',ACCT_INFO'+
+    ',ACCT_MNY'+
+    ',REVE_MNY'+
+    ',PAYM_MNY'+
+    ',RECK_MNY'+
+    ',NEAR_DATE'+
+    ',CREA_USER'+
+    ',B.SHOP_NAME as SHOP_ID_TEXT '+
+    ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+strWhere;
 
-  //关联
+  //关联[供应商]
   strSql:=
     'select jb.*,D.CLIENT_NAME from ('+strSql+') jb '+
-    ' left outer join VIW_CLIENTINFO D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID '+
-    ' order by jb.ABLE_DATE ';
+    ' left outer join VIW_CLIENTINFO D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID ';
+    
+  //关联进货单 
+  strSql:=
+    'select jc.*,c.GUIDE_USER from ('+strSql+') jc '+
+    'left outer join STK_STOCKORDER c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID ';
+
+  //关联制单人、验收货人
+  strSql:=
+    'select jd.*,d.USER_NAME as CREA_USER_NAME,e.USER_NAME as GUIDE_USER_NAME  from ('+strSql+')jd '+
+    'left outer join viw_users d on jd.TENANT_ID=d.TENANT_ID and jd.CREA_USER=d.USER_ID '+
+    'left outer join viw_users e on jd.TENANT_ID=e.TENANT_ID and jd.GUIDE_USER=e.USER_ID ';
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -453,6 +519,67 @@ begin
       1: result:=' and '+AName+'SHOP_TYPE='''+TYPE_VALUE.AsString+''' ';
     end;
   end;
+end;
+
+function TfrmPayAbleReport.GetRecvUserSQL(chk: boolean): string;
+var
+  strSql, strWhere: string;
+begin
+  if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+
+  //查询时间条件
+  strWhere:=strWhere+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE');
+
+  //门店管理群组
+  strWhere:=strWhere+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'');
+
+  //制单人：
+  if trim(fndP5_USER_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.CREA_USER='''+trim(fndP5_USER_ID.AsString)+''' ';  
+
+  strSql:=
+     'select A.TENANT_ID as TENANT_ID '+
+     ',A.CREA_USER as CREA_USER '+   //制单人
+     ',sum(ACCT_MNY) as ACCT_MNY '+  //账款金额
+     ',sum(PAYM_MNY) as PAYM_MNY '+  //已支付金额
+     ',sum(RECK_MNY) as RECK_MNY '+  //未支付金额
+     ',sum(REVE_MNY) as REVE_MNY '+  //冲账金额
+     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+  
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+     ' '+strWhere+
+     ' group by A.TENANT_ID,A.CREA_USER ';
+
+  //关联操作员:
+  strSql :=
+    ' select j.*,r.ACCOUNT as ACCOUNT,r.USER_NAME  as USER_NAME from ('+strSql+') j '+
+    ' left outer join viw_users r on '+
+    ' j.TENANT_ID=r.TENANT_ID and j.CREA_USER=r.USER_ID order by r.ACCOUNT ';  
+
+  Result := ParseSQL(Factor.iDbType,strSql);
+end;
+
+procedure TfrmPayAbleReport.DBGridEh4DblClick(Sender: TObject);
+begin
+  inherited;
+  if adoReport4.IsEmpty then Exit;
+  IsOnDblClick:=true; //设置标记位
+  P5_D1.Date:=P4_D1.Date;
+  P5_D2.Date:=P4_D2.Date;
+  fndP5_SHOP_TYPE.ItemIndex:=fndP4_SHOP_TYPE.ItemIndex;
+  fndP5_SHOP_VALUE.KeyValue:=fndP4_SHOP_VALUE.KeyValue;
+  fndP5_SHOP_VALUE.Text:=fndP4_SHOP_VALUE.Text;
+  fndP5_SHOP_ID.KeyValue:=fndP4_SHOP_ID.KeyValue;
+  fndP5_SHOP_ID.Text:=fndP4_SHOP_ID.Text;
+  if RzPage.ActivePageIndex+1<=RzPage.PageCount then
+  begin
+    RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
+    actFind.OnExecute(nil);
+  end;
+
 end;
 
 end.

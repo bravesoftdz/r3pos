@@ -337,18 +337,18 @@ begin
   end;
 
   strSql:=
-    'select A.ABLE_ID'+
-    ',A.SHOP_ID'+
-    ',A.CLIENT_ID'+
+    'select A.ABLE_ID as ABLE_ID '+
+    ',A.SHOP_ID as SHOP_ID '+
+    ',A.CLIENT_ID as CLIENT_ID'+
     ',B.CLIENT_NAME as CLIENT_ID_TEXT'+
-    ',A.ACCT_INFO'+
-    ',A.ABLE_TYPE'+
-    ',A.ACCT_MNY'+
-    ',A.PAYM_MNY'+
-    ',A.REVE_MNY,'+
-    'A.RECK_MNY'+
-    ',A.ABLE_DATE'+
-    ',A.NEAR_DATE'+
+    ',A.ACCT_INFO as ACCT_INFO'+
+    ',A.ABLE_TYPE as ABLE_TYPE'+
+    ',A.ACCT_MNY as ACCT_MNY'+
+    ',A.PAYM_MNY as PAYM_MNY'+
+    ',A.REVE_MNY as REVE_MNY'+
+    ',A.RECK_MNY as RECK_MNY'+
+    ',A.ABLE_DATE as ABLE_DATE'+
+    ',A.NEAR_DATE as NEAR_DATE'+
     ',C.SHOP_NAME as SHOP_ID_TEXT '+
     ' from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C  '+
     ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
@@ -619,28 +619,35 @@ procedure TfrmPayOrderList.AddRecord(AObj: TRecord_);
 var rs:TZQuery;
 begin
   //若不是List分页则同步刷新
-  if not CdsList.Active then Exit;
-  if cdsList.Locate('PAY_ID',AObj.FieldbyName('PAY_ID').AsString,[]) then
-    begin
-      cdsList.Edit;
-      AObj.WriteToDataSet(cdsList,false);
-      cdsList.Post;
-    end
-  else
-    begin
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select GLIDE_NO from ACC_PAYORDER where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PAY_ID='+QuotedStr(AObj.FieldbyName('PAY_ID').AsString);
-        Factor.Open(rs);
-        AObj.FieldByName('GLIDE_NO').AsString := rs.FieldByName('GLIDE_NO').AsString;
-        cdsList.Append;
-        AObj.WriteToDataSet(cdsList,False);
-        cdsList.Post;
-      finally
-        rs.Free;
-      end;
-    end;
+ case RzPage.ActivePageIndex of
+  0:
+  begin
 
+  end;
+  1:
+  begin
+    if cdsList.Locate('PAY_ID',AObj.FieldbyName('PAY_ID').AsString,[]) then
+      begin
+        cdsList.Edit;
+        AObj.WriteToDataSet(cdsList,false);
+        cdsList.Post;
+      end
+    else
+      begin
+        rs := TZQuery.Create(nil);
+        try
+          rs.SQL.Text := 'select GLIDE_NO from ACC_PAYORDER where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PAY_ID='+QuotedStr(AObj.FieldbyName('PAY_ID').AsString);
+          Factor.Open(rs);
+          AObj.FieldByName('GLIDE_NO').AsString := rs.FieldByName('GLIDE_NO').AsString;
+          cdsList.Append;
+          AObj.WriteToDataSet(cdsList,False);
+          cdsList.Post;
+        finally
+          rs.Free;
+        end;
+      end;
+   end;
+  end;
 end;
 
 function TfrmPayOrderList.FindColumn(FieldName: string): TColumnEh;

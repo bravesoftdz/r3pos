@@ -631,13 +631,13 @@ begin
        ',(case when (RECV_TYPE=''3'') and (ACC_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
        ',(case when (RECV_TYPE=''3'') and (ACC_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
        ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
-       ',(case when (RECV_TYPE=''1'') and (ACC_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
-       ',(case when (RECV_TYPE=''1'') and (ACC_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
-       ',(case when  RECV_TYPE=''1'' then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+       ',(case when (RECV_TYPE in (''1'',''4'')) and (ACC_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+       ',(case when (RECV_TYPE in (''1'',''4'')) and (ACC_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+       ',(case when  RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
        ',(case when (RECV_TYPE=''2'') and (ACC_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
        ',(case when (RECV_TYPE=''2'') and (ACC_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
        ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-       ' from VIW_CUSTRECVDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate;
+       ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate;
   end else
   if fndBegDate.Date<fndEndDate.Date then
   begin
@@ -650,9 +650,9 @@ begin
       ',(case when (RECV_TYPE=''3'') and (ACC_DATE<'+vBegDate+' or ACC_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_ADVA_MNY '+   //预收款往日
       ',(case when (RECV_TYPE=''3'') and (ACC_DATE>='+vBegDate+') and (ACC_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_ADVA_MNY '+   //预收款本期
       ',(case when  RECV_TYPE=''3'' then RECV_MNY else 0 end) as ADVA_MNY '+                                     //预收款小计
-      ',(case when (RECV_TYPE=''1'') and (ACC_DATE<'+vBegDate+' or ACC_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
-      ',(case when (RECV_TYPE=''1'') and (ACC_DATE>='+vBegDate+') and (ACC_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
-      ',(case when  RECV_TYPE=''1'' then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
+      ',(case when ((RECV_TYPE in (''1'',''4'')) and (ACC_DATE<'+vBegDate+' or ACC_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RECV_MNY '+   //收款往日
+      ',(case when ((RECV_TYPE in (''1'',''4'')) and (ACC_DATE>='+vBegDate+') and (ACC_DATE<='+vEndDate+')  then RECV_MNY else 0 end) as NEW_RECV_MNY '+   //收款本期
+      ',(case when  (RECV_TYPE in (''1'',''4'') then RECV_MNY else 0 end) as RECV_MNY '+                                     //收款小计
       ',(case when (RECV_TYPE=''2'') and (ACC_DATE<'+vBegDate+' or ACC_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (RECV_TYPE=''2'') and (ACC_DATE>='+vBegDate+') and (ACC_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计

@@ -343,7 +343,7 @@ begin
     ',A.CLIENT_ID'+
     ',B.CLIENT_NAME as CUST_ID_TEXT'+
     ',A.ACCT_INFO'+
-    ',A.RECV_TYPE as ABLE_TYPE'+
+    ',A.RECV_TYPE '+
     ',A.ACCT_MNY'+
     ',A.RECV_MNY'+
     ',A.REVE_MNY,'+
@@ -498,9 +498,7 @@ begin
   ChangeButton;
   if IsEnd2 or not DataSet.Eof then Exit;
   if cdsList.ControlsDisabled then Exit;
-
-  Open2(MaxId2);
-
+  Open2(MaxId2);                        
 end;
 
 procedure TfrmRecvOrderList.DBGridEh2DrawColumnCell(Sender: TObject;
@@ -617,32 +615,41 @@ begin
 end;
 
 procedure TfrmRecvOrderList.AddRecord(AObj: TRecord_);
-var rs:TZQuery;
+var
+  rs:TZQuery;
 begin
   //若不是List分页则同步刷新
-  if not cdsList.Active then Exit;
-  if cdsList.Locate('RECV_ID',AObj.FieldbyName('RECV_ID').AsString,[]) then
-    begin
-      cdsList.Edit;
+  case RzPage.ActivePageIndex of
+   0:  
+   begin
+ 
+   end;
+   1:
+   begin
+      if cdsList.Locate('RECV_ID',AObj.FieldbyName('RECV_ID').AsString,[]) then
+        begin
+          cdsList.Edit;
+          AObj.WriteToDataSet(cdsList,false);
+          cdsList.Post;
+        end
+      else
+        begin
+          rs := TZQuery.Create(nil);
+          try
+            rs.SQL.Text := 'select GLIDE_NO from ACC_RECVORDER where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and RECV_ID='+QuotedStr(AObj.FieldbyName('RECV_ID').AsString);
+            Factor.Open(rs);
+            AObj.FieldByName('GLIDE_NO').AsString := rs.FieldbyName('GLIDE_NO').AsString;
+            cdsList.Append;
+            AObj.WriteToDataSet(cdsList,False);
+            cdsList.Post;
+          finally
+            rs.Free;
+          end;
+        end;
       AObj.WriteToDataSet(cdsList,false);
       cdsList.Post;
-    end
-  else
-    begin
-      rs := TZQuery.Create(nil);
-      try
-        rs.SQL.Text := 'select GLIDE_NO from ACC_RECVORDER where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and RECV_ID='+QuotedStr(AObj.FieldbyName('RECV_ID').AsString);
-        Factor.Open(rs);
-        AObj.FieldByName('GLIDE_NO').AsString := rs.FieldbyName('GLIDE_NO').AsString;
-        cdsList.Append;
-        AObj.WriteToDataSet(cdsList,False);
-        cdsList.Post;
-      finally
-        rs.Free;
-      end;
     end;
-  AObj.WriteToDataSet(cdsList,false);
-  cdsList.Post;
+  end;
 end;
 
 procedure TfrmRecvOrderList.frfRecvOrderGetValue(const ParName: String;

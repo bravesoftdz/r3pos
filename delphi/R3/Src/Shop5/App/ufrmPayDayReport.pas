@@ -592,7 +592,7 @@ begin
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //应退往日
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //应退本日
        ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //应退小计
-       ' from VIW_SUPPAYDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE='+vBegDate;
+       ' from VIW_PAYABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE='+vBegDate;
   end else
   if fndBegDate.Date<fndEndDate.Date then
   begin
@@ -611,7 +611,7 @@ begin
       ',(case when (ABLE_TYPE=''2'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (ABLE_TYPE=''2'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  ABLE_TYPE=''2'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-      ' from VIW_SUPPAYDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE>='+vBegDate+' and ABLE_DATE<='+vEndDate+' ';
+      ' from VIW_PAYABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE>='+vBegDate+' and ABLE_DATE<='+vEndDate+' ';
   end;
   result:=str;
 end;

@@ -17,6 +17,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 521
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -299,7 +301,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'ABLE_TYPE'
+                    FieldName = 'RECV_TYPE'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #36134#27454#31867#22411

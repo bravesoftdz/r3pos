@@ -17,6 +17,8 @@ inherited frmPayOrderList: TfrmPayOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 521
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -279,6 +281,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Width = 32
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'ABLE_DATE'
                     Footer.Value = #21512'   '#35745#65306

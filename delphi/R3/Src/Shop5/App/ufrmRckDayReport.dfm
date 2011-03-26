@@ -8,26 +8,28 @@ inherited frmRckDayReport: TfrmRckDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1014
-    Height = 554
+    Height = 548
     inherited RzPanel2: TRzPanel
       Width = 1004
-      Height = 544
+      Height = 538
       inherited RzPage: TRzPageControl
         Width = 799
-        Height = 538
+        Height = 532
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 797
-            Height = 511
+            Height = 505
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 787
-              Height = 501
+              Height = 495
               inherited w1: TRzPanel
                 Width = 787
                 Height = 64
@@ -153,10 +155,10 @@ inherited frmRckDayReport: TfrmRckDayReport
               inherited RzPanel7: TRzPanel
                 Top = 64
                 Width = 787
-                Height = 437
+                Height = 431
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 433
+                  Height = 427
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -327,7 +329,7 @@ inherited frmRckDayReport: TfrmRckDayReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -336,7 +338,7 @@ inherited frmRckDayReport: TfrmRckDayReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -474,7 +476,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                 Left = 0
                 Top = 64
                 Width = 787
-                Height = 437
+                Height = 431
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -483,7 +485,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 433
+                  Height = 427
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -694,7 +696,7 @@ inherited frmRckDayReport: TfrmRckDayReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -703,7 +705,7 @@ inherited frmRckDayReport: TfrmRckDayReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -890,7 +892,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                 Left = 0
                 Top = 82
                 Width = 787
-                Height = 419
+                Height = 413
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -900,7 +902,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 415
+                  Height = 409
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1096,7 +1098,7 @@ inherited frmRckDayReport: TfrmRckDayReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 511
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1105,7 +1107,7 @@ inherited frmRckDayReport: TfrmRckDayReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 501
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1292,7 +1294,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                 Left = 0
                 Top = 82
                 Width = 787
-                Height = 419
+                Height = 413
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1301,7 +1303,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 415
+                  Height = 409
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1497,7 +1499,7 @@ inherited frmRckDayReport: TfrmRckDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 802
-        Height = 538
+        Height = 532
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1515,13 +1517,13 @@ inherited frmRckDayReport: TfrmRckDayReport
   inherited RzPanel4: TRzPanel
     Width = 1014
     inherited Image1: TImage
-      Width = 499
-    end
-    inherited Image14: TImage
-      Left = 1005
+      Width = 644
     end
     inherited Image3: TImage
-      Width = 499
+      Width = 644
+    end
+    inherited Image14: TImage
+      Left = 994
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

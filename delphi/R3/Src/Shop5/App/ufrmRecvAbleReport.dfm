@@ -1353,7 +1353,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                     item
                       Default = True
                     end>
-                  Properties.ReadOnly = True
+                  Properties.ReadOnly = False
                   TabOrder = 6
                   InGrid = False
                   KeyValue = Null

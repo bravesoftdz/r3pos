@@ -45,6 +45,7 @@ type
     ToolButton4: TToolButton;
     PrintDBGridEh1: TPrintDBGridEh;
     ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;

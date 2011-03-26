@@ -3610,6 +3610,8 @@ CREATE TABLE ACC_RECVABLE_INFO (
 	ACCT_INFO varchar (255) NOT NULL ,
         --类型
 	RECV_TYPE varchar (1) NOT NULL ,
+        --收款方式
+	PAYM_ID varchar (1) NULL ,
         --帐款金额
 	ACCT_MNY decimal(18, 3) ,
         --已收金额

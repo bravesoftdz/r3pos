@@ -31,6 +31,7 @@ type
     DB_ID:string;
     AUDIT_STATUS:string;
   end;
+  
   TCaLogin=record
     TENANT_ID:integer;
     RET:string;
@@ -39,6 +40,11 @@ type
     SRVR_PORT:integer;
     DB_ID:integer;
     SRVR_PATH:string;
+  end;
+  
+  TCaUpgrade=record
+    UpGrade:integer;
+    URL:string;
   end;
 
   rsp = class(TSOAPHeader)
@@ -75,7 +81,9 @@ type
     destructor Destroy;override;
 
     function CreateRio:THTTPRIO;
-    
+
+    function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
+
     function GetHeader(rio:THTTPRIO):rsp;
     function SendHeader(rio:THTTPRIO;flag:integer=1):rsp;
     function CreateXML(xml:string):IXMLDomDocument;
@@ -101,7 +109,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,IniFiles;
+uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,IniFiles;
 { TCaFactory }
 
 procedure TCaFactory.CheckRecAck(doc: IXMLDomDocument);
@@ -215,7 +223,7 @@ begin
       try
         doc := CreateXML(
                      Decode(
-                        GetCaTenantWebServiceImpl(true,URL,rio).getTenantInfo(Encode(inxml,sslpwd))
+                        GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).getTenantInfo(Encode(inxml,sslpwd))
                         ,sslpwd
                      )
                );
@@ -297,7 +305,7 @@ begin
       try
       doc := CreateXML(
                    Decode(
-                      GetCaTenantWebServiceImpl(true,URL,rio).login(Encode(inxml,pubpwd))
+                      GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).login(Encode(inxml,pubpwd))
                       ,pubpwd
                    )
              );
@@ -445,7 +453,7 @@ begin
       try
         doc := CreateXML(
                      Decode(
-                        GetCaTenantWebServiceImpl(true,URL,rio).register(Encode(inxml,pubpwd))
+                        GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).register(Encode(inxml,pubpwd))
                         ,pubpwd
                      )
                );
@@ -484,7 +492,7 @@ var
 begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    URL := f.ReadString('soft','rsp','http://10.10.11.249/services/CaTenantService?wsdl');
+    URL := f.ReadString('soft','rsp','http://jerry/rsp/services/');
     pubpwd := 'SaRi0+jf';
   finally
     f.Free;
@@ -634,6 +642,74 @@ end;
 procedure TCaFactory.SetSessionId(const Value: string);
 begin
   FSessionId := Value;
+end;
+
+function TCaFactory.CheckUpgrade(TENANT_ID, PROD_ID,CurVeraion: string): TCaUpgrade;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caProductCheckUpgradeResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  code:string;
+  h:rsp;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+  
+  Node := doc.createElement('caProductCheckUpgradeReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := TENANT_ID;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  Node := doc.createElement('prodId');
+  Node.text := PROD_ID;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  Node := doc.createElement('curVersion');
+  Node.text := CurVeraion;
+  FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio;
+  try
+    h := SendHeader(rio,1);
+    try
+      try
+      doc := CreateXML(
+                   Decode(
+                      GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio).checkUpgrade(Encode(inxml,pubpwd))
+                      ,pubpwd
+                   )
+             );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+
+    GetHeader(rio).free;
+    CheckRecAck(doc);
+    caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
+    result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
+    result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
+  finally
+    rio.Free;
+  end;
 end;
 
 { rsp }

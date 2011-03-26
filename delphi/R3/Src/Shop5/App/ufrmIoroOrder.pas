@@ -85,6 +85,8 @@ type
     procedure edtPAYM_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     Fcid: string;
     FIoroType: integer;
@@ -364,8 +366,6 @@ begin
   inherited;
   edtACCOUNT_ID.Text := cdsDetail.FieldbyName('ACCOUNT_ID_TEXT').AsString;
   edtACCOUNT_ID.KeyValue := cdsDetail.FieldbyName('ACCOUNT_ID').AsString;
-  edtPAYM_ID.Text := cdsDetail.FieldByName('PAYM_ID_TEXT').AsString;
-  edtPAYM_ID.KeyValue := cdsDetail.FieldbyName('PAYM_ID').AsString;
 
 end;
 
@@ -668,7 +668,6 @@ end;
 procedure TfrmIoroOrder.edtACCOUNT_IDKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
-  inherited;
   if (Key=VK_RIGHT) and not edtACCOUNT_ID.Edited then
      begin
        DBGridEh1.SetFocus;
@@ -827,6 +826,24 @@ procedure TfrmIoroOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
 begin
   inherited;
   if not locked then   BtnOk.Enabled := true;
+end;
+
+procedure TfrmIoroOrder.DBGridEh1Columns2BeforeShowControl(
+  Sender: TObject);
+begin
+  inherited;
+  edtPAYM_ID.Text := cdsDetail.FieldByName('PAYM_ID_TEXT').AsString;
+  edtPAYM_ID.KeyValue := cdsDetail.FieldbyName('PAYM_ID').AsString;
+
+end;
+
+procedure TfrmIoroOrder.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not edtACCOUNT_ID.Focused and not edtPAYM_ID.Focused then
+     begin
+       inherited;
+     end;
+
 end;
 
 end.

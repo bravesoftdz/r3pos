@@ -97,6 +97,7 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Title.Caption = #25903#20184#26041#24335
                 Width = 70
                 Control = edtPAYM_ID
+                OnBeforeShowControl = DBGridEh1Columns2BeforeShowControl
               end
               item
                 Alignment = taRightJustify
@@ -142,7 +143,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             OnExit = edtACCOUNT_IDExit
             OnKeyDown = edtACCOUNT_IDKeyDown
             OnKeyPress = edtACCOUNT_IDKeyPress
-            InGrid = False
+            InGrid = True
             KeyValue = Null
             FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
             KeyField = 'ACCOUNT_ID'
@@ -191,7 +192,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             OnExit = edtPAYM_IDExit
             OnKeyDown = edtPAYM_IDKeyDown
             OnKeyPress = edtPAYM_IDKeyPress
-            InGrid = False
+            InGrid = True
             KeyValue = Null
             FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
             KeyField = 'CODE_ID'

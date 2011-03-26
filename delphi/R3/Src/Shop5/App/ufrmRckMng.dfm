@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 397
-  Top = 124
+  Left = 207
+  Top = 191
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -17,8 +17,6 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 759
         Height = 487
-        ActivePage = TabSheet3
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -200,6 +198,7 @@ inherited frmRckMng: TfrmRckMng
                 TitleFont.Name = #23435#20307
                 TitleFont.Style = []
                 TitleHeight = 20
+                UseMultiTitle = True
                 IsDrawNullRow = False
                 CurrencySymbol = #65509
                 DecimalNumber = 2
@@ -245,81 +244,10 @@ inherited frmRckMng: TfrmRckMng
                   item
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'TOTAL_MNY'
+                    FieldName = 'CLSE_MNY'
                     Footers = <>
-                    Title.Caption = #38144#21806#37329#39069
+                    Title.Caption = #33829#19994#37329#39069
                     Width = 70
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_A'
-                    Footers = <>
-                    Title.Caption = #33829#19994#29616#37329
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'ORG_MNY'
-                    Footers = <>
-                    Title.Caption = #26152#26085#29616#37329
-                    Width = 56
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PUSH_MNY'
-                    Footers = <>
-                    Title.Caption = #20805#20540#29616#37329
-                    Width = 57
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'RECV_MNY'
-                    Footers = <>
-                    Title.Caption = #25209#21457#29616#37329
-                    Width = 55
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAY_MNY'
-                    Footers = <>
-                    Title.Caption = #20184#27454#29616#37329
-                    Width = 57
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'OTH_IN_MNY'
-                    Footers = <>
-                    Title.Caption = #20854#20182#25910#20837
-                    Width = 56
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'OTH_OUT_MNY'
-                    Footers = <>
-                    Title.Caption = #20854#20182#25903#20986
-                    Width = 56
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'TRN_MNY'
-                    Footers = <>
-                    Title.Caption = #32564#27454#37329#39069
-                    Width = 58
-                  end
-                  item
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'BAL_MNY'
-                    Footers = <>
-                    Title.Caption = #32467#20313#29616#37329
-                    Width = 57
                   end
                   item
                     EditButtons = <>

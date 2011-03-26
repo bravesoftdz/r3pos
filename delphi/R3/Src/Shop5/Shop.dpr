@@ -155,7 +155,6 @@ uses
   ufrmIoroOrderList in 'App\ufrmIoroOrderList.pas' {frmIoroOrderList},
   ufrmJxcTotalReport in 'App\ufrmJxcTotalReport.pas' {frmJxcTotalReport},
   ufrmStockDayReport in 'App\ufrmStockDayReport.pas' {frmStockDayReport},
-  CaTenantService in 'App\CaTenantService.pas',
   ufrmBatchCloseForDay in 'App\ufrmBatchCloseForDay.pas' {frmBatchCloseForDay},
   ufrmChangeDayReport in 'App\ufrmChangeDayReport.pas' {frmChangeDayReport},
   ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport},
@@ -174,7 +173,9 @@ uses
   ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
   ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder},
   ufrmDbDayReport in 'App\ufrmDbDayReport.pas' {frmDbDayReport},
-  ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport};
+  ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport},
+  CaProductService in 'App\CaProductService.pas',
+  CaTenantService in 'App\CaTenantService.pas';
 
 {$R *.res}
 var

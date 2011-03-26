@@ -637,7 +637,6 @@ end;
 procedure TframeOrderForm.fndGODS_IDKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  inherited;
   if (Key=VK_RIGHT) and not fndGODS_ID.Edited then
      begin
        DBGridEh1.SetFocus;

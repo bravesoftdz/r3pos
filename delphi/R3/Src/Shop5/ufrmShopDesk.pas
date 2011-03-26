@@ -19,14 +19,16 @@ type
     RzGroup2: TRzGroup;
     dgdesk: TPanel;
     Image1: TImage;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    RzBmpButton3: TRzBmpButton;
-    RzBmpButton4: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     RzBmpButton7: TRzBmpButton;
     RzBmpButton8: TRzBmpButton;
+    RzGroup3: TRzGroup;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton5: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    RzBmpButton9: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -39,6 +41,9 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure RzGroup3Items0Click(Sender: TObject);
+    procedure RzGroup3Items1Click(Sender: TObject);
+    procedure RzBmpButton9Click(Sender: TObject);
   private
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
@@ -160,8 +165,10 @@ end;
 procedure TfrmShopDesk.FormResize(Sender: TObject);
 begin
   inherited;
-  dgDesk.Top := (Height-dgDesk.Height) div 2-50;
-  dgDesk.Left := (Width-dgDesk.Width-rzTaskBar.Width) div 2-50;
+  dgDesk.Top := (Height-dgDesk.Height) div 2;
+  if dgDesk.Top > 60 then dgDesk.Top := dgDesk.Top -50;
+  dgDesk.Left := (Width-dgDesk.Width-rzTaskBar.Width) div 2;
+  if dgDesk.Top > 100 then dgDesk.Top := dgDesk.Top -50;
 end;
 
 procedure TfrmShopDesk.RzBmpButton8Click(Sender: TObject);
@@ -214,8 +221,8 @@ end;
 procedure TfrmShopDesk.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
-  if not frmShopMain.actfrmCheckOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmCheckOrderList.OnExecute(nil);
+  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
+  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
 
 end;
 
@@ -224,6 +231,27 @@ begin
   inherited;
   if not frmShopMain.actfrmStorageTracking.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
   frmShopMain.actfrmStorageTracking.OnExecute(nil);
+
+end;
+
+procedure TfrmShopDesk.RzGroup3Items0Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'没有找到公告.','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmShopDesk.RzGroup3Items1Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'没有找到问卷.','友情提示...',MB_OK+MB_ICONINFORMATION);
+
+end;
+
+procedure TfrmShopDesk.RzBmpButton9Click(Sender: TObject);
+begin
+  inherited;
+  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
+  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
 
 end;
 

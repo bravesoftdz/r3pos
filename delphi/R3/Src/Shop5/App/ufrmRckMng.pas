@@ -248,37 +248,45 @@ begin
         2:StrWhere := StrWhere + ' and CHK_DATE is not null ';
       end;
       //检测是否计算
-      if not locked then
-      CheckCalc(strtoint(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoint(formatDatetime('YYYYMMDD',P1_D2.Date)));
+      //if not locked then
+      //CheckCalc(strtoint(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoint(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
       strSql :=
-      'select jd.*,d.BAL_MNY as BAL_MNY,d.RECV_MNY as RECV_MNY,d.PUSH_MNY as PUSH_MNY,d.PAY_MNY as PAY_MNY,d.IORO_OUT_MNY as IORO_OUT_MNY,d.IORO_IN_MNY as IORO_IN_MNY,d.TRN_OUT_MNY-d.TRN_IN_MNY as TRN_MNY,'+
-      'd.BAL_MNY-d.IN_MNY+d.OUT_MNY as ORG_MNY '+
-      'from ('+
       'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from ('+
-      'select 1 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
-      'sum(PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as TOTAL_MNY,'+
+      'select 1 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,'+
+      'sum(CLSE_MNY) as CLSE_MNY,'+
       'sum(PAY_A) as PAY_A,'+
-      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,max(CREA_USER) as CREA_USER,0 as TIME_STAMP '+
+      'sum(PAY_B) as PAY_B,'+
+      'sum(PAY_C) as PAY_C,'+
+      'sum(PAY_D) as PAY_D,'+
+      'sum(PAY_E) as PAY_E,'+
+      'sum(PAY_F) as PAY_F,'+
+      'sum(PAY_G) as PAY_G,'+
+      'sum(PAY_H) as PAY_H,'+
+      'sum(PAY_I) as PAY_I,'+
+      'sum(PAY_J) as PAY_J,'+
+      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,'''' as CREA_USER,0 as TIME_STAMP '+
       'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
-      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID ) jd '+
-      'left outer join RCK_ACCT_DAYS d on jd.TENANT_ID=d.TENANT_ID and jd.SHOP_ID=d.SHOP_ID and jd.CLSE_DATE=d.CREA_DATE ';
-
-      strSql := strSql + ' union all ';
-      strSql := strSql +
-        'select 2 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,0 as TOTAL_MNY,0 as PAY_A,'''' AS CHK_DATE,'''' as CHK_USER,'''' as CREA_DATE,'''' as CREA_USER,0 as TIME_STAMP,'''' as SHOP_ID_TEXT '+
-        ',0 as BAL_MNY,0 as RECV_MNY,0 as PUSH_MNY,0 as PAY_MNY,0 as IORO_OUT_MNY,0 as IORO_IN_MNY,0 as TRN_MNY,0 as ORG_MNY '+
-        'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE';
-
-      strSql := strSql + ' union all ';
-
-      strSql := strSql +
-      'select 3 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,PAY_A+PAY_B+PAY_C+PAY_D+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J as TOTAL_MNY,PAY_A,CHK_DATE,CHK_USER,CREA_DATE,CREA_USER,TIME_STAMP,'''' as SHOP_ID_TEXT '+
-      ',PAY_I as BAL_MNY,PAY_D as RECV_MNY,PAY_C as PUSH_MNY,PAY_E as PAY_MNY,PAY_G as IORO_OUT_MNY,PAY_F as IORO_IN_MNY,PAY_H as TRN_MNY,PAY_B as ORG_MNY '+
-      ' from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' ';
+      'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
+      strSql := ' union all '+
+      'select jc.*,'''' as SHOP_ID_TEXT from ('+
+      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
+      'sum(CLSE_MNY) as CLSE_MNY,'+
+      'sum(PAY_A) as PAY_A,'+
+      'sum(PAY_B) as PAY_B,'+
+      'sum(PAY_C) as PAY_C,'+
+      'sum(PAY_D) as PAY_D,'+
+      'sum(PAY_E) as PAY_E,'+
+      'sum(PAY_F) as PAY_F,'+
+      'sum(PAY_G) as PAY_G,'+
+      'sum(PAY_H) as PAY_H,'+
+      'sum(PAY_I) as PAY_I,'+
+      'sum(PAY_J) as PAY_J,'+
+      'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,CREA_USER,0 as TIME_STAMP '+
+      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE,CREA_USER) jc ';
 
       result :=
-      'select je.*,case when flag=1 then '''' when flag=2 then ''标题'' else e.USER_NAME end as CREA_USER_TEXT from ('+
+      'select je.*,case when flag=1 then '''' else e.USER_NAME end as CREA_USER_TEXT from ('+
       'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+StrSql+') jd '+
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
       'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag';
@@ -380,6 +388,11 @@ begin
   while not rs.Eof do
     begin
       VPay.Add(rs.FieldbyName('CODE_ID').AsString+'='+rs.FieldbyName('CODE_NAME').AsString);
+      Column := DBGridEh1.Columns.Add;
+      Column.FieldName := 'PAY_'+rs.FieldbyName('CODE_ID').AsString;
+      Column.Title.Caption := '收款方式|'+rs.FieldbyName('CODE_NAME').AsString;
+      Column.Index := DBGridEh1.Columns.Count - 4;
+      Column.Width := 60;
       rs.Next;
     end;
 end;
@@ -750,7 +763,7 @@ end;
 procedure TfrmRckMng.CancelM;
 var
   rs:TZQuery;
-  d,r:integer;
+  d,r,b,e:integer;
 begin
   if not ShopGlobal.GetChkRight('22200001',2) then  Raise Exception.Create('您没有撤消权限,请联系管理员!');
   rs := TZQuery.Create(nil);
@@ -763,13 +776,23 @@ begin
     if MessageBox(Handle,pchar('是否撤消'+formatFloat('0000-00',rs.Fields[0].AsInteger)+'月的月结账操作？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     d := rs.Fields[0].AsInteger;
     rs.Close;
-    rs.SQL.Text := 'select COMM,CHK_DATE from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH=:MONTH';
+    rs.SQL.Text := 'select COMM,CHK_DATE,BEGIN_DATE,END_DATE from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH=:MONTH';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('MONTH').AsInteger := d;
     Factor.Open(rs);
     if rs.Fields[1].AsString <> '' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经审核不能撤消。');
     if copy(rs.Fields[0].AsString,1,1)='1' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经上报不能撤消。');
-    r := Factor.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+inttostr(d)+'');
+    b := StrtoInt(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[2].asString)) );
+    e := StrtoInt(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[3].asString)) );
+    Factor.BeginTrans;
+    try
+      r := Factor.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+inttostr(d)+'');
+      r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(b)+' and CREA_DATE<='+inttostr(e)+'');
+      Factor.CommitTrans;
+    except
+      Factor.RollbackTrans;
+      Raise;
+    end;
     MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION); 
     Open;
   finally

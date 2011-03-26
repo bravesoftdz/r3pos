@@ -73,7 +73,6 @@ type
     N56: TMenuItem;
     N57: TMenuItem;
     N58: TMenuItem;
-    lblUserInfo: TRzLabel;
     N59: TMenuItem;
     N60: TMenuItem;
     N55: TMenuItem;
@@ -246,7 +245,6 @@ type
     Image18: TImage;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
-    RzBmpButton4: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     toolButton: TRzBmpButton;
     rzChildTitle: TRzLabel;
@@ -258,7 +256,6 @@ type
     Page4: TRzBmpButton;
     Page5: TRzBmpButton;
     RzLabel1: TRzLabel;
-    lblLogin: TLabel;
     Panel24: TPanel;
     Image26: TImage;
     Panel26: TPanel;
@@ -269,6 +266,9 @@ type
     actfrmRecvAbleReport: TAction;
     actfrmDbDayReport: TAction;
     actfrmGodsRunningReport: TAction;
+    RzBmpButton4: TRzBmpButton;
+    lblLogin: TLabel;
+    lblUserInfo: TRzLabel;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -347,7 +347,6 @@ type
     procedure actfrmRelationExecute(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure Page1Click(Sender: TObject);
-    procedure RzBmpButton2Click(Sender: TObject);
     procedure actfrmRecvDayReportExecute(Sender: TObject);
     procedure actfrmPayDayReportExecute(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
@@ -356,6 +355,8 @@ type
     procedure actfrmStorageTrackingExecute(Sender: TObject);
     procedure actfrmDbDayReportExecute(Sender: TObject);
     procedure actfrmGodsRunningReportExecute(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -406,7 +407,7 @@ uses
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
-  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport;
+  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -560,6 +561,7 @@ var
   frmLogo:TfrmLogo;
   myComVersion:string;
 begin
+  CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductID,RzVersionInfo.FileVersion);
 {  result := false;
   if frmInstall=nil then Exit;
   if ShopGlobal.offline then Exit;
@@ -711,11 +713,11 @@ var s:string;
 begin
   FLogined := Value;
   Timer1.Enabled := Value;
-  if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
+//  if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
   if Value then
-     lblUserInfo.Caption := s+' 欢迎您:'+Global.UserName+' 登录门店：'+Global.SHOP_NAME+''
+     lblUserInfo.Caption := s+' 欢迎您【'+Global.UserName+'】'//+' 登录门店：'+Global.SHOP_NAME+''
   else
-     lblUserInfo.Caption := '未登录...请先登录系统后才能使用';
+     lblUserInfo.Caption := '未登录...';
 end;
 
 procedure TfrmShopMain.miCloseClick(Sender: TObject);
@@ -996,9 +998,18 @@ procedure TfrmShopMain.Image19Click(Sender: TObject);
 begin
   inherited;
   if rzLeft.Width = 29 then
-     rzLeft.Width := 172
+     begin
+       rzLeft.Width := 172;
+       Panel12.Width := 174;
+       Panel24.Width := 166;
+     end
   else
-     rzLeft.Width := 29;
+     begin
+       rzLeft.Width := 29;
+       Panel12.Width := 31;
+       Panel24.Width := 23;
+     end;
+
   frmMain.OnResize(nil);
 end;
 
@@ -1081,6 +1092,7 @@ begin
        Exit;
      end;
   result := TfrmTenant.coRegister(self);
+  CheckVersion;
   if result then
      begin
       if SFVersion='.NET' then
@@ -2288,6 +2300,8 @@ procedure TfrmShopMain.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
   if rzLeft.Width = 29 then rzLeft.Width := 172;
+  if Panel12.Width = 31 then Panel12.Width := 174;
+  if Panel24.Width = 23 then Panel24.Width := 166;
   frmMain.OnResize(nil);
   frmShopDesk.Locked := true;
   frmShopDesk.BringToFront;
@@ -2297,12 +2311,6 @@ procedure TfrmShopMain.Page1Click(Sender: TObject);
 begin
   inherited;
   LoadMenu;
-end;
-
-procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
-begin
-  inherited;
-  SyncFactory.SyncAll;
 end;
 
 procedure TfrmShopMain.actfrmRecvDayReportExecute(Sender: TObject);
@@ -2464,6 +2472,19 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  SyncFactory.SyncAll;
+
+end;
+
+procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'没有找到可下载订单.','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

@@ -39,6 +39,8 @@ type
     edtPAYM_ID: TcxComboBox;
     Label40: TLabel;
     edtSHOP_ID: TzrComboBoxList;
+    Label4: TLabel;
+    edtBILL_NO: TcxTextEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

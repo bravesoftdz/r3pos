@@ -27,28 +27,45 @@ type
     DataSource2: TDataSource;
     frfRecvOrder: TfrReport;
     actfrmBatchReck: TAction;
+    cdsList: TZQuery;
+    TabSheet2: TRzTabSheet;
+    RzPanel1: TRzPanel;
     RzPanel7: TRzPanel;
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label17: TLabel;
+    Label1: TLabel;
+    Label40: TLabel;
     D1: TcxDateEdit;
     D2: TcxDateEdit;
     RzBitBtn1: TRzBitBtn;
     fndOrderStatus: TcxRadioGroup;
     fndRECV_USER: TzrComboBoxList;
     fndACCOUNT_ID: TzrComboBoxList;
-    Panel2: TPanel;
-    DBGridEh2: TDBGridEh;
-    Label17: TLabel;
-    cdsList: TZQuery;
     fndCLIENT_ID: TzrComboBoxList;
-    Label1: TLabel;
     fndPAYM_ID: TcxComboBox;
-    Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
     fndITEM_ID: TzrComboBoxList;
+    fndP1_SHOP_ID: TzrComboBoxList; 
+    Panel2: TPanel;
+    DBGridEh2: TDBGridEh;
+    RzPanel6: TRzPanel;
+    Label3: TLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    Label2: TLabel;
+    P1_D1: TcxDateEdit;
+    P1_D2: TcxDateEdit;
+    btnOk: TRzBitBtn;
+    fndP1_CUST_ID: TzrComboBoxList;
+    fndSTATUS: TcxRadioGroup;
+    Panel1: TPanel;
+    DBGridEh1: TDBGridEh;
+    CdsRecvList: TZQuery;
+    RecvListDs: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -62,34 +79,33 @@ type
     procedure RzPageChange(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure frfRecvOrderUserFunction(const Name: String; p1, p2,
-      p3: Variant; var Val: Variant);
+    procedure frfRecvOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actDeleteExecute(Sender: TObject);
-    procedure frfRecvOrderGetValue(const ParName: String;
-      var ParValue: Variant);
-
+    procedure frfRecvOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure CdsRecvListAfterScroll(DataSet: TDataSet);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
   public
-    { Public declarations }
-    IsEnd2: boolean;
-    MaxId2:string;
+    IsEnd1,IsEnd2: boolean;
+    MaxId1,MaxId2:string;
     pid:string;
     locked:boolean;
     procedure InitGrid;
     procedure AddRecord(AObj:TRecord_);
 
     function FindColumn(FieldName:string):TColumnEh;
-
+    function EncodeSQL1(id:string;var w:string):string;
     function EncodeSQL2(id:string;var w:string):string;
+    procedure Open1(Id:string);
     procedure Open2(Id:string);
     function PrintSQL2(tenantid,id:string):string;
   end;
 
 implementation
 uses uGlobal, uFnUtil, ufrmEhLibReport, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmRecvOrder,
-  ufrmBasic;
+  ufrmBasic, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmRecvOrderList.InitGrid;
@@ -130,24 +146,59 @@ begin
   fndPAYM_ID.Properties.Items.Insert(0,'全部');
   fndPAYM_ID.ItemIndex := 0; 
   InitGrid;
+  //第一分页应收账款:
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  fndP1_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
+  fndP1_SHOP_ID.Text := Global.SHOP_NAME;
+  fndP1_CUST_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmRecvOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
-  Open2('');
+  case RzPage.ActivePageIndex of
+   0: Open1('');
+   1: Open2('');
+  end;
 end;
 
 procedure TfrmRecvOrderList.actNewExecute(Sender: TObject);
+var
+  ABLE_ID: string;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有新增收款单的权限,请和管理员联系.');
+  ABLE_ID:='';
+  if (RzPage.ActivePage=TabSheet1) and (CdsRecvList.Active) and (CdsRecvList.RecordCount>0) then
+    ABLE_ID:=trim(CdsRecvList.fieldbyName('ABLE_ID').AsString);
+  
   with TfrmRecvOrder.Create(self) do
     begin
       try
         Append;
         OnSave := AddRecord;
+
+        //应收款选择第一分页 [收款查询] 时执行
+        if ABLE_ID<>'' then
+        begin
+          edtCLIENT_ID.KeyValue:=trim(CdsRecvList.fieldbyName('CLIENT_ID').AsString);
+          edtCLIENT_ID.Text:=trim(CdsRecvList.fieldbyName('CUST_ID_TEXT').AsString);
+          FillData;
+          //定位到ABLE_ID
+          if cdsDetail.Locate('ABLE_ID',ABLE_ID,[]) then
+          begin
+            if cdsDetail.State<>dsEdit then cdsDetail.Edit;
+            cdsDetail.FieldByName('A').AsString:='1';
+            cdsDetail.FieldByName('RECV_MNY').AsFloat:=cdsDetail.FieldByName('BALA_MNY').AsFloat;
+            cdsDetail.FieldByName('BALA_MNY').AsFloat:=0;
+            cdsDetail.Post;
+          end; 
+        end;
+        //应收款选择第一分页 [收款查询] 时执行
+        
         ShowModal;
       finally
         free;
@@ -255,13 +306,70 @@ end;
 procedure TfrmRecvOrderList.FormShow(Sender: TObject);
 begin
   inherited;
-  Open2('');
+  Open1('');
+end;
+
+function TfrmRecvOrderList.EncodeSQL1(id:string;var w:string): string;
+var
+  strSql,strWhere: string;
+begin
+  if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
+  if P1_D1.Date > P1_D2.Date then Raise Exception.Create('收款查询开始日期不能大于结束日期');
+  strWhere := strWhere + ' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' ';
+  //分批取数据的条件:
+  if trim(id)<>'' then
+    strWhere:=strWhere+' A.ABLE_ID > '+QuotedStr(id);
+  //帐款日期:
+  if P1_D1.Date=P1_D2.Date then
+    strWhere := strWhere + ' and A.ABLE_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' ' 
+  else
+    strWhere := strWhere + ' and A.ABLE_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.ABLE_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+'';
+  //门店条件:
+  if fndP1_SHOP_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+'''';
+  //客户条件:
+  if fndP1_CUST_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.CLIENT_ID='''+fndP1_CUST_ID.AsString+'''';
+
+  case fndSTATUS.ItemIndex of
+   1:strWhere := strWhere + ' and isnull(A.RECK_MNY,0)<>0 ';
+   2:strWhere := strWhere + ' and isnull(A.RECK_MNY,0)=0 ';
+  end;
+
+  strSql:=
+    'select A.ABLE_ID'+
+    ',A.SHOP_ID'+
+    ',A.CLIENT_ID'+
+    ',B.CLIENT_NAME as CUST_ID_TEXT'+
+    ',A.ACCT_INFO'+
+    ',A.RECV_TYPE as ABLE_TYPE'+
+    ',A.ACCT_MNY'+
+    ',A.RECV_MNY'+
+    ',A.REVE_MNY,'+
+    'A.RECK_MNY'+
+    ',A.ABLE_DATE'+
+    ',A.NEAR_DATE'+
+    ',C.SHOP_NAME as SHOP_ID_TEXT '+
+    ' from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C  '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+    ' '+strWhere+' ';
+
+  case Factor.iDbType of
+  0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+strSql+') order by ABLE_ID) tp fetch first 600  rows only';
+
+  5:result := 'select * from ('+strSql+') order by ABLE_ID limit 600';
+  else
+    result := 'select * from ('+strSql+') order by ABLE_ID';
+  end;  
 end;
 
 function TfrmRecvOrderList.EncodeSQL2(id: string; var w: string): string;
 var
   strSql,strWhere: string;
-  rs:TZQuery;
 begin
   if D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
@@ -286,7 +394,7 @@ begin
   end;
   if id<>'' then
      strWhere := strWhere + ' and A.RECV_ID > '+QuotedStr(id);
-  strSql :='select A.RECV_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.RECV_DATE,A.RECV_USER,A.REMARK,A.RECV_MNY,A.CHK_DATE,A.CHK_USER,A.CREA_DATE,A.COMM from ACC_RECVORDER A where '+strWhere;
+  strSql :='select A.RECV_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.RECV_DATE,A.RECV_USER,A.REMARK,A.RECV_MNY,A.CHK_DATE,A.CHK_USER,A.CREA_DATE,A.BILL_NO,A.COMM from ACC_RECVORDER A where '+strWhere;
   strSql :='select jc.*,c.ACCT_NAME as ACCOUNT_ID_TEXT from ('+strSql+') jc '+
            'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.ACCOUNT_ID=c.ACCOUNT_ID';
   strSql :='select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+strSql+') jd '+
@@ -307,6 +415,41 @@ begin
   5:result := 'select * from ('+strSql+') order by RECV_ID limit 600';
   else
     result := 'select * from ('+strSql+') order by RECV_ID';
+  end;
+end;
+
+procedure TfrmRecvOrderList.Open1(Id: string);
+var
+  rs:TZQuery;
+  Str:string;
+  sm:TMemoryStream;
+begin
+  if not Visible then Exit;
+  if Id='' then CdsRecvList.close;
+  rs := TZQuery.Create(nil);
+  sm := TMemoryStream.Create;
+  CdsRecvList.DisableControls;
+  try
+    rs.SQL.Text :=ParseSQL(Factor.iDbType, EncodeSQL1(Id,Str));
+    Factor.Open(rs);
+    rs.SortedFields :='ABLE_ID';
+    rs.IndexFieldNames :='ABLE_ID';
+    if Id='' then
+    begin
+      rs.SaveToStream(sm);
+      CdsRecvList.LoadFromStream(sm);
+      CdsRecvList.SortedFields := 'ABLE_ID';
+      CdsRecvList.IndexFieldNames := 'ABLE_ID';
+    end else
+    begin
+      rs.SaveToStream(sm);
+      CdsRecvList.AddFromStream(sm);
+    end;
+    if rs.RecordCount <600 then IsEnd1 := True else IsEnd1 := false;
+  finally
+    CdsRecvList.EnableControls;
+    sm.Free;
+    rs.Free;
   end;
 end;
 
@@ -476,6 +619,8 @@ end;
 procedure TfrmRecvOrderList.AddRecord(AObj: TRecord_);
 var rs:TZQuery;
 begin
+  //若不是List分页则同步刷新
+  if not cdsList.Active then Exit;
   if cdsList.Locate('RECV_ID',AObj.FieldbyName('RECV_ID').AsString,[]) then
     begin
       cdsList.Edit;
@@ -526,6 +671,35 @@ end;
 function TfrmRecvOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('21300001',7);
+end;
+
+
+procedure TfrmRecvOrderList.CdsRecvListAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if IsEnd1 or not DataSet.Eof then Exit;
+  if CdsRecvList.ControlsDisabled then Exit;  
+  Open1(MaxId1);
+end;
+
+procedure TfrmRecvOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var ARect:TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQ_NO' then
+  begin
+    ARect := Rect;
+    DbGridEh1.canvas.FillRect(ARect);
+    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
 end;
 
 end.

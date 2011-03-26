@@ -1,6 +1,6 @@
 inherited frmPayOrder: TfrmPayOrder
-  Left = 545
-  Top = 165
+  Left = 349
+  Top = 123
   ActiveControl = edtCLIENT_ID
   Caption = #20184#27454#21333
   ClientHeight = 465
@@ -292,6 +292,14 @@ inherited frmPayOrder: TfrmPayOrder
         Width = 48
         Height = 12
         Caption = #20184#27454#38376#24215
+      end
+      object Label4: TLabel
+        Left = 439
+        Top = 60
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #31080#25454#32534#21495
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
@@ -780,6 +788,14 @@ inherited frmPayOrder: TfrmPayOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
+      object edtBILL_NO: TcxTextEdit
+        Left = 492
+        Top = 55
+        Width = 131
+        Height = 20
+        Properties.OnChange = edtREMARKPropertiesChange
+        TabOrder = 8
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -787,8 +803,8 @@ inherited frmPayOrder: TfrmPayOrder
     Top = 120
   end
   inherited actList: TActionList
-    Left = 224
-    Top = 112
+    Left = 120
+    Top = 120
     object actAddRecvAbleInfo: TAction
       Caption = #28155#21152#24212#25910#27454
     end

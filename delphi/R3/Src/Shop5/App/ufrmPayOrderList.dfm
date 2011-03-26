@@ -20,15 +20,371 @@ inherited frmPayOrderList: TfrmPayOrderList
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #20184#27454#21333#26597#35810
+          Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
             Height = 494
             BorderInner = fsStatus
-            object RzPanel7: TRzPanel
+            object RzPanel1: TRzPanel
               Left = 6
               Top = 6
               Width = 870
+              Height = 84
+              Align = alTop
+              BorderOuter = fsNone
+              BorderColor = clWhite
+              BorderWidth = 5
+              Color = clWhite
+              TabOrder = 0
+              object Label3: TLabel
+                Left = 24
+                Top = 33
+                Width = 48
+                Height = 12
+                Caption = #38376#24215#21517#31216
+              end
+              object RzLabel2: TRzLabel
+                Left = 24
+                Top = 11
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #36827#36135#26085#26399
+              end
+              object RzLabel3: TRzLabel
+                Left = 186
+                Top = 11
+                Width = 12
+                Height = 12
+                Caption = #33267
+              end
+              object Label2: TLabel
+                Left = 24
+                Top = 55
+                Width = 48
+                Height = 12
+                Caption = #20379' '#24212' '#21830
+              end
+              object P1_D1: TcxDateEdit
+                Left = 80
+                Top = 7
+                Width = 97
+                Height = 20
+                Properties.DateButtons = [btnToday]
+                TabOrder = 0
+              end
+              object P1_D2: TcxDateEdit
+                Left = 205
+                Top = 7
+                Width = 98
+                Height = 20
+                Properties.DateButtons = [btnToday]
+                TabOrder = 1
+              end
+              object btnOk: TRzBitBtn
+                Left = 435
+                Top = 41
+                Width = 67
+                Height = 32
+                Action = actFind
+                Caption = #26597#35810
+                Color = clSilver
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clBlack
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                HotTrackColorType = htctActual
+                ParentFont = False
+                TextShadowColor = clWhite
+                TextShadowDepth = 4
+                TabOrder = 2
+                TextStyle = tsRaised
+                ThemeAware = False
+                ImageIndex = 12
+                NumGlyphs = 2
+                Spacing = 5
+              end
+              object fndP1_SHOP_ID: TzrComboBoxList
+                Tag = -1
+                Left = 80
+                Top = 29
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                KeyField = 'SHOP_ID'
+                ListField = 'SHOP_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_ID'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 20
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 316
+                Top = 2
+                Width = 105
+                Height = 71
+                ItemIndex = 1
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #26410#32467#28165
+                  end
+                  item
+                    Caption = #24050#32467#28165
+                  end>
+                TabOrder = 4
+                Caption = #29366#24577
+              end
+              object fndP1_CLIENT_ID: TzrComboBoxList
+                Left = 80
+                Top = 51
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 5
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
+                KeyField = 'CLIENT_ID'
+                ListField = 'CLIENT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_CODE'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 60
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_NAME'
+                    Footers = <>
+                    Title.Caption = #23458#25143#21517#31216
+                    Width = 150
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'LINKMAN'
+                    Footers = <>
+                    Title.Caption = #32852#31995#20154
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ADDRESS'
+                    Footers = <>
+                    Title.Caption = #22320#22336
+                    Width = 150
+                  end>
+                DropWidth = 236
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = False
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+            end
+            object Panel3: TPanel
+              Left = 6
+              Top = 90
+              Width = 870
+              Height = 398
+              Align = alClient
+              Caption = 'Panel1'
+              TabOrder = 1
+              object DBGridEh1: TDBGridEh
+                Left = 1
+                Top = 1
+                Width = 868
+                Height = 396
+                Align = alClient
+                AllowedOperations = [alopUpdateEh]
+                DataSource = PayListDs
+                Flat = True
+                FooterColor = clWindow
+                FooterFont.Charset = GB2312_CHARSET
+                FooterFont.Color = clWindowText
+                FooterFont.Height = -12
+                FooterFont.Name = #23435#20307
+                FooterFont.Style = []
+                FooterRowCount = 1
+                FrozenCols = 2
+                Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                RowHeight = 20
+                SumList.Active = True
+                TabOrder = 0
+                TitleFont.Charset = GB2312_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -12
+                TitleFont.Name = #23435#20307
+                TitleFont.Style = []
+                TitleHeight = 20
+                UseMultiTitle = True
+                IsDrawNullRow = False
+                CurrencySymbol = #65509
+                DecimalNumber = 2
+                DigitalNumber = 12
+                OnDblClick = actInfoExecute
+                Columns = <
+                  item
+                    Color = clBtnFace
+                    EditButtons = <>
+                    FieldName = 'SEQNO'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #24207#21495
+                    Width = 32
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ABLE_DATE'
+                    Footer.Value = #21512'   '#35745#65306
+                    Footer.ValueType = fvtStaticText
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #36134#27454#26085#26399
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_ID_TEXT'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #20379#24212#21830#21517#31216
+                    Width = 135
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ABLE_TYPE'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #36134#27454#31867#22411
+                    Width = 52
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCT_INFO'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #25688#35201
+                    Width = 188
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCT_MNY'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #21512#35745#37329#39069
+                    Width = 66
+                  end
+                  item
+                    Alignment = taRightJustify
+                    EditButtons = <>
+                    FieldName = 'PAYM_MNY'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #24050#20184#37329#39069
+                    Width = 65
+                  end
+                  item
+                    Alignment = taRightJustify
+                    EditButtons = <>
+                    FieldName = 'REVE_MNY'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #20914#36134#37329#39069
+                    Width = 66
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'RECK_MNY'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #32467#20313#37329#39069
+                    Width = 63
+                  end
+                  item
+                    Alignment = taRightJustify
+                    EditButtons = <>
+                    FieldName = 'NEAR_DATE'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #26368#26032#20184#27454#26085#26399
+                    Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_ID_TEXT'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #25152#23646#38376#24215
+                    Width = 97
+                  end>
+              end
+            end
+          end
+        end
+        object TabSheet2: TRzTabSheet
+          Caption = #20184#27454#21333#26597#35810
+          object Panel1: TPanel
+            Left = 0
+            Top = 0
+            Width = 882
+            Height = 494
+            Align = alClient
+            Caption = ' '
+            TabOrder = 0
+            object RzPanel7: TRzPanel
+              Left = 1
+              Top = 1
+              Width = 880
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -399,18 +755,18 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
             end
             object Panel2: TPanel
-              Left = 6
-              Top = 129
-              Width = 870
-              Height = 359
+              Left = 1
+              Top = 124
+              Width = 880
+              Height = 369
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 357
+                Width = 878
+                Height = 367
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -537,6 +893,13 @@ inherited frmPayOrderList: TfrmPayOrderList
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'BILL_NO'
+                    Footers = <>
+                    Title.Caption = #31080#25454#32534#21495
+                    Width = 68
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>
                     Title.Caption = #21046#21333#26102#38388
@@ -587,6 +950,7 @@ inherited frmPayOrderList: TfrmPayOrderList
           Left = 0
           Top = 0
           Action = actNew
+          Caption = #20184#27454
         end
         object ToolButton4: TToolButton
           Left = 43
@@ -693,7 +1057,7 @@ inherited frmPayOrderList: TfrmPayOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      1800000066190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000005F190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -896,6 +1260,18 @@ inherited frmPayOrderList: TfrmPayOrderList
       726961626C6573000000000200736C0014006364735F436867426F64792E2253
       4C30303030220002006A650014006364735F436867426F64792E224A45303030
       30220004006B68796800000000040079687A68000000000200647A0000000000
-      00000000000000FDFF0100000000}
+      00000000000000}
+  end
+  object CdsPayList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 79
+    Top = 281
+  end
+  object PayListDs: TDataSource
+    DataSet = CdsPayList
+    Left = 109
+    Top = 282
   end
 end

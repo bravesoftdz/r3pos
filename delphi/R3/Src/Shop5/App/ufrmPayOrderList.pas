@@ -26,12 +26,19 @@ type
     ToolButton6: TToolButton;
     DataSource2: TDataSource;
     actfrmBatchReck: TAction;
+    cdsList: TZQuery;
+    frfPayOrder: TfrReport;
+    TabSheet2: TRzTabSheet;
+    Panel1: TPanel;
     RzPanel7: TRzPanel;
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label17: TLabel;
+    Label1: TLabel;
+    Label40: TLabel;
     D1: TcxDateEdit;
     D2: TcxDateEdit;
     RzBitBtn1: TRzBitBtn;
@@ -39,16 +46,26 @@ type
     fndPAY_USER: TzrComboBoxList;
     fndACCOUNT_ID: TzrComboBoxList;
     fndITEM_ID: TzrComboBoxList;
+    fndCLIENT_ID: TzrComboBoxList;
+    fndPAYM_ID: TcxComboBox;
+    fndSHOP_ID: TzrComboBoxList;
     Panel2: TPanel;
     DBGridEh2: TDBGridEh;
-    Label17: TLabel;
-    cdsList: TZQuery;
-    fndCLIENT_ID: TzrComboBoxList;
-    Label1: TLabel;
-    fndPAYM_ID: TcxComboBox;
-    Label40: TLabel;
-    fndSHOP_ID: TzrComboBoxList;
-    frfPayOrder: TfrReport;
+    RzPanel1: TRzPanel;
+    Label3: TLabel;
+    RzLabel2: TRzLabel;
+    RzLabel3: TRzLabel;
+    Label2: TLabel;
+    P1_D1: TcxDateEdit;
+    P1_D2: TcxDateEdit;
+    btnOk: TRzBitBtn;
+    fndP1_SHOP_ID: TzrComboBoxList;
+    fndSTATUS: TcxRadioGroup;
+    fndP1_CLIENT_ID: TzrComboBoxList;
+    Panel3: TPanel;
+    DBGridEh1: TDBGridEh;
+    CdsPayList: TZQuery;
+    PayListDs: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -72,22 +89,24 @@ type
     function  CheckCanExport: boolean; override;
   public
     { Public declarations }
-    IsEnd2: boolean;
-    MaxId2:string;
+    IsEnd1, IsEnd2: boolean;
+    MaxId1, MaxId2:string;
     pid:string;
     locked:boolean;
     function FindColumn(FieldName:string):TColumnEh;
     procedure InitGrid;
     procedure AddRecord(AObj:TRecord_);
 
+    function EncodeSQL1(id:string;var w:string):string;
     function EncodeSQL2(id:string;var w:string):string;
+    procedure Open1(Id:string);
     procedure Open2(Id:string);
     function PrintSQL2(tenantid:string;id:string):string;
   end;
 
 implementation
 uses uGlobal, uFnUtil, ufrmEhLibReport, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmPayOrder,
-  ufrmBasic;
+  ufrmBasic, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmPayOrderList.InitGrid;
@@ -127,24 +146,58 @@ begin
   fndPAYM_ID.Properties.Items.Insert(0,'全部');
   fndPAYM_ID.ItemIndex := 0; 
   InitGrid;
+  //第一分页应付账款:
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  fndP1_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
+  fndP1_SHOP_ID.Text := Global.SHOP_NAME;
+  fndP1_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');  
   RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmPayOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
-  Open2('');
+  case RzPage.ActivePageIndex of
+   0: Open1('');
+   1: Open2('');
+  end;
 end;
 
 procedure TfrmPayOrderList.actNewExecute(Sender: TObject);
+var
+  ABLE_ID: string;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('21400001',2) then Raise Exception.Create('你没有新增付款单的权限,请和管理员联系.');
+  ABLE_ID:='';
+  if (RzPage.ActivePage=TabSheet1) and (CdsPayList.Active) and (CdsPayList.RecordCount>0) then
+    ABLE_ID:=trim(CdsPayList.fieldbyName('ABLE_ID').AsString);
+
   with TfrmPayOrder.Create(self) do
     begin
       try
         Append;
         OnSave := AddRecord;
+        //直接选择应付单进行收款
+        if ABLE_ID<>'' then
+        begin
+          edtCLIENT_ID.KeyValue:=trim(CdsPayList.fieldbyName('CLIENT_ID').AsString);
+          edtCLIENT_ID.Text:=trim(CdsPayList.fieldbyName('CLIENT_ID_TEXT').AsString);
+          FillData;
+          //定位到ABLE_ID
+          if cdsDetail.Locate('ABLE_ID',ABLE_ID,[]) then
+          begin
+            if cdsDetail.State<>dsEdit then cdsDetail.Edit;
+            cdsDetail.FieldByName('A').AsString:='1';
+            cdsDetail.FieldByName('PAY_MNY').AsFloat:=cdsDetail.FieldByName('BALA_MNY').AsFloat;
+            cdsDetail.FieldByName('BALA_MNY').AsFloat:=0;
+            cdsDetail.Post;
+          end; 
+        end;
+        //直接选择应付单进行收款
+
         ShowModal;
       finally
         free;
@@ -252,7 +305,100 @@ end;
 procedure TfrmPayOrderList.FormShow(Sender: TObject);
 begin
   inherited;
-  Open2('');
+  Open1('');
+end;
+
+function TfrmPayOrderList.EncodeSQL1(id: string; var w: string): string;
+var
+  strSql,strWhere: string;
+begin
+  if P1_D1.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('付款日期条件不能为空');
+  if P1_D1.Date > P1_D2.Date then Raise Exception.Create('付款查询开始日期不能大于结束日期');
+  strWhere := strWhere + ' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' ';
+  //分批取数据的条件:
+  if trim(id)<>'' then
+    strWhere:=strWhere+' A.ABLE_ID > '+QuotedStr(id);
+  //帐款日期:
+  if P1_D1.Date=P1_D2.Date then
+    strWhere := strWhere + ' and A.ABLE_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' ' 
+  else
+    strWhere := strWhere + ' and A.ABLE_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.ABLE_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+'';
+  //门店条件:
+  if fndP1_SHOP_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+'''';
+  //客户条件:
+  if fndP1_CLIENT_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.CLIENT_ID='''+fndP1_CLIENT_ID.AsString+'''';
+
+  case fndSTATUS.ItemIndex of
+   1:strWhere := strWhere + ' and isnull(A.RECK_MNY,0)<>0 ';
+   2:strWhere := strWhere + ' and isnull(A.RECK_MNY,0)=0 ';
+  end;
+
+  strSql:=
+    'select A.ABLE_ID'+
+    ',A.SHOP_ID'+
+    ',A.CLIENT_ID'+
+    ',B.CLIENT_NAME as CLIENT_ID_TEXT'+
+    ',A.ACCT_INFO'+
+    ',A.ABLE_TYPE'+
+    ',A.ACCT_MNY'+
+    ',A.PAYM_MNY'+
+    ',A.REVE_MNY,'+
+    'A.RECK_MNY'+
+    ',A.ABLE_DATE'+
+    ',A.NEAR_DATE'+
+    ',C.SHOP_NAME as SHOP_ID_TEXT '+
+    ' from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C  '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+    ' '+strWhere+' ';
+
+  case Factor.iDbType of
+  0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+strSql+') order by ABLE_ID) tp fetch first 600  rows only';
+
+  5:result := 'select * from ('+strSql+') order by ABLE_ID limit 600';
+  else
+    result := 'select * from ('+strSql+') order by ABLE_ID';
+  end;   
+end;
+
+procedure TfrmPayOrderList.Open1(Id: string);
+var
+  rs:TZQuery;
+  Str:string;
+  sm:TMemoryStream;
+begin
+  if not Visible then Exit;
+  if Id='' then CdsPayList.close;
+  rs := TZQuery.Create(nil);
+  sm := TMemoryStream.Create;
+  CdsPayList.DisableControls;
+  try
+    rs.SQL.Text :=ParseSQL(Factor.iDbType, EncodeSQL1(Id,Str));
+    Factor.Open(rs);
+    rs.SortedFields :='ABLE_ID';
+    rs.IndexFieldNames :='ABLE_ID';
+    if Id='' then
+    begin
+      rs.SaveToStream(sm);
+      CdsPayList.LoadFromStream(sm);
+      CdsPayList.SortedFields := 'ABLE_ID';
+      CdsPayList.IndexFieldNames := 'ABLE_ID';
+    end else
+    begin
+      rs.SaveToStream(sm);
+      CdsPayList.AddFromStream(sm);
+    end;
+    if rs.RecordCount <600 then IsEnd1 := True else IsEnd1 := false;
+  finally
+    CdsPayList.EnableControls;
+    sm.Free;
+    rs.Free;
+  end;
 end;
 
 function TfrmPayOrderList.EncodeSQL2(id: string; var w: string): string;
@@ -283,7 +429,7 @@ begin
   end;
   if id<>'' then
      strWhere := strWhere + ' and A.PAY_ID > '+QuotedStr(id);
-  strSql :='select A.PAY_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.PAY_DATE,A.PAY_USER,A.REMARK,A.PAY_MNY,A.CHK_DATE,A.CREA_DATE,A.CHK_USER,A.COMM from ACC_PAYORDER A where '+strWhere;
+  strSql :='select A.PAY_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.PAY_DATE,A.PAY_USER,A.REMARK,A.PAY_MNY,A.CHK_DATE,A.CREA_DATE,A.CHK_USER,A.BILL_NO,A.COMM from ACC_PAYORDER A where '+strWhere;
   strSql :='select jc.*,c.ACCT_NAME as ACCOUNT_ID_TEXT from ('+strSql+') jc '+
            'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.ACCOUNT_ID=c.ACCOUNT_ID';
   strSql :='select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+strSql+') jd '+
@@ -472,6 +618,8 @@ end;
 procedure TfrmPayOrderList.AddRecord(AObj: TRecord_);
 var rs:TZQuery;
 begin
+  //若不是List分页则同步刷新
+  if not CdsList.Active then Exit;
   if cdsList.Locate('PAY_ID',AObj.FieldbyName('PAY_ID').AsString,[]) then
     begin
       cdsList.Edit;
@@ -521,5 +669,6 @@ function TfrmPayOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('32600001',7);
 end;
+
 
 end.

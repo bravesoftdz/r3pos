@@ -1,6 +1,6 @@
 inherited frmRecvOrder: TfrmRecvOrder
-  Left = 144
-  Top = 206
+  Left = 271
+  Top = 159
   ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465
@@ -290,6 +290,14 @@ inherited frmRecvOrder: TfrmRecvOrder
         Width = 48
         Height = 12
         Caption = #25910#27454#38376#24215
+      end
+      object Label4: TLabel
+        Left = 439
+        Top = 60
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #31080#25454#32534#21495
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
@@ -777,6 +785,14 @@ inherited frmRecvOrder: TfrmRecvOrder
         Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
+      end
+      object edtBILL_NO: TcxTextEdit
+        Left = 492
+        Top = 55
+        Width = 131
+        Height = 20
+        Properties.OnChange = edtREMARKPropertiesChange
+        TabOrder = 8
       end
     end
   end

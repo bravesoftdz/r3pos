@@ -1,6 +1,6 @@
 inherited frmIoroOrder: TfrmIoroOrder
-  Left = 176
-  Top = 226
+  Left = 466
+  Top = 193
   Caption = #20854#20182#36153#29992
   ClientHeight = 367
   ClientWidth = 535
@@ -92,11 +92,11 @@ inherited frmIoroOrder: TfrmIoroOrder
               end
               item
                 EditButtons = <>
-                FieldName = 'IORO_INFO'
+                FieldName = 'PAYM_ID_TEXT'
                 Footers = <>
-                Title.Caption = #25688#35201
-                Width = 225
-                OnUpdateData = DBGridEh1Columns2UpdateData
+                Title.Caption = #25903#20184#26041#24335
+                Width = 70
+                Control = edtPAYM_ID
               end
               item
                 Alignment = taRightJustify
@@ -107,10 +107,25 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Title.Caption = #37329#39069
                 Width = 76
                 OnUpdateData = DBGridEh1Columns3UpdateData
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BILL_NO'
+                Footers = <>
+                Title.Caption = #31080#25454#32534#21495
+                Width = 80
+              end
+              item
+                EditButtons = <>
+                FieldName = 'IORO_INFO'
+                Footers = <>
+                Title.Caption = #25688#35201
+                Width = 225
+                OnUpdateData = DBGridEh1Columns2UpdateData
               end>
           end
           object edtACCOUNT_ID: TzrComboBoxList
-            Left = 68
+            Left = 36
             Top = 52
             Width = 141
             Height = 20
@@ -156,6 +171,54 @@ inherited frmIoroOrder: TfrmIoroOrder
             Buttons = [zbNew]
             DropListStyle = lsFixed
             OnSaveValue = edtACCOUNT_IDSaveValue
+            MultiSelect = False
+          end
+          object edtPAYM_ID: TzrComboBoxList
+            Left = 165
+            Top = 80
+            Width = 84
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 2
+            Visible = False
+            OnEnter = edtPAYM_IDEnter
+            OnExit = edtPAYM_IDExit
+            OnKeyDown = edtPAYM_IDKeyDown
+            OnKeyPress = edtPAYM_IDKeyPress
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #21517#31216
+                Width = 60
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CODE_ID'
+                Footers = <>
+                Title.Caption = #32534#21495
+                Width = 30
+              end>
+            DropWidth = 157
+            DropHeight = 180
+            ShowTitle = True
+            AutoFitColWidth = True
+            ShowButton = False
+            LocateStyle = lsDark
+            Buttons = []
+            DropListStyle = lsFixed
+            OnSaveValue = edtPAYM_IDSaveValue
             MultiSelect = False
           end
         end

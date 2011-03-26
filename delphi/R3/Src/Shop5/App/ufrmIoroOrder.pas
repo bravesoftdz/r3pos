@@ -42,6 +42,7 @@ type
     Image1: TImage;
     Label14: TLabel;
     edtCLIENT_ID: TzrComboBoxList;
+    edtPAYM_ID: TzrComboBoxList;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -76,6 +77,12 @@ type
       Shift: TShiftState);
     procedure edtITEM_IDAddClick(Sender: TObject);
     procedure edtIORO_USERAddClick(Sender: TObject);
+    procedure edtPAYM_IDSaveValue(Sender: TObject);
+    procedure edtPAYM_IDEnter(Sender: TObject);
+    procedure edtPAYM_IDExit(Sender: TObject);
+    procedure edtPAYM_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtPAYM_IDKeyPress(Sender: TObject; var Key: Char);
   private
     Fcid: string;
     FIoroType: integer;
@@ -108,7 +115,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,ufrmClientInfo,ufrmAccountInfo,ufrmCodeInfo,ufrmUsersInfo,
-  uShopGlobal;
+  uShopGlobal, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmIoroOrder.FocusNextColumn;
@@ -196,6 +203,7 @@ begin
   AObj := TRecord_.Create;
   cid := Global.SHOP_ID;
   edtACCOUNT_ID.DataSet := Global.GeTZQueryFromName('ACC_ACCOUNT_INFO');
+  edtPAYM_ID.DataSet := Global.GetZQueryFromName('PUB_PAYMENT');
   edtITEM_ID.DataSet := Global.GeTZQueryFromName('ACC_ITEM_INFO');
   edtIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -354,6 +362,8 @@ begin
   inherited;
   edtACCOUNT_ID.Text := cdsDetail.FieldbyName('ACCOUNT_ID_TEXT').AsString;
   edtACCOUNT_ID.KeyValue := cdsDetail.FieldbyName('ACCOUNT_ID').AsString;
+  edtPAYM_ID.Text := cdsDetail.FieldByName('PAYM_ID_TEXT').AsString;
+  edtPAYM_ID.KeyValue := cdsDetail.FieldbyName('PAYM_ID').AsString;
 
 end;
 
@@ -545,10 +555,19 @@ begin
   end
   else
   begin
+    tmp := Global.GetZQueryFromName('PUB_PAYMENT');
+    tmp.Filtered := False;
+    tmp.Filter := ' CODE_ID='+QuotedStr(edtACCOUNT_ID.DataSet.FieldByName('PAYM_ID').AsString);
+    tmp.Filtered := True;
     cdsDetail.Edit;
     cdsDetail.FieldByName('ACCOUNT_ID').AsString := edtACCOUNT_ID.AsString;
     cdsDetail.FieldByName('ACCOUNT_ID_TEXT').AsString := edtACCOUNT_ID.Text;
+    cdsDetail.FieldByName('PAYM_ID').AsString := tmp.FieldbyName('CODE_ID').AsString;
+    cdsDetail.FieldByName('PAYM_ID_TEXT').AsString := tmp.FieldbyName('CODE_NAME').AsString;
+    edtPAYM_ID.KeyValue := tmp.FieldbyName('CODE_ID').AsString;
+    edtPAYM_ID.Text := tmp.FieldbyName('CODE_NAME').AsString;
     cdsDetail.FieldByName('IORO_MNY').AsString:='0';
+    tmp.Filtered := False;
   end;
   if not locked then   BtnOk.Enabled := true;
 end;
@@ -662,7 +681,7 @@ begin
      end;
   if (Key=VK_DOWN) and (Shift=[]) and not edtACCOUNT_ID.DropListed then
      begin
-       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('ITEM_ID').AsString='') then
+       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('ACCOUNT_ID').AsString='') then
          edtACCOUNT_ID.DropList
        else
        begin
@@ -671,7 +690,7 @@ begin
          cdsDetail.Next;
          if cdsDetail.Eof then
             PostMessage(Handle,WM_INIT_RECORD,0,0);
-         if (cdsDetail.FieldByName('ITEM_ID').AsString <> '') then
+         if (cdsDetail.FieldByName('ACCOUNT_ID').AsString <> '') then
             Key := 0;
        end;
      end;
@@ -713,6 +732,91 @@ begin
   finally
     r.Free;
   end;
+end;
+
+procedure TfrmIoroOrder.edtPAYM_IDSaveValue(Sender: TObject);
+var tmp:TZQuery;
+begin
+  inherited;
+  if not cdsDetail.Active then Exit;
+
+  tmp := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  tmp.Filtered := False;
+  tmp.Filter := ' PAYM_ID='+QuotedStr(edtPAYM_ID.AsString);
+  tmp.Filtered := True;
+  Factor.Open(tmp);
+  cdsDetail.Edit;
+  cdsDetail.FieldByName('PAYM_ID').AsString := edtPAYM_ID.AsString;
+  cdsDetail.FieldByName('PAYM_ID_TEXT').AsString := edtPAYM_ID.Text;
+  cdsDetail.FieldByName('ACCOUNT_ID').AsString := tmp.FieldbyName('ACCOUNT_ID').AsString;
+  cdsDetail.FieldByName('ACCOUNT_ID_TEXT').AsString := tmp.FieldbyName('ACCT_NAME').AsString;
+  cdsDetail.FieldByName('IORO_MNY').AsString:='0';
+  tmp.Filtered := False;
+  if not locked then   BtnOk.Enabled := true;
+end;
+
+procedure TfrmIoroOrder.edtPAYM_IDEnter(Sender: TObject);
+begin
+  inherited;
+  edtPAYM_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
+end;
+
+procedure TfrmIoroOrder.edtPAYM_IDExit(Sender: TObject);
+begin
+  inherited;
+  if not edtPAYM_ID.DropListed then edtPAYM_ID.Visible := false;
+end;
+
+procedure TfrmIoroOrder.edtPAYM_IDKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) and (not edtPAYM_ID.Edited) then
+     begin
+       DBGridEh1.SetFocus;
+       edtPAYM_ID.Visible := True;
+     end;
+  if (Key=VK_LEFT) and not edtPAYM_ID.Edited then
+     begin
+       DBGridEh1.SetFocus;
+       edtPAYM_ID.Visible := false;
+     end;
+  if (Key=VK_UP) and not edtPAYM_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       edtPAYM_ID.Visible := false;
+       cdsDetail.Prior;
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not edtPAYM_ID.DropListed then
+     begin
+       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('PAYM_ID').AsString='') then
+         edtPAYM_ID.DropList
+       else
+       begin
+         DBGridEh1.SetFocus;
+         edtPAYM_ID.Visible := false;
+         cdsDetail.Next;
+         if cdsDetail.Eof then
+            PostMessage(Handle,WM_INIT_RECORD,0,0);
+         if (cdsDetail.FieldByName('PAYM_ID').AsString <> '') then
+            Key := 0;
+       end;
+     end;
+end;
+
+procedure TfrmIoroOrder.edtPAYM_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       if cdsDetail.FieldbyName('PAYM_ID').AsString = '' then
+          begin
+            edtPAYM_ID.DropList;
+            Exit;
+          end;
+       DBGridEh1.SetFocus;
+     end;
 end;
 
 end.

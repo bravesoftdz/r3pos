@@ -509,4 +509,9 @@ inherited frameToolForm: TframeToolForm
       end
     end
   end
+  inherited actList: TActionList
+    inherited actCancel: TAction
+      ImageIndex = 15
+    end
+  end
 end

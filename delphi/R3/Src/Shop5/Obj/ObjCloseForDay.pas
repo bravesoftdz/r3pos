@@ -37,6 +37,7 @@ function TCloseForDay.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:String;
   r:integer;
+  rs:TZQuery;
 begin
   Result := False;
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
@@ -48,11 +49,20 @@ begin
 //  ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and PAYM_ID=''A'' ';
 
 //  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
-  Str := 'delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_ROWS_ID and RECV_TYPE=''4'' and RECV_MNY=0';
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE and RECV_TYPE=''4'' and RECV_MNY<>0';
+    CopyToParams(rs.Params,true);
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Raise Exception.Create('当天的结账记录，已经做缴款登记了不能撤消？');  
+  finally
+    rs.Free;
+  end;
+  Str := 'delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE and RECV_TYPE=''4''';
   r := AGlobal.ExecSQL(Str,self);
-  if r = 0 then Raise Exception.Create('没找到前当结账记录，已经做缴款登记了不能撤消？'); 
+  if r = 0 then Raise Exception.Create('没找到前当结账记录，是否被另一用户撤消？');
 
-  Str := 'delete from ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
+  Str := 'delete from ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE';
   r := AGlobal.ExecSQL(Str,self);
   if r = 0 then Raise Exception.Create('没找到前当结账记录，是否被另一用户撤消？'); 
   Result := True;

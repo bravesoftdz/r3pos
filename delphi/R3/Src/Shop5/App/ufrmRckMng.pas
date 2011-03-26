@@ -253,7 +253,7 @@ begin
 
       strSql :=
       'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from ('+
-      'select 1 as FLAG,'''' as ROWS_ID,TENANT_ID,SHOP_ID,'+
+      'select 1 as FLAG,TENANT_ID,SHOP_ID,CLSE_DATE,'+
       'sum(CLSE_MNY) as CLSE_MNY,'+
       'sum(PAY_A) as PAY_A,'+
       'sum(PAY_B) as PAY_B,'+
@@ -268,9 +268,9 @@ begin
       'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,'''' as CREA_USER,0 as TIME_STAMP '+
       'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
       'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
-      strSql := ' union all '+
+      strSql := strSql + ' union all '+
       'select jc.*,'''' as SHOP_ID_TEXT from ('+
-      'select 0 as FLAG,ROWS_ID,TENANT_ID,SHOP_ID,CLSE_DATE,'+
+      'select 3 as FLAG,TENANT_ID,SHOP_ID,CLSE_DATE,'+
       'sum(CLSE_MNY) as CLSE_MNY,'+
       'sum(PAY_A) as PAY_A,'+
       'sum(PAY_B) as PAY_B,'+

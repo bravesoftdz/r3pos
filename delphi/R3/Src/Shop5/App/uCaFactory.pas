@@ -68,11 +68,14 @@ type
     Fsslpwd: string;
     Fpubpwd: string;
     FSessionId: string;
+    timeout:Integer;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
     procedure Setsslpwd(const Value: string);
     procedure SetSessionId(const Value: string);
+    procedure doAfterExecute(const MethodName: string;
+      SOAPResponse: TStream);
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
@@ -80,7 +83,7 @@ type
     constructor Create;
     destructor Destroy;override;
 
-    function CreateRio:THTTPRIO;
+    function CreateRio(_timeOut:integer=-1):THTTPRIO;
 
     function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
 
@@ -112,6 +115,19 @@ implementation
 uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,IniFiles;
 { TCaFactory }
 
+procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
+begin
+  try
+    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+  except
+    on E:Exception do
+       begin
+         Raise;
+       end;
+  end;
+end;
 procedure TCaFactory.CheckRecAck(doc: IXMLDomDocument);
 var
   node:IXMLDOMNode;
@@ -216,7 +232,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio;
+  rio := CreateRio(10000);
   try
     h := SendHeader(rio,2);
     try
@@ -298,7 +314,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio;
+  rio := CreateRio(10000);
   try
     h := SendHeader(rio,1);
     try
@@ -446,7 +462,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio;
+  rio := CreateRio(10000);
   try
     h := SendHeader(rio,1);
     try
@@ -497,11 +513,17 @@ begin
   finally
     f.Free;
   end;
+  timeout:= 2000000;
 end;
 
-function TCaFactory.CreateRio: THTTPRIO;
+function TCaFactory.CreateRio(_timeOut:integer=-1): THTTPRIO;
 begin
-  result := THTTPRIO.Create(nil); 
+  result := THTTPRIO.Create(nil);
+  timeOut := _timeOut;
+  if _timeOut>0 then
+     result.OnAfterExecute := doAfterExecute
+  else
+     result.OnAfterExecute := nil;
 end;
 
 function TCaFactory.CreateXML(xml: string): IXMLDomDocument;
@@ -676,7 +698,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio;
+  rio := CreateRio(10000);
   try
     h := SendHeader(rio,1);
     try

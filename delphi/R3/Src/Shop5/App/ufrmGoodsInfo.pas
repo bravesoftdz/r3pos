@@ -2683,7 +2683,7 @@ begin
     DropUNITS_Ds.Data:=Rs.Data;
     for i:=DropUNITS_Ds.RecordCount downto 1 do
     begin
-      if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)='2' then //判断到非自主创建的
+      if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)<>'2' then //判断到非自主创建的
       begin
         DropUNITS_Ds.RecNo:=i;
         DropUNITS_Ds.Delete;

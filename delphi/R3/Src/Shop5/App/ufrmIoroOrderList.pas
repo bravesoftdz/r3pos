@@ -319,6 +319,7 @@ begin
   result :=
   'select j.*,'''+code_name+''' as CODE_NAME '+
   'from ( '+
+  'select jl.*,l.CODE_NAME as PAYM_ID_TEXT from ('+
   'select jk.*,k.USER_NAME as CREA_USER_TEXT from ('+
   'select ji.*,i.USER_NAME as IORO_USER_TEXT from ('+
   'select jh.*,h.USER_NAME as CHK_USER_TEXT from ('+
@@ -326,7 +327,7 @@ begin
   'select jf.*,f.ACCT_NAME as ACCOUNT_ID_TEXT from ('+
   'select je.*,e.CODE_NAME as ITEM_ID_TEXT from ('+
   'select jd.*,d.CLIENT_NAME as CLIENT_ID_TEXT,d.CLIENT_CODE,d.ADDRESS,d.POSTALCODE,d.LINKMAN,d.TELEPHONE2 as MOVE_TELE from ('+
-  'select A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.SEQNO,A.IORO_MNY,'+
+  'select A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.SEQNO,A.IORO_MNY,A.PAYM_ID,A.BILL_NO,'+
   'A.IORO_INFO,c.CLIENT_ID,C.ITEM_ID,A.ACCOUNT_ID,C.GLIDE_NO,C.IORO_USER,C.IORO_MNY as TOTAL_IORO_MNY,C.CREA_USER,C.REMARK,C.IORO_DATE,C.IORO_TYPE,C.CHK_USER '+
   'from ACC_IORODATA A,ACC_IOROORDER C where A.TENANT_ID=C.TENANT_ID and A.IORO_ID=C.IORO_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_ID='''+id+''' ) jd '+
   'left outer join '+tb+' d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
@@ -335,7 +336,8 @@ begin
   'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
   'left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.CHK_USER=h.USER_ID ) ji '+
   'left outer join VIW_USERS i on ji.TENANT_ID=i.TENANT_ID and ji.IORO_USER=i.USER_ID ) jk '+
-  'left outer join VIW_USERS k on jk.TENANT_ID=k.TENANT_ID and jk.CREA_USER=k.USER_ID ) j '+
+  'left outer join VIW_USERS k on jk.TENANT_ID=k.TENANT_ID and jk.CREA_USER=k.USER_ID ) jl '+
+  'left outer join VIW_PAYMENT l on jl.TENANT_ID=l.TENANT_ID and jl.PAYM_ID=l.CODE_ID ) j '+
   'order by j.SEQNO' ;
 end;
 

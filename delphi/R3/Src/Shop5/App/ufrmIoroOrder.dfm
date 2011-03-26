@@ -111,18 +111,18 @@ inherited frmIoroOrder: TfrmIoroOrder
               end
               item
                 EditButtons = <>
-                FieldName = 'BILL_NO'
+                FieldName = 'IORO_INFO'
                 Footers = <>
-                Title.Caption = #31080#25454#32534#21495
-                Width = 80
+                Title.Caption = #25688#35201
+                Width = 160
                 OnUpdateData = DBGridEh1Columns4UpdateData
               end
               item
                 EditButtons = <>
-                FieldName = 'IORO_INFO'
+                FieldName = 'BILL_NO'
                 Footers = <>
-                Title.Caption = #25688#35201
-                Width = 225
+                Title.Caption = #31080#25454#32534#21495
+                Width = 80
                 OnUpdateData = DBGridEh1Columns5UpdateData
               end>
           end

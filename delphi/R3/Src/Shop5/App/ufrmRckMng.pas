@@ -336,12 +336,12 @@ begin
       cdsBrowser.SQL.Text := EncodeSQL;
       Factor.Open(cdsBrowser);
     end;
-  1:begin
+  2:begin
       Db_CloseDay.Close;
       Db_CloseDay.SQL.Text := EncodeSQL;
       Factor.Open(Db_CloseDay);
     end;
-  2:begin
+  1:begin
       Db_CloseMonth.Close;
       Db_CloseMonth.SQL.Text := EncodeSQL;
       Factor.Open(Db_CloseMonth);

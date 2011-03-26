@@ -19,6 +19,8 @@ type
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     //初始化
     procedure InitClass;override;
     property RowAccessor:TZRowAccessor read GetRowAccessor;
@@ -28,15 +30,27 @@ type
   public
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   //2 synFlag
   TSyncCaRelationInfo=class(TSyncSingleTable)
   public
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   //3 synFlag
   TSyncPubBarcode=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  //4 synFlag
+  TSyncPubIcInfo=class(TSyncSingleTable)
   public
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
@@ -46,7 +60,15 @@ implementation
 
 { TSyncSingleTable }
 
-{ TSyncSingleTable }
+function TSyncSingleTable.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP'),Params);
+end;
 
 function TSyncSingleTable.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure FillParams(ZQuery:TZQuery);
@@ -173,7 +195,13 @@ begin
   result :=
     (pos('unique',lowercase(s))>0)
     or
-    (pos('primary',lowercase(s))>0);
+    (pos('primary',lowercase(s))>0)
+    or
+    (pos('sql0803',lowercase(s))>0)
+    or
+    (pos('主健',s)>0)
+    or
+    (pos('唯一约束',s)>0);
 end;
 
 function TSyncSingleTable.GetRowAccessor: TZRowAccessor;
@@ -235,6 +263,16 @@ end;
 
 { TSyncCaRelations }
 
+function TSyncCaRelations.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where (TENANT_ID=:TENANT_ID or RELATI_ID=:TENANT_ID) and TIME_STAMP>:TIME_STAMP'),Params);
+end;
+
 function TSyncCaRelations.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
@@ -248,6 +286,16 @@ begin
 end;
 
 { TSyncCaRelation }
+
+function TSyncCaRelationInfo.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=b.RELATION_ID and s.RELATI_ID=:TENANT_ID) and TIME_STAMP>:TIME_STAMP'),Params);
+end;
 
 function TSyncCaRelationInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
@@ -263,6 +311,16 @@ end;
 
 { TSyncPubBarcode }
 
+function TSyncPubBarcode.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=b.RELATION_ID and s.RELATI_ID=:TENANT_ID) and TIME_STAMP>:TIME_STAMP'),Params);
+end;
+
 function TSyncPubBarcode.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
@@ -275,14 +333,30 @@ begin
   SelectSQL.Text := Str;
 end;
 
+{ TSyncPubIcInfo }
+
+function TSyncPubIcInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,PASSWRD,USING_DATE,COMM,TIME_STAMP from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaRelationInfo);
   RegisterClass(TSyncCaRelations);
   RegisterClass(TSyncPubBarcode);
+  RegisterClass(TSyncPubIcInfo);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
   UnRegisterClass(TSyncCaRelations);
   UnRegisterClass(TSyncPubBarcode);
+  UnRegisterClass(TSyncPubIcInfo);
 end.

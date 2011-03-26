@@ -70,18 +70,24 @@ begin
         Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('RECV_DATE').AsString);
         if FieldbyName('RECV_DATE').AsOldString <> '' then
            Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('RECV_DATE').AsOldString);
-        rs := TZQuery.Create(nil);
-        try
-          rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE in (:CLSE_DATE ,:OLD_CLSE_DATE ) and CREA_USER=:CREA_USER';
-          rs.Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-          rs.Params.ParamByName('SHOP_ID').asString := FieldbyName('SHOP_ID').AsString;
-          rs.Params.ParamByName('CLSE_DATE').AsInteger := FieldbyName('RECV_DATE').AsInteger;
-          rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('RECV_DATE').AsOldInteger;
-          rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
-          AGlobal.Open(rs);
-          if not rs.IsEmpty then Raise Exception.Create('当前收款人在'+FieldbyName('RECV_DATE').AsString+'已经结账不能再开单.');
-        finally
-          rs.Free;
+        if (FieldbyName('PAYM_ID').AsString = 'A')
+           or
+           (FieldbyName('PAYM_ID').AsOldString = 'A')
+        then  //已经结账不能操作现金收款
+        begin
+          rs := TZQuery.Create(nil);
+          try
+            rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE in (:CLSE_DATE ,:OLD_CLSE_DATE ) and CREA_USER=:CREA_USER';
+            rs.Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+            rs.Params.ParamByName('SHOP_ID').asString := FieldbyName('SHOP_ID').AsString;
+            rs.Params.ParamByName('CLSE_DATE').AsInteger := FieldbyName('RECV_DATE').AsInteger;
+            rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('RECV_DATE').AsOldInteger;
+            rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
+            AGlobal.Open(rs);
+            if not rs.IsEmpty then Raise Exception.Create('当前收款人在'+FieldbyName('RECV_DATE').AsString+'已经结账不能再开单.');
+          finally
+            rs.Free;
+          end;
         end;
         result := true;
       end

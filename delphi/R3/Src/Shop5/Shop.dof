@@ -27,8 +27,8 @@ W=0
 X=1
 Y=1
 Z=1
-ShowHints=1
-ShowWarnings=1
+ShowHints=0
+ShowWarnings=0
 UnitAliases=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 NamespacePrefix=
 SymbolDeprecated=1
@@ -112,7 +112,7 @@ RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
-MajorVer=5
+MajorVer=3
 MinorVer=0
 Release=0
 Build=52
@@ -124,16 +124,21 @@ DLL=0
 Locale=2052
 CodePage=936
 [Version Info Keys]
-CompanyName=
-FileDescription=
-FileVersion=5.0.0.52
+CompanyName=浪潮软件
+FileDescription=零售终端管理系统
+FileVersion=3.0.0.52
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=
-ProductVersion=1.0.0.0
+ProductName=R3
+ProductVersion=3.0.0.0
 Comments=
+[HistoryLists\hlConditionals]
+Count=3
+Item0=RELEASE
+Item1=DEBUG;RELEASE
+Item2=DEBUG
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

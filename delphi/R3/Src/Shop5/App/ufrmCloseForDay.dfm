@@ -2,7 +2,7 @@ inherited frmCloseForDay: TfrmCloseForDay
   Left = 328
   Top = 230
   BorderStyle = bsNone
-  Caption = #20132#29677#20851#36134
+  Caption = #20132#29677#32467#36134
   ClientHeight = 258
   ClientWidth = 435
   OldCreateOrder = True

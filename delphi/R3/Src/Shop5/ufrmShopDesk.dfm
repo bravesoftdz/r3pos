@@ -20,24 +20,21 @@ inherited frmShopDesk: TfrmShopDesk
     Color = clWhite
     FlatColor = 14588523
     TabOrder = 0
-    DesignSize = (
-      1064
-      600)
     object rzTaskBar: TRzGroupBar
-      Left = 875
+      Left = 877
       Top = 0
       Width = 187
-      Height = 577
+      Height = 600
+      BorderOuter = fsFlat
       BorderColor = 13871254
       BorderShadow = 13871254
-      GroupBorderSize = 8
+      GroupBorderSize = 3
       FlatColor = 13871254
       LargeImages = ImageList1
       SmallImages = ImageList1
       UseGradients = False
-      Align = alNone
-      Anchors = [akTop, akRight]
-      Color = clWhite
+      Align = alRight
+      Color = 16381681
       ParentColor = False
       TabOrder = 0
       object RzGroup1: TRzGroup
@@ -78,6 +75,8 @@ inherited frmShopDesk: TfrmShopDesk
         CaptionColorDefault = False
         CaptionHeight = 30
         CaptionImageIndex = 1
+        Color = 16381681
+        ColorDefault = False
         Items = <
           item
             Action = frmShopMain.actfrmSaleDayReport

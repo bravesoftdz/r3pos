@@ -52,17 +52,16 @@ type
   private
     Fokline: boolean;
     FLimit: integer;
-    Foffline: boolean;
     procedure SetLimit(const Value: integer);
     procedure Setokline(const Value: boolean);
-    procedure Setoffline(const Value: boolean);
+    function Getoffline: boolean;
     { Private declarations }
   protected
     function GetSysDate: TDate;override;
   public
     { Public declarations }
     function GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter:string=''): Boolean;
-    function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean; overload;  
+    function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean; overload;
 
     procedure LoadRight;
     //1.操作日志 2.数据日志
@@ -79,7 +78,7 @@ type
     //是否网络在线应用
     property okline:boolean read Fokline write Setokline;
     // 1是离线, 0 是联机
-    property offline:boolean read Foffline write Setoffline;
+    property offline:boolean read Getoffline;
 
   end;
 
@@ -162,11 +161,6 @@ begin
   if CA_RIGHTS.Params.FindParam('USER_ID')<>nil then
     CA_RIGHTS.ParamByName('USER_ID').AsString:=Global.UserID;
   Factor.Open(CA_RIGHTS);
-end;
-
-procedure TShopGlobal.Setoffline(const Value: boolean);
-begin
-  Foffline := Value;
 end;
 
 function TShopGlobal.CheckHostLocal: boolean;
@@ -294,6 +288,11 @@ begin
     CdsRight.Filtered:=False;
     CdsRight.Filter:='';
   end;
+end;
+
+function TShopGlobal.Getoffline: boolean;
+begin
+  result := (Factor=LocalFactory);
 end;
 
 initialization

@@ -54,6 +54,7 @@ inherited frmPosMain: TfrmPosMain
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        ThemeAware = False
         object Label2: TLabel
           Left = 17
           Top = 110
@@ -814,7 +815,7 @@ inherited frmPosMain: TfrmPosMain
       AllowedOperations = [alopUpdateEh]
       AutoFitColWidths = True
       BorderStyle = bsNone
-      Color = 8404992
+      Color = clBlack
       DataSource = DataSource1
       Enabled = False
       FixedColor = clBlack
@@ -983,11 +984,13 @@ inherited frmPosMain: TfrmPosMain
       Top = 1
       Height = 25
       Align = alLeft
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       Alignment = taCenter
       Caption = #32852#26426#29366#24577
@@ -995,29 +998,18 @@ inherited frmPosMain: TfrmPosMain
     object RzStatusPane2: TRzStatusPane
       Left = 101
       Top = 1
-      Width = 485
+      Width = 606
       Height = 25
       Align = alClient
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       Alignment = taCenter
-    end
-    object RzClockStatus1: TRzClockStatus
-      Left = 586
-      Top = 1
-      Width = 121
-      Height = 25
-      Align = alRight
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clWhite
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
     end
     object RzStatusPane5: TRzStatusPane
       Left = 754
@@ -1026,11 +1018,13 @@ inherited frmPosMain: TfrmPosMain
       Height = 25
       Cursor = crHandPoint
       Align = alRight
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       OnClick = RzStatusPane5Click
       Alignment = taCenter
@@ -1043,11 +1037,13 @@ inherited frmPosMain: TfrmPosMain
       Height = 25
       Cursor = crHandPoint
       Align = alRight
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       OnClick = RzStatusPane7Click
       Alignment = taCenter
@@ -1068,14 +1064,16 @@ inherited frmPosMain: TfrmPosMain
     object lblHint: TRzStatusPane
       Left = 201
       Top = 0
-      Width = 471
+      Width = 484
       Height = 25
       Align = alClient
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       Alignment = taCenter
     end
@@ -1084,25 +1082,13 @@ inherited frmPosMain: TfrmPosMain
       Top = 0
       Height = 25
       Align = alLeft
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
-      ParentFont = False
-      Alignment = taCenter
-    end
-    object RzStatusPane6: TRzStatusPane
-      Left = 672
-      Top = 0
-      Width = 129
-      Height = 25
-      Align = alRight
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clWhite
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
+      ParentColor = False
       ParentFont = False
       Alignment = taCenter
     end
@@ -1111,15 +1097,32 @@ inherited frmPosMain: TfrmPosMain
       Top = 0
       Height = 25
       Align = alLeft
+      Color = 8404992
       Font.Charset = GB2312_CHARSET
       Font.Color = clRed
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
+      ParentColor = False
       ParentFont = False
       OnClick = RzStatusPane3Click
       Alignment = taCenter
       Caption = #25346#21333#25968':5'#21333
+    end
+    object RzClockStatus1: TRzClockStatus
+      Left = 685
+      Top = 0
+      Width = 116
+      Height = 25
+      Align = alRight
+      Color = 8404992
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
     end
   end
   object rzHelp: TRzPanel [4]
@@ -1130,7 +1133,7 @@ inherited frmPosMain: TfrmPosMain
     Align = alBottom
     BorderOuter = fsFlat
     BorderSides = [sdLeft, sdRight, sdBottom]
-    Color = clTeal
+    Color = clBlack
     TabOrder = 4
     object h2: TLabel
       Left = 137

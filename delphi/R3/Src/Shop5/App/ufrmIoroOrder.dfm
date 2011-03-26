@@ -1,6 +1,6 @@
 inherited frmIoroOrder: TfrmIoroOrder
-  Left = 567
-  Top = 312
+  Left = 176
+  Top = 226
   Caption = #20854#20182#36153#29992
   ClientHeight = 367
   ClientWidth = 535

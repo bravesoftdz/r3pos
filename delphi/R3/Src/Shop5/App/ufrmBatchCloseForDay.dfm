@@ -1,7 +1,7 @@
 inherited frmBatchCloseForDay: TfrmBatchCloseForDay
   Left = 584
   Top = 216
-  Caption = #38646#21806#32467#36134
+  Caption = #20132#29677#32467#36134
   ClientHeight = 314
   ClientWidth = 347
   OnCreate = FormCreate
@@ -17,7 +17,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
       Height = 264
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
-        Caption = #38646#21806#32467#36134
+        Caption = #24453#32467#36134#21015#34920
         inherited RzPanel2: TRzPanel
           Width = 333
           Height = 237
@@ -35,6 +35,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
               Width = 323
               Height = 227
               Align = alClient
+              AutoFitColWidths = True
               DataSource = DsCloseForDay
               Flat = True
               FooterColor = clWindow
@@ -82,7 +83,7 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
                   Footers = <>
                   Title.Alignment = taCenter
                   Title.Caption = #25910#38134#21592
-                  Width = 80
+                  Width = 58
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -90,8 +91,8 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
                   FieldName = 'CREA_DATE'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Title.Caption = #38144#21806#26085#26399
-                  Width = 80
+                  Title.Caption = #33829#19994#26085#26399
+                  Width = 76
                 end
                 item
                   DisplayFormat = '#0.00'
@@ -99,14 +100,15 @@ inherited frmBatchCloseForDay: TfrmBatchCloseForDay
                   FieldName = 'SALE_MNY'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Title.Caption = #38144#21806#37329#39069
-                  Width = 80
+                  Title.Caption = #33829#19994#37329#39069
+                  Width = 69
                 end
                 item
                   EditButtons = <>
                   FieldName = 'PAY_A'
                   Footers = <>
-                  Title.Caption = #29616#37329
+                  Title.Caption = #33829#19994#29616#37329
+                  Width = 66
                 end>
             end
           end

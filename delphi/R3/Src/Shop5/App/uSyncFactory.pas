@@ -35,6 +35,8 @@ type
     procedure SyncSingleTable(tbName,KeyFields,ZClassName:string);
     //开始同步数据
     procedure SyncAll;
+    //开始基础数据
+    procedure SyncBasic;
 
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
@@ -88,6 +90,7 @@ begin
   1:result := 'TSyncCaRelations';
   2:result := 'TSyncCaRelationInfo';
   3:result := 'TSyncPubBarcode';
+  4:result := 'TSyncPubIcInfo';
   else
     result := 'TSyncSingleTable';
   end;
@@ -311,9 +314,29 @@ begin
   new(n);
   n^.tbname := 'PUB_IC_INFO';
   n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
-  n^.synFlag := 0;
+  n^.synFlag := 4;
   n^.tbtitle := 'IC档案';
   FList.Add(n);
+
+  new(n);
+  n^.tbname := 'PUB_GOODSPRICE';
+  n^.keyFields := 'TENANT_ID;GODS_ID;SHOP_ID;PRICE_ID';
+  n^.synFlag := 0;
+  n^.tbtitle := '最新售价';
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'PUB_GOODSINFOEXT';
+  n^.keyFields := 'TENANT_ID;GODS_ID';
+  n^.synFlag := 0;
+  n^.tbtitle := '最新进价';
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'LOG_PRICING_INFO';
+  n^.keyFields := 'ROWS_ID';
+  n^.synFlag := 0;
+  n^.tbtitle := '变价日志';
+  FList.Add(n);
+  
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -348,7 +371,29 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      0,1,2,3,4:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      end;
+      frmLogo.ProgressBar1.Position := i;
+    end;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TSyncFactory.SyncBasic;
+var
+  i:integer;
+begin
+  frmLogo.Show;
+  try
+  SyncFactory.InitList;
+  frmLogo.ProgressBar1.Max := FList.Count;
+  for i:=0 to FList.Count -1 do
+    begin
+      frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      frmLogo.Label1.Update;
+      case PSynTableInfo(FList[i])^.synFlag of
+      0,1,2,3,4:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -386,10 +431,23 @@ begin
     //上传本机数据
     cs.Close;
     rs.Close;
-    Global.LocalFactory.Open(cs,ZClassName,Params);
-    rs.SyncDelta := cs.SyncDelta;
-    Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
-    SetSynTimeStamp(tbName,SyncTimeStamp);
+    Global.LocalFactory.BeginTrans;
+    try
+      Global.LocalFactory.Open(cs,ZClassName,Params);
+      if not cs.IsEmpty then
+      begin
+        rs.SyncDelta := cs.SyncDelta;
+        cs.Delete;
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+
+        SetSynTimeStamp(tbName,SyncTimeStamp);
+        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+      end;
+      Global.LocalFactory.CommitTrans;
+    except
+      Global.LocalFactory.RollbackTrans;
+      Raise;
+    end;
   finally
     rs.Free;
     cs.Free;

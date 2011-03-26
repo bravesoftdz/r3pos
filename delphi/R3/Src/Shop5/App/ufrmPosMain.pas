@@ -120,8 +120,6 @@ type
     Label18: TLabel;
     fndPRICE_ID: TcxTextEdit;
     lblACCT_MNY: TLabel;
-    RzClockStatus1: TRzClockStatus;
-    RzStatusPane6: TRzStatusPane;
     cdsHeader: TZQuery;
     cdsTable: TZQuery;
     RzStatusPane3: TRzStatusPane;
@@ -130,6 +128,7 @@ type
     RzStatusPane5: TRzStatusPane;
     RzStatusPane7: TRzStatusPane;
     DBGridEh2: TDBGridEh;
+    RzClockStatus1: TRzClockStatus;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);

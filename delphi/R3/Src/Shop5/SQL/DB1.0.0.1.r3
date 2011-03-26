@@ -1185,7 +1185,7 @@ select TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO,COMM,TIME_STAMP from PUB_CO
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','应收款','RECV_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','应退款','RECV_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','预收款','RECV_TYPE','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','收银结账','RECV_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','零售款','RECV_TYPE','00',5497000);
 
 --应收帐款
 CREATE TABLE [ACC_RECVABLE_INFO] (
@@ -1316,6 +1316,8 @@ CREATE TABLE [ACC_PAYORDER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+        --票据编号
+	[BILL_NO] [varchar] (50) NULL ,
         --说明
 	[REMARK] [varchar] (255) NULL ,
         --操作时间
@@ -1391,6 +1393,8 @@ CREATE TABLE [ACC_RECVORDER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+        --票据编号
+	[BILL_NO] [varchar] (50) NULL ,
         --说明
 	[REMARK] [varchar] (255) NULL ,
         --操作时间
@@ -1469,6 +1473,8 @@ CREATE TABLE [ACC_IOROORDER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+        --票据编号
+	[BILL_NO] [varchar] (50) NULL ,
         --说明
 	[REMARK] [varchar] (255) NULL ,
         --操作时间
@@ -1514,7 +1520,10 @@ CREATE TABLE [ACC_IORODATA] (
 CREATE INDEX IX_ACC_IORODATA_TENANT_ID ON ACC_IORODATA(TENANT_ID);
 CREATE INDEX IX_ACC_IORODATA_CLIENT_ID ON ACC_IORODATA(TENANT_ID,IORO_ID);
 
---交班结账表
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','门店销售','CLSE_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','会员充值','CLSE_TYPE','00',5497000);
+
+--销售结账表
 CREATE TABLE [ACC_CLOSE_FORDAY] (
         --行号
 	[ROWS_ID] [char] (36) NOT NULL ,
@@ -1522,8 +1531,12 @@ CREATE TABLE [ACC_CLOSE_FORDAY] (
 	[TENANT_ID] int NOT NULL ,
         --门店代码
 	[SHOP_ID] [varchar] (11) NOT NULL ,
+        --关账类型
+	[CLSE_TYPE] [varchar] (1) NOT NULL ,
         --关账日期
 	[CLSE_DATE] int NULL ,
+        --关账金额
+	[CLSE_MNY] [decimal](18, 3) NULL ,
         --结算方式
 	[PAY_A] [decimal](18, 3) NULL ,
 	[PAY_B] [decimal](18, 3) NULL ,
@@ -1558,7 +1571,7 @@ CREATE TABLE [ACC_CLOSE_FORDAY] (
 ) ;
 CREATE INDEX IX_ACC_CLOSE_FORDAY_TENANT_ID ON ACC_CLOSE_FORDAY(TENANT_ID);
 CREATE INDEX IX_ACC_CLOSE_FORDAY_CLSE_DATE ON ACC_CLOSE_FORDAY(CLSE_DATE);
-CREATE INDEX IX_ACC_CLOSE_FORDAY_KEYFIELD ON ACC_CLOSE_FORDAY(TENANT_ID,SHOP_ID,CLSE_DATE);
+CREATE INDEX IX_ACC_CLOSE_FORDAY_CLSE_DATA ON ACC_CLOSE_FORDAY(TENANT_ID,SHOP_ID,CLSE_DATE);
 
 --存取款单
 CREATE TABLE [ACC_TRANSORDER] (
@@ -1584,6 +1597,8 @@ CREATE TABLE [ACC_TRANSORDER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+        --票据编号
+	[BILL_NO] [varchar] (50) NULL ,
         --说明
 	[REMARK] [varchar] (255) NULL ,
         --操作时间

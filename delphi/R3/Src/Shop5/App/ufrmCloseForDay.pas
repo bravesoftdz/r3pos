@@ -391,6 +391,8 @@ begin
               sv.FieldByName('CLSE_DATE').AsInteger := strtoint(formatDatetime('YYYYMMDD',Date()));
               sv.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
               sv.FieldbyName('CREA_USER').AsString := Global.UserID; 
+              sv.FieldbyName('CLSE_MNY').AsFloat := 0;
+              sv.FieldbyName('CLSE_TYPE').AsString := '1'; 
               sv.FieldbyName('PAY_A').AsFloat := 0;
               sv.FieldbyName('PAY_B').AsFloat := 0;
               sv.FieldbyName('PAY_C').AsFloat := 0;
@@ -459,7 +461,8 @@ procedure TfrmCloseForDay.GetEverydayAcc(var Acc_Data: TZQuery;ThatDay:Integer);
 var Str:String;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,'+
+  'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CLSE_DATE,''1'' as CLSE_TYPE,'+
+  'sum(PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as CLSE_MNY,'+
   'sum(PAY_A) as PAY_A,'+
   'sum(PAY_B) as PAY_B,'+
   'sum(PAY_C) as PAY_C,'+
@@ -471,10 +474,26 @@ begin
   'sum(PAY_I) as PAY_I,'+
   'sum(PAY_J) as PAY_J '+
   ' from SAL_SALESORDER A'+
-  ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE>:LAST_SALES_DATE and SALES_DATE<=:SALES_DATE '+
-  ' and not exists('+
-  'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.SALES_DATE'+
-  ') group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE';
+  ' where SALES_TYPE = 4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and SALES_DATE>:LAST_SALES_DATE and SALES_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE'+
+  ' union all '+
+  'select TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE as CLSE_DATE,''2'' as CLSE_TYPE,'+
+  'sum(PAY_A+PAY_B+PAY_C+PAY_E+PAY_F+PAY_G+PAY_H+PAY_I+PAY_J) as CLSE_MNY,'+
+  'sum(PAY_A) as PAY_A,'+
+  'sum(PAY_B) as PAY_B,'+
+  'sum(PAY_C) as PAY_C,'+
+  'sum(PAY_D) as PAY_D,'+
+  'sum(PAY_E) as PAY_E,'+
+  'sum(PAY_F) as PAY_F,'+
+  'sum(PAY_G) as PAY_G,'+
+  'sum(PAY_H) as PAY_H,'+
+  'sum(PAY_I) as PAY_I,'+
+  'sum(PAY_J) as PAY_J '+
+  ' from SAL_IC_GLIDE A'+
+  ' where IC_GLIDE_TYPE = ''1'' and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and CREA_DATE>:LAST_SALES_DATE and CREA_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE';
+  Str :=
+  'select A.* from ('+Str+') A where not exists('+
+  'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.CLSE_DATE'+
+  ')';
   Acc_Data.Close;
   Acc_Data.SQL.Text := Str;
   Acc_Data.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

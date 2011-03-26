@@ -651,6 +651,9 @@ begin
          Global.Roles := Params.Roles;
          Global.CloseAll;
          Global.SysDate := lDate;
+
+//         if (Factor<>Global.LocalFactory) and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+
          Global.LoadBasic();
          ShopGlobal.LoadRight;
          CheckEnabled;
@@ -1066,7 +1069,6 @@ end;
 begin
   frmLogo.Show;
   try
-    ShopGlobal.offline := false;
     result := false;
     Global.MoveToLocal;
     Global.Connect;

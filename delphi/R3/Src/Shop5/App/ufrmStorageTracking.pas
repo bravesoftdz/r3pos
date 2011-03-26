@@ -83,8 +83,6 @@ type
     { Public declarations }
   end;
 
-var
-  frmStorageTracking: TfrmStorageTracking;
 
 implementation
 uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,

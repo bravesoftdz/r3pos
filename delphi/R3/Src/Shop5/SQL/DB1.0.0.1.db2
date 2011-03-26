@@ -3894,8 +3894,6 @@ CREATE TABLE ACC_IOROORDER (
 	CHK_DATE varchar (10) ,
         --审核人员
 	CHK_USER varchar (36) ,
-        --票据编号
-	BILL_NO varchar(50) ,
         --说明
 	REMARK varchar (255) ,
         --操作时间
@@ -3929,6 +3927,10 @@ CREATE TABLE ACC_IORODATA (
 	SEQNO int NOT NULL ,
         --收支账户
 	ACCOUNT_ID char (36) NOT NULL ,
+        --对应支付方式
+	PAYM_ID varchar (1) NOT NULL ,
+        --票据编号
+	BILL_NO varchar(50) ,
         --摘要
 	IORO_INFO varchar (255) NOT NULL ,
         --收支金额

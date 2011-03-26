@@ -83,6 +83,8 @@ type
     procedure edtPAYM_IDKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure edtPAYM_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     Fcid: string;
     FIoroType: integer;
@@ -449,7 +451,7 @@ procedure TfrmIoroOrder.DBGridEh1Columns4UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
-  if locked then exit;
+  if not locked then   BtnOk.Enabled := true;
 end;
 
 procedure TfrmIoroOrder.edtCLIENT_IDAddClick(Sender: TObject);
@@ -816,7 +818,15 @@ begin
             Exit;
           end;
        DBGridEh1.SetFocus;
+       DBGridEh1.Col := 3;
      end;
+end;
+
+procedure TfrmIoroOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  if not locked then   BtnOk.Enabled := true;
 end;
 
 end.

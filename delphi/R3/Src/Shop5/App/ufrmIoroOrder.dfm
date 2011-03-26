@@ -114,6 +114,7 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Footers = <>
                 Title.Caption = #31080#25454#32534#21495
                 Width = 80
+                OnUpdateData = DBGridEh1Columns4UpdateData
               end
               item
                 EditButtons = <>
@@ -121,7 +122,7 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Footers = <>
                 Title.Caption = #25688#35201
                 Width = 225
-                OnUpdateData = DBGridEh1Columns2UpdateData
+                OnUpdateData = DBGridEh1Columns5UpdateData
               end>
           end
           object edtACCOUNT_ID: TzrComboBoxList

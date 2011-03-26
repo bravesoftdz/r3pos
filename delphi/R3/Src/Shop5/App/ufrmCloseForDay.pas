@@ -49,6 +49,9 @@ type
     Label2: TLabel;
     edtPAY_MNY: TcxTextEdit;
     labMNY: TLabel;
+    Label3: TLabel;
+    edtHIS_MNY: TcxTextEdit;
+    cdsTable: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -65,7 +68,7 @@ type
     MainRecord: TRecord_;
     procedure GetEverydayAcc(var Acc_Data:TZQuery;ThatDay:Integer);
     procedure GetLastDate;
-    function GetBalance:Boolean;
+    function  GetBalance:Boolean;
     procedure Open;
     procedure Save;
     procedure InitForm;
@@ -87,10 +90,11 @@ var rs: TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-
     //获得当天各种支付方式的汇总
-    rs.Close;
-    rs.SQL.Text := 'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,'+
+//优化，由检测函数统一读取    
+{    rs.Close;
+    rs.SQL.Text :=
+    'select TENANT_ID,SHOP_ID,CREA_USER,SALES_DATE as CREA_DATE,'+
     'sum(PAY_A) as PAY_A,'+
     'sum(PAY_B) as PAY_B,'+
     'sum(PAY_C) as PAY_C,'+
@@ -109,18 +113,30 @@ begin
     rs.ParamByName('CREA_USER').AsString := Global.UserID;
     rs.ParamByName('SALES_DATE').AsInteger := StrtoInt(FormatDateTime('YYYYMMDD',Date()));
     Factor.Open(rs);
-    if not rs.IsEmpty then Is_Print := True;
-    MainRecord.ReadFromDataSet(rs);
+}
+    Is_Print := cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',Date())),'1']),[]);
+    if Is_Print then
+       MainRecord.ReadFromDataSet(cdsTable)
+    else
+       MainRecord.ReadField(cdsTable);
 
     //获得储值卡充值金额
-    rs.Close;
-    rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
-    Factor.Open(rs);
-    if rs.Fields[0].AsString<>'' then
-      Is_Print := True;
-    edtPAY_MNY.Text := rs.Fields[0].AsString;
-
+//    rs.Close;
+//    rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
+//    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
+//    Factor.Open(rs);
+//    if rs.Fields[0].AsString<>'' then
+//      Is_Print := True;
+//    edtPAY_MNY.Text := rs.Fields[0].AsString;
+    if cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',Date())),'2']),[]) then
+       begin
+         edtPAY_MNY.Text := formatfloat('#0.00',cdsTable.FieldbyName('PAY_A').asFloat);
+         Is_Print := true;
+       end
+    else
+       begin
+         edtPAY_MNY.Text := formatfloat('#0.00',0);
+       end;
     //获得批发金额
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
@@ -131,7 +147,6 @@ begin
     edtRECV_MNY.Text := rs.Fields[0].AsString;
 
     ShowFee;
-
 
     rs.Close;
     Str :=
@@ -228,7 +243,7 @@ begin
     begin
       try
         GetLastDate;
-        if not ((LastTime = 0) and GetBalance) then
+        if not (GetBalance and (LastTime = 0)) then
           begin
             Open;
             if (IntToStr(LastTime) = FormatDateTime('YYYYMMDD',Date())) then  //打印当天已经结账汇总
@@ -361,11 +376,11 @@ var i:Integer;
     rs,sv: TZQuery;
     AObj:TRecord_;
 begin
-    rs := TZQuery.Create(nil);
+    rs := cdsTable;
     sv := TZQuery.Create(nil);
     AObj := TRecord_.Create;
     try
-      GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',Date())));
+//      GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',Date())));
 //      if not rs.IsEmpty then  //当天没数据可以补0了
         begin
           //把未结账日期值 赋给 动态数组
@@ -410,7 +425,7 @@ begin
     finally
       AObj.Free;
       sv.Free;
-      rs.Free;
+//      rs.Free;
     end;
 
 end;
@@ -524,35 +539,20 @@ begin
 end;
 
 function TfrmCloseForDay.GetBalance: Boolean;
-var rs:TZQuery;
-    Str:String;
+var toDay:integer;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    //获得店内余额
-    rs.Close;
-    Str :=
-    'select sum(PAY_A) as PAY_A,sum(case when CREA_USER=:CREA_USER then SALE_MNY else 0 end) as SALE_MNY '+
-    ' from SAL_SALESORDER A '+
-    ' where SALES_TYPE=4 and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and SALES_DATE>:LAST_SALES_DATE and SALES_DATE <=:SALES_DATE '+
-    ' and not exists('+
-    ' select * from ACC_CLOSE_FORDAY B where B.TENANT_ID=A.TENANT_ID and B.SHOP_ID=A.SHOP_ID and B.CREA_USER=A.CREA_USER and B.CLSE_DATE=A.SALES_DATE'+
-    ' )';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,Str);
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    rs.ParamByName('CREA_USER').AsString := Global.UserID;
-    rs.ParamByName('SALES_DATE').AsInteger := StrtoInt(FormatDatetime('YYYYMMDD',Date()));
-    rs.ParamByName('LAST_SALES_DATE').AsInteger := LastTime;
-    Factor.Open(rs);
-
-    Result := (rs.FieldByName('SALE_MNY').asFloat=0);
-
-    Balance := rs.FieldbyName('PAY_A').asFloat;
-
-  finally
-    rs.Free;
-  end;
+  toDay := StrToInt(FormatDateTime('YYYYMMDD',Date()));
+  GetEverydayAcc(cdsTable,toDay); //合并操作，当它只是打开一次即可
+  result := cdsTable.IsEmpty;
+  Balance := 0;
+  cdsTable.First;
+  while not cdsTable.Eof do
+    begin
+      if cdsTable.FieldByName('CLSE_DATE').AsInteger < toDay then
+         Balance := Balance + cdsTable.FieldByName('PAY_A').AsFloat;
+      cdsTable.Next;
+    end;
+  edtHIS_MNY.Text := formatfloat('#0.00',Balance);
 end;
 
 end.

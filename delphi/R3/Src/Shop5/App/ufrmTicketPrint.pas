@@ -160,7 +160,7 @@ begin
         DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
       end;
 
-    DevFactory.WritePrint('销售总额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
+    DevFactory.WritePrint('营业额:'+FormatFloat('#0.00',ForDay_rs.FieldbyName('PAY_A').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_B').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_C').AsFloat+
                                                         ForDay_rs.FieldbyName('PAY_D').AsFloat+

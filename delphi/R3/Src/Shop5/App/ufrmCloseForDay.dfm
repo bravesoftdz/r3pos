@@ -227,7 +227,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object lblCASH: TLabel
         Left = 225
-        Top = 68
+        Top = 79
         Width = 95
         Height = 20
         Caption = #24403#26085#29616#37329':'
@@ -370,6 +370,20 @@ inherited frmCloseForDay: TfrmCloseForDay
         Font.Color = clRed
         Font.Height = -20
         Font.Name = #40657#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label3: TLabel
+        Left = 227
+        Top = 56
+        Width = 52
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #24448#26085#29616#37329
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWhite
+        Font.Height = -12
+        Font.Name = #23435#20307
         Font.Style = [fsBold]
         ParentFont = False
       end
@@ -569,6 +583,22 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 11
       end
+      object edtHIS_MNY: TcxTextEdit
+        Tag = 1
+        Left = 285
+        Top = 52
+        Width = 104
+        Height = 20
+        Enabled = False
+        ParentFont = False
+        Style.Color = 14671839
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 12
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -578,5 +608,12 @@ inherited frmCloseForDay: TfrmCloseForDay
   inherited actList: TActionList
     Left = 8
     Top = 320
+  end
+  object cdsTable: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 183
+    Top = 112
   end
 end

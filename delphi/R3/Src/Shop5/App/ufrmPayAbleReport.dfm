@@ -1351,7 +1351,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 item
                   Default = True
                 end>
-              Properties.ReadOnly = True
+              Properties.ReadOnly = False
               TabOrder = 6
               InGrid = False
               KeyValue = Null
@@ -1382,7 +1382,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               DropListStyle = lsFixed
               MultiSelect = False
             end
-            object zrComboBoxList1: TzrComboBoxList
+            object fndP5_GLIDE_ID: TzrComboBoxList
               Left = 323
               Top = 32
               Width = 89
@@ -1392,7 +1392,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 item
                   Default = True
                 end>
-              Properties.ReadOnly = True
+              Properties.ReadOnly = False
               TabOrder = 7
               InGrid = False
               KeyValue = Null
@@ -1419,7 +1419,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               AutoFitColWidth = True
               ShowButton = True
               LocateStyle = lsDark
-              Buttons = [zbNew]
+              Buttons = [zbClear]
               DropListStyle = lsFixed
               MultiSelect = False
             end

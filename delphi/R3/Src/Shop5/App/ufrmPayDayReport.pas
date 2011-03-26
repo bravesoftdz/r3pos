@@ -641,10 +641,10 @@ begin
 
   //¹ØÁªÓï¾ä
   strSql:=
-    'select je.*,r.USER_NAME as USER_NAME from '+
+    'select je.*,r.USER_NAME as USER_NAME,0 as OVERDAYS from '+
     '(select jd.*,E.ACCT_NAME as ACC_NAME from '+
     '(select j.*,D.CLIENT_NAME as CUST_NAME from  '+
-    ' (select A.*,B.SHOP_NAME from VIW_SUPPAYDATA A,CA_SHOP_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
+    ' (select A.*,B.SHOP_NAME from VIW_PAYABLEDATA A,CA_SHOP_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
     '  left outer join VIW_CLIENTINFO D on j.TENANT_ID=D.TENANT_ID and j.CLIENT_ID=D.CLIENT_ID)jd '+
     '  left outer join ACC_ACCOUNT_INFO E on jd.ACCOUNT_ID=E.ACCOUNT_ID)je '+
     '  left outer join viw_users r on je.TENANT_ID=r.TENANT_ID and je.PAY_USER=r.USER_ID order by je.PAY_USER ';
@@ -718,6 +718,7 @@ end;
 
 procedure TfrmPayDayReport.CaclOverDays(Report: TZQuery; BegField, EndField: string);
 var
+  OverDays: Extended;
   IdxBeg,IdxEnd,IdxDay: integer;
 begin
   if not Report.Active then Exit;
@@ -727,8 +728,10 @@ begin
   Report.First;
   while not Report.Eof do
   begin
+    OverDays:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+    if OverDays<0 then OverDays:=0;
     Report.Edit;
-    Report.Fields[IdxDay].AsFloat:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+    Report.Fields[IdxDay].AsFloat:=OverDays;
     Report.Post;
     Report.Next;
   end;

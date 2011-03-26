@@ -92,7 +92,7 @@ type
     Label7: TLabel;
     fndP5_USER_ID: TzrComboBoxList;
     Label8: TLabel;
-    zrComboBoxList1: TzrComboBoxList;
+    fndP5_GLIDE_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -147,7 +147,11 @@ begin
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
+  P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+
   SetRzPageActivePage; //设置PzPage.Activepage
+  fndP5_GLIDE_ID.DataSet:=Global.GetZQueryFromName('CA_USERS');
 
   InitGrid;
   RefreshColumn;
@@ -303,19 +307,21 @@ end;
 
 function TfrmPayAbleReport.GetRecvGlideSQL(chk:boolean=true): string;
 var
-  strSql,strWhere: string;
+  strSql,strWhere,GLIDE_Cnd: string;
 begin
   if P5_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P5_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
-
+  GLIDE_Cnd:='';
   //企业ID
   strWhere:='and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
   //日期：
   strWhere:=strWhere+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' ';
   //门店管理群组
   strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+'  ';  
-
+  //验货人：
+  if trim(fndP5_GLIDE_ID.AsString)<>'' then
+    GLIDE_Cnd:=' where GUIDE_USER='''+fndP5_GLIDE_ID.AsString+''' ';  
 
 
   //按根据条件门店查询:
@@ -331,7 +337,7 @@ begin
     ',PAYM_MNY'+
     ',RECK_MNY'+
     ',NEAR_DATE'+
-    ',CREA_USER'+
+    ',STOCK_ID'+
     ',B.SHOP_NAME as SHOP_ID_TEXT '+
     ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+strWhere;
@@ -344,7 +350,8 @@ begin
   //关联进货单 
   strSql:=
     'select jc.*,c.GUIDE_USER from ('+strSql+') jc '+
-    'left outer join STK_STOCKORDER c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID ';
+    'left outer join STK_STOCKORDER c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID '+
+    ' '+GLIDE_Cnd;
 
   //关联制单人、验收货人
   strSql:=

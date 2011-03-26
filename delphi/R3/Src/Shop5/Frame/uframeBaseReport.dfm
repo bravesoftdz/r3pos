@@ -10,25 +10,25 @@ inherited frameBaseReport: TframeBaseReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 790
-    Height = 511
+    Height = 505
     inherited RzPanel2: TRzPanel
       Width = 780
-      Height = 501
+      Height = 495
       inherited RzPage: TRzPageControl
         Width = 575
-        Height = 495
+        Height = 489
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
             Width = 573
-            Height = 468
+            Height = 462
             BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
               Width = 563
-              Height = 458
+              Height = 452
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -48,7 +48,7 @@ inherited frameBaseReport: TframeBaseReport
                 Left = 0
                 Top = 81
                 Width = 563
-                Height = 377
+                Height = 371
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -57,7 +57,7 @@ inherited frameBaseReport: TframeBaseReport
                   Left = 2
                   Top = 2
                   Width = 559
-                  Height = 373
+                  Height = 367
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -109,7 +109,7 @@ inherited frameBaseReport: TframeBaseReport
         Left = 578
         Top = 3
         Width = 199
-        Height = 495
+        Height = 489
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -497,15 +497,18 @@ inherited frameBaseReport: TframeBaseReport
   inherited RzPanel4: TRzPanel
     Width = 790
     inherited Image1: TImage
-      Left = 506
-      Width = 275
-    end
-    inherited Image14: TImage
-      Left = 781
+      Left = 350
+      Width = 420
     end
     inherited Image3: TImage
-      Left = 506
-      Width = 275
+      Left = 350
+      Width = 420
+    end
+    inherited Image14: TImage
+      Left = 770
+    end
+    inherited rzPanel5: TPanel
+      Left = 350
     end
     inherited CoolBar1: TCoolBar
       Width = 330
@@ -516,11 +519,10 @@ inherited frameBaseReport: TframeBaseReport
           FixedSize = True
           ImageIndex = -1
           MinHeight = 330
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 330
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0

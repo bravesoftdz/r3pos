@@ -272,12 +272,12 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',B.REGION_ID '+
-    ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -417,12 +417,12 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.SHOP_ID '+
-    ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -510,10 +510,10 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
     ',sum(DBOUT_RTL) as DBOUT_RTL '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -660,13 +660,13 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
-    ',sum(DBIN_AMT/'+UnitCalc+') as DBIN_AMT '+
+    ',sum(DBIN_AMT*1.00/'+UnitCalc+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
-    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
+    ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBIN_PRC '+
     ',sum(DBIN_RTL) as DBIN_RTL '+
-    ',sum(DBOUT_AMT/'+UnitCalc+') as DBOUT_AMT '+
+    ',sum(DBOUT_AMT*1.00/'+UnitCalc+') as DBOUT_AMT '+
     ',sum(DBOUT_CST) as DBOUT_CST '+
-    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
+    ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as DBOUT_PRC '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
@@ -904,9 +904,19 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
+  P5_D1.Date:=P4_D1.Date;
+  P5_D2.Date:=P4_D2.Date;
+  fndP5_TYPE_ID.ItemIndex:=fndP4_TYPE_ID.ItemIndex;
+  fndP5_STAT_ID.KeyValue:=fndP4_STAT_ID.KeyValue;
+  fndP5_STAT_ID.Text:=fndP4_STAT_ID.Text;
+  fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text;
   sid5:=sid4;
   srid5:=srid4;
-  DoAssignParamsValue(RzPanel14, RzPanel17);
+  if RzPage.ActivePageIndex+1<=RzPage.PageCount then
+  begin
+    RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
+    actFind.OnExecute(nil);
+  end;
 end;
 
 procedure TfrmDbDayReport.PrintBefore;

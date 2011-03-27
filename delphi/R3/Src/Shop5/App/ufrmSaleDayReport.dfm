@@ -8,28 +8,28 @@ inherited frmSaleDayReport: TfrmSaleDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 905
-    Height = 529
+    Height = 523
     inherited RzPanel2: TRzPanel
       Width = 895
-      Height = 519
+      Height = 513
       inherited RzPage: TRzPageControl
         Width = 690
-        Height = 513
-        ActivePage = TabSheet5
+        Height = 507
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 688
-            Height = 486
+            Height = 480
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 678
-              Height = 476
+              Height = 470
               inherited w1: TRzPanel
                 Width = 678
                 Height = 77
@@ -257,10 +257,10 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               inherited RzPanel7: TRzPanel
                 Top = 77
                 Width = 678
-                Height = 399
+                Height = 393
                 inherited DBGridEh1: TDBGridEh
                   Width = 674
-                  Height = 395
+                  Height = 389
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -808,7 +808,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             Left = 0
             Top = 0
             Width = 688
-            Height = 486
+            Height = 480
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -817,7 +817,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               Left = 5
               Top = 5
               Width = 678
-              Height = 476
+              Height = 470
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1042,7 +1042,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 Left = 0
                 Top = 77
                 Width = 678
-                Height = 399
+                Height = 393
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1052,7 +1052,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Left = 2
                   Top = 2
                   Width = 674
-                  Height = 395
+                  Height = 389
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1124,8 +1124,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                       Width = 63
@@ -1142,8 +1140,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -1152,8 +1148,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -1162,8 +1156,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1172,8 +1164,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -1182,8 +1172,6 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AGO'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80
@@ -1693,7 +1681,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
             Left = 0
             Top = 0
             Width = 688
-            Height = 486
+            Height = 480
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1702,7 +1690,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
               Left = 5
               Top = 5
               Width = 678
-              Height = 476
+              Height = 470
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2034,7 +2022,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                 Left = 0
                 Top = 103
                 Width = 678
-                Height = 373
+                Height = 367
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2043,7 +2031,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
                   Left = 2
                   Top = 2
                   Width = 674
-                  Height = 369
+                  Height = 363
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2280,7 +2268,7 @@ inherited frmSaleDayReport: TfrmSaleDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 693
-        Height = 513
+        Height = 507
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2298,13 +2286,13 @@ inherited frmSaleDayReport: TfrmSaleDayReport
   inherited RzPanel4: TRzPanel
     Width = 905
     inherited Image1: TImage
-      Width = 390
-    end
-    inherited Image14: TImage
-      Left = 896
+      Width = 535
     end
     inherited Image3: TImage
-      Width = 390
+      Width = 535
+    end
+    inherited Image14: TImage
+      Left = 885
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

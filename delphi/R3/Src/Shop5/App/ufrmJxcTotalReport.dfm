@@ -8,28 +8,28 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 951
-    Height = 568
+    Height = 562
     inherited RzPanel2: TRzPanel
       Width = 941
-      Height = 558
+      Height = 552
       inherited RzPage: TRzPageControl
         Width = 736
-        Height = 552
-        ActivePage = TabSheet4
+        Height = 546
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
             Width = 734
-            Height = 525
+            Height = 519
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 724
-              Height = 515
+              Height = 509
               inherited w1: TRzPanel
                 Width = 724
                 Height = 83
@@ -267,10 +267,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               inherited RzPanel7: TRzPanel
                 Top = 83
                 Width = 724
-                Height = 432
+                Height = 426
                 inherited DBGridEh1: TDBGridEh
                   Width = 720
-                  Height = 428
+                  Height = 422
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -1064,7 +1064,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             Left = 0
             Top = 0
             Width = 734
-            Height = 525
+            Height = 519
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1073,7 +1073,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               Left = 5
               Top = 5
               Width = 724
-              Height = 515
+              Height = 509
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1312,7 +1312,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 Left = 0
                 Top = 84
                 Width = 724
-                Height = 431
+                Height = 425
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1322,7 +1322,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Left = 2
                   Top = 2
                   Width = 720
-                  Height = 427
+                  Height = 421
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1394,8 +1394,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#21021'|'#25968#37327
                       Width = 60
@@ -1404,8 +1402,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#21021'|'#37329#39069
                       Width = 62
@@ -1414,8 +1410,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#21021'|'#21487#38144#21806#39069
                       Width = 60
@@ -1424,8 +1418,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135'|'#25968#37327
                       Width = 61
@@ -1434,8 +1426,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135'|'#36827#36135#37329#39069
                       Width = 69
@@ -1444,8 +1434,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135'|'#26410#31246#37329#39069
                       Width = 68
@@ -1454,8 +1442,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135'|'#36827#39033#31246#39069
                       Width = 59
@@ -1464,8 +1450,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25968#37327
                       Width = 60
@@ -1474,8 +1458,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#38144#21806#37329#39069
                       Width = 76
@@ -1484,8 +1466,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#26410#31246#37329#39069
                       Width = 72
@@ -1494,8 +1474,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#38144#39033#31246#39069
                       Width = 67
@@ -1504,8 +1482,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#25104#26412
                       Width = 72
@@ -1514,8 +1490,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033
                       Width = 73
@@ -1524,8 +1498,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806'|'#27611#21033#29575
                       Width = 52
@@ -1534,8 +1506,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35843#20837'|'#25968#37327
                       Width = 60
@@ -1544,8 +1514,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35843#20837'|'#37329#39069
                       Width = 74
@@ -1554,8 +1522,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35843#20986'|'#25968#37327
                       Width = 60
@@ -1564,8 +1530,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35843#20986'|'#37329#39069
                       Width = 74
@@ -1574,8 +1538,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#26410'|'#25968#37327
                       Width = 60
@@ -1584,8 +1546,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#26410'|'#37329#39069
                       Width = 77
@@ -1594,8 +1554,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26399#26410'|'#21487#38144#21806#39069
                     end>
@@ -1611,7 +1569,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             Left = 0
             Top = 0
             Width = 734
-            Height = 525
+            Height = 519
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1620,7 +1578,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               Left = 5
               Top = 5
               Width = 724
-              Height = 515
+              Height = 509
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1919,7 +1877,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 Left = 0
                 Top = 105
                 Width = 724
-                Height = 410
+                Height = 404
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1928,7 +1886,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Left = 2
                   Top = 2
                   Width = 720
-                  Height = 406
+                  Height = 400
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2220,7 +2178,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
       end
       inherited PanelColumnS: TPanel
         Left = 739
-        Height = 552
+        Height = 546
         inherited Panel2: TPanel
           Height = 502
           inherited RzPanel1: TRzPanel [3]
@@ -2238,13 +2196,13 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   inherited RzPanel4: TRzPanel
     Width = 951
     inherited Image1: TImage
-      Width = 436
-    end
-    inherited Image14: TImage
-      Left = 942
+      Width = 581
     end
     inherited Image3: TImage
-      Width = 436
+      Width = 581
+    end
+    inherited Image14: TImage
+      Left = 931
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

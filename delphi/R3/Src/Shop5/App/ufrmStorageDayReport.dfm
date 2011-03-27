@@ -8,13 +8,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1075
-    Height = 565
+    Height = 559
     inherited RzPanel2: TRzPanel
       Width = 1065
-      Height = 555
+      Height = 549
       inherited RzPage: TRzPageControl
         Width = 860
-        Height = 549
+        Height = 543
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -23,11 +23,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
           Caption = #22320#21306#24211#23384#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 858
-            Height = 522
+            Height = 516
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 848
-              Height = 512
+              Height = 506
               inherited w1: TRzPanel
                 Width = 848
                 Height = 87
@@ -250,10 +250,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               inherited RzPanel7: TRzPanel
                 Top = 87
                 Width = 848
-                Height = 425
+                Height = 419
                 inherited DBGridEh1: TDBGridEh
                   Width = 844
-                  Height = 421
+                  Height = 415
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -713,7 +713,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -722,7 +722,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -940,7 +940,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 89
                 Width = 848
-                Height = 423
+                Height = 417
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -950,7 +950,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 419
+                  Height = 413
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1022,8 +1022,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
@@ -1040,8 +1038,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
@@ -1058,8 +1054,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97
@@ -1510,7 +1504,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 863
-        Height = 549
+        Height = 543
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -1528,13 +1522,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
   inherited RzPanel4: TRzPanel
     Width = 1075
     inherited Image1: TImage
-      Width = 560
-    end
-    inherited Image14: TImage
-      Left = 1066
+      Width = 705
     end
     inherited Image3: TImage
-      Width = 560
+      Width = 705
+    end
+    inherited Image14: TImage
+      Left = 1055
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

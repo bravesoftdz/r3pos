@@ -109,9 +109,9 @@ begin
    4:   CLIENT_Tab:=' select trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
   end;
   CLIENT_Tab:=
-     ' (select CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO)'+  //供应商表
-     ' union all (select CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME from PUB_CUSTOMER)'+  //客户表
-     ' union all ('+CLIENT_Tab+') ';  //企业表
+     ' select CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO '+  //供应商表
+     ' union all select CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME from PUB_CUSTOMER '+  //客户表
+     ' union all '+CLIENT_Tab+' ';  //企业表
 
   strSql :=
     'select A.TENANT_ID'+

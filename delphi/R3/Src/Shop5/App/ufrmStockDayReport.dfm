@@ -7,28 +7,28 @@ inherited frmStockDayReport: TfrmStockDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1075
-    Height = 565
+    Height = 559
     inherited RzPanel2: TRzPanel
       Width = 1065
-      Height = 555
+      Height = 549
       inherited RzPage: TRzPageControl
         Width = 860
-        Height = 549
-        ActivePage = TabSheet5
+        Height = 543
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 858
-            Height = 522
+            Height = 516
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 848
-              Height = 512
+              Height = 506
               inherited w1: TRzPanel
                 Width = 848
                 Height = 82
@@ -255,10 +255,10 @@ inherited frmStockDayReport: TfrmStockDayReport
               inherited RzPanel7: TRzPanel
                 Top = 82
                 Width = 848
-                Height = 430
+                Height = 424
                 inherited DBGridEh1: TDBGridEh
                   Width = 844
-                  Height = 426
+                  Height = 420
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -802,7 +802,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -811,7 +811,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1033,7 +1033,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 82
                 Width = 848
-                Height = 430
+                Height = 424
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1043,7 +1043,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 426
+                  Height = 420
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1115,8 +1115,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 63
@@ -1133,8 +1131,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -1143,8 +1139,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -1153,8 +1147,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1163,8 +1155,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -1181,8 +1171,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -1688,7 +1676,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1697,7 +1685,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2018,7 +2006,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 102
                 Width = 848
-                Height = 410
+                Height = 404
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2027,7 +2015,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 406
+                  Height = 400
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2268,7 +2256,7 @@ inherited frmStockDayReport: TfrmStockDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 863
-        Height = 549
+        Height = 543
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -2286,13 +2274,13 @@ inherited frmStockDayReport: TfrmStockDayReport
   inherited RzPanel4: TRzPanel
     Width = 1075
     inherited Image1: TImage
-      Width = 560
-    end
-    inherited Image14: TImage
-      Left = 1066
+      Width = 705
     end
     inherited Image3: TImage
-      Width = 560
+      Width = 705
+    end
+    inherited Image14: TImage
+      Left = 1055
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

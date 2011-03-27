@@ -249,7 +249,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+'  ';
 
   //查询主数据:
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
@@ -300,7 +300,7 @@ begin
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
     // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -309,7 +309,7 @@ begin
     SQLData:=
       '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+'  and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
   end;
 
@@ -319,8 +319,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+   //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -449,7 +449,7 @@ begin
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
     // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -458,7 +458,7 @@ begin
     SQLData:=
       '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
   end;
 
@@ -468,8 +468,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -540,7 +540,7 @@ begin
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
     // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -549,7 +549,7 @@ begin
     SQLData:=
       '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
   end;
 
@@ -559,8 +559,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -696,7 +696,7 @@ begin
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
-    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
+    SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else if RckMaxDate > vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_GOODS_DAYS'
     // SQLData:='(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -705,7 +705,7 @@ begin
     SQLData:=
       '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
+      ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
   end;
 
@@ -714,8 +714,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',A.GODS_ID as GODS_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -746,7 +746,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('调整日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CHANGE_CODE='''+CodeId+''' ';
   //GodsID不为空(DBGridEh4双击查看明细数据显示)
   if trim(GodsID)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
@@ -810,12 +810,12 @@ begin
     ',A.CREA_USER '+
     ',A.SHOP_ID '+
     ',A.CHANGE_TYPE '+
-    ',A.AMOUNT '+               //--数量
+    ',-A.AMOUNT as AMOUNT'+               //--数量
     ',A.APRICE '+               //--零售价
-    ',A.RTL_MONEY as AMONEY '+  //--零售金额
+    ',-A.RTL_MONEY as AMONEY '+  //--零售金额
     ',A.COST_PRICE '+           //--成本价
-    ',A.COST_MONEY '+           //--成本金额
-    ',(A.RTL_MONEY-A.COST_MONEY) as PROFIT_MONEY '+                   //--差额毛利
+    ',-A.COST_MONEY as COST_MONEY '+           //--成本金额
+    ',-(A.RTL_MONEY-A.COST_MONEY) as PROFIT_MONEY '+                   //--差额毛利
     ',B.SHOP_NAME '+
     'from VIW_CHANGEDATA A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 

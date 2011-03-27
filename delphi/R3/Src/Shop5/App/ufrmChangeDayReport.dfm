@@ -8,28 +8,28 @@ inherited frmChangeDayReport: TfrmChangeDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 892
-    Height = 532
+    Height = 526
     inherited RzPanel2: TRzPanel
       Width = 882
-      Height = 522
+      Height = 516
       inherited RzPage: TRzPageControl
         Width = 677
-        Height = 516
-        ActivePage = TabSheet3
+        Height = 510
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#35843#25972#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 675
-            Height = 489
+            Height = 483
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 665
-              Height = 479
+              Height = 473
               inherited w1: TRzPanel
                 Width = 665
                 Height = 86
@@ -256,10 +256,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               inherited RzPanel7: TRzPanel
                 Top = 86
                 Width = 665
-                Height = 393
+                Height = 387
                 inherited DBGridEh1: TDBGridEh
                   Width = 661
-                  Height = 389
+                  Height = 383
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -734,7 +734,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 489
+            Height = 483
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -743,7 +743,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 479
+              Height = 473
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -968,7 +968,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 85
                 Width = 665
-                Height = 394
+                Height = 388
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -978,7 +978,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 390
+                  Height = 384
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1050,8 +1050,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
@@ -1068,8 +1066,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 84
@@ -1078,8 +1074,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25104#26412
                       Width = 80
@@ -1088,8 +1082,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24046#39069#27611#21033
                       Width = 80
@@ -1554,7 +1546,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 489
+            Height = 483
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1563,7 +1555,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 479
+              Height = 473
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1853,7 +1845,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 81
                 Width = 665
-                Height = 398
+                Height = 392
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1862,7 +1854,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 394
+                  Height = 388
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1995,8 +1987,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_PRICE'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25104#26412#20215
                       Width = 80
@@ -2064,7 +2054,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 680
-        Height = 516
+        Height = 510
         inherited Panel2: TPanel
           Height = 466
           inherited RzPanel1: TRzPanel [3]
@@ -2082,13 +2072,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
   inherited RzPanel4: TRzPanel
     Width = 892
     inherited Image1: TImage
-      Width = 377
-    end
-    inherited Image14: TImage
-      Left = 883
+      Width = 522
     end
     inherited Image3: TImage
-      Width = 377
+      Width = 522
+    end
+    inherited Image14: TImage
+      Left = 872
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

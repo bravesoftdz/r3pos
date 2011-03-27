@@ -154,7 +154,7 @@ begin
       EditObj.FieldByName('RELATION_ID').AsString:='0';   //新增的商品: 自主经营
       EditObj.FieldByName('selflag').AsString:='0';       //标记位
       if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
-        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
+        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)+'%'
       else
         EditObj.FieldByName('PROFIT_RATE').AsValue := null;
       EditObj.WriteToDataSet(cdsBrowser);
@@ -163,6 +163,8 @@ begin
     finally
       EditObj.Free;
     end;
+    Inc(rcAmt); //新插入增加一条
+    GetNo; //刷新显示记录数
   end;
 
   InitGrid;
@@ -307,10 +309,10 @@ begin
     rs.SaveToStream(StrmData);
     if Id='' then
     begin
-      //  cdsBrowser.Close;
-      //  cdsBrowser.SQL.Text:=rs.SQL.Text;
-      //  cdsBrowser.Params.AssignValues(rs.Params);
-      //  Factor.Open(cdsBrowser);
+      // cdsBrowser.Close;
+      // cdsBrowser.SQL.Text:=rs.SQL.Text;
+      // cdsBrowser.Params.AssignValues(rs.Params);
+      // Factor.Open(cdsBrowser);
       cdsBrowser.LoadFromStream(StrmData);
       cdsBrowser.IndexFieldNames := 'GODS_CODE';
       cdsBrowser.SortedFields:='GODS_CODE';

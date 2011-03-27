@@ -386,6 +386,8 @@ CREATE TABLE CA_RELATION(
 	RELATION_SPELL varchar(50) NOT NULL,
 	  --说明
 	REMARK varchar(255),
+	  --创建日期
+	CREA_DATE varchar(10),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  
@@ -412,6 +414,10 @@ CREATE TABLE CA_RELATIONS(
 	LEVEL_ID varchar(30) NOT NULL,
     --关系状态  1 申请 2 审核 
 	RELATION_STATUS varchar(1) NOT NULL,
+	  --创建日期
+	CREA_DATE varchar(10),
+	  --审核日期
+	CHK_DATE varchar(10),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  

@@ -103,7 +103,7 @@ function TDelFromRelation.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   r:integer;
 begin
-  r := AGlobal.ExecSQL('update PUB_GOODS_RELATION set COMM=''00'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and RELATION_ID=:RELATION_ID',self);
+  r := AGlobal.ExecSQL('update PUB_GOODS_RELATION set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and RELATION_ID=:RELATION_ID',self);
   if r=0 then Raise Exception.Create('撤消商品失败，已经被其他用户撤消...');  
 end;
 

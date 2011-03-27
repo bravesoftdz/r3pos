@@ -556,80 +556,59 @@ begin
 end;
 
 function TfrmShopMain.CheckVersion:boolean;
-var
-  F:TIniFile;
-  frmLogo:TfrmLogo;
-  myComVersion:string;
+function GetFileNameFromURL(url: string): string;
+var ts : TStrings;
 begin
-//  CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductID,RzVersionInfo.FileVersion);
-{  result := false;
-  if frmInstall=nil then Exit;
-  if ShopGlobal.offline then Exit;
-  frmLogo := TfrmLogo.Create(self);
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  //从url取得文件名
+  ts := TStringList.create;
   try
-    frmLogo.Show;
-    frmInstall.SysId := 'okly';
-    frmInstall.Path := ExtractFilePath(ParamStr(0));
-    frmInstall.Url := F.ReadString('update','url','http://www.okonly.net/update');
-    frmInstall.LoadVersionFile;
-    if frmInstall.DownLoadControlFile then
-       begin
-          frmInstall.LoadControlFile;
-          if frmInstall.CompareVersion(frmInstall.NewVersion,frmInstall.CurVersion) then
-             begin
-               myComVersion := Factor.ExecProc('TGetComVersion');
-               frmLogo.Close;
-               frmInstall.Close;
-               if (frmInstall.flag=1) then //服务器
-                 begin
-                    if (MessageBox(Handle,pchar('软件检测到新版本:'+frmInstall.NewVersion+',是否立即下载?'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
-                       begin
-                         Exit;
-                       end;
-                 end
-               else
-                 begin
-                   if (Factor.LoginParam.ConnMode = 2) then
-                      begin
-                        if frmInstall.CompareVersion(frmInstall.ComVersion,myComVersion) then
-                           begin
-                             MessageBox(Handle,pchar('软件检测到新版本:'+frmInstall.NewVersion+'，请把服务器升级到最新版本...'),'友情提示...',MB_OK+MB_ICONINFORMATION);
-                             Exit;
-                           end
-                      end
-                   else
-                      begin
-                        if (frmInstall.ComVersion<>myComVersion) and (MessageBox(Handle,pchar('软件检测到新版本:'+frmInstall.NewVersion+',是否立即下载?'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
-                           begin
-                             Exit;
-                           end;
-                      end;
-                  end;
-               frmInstall.Show;
-               frmInstall.Update;
-               ForceDirectories(frmInstall.Path);//目录不存在时自动建目录
-               if frmInstall.CompareVersion(frmInstall.NewVersion,frmInstall.CurVersion) then
-               begin
-                  frmInstall.cxbtnCancel.Caption := '隐藏';
-                  frmInstall.cxbtnCancel.Enabled := false;
-                  if frmInstall.DownFiles then
-                     begin
-                       frmInstall.BringToFront;
-                       frmInstall.InstallType := 1;
-                       frmInstall.btnInstall.OnClick(nil);
-                       result := true;
-                       Exit;
-                     end;
-               end;
-             end;
-       end;
-    frmInstall.Close;
+    ts.Delimiter :='/';
+    ts.DelimitedText := url;
+    if ts.Count > 0 then
+      Result := ts[ts.Count - 1];
   finally
-    Sleep(2000);
-    frmLogo.free;
-    F.free;
-  end;  }
+    ts.Free;
+  end;
+end;
+var
+  filename:string;
+  r:integer;
+  frmInstall:TfrmInstall;
+  CaUpgrade:TCaUpgrade;
+begin
+  result := false;
+  try
+  CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion); 
+  if (r=1) and (MessageBox(Application.Handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then r := 0;
+  if r<>0 then
+    begin
+      frmInstall := TfrmInstall.Create(Application);
+      try
+        frmInstall.Show;
+        frmInstall.CurVersion := RzVersionInfo.FileVersion;
+        frmInstall.NewVersion := CaUpgrade.Version;
+        frmInstall.Update;
+        filename := GetFileNameFromURL(CaUpgrade.URL);
+        frmInstall.Url := copy(CaUpgrade.URL,1,length(CaUpgrade.URL)-length(filename));
+        frmInstall.Path := ExtractFilePath(ParamStr(0));
+        if frmInstall.DownFile(filename) then
+           begin
+             result := false;
+             ShellExecute(application.handle,'open',pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),pchar(ExtractFilePath(ParamStr(0))+'install\'),nil,SW_SHOWNORMAL);
+             Exit;
+           end;
+      finally
+        frmInstall.free;
+      end;
+     end;
+     result := true;
+  except
+    on E:Exception do
+       begin
+         MessageBox(application.Handle,pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+         result := false;
+       end;
+  end;
 end;
 function TfrmShopMain.Login(Locked:boolean=false):boolean;
 var
@@ -1092,7 +1071,7 @@ begin
        Exit;
      end;
   result := TfrmTenant.coRegister(self);
-  CheckVersion;
+  if result then result := CheckVersion;
   if result then
      begin
       if SFVersion='.NET' then

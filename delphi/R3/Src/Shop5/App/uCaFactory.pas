@@ -45,6 +45,7 @@ type
   TCaUpgrade=record
     UpGrade:integer;
     URL:string;
+    Version:string;
   end;
 
   rsp = class(TSOAPHeader)
@@ -729,6 +730,7 @@ begin
     caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
     result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
     result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
+    result.Version := GetNodeValue(caProductCheckUpgradeResp,'currentVersion');
   finally
     rio.Free;
   end;

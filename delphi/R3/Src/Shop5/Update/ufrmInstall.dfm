@@ -1,6 +1,7 @@
 object frmInstall: TfrmInstall
   Left = 351
   Top = 184
+  BorderIcons = []
   BorderStyle = bsDialog
   Caption = #23433#35013#31243#24207#21521#23548
   ClientHeight = 271
@@ -401,9 +402,9 @@ object frmInstall: TfrmInstall
   object Label10: TLabel
     Left = 85
     Top = 118
-    Width = 147
+    Width = 91
     Height = 12
-    Caption = 'www.jiajiawang.com.cn'
+    Caption = 'www.rspcn.com'
     Font.Charset = GB2312_CHARSET
     Font.Color = clNavy
     Font.Height = -12
@@ -416,20 +417,27 @@ object frmInstall: TfrmInstall
     Top = 140
     Width = 60
     Height = 12
-    Caption = #23458' '#26381' QQ'#65306
+    Caption = #23458#26381#30005#35805#65306
   end
   object Label12: TLabel
     Left = 86
-    Top = 139
-    Width = 56
+    Top = 140
+    Width = 112
     Height = 12
-    Caption = '30355701'
+    Caption = '(86)0592-5807033'
     Font.Charset = GB2312_CHARSET
     Font.Color = clNavy
     Font.Height = -12
     Font.Name = #23435#20307
     Font.Style = [fsBold]
     ParentFont = False
+  end
+  object Label7: TLabel
+    Left = 26
+    Top = 168
+    Width = 114
+    Height = 12
+    Caption = #19979#36733#21319#32423#21253#35831#31245#20505'...'
   end
   object PrsBar: TProgressBar
     Left = 29
@@ -448,20 +456,8 @@ object frmInstall: TfrmInstall
     HotTrack = True
     HotTrackColor = 3983359
     TabOrder = 1
-    OnClick = cxbtnCancelClick
-    NumGlyphs = 2
-  end
-  object btnInstall: TRzBitBtn
-    Left = 207
-    Top = 236
-    Caption = #23433#35013
-    Color = 15791348
-    HighlightColor = 16026986
-    HotTrack = True
-    HotTrackColor = 3983359
-    TabOrder = 2
     Visible = False
-    OnClick = btnInstallClick
+    OnClick = cxbtnCancelClick
     NumGlyphs = 2
   end
 end

@@ -83,6 +83,8 @@ type
       p3: Variant; var Val: Variant);
     procedure actDeleteExecute(Sender: TObject);
     procedure frfPayOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 
   private
     procedure ChangeButton;
@@ -677,5 +679,26 @@ begin
   result:=ShopGlobal.GetChkRight('32600001',7);
 end;
 
+
+procedure TfrmPayOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQ_NO' then
+  begin
+    ARect := Rect;
+    DbGridEh1.canvas.FillRect(ARect);
+    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(CdsPayList.RecNo)),length(Inttostr(CdsPayList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+end;
 
 end.

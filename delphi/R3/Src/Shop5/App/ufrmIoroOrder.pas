@@ -258,6 +258,8 @@ begin
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择科目名称');
   if edtIORO_DATE.EditValue = null then Raise Exception.Create('请选择日期');
   if edtIORO_USER.AsString = '' then Raise Exception.Create('负责人不能为空');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create('所属门店不能为空');
   Check;
   WriteToObject(AObj,self);
   if dbState = dsInsert then
@@ -409,8 +411,9 @@ begin
         if cdsDetail.FieldbyName('ACCOUNT_ID').AsString = '' then cdsDetail.Delete 
         else
         begin
+          if cdsDetail.FieldByName('PAYM_ID').AsString='' then Raise Exception.Create('支付方式不能为空!');
           if cdsDetail.FieldByName('IORO_INFO').AsString='' then Raise Exception.Create('摘要不能为空!');
-          if (cdsDetail.FieldByName('IORO_MNY').AsString='0') then Raise Exception.Create('金额不能为0');
+          if cdsDetail.FieldByName('IORO_MNY').asFloat=0 then Raise Exception.Create('金额不能为0');
           cdsDetail.Next;
         end;
       end;
@@ -568,7 +571,7 @@ begin
     cdsDetail.FieldByName('PAYM_ID_TEXT').AsString := tmp.FieldbyName('CODE_NAME').AsString;
     edtPAYM_ID.KeyValue := tmp.FieldbyName('CODE_ID').AsString;
     edtPAYM_ID.Text := tmp.FieldbyName('CODE_NAME').AsString;
-    cdsDetail.FieldByName('IORO_MNY').AsString:='0';
+//    cdsDetail.FieldByName('IORO_MNY').AsString:='0';
     tmp.Filtered := False;
   end;
   if not locked then   BtnOk.Enabled := true;
@@ -736,23 +739,13 @@ begin
 end;
 
 procedure TfrmIoroOrder.edtPAYM_IDSaveValue(Sender: TObject);
-var tmp:TZQuery;
 begin
   inherited;
   if not cdsDetail.Active then Exit;
 
-  tmp := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  tmp.Filtered := False;
-  tmp.Filter := ' PAYM_ID='+QuotedStr(edtPAYM_ID.AsString);
-  tmp.Filtered := True;
-  Factor.Open(tmp);
   cdsDetail.Edit;
   cdsDetail.FieldByName('PAYM_ID').AsString := edtPAYM_ID.AsString;
   cdsDetail.FieldByName('PAYM_ID_TEXT').AsString := edtPAYM_ID.Text;
-  cdsDetail.FieldByName('ACCOUNT_ID').AsString := tmp.FieldbyName('ACCOUNT_ID').AsString;
-  cdsDetail.FieldByName('ACCOUNT_ID_TEXT').AsString := tmp.FieldbyName('ACCT_NAME').AsString;
-  cdsDetail.FieldByName('IORO_MNY').AsString:='0';
-  tmp.Filtered := False;
   if not locked then   BtnOk.Enabled := true;
 end;
 

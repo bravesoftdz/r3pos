@@ -8,25 +8,25 @@ inherited frmIoroOrderList: TfrmIoroOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 810
-    Height = 506
+    Width = 802
+    Height = 495
     inherited RzPanel2: TRzPanel
-      Width = 800
-      Height = 496
+      Width = 792
+      Height = 485
       inherited RzPage: TRzPageControl
-        Width = 794
-        Height = 490
+        Width = 786
+        Height = 479
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#20837#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 792
-            Height = 463
+            Width = 784
+            Height = 452
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 780
+              Width = 772
               Height = 97
               Align = alTop
               BorderOuter = fsNone
@@ -291,16 +291,16 @@ inherited frmIoroOrderList: TfrmIoroOrderList
             object Panel1: TPanel
               Left = 6
               Top = 103
-              Width = 780
-              Height = 354
+              Width = 772
+              Height = 343
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 778
-                Height = 352
+                Width = 770
+                Height = 341
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -314,6 +314,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                 FrozenCols = 1
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                ReadOnly = True
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -337,7 +338,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'SEQNO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 31
                   end
@@ -346,7 +346,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'IORO_DATE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26085#26399
                     Width = 75
                   end
@@ -356,7 +355,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     Footer.Value = #21512'   '#35745#65306
                     Footer.ValueType = fvtStaticText
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21333#21495
                     Width = 95
                   end
@@ -371,7 +369,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'ITEM_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #31185#30446#21517#31216
                     Width = 79
                   end
@@ -379,7 +376,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'IORO_USER_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36127#36131#20154
                     Width = 69
                   end
@@ -395,7 +391,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #23457#26680#20154
                     Width = 75
                   end
@@ -403,7 +398,6 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                     EditButtons = <>
                     FieldName = 'CHK_DATE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #23457#26680#26085#26399
                     Width = 72
                   end
@@ -429,17 +423,17 @@ inherited frmIoroOrderList: TfrmIoroOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 810
+    Width = 802
     inherited Image1: TImage
       Left = 374
-      Width = 416
+      Width = 408
     end
     inherited Image3: TImage
       Left = 374
-      Width = 416
+      Width = 408
     end
     inherited Image14: TImage
-      Left = 790
+      Left = 782
     end
     inherited rzPanel5: TPanel
       Left = 374

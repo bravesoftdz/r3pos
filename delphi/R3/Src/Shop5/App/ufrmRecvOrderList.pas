@@ -705,7 +705,7 @@ begin
   begin
     ARect := Rect;
     DbGridEh1.canvas.FillRect(ARect);
-    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(CdsRecvList.RecNo)),length(Inttostr(CdsRecvList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 end;
 

@@ -362,7 +362,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 2
+        TabOrder = 4
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME'
@@ -400,7 +400,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Width = 237
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 1
+        TabOrder = 5
       end
       object edtITEM_ID: TzrComboBoxList
         Left = 92
@@ -450,7 +450,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 4
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -491,7 +491,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 5
+        TabOrder = 6
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -762,7 +762,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'

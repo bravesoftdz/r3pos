@@ -561,7 +561,7 @@ var
   frmLogo:TfrmLogo;
   myComVersion:string;
 begin
-  CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductID,RzVersionInfo.FileVersion);
+//  CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductID,RzVersionInfo.FileVersion);
 {  result := false;
   if frmInstall=nil then Exit;
   if ShopGlobal.offline then Exit;

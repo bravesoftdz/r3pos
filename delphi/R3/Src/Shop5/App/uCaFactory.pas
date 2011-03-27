@@ -508,7 +508,7 @@ var
 begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    URL := f.ReadString('soft','rsp','http://jerry/rsp/services/');
+    URL := f.ReadString('soft','rsp','http://10.10.11.249/services/');
     pubpwd := 'SaRi0+jf';
   finally
     f.Free;

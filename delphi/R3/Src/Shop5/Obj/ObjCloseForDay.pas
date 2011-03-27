@@ -40,7 +40,7 @@ var
   rs:TZQuery;
 begin
   Result := False;
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
+//  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前结账记录已经被另一用户修改.');
 
   Result := GetAccountRange(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('CLSE_DATE').AsOldString);
 //  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=-:OLD_PAY_A+isnull(IN_MNY,0),BALANCE=-:OLD_PAY_A+isnull(BALANCE,0),'+
@@ -51,18 +51,21 @@ begin
 //  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),self);
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE and RECV_TYPE=''4'' and RECV_MNY<>0';
-    CopyToParams(rs.Params,true);
+    rs.SQL.Text := 'select count(*) from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and ABLE_DATE=:OLD_CLSE_DATE and SHOP_ID=:OLD_SHOP_ID and CREA_USER=:OLD_CREA_USER and RECV_TYPE=''4'' and RECV_MNY<>0';
+    rs.ParamByName('OLD_TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
+    rs.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('CLSE_DATE').AsOldInteger;
+    rs.ParamByName('OLD_SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
+    rs.ParamByName('OLD_CREA_USER').AsString := FieldbyName('CREA_USER').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then Raise Exception.Create('当天的结账记录，已经做缴款登记了不能撤消？');  
   finally
     rs.Free;
   end;
-  Str := 'delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE and RECV_TYPE=''4''';
+  Str := 'delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and ABLE_DATE=:OLD_CLSE_DATE and SHOP_ID=:OLD_SHOP_ID and CREA_USER=:OLD_CREA_USER and RECV_TYPE=''4''';
   r := AGlobal.ExecSQL(Str,self);
-  if r = 0 then Raise Exception.Create('没找到前当结账记录，是否被另一用户撤消？');
+//  if r = 0 then Raise Exception.Create('没找到前当结账记录，是否被另一用户撤消？');
 
-  Str := 'delete from ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE';
+  Str := 'delete from ACC_CLOSE_FORDAY where TENANT_ID=:OLD_TENANT_ID and CLSE_DATE=:OLD_CLSE_DATE and SHOP_ID=:OLD_SHOP_ID and CREA_USER=:OLD_CREA_USER';
   r := AGlobal.ExecSQL(Str,self);
   if r = 0 then Raise Exception.Create('没找到前当结账记录，是否被另一用户撤消？'); 
   Result := True;
@@ -90,7 +93,7 @@ begin
        end;
     rs.SQL.Text :=
       'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-    + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:SHOP_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,:ROWS_ID,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+    + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,:ROWS_ID,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
     CopyToParams(rs.Params);
     rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
     rs.ParambyName('ROWS_ID').AsString := id;

@@ -414,12 +414,12 @@ inherited frmRckMng: TfrmRckMng
                 Caption = #33267
               end
               object Label3: TLabel
-                Left = 38
+                Left = 24
                 Top = 43
-                Width = 36
+                Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #32467#36134#20154
+                Caption = #25805#20316#20154#21592
               end
               object RzBitBtn2: TRzBitBtn
                 Left = 443
@@ -470,7 +470,7 @@ inherited frmRckMng: TfrmRckMng
               object fndP3_CREA_USER: TzrComboBoxList
                 Left = 80
                 Top = 39
-                Width = 114
+                Width = 223
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <

@@ -459,7 +459,11 @@ begin
     if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('已经审核,不能进行撤消操作.');
     if MessageBox(Handle,'是否撤消当前选择的结账记录？ ','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     rs.Close;
-    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and ROWS_ID='+QuotedStr(cdsBrowser.FieldbyName('ROWS_ID').AsString);
+    rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and CLSE_DATE=:CLSE_DATE and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('CLSE_DATE').AsInteger := cdsBrowser.FieldbyName('CLSE_DATE').AsInteger;
+    rs.ParamByName('SHOP_ID').AsString := cdsBrowser.FieldbyName('SHOP_ID').AsString;
+    rs.ParamByName('CREA_USER').AsString := cdsBrowser.FieldbyName('CREA_USER').AsString;
     Factor.Open(rs);
     if (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('数据已经同步,不能撤消!');
     cdsBrowser.Delete;

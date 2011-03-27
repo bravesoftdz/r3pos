@@ -958,7 +958,7 @@ begin
           Factor.BeginBatch;
           try
             Factor.AddBatch(h,'TStockOrder',Params);
-            Factor.AddBatch(d,'TStkRetuData',Params);
+            Factor.AddBatch(d,'TStockData',Params);
             Factor.OpenBatch;
             HObj.ReadFromDataSet(h);
             ReadFromObject(HObj,self);

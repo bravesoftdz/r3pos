@@ -70,6 +70,7 @@ type
     Fpubpwd: string;
     FSessionId: string;
     timeout:Integer;
+    FAudited: boolean;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -77,6 +78,7 @@ type
     procedure SetSessionId(const Value: string);
     procedure doAfterExecute(const MethodName: string;
       SOAPResponse: TStream);
+    procedure SetAudited(const Value: boolean);
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
@@ -110,6 +112,8 @@ type
     property sslpwd:string read Fsslpwd write Setsslpwd;
     //通讯会话
     property SessionId:string read FSessionId write SetSessionId;
+    //认证审核通过
+    property Audited:boolean read FAudited write SetAudited;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -297,6 +301,7 @@ var
   code:string;
   h:rsp;
 begin
+  Audited := false;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
@@ -357,6 +362,7 @@ begin
               result.SRVR_PORT := StrtoInt(GetNodeValue(caTenantLoginResp,'srvrPort'));
               result.SRVR_PATH := GetNodeValue(caTenantLoginResp,'srvrPath');
               result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
+              Audited := true;
             end;
        end
     else
@@ -730,10 +736,15 @@ begin
     caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
     result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
     result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
-    result.Version := GetNodeValue(caProductCheckUpgradeResp,'currentVersion');
+    result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
   finally
     rio.Free;
   end;
+end;
+
+procedure TCaFactory.SetAudited(const Value: boolean);
+begin
+  FAudited := Value;
 end;
 
 { rsp }

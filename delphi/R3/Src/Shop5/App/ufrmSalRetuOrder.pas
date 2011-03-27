@@ -1469,7 +1469,7 @@ begin
           Factor.BeginBatch;
           try
             Factor.AddBatch(h,'TSalesOrder',Params);
-            Factor.AddBatch(d,'TSalRetuData',Params);
+            Factor.AddBatch(d,'TSalesData',Params);
             Factor.OpenBatch;
             HObj.ReadFromDataSet(h);
             ReadFromObject(HObj,self);

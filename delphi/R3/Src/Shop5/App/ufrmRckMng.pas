@@ -1103,7 +1103,7 @@ begin
     rs.ParamByName('CREA_DATE').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-       TfrmCostCalc.StartCalc(self);
+       TfrmCostCalc.TryCalcDayAcct(self);
   finally
     rs.Free;
   end;

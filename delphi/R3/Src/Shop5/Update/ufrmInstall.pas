@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, TlHelp32,Forms,
-  Dialogs, ComCtrls, RzButton, ExtCtrls, StdCtrls,ZipUtils,IniFiles,ShellApi,RzBckgnd;
+  Dialogs, ComCtrls, RzButton, ExtCtrls, StdCtrls,ZipUtils,IniFiles,ShellApi,RzBckgnd,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
   TfrmInstall = class(TForm)

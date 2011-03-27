@@ -55,6 +55,17 @@ type
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //5 synFlag
+  TSyncStockOrder=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncStockData=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 
 implementation
 
@@ -344,6 +355,29 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncStockOrder }
+
+function TSyncStockOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncStockData }
+
+function TSyncStockData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from STK_STOCKDATA where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
   SelectSQL.Text := Str;
 end;
 

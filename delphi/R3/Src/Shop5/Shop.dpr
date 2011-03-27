@@ -185,6 +185,7 @@ var
 begin
   Application.Initialize;
   DBVersion := 'DB1.0.0.1';
+  Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmShopMain, frmShopMain);

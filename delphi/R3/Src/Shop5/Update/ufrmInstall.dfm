@@ -1,6 +1,6 @@
 object frmInstall: TfrmInstall
-  Left = 351
-  Top = 184
+  Left = 97
+  Top = 193
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = #23433#35013#31243#24207#21521#23548
@@ -41,11 +41,11 @@ object frmInstall: TfrmInstall
     ShowTexture = False
   end
   object Label1: TLabel
-    Left = 24
-    Top = 11
-    Width = 52
+    Left = 25
+    Top = 14
+    Width = 164
     Height = 12
-    Caption = #23433#35013#31243#24207
+    Caption = #31995#32479#27491#22312#21319#32423#20013#65292#35831#31245#20505'...'
     Font.Charset = GB2312_CHARSET
     Font.Color = clNavy
     Font.Height = -12
@@ -83,19 +83,19 @@ object frmInstall: TfrmInstall
   end
   object Label4: TLabel
     Left = 29
-    Top = 166
+    Top = 173
     Width = 6
     Height = 12
   end
   object Bevel2: TBevel
     Left = 144
-    Top = 219
+    Top = 227
     Width = 243
     Height = 2
   end
   object Label5: TLabel
     Left = 18
-    Top = 214
+    Top = 222
     Width = 120
     Height = 12
     Caption = #8220#23433#35013#31243#24207#8221#21319#32423#21521#23548
@@ -417,7 +417,7 @@ object frmInstall: TfrmInstall
     Top = 140
     Width = 60
     Height = 12
-    Caption = #23458#26381#30005#35805#65306
+    Caption = #23458#26381'QQ'#21495#65306
   end
   object Label12: TLabel
     Left = 86
@@ -434,14 +434,14 @@ object frmInstall: TfrmInstall
   end
   object Label7: TLabel
     Left = 26
-    Top = 168
+    Top = 175
     Width = 114
     Height = 12
     Caption = #19979#36733#21319#32423#21253#35831#31245#20505'...'
   end
   object PrsBar: TProgressBar
     Left = 29
-    Top = 185
+    Top = 192
     Width = 355
     Height = 17
     BorderWidth = 1
@@ -452,11 +452,11 @@ object frmInstall: TfrmInstall
     Top = 236
     Caption = #21462#28040
     Color = 15791348
+    Enabled = False
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
     TabOrder = 1
-    Visible = False
     OnClick = cxbtnCancelClick
     NumGlyphs = 2
   end

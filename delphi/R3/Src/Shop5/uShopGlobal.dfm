@@ -238,7 +238,7 @@ inherited ShopGlobal: TShopGlobal
       end>
     IndexFieldNames = 'GODS_ID Asc'
     Left = 136
-    Top = 296
+    Top = 304
     ParamData = <
       item
         DataType = ftUnknown
@@ -348,7 +348,9 @@ inherited ShopGlobal: TShopGlobal
       
         'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,TELEPHONE,LINKMAN,' +
         'FAXES,REMARK,SEQ_NO '
-      'from CA_DEPT_INFO where TENANT_ID=:TENANT_ID order by LEVEL_ID')
+      
+        'from CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in ('#39'0' +
+        '2'#39','#39'12'#39') order by LEVEL_ID')
     Params = <
       item
         DataType = ftUnknown

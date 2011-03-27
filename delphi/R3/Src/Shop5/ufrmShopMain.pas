@@ -578,9 +578,21 @@ var
 begin
   result := false;
   try
-  CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion); 
-  if (r=1) and (MessageBox(Application.Handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then r := 0;
-  if r<>0 then
+  CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion);
+  if CaUpgrade.UpGrade in [1,2] then
+  begin
+     if (MessageBox(Application.Handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
+     begin
+       if (CaUpgrade.UpGrade=1) then
+          begin
+            MessageBox(Application.Handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
+            Exit
+          end else CaUpgrade.UpGrade := 0;
+     end;
+  end
+  else
+     CaUpgrade.UpGrade := 0;
+  if CaUpgrade.UpGrade<>0 then
     begin
       frmInstall := TfrmInstall.Create(Application);
       try
@@ -596,7 +608,9 @@ begin
              result := false;
              ShellExecute(application.handle,'open',pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),pchar(ExtractFilePath(ParamStr(0))+'install\'),nil,SW_SHOWNORMAL);
              Exit;
-           end;
+           end
+        else
+           Raise Exception.Create('下载升级文件失败，系统无法完成升级');
       finally
         frmInstall.free;
       end;
@@ -633,7 +647,7 @@ begin
          Global.CloseAll;
          Global.SysDate := lDate;
 
-//         if (Factor<>Global.LocalFactory) and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+         if (Factor<>Global.LocalFactory) and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
 
          Global.LoadBasic();
          ShopGlobal.LoadRight;
@@ -1071,7 +1085,7 @@ begin
        Exit;
      end;
   result := TfrmTenant.coRegister(self);
-  if result then result := CheckVersion;
+  if result and CaFactory.Audited then result := CheckVersion;
   if result then
      begin
       if SFVersion='.NET' then
@@ -1725,14 +1739,14 @@ end;
 procedure TfrmShopMain.actfrmCostCalcExecute(Sender: TObject);
 begin
   inherited;
-  if not Logined then
+{  if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  TfrmCostCalc.StartCalc(self);
+  TfrmCostCalc.StartCalc(self); }
 end;
 
 procedure TfrmShopMain.actfrmSysDefineExecute(Sender: TObject);

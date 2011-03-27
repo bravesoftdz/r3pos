@@ -95,10 +95,10 @@ begin
       'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
     + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,:ROWS_ID,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
     CopyToParams(rs.Params);
-    rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
     rs.ParambyName('ROWS_ID').AsString := id;
     if FieldbyName('PAY_A').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('A')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'A';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_A').AsFloat;
@@ -106,6 +106,7 @@ begin
        end;
     if FieldbyName('PAY_B').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('B')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'B';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_B').AsFloat;
@@ -113,6 +114,7 @@ begin
        end;
     if FieldbyName('PAY_C').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('C')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'C';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_C').AsFloat;
@@ -120,6 +122,7 @@ begin
        end;
     if FieldbyName('PAY_E').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('E')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'E';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_E').AsFloat;
@@ -127,6 +130,7 @@ begin
        end;
     if FieldbyName('PAY_F').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('F')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'F';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_F').AsFloat;
@@ -134,6 +138,7 @@ begin
        end;
     if FieldbyName('PAY_G').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('G')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'G';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_G').AsFloat;
@@ -141,6 +146,7 @@ begin
        end;
     if FieldbyName('PAY_H').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('H')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'H';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_H').AsFloat;
@@ -148,6 +154,7 @@ begin
        end;
     if FieldbyName('PAY_I').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('I')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'I';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_I').AsFloat;
@@ -155,6 +162,7 @@ begin
        end;
     if FieldbyName('PAY_J').AsFloat<>0 then
        begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('J')+'】';
          rs.ParambyName('PAYM_ID').AsString := 'J';
          rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_J').AsFloat;

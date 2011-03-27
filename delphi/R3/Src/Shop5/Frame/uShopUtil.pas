@@ -4,8 +4,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
   Dialogs, ExtCtrls, StdCtrls, cxMaskEdit, cxDropDownEdit, cxControls, cxContainer,
-  cxEdit, cxTextEdit,ZDataSet,ZBase,DB,DBGridEh, cxCalendar,cxMemo,zrComboBoxList,
-  cxRadioGroup,cxSpinEdit,cxCheckBox,cxButtonEdit;
+  cxEdit, cxTextEdit,ZDataSet,ZBase,DB,DBGridEh,cxButtonEdit, cxCalendar,cxMemo,zrComboBoxList,
+  cxRadioGroup,cxSpinEdit,cxCheckBox;
 
 //添加下拉选择框
 procedure AddCbxPickList(Cbx:TcxComboBox;cname:string='';temp:TZQuery=nil);
@@ -538,6 +538,10 @@ begin
          begin
            TcxMaskEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
+      if Components[i] is TcxButtonEdit then
+         begin
+           TcxButtonEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
+         end;
       if Components[i] is TzrComboBoxList then
          begin
            TzrComboBoxList(Components[i]).KeyValue := AObj.FieldbyName(fldname).AsString;
@@ -647,6 +651,10 @@ begin
                    end;
                 AObj.FieldbyName(fldname).AsString := trim(TcxMaskEdit(Components[i]).Text);
               end;
+         end;
+      if Components[i] is TcxButtonEdit then
+         begin
+           AObj.FieldbyName(fldname).AsString := TcxButtonEdit(Components[i]).Text;
          end;
       if Components[i] is TcxTextEdit then
          begin

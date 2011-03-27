@@ -84,7 +84,7 @@ type
     property uDate:TDate read FuDate write SetuDate;
     //结账类型 0 试算， 1 日结  2 月结
     property flag:integer read Fflag write Setflag;
-    class function StartCalc(Owner:TForm):boolean;
+//    class function StartCalc(Owner:TForm):boolean;
     //计算日账户台账
     class function TryCalcDayAcct(Owner:TForm):boolean;
     //计算日商品台账
@@ -321,16 +321,16 @@ begin
     Label11.Update;
     RzProgressBar1.Percent := 1;
     CheckForRck;
-    CreateTempTable;
+    if flag in [1,2,4,6] then CreateTempTable;
     Label11.Caption := '准备核算数据...';
     Label11.Update;
     //数据准备
-    CheckForRck;
-    PrepareDataForRck;
+    if flag in [1,2,4,6] then PrepareDataForRck;
     Label11.Caption := '正在核算成本...';
     Label11.Update;
     RzProgressBar1.Percent := 5;
     //计算成本
+    if flag in [1,2,4,6] then
     case calc_flag of
     0:Calc0;
     1:Calc1;
@@ -338,14 +338,14 @@ begin
     end;
     Label11.Caption := '正在计算商品月台账...';
     Label11.Update;
-    CalcMth;
+    if flag in [1,2,6] then CalcMth;
     Label11.Caption := '正在计算账户日台账...';
     Label11.Update;
     AutoPosReck;
-    CalcAcctDay;
+    if flag in [1,2,3,5] then CalcAcctDay;
     Label11.Caption := '正在计算账户月台账...';
     Label11.Update;
-    CalcAcctMth;
+    if flag in [1,2,5] then CalcAcctMth;
 
     Label11.Caption := '输出数据中...';
     Label11.Update;
@@ -357,7 +357,7 @@ begin
   ModalResult := MROK;
 end;
 
-class function TfrmCostCalc.StartCalc(Owner: TForm): boolean;
+{class function TfrmCostCalc.StartCalc(Owner: TForm): boolean;
 begin
   with TfrmCostCalc.Create(Owner) do
     begin
@@ -369,7 +369,7 @@ begin
       end;
     end;
 end;
-
+}
 procedure TfrmCostCalc.Calc2;
 var
   i,b:integer;
@@ -842,7 +842,7 @@ var
   SQL:string;
   e:TDate;
 begin
-  if flag=0 then Exit;
+  if not (flag in [1,2]) then Exit;
   Factor.BeginTrans;
   try
     if pt>0 then RzProgressBar1.Percent := (b*100 div pt) div 3+90;
@@ -1179,6 +1179,7 @@ begin
   with TfrmCostCalc.Create(Owner) do
     begin
       try
+        flag := 3;
         Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
         Show;
         btnStartClick(nil);
@@ -1193,6 +1194,7 @@ begin
   with TfrmCostCalc.Create(Owner) do
     begin
       try
+        flag := 4;
         Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
         Show;
         btnStartClick(nil);
@@ -1207,6 +1209,7 @@ begin
   with TfrmCostCalc.Create(Owner) do
     begin
       try
+        flag := 5;
         Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
         Show;
         btnStartClick(nil);
@@ -1221,6 +1224,7 @@ begin
   with TfrmCostCalc.Create(Owner) do
     begin
       try
+        flag := 6;
         Label2.Caption := '计算台账:'+formatDatetime('YYYY-MM-DD',date());
         Show;
         btnStartClick(nil);
@@ -1236,6 +1240,7 @@ var
   Str:string;
   AObj:TRecord_;
 begin
+  if not (flag in [1,2]) then Exit;
   rs := TZQuery.Create(nil);
   sv := TZQuery.Create(nil);
   AObj := TRecord_.Create;

@@ -285,16 +285,16 @@ select
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM1_RTL,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM1_MONEY,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='2' then A.CALC_AMOUNT else 0 end as PARM2_AMOUNT,
-  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM2_RTL,
+  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='2' then A.CALC_MONEY else 0 end as PARM2_RTL,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='2' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM2_MONEY,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='3' then A.CALC_AMOUNT else 0 end as PARM3_AMOUNT,
-  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM3_RTL,
+  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='3' then A.CALC_MONEY else 0 end as PARM3_RTL,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='3' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM3_MONEY,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='4' then A.CALC_AMOUNT else 0 end as PARM4_AMOUNT,
-  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM4_RTL,
+  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='4' then A.CALC_MONEY else 0 end as PARM4_RTL,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='4' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM4_MONEY,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='5' then A.CALC_AMOUNT else 0 end as PARM5_AMOUNT,
-  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='1' then A.CALC_MONEY else 0 end as PARM5_RTL,
+  case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='5' then A.CALC_MONEY else 0 end as PARM5_RTL,
   case when B.CHANGE_TYPE='1' then 1 else -1 end*case when B.CHANGE_CODE='5' then round(A.CALC_AMOUNT*A.COST_PRICE,2) else 0 end as PARM5_MONEY
 from STO_CHANGEDATA A,STO_CHANGEORDER B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and B.COMM not in ('02','12');
 

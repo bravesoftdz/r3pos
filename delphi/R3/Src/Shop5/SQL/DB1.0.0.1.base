@@ -150,7 +150,7 @@ CREATE TABLE [CA_SN_INFO](
     --系列号状态
 	[SN_STATUS] [varchar](1) NOT NULL,
     --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL,
+	[SHOP_ID] [varchar] (13) NOT NULL,
     --激活日期
 	[ACTV_DATE] [varchar](10) NOT NULL,
     --有效截止日期
@@ -436,7 +436,7 @@ CREATE INDEX IX_CA_RELATIONS_TIME_STAMP ON CA_RELATIONS(TIME_STAMP);
 --部门资料
 CREATE TABLE [CA_DEPT_INFO](
     --部门代码 企业代码+3位序号
-	[DEPT_ID] [varchar] (10) NOT NULL,
+	[DEPT_ID] [varchar] (12) NOT NULL,
     --部门名称
 	[DEPT_NAME] [varchar](50) NOT NULL,
     --拼音码
@@ -470,7 +470,7 @@ CREATE INDEX IX_CA_DEPT_INFO_TIME_STAMP ON CA_DEPT_INFO(TENANT_ID,TIME_STAMP);
 --门店资料
 CREATE TABLE [CA_SHOP_INFO](
     --门店代码 企业代码+4位序号
-	[SHOP_ID] [varchar] (11) NOT NULL,
+	[SHOP_ID] [varchar] (13) NOT NULL,
     --经营许可证
 	[LICENSE_CODE] [varchar](50) NOT NULL,
     --门店名称
@@ -511,7 +511,7 @@ CREATE INDEX IX_CA_SHOP_INFO_TIME_STAMP ON CA_SHOP_INFO(TENANT_ID,TIME_STAMP);
 --职务资料
 CREATE TABLE [CA_DUTY_INFO](
     --职务代码 企业代码+3位序号
-	[DUTY_ID] [varchar](10) NOT NULL,
+	[DUTY_ID] [varchar](12) NOT NULL,
     --职务名称
 	[DUTY_NAME] [varchar](30) NOT NULL,
     --从属关系 第3位一级
@@ -536,7 +536,7 @@ CREATE INDEX IX_CA_DUTY_INFO_TIME_STAMP ON CA_DUTY_INFO(TENANT_ID,TIME_STAMP);
 --角色资料
 CREATE TABLE [CA_ROLE_INFO](
     --角色代码 企业代码+3位序号
-	[ROLE_ID] [varchar](10) NOT NULL,
+	[ROLE_ID] [varchar](12) NOT NULL,
     --角色名称
 	[ROLE_NAME] [varchar](30) NOT NULL,
     --拼音码
@@ -571,9 +571,9 @@ CREATE TABLE [CA_USERS](
     --密码
 	[PASS_WRD] [varchar](50) NULL,
     --所属门店 
-	[SHOP_ID] [varchar] (11) NOT NULL,
+	[SHOP_ID] [varchar] (13) NOT NULL,
     --所属部门
-	[DEPT_ID] [varchar] (10) NOT NULL,
+	[DEPT_ID] [varchar] (12) NOT NULL,
     --所属职务,多职务用,号分隔
 	[DUTY_IDS] [varchar](100) NOT NULL,
     --所属职务名称,多职务用,号分隔
@@ -4621,7 +4621,7 @@ CREATE TABLE [PUB_CLIENTINFO] (
         --客户等级
 	[PRICE_ID] [varchar] (36) NULL ,
         --所属门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -4639,7 +4639,7 @@ CREATE TABLE [PUB_CUSTOMER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --入会门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --会员号
 	[CUST_CODE] [varchar] (20) NOT NULL ,
         --会员名称

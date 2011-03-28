@@ -176,7 +176,8 @@ uses
   ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport},
   CaProductService in 'App\CaProductService.pas',
   CaTenantService in 'App\CaTenantService.pas',
-  CaServiceLineService in 'App\CaServiceLineService.pas';
+  CaServiceLineService in 'App\CaServiceLineService.pas',
+  ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint};
 
 {$R *.res}
 var

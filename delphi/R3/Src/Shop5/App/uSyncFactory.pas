@@ -35,6 +35,8 @@ type
     procedure SyncSingleTable(tbName,KeyFields,ZClassName:string);
     //同步入库类单据
     procedure SyncStockOrder(tbName,KeyFields,ZClassName:string);
+    //同步出库类单据
+    procedure SyncSalesOrder(tbName,KeyFields,ZClassName:string);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -348,6 +350,12 @@ begin
   n^.tbtitle := '入库单据';
   FList.Add(n);
   
+  new(n);
+  n^.tbname := 'SAL_SALESORDER';
+  n^.keyFields := 'TENANT_ID;SALES_ID';
+  n^.synFlag := 6;
+  n^.tbtitle := '出库单据';
+  FList.Add(n);
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -384,6 +392,7 @@ begin
       case PSynTableInfo(FList[i])^.synFlag of
       0,1,2,3,4:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -411,6 +420,119 @@ begin
     end;
   finally
     frmLogo.Close;
+  end;
+end;
+
+procedure TSyncFactory.SyncSalesOrder(tbName, KeyFields,
+  ZClassName: string);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSalesOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSalesData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSalesOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSalesData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSalesOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSalesData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSalesOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSalesData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
   end;
 end;
 
@@ -490,7 +612,7 @@ begin
          cs_d.Close;
          rs_h.Close;
          rs_d.Close;
-         
+
          Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
          Global.RemoteFactory.BeginBatch;
          try
@@ -514,7 +636,7 @@ begin
            Global.LocalFactory.CancelBatch;
            Raise;
          end;
-         
+
          ls.Next;
        end;
   finally
@@ -541,7 +663,7 @@ begin
          cs_d.Close;
          rs_h.Close;
          rs_d.Close;
-         
+
          Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
          Global.LocalFactory.BeginBatch;
          try
@@ -565,7 +687,7 @@ begin
            Global.RemoteFactory.CancelBatch;
            Raise;
          end;
-         
+
          ls.Next;
        end;
     SetSynTimeStamp(tbName,SyncTimeStamp);

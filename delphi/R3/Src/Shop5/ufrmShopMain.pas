@@ -662,7 +662,7 @@ begin
                      Global.MoveToLocal;
                    end;
                  end;
-              if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+              //if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
             end;
 
          Global.LoadBasic();

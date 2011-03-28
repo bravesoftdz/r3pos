@@ -48,7 +48,13 @@ type
     Version:string;
   end;
 
+  PServiceLine=^TServiceLine;
   TServiceLine=record
+    RELATION_ID:integer;
+    TENANT_ID:integer;
+    RELATION_NAME:string;
+    RELATION_SPELL:string;
+    REMARK:string;
   end;
 
   rsp = class(TSOAPHeader)
@@ -102,7 +108,8 @@ type
     function GetNodeValue(root:IXMLDOMNode;s:string):string;
     procedure CheckRecAck(doc:IXMLDomDocument);
 
-    function CreateServiceLine():TServiceLine;
+    function CreateServiceLine(var ServiceLine:TServiceLine):boolean;
+    function queryServiceLines(tid:integer;List:TList):boolean;
 
     function CheckNetwork(addr:string=''):boolean;
     function coLogin(Account:string;PassWrd:string):TCaLogin;
@@ -122,7 +129,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,IniFiles;
+uses EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,IniFiles;
 { TCaFactory }
 
 procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
@@ -752,9 +759,152 @@ begin
   FAudited := Value;
 end;
 
-function TCaFactory.CreateServiceLine: TServiceLine;
+function TCaFactory.CreateServiceLine(var ServiceLine:TServiceLine):boolean;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caServiceLineCreateResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  code:string;
+  h:rsp;
 begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
 
+  Node := doc.createElement('caServiceLineCreateReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(ServiceLine.TENANT_ID);
+  FindNode(doc,'body\caServiceLineCreateReq').appendChild(Node);
+
+  Node := doc.createElement('serviceLineName');
+  Node.text := ServiceLine.RELATION_NAME;
+  FindNode(doc,'body\caServiceLineCreateReq').appendChild(Node);
+
+  Node := doc.createElement('serviceLineSpell');
+  Node.text := ServiceLine.RELATION_SPELL;
+  FindNode(doc,'body\caServiceLineCreateReq').appendChild(Node);
+
+  Node := doc.createElement('remark');
+  Node.text := ServiceLine.REMARK;
+  FindNode(doc,'body\caServiceLineCreateReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio(10000);
+  try
+    h := SendHeader(rio,2);
+    try
+      try
+      doc := CreateXML(
+                   Decode(
+                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).createServiceLine(Encode(inxml,sslpwd))
+                      ,sslpwd
+                   )
+             );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+
+    GetHeader(rio).free;
+    CheckRecAck(doc);
+    caServiceLineCreateResp := FindNode(doc,'body\caServiceLineCreateResp');
+    code := GetNodeValue(caServiceLineCreateResp,'code');
+    result := (code='1');
+    if result then
+       begin
+         ServiceLine.RELATION_ID := StrtoInt(GetNodeValue(caServiceLineCreateResp,'serviceLineId'));
+       end
+    else
+       Raise Exception.Create(GetNodeValue(caServiceLineCreateResp,'desc'));
+  finally
+    rio.Free;
+  end;
+end;
+
+function TCaFactory.queryServiceLines(tid:integer;List: TList): boolean;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caServiceLineQueryResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  line:PServiceLine;
+  h:rsp;
+  i:integer;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caServiceLineQueryReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(tid);
+  FindNode(doc,'body\caServiceLineQueryReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio(10000);
+  try
+    h := SendHeader(rio,2);
+    try
+      try
+      doc := CreateXML(
+                   Decode(
+                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).queryServiceLines(Encode(inxml,sslpwd))
+                      ,sslpwd
+                   )
+             );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+
+    GetHeader(rio).free;
+    CheckRecAck(doc);
+    Node := FindNode(doc,'body');
+    caServiceLineQueryResp := Node.firstChild;
+    while caServiceLineQueryResp<>nil do
+       begin
+         new(line);
+         line^.RELATION_ID := StrtoInt(GetNodeValue(caServiceLineQueryResp,'serviceLineId'));
+         line^.RELATION_NAME := GetNodeValue(caServiceLineQueryResp,'serviceLineName');
+         line^.RELATION_SPELL := GetNodeValue(caServiceLineQueryResp,'serviceLineSpell');
+         line^.REMARK := GetNodeValue(caServiceLineQueryResp,'remark');
+         List.Add(line);
+         caServiceLineQueryResp := Node.nextSibling;
+       end;
+  finally
+    rio.Free;
+  end;
 end;
 
 { rsp }

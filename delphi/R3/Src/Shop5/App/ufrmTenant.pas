@@ -180,7 +180,7 @@ begin
   CdsTable.Post;
   Factor.UpdateBatch(CdsTable,'TTenant',nil);
   Global.TENANT_ID := Tenant.TENANT_ID;
-  Global.TENANT_NAME := Tenant.TENANT_NAME;
+  Global.TENANT_NAME := Obj.FieldByName('TENANT_NAME').AsString;
   TENANT_ID := Tenant.TENANT_ID;
   SaveParams;
 end;

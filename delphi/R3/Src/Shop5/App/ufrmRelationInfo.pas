@@ -57,7 +57,7 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uShopGlobal, ufrmBasic;
+uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uShopGlobal, ufrmBasic,uCaFactory;
 {$R *.dfm}
 
 { TfrmRelationInfo }
@@ -99,13 +99,19 @@ begin
 end;
 
 procedure TfrmRelationInfo.Save;
+var ServiceLine:TServiceLine;
 begin
   WriteToObject(Aobj,Self);
   if not IsEdit(Aobj,Relation_Data) then Exit;
 
   if dbState = dsInsert then
     begin
-      Aobj.FieldByName('RELATION_ID').AsInteger := Global.TENANT_ID;
+      ServiceLine.TENANT_ID := Global.TENANT_ID;
+      ServiceLine.RELATION_NAME := edtRELATION_NAME.Text;
+      ServiceLine.RELATION_SPELL := edtRELATION_SPELL.Text;
+      ServiceLine.REMARK := edtREMARK.Text;
+      CaFactory.CreateServiceLine(ServiceLine);
+      Aobj.FieldByName('RELATION_ID').AsInteger := ServiceLine.RELATION_ID;
       Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     end;
   Relation_Data.Edit;

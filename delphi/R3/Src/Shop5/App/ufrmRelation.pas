@@ -101,7 +101,7 @@ implementation
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmRelationInfo,
   ufrmEhLibReport,ufrmSelectGoodSort,ufrmGoodssortTree, ObjCommon, ufrmJoinRelation,
-  ufrmBasic, Math;
+  ufrmBasic, Math ,uCaFactory;
    
 
 {$R *.dfm}
@@ -433,8 +433,15 @@ begin
 end;
 
 procedure TfrmRelation.actNewExecute(Sender: TObject);
+var List:TList;
 begin
   inherited;
+  List := TList.Create;
+  try
+  CaFactory.queryServiceLines(Global.TENANT_ID,List);
+  finally
+    List.Free;
+  end;
 //  if TfrmJoinRelation.AddDialog(Self) then
 //     begin
 //       Prepare;

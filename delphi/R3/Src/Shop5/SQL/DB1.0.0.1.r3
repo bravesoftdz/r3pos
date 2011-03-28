@@ -5,7 +5,7 @@ CREATE TABLE [PUB_GOODSPRICE] (
         --客户类型 # 号为所有客户
 	[PRICE_ID] [char] (36) NOT NULL , 
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --货号编码
 	[GODS_ID] [char] (36) NOT NULL ,
         --定价方式<变价方式>
@@ -71,7 +71,7 @@ CREATE TABLE [LOG_PRICING_INFO] (
         --客户类型 # 号为所有客户
 	[PRICE_ID] [char] (36) NOT NULL , 
         --门店代码 0 时代码所有门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --货号编码
 	[GODS_ID] [char] (36) NOT NULL ,
         --定价方式
@@ -105,7 +105,7 @@ CREATE TABLE [STO_STORAGE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --批号，没批号用 #号
 	[BATCH_NO] [varchar] (20) NOT NULL,
         --货品代码
@@ -150,7 +150,7 @@ CREATE TABLE [SAL_PRICEORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --开单门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --开始时间 yyyy-mm-dd hh:mm:ss
 	[BEGIN_DATE] [varchar] (25) NOT NULL ,
         --结束时间 yyyy-mm-dd hh:mm:ss
@@ -187,7 +187,7 @@ CREATE TABLE [SAL_PROM_SHOP] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
   CONSTRAINT [PK_SAL_PROM_SHOP] PRIMARY KEY (ROWS_ID)
 );
 
@@ -240,7 +240,7 @@ CREATE TABLE [STK_STOCKORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --入库单号
 	[STOCK_ID] [char] (36) NOT NULL ,
         --流水号
@@ -304,7 +304,7 @@ CREATE TABLE [STK_STOCKDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --入库单号
 	[STOCK_ID] [char] (36) NOT NULL ,
         --序号
@@ -366,7 +366,7 @@ CREATE TABLE [SAL_SALESORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --销售单号
 	[SALES_ID] [char] (36) NOT NULL ,
         --流水号
@@ -473,7 +473,7 @@ CREATE TABLE [SAL_SALESDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --销售单号
 	[SALES_ID] [char] (36) NOT NULL ,
         --序号
@@ -542,7 +542,7 @@ CREATE TABLE [SAL_IC_GLIDE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --客户ID<不记名卡用 #>
 	[CLIENT_ID] [varchar] (36) NOT NULL ,
         --IC卡号
@@ -602,7 +602,7 @@ CREATE TABLE [SAL_INTEGRAL_GLIDE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --客户ID
 	[CLIENT_ID] [varchar] (36) NOT NULL ,
         --IC卡号
@@ -662,7 +662,7 @@ CREATE TABLE [STO_CHANGEORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[CHANGE_ID] [char] (36) NOT NULL ,
         --流水号
@@ -713,7 +713,7 @@ CREATE TABLE [STO_CHANGEDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[CHANGE_ID] [char] (36) NOT NULL ,
         --序号
@@ -764,7 +764,7 @@ CREATE TABLE [STK_INDENTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[INDE_ID] [char] (36) NOT NULL ,
         --流水号
@@ -825,7 +825,7 @@ CREATE TABLE [STK_INDENTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --订单号
@@ -884,7 +884,7 @@ CREATE TABLE [SAL_INDENTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[INDE_ID] [char] (36) NOT NULL ,
         --流水号
@@ -951,7 +951,7 @@ CREATE TABLE [SAL_INDENTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --订单号
@@ -1025,7 +1025,7 @@ CREATE TABLE [STO_PRINTORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --盘点状态
@@ -1062,7 +1062,7 @@ CREATE TABLE [STO_PRINTDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --批号，没批号用 #号
@@ -1101,7 +1101,7 @@ CREATE TABLE [STO_CHECKDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --盘点日期 
 	[PRINT_DATE] int NOT NULL ,
         --序号
@@ -1146,7 +1146,7 @@ CREATE TABLE [ACC_ACCOUNT_INFO] (
         --帐户代码
 	[ACCOUNT_ID] [char] (36) NOT NULL ,
         --所属门店<为每个门店自动创建一个<现金账户>
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --帐户名称
 	[ACCT_NAME] [varchar] (50) NOT NULL ,
         --拼音码
@@ -1192,7 +1192,7 @@ CREATE TABLE [ACC_RECVABLE_INFO] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[ABLE_ID] [char] (36) NOT NULL ,
         --客户
@@ -1247,7 +1247,7 @@ CREATE TABLE [ACC_PAYABLE_INFO] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[ABLE_ID] [char] (36) NOT NULL ,
         --供应商
@@ -1295,7 +1295,7 @@ CREATE TABLE [ACC_PAYORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[PAY_ID] [char] (36) NOT NULL ,
         --流水号
@@ -1346,7 +1346,7 @@ CREATE TABLE [ACC_PAYDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[PAY_ID] [char] (36) NOT NULL ,
         --序号
@@ -1372,7 +1372,7 @@ CREATE TABLE [ACC_RECVORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[RECV_ID] [char] (36) NOT NULL ,
         --流水号
@@ -1423,7 +1423,7 @@ CREATE TABLE [ACC_RECVDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[RECV_ID] [char] (36) NOT NULL ,
         --序号
@@ -1452,7 +1452,7 @@ CREATE TABLE [ACC_IOROORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[IORO_ID] [char] (36) NOT NULL ,
         --流水号
@@ -1501,7 +1501,7 @@ CREATE TABLE [ACC_IORODATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[IORO_ID] [char] (36) NOT NULL ,
         --序号
@@ -1534,7 +1534,7 @@ CREATE TABLE [ACC_CLOSE_FORDAY] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --关账类型
 	[CLSE_TYPE] [varchar] (1) NOT NULL ,
         --关账日期
@@ -1582,7 +1582,7 @@ CREATE TABLE [ACC_TRANSORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[TRANS_ID] [char] (36) NOT NULL ,
         --流水号
@@ -1629,7 +1629,7 @@ CREATE TABLE [SAL_BOMORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码<发布门店>
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号序号
 	[BOM_ID] [char] (36) NOT NULL ,
         --流水号
@@ -1679,7 +1679,7 @@ CREATE TABLE [SAL_BOMDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店代码
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[BOM_ID] [char] (36) NOT NULL ,
         --序号
@@ -1723,7 +1723,7 @@ CREATE TABLE [SAL_INVOICE_BOOK] (
         --流水ID号
 	[INVH_ID] [char] (36) NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --领用人
 	[CREA_USER] int NOT NULL ,
         --领用日期
@@ -1769,7 +1769,7 @@ CREATE TABLE [SAL_INVOICE_INFO] (
         --流水ID号
 	[INVH_ID] [char] (36) NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --开票人
 	[CREA_USER] [varchar] (36) NOT NULL ,
         --开票日期
@@ -1807,7 +1807,7 @@ CREATE TABLE [RCK_DAYS_CLOSE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --日期
 	[CREA_DATE] int NOT NULL ,
         --结账用户
@@ -1831,7 +1831,7 @@ CREATE TABLE [RCK_MONTH_CLOSE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --日期
 	[MONTH] int NOT NULL ,
         --结账用户
@@ -1859,7 +1859,7 @@ CREATE TABLE [RCK_GOODS_DAYS] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --日期
 	[CREA_DATE] int NOT NULL ,
         --客户编码
@@ -2025,7 +2025,7 @@ CREATE TABLE [TMP_GOODS_DAYS] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --日期
 	[CREA_DATE] int NOT NULL ,
         --客户编码
@@ -2171,7 +2171,7 @@ CREATE TABLE [RCK_GOODS_MONTH] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --月份
 	[MONTH] int NOT NULL ,
         --客户编码
@@ -2354,7 +2354,7 @@ CREATE TABLE [RCK_ACCT_DAYS] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --日期
 	[CREA_DATE] int NOT NULL ,
         --账户代码
@@ -2413,7 +2413,7 @@ CREATE TABLE [RCK_ACCT_MONTH] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --领用门店
-	[SHOP_ID] [varchar] (11) NOT NULL ,
+	[SHOP_ID] [varchar] (13) NOT NULL ,
         --月份
 	[MONTH] int NOT NULL ,
         --账户代码

@@ -48,6 +48,9 @@ type
     Version:string;
   end;
 
+  TServiceLine=record
+  end;
+
   rsp = class(TSOAPHeader)
   private
     FencryptType: integer;
@@ -98,6 +101,8 @@ type
     function FindNode(doc:IXMLDomDocument;tree:string):IXMLDOMNode;
     function GetNodeValue(root:IXMLDOMNode;s:string):string;
     procedure CheckRecAck(doc:IXMLDomDocument);
+
+    function CreateServiceLine():TServiceLine;
 
     function CheckNetwork(addr:string=''):boolean;
     function coLogin(Account:string;PassWrd:string):TCaLogin;
@@ -745,6 +750,11 @@ end;
 procedure TCaFactory.SetAudited(const Value: boolean);
 begin
   FAudited := Value;
+end;
+
+function TCaFactory.CreateServiceLine: TServiceLine;
+begin
+
 end;
 
 { rsp }

@@ -175,7 +175,8 @@ uses
   ufrmDbDayReport in 'App\ufrmDbDayReport.pas' {frmDbDayReport},
   ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport},
   CaProductService in 'App\CaProductService.pas',
-  CaTenantService in 'App\CaTenantService.pas';
+  CaTenantService in 'App\CaTenantService.pas',
+  CaServiceLineService in 'App\CaServiceLineService.pas';
 
 {$R *.res}
 var

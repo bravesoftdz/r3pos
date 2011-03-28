@@ -647,7 +647,23 @@ begin
          Global.CloseAll;
          Global.SysDate := lDate;
 
-         if (Factor<>Global.LocalFactory) and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+         if CaFactory.Audited then
+            begin
+              if not Global.RemoteFactory.Connected and ShopGlobal.offline then
+                 begin
+                   Global.MoveToRemate;
+                   try
+                     try
+                       Global.Connect;
+                     except
+                       MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                     end;
+                   finally
+                     Global.MoveToLocal;
+                   end;
+                 end;
+              if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+            end;
 
          Global.LoadBasic();
          ShopGlobal.LoadRight;

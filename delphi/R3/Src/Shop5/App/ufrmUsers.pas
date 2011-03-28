@@ -71,7 +71,7 @@ type
 
 
 implementation
-uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,
+uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, objCommon, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,
 {$R *.dfm}
 
 procedure TfrmUsers.actFindExecute(Sender: TObject);
@@ -85,6 +85,7 @@ begin
                   ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
   Cds_Users.SQL.Text :=
+  ParseSQL(Factor.iDbType,
   'select jb.*,b.SHOP_NAME as SHOP_ID_TEXT from( '+
   'select ja.*,a.DEPT_NAME as DEPT_ID_TEXT from('+
   'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
@@ -92,8 +93,8 @@ begin
   'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK from CA_USERS '+
   'where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+') ja '+
   'left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID) jb '+
-  'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID';
-
+  'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID'
+  );
   Factor.Open(Cds_Users);
 end;
 

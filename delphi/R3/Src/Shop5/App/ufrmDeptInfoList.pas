@@ -40,7 +40,6 @@ type
     stbPanel: TPanel;
     Label2: TLabel;
     cdsBrowser: TZQuery;
-    PrintDBGridEh1: TPrintDBGridEh;
     pmSort: TPopupMenu;
     Sort_First: TMenuItem;
     Sort_Prior: TMenuItem;
@@ -49,6 +48,7 @@ type
     Sort_Next: TMenuItem;
     N7: TMenuItem;
     Sort_Last: TMenuItem;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actFindExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -77,6 +77,7 @@ type
     procedure DeptTreeSort(SortType: string); //部门树型排序
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function  CheckCanExport:boolean; override;
+    procedure PrintView;
   public
     procedure DoOnTreeChange(Sender: TObject; Node: TTreeNode);
     procedure AddRecord(AObj:TRecord_);
@@ -440,7 +441,7 @@ procedure TfrmDeptInfoList.actPrintExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('31200001',5) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   SetRecNo;  //设置记录序号
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   PrintDBGridEh1.Print;
 end;
 
@@ -448,7 +449,7 @@ procedure TfrmDeptInfoList.actPreviewExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('31200001',5) then Raise Exception.Create('你没有报表预览'+Caption+'的权限,请和管理员联系.');
   SetRecNo;  //设置记录序号
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
     try
@@ -594,6 +595,16 @@ end;
 function TfrmDeptInfoList.CheckCanExport: boolean;
 begin                             
   result:=ShopGlobal.GetChkRight('31200001',6);
+end;
+
+procedure TfrmDeptInfoList.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '客户档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

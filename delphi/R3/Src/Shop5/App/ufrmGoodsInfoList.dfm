@@ -522,26 +522,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       OnClick = N4Click
     end
   end
-  object PrintDBGridEh1: TPrintDBGridEh
-    Options = [pghFitGridToPageWidth]
-    Page.BottomMargin = 2.000000000000000000
-    Page.LeftMargin = 2.000000000000000000
-    Page.RightMargin = 2.000000000000000000
-    Page.TopMargin = 2.000000000000000000
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'MS Sans Serif'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'MS Sans Serif'
-    PageHeader.Font.Style = []
-    Units = MM
-    Left = 296
-    Top = 136
-  end
   object cdsBrowser: TZQuery
     SortedFields = 'GODS_CODE'
     FieldDefs = <>
@@ -594,5 +574,44 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       Caption = #21047#26032
       OnClick = N10Click
     end
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 192
+    Top = 288
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

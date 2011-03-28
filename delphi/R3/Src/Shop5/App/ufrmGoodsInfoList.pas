@@ -44,12 +44,12 @@ type
     actCopyNew: TAction;
     N7: TMenuItem;
     actPrintBarCode: TAction;
-    PrintDBGridEh1: TPrintDBGridEh;
     cdsBrowser: TZQuery;
     AddSortTree: TPopupMenu;
     N8: TMenuItem;
     N9: TMenuItem;
     N10: TMenuItem;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -82,6 +82,7 @@ type
     procedure N10Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
+     procedure PrintView;
      procedure GetNo;
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
      function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
@@ -913,14 +914,19 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('32600001',5) then
     Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  with TfrmEhLibReport.Create(self) do
-  begin
-    try
-      Preview(PrintDBGridEh1);
-    finally
-      free;
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    with TfrmEhLibReport.Create(self) do
+    begin
+      try
+        Preview(PrintDBGridEh1);
+      finally
+        free;
+      end;
     end;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
   end;
 end;
 
@@ -943,8 +949,13 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('32600001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.Print;
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    PrintDBGridEh1.Print;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
+  end;
 end;
 
 procedure TfrmGoodsInfoList.cdsBrowserAfterScroll(DataSet: TDataSet);
@@ -1083,6 +1094,15 @@ begin
   finally
     FreeAndNil(Qry);
   end;
+end;
+
+procedure TfrmGoodsInfoList.PrintView;
+begin
+    PrintDBGridEh1.PageHeader.CenterText.Text := '商品档案管理';
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+    DBGridEh1.DataSource.DataSet.Filtered := False;
+    PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

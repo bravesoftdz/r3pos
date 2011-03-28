@@ -48,7 +48,7 @@ type
     Sort_Prior: TMenuItem;
     Sort_Next: TMenuItem;
     Sort_Last: TMenuItem;
-    PrintDBGridEh1: TPrintDBGridEh;    
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actFindExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -77,6 +77,7 @@ type
     function  FindNode(ID: string): TTreeNode;
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function  CheckCanExport:boolean; override;
+    procedure PrintView;  
   public
     // locked,IsCompany : boolean;
     procedure DoOnTreeChange(Sender: TObject; Node: TTreeNode);
@@ -450,7 +451,7 @@ begin
   if not ShopGlobal.GetChkRight('31300001', 5) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   if not DBGridEh1.DataSource.DataSet.Active then Raise Exception.Create('没有数据！');
   SetRecNo; //设置序号
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   PrintDBGridEh1.Print;
 end;
 
@@ -459,7 +460,7 @@ begin
   if not ShopGlobal.GetChkRight('31300001', 5) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   if not DBGridEh1.DataSource.DataSet.Active then Raise Exception.Create('没有数据！');
   SetRecNo; //设置序号
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
     try
@@ -603,6 +604,16 @@ end;
 function TfrmDutyInfoList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('31300001',6);
+end;
+
+procedure TfrmDutyInfoList.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '客户档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

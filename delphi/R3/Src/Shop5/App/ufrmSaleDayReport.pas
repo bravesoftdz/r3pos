@@ -935,6 +935,8 @@ procedure TfrmSaleDayReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
+  fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
+  fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
   DoAssignParamsValue(RzPanel9,RzPanel11);  //对应查询条件赋值
 
  {

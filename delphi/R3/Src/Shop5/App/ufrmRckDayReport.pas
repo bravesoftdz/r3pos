@@ -172,7 +172,7 @@ begin
      ' group by B.REGION_ID,A.SHOP_ID ';
 
   //台账表
-  RCKRData:='select SHOP_ID,isnull(TRN_IN_MNY,0)-isnull(TRN_OUT_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  RCKRData:='select SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
   //关联
   strSql:=
     'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
@@ -251,7 +251,7 @@ begin
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
   //台账表
-  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_IN_MNY,0)-isnull(TRN_OUT_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
   //关联
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY from ('+ViwSql+') j left outer join ('+RCKRData+')c '+
@@ -287,7 +287,7 @@ begin
      ' group by A.RECV_DATE ';
 
   //台账表
-  RCKRData:='select CREA_DATE,isnull(sum(TRN_IN_MNY),0)-isnull(sum(TRN_OUT_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
+  RCKRData:='select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
   //关联
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY '+

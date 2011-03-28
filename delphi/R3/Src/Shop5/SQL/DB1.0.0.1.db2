@@ -4401,6 +4401,50 @@ CREATE TABLE PUB_GOODS_RELATION (
 	SECOND_ID varchar (36) , 
         --货号<识别码>
 	GODS_CODE varchar (36) , 
+        --品名+规格
+	GODS_NAME varchar (50) NOT NULL ,
+        --拼音码
+	GODS_SPELL varchar (50) NOT NULL ,
+        --分类1
+	SORT_ID1 varchar (36) ,
+        --分类2
+	SORT_ID2 varchar (36) ,
+        --分类3
+	SORT_ID3 varchar (36) ,
+        --分类4
+	SORT_ID4 varchar (36) ,
+        --分类5
+	SORT_ID5 varchar (36) ,
+        --分类6
+	SORT_ID6 varchar (36) ,
+        --颜色组
+	SORT_ID7 varchar (36) ,
+        --尺码组
+	SORT_ID8 varchar (36) ,
+        --自定义9
+	SORT_ID9 varchar (36) ,
+        --自定义10
+	SORT_ID10 varchar (36) ,
+        --自定义11
+	SORT_ID11 varchar (36) ,
+        --自定义12
+	SORT_ID12 varchar (36) ,
+        --自定义13
+	SORT_ID13 varchar (36) ,
+        --自定义14
+	SORT_ID14 varchar (36) ,
+        --自定义15
+	SORT_ID15 varchar (36) ,
+        --自定义16
+	SORT_ID16 varchar (36) ,
+        --自定义17
+	SORT_ID17 varchar (36) ,
+        --自定义18
+	SORT_ID18 varchar (36) ,
+        --自定义19
+	SORT_ID19 varchar (36) ,
+        --自定义20
+	SORT_ID20 varchar (36) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
@@ -4420,10 +4464,27 @@ CREATE INDEX IX_PUB_GOODS_RELATION_TIME_STAMP ON PUB_GOODS_RELATION(TENANT_ID,TI
 --企业经营商品视图,自经营商品+连锁商品                                              
 CREATE view VIW_GOODSINFO
 as
-select 1 as RELATION_FLAG,B.RELATION_ID,C.RELATI_ID as TENANT_ID,A.GODS_ID,coalesce(B.GODS_CODE,A.GODS_CODE) as GODS_CODE,B.GODS_CODE as SECOND_CODE,B.SECOND_ID,GODS_NAME,GODS_SPELL,GODS_TYPE,
-       SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,
-       SORT_ID9,SORT_ID10,SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,
-       SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20,
+select 1 as RELATION_FLAG,B.RELATION_ID,C.RELATI_ID as TENANT_ID,A.GODS_ID,coalesce(B.GODS_CODE,A.GODS_CODE) as GODS_CODE,B.GODS_CODE as SECOND_CODE,B.SECOND_ID,coalesce(B.GODS_NAME,A.GODS_NAME) as GODS_NAME,coalesce(B.GODS_SPELL,A.GODS_SPELL) as GODS_SPELL,GODS_TYPE,
+       coalesce(B.SORT_ID1,A.SORT_ID1) as SORT_ID1,
+       coalesce(B.SORT_ID2,A.SORT_ID2) as SORT_ID2,
+       coalesce(B.SORT_ID3,A.SORT_ID3) as SORT_ID3,
+       coalesce(B.SORT_ID4,A.SORT_ID4) as SORT_ID4,
+       coalesce(B.SORT_ID5,A.SORT_ID5) as SORT_ID5,
+       coalesce(B.SORT_ID6,A.SORT_ID6) as SORT_ID6,
+       coalesce(B.SORT_ID7,A.SORT_ID7) as SORT_ID7,
+       coalesce(B.SORT_ID8,A.SORT_ID8) as SORT_ID8,
+       coalesce(B.SORT_ID9,A.SORT_ID9) as SORT_ID9,
+       coalesce(B.SORT_ID10,A.SORT_ID10) as SORT_ID10,
+       coalesce(B.SORT_ID11,A.SORT_ID11) as SORT_ID11,
+       coalesce(B.SORT_ID12,A.SORT_ID12) as SORT_ID12,
+       coalesce(B.SORT_ID13,A.SORT_ID13) as SORT_ID13,
+       coalesce(B.SORT_ID14,A.SORT_ID14) as SORT_ID14,
+       coalesce(B.SORT_ID15,A.SORT_ID15) as SORT_ID15,
+       coalesce(B.SORT_ID16,A.SORT_ID16) as SORT_ID16,
+       coalesce(B.SORT_ID17,A.SORT_ID17) as SORT_ID17,
+       coalesce(B.SORT_ID18,A.SORT_ID18) as SORT_ID18,
+       coalesce(B.SORT_ID19,A.SORT_ID19) as SORT_ID19,
+       coalesce(B.SORT_ID20,A.SORT_ID20) as SORT_ID20,
        BARCODE,UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,
        NEW_INPRICE,NEW_OUTPRICE,NEW_LOWPRICE,USING_BARTER,BARTER_INTEGRAL,
        USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,REMARK,'#' as PRICE_ID,A.COMM,A.TIME_STAMP
@@ -5443,13 +5504,13 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','付款方式','CODE_TYPE','00',5497000);
 
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('A','现金','XJ','1',1,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('B','银联','YL','1',2,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('C','储值卡','CZK','1',3,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('D','记账','JZ','1',4,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('E','转账','LQ','1',5,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('F','支票','ZP','1',6,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values('G','礼券','XEZF','1',7,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'A','现金','XJ','1',1,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'B','银联','YL','1',2,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'C','储值卡','CZK','1',3,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'D','记账','JZ','1',4,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'E','转账','LQ','1',5,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'F','支票','ZP','1',6,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'G','礼券','XEZF','1',7,'00',5497000);
 
 CREATE VIEW VIW_PAYMENT
 as

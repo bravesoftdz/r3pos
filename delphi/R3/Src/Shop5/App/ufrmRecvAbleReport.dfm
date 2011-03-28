@@ -1,6 +1,6 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Left = 192
-  Top = 102
+  Left = 194
+  Top = 109
   Width = 1022
   Height = 611
   Caption = #24212#25910#27454#25253#34920
@@ -15,8 +15,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1455,7 +1457,6 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'ABLE_DATE'
-                      Footer.Value = #21512'   '#35745#65306
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       ReadOnly = True

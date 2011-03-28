@@ -194,7 +194,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -205,7 +205,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24050#20184#37329#39069
-                      Width = 112
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -216,7 +216,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -226,7 +226,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Width = 110
                     end>
                 end
               end
@@ -473,7 +473,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -484,7 +484,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24050#20184#37329#39069
-                      Width = 112
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -495,7 +495,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -505,7 +505,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Width = 110
                     end>
                 end
               end
@@ -796,7 +796,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21512#35745#37329#39069
-                      Width = 91
+                      Width = 120
                     end
                     item
                       Alignment = taRightJustify
@@ -807,7 +807,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24050#20184#37329#39069
-                      Width = 112
+                      Width = 110
                     end
                     item
                       Alignment = taRightJustify
@@ -818,7 +818,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20914#24080#37329#39069
-                      Width = 106
+                      Width = 110
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -828,7 +828,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#37329#39069
-                      Width = 143
+                      Width = 110
                     end>
                 end
               end
@@ -1115,7 +1115,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #21512#35745#37329#39069
-                    Width = 91
+                    Width = 120
                   end
                   item
                     Alignment = taRightJustify
@@ -1126,7 +1126,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #24050#20184#37329#39069
-                    Width = 112
+                    Width = 110
                   end
                   item
                     Alignment = taRightJustify
@@ -1137,7 +1137,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #20914#24080#37329#39069
-                    Width = 106
+                    Width = 110
                   end
                   item
                     DisplayFormat = '#0.00'
@@ -1147,7 +1147,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #32467#20313#37329#39069
-                    Width = 143
+                    Width = 110
                   end>
               end
             end
@@ -1505,7 +1505,6 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'ABLE_DATE'
-                    Footer.Value = #21512'   '#35745#65306
                     Footer.ValueType = fvtStaticText
                     Footers = <>
                     ReadOnly = True
@@ -1571,7 +1570,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Title.Font.Height = -12
                     Title.Font.Name = #23435#20307
                     Title.Font.Style = [fsBold]
-                    Width = 61
+                    Width = 72
                   end
                   item
                     Alignment = taRightJustify
@@ -1588,7 +1587,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Title.Font.Height = -12
                     Title.Font.Name = #23435#20307
                     Title.Font.Style = [fsBold]
-                    Width = 61
+                    Width = 66
                   end
                   item
                     Alignment = taRightJustify
@@ -1605,7 +1604,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Title.Font.Height = -12
                     Title.Font.Name = #23435#20307
                     Title.Font.Style = [fsBold]
-                    Width = 61
+                    Width = 66
                   end
                   item
                     DisplayFormat = '#0.00'
@@ -1621,7 +1620,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Title.Font.Height = -12
                     Title.Font.Name = #23435#20307
                     Title.Font.Style = [fsBold]
-                    Width = 61
+                    Width = 66
                   end
                   item
                     Alignment = taRightJustify

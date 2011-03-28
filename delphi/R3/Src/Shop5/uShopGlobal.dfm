@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 167
-  Top = 108
+  Left = 507
+  Top = 225
   Height = 616
   Width = 819
   object SYS_DEFINE: TZQuery
@@ -40,7 +40,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
-        'OP_ID from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
+        'OP_ID,MM from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
       'and TENANT_ID=:TENANT_ID order by ACCOUNT')
     Params = <
       item

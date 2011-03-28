@@ -662,8 +662,8 @@ inherited frmLogin: TfrmLogin
     NumGlyphs = 2
   end
   object cxcbSave: TcxCheckBox [9]
-    Left = 47
-    Top = 218
+    Left = 46
+    Top = 217
     Width = 103
     Height = 21
     Properties.DisplayUnchecked = 'False'

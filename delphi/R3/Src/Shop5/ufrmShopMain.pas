@@ -815,13 +815,12 @@ begin
     SFVersion := F.ReadString('soft','SFVersion','.NET');
     CLVersion := F.ReadString('soft','CLVersion','.MKT');
     ProductID := F.ReadString('soft','ProductID','R3_RYC');
+    RzLabel1.Caption := F.ReadString('soft','copyright','');
   finally
     F.Free;
   end;
-//  if FileExists(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg') then
-//    Image4.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'frame\logo_lt.jpg');
-//  Label4.Caption := '版本:'+RzVersionInfo.FileVersion;
-
+  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
+    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
 end;
 
 procedure TfrmShopMain.SetLoging(const Value: boolean);
@@ -2470,6 +2469,21 @@ end;
 procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+     begin
+       Global.MoveToRemate;
+       try
+         try
+           Global.Connect;
+         except
+           Raise Exception.Create('连接远程数据库失败,完成数据同步...'); 
+         end;
+       finally
+         Global.MoveToLocal;
+       end;
+     end;
+  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...'); 
+//  SyncFactory.SyncStockOrder('STK_STOCKORDER','TENANT_ID;STOCK_ID','TSyncSingleTable');
   SyncFactory.SyncAll;
 
 end;

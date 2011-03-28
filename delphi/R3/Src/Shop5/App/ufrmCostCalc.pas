@@ -51,6 +51,7 @@ type
     procedure Prepare;
     procedure CreateTempTable;
     procedure PrepareDataForRck;
+    procedure PrepareDataForAcct;
     procedure CheckForRck;
     //自动缴银结账
     procedure AutoPosReck;
@@ -342,6 +343,8 @@ begin
     Label11.Caption := '正在计算账户日台账...';
     Label11.Update;
     AutoPosReck;
+    //数据准备
+    if flag in [1,2,3,5] then PrepareDataForAcct;
     if flag in [1,2,3,5] then CalcAcctDay;
     Label11.Caption := '正在计算账户月台账...';
     Label11.Update;
@@ -1147,7 +1150,7 @@ begin
         'union all '+
         'select '+
         'A.TENANT_ID,B.SHOP_ID,A.ACCOUNT_ID,'+
-        '0 as ORG_MNY,A.IN_MNY,B.OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
+        '0 as ORG_MNY,A.IN_MNY,A.OUT_MNY,0 as BAL_MNY,PAY_MNY,RECV_MNY,POS_MNY,TRN_IN_MNY,TRN_OUT_MNY,PUSH_MNY,IORO_IN_MNY,IORO_OUT_MNY '+
         'from VIW_ACCT_DAYS A,ACC_ACCOUNT_INFO B where A.TENANT_ID=B.TENANT_ID and A.ACCOUNT_ID=B.ACCOUNT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+' '+
         ') j group by TENANT_ID,SHOP_ID,ACCOUNT_ID';
       Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
@@ -1299,6 +1302,35 @@ begin
   finally
     AObj.free;
     sv.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmCostCalc.PrepareDataForAcct;
+var
+  SQL:string;
+  rs:TZQuery;
+  myDate:TDate;
+begin
+  myDate := cDate;
+  if (calc_flag=2) then myDate := bDate;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select max(CREA_DATE) from VIW_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    Factor.Open(rs);
+    if rs.Fields[0].asString<>'' then
+       myDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
+    else
+       myDate := cDate;
+    if (myDate>eDate) and (eDate=0) then eDate := myDate;
+    
+    mDate := myDate;
+    uDate := mDate;
+    
+    //每次计算都算到最后一天
+    if mDate<eDate then mDate := eDate;
+    pt := round(mDate-cDate);
+  finally
     rs.Free;
   end;
 end;

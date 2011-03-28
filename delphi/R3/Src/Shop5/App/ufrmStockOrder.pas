@@ -91,7 +91,6 @@ type
   protected
     procedure ReadHeader;
     function CheckInput:boolean;override;
-
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
   public
     { Public declarations }
@@ -120,9 +119,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmShopMain
-  ,ufrmFindOrder
-  ;
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo,
+  ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmShopMain,ufrmFindOrder,ufrmBarCodePrint;
 {$R *.dfm}
 
 procedure TfrmStockOrder.CancelOrder;
@@ -585,14 +583,13 @@ begin
 end;
 
 procedure TfrmStockOrder.PrintBarcode;
-{
 procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
 function PubGetBarCode:string;
-var rs:TADODataSet;
+var rs:TZQuery;
 begin
-  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   try
-    rs.CommandText := 'select BARCODE from PUB_BARCODE where GODS_ID='''+ID+''' and PROPERTY_01='''+P1+''' and PROPERTY_02='''+P2+''' and BATCH_NO=''#''';
+    rs.SQL.Text := 'select BARCODE from PUB_BARCODE where GODS_ID='''+ID+''' and PROPERTY_01='''+P1+''' and PROPERTY_02='''+P2+''' and BATCH_NO=''#''';
     Factor.Open(rs);
     result := rs.Fields[0].AsString;
   finally
@@ -600,19 +597,21 @@ begin
   end;
 end;
 var
-  rs:TADODataSet;
+  rs:TZQuery;
 begin
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if rs.Locate('GODS_ID',ID,[]) then
   begin
     DataSet.Append;
     DataSet.FieldByName('A').AsBoolean := true;
-    DataSet.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;;
-    DataSet.FieldByName('BCODE').AsString := rs.FieldByName('BCODE').AsString;
+    DataSet.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
     DataSet.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
     DataSet.FieldByName('GODS_CODE').AsString := rs.FieldByName('GODS_CODE').AsString;;
     DataSet.FieldByName('NEW_OUTPRICE').AsString := rs.FieldByName('NEW_OUTPRICE').AsString;
-    DataSet.FieldByName('NEW_CUSTPRICE').AsString := rs.FieldByName('NEW_CUSTPRICE').AsString;
+    DataSet.FieldByName('NEW_OUTPRICE1').AsString := rs.FieldByName('NEW_OUTPRICE1').AsString;
+    DataSet.FieldByName('NEW_OUTPRICE2').AsString := rs.FieldByName('NEW_OUTPRICE2').AsString;
+    DataSet.FieldByName('NEW_LOWPRICE').AsString := rs.FieldByName('NEW_LOWPRICE').AsString;
+
     DataSet.FieldByName('PROPERTY_01').AsString := P1;
     DataSet.FieldByName('PROPERTY_02').AsString := P2;
     //
@@ -625,10 +624,10 @@ begin
   end;
 end;
 var amt,i,RecNo:integer;
-}
+
 begin
   inherited;
-  {
+
   RecNo := edtTable.RecNo;
   edtTable.DisableControls;
   try
@@ -667,7 +666,7 @@ begin
     if RecNo>0 then edtTable.RecNo := RecNo;
     edtTable.EnableControls;
   end;
-  }
+
 end;
 
 procedure TfrmStockOrder.actPrintBarcodeExecute(Sender: TObject);

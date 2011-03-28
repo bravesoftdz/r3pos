@@ -7,14 +7,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 943
-    Height = 551
+    Width = 951
+    Height = 562
     inherited RzPanel2: TRzPanel
-      Width = 933
-      Height = 541
+      Width = 941
+      Height = 552
       inherited RzPage: TRzPageControl
-        Width = 728
-        Height = 535
+        Width = 736
+        Height = 546
         ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
@@ -24,14 +24,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
-            Width = 726
-            Height = 508
+            Width = 734
+            Height = 519
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 716
-              Height = 498
+              Width = 724
+              Height = 509
               inherited w1: TRzPanel
-                Width = 716
+                Width = 724
                 Height = 83
                 object Label6: TLabel
                   Left = 288
@@ -266,11 +266,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 83
-                Width = 716
-                Height = 415
+                Width = 724
+                Height = 426
                 inherited DBGridEh1: TDBGridEh
-                  Width = 712
-                  Height = 411
+                  Width = 720
+                  Height = 422
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -1575,8 +1575,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 726
-            Height = 508
+            Width = 734
+            Height = 519
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1584,8 +1584,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 716
-              Height = 498
+              Width = 724
+              Height = 509
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1593,7 +1593,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 716
+                Width = 724
                 Height = 105
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1883,8 +1883,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 105
-                Width = 716
-                Height = 393
+                Width = 724
+                Height = 404
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1892,8 +1892,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 712
-                  Height = 389
+                  Width = 720
+                  Height = 400
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2187,8 +2187,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 731
-        Height = 535
+        Left = 739
+        Height = 546
         inherited Panel2: TPanel
           Height = 502
           inherited RzPanel1: TRzPanel [3]
@@ -2204,15 +2204,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 943
+    Width = 951
     inherited Image1: TImage
-      Width = 569
+      Width = 581
     end
     inherited Image3: TImage
-      Width = 569
+      Width = 581
     end
     inherited Image14: TImage
-      Left = 923
+      Left = 931
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

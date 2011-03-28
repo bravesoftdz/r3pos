@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, RzButton, Grids, DBGridEh, ExtCtrls, StdCtrls,
   ActnList, Menus, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, DB, ADODB, FR_DSet, FR_Class, FR_BarC;
+  cxDropDownEdit, DB, ADODB, FR_DSet, FR_Class, FR_BarC,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmBarCodePrint = class(TfrmBasic)
@@ -23,38 +24,14 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
-    adoPrint: TADODataSet;
     dsPrint: TDataSource;
-    adoPrintA: TBooleanField;
-    adoPrintGODS_PRICE: TStringField;
-    adoPrintBARCODE: TStringField;
     frBarCodeObj: TfrBarCodeObject;
     frMasterDs: TfrUserDataset;
     frBarCodeRpt13: TfrReport;
-    adoPrintSIZE_NAME: TStringField;
-    adoPrintCOLOR_NAME: TStringField;
     RzBitBtn1: TRzBitBtn;
     Image3: TImage;
-    adoPrintGODS_NAME: TStringField;
-    adoPrintGODS_ID: TStringField;
-    adoPrintGODS_CODE: TStringField;
-    adoPrintAMOUNT: TIntegerField;
-    adoPrintTemp: TADODataSet;
-    BooleanField1: TBooleanField;
-    StringField1: TStringField;
-    StringField2: TStringField;
-    StringField3: TStringField;
-    StringField4: TStringField;
-    StringField5: TStringField;
-    StringField6: TStringField;
-    StringField7: TStringField;
-    adoPrintTempUNIT_NAME: TStringField;
-    adoPrintTempBRAND: TStringField;
-    adoPrintTempPROVIDE: TStringField;
-    adoPrintBCODE: TStringField;
-    adoPrintTempBCODE: TStringField;
-    adoPrintTempNEW_CUSTPRICE: TStringField;
-    adoPrintNEW_CUSTPRICE: TStringField;
+    adoPrint: TZQuery;
+    adoPrintTemp: TZQuery;
     procedure RzCloseClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -187,19 +164,19 @@ var
 begin
   adoPrint.Close;
   adoPrint.CreateDataSet;
-  QTemp := TAdoDataSet.Create(Self);
+  QTemp := TZQuery.Create(nil);
   try
     QTemp.Close;
-    QTemp.CommandText :=
-         'select distinct a.GODS_ID,b.BCODE,b.GODS_NAME,b.GODS_CODE,a.PROPERTY_01,a.PROPERTY_02,a.BARCODE,b.NEW_OUTPRICE,b.NEW_CUSTPRICE '+
-         'from PUB_BARCODE a,VIW_GOODSINFO b where a.GODS_ID=b.GODS_ID and a.GODS_ID='''+ID+''' and b.COMP_ID='''+Global.CompanyID+'''';
+    QTemp.SQL.Text :=
+         'select distinct A.GODS_ID,B.GODS_NAME,B.GODS_CODE,A.PROPERTY_01,A.PROPERTY_02,A.BARCODE,B.NEW_OUTPRICE,B.NEW_OUTPRICE1,B.NEW_OUTPRICE2,B.NEW_LOWPRICE '+
+         ' from PUB_BARCODE A,VIW_GOODSPRICE B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.= and A.GODS_ID='''+ID+''' and B.SHOP_ID='''+Global.SHOP_ID+'''';
     Factor.Open(QTemp);
     if QTemp.RecordCount = 0 then
     begin
       QTemp.Close;
-      QTemp.CommandText :=
-         'select distinct a.GODS_ID,b.BCODE,b.GODS_NAME,b.GODS_CODE,a.PROPERTY_01,a.PROPERTY_02,null as BARCODE,b.NEW_OUTPRICE,b.NEW_CUSTPRICE '+
-         'from STO_STORAGE a,VIW_GOODSINFO b where a.COMP_ID=b.COMP_ID and a.GODS_ID=b.GODS_ID and a.GODS_ID='''+ID+''' and b.COMP_ID='''+Global.CompanyID+'''';
+      QTemp.SQL.Text :=
+         'select distinct A.GODS_ID,B.GODS_NAME,B.GODS_CODE,A.PROPERTY_01,A.PROPERTY_02,'' as BARCODE,B.NEW_OUTPRICE,B.NEW_OUTPRICE1,B.NEW_OUTPRICE2,B.NEW_LOWPRICE '+
+         ' from STO_STORAGE A,VIW_GOODSPRICE B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.GODS_ID='''+ID+''' and B.SHOP_ID='''+Global.SHOP_ID+'''';
       Factor.Open(QTemp);
     end;
     adoPrint.First;
@@ -210,7 +187,7 @@ begin
         adoPrint.Append;
         adoPrint.FieldByName('A').AsBoolean := False;
         adoPrint.FieldByName('GODS_ID').AsString := QTemp.FieldByName('GODS_ID').AsString;
-        adoPrint.FieldByName('BCODE').AsString := QTemp.FieldByName('BCODE').AsString;
+        //adoPrint.FieldByName('BCODE').AsString := QTemp.FieldByName('BCODE').AsString;
         adoPrint.FieldByName('GODS_CODE').AsString := QTemp.FieldByName('GODS_CODE').AsString;
         adoPrint.FieldByName('GODS_NAME').AsString := QTemp.FieldByName('GODS_NAME').AsString;
         adoPrint.FieldByName('PROPERTY_01').AsString := QTemp.FieldByName('PROPERTY_01').AsString;
@@ -219,10 +196,13 @@ begin
         if (QTemp.FieldByName('BARCODE').AsString<>'') and not fnString.IsCustBarCode(QTemp.FieldByName('BARCODE').AsString) then
            adoPrint.FieldByName('BARCODE').AsString := QTemp.FieldByName('BARCODE').AsString
         else
-           adoPrint.FieldByName('BARCODE').AsString := GetBarCode(QTemp.FieldByName('BCODE').AsString,QTemp.FieldByName('PROPERTY_01').AsString,QTemp.FieldByName('PROPERTY_02').AsString);
+           adoPrint.FieldByName('BARCODE').AsString := GetBarCode(QTemp.FieldByName('GODS_CODE').AsString,QTemp.FieldByName('PROPERTY_01').AsString,QTemp.FieldByName('PROPERTY_02').AsString);
         //
         adoPrint.FieldByName('NEW_OUTPRICE').AsString := QTemp.FieldByName('NEW_OUTPRICE').AsString;
-        adoPrint.FieldByName('NEW_CUSTPRICE').AsString := QTemp.FieldByName('NEW_CUSTPRICE').AsString;
+        adoPrint.FieldByName('NEW_OUTPRICE1').AsString := QTemp.FieldByName('NEW_OUTPRICE1').AsString;
+        adoPrint.FieldByName('NEW_OUTPRICE2').AsString := QTemp.FieldByName('NEW_OUTPRICE2').AsString;
+        adoPrint.FieldByName('NEW_LOWPRICE').AsString := QTemp.FieldByName('NEW_LOWPRICE').AsString;
+
         adoPrint.FieldByName('AMOUNT').AsString := '1';
         adoPrint.Post;
       QTemp.Next;
@@ -280,7 +260,7 @@ begin
 end;
 var
   i,n,j: Integer;
-  rs:TADODataSet;
+  rs:TZQuery;
   s,s1,s2,s3,s4:string;
   Column1,Column2:TColumnEh;
 begin
@@ -289,7 +269,7 @@ begin
   Column2 := FindColumn('PROPERTY_02');
   adoPrintTemp.Close;
   adoPrintTemp.CreateDataSet;
-  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   adoPrint.DisableControls;
   try
   adoPrint.First;
@@ -298,21 +278,25 @@ begin
     if (adoPrint.FieldByName('A').AsBoolean) and (adoPrint.FieldByName('BARCODE').AsString <> '') then
     begin
       rs.Close;
-      rs.CommandText := 'select BRAND,PROVIDE,UNIT_ID from VIW_GOODSINFO where GODS_ID='''+adoPrint.FieldByName('GODS_ID').AsString+''' and COMP_ID='''+Global.CompanyID+'''';
-      Factor.Open(rs); 
+      rs.SQL.Text :=
+      'select SORT_ID4,SORT_ID3,UNIT_ID from VIW_GOODSPRICE where GODS_ID='''+adoPrint.FieldByName('GODS_ID').AsString+''' and SHOP_ID='''+Global.SHOP_ID+'''';
+      Factor.Open(rs);
       for i := 0 to adoPrint.FieldByName('AMOUNT').AsInteger - 1 do
       begin
         adoPrintTemp.Append;
         adoPrintTemp.FieldByName('GODS_NAME').AsString := stringreplace(adoPrint.FieldByName('GODS_NAME').AsString,' ','',[rfReplaceAll]);
         adoPrintTemp.FieldByName('NEW_OUTPRICE').AsString := adoPrint.FieldByName('NEW_OUTPRICE').AsString;
-        adoPrintTemp.FieldByName('NEW_CUSTPRICE').AsString := adoPrint.FieldByName('NEW_CUSTPRICE').AsString;
+        adoPrintTemp.FieldByName('NEW_OUTPRICE1').AsString := adoPrint.FieldByName('NEW_OUTPRICE1').AsString;
+        adoPrintTemp.FieldByName('NEW_OUTPRICE2').AsString := adoPrint.FieldByName('NEW_OUTPRICE2').AsString;
+        adoPrintTemp.FieldByName('NEW_LOWPRICE').AsString := adoPrint.FieldByName('NEW_LOWPRICE').AsString;
+
         adoPrintTemp.FieldByName('BARCODE').AsString := adoPrint.FieldByName('BARCODE').AsString;
         adoPrintTemp.FieldByName('GODS_CODE').AsString := adoPrint.FieldByName('GODS_CODE').AsString;
         adoPrintTemp.FieldByName('GODS_ID').AsString := adoPrint.FieldByName('GODS_ID').AsString;
-        adoPrintTemp.FieldByName('BCODE').AsString := adoPrint.FieldByName('BCODE').AsString;
-        adoPrintTemp.FieldByName('BRAND').AsString := TdsFind.GetNameByID(Global.GetADODataSetFromName('PUB_BRAND_INFO'),'CODE_ID','CODE_NAME',rs.FieldByName('BRAND').AsString);
-        adoPrintTemp.FieldByName('PROVIDE').AsString := TdsFind.GetNameByID(Global.GetADODataSetFromName('BAS_CLIENTINFO'),'CLIENT_ID','CLIENT_NAME',rs.FieldByName('PROVIDE').AsString);
-        adoPrintTemp.FieldByName('UNIT_NAME').AsString := TdsFind.GetNameByID(Global.GetADODataSetFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',rs.FieldByName('UNIT_ID').AsString);
+        //adoPrintTemp.FieldByName('BCODE').AsString := adoPrint.FieldByName('BCODE').AsString;
+        adoPrintTemp.FieldByName('BRAND').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BRAND_INFO'),'CODE_ID','CODE_NAME',rs.FieldByName('SORT_ID4').AsString);
+        adoPrintTemp.FieldByName('PROVIDE').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('BAS_CLIENTINFO'),'CLIENT_ID','CLIENT_NAME',rs.FieldByName('SORT_ID3').AsString);
+        adoPrintTemp.FieldByName('UNIT_NAME').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',rs.FieldByName('UNIT_ID').AsString);
         if length(adoPrint.FieldByName('PROPERTY_01').AsString)=3 then
         adoPrintTemp.FieldByName('PROPERTY_01').AsString := Column1.PickList[Column1.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_01').AsString)];
         if length(adoPrint.FieldByName('PROPERTY_02').AsString)=3 then
@@ -413,36 +397,31 @@ end;
 
 procedure TfrmBarCodePrint.FormCreate(Sender: TObject);
 var
-  rs:TADODataSet;
+  rs:TZQuery;
 begin
   inherited;
   Refreshed := true;
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select CODE_ID,CODE_NAME,CODE_TYPE from PUB_CODE_INFO where CODE_TYPE in (2,4) and len(CODE_ID)=3';
-    Factor.Open(rs);
-    DBGridEh1.Columns[2].KeyList.Add('#');
-    DBGridEh1.Columns[2].PickList.Add('无');
-    DBGridEh1.Columns[3].KeyList.Add('#');
-    DBGridEh1.Columns[3].PickList.Add('无');
-    rs.First;
-    while not rs.Eof do
-      begin
-        if rs.Fields[2].AsString = '2' then
-           begin
-             DBGridEh1.Columns[2].KeyList.Add(rs.Fields[0].asString);
-             DBGridEh1.Columns[2].PickList.Add(rs.Fields[1].asString);
-           end
-        else
-           begin
-             DBGridEh1.Columns[3].KeyList.Add(rs.Fields[0].asString);
-             DBGridEh1.Columns[3].PickList.Add(rs.Fields[1].asString);
-           end;
-        rs.Next;
-      end;
-  finally
-    rs.Free;
-  end;
+  DBGridEh1.Columns[2].KeyList.Add('#');
+  DBGridEh1.Columns[2].PickList.Add('无');
+  DBGridEh1.Columns[3].KeyList.Add('#');
+  DBGridEh1.Columns[3].PickList.Add('无');
+  rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  rs.First;
+  while not rs.Eof do
+    begin
+      DBGridEh1.Columns[2].KeyList.Add(rs.Fields[0].asString);
+      DBGridEh1.Columns[2].PickList.Add(rs.Fields[1].asString);
+      rs.Next;
+    end;
+
+  rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  rs.First;
+  while not rs.Eof do
+    begin
+      DBGridEh1.Columns[3].KeyList.Add(rs.Fields[0].asString);
+      DBGridEh1.Columns[3].PickList.Add(rs.Fields[1].asString);
+      rs.Next;
+    end;
 end;
 
 procedure TfrmBarCodePrint.FormClose(Sender: TObject;

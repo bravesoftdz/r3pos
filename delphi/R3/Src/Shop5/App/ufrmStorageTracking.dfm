@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 242
-  Top = 123
+  Left = 253
+  Top = 126
   Width = 1073
   Height = 604
   Caption = #24211#23384#26597#35810
@@ -115,10 +115,12 @@ inherited frmStorageTracking: TfrmStorageTracking
                     FooterFont.Height = -12
                     FooterFont.Name = #23435#20307
                     FooterFont.Style = []
+                    FooterRowCount = 1
                     FrozenCols = 1
                     Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                     RowHeight = 23
+                    SumList.Active = True
                     TabOrder = 1
                     TitleFont.Charset = GB2312_CHARSET
                     TitleFont.Color = clWindowText
@@ -151,7 +153,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'SEQ_NO'
+                        FieldName = 'SEQNO'
                         Footers = <>
                         Title.Caption = #24207#21495
                         Width = 27
@@ -221,6 +223,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       item
                         EditButtons = <>
                         FieldName = 'AMOUNT'
+                        Footer.Alignment = taRightJustify
+                        Footer.ValueType = fvtSum
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #24211#23384#37327
@@ -229,6 +233,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       item
                         EditButtons = <>
                         FieldName = 'NEW_OUTPRICE'
+                        Footer.Alignment = taRightJustify
+                        Footer.ValueType = fvtSum
                         Footers = <>
                         Title.Caption = #24403#21069#21806#20215
                         Width = 66
@@ -236,6 +242,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       item
                         EditButtons = <>
                         FieldName = 'SALE_MNY'
+                        Footer.Alignment = taRightJustify
+                        Footer.ValueType = fvtSum
                         Footers = <>
                         Title.Caption = #38144#21806#37329#39069
                         Width = 67

@@ -11,19 +11,19 @@ inherited frmSupplier: TfrmSupplier
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 734
-    Height = 433
+    Height = 427
     inherited RzPanel2: TRzPanel
       Width = 724
-      Height = 423
+      Height = 417
       inherited RzPage: TRzPageControl
         Width = 718
-        Height = 417
+        Height = 411
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#21830#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 716
-            Height = 390
+            Height = 384
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -136,7 +136,7 @@ inherited frmSupplier: TfrmSupplier
               Left = 5
               Top = 66
               Width = 706
-              Height = 319
+              Height = 313
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -145,7 +145,7 @@ inherited frmSupplier: TfrmSupplier
                 Left = 5
                 Top = 5
                 Width = 696
-                Height = 290
+                Height = 284
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -317,7 +317,7 @@ inherited frmSupplier: TfrmSupplier
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 295
+                Top = 289
                 Width = 696
                 Height = 19
                 Align = alBottom
@@ -346,17 +346,18 @@ inherited frmSupplier: TfrmSupplier
   inherited RzPanel4: TRzPanel
     Width = 734
     inherited Image1: TImage
-      Left = 484
-      Width = 241
-    end
-    inherited Image14: TImage
-      Left = 725
+      Left = 328
+      Width = 386
     end
     inherited Image3: TImage
-      Left = 484
-      Width = 241
+      Left = 328
+      Width = 386
+    end
+    inherited Image14: TImage
+      Left = 714
     end
     inherited rzPanel5: TPanel
+      Left = 328
       inherited lblToolCaption: TRzLabel
         Width = 60
         Caption = #20379#24212#21830#31649#29702
@@ -371,11 +372,10 @@ inherited frmSupplier: TfrmSupplier
           FixedSize = True
           ImageIndex = -1
           MinHeight = 308
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 308
-        ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0
@@ -493,11 +493,11 @@ inherited frmSupplier: TfrmSupplier
     PageFooter.Font.Height = -11
     PageFooter.Font.Name = 'MS Sans Serif'
     PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
+    PageHeader.Font.Charset = ANSI_CHARSET
     PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'MS Sans Serif'
-    PageHeader.Font.Style = []
+    PageHeader.Font.Height = -29
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
     Units = MM
     Left = 160
     Top = 256

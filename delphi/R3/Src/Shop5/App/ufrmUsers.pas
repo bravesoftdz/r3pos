@@ -61,6 +61,7 @@ type
     //ccid:string;
     { Private declarations }
     function CheckCanExport:Boolean;
+    procedure PrintView;
   public
     { Public declarations }
     procedure InitGrid;
@@ -222,7 +223,7 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
       DbGridEh1.canvas.FillRect(ARect);
@@ -235,7 +236,7 @@ procedure TfrmUsers.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
      Background := clBtnFace;
 end;
 
@@ -339,7 +340,7 @@ begin
   if not ShopGlobal.GetChkRight('31500001',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   PrintDBGridEh1.Print;
 end;
 
@@ -348,7 +349,7 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('31500001',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
     try
@@ -362,6 +363,16 @@ end;
 function TfrmUsers.CheckCanExport: Boolean;
 begin
   Result := ShopGlobal.GetChkRight('31500001',7);
+end;
+
+procedure TfrmUsers.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '员工档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

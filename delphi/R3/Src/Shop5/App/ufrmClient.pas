@@ -36,8 +36,8 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
-    PrintDBGridEh1: TPrintDBGridEh;
     Cds_Client: TZQuery;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -65,7 +65,8 @@ type
       var Accept: Boolean);
   private
     sqlstring:string;
-    function CheckCanExport:boolean;    
+    function CheckCanExport:boolean;
+    procedure PrintView;   
     { Private declarations }
   public
     { Public declarations }
@@ -368,25 +369,34 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('33300001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.Print;
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    PrintDBGridEh1.Print;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
+  end;
 end;
 
 procedure TfrmClient.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33300001',5) then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');  
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  with TfrmEhLibReport.Create(self) do
-    begin
-      try
-        Preview(PrintDBGridEh1);
-      finally
-        free;
+    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    with TfrmEhLibReport.Create(self) do
+      begin
+        try
+          Preview(PrintDBGridEh1);
+        finally
+          free;
+        end;
       end;
-    end;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
+  end;
 end;
 procedure TfrmClient.DBGridEh1TitleClick(Column: TColumnEh);
 begin
@@ -510,6 +520,16 @@ end;
 function TfrmClient.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('33300001',6);
+end;
+
+procedure TfrmClient.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '客户档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

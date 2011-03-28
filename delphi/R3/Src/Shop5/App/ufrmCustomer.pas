@@ -71,9 +71,9 @@ type
     actRenew: TAction;
     fndSORT_ID: TzrComboBoxList;
     Label40: TLabel;
-    PrintDBGridEh1: TPrintDBGridEh;
     Cds_Customer: TZQuery;
     N13: TMenuItem;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -111,6 +111,8 @@ type
     procedure actPreviewExecute(Sender: TObject);
   private
     function CheckCanExport:boolean;
+    procedure PrintView;
+    function FormatString(TextStr:String;SpaceNum:Integer):String;
     { Private declarations }
   public
     { Public declarations }
@@ -783,9 +785,13 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.Print;
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    PrintDBGridEh1.Print;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
+  end;
 end;
 
 procedure TfrmCustomer.actPreviewExecute(Sender: TObject);
@@ -793,14 +799,19 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  with TfrmEhLibReport.Create(self) do
-  begin
-    try
-      Preview(PrintDBGridEh1);
-    finally
-      free;
+  try
+    DBGridEh1.Columns[0].Visible := False;
+    PrintView;
+    with TfrmEhLibReport.Create(self) do
+    begin
+      try
+        Preview(PrintDBGridEh1);
+      finally
+        free;
+      end;
     end;
+  finally
+    DBGridEh1.Columns[0].Visible := True;
   end;
 end;
 
@@ -812,6 +823,62 @@ end;
 function TfrmCustomer.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('33400001',6);
+end;
+
+procedure TfrmCustomer.PrintView;
+var HeaderText:String;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '会员档案管理';
+  if cmbPRICE_ID.Text <> '' then
+    HeaderText := '会员等级:'+FormatString(cmbPRICE_ID.Text,30);
+  if cmbSHOP_ID.Text <> '' then
+    HeaderText := HeaderText+'会员等级:'+FormatString(cmbPRICE_ID.Text,30);
+  if fndSORT_ID.Text <> '' then
+    HeaderText := HeaderText+'会员类别:'+FormatString(fndSORT_ID.Text,30);
+
+  HeaderText:=HeaderText+#13;
+  // 对会员入会日期进行条件查询
+  if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
+     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate4.Date),30);
+  if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
+     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate3.Date),30);
+  if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
+     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate3.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate4.Date),40);
+
+
+  //  对会员生日日期进行条件查询
+  if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
+     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate2.Date),30);
+  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
+     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate1.Date),30);
+  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
+     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate1.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate2.Date),40);
+
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]',HeaderText]);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
+end;
+
+function TfrmCustomer.FormatString(TextStr: String;
+  SpaceNum: Integer): String;
+var Len,i:Integer;
+    SpaceStr:String;
+begin
+  Len := length(TextStr);
+  if Len >= SpaceNum then
+    begin
+      Result := copy(TextStr,1,SpaceNum);
+    end
+  else
+    begin
+      for i:=0 to SpaceNum-Len-1 do
+        begin
+          SpaceStr := SpaceStr + ' ';
+        end;
+      Result := TextStr + SpaceStr;
+    end;
 end;
 
 end.

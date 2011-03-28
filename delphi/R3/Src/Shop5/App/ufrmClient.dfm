@@ -11,19 +11,19 @@ inherited frmClient: TfrmClient
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 734
-    Height = 433
+    Height = 427
     inherited RzPanel2: TRzPanel
       Width = 724
-      Height = 423
+      Height = 417
       inherited RzPage: TRzPageControl
         Width = 718
-        Height = 417
+        Height = 411
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23458#25143#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 716
-            Height = 390
+            Height = 384
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -136,7 +136,7 @@ inherited frmClient: TfrmClient
               Left = 5
               Top = 66
               Width = 706
-              Height = 319
+              Height = 313
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -145,7 +145,7 @@ inherited frmClient: TfrmClient
                 Left = 5
                 Top = 5
                 Width = 696
-                Height = 290
+                Height = 284
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -324,7 +324,7 @@ inherited frmClient: TfrmClient
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 295
+                Top = 289
                 Width = 696
                 Height = 19
                 Align = alBottom
@@ -353,17 +353,18 @@ inherited frmClient: TfrmClient
   inherited RzPanel4: TRzPanel
     Width = 734
     inherited Image1: TImage
-      Left = 484
-      Width = 241
-    end
-    inherited Image14: TImage
-      Left = 725
+      Left = 328
+      Width = 386
     end
     inherited Image3: TImage
-      Left = 484
-      Width = 241
+      Left = 328
+      Width = 386
+    end
+    inherited Image14: TImage
+      Left = 714
     end
     inherited rzPanel5: TPanel
+      Left = 328
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #23458#25143#31649#29702
@@ -378,11 +379,10 @@ inherited frmClient: TfrmClient
           FixedSize = True
           ImageIndex = -1
           MinHeight = 308
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 308
-        ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0
@@ -489,26 +489,6 @@ inherited frmClient: TfrmClient
       OnClick = N3Click
     end
   end
-  object PrintDBGridEh1: TPrintDBGridEh
-    Options = [pghFitGridToPageWidth]
-    Page.BottomMargin = 2.000000000000000000
-    Page.LeftMargin = 2.000000000000000000
-    Page.RightMargin = 2.000000000000000000
-    Page.TopMargin = 2.000000000000000000
-    PageFooter.Font.Charset = DEFAULT_CHARSET
-    PageFooter.Font.Color = clWindowText
-    PageFooter.Font.Height = -11
-    PageFooter.Font.Name = 'MS Sans Serif'
-    PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
-    PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'MS Sans Serif'
-    PageHeader.Font.Style = []
-    Units = MM
-    Left = 160
-    Top = 256
-  end
   object Cds_Client: TZQuery
     SortedFields = 'CLIENT_CODE'
     FieldDefs = <>
@@ -519,5 +499,44 @@ inherited frmClient: TfrmClient
     IndexFieldNames = 'CLIENT_CODE Asc'
     Left = 182
     Top = 337
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 128
+    Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

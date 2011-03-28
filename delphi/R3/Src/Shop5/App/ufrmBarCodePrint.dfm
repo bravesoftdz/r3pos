@@ -1,6 +1,6 @@
 inherited frmBarCodePrint: TfrmBarCodePrint
-  Left = 259
-  Top = 189
+  Left = 779
+  Top = 185
   Width = 513
   Height = 393
   BorderIcons = [biSystemMenu]
@@ -12,14 +12,14 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   object TitlePanel: TPanel [0]
     Left = 0
     Top = 0
-    Width = 497
+    Width = 505
     Height = 42
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
     DesignSize = (
-      497
+      505
       42)
     object labTitle: TLabel
       Left = 16
@@ -36,7 +36,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
     object Bevel2: TBevel
       Left = 0
       Top = 40
-      Width = 497
+      Width = 505
       Height = 2
       Align = alBottom
     end
@@ -360,8 +360,8 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   object DBGridEh1: TDBGridEh [1]
     Left = 0
     Top = 42
-    Width = 497
-    Height = 266
+    Width = 505
+    Height = 277
     Align = alClient
     AllowedOperations = [alopUpdateEh]
     AutoFitColWidths = True
@@ -449,15 +449,15 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   end
   object Panel1: TPanel [2]
     Left = 0
-    Top = 308
-    Width = 497
+    Top = 319
+    Width = 505
     Height = 47
     Align = alBottom
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 2
     DesignSize = (
-      497
+      505
       47)
     object BtnPrint: TRzBitBtn
       Left = 347
@@ -531,53 +531,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       OnClick = N3Click
     end
   end
-  object adoPrint: TADODataSet
-    Parameters = <>
-    Left = 248
-    Top = 176
-    object adoPrintA: TBooleanField
-      FieldName = 'A'
-    end
-    object adoPrintGODS_PRICE: TStringField
-      FieldName = 'NEW_OUTPRICE'
-      Size = 10
-    end
-    object adoPrintBARCODE: TStringField
-      FieldName = 'BARCODE'
-    end
-    object adoPrintSIZE_NAME: TStringField
-      FieldName = 'PROPERTY_02'
-      Size = 10
-    end
-    object adoPrintCOLOR_NAME: TStringField
-      FieldName = 'PROPERTY_01'
-      Size = 10
-    end
-    object adoPrintGODS_NAME: TStringField
-      FieldName = 'GODS_NAME'
-      Size = 100
-    end
-    object adoPrintGODS_ID: TStringField
-      FieldName = 'GODS_ID'
-    end
-    object adoPrintGODS_CODE: TStringField
-      FieldName = 'GODS_CODE'
-      Size = 30
-    end
-    object adoPrintAMOUNT: TIntegerField
-      FieldName = 'AMOUNT'
-    end
-    object adoPrintBCODE: TStringField
-      FieldName = 'BCODE'
-      Size = 7
-    end
-    object adoPrintNEW_CUSTPRICE: TStringField
-      FieldName = 'NEW_CUSTPRICE'
-      Size = 50
-    end
-  end
   object dsPrint: TDataSource
-    DataSet = adoPrint
     Left = 280
     Top = 176
   end
@@ -609,7 +563,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       00000086010000450000003000050001000000000000000000FFFFFF1F000000
       0001003100000000000000FFFF00000000000200000001000000000000000100
       0000C800000014000000010000000000000200490100000B00BDBBB2E6B1EDCA
-      FDBEDD3100020102000000000000007D0000005A000000300013000100000000
+      FDBEDD310002010200000000000000850000005A000000300013000100000000
       0000000000FFFFFF1F000000001500D6F7CFEECAFDBEDD313D66724D61737465
       7244733B00000000000000FFFF00000000000200000001000000000000000100
       0000C800000014000000010000000000000000CC01000005004D656D6F310002
@@ -631,58 +585,105 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       0200000001000000000101000E01000000000000000000004000000000000000
       00FEFEFF000000000000000000000000FDFF0100000000}
   end
-  object adoPrintTemp: TADODataSet
-    Parameters = <>
+  object adoPrint: TZQuery
+    FieldDefs = <
+      item
+        Name = 'A'
+      end
+      item
+        Name = 'NEW_OUTPRICE'
+      end
+      item
+        Name = 'BARCODE'
+      end
+      item
+        Name = 'PROPERTY_02'
+      end
+      item
+        Name = 'PROPERTY_01'
+      end
+      item
+        Name = 'GODS_NAME'
+      end
+      item
+        Name = 'GODS_ID'
+      end
+      item
+        Name = 'GODS_CODE'
+      end
+      item
+        Name = 'UNIT_NAME'
+      end
+      item
+        Name = 'BRAND'
+      end
+      item
+        Name = 'PROVIDE'
+      end
+      item
+        Name = 'BCODE'
+      end
+      item
+        Name = 'NEW_OUTPRICE1'
+      end
+      item
+        Name = 'NEW_OUTPRICE2'
+      end
+      item
+        Name = 'NEW_LOWPRICE'
+      end
+      item
+        Name = 'AMOUNT'
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 248
+    Top = 176
+  end
+  object adoPrintTemp: TZQuery
+    FieldDefs = <
+      item
+        Name = 'A'
+      end
+      item
+        Name = 'NEW_OUTPRICE'
+      end
+      item
+        Name = 'BARCODE'
+      end
+      item
+        Name = 'PROPERTY_02'
+      end
+      item
+        Name = 'PROPERTY_01'
+      end
+      item
+        Name = 'GODS_NAME'
+      end
+      item
+        Name = 'GODS_ID'
+      end
+      item
+        Name = 'GODS_CODE'
+      end
+      item
+        Name = 'UNIT_NAME'
+      end
+      item
+        Name = 'BRAND'
+      end
+      item
+        Name = 'PROVIDE'
+      end
+      item
+        Name = 'BCODE'
+      end
+      item
+        Name = 'NEW_CUSTPRICE'
+      end>
+    CachedUpdates = True
+    Params = <>
     Left = 312
     Top = 176
-    object BooleanField1: TBooleanField
-      FieldName = 'A'
-    end
-    object StringField1: TStringField
-      FieldName = 'NEW_OUTPRICE'
-      Size = 10
-    end
-    object StringField2: TStringField
-      FieldName = 'BARCODE'
-    end
-    object StringField3: TStringField
-      FieldName = 'PROPERTY_02'
-      Size = 10
-    end
-    object StringField4: TStringField
-      FieldName = 'PROPERTY_01'
-      Size = 10
-    end
-    object StringField5: TStringField
-      FieldName = 'GODS_NAME'
-      Size = 100
-    end
-    object StringField6: TStringField
-      FieldName = 'GODS_ID'
-    end
-    object StringField7: TStringField
-      FieldName = 'GODS_CODE'
-      Size = 30
-    end
-    object adoPrintTempUNIT_NAME: TStringField
-      FieldName = 'UNIT_NAME'
-      Size = 30
-    end
-    object adoPrintTempBRAND: TStringField
-      FieldName = 'BRAND'
-      Size = 50
-    end
-    object adoPrintTempPROVIDE: TStringField
-      FieldName = 'PROVIDE'
-      Size = 50
-    end
-    object adoPrintTempBCODE: TStringField
-      FieldName = 'BCODE'
-      Size = 7
-    end
-    object adoPrintTempNEW_CUSTPRICE: TStringField
-      FieldName = 'NEW_CUSTPRICE'
-      Size = 50
-    end
   end
 end

@@ -433,7 +433,7 @@ begin
   end;
   
   Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
       Grid.canvas.FillRect(ARect);
@@ -446,7 +446,7 @@ procedure TfrmStorageTracking.GridGetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
      Background := clBtnFace;
 end;
 

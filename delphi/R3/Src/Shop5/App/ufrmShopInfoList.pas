@@ -33,8 +33,8 @@ type
     Label2: TLabel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    PrintDBGridEh1: TPrintDBGridEh;
     cdsBrowser: TZQuery;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -58,6 +58,7 @@ type
     { Private declarations }
     locked:Boolean;
     function CheckCanExport:Boolean;
+    procedure PrintView;
   public
     { Public declarations }
     function FindColumn(FieldName:String):TColumnEh;
@@ -306,7 +307,7 @@ begin
   inherited;
   if not ShopGlobal.GetChkRight('31100001',5) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   with TfrmEhLibReport.Create(self) do
     begin
       try
@@ -332,8 +333,8 @@ procedure TfrmShopInfoList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('31100001',5) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
-  PrintDBGridEh1.Print;  
+  PrintView;
+  PrintDBGridEh1.Print;
 end;
 
 function TfrmShopInfoList.FindColumn(FieldName: String): TColumnEh;
@@ -359,6 +360,16 @@ end;
 function TfrmShopInfoList.CheckCanExport: Boolean;
 begin
   Result := ShopGlobal.GetChkRight('31500001',6);
+end;
+
+procedure TfrmShopInfoList.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '门店档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

@@ -527,7 +527,7 @@ begin
 
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from RCK_ACCT_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE>=:CREA_DATE';
+    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE>=:CREA_DATE';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('CREA_DATE').AsInteger := EndDate;
     Factor.Open(rs);

@@ -10,23 +10,23 @@ inherited frmDeptInfoList: TfrmDeptInfoList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 727
-    Height = 464
+    Height = 458
     inherited RzPanel2: TRzPanel
       Width = 717
-      Height = 454
+      Height = 448
       inherited RzPage: TRzPageControl
         Width = 711
-        Height = 448
+        Height = 442
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32844#21153#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 709
-            Height = 421
+            Height = 415
             object Splitter1: TSplitter
               Left = 185
               Top = 41
-              Height = 375
+              Height = 369
             end
             object RzPanel1: TRzPanel
               Left = 5
@@ -129,7 +129,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
               Left = 5
               Top = 41
               Width = 180
-              Height = 375
+              Height = 369
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -146,7 +146,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
               Left = 188
               Top = 41
               Width = 516
-              Height = 375
+              Height = 369
               Align = alClient
               Caption = 'Panel3'
               TabOrder = 2
@@ -154,7 +154,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
                 Left = 1
                 Top = 1
                 Width = 514
-                Height = 354
+                Height = 348
                 Align = alClient
                 DataSource = DataSource1
                 Flat = True
@@ -247,7 +247,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 355
+                Top = 349
                 Width = 514
                 Height = 19
                 Align = alBottom
@@ -276,17 +276,18 @@ inherited frmDeptInfoList: TfrmDeptInfoList
   inherited RzPanel4: TRzPanel
     Width = 727
     inherited Image1: TImage
-      Left = 485
-      Width = 233
-    end
-    inherited Image14: TImage
-      Left = 718
+      Left = 329
+      Width = 378
     end
     inherited Image3: TImage
-      Left = 485
-      Width = 233
+      Left = 329
+      Width = 378
+    end
+    inherited Image14: TImage
+      Left = 707
     end
     inherited rzPanel5: TPanel
+      Left = 329
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #37096#38376#26723#26696
@@ -301,11 +302,10 @@ inherited frmDeptInfoList: TfrmDeptInfoList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 309
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 309
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0

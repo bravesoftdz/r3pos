@@ -15,8 +15,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -180,6 +182,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -458,6 +461,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -780,6 +784,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'RECV_DATE'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #26085#26399
                       Width = 99
@@ -1090,6 +1095,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 item
                   EditButtons = <>
                   FieldName = 'USER_NAME'
+                  Footer.ValueType = fvtCount
                   Footers = <>
                   Title.Caption = #21046#21333#20154
                   Width = 121
@@ -1466,6 +1472,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                     item
                       EditButtons = <>
                       FieldName = 'CLIENT_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #23458#25143#21517#31216

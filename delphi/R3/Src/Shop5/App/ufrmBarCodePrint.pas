@@ -4,10 +4,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmBasic, RzButton, Grids, DBGridEh, ExtCtrls, StdCtrls,
+  Dialogs, ufrmBasic, RzButton, Grids, DBGridEh, ExtCtrls, StdCtrls, FR_BarC,
   ActnList, Menus, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, DB, ADODB, FR_DSet, FR_Class, FR_BarC,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  cxDropDownEdit, DB, FR_DSet, FR_Class, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
   TfrmBarCodePrint = class(TfrmBasic)

@@ -62,6 +62,7 @@ type
   private
     procedure SetRecNo;
     function  CheckCanExport: boolean; override;
+    procedure PrintView;
   public
     procedure Open;
     procedure AddRecord(AObj:TRecord_);
@@ -320,7 +321,7 @@ begin
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   SetRecNo;
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   PrintDBGridEh1.Print;
 end;
 
@@ -331,7 +332,7 @@ begin
   if not ShopGlobal.GetChkRight('31400001',6) then
     Raise Exception.Create('你没有预览报表'+Caption+'的权限,请和管理员联系.');
   SetRecNo;
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+  PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
     try
@@ -394,6 +395,16 @@ end;
 function TfrmRoleInfoList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('31400001',6);  
+end;
+
+procedure TfrmRoleInfoList.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '客户档案管理';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  DBGridEh1.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := DBGridEh1;
 end;
 
 end.

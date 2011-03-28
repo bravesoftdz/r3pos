@@ -1,6 +1,6 @@
 inherited frmRoleInfoList: TfrmRoleInfoList
-  Left = 195
-  Top = 107
+  Left = 260
+  Top = 194
   Width = 735
   Height = 521
   Caption = #35282#33394#26723#26696
@@ -11,19 +11,19 @@ inherited frmRoleInfoList: TfrmRoleInfoList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 727
-    Height = 464
+    Height = 458
     inherited RzPanel2: TRzPanel
       Width = 717
-      Height = 454
+      Height = 448
       inherited RzPage: TRzPageControl
         Width = 711
-        Height = 448
+        Height = 442
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32844#21153#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 709
-            Height = 421
+            Height = 415
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
@@ -124,7 +124,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
               Left = 5
               Top = 41
               Width = 699
-              Height = 375
+              Height = 369
               Align = alClient
               Caption = 'Panel3'
               TabOrder = 1
@@ -132,7 +132,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
                 Left = 1
                 Top = 1
                 Width = 697
-                Height = 354
+                Height = 348
                 Align = alClient
                 DataSource = DataSource1
                 Flat = True
@@ -197,7 +197,7 @@ inherited frmRoleInfoList: TfrmRoleInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 355
+                Top = 349
                 Width = 697
                 Height = 19
                 Align = alBottom
@@ -226,17 +226,18 @@ inherited frmRoleInfoList: TfrmRoleInfoList
   inherited RzPanel4: TRzPanel
     Width = 727
     inherited Image1: TImage
-      Left = 528
-      Width = 190
-    end
-    inherited Image14: TImage
-      Left = 718
+      Left = 372
+      Width = 335
     end
     inherited Image3: TImage
-      Left = 528
-      Width = 190
+      Left = 372
+      Width = 335
+    end
+    inherited Image14: TImage
+      Left = 707
     end
     inherited rzPanel5: TPanel
+      Left = 372
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #35282#33394#26723#26696
@@ -251,11 +252,10 @@ inherited frmRoleInfoList: TfrmRoleInfoList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 352
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 352
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0
@@ -395,24 +395,42 @@ inherited frmRoleInfoList: TfrmRoleInfoList
       end>
   end
   object PrintDBGridEh1: TPrintDBGridEh
-    DBGridEh = DBGridEh1
     Options = [pghFitGridToPageWidth]
     Page.BottomMargin = 2.000000000000000000
     Page.LeftMargin = 2.000000000000000000
-    Page.RightMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
     Page.TopMargin = 2.000000000000000000
     PageFooter.Font.Charset = DEFAULT_CHARSET
     PageFooter.Font.Color = clWindowText
     PageFooter.Font.Height = -11
     PageFooter.Font.Name = 'MS Sans Serif'
     PageFooter.Font.Style = []
-    PageHeader.Font.Charset = DEFAULT_CHARSET
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
     PageHeader.Font.Color = clWindowText
-    PageHeader.Font.Height = -11
-    PageHeader.Font.Name = 'MS Sans Serif'
-    PageHeader.Font.Style = []
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
     Units = MM
-    Left = 456
-    Top = 216
+    Left = 128
+    Top = 208
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

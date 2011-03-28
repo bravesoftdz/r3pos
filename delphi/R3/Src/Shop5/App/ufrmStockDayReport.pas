@@ -219,7 +219,7 @@ begin
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
 
-  SetRzPageActivePage(false); //设置活动RzPage.Acitve
+  SetRzPageActivePage; //设置活动RzPage.Acitve
 
   RefreshColumn;
 end;

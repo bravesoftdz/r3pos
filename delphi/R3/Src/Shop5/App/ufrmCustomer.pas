@@ -112,6 +112,7 @@ type
   private
     function CheckCanExport:boolean;
     procedure PrintView;
+    function  FormatReportHead(TitleList: TStringList; Cols: integer): string;
     function FormatString(TextStr:String;SpaceNum:Integer):String;
     { Private declarations }
   public
@@ -827,38 +828,43 @@ end;
 
 procedure TfrmCustomer.PrintView;
 var HeaderText:String;
+    HeaderList:TStringList;
 begin
-  PrintDBGridEh1.PageHeader.CenterText.Text := '会员档案管理';
-  if cmbPRICE_ID.Text <> '' then
-    HeaderText := '会员等级:'+FormatString(cmbPRICE_ID.Text,30);
-  if cmbSHOP_ID.Text <> '' then
-    HeaderText := HeaderText+'会员等级:'+FormatString(cmbPRICE_ID.Text,30);
-  if fndSORT_ID.Text <> '' then
-    HeaderText := HeaderText+'会员类别:'+FormatString(fndSORT_ID.Text,30);
+  HeaderList := TStringList.Create;
+  try
+    PrintDBGridEh1.PageHeader.CenterText.Text := '会员档案管理';
+    if cmbPRICE_ID.Text <> '' then
+      HeaderList.Add('会员等级:'+cmbPRICE_ID.Text);
+    if cmbSHOP_ID.Text <> '' then
+      HeaderList.Add('会员等级:'+cmbPRICE_ID.Text);
+    if fndSORT_ID.Text <> '' then
+      HeaderList.Add('会员类别:'+fndSORT_ID.Text);
 
-  HeaderText:=HeaderText+#13;
-  // 对会员入会日期进行条件查询
-  if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
-     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate4.Date),30);
-  if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
-     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate3.Date),30);
-  if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
-     HeaderText:=HeaderText+'入会日期:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate3.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate4.Date),40);
-
-
-  //  对会员生日日期进行条件查询
-  if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate2.Date),30);
-  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate1.Date),30);
-  if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     HeaderText:=HeaderText+'会员生日:'+FormatString(FormatDateTime('YYYY-MM-DD',edtDate1.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate2.Date),40);
+    // 对会员入会日期进行条件查询
+    if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
+      HeaderList.Add('入会日期:'+FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+    if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
+      HeaderList.Add('入会日期:'+FormatDateTime('YYYY-MM-DD',edtDate3.Date));
+    if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
+      HeaderList.Add('入会日期:'+FormatDateTime('YYYY-MM-DD',edtDate3.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate4.Date));
 
 
-  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
-  PrintDBGridEh1.SetSubstitutes(['%[whr]',HeaderText]);
-  DBGridEh1.DataSource.DataSet.Filtered := False;
-  PrintDBGridEh1.DBGridEh := DBGridEh1;
+    //  对会员生日日期进行条件查询
+    if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
+      HeaderList.Add('会员生日:'+FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+    if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
+      HeaderList.Add('会员生日:'+FormatDateTime('YYYY-MM-DD',edtDate1.Date));
+    if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
+      HeaderList.Add('会员生日:'+FormatDateTime('YYYY-MM-DD',edtDate1.Date)+' 至 '+FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+
+    HeaderText := FormatReportHead(HeaderList,4);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[whr]',HeaderText]);
+    DBGridEh1.DataSource.DataSet.Filtered := False;
+    PrintDBGridEh1.DBGridEh := DBGridEh1;
+  finally
+    HeaderList.Free;
+  end;
 end;
 
 function TfrmCustomer.FormatString(TextStr: String;
@@ -879,6 +885,45 @@ begin
         end;
       Result := TextStr + SpaceStr;
     end;
+end;
+
+function TfrmCustomer.FormatReportHead(TitleList: TStringList;
+  Cols: integer): string;
+var
+  spaceStr,str1: string;
+  i,j: integer;
+begin
+  //中间间隔4个空格:
+  result:='';
+  for i:=0 to TitleList.Count-1 do
+  begin
+    if i mod Cols=0 then
+    begin
+      j:=i;
+      if j<=TitleList.Count-1 then str1:=trim(TitleList.Strings[j]);    //1
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //2
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //3
+      inc(j);
+      if j<=TitleList.Count-1 then str1:=str1+trim(TitleList.Strings[j]); //4
+      case length(str1) of
+        1.. 50:  spaceStr:='                                ';
+        51..60:  spaceStr:='                          ';
+        61..75:  spaceStr:='                    ';
+        76..90:  spaceStr:='              ';
+        else     spaceStr:='        ';
+      end;
+    end;
+    if result='' then result:=trim(TitleList.Strings[i])
+    else
+    begin
+      if (i mod Cols=0) and (i>=Cols) then
+        result:=result+#13+trim(TitleList.Strings[i])
+      else
+        result:=result+spaceStr+trim(TitleList.Strings[i]);
+    end;
+  end;
 end;
 
 end.

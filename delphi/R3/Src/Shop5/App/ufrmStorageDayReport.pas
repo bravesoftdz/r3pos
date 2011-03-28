@@ -263,9 +263,9 @@ begin
       ' A.TENANT_ID '+
       ',B.REGION_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
@@ -401,10 +401,10 @@ begin
       'SELECT '+
       ' A.TENANT_ID '+
       ',A.SHOP_ID '+
-      ',sum(BAL_AMT/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then sum(BAL_CST)/sum(BAL_AMT/'+UnitCalc+') else 0 end as BAL_PRC '+
+      ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
+      ',case when sum(BAL_AMT)<>0 then sum(BAL_CST)*1.00/sum(BAL_AMT*1.00/'+UnitCalc+') else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then sum(BAL_RTL)/sum(BAL_AMT/'+UnitCalc+') else 0 end as BAL_OUTPRC '+
+      ',case when sum(BAL_AMT)<>0 then sum(BAL_RTL*1.00)/sum(BAL_AMT*1.00/'+UnitCalc+') else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
@@ -542,9 +542,9 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_TTL) as decimal(18,3))/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_TTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(BAL_RTL) as BAL_RTL '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''нч'') as SORT_NAME from ('+strSql+') j left outer join ('+
@@ -641,10 +641,10 @@ begin
       ' A.TENANT_ID '+
       ',A.GODS_ID '+
       ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
-      ',sum(BAL_AMT/'+UnitCalc+') as BAL_AMT '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
+      ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+      ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,CALC_UNITS ';

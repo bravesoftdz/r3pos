@@ -15,8 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -284,19 +286,20 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
+                      Footer.DisplayFormat = '#0.00#'
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 91
@@ -312,9 +315,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
+                      Footer.DisplayFormat = '#0.00#'
                       Footers = <>
                       Title.Caption = #38646#21806#22343#20215
                       Width = 79
@@ -341,7 +345,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -350,7 +354,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -582,7 +586,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 87
                 Width = 848
-                Height = 425
+                Height = 419
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -591,7 +595,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 421
+                  Height = 415
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -660,15 +664,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 146
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
+                      Footer.DisplayFormat = '#0.###'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
                       Footers = <>
@@ -685,7 +691,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
                       Footers = <>
@@ -1019,7 +1025,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 171
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
                       Footers = <>
@@ -1027,7 +1033,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 100
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
                       Footers = <>
@@ -1043,7 +1049,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
                       Footers = <>
@@ -1070,7 +1076,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1079,7 +1085,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1360,7 +1366,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 108
                 Width = 848
-                Height = 404
+                Height = 398
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1369,7 +1375,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 400
+                  Height = 394
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1451,17 +1457,17 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 35
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
                       Footers = <>
@@ -1479,7 +1485,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
                       Footers = <>

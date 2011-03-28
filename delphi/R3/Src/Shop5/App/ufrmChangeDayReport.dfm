@@ -290,17 +290,18 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
@@ -308,6 +309,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
@@ -318,6 +320,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
@@ -328,6 +331,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
@@ -349,7 +353,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 489
+            Height = 483
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -358,7 +362,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 479
+              Height = 473
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -597,7 +601,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 85
                 Width = 665
-                Height = 394
+                Height = 388
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -606,7 +610,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 390
+                  Height = 384
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -675,24 +679,27 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
@@ -703,6 +710,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
@@ -713,6 +721,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
@@ -1047,7 +1056,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 185
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
                       Footers = <>
@@ -1055,7 +1064,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
@@ -1063,6 +1073,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
@@ -1071,6 +1082,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
@@ -1079,6 +1091,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
@@ -1098,7 +1111,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 489
+            Height = 483
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1107,7 +1120,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 479
+              Height = 473
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1395,7 +1408,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 107
                 Width = 665
-                Height = 372
+                Height = 366
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1404,7 +1417,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 368
+                  Height = 362
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1487,16 +1500,17 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 32
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'APRICE'
@@ -1505,6 +1519,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
@@ -1515,6 +1530,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
@@ -1525,6 +1541,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
@@ -1956,17 +1973,18 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 33
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>
@@ -1974,6 +1992,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 66
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AMONEY'
@@ -1984,7 +2003,8 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 84
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'COST_PRICE'
                       Footers = <>
@@ -1992,6 +2012,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'COST_MONEY'
@@ -2002,6 +2023,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PROFIT_MONEY'
@@ -2111,6 +2133,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
     Top = 321
   end
   inherited PrintDBGridEh1: TPrintDBGridEh
+    Left = 48
     BeforeGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B

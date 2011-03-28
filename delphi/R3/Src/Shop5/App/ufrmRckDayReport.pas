@@ -177,7 +177,8 @@ begin
   strSql:=
     'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
     'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
-    '('+ViwSql+') j left outer join ('+RCKRData+')c on j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
+    '('+ViwSql+') j '+
+    ' left outer join ('+RCKRData+')c on j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''нч'') as CODE_NAME from  ('+strSql+') jp '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+

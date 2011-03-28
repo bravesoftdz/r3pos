@@ -100,6 +100,26 @@ type
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
 
@@ -585,8 +605,52 @@ begin
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
     actFind.OnExecute(nil);
-  end;
+  end;   
+end;
 
+procedure TfrmPayAbleReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayAbleReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayAbleReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'RECV_DATE' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayAbleReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'USER_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmPayAbleReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

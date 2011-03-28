@@ -15,10 +15,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -162,6 +160,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -439,6 +438,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -766,6 +766,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1069,6 +1070,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               OnDblClick = DBGridEh4DblClick
               OnDrawColumnCell = DBGridEh1DrawColumnCell
               OnGetCellParams = DBGridEh1GetCellParams
+              OnGetFooterParams = DBGridEh4GetFooterParams
               Columns = <
                 item
                   Alignment = taCenter
@@ -1429,6 +1431,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <
                     item
                       Color = clBtnFace

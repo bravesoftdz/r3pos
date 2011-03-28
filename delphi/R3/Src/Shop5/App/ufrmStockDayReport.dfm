@@ -14,10 +14,8 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -289,17 +287,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 153
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 60
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
                       Footers = <>
@@ -384,7 +382,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -393,7 +391,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -629,7 +627,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 82
                 Width = 848
-                Height = 430
+                Height = 424
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -638,7 +636,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 426
+                  Height = 420
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -707,17 +705,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 146
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
                       Footers = <>
@@ -1112,7 +1110,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 171
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
                       Footers = <>
@@ -1120,7 +1118,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
                       Footers = <>
@@ -1195,7 +1193,7 @@ inherited frmStockDayReport: TfrmStockDayReport
             Left = 0
             Top = 0
             Width = 858
-            Height = 522
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1204,7 +1202,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               Left = 5
               Top = 5
               Width = 848
-              Height = 512
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1489,7 +1487,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 106
                 Width = 848
-                Height = 406
+                Height = 400
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1498,7 +1496,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 402
+                  Height = 396
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1581,17 +1579,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 35
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
                       Footers = <>
@@ -2117,17 +2115,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 31
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 63
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footers = <>

@@ -15,10 +15,10 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet4
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -966,8 +966,11 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 99
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25910#27454#21512#35745
                       Width = 80

@@ -715,13 +715,13 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
     ',sum(STOCK_AMT) as STOCK_AMT '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100/cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3)) else 0 end as STOCK_RATE '+
-    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';

@@ -7,13 +7,13 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1070
-    Height = 568
+    Height = 562
     inherited RzPanel2: TRzPanel
       Width = 1060
-      Height = 558
+      Height = 552
       inherited RzPage: TRzPageControl
         Width = 855
-        Height = 552
+        Height = 546
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,12 +22,12 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           Caption = #30424#28857#23545#29031#34920
           inherited RzPanel3: TRzPanel
             Width = 853
-            Height = 525
+            Height = 519
             BorderColor = clBtnFace
             Caption = '`'
             inherited Panel4: TPanel
               Width = 843
-              Height = 515
+              Height = 509
               inherited w1: TRzPanel
                 Width = 843
                 Height = 76
@@ -268,11 +268,12 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
               inherited RzPanel7: TRzPanel
                 Top = 76
                 Width = 843
-                Height = 439
+                Height = 433
                 inherited DBGridEh1: TDBGridEh
                   Width = 839
-                  Height = 435
+                  Height = 429
                   FrozenCols = 3
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
                   Columns = <
                     item
@@ -333,36 +334,36 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Width = 32
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'RCK_AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24080#38754#24211#23384
                       Width = 59
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'CHK_AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23454#29289#24211#23384
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'PAL_AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #30424#28857#25439#30410
                       Width = 61
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'NEW_INPRICE'
                       Footers = <>
@@ -370,7 +371,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Width = 48
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'NEW_OUTPRICE'
                       Footers = <>
@@ -403,7 +404,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
       end
       inherited PanelColumnS: TPanel
         Left = 858
-        Height = 552
+        Height = 546
         inherited Panel2: TPanel
           Height = 502
           inherited Image5: TImage
@@ -435,17 +436,18 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   inherited RzPanel4: TRzPanel
     Width = 1070
     inherited Image1: TImage
-      Left = 590
-      Width = 471
-    end
-    inherited Image14: TImage
-      Left = 1061
+      Left = 434
+      Width = 616
     end
     inherited Image3: TImage
-      Left = 590
-      Width = 471
+      Left = 434
+      Width = 616
+    end
+    inherited Image14: TImage
+      Left = 1050
     end
     inherited rzPanel5: TPanel
+      Left = 434
       inherited lblToolCaption: TRzLabel
         Width = 60
         Caption = #30424#28857#23545#29031#34920
@@ -460,7 +462,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           FixedSize = True
           ImageIndex = -1
           MinHeight = 414
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 414

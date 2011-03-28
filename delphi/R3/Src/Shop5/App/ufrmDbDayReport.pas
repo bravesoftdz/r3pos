@@ -141,6 +141,26 @@ type
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -262,7 +282,7 @@ begin
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,DBIN_AMT,DBIN_CST,DBIN_RTL,DBOUT_AMT,DBOUT_CST,DBOUT_RTL from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
-      ' union all '+                                                                                          
+      ' union all '+
       ' select TENANT_ID,SHOP_ID,MOVE_DATE as CREA_DATE,GODS_ID,DBIN_AMT,DBIN_CST,DBIN_RTL,DBOUT_AMT,DBOUT_CST,DBOUT_RTL from VIW_MOVEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ') ';
   end;
@@ -1035,6 +1055,51 @@ procedure TfrmDbDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
 begin
   inherited;
   DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
+end;
+
+procedure TfrmDbDayReport.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmDbDayReport.DBGridEh2GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmDbDayReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmDbDayReport.DBGridEh4GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmDbDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'MOVE_DATE' then Text := '合计:'+Text+'笔';
 end;
 
 end.

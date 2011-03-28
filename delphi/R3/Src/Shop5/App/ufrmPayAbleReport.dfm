@@ -161,6 +161,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -180,6 +181,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -438,6 +440,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   OnDblClick = DBGridEh2DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -457,6 +460,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     item
                       EditButtons = <>
                       FieldName = 'SHOP_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #38376#24215#21517#31216
                       Width = 153
@@ -765,6 +769,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -778,6 +783,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'RECV_DATE'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #26085#26399
                       Width = 99
@@ -1077,6 +1083,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 OnDblClick = DBGridEh4DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
+                OnGetFooterParams = DBGridEh4GetFooterParams
                 Columns = <
                   item
                     Alignment = taCenter
@@ -1095,6 +1102,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   item
                     EditButtons = <>
                     FieldName = 'USER_NAME'
+                    Footer.ValueType = fvtCount
                     Footers = <>
                     Title.Caption = #21046#21333#20154
                     Width = 99
@@ -1477,6 +1485,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 DigitalNumber = 12
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
+                OnGetFooterParams = DBGridEh5GetFooterParams
                 Columns = <
                   item
                     Color = clBtnFace
@@ -1511,6 +1520,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   item
                     EditButtons = <>
                     FieldName = 'CLIENT_NAME'
+                    Footer.ValueType = fvtCount
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23458#25143#21517#31216

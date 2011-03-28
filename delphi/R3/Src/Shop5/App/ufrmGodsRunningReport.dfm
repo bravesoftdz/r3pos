@@ -358,10 +358,10 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Width = 34
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = ' #0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = ' #0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #25968#37327
@@ -371,7 +371,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
-                      Footer.DisplayFormat = '#0.00'
+                      Footer.DisplayFormat = '#0.00#'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21333#20215

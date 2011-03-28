@@ -33,6 +33,10 @@ type
     procedure fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     sid1,//商品分类ID1;
     srid1,//商品分类REGLATION_ID; 关系ID
@@ -182,13 +186,13 @@ begin
     ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
     ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
-    ',(RCK_AMOUNT/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
-    ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
-    ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
+    ',(RCK_AMOUNT*1.00/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
+    ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT*1.00/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
+    ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
     ',isnull(B.NEW_INPRICE,0) as NEW_INPRICE '+      //--成本价
     ',isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE '+    //--零售价
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_INPRICE,0))/'+CalcFields+' end) as PAL_INAMONEY ' +    //--损益成本金额
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*isnull(B.NEW_OUTPRICE,0))/'+CalcFields+' end) as PAL_OUTAMONEY ' +  //--损益销售金额
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_INPRICE,0))*1.00/'+CalcFields+' end) as PAL_INAMONEY ' +    //--损益成本金额
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_OUTPRICE,0))*1.00/'+CalcFields+' end) as PAL_OUTAMONEY ' +  //--损益销售金额
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
     'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
@@ -369,6 +373,15 @@ var SortName: string;
 begin
   if SelectGoodSortType(sid1,srid1,SortName) then
     fndP1_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmCheckTablePrint.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

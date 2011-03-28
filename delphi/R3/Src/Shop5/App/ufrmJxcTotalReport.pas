@@ -599,7 +599,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST)as decimal(18,3))*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST)as decimal(18,3))*100.00 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -642,7 +642,7 @@ begin
         ',sum(SALE_TTL) as SALE_TTL '+
         ',sum(SALE_CST) as SALE_CST '+
         ',sum(SALE_PRF) as SALE_PRF '+
-        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST) as decimal(18,3))*100 else 0 end SALE_RATE '+
+        ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_CST) as decimal(18,3))*100.00 else 0 end SALE_RATE '+
         ',sum(DBIN_AMT) as DBIN_AMT '+
         ',sum(DBIN_CST) as DBIN_CST '+
         ',sum(DBOUT_AMT) as DBOUT_AMT '+
@@ -1084,7 +1084,7 @@ begin
     rs.ParamByName('END_MONTH').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-      TfrmCostCalc.TryCalcMthAcct(self);
+      TfrmCostCalc.TryCalcMthGods(self);
   finally
     rs.Free;
   end;

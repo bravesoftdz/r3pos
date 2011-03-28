@@ -112,8 +112,7 @@ type
   private
     function CheckCanExport:boolean;
     procedure PrintView;
-    function  FormatReportHead(TitleList: TStringList; Cols: integer): string;
-    function FormatString(TextStr:String;SpaceNum:Integer):String;
+    function FormatReportHead(TitleList: TStringList; Cols: integer): string;
     { Private declarations }
   public
     { Public declarations }
@@ -865,26 +864,6 @@ begin
   finally
     HeaderList.Free;
   end;
-end;
-
-function TfrmCustomer.FormatString(TextStr: String;
-  SpaceNum: Integer): String;
-var Len,i:Integer;
-    SpaceStr:String;
-begin
-  Len := length(TextStr);
-  if Len >= SpaceNum then
-    begin
-      Result := copy(TextStr,1,SpaceNum);
-    end
-  else
-    begin
-      for i:=0 to SpaceNum-Len-1 do
-        begin
-          SpaceStr := SpaceStr + ' ';
-        end;
-      Result := TextStr + SpaceStr;
-    end;
 end;
 
 function TfrmCustomer.FormatReportHead(TitleList: TStringList;

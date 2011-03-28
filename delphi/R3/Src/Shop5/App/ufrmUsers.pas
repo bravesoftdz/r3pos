@@ -81,8 +81,8 @@ begin
   //查自已门店用户，及下属直营门店的用户
   if not ShopGlobal.GetChkRight('31500001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if edtKey.Text<>'' then
-     str:=' and ( [USER_NAME] LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
-                  ' or A.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or A.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
+     str:=' and ( USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
+                  ' or USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
   Cds_Users.SQL.Text :=
   ParseSQL(Factor.iDbType,

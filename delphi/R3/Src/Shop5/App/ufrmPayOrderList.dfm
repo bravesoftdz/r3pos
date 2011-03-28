@@ -9,26 +9,26 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 526
+    Width = 900
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 516
+      Width = 890
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 510
+        Width = 884
+        Height = 521
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -229,16 +229,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel3: TPanel
               Left = 6
               Top = 90
-              Width = 862
-              Height = 387
+              Width = 870
+              Height = 398
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 385
+                Width = 868
+                Height = 396
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -315,8 +315,10 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Width = 188
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'ACCT_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -325,8 +327,10 @@ inherited frmPayOrderList: TfrmPayOrderList
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PAYM_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -335,8 +339,10 @@ inherited frmPayOrderList: TfrmPayOrderList
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'REVE_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -344,8 +350,10 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Width = 66
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'RECK_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -378,15 +386,15 @@ inherited frmPayOrderList: TfrmPayOrderList
           object Panel1: TPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             Align = alClient
             Caption = ' '
             TabOrder = 0
             object RzPanel7: TRzPanel
               Left = 1
               Top = 1
-              Width = 872
+              Width = 880
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -759,16 +767,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel2: TPanel
               Left = 1
               Top = 124
-              Width = 872
-              Height = 358
+              Width = 880
+              Height = 369
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 870
-                Height = 356
+                Width = 878
+                Height = 367
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -915,17 +923,17 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image3: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited rzPanel5: TPanel
       Left = 374
@@ -1059,7 +1067,7 @@ inherited frmPayOrderList: TfrmPayOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      1800000066190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000005F190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1262,7 +1270,7 @@ inherited frmPayOrderList: TfrmPayOrderList
       726961626C6573000000000200736C0014006364735F436867426F64792E2253
       4C30303030220002006A650014006364735F436867426F64792E224A45303030
       30220004006B68796800000000040079687A68000000000200647A0000000000
-      00000000000000FDFF0100000000}
+      00000000000000}
   end
   object CdsPayList: TZQuery
     FieldDefs = <>

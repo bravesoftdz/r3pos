@@ -9,26 +9,26 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 526
+    Width = 900
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 516
+      Width = 890
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 510
+        Width = 884
+        Height = 521
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#25910#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -229,16 +229,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel1: TPanel
               Left = 6
               Top = 90
-              Width = 862
-              Height = 387
+              Width = 870
+              Height = 398
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 385
+                Width = 868
+                Height = 396
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -314,8 +314,10 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Width = 208
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'ACCT_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -324,8 +326,10 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'RECV_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -334,8 +338,10 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'REVE_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -343,8 +349,10 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Width = 61
                   end
                   item
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'RECK_MNY'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
@@ -916,17 +924,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image3: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited rzPanel5: TPanel
       Left = 374
@@ -1052,7 +1060,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     Left = 176
     Top = 233
     ReportForm = {
-      180000007C190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      1800000075190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1255,8 +1263,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       00000200000000000000FEFEFF060000000A00205661726961626C6573000000
       000200736C0014006364735F436867426F64792E22534C30303030220002006A
       650014006364735F436867426F64792E224A4530303030220004006B68796800
-      000000040079687A68000000000200647A000000000000000000000000FDFF01
-      00000000}
+      000000040079687A68000000000200647A000000000000000000000000}
   end
   object cdsList: TZQuery
     FieldDefs = <>

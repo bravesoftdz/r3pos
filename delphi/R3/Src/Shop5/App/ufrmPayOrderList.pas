@@ -79,8 +79,7 @@ type
     procedure RzPageChange(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure frfPayOrderUserFunction(const Name: String; p1, p2,
-      p3: Variant; var Val: Variant);
+    procedure frfPayOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actDeleteExecute(Sender: TObject);
     procedure frfPayOrderGetValue(const ParName: String; var ParValue: Variant);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;

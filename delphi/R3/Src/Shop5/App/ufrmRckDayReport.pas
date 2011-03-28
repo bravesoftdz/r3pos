@@ -193,7 +193,8 @@ begin
 end;
 
 procedure TfrmRckDayReport.actFindExecute(Sender: TObject);
-var strSql: string;
+var
+  strSql: string;
 begin
   case rzPage.ActivePageIndex of
     0: begin //按地区汇总表

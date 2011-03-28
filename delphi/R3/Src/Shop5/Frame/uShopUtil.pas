@@ -538,7 +538,7 @@ begin
          begin
            TcxMaskEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
-      if Components[i] is TcxButtonEdit then
+      if Components[i].ClassNameIs('TcxButtonEdit') then
          begin
            TcxButtonEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
@@ -604,7 +604,7 @@ begin
               AObj.FieldbyName(fldname).AsString := ''
            else
               begin
-                if AObj.FieldbyName(fldname).DataType = ftString then
+                if AObj.FieldbyName(fldname).DataType in [ftString,ftWideString] then
                    AObj.FieldbyName(fldname).AsString := formatDatetime('YYYY-MM-DD',TcxDateEdit(Components[i]).Date)
                 else
                    AObj.FieldbyName(fldname).asInteger := StrtoInt(formatDatetime('YYYYMMDD',TcxDateEdit(Components[i]).Date));
@@ -652,7 +652,7 @@ begin
                 AObj.FieldbyName(fldname).AsString := trim(TcxMaskEdit(Components[i]).Text);
               end;
          end;
-      if Components[i] is TcxButtonEdit then
+      if Components[i].ClassNameIs('TcxButtonEdit') then
          begin
            AObj.FieldbyName(fldname).AsString := TcxButtonEdit(Components[i]).Text;
          end;

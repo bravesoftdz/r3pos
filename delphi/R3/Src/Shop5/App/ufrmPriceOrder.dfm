@@ -106,7 +106,7 @@ inherited frmPriceOrder: TfrmPriceOrder
       end
       object Btn_AddShop: TRzBitBtn
         Left = 542
-        Top = 45
+        Top = 46
         Width = 80
         Height = 26
         Caption = #28155#21152#38376#24215
@@ -133,7 +133,7 @@ inherited frmPriceOrder: TfrmPriceOrder
       end
       object Btn_BatchPrice: TRzBitBtn
         Left = 461
-        Top = 45
+        Top = 46
         Width = 80
         Height = 26
         Caption = #25209#37327#20419#38144
@@ -160,7 +160,7 @@ inherited frmPriceOrder: TfrmPriceOrder
       end
       object Btn_View: TRzBitBtn
         Left = 623
-        Top = 45
+        Top = 46
         Width = 80
         Height = 26
         Caption = #26597#30475#38376#24215

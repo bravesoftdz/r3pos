@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzPanel, Grids, RzGrids,
-  StdCtrls, RzButton,DbClient,FR_Class, FR_Desgn,DB,ADODB;
+  StdCtrls, RzButton,DB,FR_Class, FR_Desgn,ZDataSet;
 
 type
   TfrmDesigner = class(TfrmBasic)
@@ -29,11 +29,11 @@ type
     procedure frDesigner1SaveReport(Report: TfrReport;
       var ReportName: String; SaveAs: Boolean; var Saved: Boolean);
   private
-    FDataSet: TClientDataSet;
+    FDataSet: TZQuery;
     FfrReport: TfrReport;
     FForm: TfrmBasic;
     FIndex:Integer;
-    procedure SetDataSet(const Value: TClientDataSet);
+    procedure SetDataSet(const Value: TZQuery);
     procedure SetfrReport(const Value: TfrReport);
     procedure SetForm(const Value: TfrmBasic);
     procedure Designer(AfrReport: TfrReport; Index: Integer=-1);
@@ -45,72 +45,63 @@ type
     procedure LoadFastFile(frfFileName:string);
 
     function  ShowExecute(AOwner: TfrReport; Params: string = ''): boolean;
-    property  DataSet:TClientDataSet read FDataSet write SetDataSet;
+    property  DataSet:TZQuery read FDataSet write SetDataSet;
     property  frReport:TfrReport read FfrReport write SetfrReport;
     property  Form:TfrmBasic read FForm write SetForm;
   end;
 
 implementation
-uses ufrmFastReport;
+uses ufrmFastReport, uGlobal;
 {$R *.dfm}
 
 { TfrmDesigner }
 
 procedure TfrmDesigner.Designer(AfrReport: TfrReport;Index:Integer=-1);
-var Temp :TClientDataSet;
-    sm:TMemoryStream;
-    s:string;
+var
+  Temp :TZQuery;
+  sm:TMemoryStream;
+  s:string;
 begin
-  FfrReport := AfrReport;
-  FIndex := Index;
-  Temp := TClientDataSet.Create(nil);
-  if Index<=0 then s := '' else s := Inttostr(Index);
-
-  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+AfrReport.Name+s+'.frf') then
-     begin
-       frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+AfrReport.Name+s+'.frf') ;
-     end
+  if Index<=0 then s := '' else s:=Inttostr(Index);
+  if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') then
+  begin
+     frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') ;
+  end
   else
   begin
-  sm := TMemoryStream.Create;
-  try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+AfrReport.Name +'''';
-     Factor.Open(Temp);
-     if Temp.IsEmpty and AfrReport.StoreInDFM then
-        begin
-           AfrReport.SaveToStream(sm);
-           Temp.Append;
-           Temp.FieldByName('frfFileName').AsString := AfrReport.Name;
-           Temp.FieldByName('frfFileTitle').AsString := AfrReport.Name;
-           sm.Position := 0;
-           TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
-           Temp.Post;
-           Factor.UpdateBatch(Temp);
-        end
-     else
-     if not Temp.IsEmpty then
-        begin
-           TBlobField(Temp.FieldByName('frfBlob'+s)).SaveToStream(sm);
-           sm.Position := 0;
-           AfrReport.LoadFromStream(sm);
-        end;
-     AfrReport.FileName := '';
-  finally
-     Temp.Free;
-     sm.Free;
-  end;
+    temp := TZQuery.Create(nil);
+    sm := TMemoryStream.Create;
+    try
+       Temp.SQL.Text := 'select * from SYS_FASTFILE where frfFileName=:frfFileName and TENANT_ID=:TENANT_ID';
+       Temp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+       Temp.ParamByName('frfFileName').AsString := frReport.Name;
+       Factor.Open(Temp);
+       if not Temp.IsEmpty then
+       begin
+         if Index<=0 then
+            TBlobField(Temp.FieldByName('frfBlob')).SaveToStream(sm)
+         else
+            TBlobField(Temp.FieldByName('frfBlob'+inttostr(Index))).SaveToStream(sm);
+         sm.Position := 0;
+         frReport.LoadFromStream(sm);
+       end;
+       frReport.FileName := '';
+    finally
+       Temp.Free;
+       sm.Free;
+    end;
   end;
   frReport.DesignReport;
 end;
 
 procedure TfrmDesigner.SetDefault(AfrReport: TfrReport; Index: Integer);
 begin
-  Factor.ExecSQL('update REP_FASTFILE set frfDefault='+Inttostr(Index)+' where frfFileName='''+AfrReport.Name+'''');
+  Factor.ExecSQL('update SYS_FASTFILE set frfDefault='+Inttostr(Index)+' where frfFileName='''+AfrReport.Name+''' and TENANT_ID='+inttostr(Global.TENANT_ID));
 end;
 procedure TfrmDesigner.LoadFastFile(frfFileName: string);
 begin
   DataSet.Close;
-  DataSet.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frfFileName +'''';
+  DataSet.SQL.Text := 'select * from SYS_FASTFILE where frfFileName='''+frfFileName +''' and TENANT_ID='+inttostr(Global.TENANT_ID);
   Factor.Open(DataSet);
   frfGrid.Cells[0,0] := '标准样式';
   if DataSet.FieldByName('frfBlob1').IsNull then
@@ -149,7 +140,7 @@ begin
 //     end;
 end;
 
-procedure TfrmDesigner.SetDataSet(const Value: TClientDataSet);
+procedure TfrmDesigner.SetDataSet(const Value: TZQuery);
 begin
   FDataSet := Value;
 end;
@@ -157,7 +148,7 @@ end;
 procedure TfrmDesigner.FormCreate(Sender: TObject);
 begin
   inherited;
-  DataSet := TClientDataSet.Create(nil);
+  DataSet := TZQuery.Create(nil);
 end;
 
 procedure TfrmDesigner.FormDestroy(Sender: TObject);
@@ -239,31 +230,14 @@ end;
 
 procedure TfrmDesigner.frDesigner1SaveReport(Report: TfrReport;
   var ReportName: String; SaveAs: Boolean; var Saved: Boolean);
-var Temp :TClientDataSet;
-    sm:TMemoryStream;
-    s:string;
+var
+  Temp :TZQuery;
+  sm:TMemoryStream;
+  s:string;
 begin
-  Temp := TClientDataSet.Create(nil);
-  if FIndex<=0 then s := '' else s := Inttostr(FIndex);
-  sm := TMemoryStream.Create;
-  try
-     Temp.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport.Name +'''';
-     Factor.Open(Temp);
-     sm.Clear;
-     frReport.SaveToStream(sm);
-     Temp.Edit;
-     Temp.FieldByName('frfFileName').AsString := frReport.Name;
-     Temp.FieldByName('frfFileTitle').AsString := frReport.Name;
-     sm.Position := 0;
-     TBlobField(Temp.FieldByName('frfBlob'+s)).LoadFromStream(sm);
-     Temp.Post;
-     Factor.UpdateBatch(Temp);
-     ForceDirectories(ExtractFilePath(ParamStr(0))+'frf\');
-     frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf');
-  finally
-     sm.Free;
-     Temp.Free;
-  end;
+  if FIndex=0 then s := '' else s := inttostr(FIndex);
+  ForceDirectories(ExtractFilePath(ParamStr(0))+'frf\');
+  frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf');
   Saved := True;
   s := frfGrid.Cells[0,frfGrid.Selection.Top];
   if Copy(s,length(s)-7,8)='(不可用)' then

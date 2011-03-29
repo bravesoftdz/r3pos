@@ -137,7 +137,7 @@ begin
   if (s<>'') and (copy(s,1,3)='-mm') then
      begin
        rs := Global.GetZQueryFromName('CA_USERS');
-       chk := copy(ParamStr(2),5,255);
+       chk := copy(ParamStr(2),6,255);
        if rs.Locate('MM',copy(s,5,255),[]) then
           begin
             lDate := Date();

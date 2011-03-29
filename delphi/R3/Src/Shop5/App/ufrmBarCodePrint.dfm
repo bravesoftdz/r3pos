@@ -12,14 +12,14 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   object TitlePanel: TPanel [0]
     Left = 0
     Top = 0
-    Width = 505
+    Width = 497
     Height = 42
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
     DesignSize = (
-      505
+      497
       42)
     object labTitle: TLabel
       Left = 16
@@ -36,7 +36,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
     object Bevel2: TBevel
       Left = 0
       Top = 40
-      Width = 505
+      Width = 497
       Height = 2
       Align = alBottom
     end
@@ -360,8 +360,8 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   object DBGridEh1: TDBGridEh [1]
     Left = 0
     Top = 42
-    Width = 505
-    Height = 277
+    Width = 497
+    Height = 266
     Align = alClient
     AllowedOperations = [alopUpdateEh]
     AutoFitColWidths = True
@@ -449,15 +449,15 @@ inherited frmBarCodePrint: TfrmBarCodePrint
   end
   object Panel1: TPanel [2]
     Left = 0
-    Top = 319
-    Width = 505
+    Top = 308
+    Width = 497
     Height = 47
     Align = alBottom
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 2
     DesignSize = (
-      505
+      497
       47)
     object BtnPrint: TRzBitBtn
       Left = 347

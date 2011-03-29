@@ -169,6 +169,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 PopupMenu = PopupMenu1
+                ReadOnly = True
                 RowHeight = 20
                 TabOrder = 0
                 TitleFont.Charset = GB2312_CHARSET
@@ -210,7 +211,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'SEQNO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 28
                   end
@@ -224,7 +224,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     PickList.Strings = (
                       #36830#38145#32463#33829
                       #33258#20027#32463#33829)
-                    ReadOnly = True
                     Title.Caption = #32463#33829#31867#22411
                     Width = 66
                   end
@@ -233,7 +232,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'GODS_CODE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36135#21495
                     Width = 66
                   end
@@ -241,7 +239,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'BARCODE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26465#30721
                     Width = 85
                   end
@@ -249,7 +246,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'GODS_NAME'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21830#21697#21517#31216
                     Width = 152
                   end
@@ -257,20 +253,20 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'CALC_UNITS'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #35745#37327#21333#20301
                     Width = 34
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'RTL_OUTPRICE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26631#20934#21806#20215
                     Width = 62
                   end
                   item
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'NEW_LOWPRICE'
                     Footers = <>
@@ -278,23 +274,25 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'NEW_OUTPRICE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26412#24215#21806#20215
                     Width = 60
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'NEW_INPRICE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21442#32771#36827#20215
                     Width = 58
                   end
                   item
+                    Alignment = taRightJustify
+                    DisplayFormat = '#0%'
                     EditButtons = <>
                     FieldName = 'PROFIT_RATE'
                     Footers = <>
@@ -304,7 +302,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'SORT_ID3'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20379#24212#21830
                     Width = 129
                   end
@@ -312,7 +309,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     EditButtons = <>
                     FieldName = 'SORT_ID4'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21697#29260
                     Width = 57
                   end
@@ -327,7 +323,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                       #21542' '
                       #26159' '
                       '')
-                    ReadOnly = True
                     Title.Caption = #31649#29702#24211#23384
                     Width = 32
                   end>

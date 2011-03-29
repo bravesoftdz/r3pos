@@ -131,7 +131,7 @@ begin
       EditObj.ReadFromDataSet(cdsBrowser);
       GODS_ID:=EditObj.FieldByName('GODS_ID').AsString;
       if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
-        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0.0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
+        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
       else
         EditObj.FieldByName('PROFIT_RATE').AsValue := null;
       EditObj.FieldByName('selflag').AsString:='0';
@@ -217,7 +217,8 @@ var
 begin
   vCnd:='';
   OperChar:=GetStrJoin(Factor.iDbType); //字符连接操作符
-  GoodTab:=
+  GoodTab:='VIW_GOODSPRICEEXT';
+ {
     '(select J.TENANT_ID as TENANT_ID,RELATION_ID,J.GODS_ID as GODS_ID,J.SHOP_ID as SHOP_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end as NEW_INPRICE,'+
     ' case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.SMALLTO_CALC else C.NEW_INPRICE1 end as NEW_INPRICE1,'+
@@ -235,7 +236,9 @@ begin
     ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID ) J '+
     ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID)';
 
-  w := ' and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+   }
+
+  w := ' and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then w := w + ' and j.GODS_ID>=:MAXID';
 
   if rzTree.Selected<>nil then
@@ -253,7 +256,7 @@ begin
   begin
     LikeCnd:=GetLikeCnd(Factor.iDbType,'bar.BARCODE',':KEYVALUE','');
     LikeCnd:=' and ('+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','j.BARCODE'],':KEYVALUE','')+' or (exists(select BARCODE from PUB_BARCODE bar where j.GODS_ID=bar.GODS_ID and '+LikeCnd+'))'+
-                  ')';
+                   ')';
     w := w+LikeCnd;
     vCnd:=vCnd+LikeCnd;
   end;
@@ -261,20 +264,21 @@ begin
   Cnd:=vCnd; //返回查询记录数的条件;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(cast(Round((l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) as varchar)+''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
-     ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
-     'left outer join '+
-     '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
-     'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+  result :=
+    'select top 600 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then cast(Round((l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.0),0) as int) else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+    ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+    'left outer join '+
+    '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
+    'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
   4:
   result := 'select tp.* from ('+
-     'select 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then (l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.00) else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+     'select 0 as selflag,RELATION_Flag,(case when l.NEW_OUTPRICE<>0 then Round((l.NEW_INPRICE*100.0)/(l.NEW_OUTPRICE*1.00),0) else null end) as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left outer join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID group by GODS_ID) r '+
      ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600 rows only ';
   5:
-  result := 'select 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then Cast(Round((l.NEW_INPRICE*100)/(l.NEW_OUTPRICE*1.00),0) as integer) ||''%'' else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
+  result := 'select 0 as selflag,RELATION_Flag,case when l.NEW_OUTPRICE<>0 then Round((l.NEW_INPRICE*100)/(l.NEW_OUTPRICE*1.00),0) else null end as PROFIT_RATE,l.*,r.AMOUNT as AMOUNT from '+
      ' (select j.*,RELATION_Flag from '+GoodTab+' j,VIW_GOODSSORT b where b.SORT_TYPE=1 and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
      'left join '+
      '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID  group by GODS_ID) r '+

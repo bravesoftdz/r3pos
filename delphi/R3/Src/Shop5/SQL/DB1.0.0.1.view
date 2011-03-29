@@ -5,7 +5,7 @@ union all
 select TENANT_ID,cast(TENANT_ID*10000+1 as varchar(11)) as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
 VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID<>0
 union all
-select B.TENANT_ID,cast(B.TENANT_ID*10000+1 as varchar(11)) as SHOP_ID,'administrator' as USER_ID,'administrator' as ACCOUNT,'超级管理员' as USER_NAME,'cjgly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
+select B.TENANT_ID,cast(B.TENANT_ID*10000+1 as varchar(11)) as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
 VALUE as PASS_WRD, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
 
 --企业经营颜色档案,自经营颜色档案+连接颜色档案

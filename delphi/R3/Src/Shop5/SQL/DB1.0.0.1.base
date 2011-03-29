@@ -271,6 +271,19 @@ CREATE TABLE [CA_UPGRADE_RANGE](
     CONSTRAINT [PK_CA_UPGRADE_RANGE] PRIMARY KEY([VERSION_ID])
 );
 
+--数据同步控制表
+CREATE TABLE [SYS_SYNC_CTRL] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --同步门店
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --同步数据表
+	[TABLE_NAME] [varchar] (50) NOT NULL ,
+        --时间戳 从2011-01-01开始的秒数  
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SYS_SYNC_CTRL] PRIMARY KEY ([TENANT_ID],[SHOP_ID],[TABLE_NAME])
+);
+
 --参数设置表
 CREATE TABLE [SYS_DEFINE] (
         --企业代码，全局参数时代码为 0 

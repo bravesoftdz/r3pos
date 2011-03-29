@@ -55,11 +55,7 @@ begin
     if FieldbyName('ORG_MNY').AsFloat<>0 then
        begin
          rs.Close;
-<<<<<<< .mine
          rs.SQL.Text := 'select max(MONTH) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
-=======
-         rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
->>>>>>> .r1148
          rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
          AGlobal.Open(rs);
          if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录时期初金额只能是0...');
@@ -93,7 +89,6 @@ begin
     //检测余额变成
     if FieldbyName('ORG_MNY').AsFloat<>FieldbyName('ORG_MNY').AsOldFloat then
        begin
-<<<<<<< .mine
         Raise Exception.Create('不能修改期初金额...');
          //rs.Close;
          //rs.SQL.Text := 'select OUT_MNY,IN_MNY,COMM from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID and SHOP_ID=:OLD_SHOP_ID';
@@ -110,13 +105,6 @@ begin
          //rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
          //AGlobal.Open(rs);
          //if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录不能修改期初金额...');
-=======
-         rs.Close;
-         rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
-         rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
-         AGlobal.Open(rs);
-         if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录不能修改期初金额...');
->>>>>>> .r1148
        end;
   finally
     rs.Free;   

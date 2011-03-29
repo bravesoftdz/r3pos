@@ -88,6 +88,7 @@ type
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure SetIsRel(const Value: Boolean);
     function getflag: integer;
+    function CheckCanExport:Boolean;
   public
     { Public declarations }
     property IsRel:Boolean read FIsRel write SetIsRel;
@@ -436,6 +437,7 @@ procedure TfrmRelation.actNewExecute(Sender: TObject);
 var List:TList;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',2) then Raise Exception.Create('你没有申请'+Caption+'的权限,请和管理员联系.');  
   List := TList.Create;
   try
   CaFactory.queryServiceLines(Global.TENANT_ID,List);
@@ -458,6 +460,7 @@ begin
   try
     if ToolButton4.Tag = 1 then
       begin
+        if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
         if TfrmRelationInfo.EditDialog(Self,RID,Aobj1) then
           begin
             Prepare;
@@ -468,6 +471,7 @@ begin
       end
     else
       begin
+        if not ShopGlobal.GetChkRight('32700001',3) then Raise Exception.Create('你没有创建'+Caption+'的权限,请和管理员联系.');
         if TfrmRelationInfo.AddDialog(Self,Aobj1) then
           begin
             Prepare;
@@ -502,6 +506,7 @@ var
   cid:string;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',4) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
   if rzTree.Selected <> nil then
      begin
        if TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString='0' then
@@ -552,6 +557,7 @@ procedure TfrmRelation.actSaveExecute(Sender: TObject);
 var Params:TftParamList;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
   Cds_RelationAndGoods.CommitUpdates;
   Cds_RelationAndGoods.DisableControls;
   Params := TftParamList.Create(nil);
@@ -583,6 +589,7 @@ end;
 procedure TfrmRelation.actCancelExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
 //
 end;
 
@@ -685,6 +692,11 @@ begin
   end;
   Grid_RelationAndGoods.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+end;
+
+function TfrmRelation.CheckCanExport: Boolean;
+begin
+  Result := ShopGlobal.GetChkRight('32700001',6);
 end;
 
 end.

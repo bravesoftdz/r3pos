@@ -9,19 +9,19 @@ inherited frmPriceOrderList: TfrmPriceOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 833
-    Height = 524
+    Height = 518
     inherited RzPanel2: TRzPanel
       Width = 823
-      Height = 514
+      Height = 508
       inherited RzPage: TRzPageControl
         Width = 817
-        Height = 508
+        Height = 502
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20419#38144#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 815
-            Height = 481
+            Height = 475
             inherited RzPanel1: TRzPanel
               Width = 805
               Height = 68
@@ -135,7 +135,7 @@ inherited frmPriceOrderList: TfrmPriceOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 73
               Width = 805
-              Height = 403
+              Height = 397
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -196,17 +196,18 @@ inherited frmPriceOrderList: TfrmPriceOrderList
   inherited RzPanel4: TRzPanel
     Width = 833
     inherited Image1: TImage
-      Left = 737
-      Width = 87
-    end
-    inherited Image14: TImage
-      Left = 824
+      Left = 581
+      Width = 232
     end
     inherited Image3: TImage
-      Left = 737
-      Width = 87
+      Left = 581
+      Width = 232
+    end
+    inherited Image14: TImage
+      Left = 813
     end
     inherited rzPanel5: TPanel
+      Left = 581
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #20419#38144#21333
@@ -221,7 +222,7 @@ inherited frmPriceOrderList: TfrmPriceOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 561
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 561

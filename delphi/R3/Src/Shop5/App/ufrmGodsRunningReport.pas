@@ -105,12 +105,12 @@ begin
 
   //供应商+客户+企业资料
   case Factor.iDbType of
-   0,5: CLIENT_Tab:=' select cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
-   4:   CLIENT_Tab:=' select trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
+   0,5: CLIENT_Tab:=' select TENANT_ID,cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
+   4:   CLIENT_Tab:=' select TENANT_ID,trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
   end;
   CLIENT_Tab:=
-     ' select CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO '+  //供应商表
-     ' union all select CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME from PUB_CUSTOMER '+  //客户表
+     ' select TENANT_ID,CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO '+  //供应商表
+     ' union all select TENANT_ID,CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME from PUB_CUSTOMER '+  //客户表
      ' union all '+CLIENT_Tab+' ';  //企业表
 
   strSql :=
@@ -146,7 +146,7 @@ begin
     ',u.UNIT_NAME as UNIT_NAME'+
     ',e.USER_NAME as CREA_USER_TXT from '+
     ' ('+strSql+') j '+
-    ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+                         //供应商  //j.BATCH_NO=bar.BATCH_NO and
+    ' left outer join ('+CLIENT_Tab+') h on j.TENANT_ID=h.TENANT_ID and j.CLIENT_ID=h.CLIENT_ID '+                         //供应商  //j.BATCH_NO=bar.BATCH_NO and
     ' left outer join VIW_BARCODE i on j.TENANT_ID=i.TENANT_ID and j.GODS_ID=i.GODS_ID and j.PROPERTY_01=i.PROPERTY_01 and j.PROPERTY_02=i.PROPERTY_02 and j.UNIT_ID=i.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+

@@ -394,7 +394,7 @@ end;
 
 function TfrmRoleInfoList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('31400001',6);  
+  result:=ShopGlobal.GetChkRight('31400001',7);  
 end;
 
 procedure TfrmRoleInfoList.PrintView;

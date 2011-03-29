@@ -819,8 +819,8 @@ inherited frmIoroOrder: TfrmIoroOrder
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 80
-    Top = 184
+    Left = 72
+    Top = 200
   end
   inherited actList: TActionList
     Left = 88
@@ -845,7 +845,7 @@ inherited frmIoroOrder: TfrmIoroOrder
     CachedUpdates = True
     Params = <>
     Left = 118
-    Top = 185
+    Top = 201
   end
   object cdsDetail: TZQuery
     FieldDefs = <>

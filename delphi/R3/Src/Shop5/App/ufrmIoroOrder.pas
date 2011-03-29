@@ -529,11 +529,13 @@ begin
   FIoroType := Value;
   case Value of
   1:begin
+     edtCLIENT_ID.FilterFields:='CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2';
      edtCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
      Label2.Caption := '客户名称';
      Caption := '其他收入';
     end;
   2:begin
+     edtCLIENT_ID.FilterFields:='CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL';
      edtCLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
      Label2.Caption := '供应商名称';
      Caption := '其他支出';

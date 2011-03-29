@@ -1,16 +1,16 @@
 inherited frmStkIndentOrder: TfrmStkIndentOrder
-  Left = -12
-  Top = 282
+  Left = 202
+  Top = 233
   Width = 846
   Height = 522
   Caption = #35746#36135#35746#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 830
-    Height = 484
+    Width = 838
+    Height = 495
     inherited RzPanel2: TRzPanel
-      Width = 820
+      Width = 828
       Height = 96
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -320,8 +320,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 403
-      Width = 820
+      Top = 414
+      Width = 828
       Height = 33
       TabOrder = 2
       object Label8: TLabel
@@ -414,8 +414,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 135
-      Width = 820
-      Height = 268
+      Width = 828
+      Height = 279
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <
@@ -569,16 +569,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 101
-      Width = 820
+      Width = 828
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 436
-      Width = 820
+      Top = 447
+      Width = 828
     end
     inherited rzHelp: TRzPanel
-      Top = 460
-      Width = 820
+      Top = 471
+      Width = 828
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

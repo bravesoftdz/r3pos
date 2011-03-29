@@ -88,6 +88,7 @@ type
     InRate2:real;
     //增值税率
     InRate3:real;
+    function  CheckCanExport: boolean; override;    
   protected
     procedure ReadHeader;
     function CheckInput:boolean;override;
@@ -1153,6 +1154,11 @@ begin
          d.Free;
        end;
      end;
+end;
+
+function TfrmStockOrder.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('11200001',7);
 end;
 
 end.

@@ -82,6 +82,7 @@ type
     InRate3:real;
     procedure ReadHeader;
     function CheckInput:boolean;override;
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -940,6 +941,11 @@ end;
 function TfrmStkIndentOrder.CheckInput: boolean;
 begin
   result := not (pos(inttostr(InputFlag),'124')>0);
+end;
+
+function TfrmStkIndentOrder.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('32600001',7);
 end;
 
 end.

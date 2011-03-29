@@ -80,6 +80,7 @@ type
     InRate2:real;
     //增值税率
     InRate3:real;
+    function  CheckCanExport: boolean; override;    
   protected
     procedure ReadHeader;
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
@@ -977,6 +978,11 @@ begin
          d.Free;
        end;
      end;
+end;
+
+function TfrmStkRetuOrder.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('32600001',7);
 end;
 
 end.

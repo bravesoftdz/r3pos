@@ -509,11 +509,20 @@ function TdbResolver.CreateFactory(AClassName: string): TZFactory;
 var
   FactoryClass:TPersistentClass;
 begin
-  FactoryClass := GetClass(AClassName);
-  if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
-  result := TZFactoryClass(FactoryClass).Create;
-  result.iDbType := dbHelp.iDbType;
-  result.ZClassName:=AClassName;  //类名AClassName传入
+  if AClassName<>'' then
+  begin
+    FactoryClass := GetClass(AClassName);
+    if FactoryClass = nil then Raise Exception.Create(AClassName+'对象名没有找到.');
+    result := TZFactoryClass(FactoryClass).Create;
+    result.iDbType := dbHelp.iDbType;
+    result.ZClassName:=AClassName;  //类名AClassName传入
+  end
+  else
+  begin
+    result := TZFactory.Create;
+    result.iDbType := dbHelp.iDbType;
+    result.ZClassName:=''; 
+  end;
 end;
 
 destructor TdbResolver.Destroy;
@@ -771,6 +780,11 @@ begin
           begin
             ReadFromDataSet(DataSet);
             BeforeOpenRecord(dbHelp);
+            if ZClassName<>'' then
+               begin
+                 if SelectSQL.Text<>'' then TZQuery(DataSet).SQL.Text := SelectSQL.Text;
+                 if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
+               end;
             result := dbHelp.Open(DataSet);
           end;
       end;

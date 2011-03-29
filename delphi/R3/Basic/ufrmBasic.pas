@@ -117,12 +117,12 @@ constructor TfrmBasic.Create(AOwner: TComponent);
 var i:integer;
 begin
   inherited;
-  try
-     LoadInterfaceFromFile;
-  if sysLogFile and Factor.Connected then
-     WriteCreateLogFile;
-  except
-  end;
+//  try
+//     LoadInterfaceFromFile;
+//  if sysLogFile and Factor.Connected then
+//     WriteCreateLogFile;
+//  except
+//  end;
   if AOwner is TfrmBasic then
      TfrmBasic(AOwner).CopyTo(Self);
   SetCaption;
@@ -294,8 +294,8 @@ begin
       except
       end;
     end;
-  if sysLogFile and Assigned(Factor) and Factor.Connected then
-     WriteDestroyLogFile;
+//  if sysLogFile and Assigned(Factor) and Factor.Connected then
+//     WriteDestroyLogFile;
   TDbGridEhExport.FreeForm(self);
   TDbGridEhMark.FreeForm(self);
   except

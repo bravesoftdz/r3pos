@@ -952,7 +952,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   TabOrder = 1
                 end
                 object RzBitBtn3: TRzBitBtn
-                  Left = 472
+                  Left = 473
                   Top = 63
                   Width = 79
                   Height = 32

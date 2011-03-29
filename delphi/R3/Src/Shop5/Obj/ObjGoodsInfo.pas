@@ -216,11 +216,18 @@ end;
        where B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID and A.GODS_ID=:GODS_ID )  
    备注: VIW_GOODSPRICE为
  ------------------------------------------------------------------------------}
-
+  {
+   (select * from VIW_GOODSPRICE where POLICY_TYPE=2  and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID '+
+      ' union all '+
+      ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
+      ' where B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID and A.GODS_ID=:GODS_ID)
+  }
+  
 procedure TGoodsInfo.InitClass;
 var
   Str: string;
 begin
+
   inherited;
   case iDbType of
    0,4,5: //此语句在SQLITE下调试通过，MS SQL Server语法一样
@@ -239,12 +246,9 @@ begin
       ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,'+
       ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,REMARK,'+
       ' case when NEW_OUTPRICE<>0 then (case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end)*100.0/(NEW_OUTPRICE*1.0) else null end as PROFIT_RATE '+
-      'from (select * from VIW_GOODSPRICE where POLICY_TYPE=2  and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and GODS_ID=:GODS_ID '+
-      ' union all '+
-      ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
-      ' where B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID and A.GODS_ID=:GODS_ID ) J '+
+      'from VIW_GOODSPRICE J '+
       ' left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TENANT_ID=C.TENANT_ID '+
-      ' where J.COMM not in (''02'',''12'') order by J.GODS_CODE ';
+      ' where J.COMM not in (''02'',''12'') and J.TENANT_ID=:TENANT_ID and J.SHOP_ID=:SHOP_ID and J.GODS_ID=:GODS_ID order by J.GODS_CODE ';
    1: Str:='';
    //4: Str:='';
   end;

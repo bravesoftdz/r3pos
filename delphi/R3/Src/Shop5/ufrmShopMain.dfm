@@ -19020,4 +19020,23 @@ inherited frmShopMain: TfrmShopMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
   end
+  object tlbPage: TPopupMenu
+    Left = 632
+    Top = 192
+    object tlbClose: TMenuItem
+      Caption = #20851#38381
+      OnClick = tlbCloseClick
+    end
+    object N33: TMenuItem
+      Caption = '-'
+    end
+    object N103: TMenuItem
+      Caption = #31383#20307#37325#25490
+      OnClick = N103Click
+    end
+    object N104: TMenuItem
+      Caption = #31383#20307#24182#25490
+      OnClick = N104Click
+    end
+  end
 end

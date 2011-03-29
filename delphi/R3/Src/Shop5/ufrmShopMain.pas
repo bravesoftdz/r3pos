@@ -269,6 +269,11 @@ type
     RzBmpButton4: TRzBmpButton;
     lblLogin: TLabel;
     lblUserInfo: TRzLabel;
+    tlbPage: TPopupMenu;
+    tlbClose: TMenuItem;
+    N33: TMenuItem;
+    N103: TMenuItem;
+    N104: TMenuItem;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -357,6 +362,9 @@ type
     procedure actfrmGodsRunningReportExecute(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure tlbCloseClick(Sender: TObject);
+    procedure N103Click(Sender: TObject);
+    procedure N104Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -471,12 +479,13 @@ begin
   button.GroupIndex := 1;
   button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
   button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
-  button.Font.Assign(toolButton.Font); 
+  button.Font.Assign(toolButton.Font);
   button.Caption := form.Caption;
   button.Tag := Integer(Pointer(form));
   button.OnClick := DoActiveForm;
   button.Visible := true;
   button.Parent := rzToolButton;
+  button.PopupMenu := tlbPage;
   FList.Add(button);
   SortToolButton;
   button.Down := true;
@@ -2498,7 +2507,7 @@ begin
          Global.MoveToLocal;
        end;
      end;
-  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...'); 
+  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
 //  SyncFactory.SyncStockOrder('STK_STOCKORDER','TENANT_ID;STOCK_ID','TSyncSingleTable');
   SyncFactory.SyncAll;
 
@@ -2508,6 +2517,33 @@ procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'没有找到可下载订单.','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmShopMain.tlbCloseClick(Sender: TObject);
+var
+  i:integer;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      if TrzBmpButton(FList[i]).Down then
+         begin
+           TfrmBasic(FList[i]).Close;
+           break;
+         end;
+    end;
+end;
+
+procedure TfrmShopMain.N103Click(Sender: TObject);
+begin
+  inherited;
+  self.Cascade;
+end;
+
+procedure TfrmShopMain.N104Click(Sender: TObject);
+begin
+  inherited;
+  self.ArrangeIcons;
+
 end;
 
 end.

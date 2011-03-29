@@ -4367,9 +4367,9 @@ CREATE TABLE [PUB_GOODS_RELATION] (
         --货号<识别码>
 	[GODS_CODE] [varchar] (36) NULL , 
         --品名+规格
-	[GODS_NAME] [varchar] (50) NOT NULL ,
+	[GODS_NAME] [varchar] (50) NULL ,
         --拼音码
-	[GODS_SPELL] [varchar] (50) NOT NULL ,
+	[GODS_SPELL] [varchar] (50) NULL ,
         --分类1
 	[SORT_ID1] [varchar] (36) NULL ,
         --分类2
@@ -4410,6 +4410,24 @@ CREATE TABLE [PUB_GOODS_RELATION] (
 	[SORT_ID19] [varchar] (36) NULL ,
         --自定义20
 	[SORT_ID20] [varchar] (36) NULL ,
+        --标准进价
+	[NEW_INPRICE] [decimal](18, 3) NULL ,
+        --标准售价
+	[NEW_OUTPRICE] [decimal](18, 3) NULL ,
+        --最低售价
+	[NEW_LOWPRICE] [decimal](18, 3) NULL ,
+        --是否启用折扣率 1启用,2禁用
+	[USING_PRICE] [int] NULL ,
+        --是否参考积分
+	[HAS_INTEGRAL] [int] NULL ,
+        --是否使用批号管制
+	[USING_BATCH_NO] [int] NULL ,
+        --是否管制积分换购
+	[USING_BARTER] [int] NULL ,
+        --是否管制物流跟踪码
+	[USING_LOCUS_NO] [int] NULL ,
+        --积分换购积分
+	[BARTER_INTEGRAL] [int] NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODS_RELATION_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000

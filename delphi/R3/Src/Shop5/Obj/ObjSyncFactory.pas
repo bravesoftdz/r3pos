@@ -61,6 +61,11 @@ type
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   //5 synFlag
+  TSyncStockOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
   TSyncStockOrder=class(TSyncSingleTable)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -80,6 +85,11 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   //6 synFlag
+  TSyncSalesOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
   TSyncSalesOrder=class(TSyncSingleTable)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -99,6 +109,11 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   //7 synFlag
+  TSyncChangeOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
   TSyncChangeOrder=class(TSyncSingleTable)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -117,8 +132,12 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-
   //8 synFlag
+  TSyncStkIndentOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
   TSyncStkIndentOrder=class(TSyncSingleTable)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -132,9 +151,29 @@ type
   public
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
-    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  //9 synFlag
+  TSyncSalIndentOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncSalIndentOrder=class(TSyncSingleTable)
+  public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncSalIndentData=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
@@ -1035,28 +1074,436 @@ begin
   end;
 end;
 
+{ TSyncStkIndentOrder }
+
+function TSyncStkIndentOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID'),self);
+end;
+
+function TSyncStkIndentOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAbleInfo;
+begin
+   if (FieldbyName('ADVA_MNY').AsFloat <> 0) then
+   begin
+     AGlobal.ExecSQL(
+         'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预付款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''6'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+    ,self);
+   end;
+end;
+procedure UpdateAbleInfo;
+var
+   rs:TZQuery;
+begin
+   rs := TZQuery.Create(nil);
+   try
+     rs.SQL.Text :=
+       'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+     + 'where TENANT_ID=:TENANT_ID and STOCK_ID=:INDE_ID';
+     CopyToParams(rs.Params);
+     AGlobal.ExecQuery(rs);
+   finally
+     rs.Free;
+   end;
+end;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTORDER';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+         InsertAbleInfo;
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                   UpdateAbleInfo;
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r <>0 then UpdateAbleInfo;
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+              InsertAbleInfo;
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncStkIndentOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncStkIndentData }
+
+function TSyncStkIndentData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTDATA';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncStkIndentData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select a.* from STK_INDENTDATA a where a.TENANT_ID=:TENANT_ID and a.INDE_ID=:INDE_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncStockOrderList }
+
+function TSyncStockOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSalesOrderList }
+
+function TSyncSalesOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID) and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncChangeOrderList }
+
+function TSyncChangeOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncStkIndentOrderList }
+
+function TSyncStkIndentOrderList.BeforeOpenRecord(
+  AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSalIndentOrderList }
+
+function TSyncSalIndentOrderList.BeforeOpenRecord(
+  AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSalIndentOrder }
+
+function TSyncSalIndentOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID'),self);
+end;
+
+function TSyncSalIndentOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAbleInfo;
+begin
+   if (FieldbyName('ADVA_MNY').AsFloat <> 0) then
+   begin
+     AGlobal.ExecSQL(
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+    ,self);
+   end;
+end;
+procedure UpdateAbleInfo;
+var
+   rs:TZQuery;
+begin
+   rs := TZQuery.Create(nil);
+   try
+     rs.SQL.Text :=
+       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+     + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID';
+     CopyToParams(rs.Params);
+     AGlobal.ExecQuery(rs);
+   finally
+     rs.Free;
+   end;
+end;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTORDER';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+         InsertAbleInfo;
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                   UpdateAbleInfo;
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r <>0 then UpdateAbleInfo;
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+              InsertAbleInfo;
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncSalIndentOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSalIndentData }
+
+function TSyncSalIndentData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_INDENTDATA';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncSalIndentData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select a.* from SAL_INDENTDATA a where a.TENANT_ID=:TENANT_ID and a.INDE_ID=:INDE_ID';
+  SelectSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaRelationInfo);
   RegisterClass(TSyncCaRelations);
   RegisterClass(TSyncPubBarcode);
   RegisterClass(TSyncPubIcInfo);
+  RegisterClass(TSyncStockOrderList);
   RegisterClass(TSyncStockOrder);
   RegisterClass(TSyncStockData);
+  RegisterClass(TSyncSalesOrderList);
   RegisterClass(TSyncSalesOrder);
   RegisterClass(TSyncSalesData);
+  RegisterClass(TSyncChangeOrderList);
   RegisterClass(TSyncChangeOrder);
   RegisterClass(TSyncChangeData);
+  RegisterClass(TSyncStkIndentOrderList);
+  RegisterClass(TSyncStkIndentOrder);
+  RegisterClass(TSyncStkIndentData);
+  RegisterClass(TSyncSalIndentOrderList);
+  RegisterClass(TSyncSalIndentOrder);
+  RegisterClass(TSyncSalIndentData);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
   UnRegisterClass(TSyncCaRelations);
   UnRegisterClass(TSyncPubBarcode);
   UnRegisterClass(TSyncPubIcInfo);
+  UnRegisterClass(TSyncStockOrderList);
   UnRegisterClass(TSyncStockOrder);
   UnRegisterClass(TSyncStockData);
+  UnRegisterClass(TSyncSalesOrderList);
   UnRegisterClass(TSyncSalesOrder);
   UnRegisterClass(TSyncSalesData);
+  UnRegisterClass(TSyncChangeOrderList);
   UnRegisterClass(TSyncChangeOrder);
   UnRegisterClass(TSyncChangeData);
+  UnRegisterClass(TSyncStkIndentOrderList);
+  UnRegisterClass(TSyncStkIndentOrder);
+  UnRegisterClass(TSyncStkIndentData);
+  UnRegisterClass(TSyncSalIndentOrderList);
+  UnRegisterClass(TSyncSalIndentOrder);
+  UnRegisterClass(TSyncSalIndentData);
 end.

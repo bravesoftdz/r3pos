@@ -29,8 +29,8 @@ type
     //初始化同步队列
     procedure InitList;
 
-    function GetSynTimeStamp(tbName:string):int64;
-    procedure SetSynTimeStamp(tbName:string;TimeStamp:int64);
+    function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
+    procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     //双同同步
     procedure SyncSingleTable(tbName,KeyFields,ZClassName:string);
     //同步入库类单据
@@ -39,6 +39,10 @@ type
     procedure SyncSalesOrder(tbName,KeyFields,ZClassName:string);
     //同步库存类单据
     procedure SyncChangeOrder(tbName,KeyFields,ZClassName:string);
+    //进货订单单据
+    procedure SyncStkIndentOrder(tbName,KeyFields,ZClassName:string);
+    //销售订单单据
+    procedure SyncSalIndentOrder(tbName,KeyFields,ZClassName:string);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -97,22 +101,28 @@ begin
   2:result := 'TSyncCaRelationInfo';
   3:result := 'TSyncPubBarcode';
   4:result := 'TSyncPubIcInfo';
+  5:result := 'TSyncStockOrderList';
+  6:result := 'TSyncSalesOrderList';
+  7:result := 'TSyncChangeOrderList';
+  8:result := 'TSyncStkIndentOrderList';
+  9:result := 'TSyncSalIndentOrderList';
   else
     result := 'TSyncSingleTable';
   end;
 end;
 
-function TSyncFactory.GetSynTimeStamp(tbName: string): int64;
+function TSyncFactory.GetSynTimeStamp(tbName: string;SHOP_ID:string='#'): int64;
 var
   rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+    rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
     rs.ParambyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('DEFINE').AsString := 'SYN_'+tbName;
+    rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
+    rs.ParamByName('TABLE_NAME').AsString := tbName;
     Global.LocalFactory.Open(rs);
-    if rs.IsEmpty then result := 0 else StrtoInt64(rs.Fields[0].AsString);
+    if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
   finally
     rs.Free;
   end;
@@ -365,6 +375,20 @@ begin
   n^.synFlag := 7;
   n^.tbtitle := '存货单据';
   FList.Add(n);
+
+  new(n);
+  n^.tbname := 'STK_INDENTORDER';
+  n^.keyFields := 'TENANT_ID;INDE_ID';
+  n^.synFlag := 8;
+  n^.tbtitle := '进货订单';
+  FList.Add(n);
+
+  new(n);
+  n^.tbname := 'SAL_INDENTORDER';
+  n^.keyFields := 'TENANT_ID;INDE_ID';
+  n^.synFlag := 9;
+  n^.tbtitle := '销售订单';
+  FList.Add(n);
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -377,13 +401,13 @@ begin
   FSyncTimeStamp := Value;
 end;
 
-procedure TSyncFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64);
+procedure TSyncFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64;SHOP_ID:string='#');
 var
   r:integer;
 begin
-  r := Global.LocalFactory.ExecSQL('update SYS_DEFINE set VALUE='''+inttostr(TimeStamp)+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''SYN_'+tbName+'''');
+  r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then
-     Global.LocalFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,COMM,TIME_STAMP,VALUE_TYPE) values('+inttostr(Global.TENANT_ID)+',''SYN_'+tbName+''','''+inttostr(TimeStamp)+''',''00'','+GetTimeStamp(Global.LocalFactory.iDbType)+',0)');
+     Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
 end;
 
 procedure TSyncFactory.SyncAll;
@@ -402,6 +426,9 @@ begin
       0,1,2,3,4:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      8:SyncStkIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      9:SyncSalIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -438,9 +465,10 @@ var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -535,7 +563,7 @@ begin
 
          ls.Next;
        end;
-    SetSynTimeStamp(tbName,SyncTimeStamp);
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
     rs_h.Free;
@@ -551,9 +579,10 @@ var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -648,7 +677,121 @@ begin
 
          ls.Next;
        end;
-    SetSynTimeStamp(tbName,SyncTimeStamp);
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncSalIndentOrder(tbName, KeyFields,
+  ZClassName: string);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('INDE_ID').AsString := ls.FieldbyName('INDE_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSalIndentOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSalIndentData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSalIndentOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSalIndentData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('INDE_ID').AsString := ls.FieldbyName('INDE_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSalIndentOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSalIndentData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSalIndentOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSalIndentData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
     rs_h.Free;
@@ -710,14 +853,129 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncStkIndentOrder(tbName, KeyFields,
+  ZClassName: string);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('INDE_ID').AsString := ls.FieldbyName('INDE_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncStkIndentOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncStkIndentData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncStkIndentOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncStkIndentData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('INDE_ID').AsString := ls.FieldbyName('INDE_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncStkIndentOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncStkIndentData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncStkIndentOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncStkIndentData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+end;
+
 procedure TSyncFactory.SyncStockOrder(tbName,KeyFields,ZClassName:string);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -812,7 +1070,7 @@ begin
 
          ls.Next;
        end;
-    SetSynTimeStamp(tbName,SyncTimeStamp);
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
     rs_h.Free;

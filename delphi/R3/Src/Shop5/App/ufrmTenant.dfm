@@ -1,7 +1,7 @@
 inherited frmTenant: TfrmTenant
-  Left = 551
-  Top = 25
-  ActiveControl = edtLOGIN_NAME
+  Left = 333
+  Top = 199
+  ActiveControl = cxedtLOGIN_NAME
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -17,9 +17,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 476
     Height = 326
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet
@@ -72,7 +72,7 @@ inherited frmTenant: TfrmTenant
           Width = 90
           Height = 14
           Cursor = crHandPoint
-          Caption = #12304#31435#21363#27880#20876#12305
+          Caption = #12304#30003#35831#36134#21495#12305
           Font.Charset = GB2312_CHARSET
           Font.Color = clNavy
           Font.Height = -14
@@ -107,7 +107,7 @@ inherited frmTenant: TfrmTenant
           Width = 90
           Height = 14
           Cursor = crHandPoint
-          Caption = #12304#31435#21363#27880#20876#12305
+          Caption = #12304#30003#35831#36134#21495#12305
           Font.Charset = GB2312_CHARSET
           Font.Color = clNavy
           Font.Height = -14
@@ -612,7 +612,7 @@ inherited frmTenant: TfrmTenant
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #30331#24405#21517#31216
+        Caption = #27880#20876#24080#21495
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -818,7 +818,7 @@ inherited frmTenant: TfrmTenant
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #30331#24405#23494#30721
+        Caption = #27880#20876#23494#30721
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12

@@ -424,12 +424,12 @@ end;
 
 
 procedure TfrmShopMain.FormCreate(Sender: TObject);
-var F:TextFile;
+var
+  F:TextFile;
 begin
   inherited;
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
-  if not FileExists(Global.InstallPath+'data\R3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\R3.db'),false);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   ForceDirectories(ExtractFilePath(ParamStr(0))+'debug');
   SystemShutdown := false;

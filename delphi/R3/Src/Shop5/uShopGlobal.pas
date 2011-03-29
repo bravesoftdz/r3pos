@@ -55,6 +55,7 @@ type
     procedure SetLimit(const Value: integer);
     procedure Setokline(const Value: boolean);
     function Getoffline: boolean;
+    function GetNetVersion: boolean;
     { Private declarations }
   protected
     function GetSysDate: TDate;override;
@@ -79,6 +80,8 @@ type
     property okline:boolean read Fokline write Setokline;
     // 1是离线, 0 是联机
     property offline:boolean read Getoffline;
+    //判断是否连锁版
+    property NetVersion:boolean read GetNetVersion;
 
   end;
 
@@ -293,6 +296,11 @@ end;
 function TShopGlobal.Getoffline: boolean;
 begin
   result := (Factor=LocalFactory);
+end;
+
+function TShopGlobal.GetNetVersion: boolean;
+begin
+  result := (SFVersion='.NET');
 end;
 
 initialization

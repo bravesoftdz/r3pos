@@ -37,6 +37,8 @@ type
     procedure SyncStockOrder(tbName,KeyFields,ZClassName:string);
     //同步出库类单据
     procedure SyncSalesOrder(tbName,KeyFields,ZClassName:string);
+    //同步库存类单据
+    procedure SyncChangeOrder(tbName,KeyFields,ZClassName:string);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -356,6 +358,13 @@ begin
   n^.synFlag := 6;
   n^.tbtitle := '出库单据';
   FList.Add(n);
+  
+  new(n);
+  n^.tbname := 'STO_CHANGEORDER';
+  n^.keyFields := 'TENANT_ID;CHANGE_ID';
+  n^.synFlag := 7;
+  n^.tbtitle := '存货单据';
+  FList.Add(n);
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -420,6 +429,119 @@ begin
     end;
   finally
     frmLogo.Close;
+  end;
+end;
+
+procedure TSyncFactory.SyncChangeOrder(tbName, KeyFields,
+  ZClassName: string);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncChangeOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncChangeData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncChangeOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncChangeData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncChangeOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncChangeData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncChangeOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncChangeData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
   end;
 end;
 

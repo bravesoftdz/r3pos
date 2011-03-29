@@ -98,6 +98,45 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //7 synFlag
+  TSyncChangeOrder=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncChangeData=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  //8 synFlag
+  TSyncStkIndentOrder=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncStkIndentData=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 
 implementation
 
@@ -449,7 +488,7 @@ end;
 procedure UpdateAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('STOCK_MNY').AsFloat <> 0) and (FieldbyName('STOCK_TYPE').asInteger in [1,3]) then
+   if (FieldbyName('STOCK_TYPE').asInteger in [1,3]) then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
      rs := TZQuery.Create(nil);
@@ -501,7 +540,7 @@ begin
      begin
        FillParams(UpdateQuery);
        r := AGlobal.ExecQuery(UpdateQuery);
-       UpdateAbleInfo;
+       if r<>0 then UpdateAbleInfo;
        if r=0 then
           begin
             try
@@ -633,6 +672,32 @@ begin
      end;
    end;
 end;
+procedure InsertIntegralInfo;
+var rs:TZQuery;
+begin
+  //更新积分
+  if length(FieldbyName('CLIENT_ID').AsString)>0 then
+  begin
+     if (FieldbyName('BARTER_INTEGRAL').AsInteger<>0) or (FieldbyName('INTEGRAL').AsInteger<>0) then //扣减换购积分
+     begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text :=
+        ParseSQL(idbType,
+        'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=IsNull(RULE_INTEGRAL,0) + :RULE_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + :ACCU_INTEGRAL  '+
+        ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID');
+        rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+        rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsString;
+        rs.ParamByName('INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger-FieldbyName('INTEGRAL').AsInteger;
+        rs.ParamByName('ACCU_INTEGRAL').AsInteger := FieldbyName('INTEGRAL').AsInteger;
+        rs.ParamByName('RULE_INTEGRAL').AsInteger := FieldbyName('BARTER_INTEGRAL').AsInteger;
+        AGlobal.ExecQuery(rs);
+      finally
+        rs.Free;
+      end;
+     end;
+  end;
+end;
 procedure UpdateAbleInfo;
 var rs:TZQuery;
 begin
@@ -643,7 +708,7 @@ begin
      try
        rs.SQL.Text :=
          'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-       + 'where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID and ABLE_TYPE=''1''';
+       + 'where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
        CopyToParams(rs.Params);
 //       rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
        rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -652,6 +717,40 @@ begin
        rs.Free;
      end;
    end;
+end;
+function UpdateIntegralInfo:boolean;
+var
+  rs:TZQuery;
+  Params:TftParamList;
+begin
+  rs := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    rs.SQL.Text := 'select INTEGRAL,BARTER_INTEGRAL,CLIENT_ID,SALES_TYPE from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
+    AGlobal.Open(rs);
+    result := not rs.IsEmpty;
+    if result and (rs.FieldByName('SALES_TYPE').AsInteger in [1,3,4]) then
+    begin
+      if (rs.Fields[0].AsInteger <> 0) or (rs.Fields[1].AsInteger <> 0) then
+         begin
+           Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+           Params.ParamByName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
+           Params.ParamByName('INTEGRAL').AsInteger := rs.FieldbyName('INTEGRAL').AsInteger-rs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+           Params.ParamByName('ACCU_INTEGRAL').AsInteger := rs.FieldbyName('INTEGRAL').AsInteger;
+           Params.ParamByName('RULE_INTEGRAL').AsInteger := rs.FieldbyName('BARTER_INTEGRAL').AsInteger;
+           AGlobal.ExecSQL(
+             'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=IsNull(RULE_INTEGRAL,0) - :RULE_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) - :ACCU_INTEGRAL  '+
+             'where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID',Params);
+         end;
+      //更新积分
+      InsertIntegralInfo;
+    end;
+  finally
+    Params.Free;
+    rs.Free;
+  end;
 end;
 var
   r:integer;
@@ -670,14 +769,16 @@ begin
          FillParams(InsertQuery);
          AGlobal.ExecQuery(InsertQuery);
          InsertAbleInfo;
+         InsertIntegralInfo;
        except
          on E:Exception do
             begin
               if CheckUnique(E.Message) then
                  begin
+                   UpdateIntegralInfo;
+                   UpdateAbleInfo;
                    FillParams(UpdateQuery);
                    AGlobal.ExecQuery(UpdateQuery);
-                   UpdateAbleInfo;
                  end
               else
                  Raise;
@@ -686,15 +787,21 @@ begin
      end
   else
      begin
-       FillParams(UpdateQuery);
-       r := AGlobal.ExecQuery(UpdateQuery);
-       UpdateAbleInfo;
+       if UpdateIntegralInfo then
+       begin
+         FillParams(UpdateQuery);
+         r := AGlobal.ExecQuery(UpdateQuery);
+         if r<>0 then UpdateAbleInfo;
+       end
+       else
+         r := 0;
        if r=0 then
           begin
             try
               FillParams(InsertQuery);
               AGlobal.ExecQuery(InsertQuery);
               InsertAbleInfo;
+              InsertIntegralInfo;
             except
                on E:Exception do
                   begin
@@ -777,6 +884,157 @@ begin
   end;
 end;
 
+{ TSyncChangeOrder }
+
+function TSyncChangeOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID'),self);
+end;
+
+function TSyncChangeOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEORDER';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncChangeOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncChangeData }
+
+function TSyncChangeData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertStorageInfo;
+begin
+  if FieldbyName('BATCH_NO').asString='' then FieldbyName('BATCH_NO').asString := '#';
+  if FieldbyName('CHANGE_TYPE').AsString = '1' then
+  IncStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+             FieldbyName('GODS_ID').asString,
+             FieldbyName('PROPERTY_01').asString,
+             FieldbyName('PROPERTY_02').asString,
+             FieldbyName('BATCH_NO').asString,
+             FieldbyName('CALC_AMOUNT').asFloat,
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1)
+  else
+  DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
+             FieldbyName('GODS_ID').asString,
+             FieldbyName('PROPERTY_01').asString,
+             FieldbyName('PROPERTY_02').asString,
+             FieldbyName('BATCH_NO').asString,
+             FieldbyName('CALC_AMOUNT').asFloat,
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1);
+end;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEDATA';
+       MaxCol := RowAccessor.ColumnCount-1;
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+  InsertStorageInfo;
+end;
+
+function TSyncChangeData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select a.*,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGESDATA a,STO_CHANGESORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID and a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncChangeData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+       'select a.TENANT_ID,a.SHOP_ID,a.GODS_ID,a.PROPERTY_01,a.PROPERTY_02,a.BATCH_NO,a.CALC_AMOUNT,a.COST_PRICE,b.CHANGE_TYPE as CHANGE_TYPE from STO_CHANGESDATA a,STO_CHANGESORDER b where a.TENANT_ID=b.TENANT_ID and a.CHANGE_ID=b.CHANGE_ID '+
+       'where a.TENANT_ID=:TENANT_ID and a.CHANGE_ID=:CHANGE_ID';
+    rs.Params.AssignValues(Params); 
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if FieldbyName('CHANGE_TYPE').AsString = '1' then
+        DecStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                   rs.FieldbyName('GODS_ID').asString,
+                   rs.FieldbyName('PROPERTY_01').asString,
+                   rs.FieldbyName('PROPERTY_02').asString,
+                   rs.FieldbyName('BATCH_NO').asString,
+                   rs.FieldbyName('CALC_AMOUNT').asFloat,
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,2),3)
+        else
+        IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
+                   rs.FieldbyName('GODS_ID').asString,
+                   rs.FieldbyName('PROPERTY_01').asString,
+                   rs.FieldbyName('PROPERTY_02').asString,
+                   rs.FieldbyName('BATCH_NO').asString,
+                   rs.FieldbyName('CALC_AMOUNT').asFloat,
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,2),3);
+        rs.Next;
+      end;
+    AGlobal.ExecSQL('delete from STO_CHANGESDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
+  finally
+    rs.Free;
+  end;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaRelationInfo);
@@ -787,6 +1045,8 @@ initialization
   RegisterClass(TSyncStockData);
   RegisterClass(TSyncSalesOrder);
   RegisterClass(TSyncSalesData);
+  RegisterClass(TSyncChangeOrder);
+  RegisterClass(TSyncChangeData);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
@@ -797,4 +1057,6 @@ finalization
   UnRegisterClass(TSyncStockData);
   UnRegisterClass(TSyncSalesOrder);
   UnRegisterClass(TSyncSalesData);
+  UnRegisterClass(TSyncChangeOrder);
+  UnRegisterClass(TSyncChangeData);
 end.

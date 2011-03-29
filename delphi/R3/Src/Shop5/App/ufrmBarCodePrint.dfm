@@ -532,6 +532,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
     end
   end
   object dsPrint: TDataSource
+    DataSet = adoPrint
     Left = 280
     Top = 176
   end
@@ -563,7 +564,7 @@ inherited frmBarCodePrint: TfrmBarCodePrint
       00000086010000450000003000050001000000000000000000FFFFFF1F000000
       0001003100000000000000FFFF00000000000200000001000000000000000100
       0000C800000014000000010000000000000200490100000B00BDBBB2E6B1EDCA
-      FDBEDD310002010200000000000000850000005A000000300013000100000000
+      FDBEDD3100020102000000000000007D0000005A000000300013000100000000
       0000000000FFFFFF1F000000001500D6F7CFEECAFDBEDD313D66724D61737465
       7244733B00000000000000FFFF00000000000200000001000000000000000100
       0000C800000014000000010000000000000000CC01000005004D656D6F310002
@@ -589,51 +590,72 @@ inherited frmBarCodePrint: TfrmBarCodePrint
     FieldDefs = <
       item
         Name = 'A'
+        DataType = ftBoolean
       end
       item
         Name = 'NEW_OUTPRICE'
+        DataType = ftFloat
       end
       item
         Name = 'BARCODE'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
       end
       item
         Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'UNIT_NAME'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'BRAND'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'PROVIDE'
-      end
-      item
-        Name = 'BCODE'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'NEW_OUTPRICE1'
+        DataType = ftFloat
       end
       item
         Name = 'NEW_OUTPRICE2'
+        DataType = ftFloat
       end
       item
         Name = 'NEW_LOWPRICE'
+        DataType = ftFloat
       end
       item
         Name = 'AMOUNT'
+        DataType = ftInteger
       end>
     CachedUpdates = True
     Params = <>
@@ -644,42 +666,72 @@ inherited frmBarCodePrint: TfrmBarCodePrint
     FieldDefs = <
       item
         Name = 'A'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'NEW_OUTPRICE'
+        DataType = ftFloat
       end
       item
         Name = 'BARCODE'
+        DataType = ftFloat
       end
       item
         Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 30
       end
       item
         Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
       end
       item
         Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'UNIT_NAME'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'BRAND'
+        DataType = ftString
+        Size = 20
       end
       item
         Name = 'PROVIDE'
+        DataType = ftString
+        Size = 20
       end
       item
-        Name = 'BCODE'
+        Name = 'NEW_OUTPRICE1'
+        DataType = ftFloat
       end
       item
-        Name = 'NEW_CUSTPRICE'
+        Name = 'NEW_OUTPRICE2'
+        DataType = ftFloat
+      end
+      item
+        Name = 'NEW_LOWPRICE'
+        DataType = ftFloat
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftInteger
       end>
     CachedUpdates = True
     Params = <>

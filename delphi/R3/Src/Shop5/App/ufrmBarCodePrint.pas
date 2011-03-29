@@ -293,8 +293,8 @@ begin
         adoPrintTemp.FieldByName('GODS_CODE').AsString := adoPrint.FieldByName('GODS_CODE').AsString;
         adoPrintTemp.FieldByName('GODS_ID').AsString := adoPrint.FieldByName('GODS_ID').AsString;
         //adoPrintTemp.FieldByName('BCODE').AsString := adoPrint.FieldByName('BCODE').AsString;
-        adoPrintTemp.FieldByName('BRAND').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BRAND_INFO'),'CODE_ID','CODE_NAME',rs.FieldByName('SORT_ID4').AsString);
-        adoPrintTemp.FieldByName('PROVIDE').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('BAS_CLIENTINFO'),'CLIENT_ID','CLIENT_NAME',rs.FieldByName('SORT_ID3').AsString);
+        adoPrintTemp.FieldByName('BRAND').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_BRAND_INFO'),'SORT_ID','SORT_NAME',rs.FieldByName('SORT_ID4').AsString);
+        adoPrintTemp.FieldByName('PROVIDE').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_CLIENTINFO'),'CLIENT_ID','CLIENT_NAME',rs.FieldByName('SORT_ID3').AsString);
         adoPrintTemp.FieldByName('UNIT_NAME').AsString := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',rs.FieldByName('UNIT_ID').AsString);
         if length(adoPrint.FieldByName('PROPERTY_01').AsString)=3 then
         adoPrintTemp.FieldByName('PROPERTY_01').AsString := Column1.PickList[Column1.KeyList.IndexOf(adoPrint.FieldByName('PROPERTY_01').AsString)];
@@ -400,16 +400,16 @@ var
 begin
   inherited;
   Refreshed := true;
-  DBGridEh1.Columns[2].KeyList.Add('#');
-  DBGridEh1.Columns[2].PickList.Add('нч');
+  DBGridEh1.Columns[4].KeyList.Add('#');
+  DBGridEh1.Columns[4].PickList.Add('нч');
   DBGridEh1.Columns[3].KeyList.Add('#');
   DBGridEh1.Columns[3].PickList.Add('нч');
   rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
   rs.First;
   while not rs.Eof do
     begin
-      DBGridEh1.Columns[2].KeyList.Add(rs.Fields[0].asString);
-      DBGridEh1.Columns[2].PickList.Add(rs.Fields[1].asString);
+      DBGridEh1.Columns[4].KeyList.Add(rs.Fields[0].asString);
+      DBGridEh1.Columns[4].PickList.Add(rs.Fields[1].asString);
       rs.Next;
     end;
 

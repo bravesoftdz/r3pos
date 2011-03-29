@@ -155,7 +155,7 @@ begin
       EditObj.FieldByName('RELATION_ID').AsString:='0';   //新增的商品: 自主经营
       EditObj.FieldByName('selflag').AsString:='0';       //标记位
       if EditObj.FieldbyName('NEW_OUTPRICE').AsFloat <> 0 then
-        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)+'%'
+        EditObj.FieldByName('PROFIT_RATE').AsString := formatfloat('#0',EditObj.FieldbyName('NEW_INPRICE').AsFloat*100/EditObj.FieldbyName('NEW_OUTPRICE').AsFloat)
       else
         EditObj.FieldByName('PROFIT_RATE').AsValue := null;
       EditObj.WriteToDataSet(cdsBrowser);

@@ -587,14 +587,12 @@ procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
 function PubGetBarCode:string;
 var rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select BARCODE from PUB_BARCODE where GODS_ID='''+ID+''' and PROPERTY_01='''+P1+''' and PROPERTY_02='''+P2+''' and BATCH_NO=''#''';
-    Factor.Open(rs);
-    result := rs.Fields[0].AsString;
-  finally
-    rs.Free;
-  end;
+  rs := Global.GetZQueryFromName('PUB_BARCODE');
+  if rs.Locate('GODS_ID,PROPERTY_01,PROPERTY_02',VarArrayOf([ID,P1,P2]),[]) then
+    Result := rs.FieldbyName('BARCODE').AsString
+  else
+    Result := '';
+
 end;
 var
   rs:TZQuery;
@@ -614,11 +612,13 @@ begin
 
     DataSet.FieldByName('PROPERTY_01').AsString := P1;
     DataSet.FieldByName('PROPERTY_02').AsString := P2;
-    //
-    DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
-    if (DataSet.FieldByName('BARCODE').AsString='') or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString) then
-       DataSet.FieldByName('BARCODE').AsString := GetBarCode(rs.FieldByName('BCODE').AsString,
-         P1,P2);
+    if (p1='#') and (p2='#') then
+      DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString
+    else
+      DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
+
+    {if (DataSet.FieldByName('BARCODE').AsString='') then  // or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString)
+       DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;}
     DataSet.FieldByName('AMOUNT').AsInteger := amt;
     DataSet.Post;
   end;

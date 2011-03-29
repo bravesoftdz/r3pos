@@ -529,8 +529,10 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   try
     if Factor=LocalFactory then
-//       Factor.Initialize('connmode=2;hostname=10.72.11.226;port=1024;dbid=1000001')
-       Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db')
+       begin
+         if not FileExists(Global.InstallPath+'data\r3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\r3.db'),false);
+         Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db');
+       end
     else
        Factor.Initialize(F.ReadString('db','Connstr',''));
     Factor.Connect;

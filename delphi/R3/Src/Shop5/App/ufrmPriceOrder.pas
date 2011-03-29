@@ -52,6 +52,8 @@ type
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);
     procedure SetdbState(const Value: TDataSetState); override;
     procedure CheckPrice_Rate;  //判断明细数据的单价是否为0，指定折扣率：不为0
+    procedure WriteAmount(UNIT_ID,PROPERTY_01,PROPERTY_02:string;Amt:real;Appended:boolean=false);override;
+    procedure BulkAmount(UNIT_ID:string;Amt,Pri,mny:real;Appended:boolean=false);override;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -691,6 +693,16 @@ begin
       Raise Exception.Create(' 促销商品：'+edtTable.fieldbyName('GODS_NAME').AsString+'  再折率不能为0！  ');
     edtTable.Next;
   end;
+end;
+
+procedure TfrmPriceOrder.BulkAmount(UNIT_ID: string; Amt, Pri, mny: real; Appended: boolean);
+begin
+  //条码输入数量覆盖掉原方法  
+end;
+
+procedure TfrmPriceOrder.WriteAmount(UNIT_ID, PROPERTY_01, PROPERTY_02: string; Amt: real; Appended: boolean);
+begin
+  //条码输入数量覆盖掉原方法  
 end;
 
 end.

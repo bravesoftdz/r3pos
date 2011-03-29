@@ -798,7 +798,7 @@ procedure TfrmCustomer.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33400001',5) then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   try
     DBGridEh1.Columns[0].Visible := False;
     PrintView;

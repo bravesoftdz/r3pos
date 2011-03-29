@@ -431,7 +431,6 @@ var i:integer;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
-
   if rzTree.Selected<>nil then WriteTo(TRecord_(rzTree.Selected.Data));
   for i:=0 to rzTree.Items.Count -1 do
   begin
@@ -554,7 +553,7 @@ var Aobj:TRecord_;
     ID:string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('33200001',4) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33200001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if rzTree.Selected = nil then Exit;
   if MessageBox(Handle,pchar('是否删除"'+rzTree.Selected.Text+'"会员等级?'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   if (TRecord_(rzTree.Selected.Data).FieldbyName('PRICE_ID').AsString='---')  or (TRecord_(rzTree.Selected.Data).FieldbyName('PRICE_ID').AsString='000') then

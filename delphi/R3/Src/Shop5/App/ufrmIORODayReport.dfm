@@ -3,7 +3,7 @@ inherited frmIORODayReport: TfrmIORODayReport
   Top = 106
   Width = 1022
   Height = 611
-  Caption = #20854#20182#25910#25903#32479#35745#34920
+  Caption = #25910#20837#25903#20986#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -15,14 +15,14 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#20854#20182#25910#25903#27719#24635#34920
+          Caption = #22320#21306#25910#25903#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 797
             Height = 505
@@ -194,7 +194,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25910#20837#37329#39069
+                      Title.Caption = #25910#20837#37329#39069
                       Width = 130
                     end
                     item
@@ -204,7 +204,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25903#20986#37329#39069
+                      Title.Caption = #25903#20986#37329#39069
                       Width = 130
                     end>
                 end
@@ -214,7 +214,7 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #38376#24215#20854#20182#25910#25903#27719#24635#34920
+          Caption = #38376#24215#25910#25903#27719#24635#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -451,7 +451,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25910#20837#37329#39069
+                      Title.Caption = #25910#20837#37329#39069
                       Width = 130
                     end
                     item
@@ -461,7 +461,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25903#20986#37329#39069
+                      Title.Caption = #25903#20986#37329#39069
                       Width = 130
                     end>
                 end
@@ -471,7 +471,7 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #25910#25903#31185#30446#20854#20182#25910#25903#27719#24635#34920
+          Caption = #31185#30446#25910#25903#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -819,7 +819,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25910#20837#37329#39069
+                      Title.Caption = #25910#20837#37329#39069
                       Width = 130
                     end
                     item
@@ -829,7 +829,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20854#20182#25903#20986#37329#39069
+                      Title.Caption = #25903#20986#37329#39069
                       Width = 130
                     end>
                 end
@@ -839,7 +839,7 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #20854#20182#25910#25903#26126#32454#34920
+          Caption = #25910#25903#26126#32454#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -862,7 +862,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 82
+                Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -899,25 +899,41 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object Label4: TLabel
                   Left = 287
-                  Top = 37
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #25903#20184#26041#24335
                 end
                 object Label6: TLabel
                   Left = 287
-                  Top = 17
+                  Top = 14
                   Width = 48
                   Height = 12
                   Caption = #36134#25143#21517#31216
                 end
                 object Label7: TLabel
                   Left = 287
-                  Top = 58
+                  Top = 79
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #32463' '#25163' '#20154
+                end
+                object Label13: TLabel
+                  Left = 25
+                  Top = 79
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #24448#26469#21333#20301
+                end
+                object Label14: TLabel
+                  Left = 287
+                  Top = 35
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #25910#25903#31185#30446
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -936,9 +952,9 @@ inherited frmIORODayReport: TfrmIORODayReport
                   TabOrder = 1
                 end
                 object RzBitBtn3: TRzBitBtn
-                  Left = 491
-                  Top = 41
-                  Width = 67
+                  Left = 472
+                  Top = 63
+                  Width = 79
                   Height = 32
                   Action = actFind
                   Caption = #26597#35810
@@ -1059,8 +1075,8 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_PAYM_ID: TzrComboBoxList
                   Left = 340
-                  Top = 32
-                  Width = 139
+                  Top = 54
+                  Width = 110
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1102,7 +1118,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object fndP4_ACCOUNT_ID: TzrComboBoxList
                   Left = 340
                   Top = 10
-                  Width = 139
+                  Width = 110
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1136,8 +1152,8 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_USER_ID: TzrComboBoxList
                   Left = 340
-                  Top = 54
-                  Width = 139
+                  Top = 76
+                  Width = 110
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1175,12 +1191,117 @@ inherited frmIORODayReport: TfrmIORODayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP4_CLIENT_ID: TzrComboBoxList
+                  Left = 80
+                  Top = 76
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 9
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE'
+                  KeyField = 'CLIENT_ID'
+                  ListField = 'CLIENT_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_CODE'
+                      Footers = <>
+                      Title.Caption = #23458#25143#21495
+                      Width = 60
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_NAME'
+                      Footers = <>
+                      Title.Caption = #23458#25143#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'LINKMAN'
+                      Footers = <>
+                      Title.Caption = #32852#31995#20154
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'TELEPHONE2'
+                      Footers = <>
+                      Title.Caption = #32852#31995#30005#35805
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'LICENSE_CODE'
+                      Footers = <>
+                      Title.Caption = #35777#20214#21495
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'ADDRESS'
+                      Footers = <>
+                      Title.Caption = #22320#22336
+                      Width = 150
+                    end>
+                  DropWidth = 314
+                  DropHeight = 281
+                  ShowTitle = True
+                  AutoFitColWidth = False
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP4_ITEM_ID: TzrComboBoxList
+                  Left = 340
+                  Top = 32
+                  Width = 110
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 10
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'CODE_NAME;CODE_ID;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #31185#30446#21517#31216
+                      Width = 140
+                    end>
+                  DropWidth = 142
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 103
                 Width = 787
-                Height = 413
+                Height = 392
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1189,7 +1310,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 409
+                  Height = 388
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsadoReport4
@@ -1201,8 +1322,8 @@ inherited frmIORODayReport: TfrmIORODayReport
                   FooterFont.Name = #23435#20307
                   FooterFont.Style = []
                   FooterRowCount = 1
-                  FrozenCols = 5
-                  Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                  FrozenCols = 2
+                  Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                   ReadOnly = True
                   RowHeight = 20
@@ -1219,7 +1340,6 @@ inherited frmIORODayReport: TfrmIORODayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh1DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
@@ -1246,14 +1366,14 @@ inherited frmIORODayReport: TfrmIORODayReport
                       FieldName = 'IORO_TYPE'
                       Footers = <>
                       Title.Caption = #21333#25454#31867#22411
-                      Width = 53
+                      Width = 33
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 89
+                      Width = 83
                     end
                     item
                       EditButtons = <>
@@ -1267,21 +1387,14 @@ inherited frmIORODayReport: TfrmIORODayReport
                       FieldName = 'ITEM_ID_TEXT'
                       Footers = <>
                       Title.Caption = #31185#30446#21517#31216
-                      Width = 83
+                      Width = 88
                     end
                     item
                       EditButtons = <>
                       FieldName = 'ACCOUNT_ID_TEXT'
                       Footers = <>
                       Title.Caption = #36134#25143#21517#31216
-                      Width = 117
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PAYM_ID_TEXT'
-                      Footers = <>
-                      Title.Caption = #25903#20184#26041#24335
-                      Width = 70
+                      Width = 118
                     end
                     item
                       Alignment = taRightJustify
@@ -1292,7 +1405,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #37329#39069
-                      Width = 76
+                      Width = 66
                     end
                     item
                       EditButtons = <>
@@ -1300,6 +1413,13 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footers = <>
                       Title.Caption = #25688#35201
                       Width = 139
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'PAYM_ID_TEXT'
+                      Footers = <>
+                      Title.Caption = #25903#20184#26041#24335
+                      Width = 54
                     end
                     item
                       EditButtons = <>
@@ -1313,7 +1433,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       FieldName = 'IORO_USER_TEXT'
                       Footers = <>
                       Title.Caption = #32463#21150#20154
-                      Width = 69
+                      Width = 46
                     end
                     item
                       EditButtons = <>
@@ -1328,7 +1448,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       FieldName = 'CHK_USER_TEXT'
                       Footers = <>
                       Title.Caption = #23457#26680#20154
-                      Width = 75
+                      Width = 49
                     end
                     item
                       EditButtons = <>
@@ -1342,7 +1462,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
                       Title.Caption = #21046#21333#20154
-                      Width = 56
+                      Width = 44
                     end
                     item
                       EditButtons = <>
@@ -1350,13 +1470,6 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Footers = <>
                       Title.Caption = #21046#21333#26085#26399
                       Width = 118
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'IORO_INFO'
-                      Footers = <>
-                      Title.Caption = #25688#35201
-                      Width = 107
                     end
                     item
                       EditButtons = <>

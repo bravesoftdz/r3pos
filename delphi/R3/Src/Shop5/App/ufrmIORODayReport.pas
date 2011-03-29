@@ -83,6 +83,10 @@ type
     fndP3_SortType: TcxComboBox;
     LblSortName: TLabel;
     fndP3_SORT_NAME: TzrComboBoxList;
+    Label13: TLabel;
+    fndP4_CLIENT_ID: TzrComboBoxList;
+    Label14: TLabel;
+    fndP4_ITEM_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -107,6 +111,7 @@ type
       State: TGridDrawState; var Text: String);
     procedure fndP3_SortTypePropertiesChange(Sender: TObject);
   private
+    PUB_CLient: TZQuery;
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
     //计算日台账:
     procedure CheckCalc(EndDate: integer); //开始月份| 结束月份
@@ -119,11 +124,12 @@ type
     //按商品收款汇总表
     function GetGodsSQL(chk:boolean=true): string;
 
-    //输入查询条件最大值日期，返回台帐表的最大结帐日期
-    function GetRckMaxDate(EndDate: integer): Integer;
     function GetShopIDCnd(ShopID: TzrComboBoxList; FieldName: string): string; //返回门店查询条件
     function GetDateCnd(BegDate,EndDate: TcxDateEdit; FieldName: string): string;  //时间条件
     function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
+
+    //设置往来客户
+    procedure SetFndP4_ClientID_DataSet;
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
@@ -156,6 +162,13 @@ begin
 
   SetRzPageActivePage; //设置PzPage.Activepage
 
+  //设置供应商+客户: DataSet
+  PUB_CLient:=TZQuery.Create(self);
+  fndP4_CLIENT_ID.DataSet:=PUB_CLient;
+  SetFndP4_ClientID_DataSet; //取数据
+
+  //设置关联的数据集:  
+  fndP4_ITEM_ID.DataSet:= Global.GeTZQueryFromName('ACC_ITEM_INFO');
   fndP4_ACCOUNT_ID.DataSet := Global.GeTZQueryFromName('ACC_ACCOUNT_INFO');
   fndP4_PAYM_ID.DataSet := Global.GetZQueryFromName('PUB_PAYMENT');
   fndP4_USER_ID.DataSet:= Global.GeTZQueryFromName('CA_USERS');
@@ -287,22 +300,22 @@ begin
    0:  //按收支科目:
     begin
       strSql:=
-        'select C.CODE_NAME as SORT_NAME,sum(IN_MONEY) as IN_MONEY,sum(OUT_MONEY) as OUT_MONEY from '+
+        'select jb.ITEM_ID as SORT_ID,C.CODE_NAME as SORT_NAME,sum(IN_MONEY) as IN_MONEY,sum(OUT_MONEY) as OUT_MONEY from '+
         '(select A.TENANT_ID as TENANT_ID,ITEM_ID,IN_MONEY,OUT_MONEY '+
         ' from VIW_IORODATA A,CA_SHOP_INFO B '+
         ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+strWhere+')jb '+
         ' left outer join VIW_ITEM_INFO C on jb.TENANT_ID=C.TENANT_ID and jb.ITEM_ID=C.CODE_ID '+
-        ' group by C.CODE_NAME ';
+        ' group by C.CODE_NAME,jb.ITEM_ID ';
     end;
    1:  //按账户名称:
     begin
       strSql:=
-        'select C.ACCT_NAME as SORT_NAME,sum(IN_MONEY) as IN_MONEY,sum(OUT_MONEY) as OUT_MONEY from '+
+        'select jb.ACCOUNT_ID as SORT_ID,C.ACCT_NAME as SORT_NAME,sum(IN_MONEY) as IN_MONEY,sum(OUT_MONEY) as OUT_MONEY from '+
         '(select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID,A.ACCOUNT_ID as ACCOUNT_ID,IN_MONEY,OUT_MONEY '+
         ' from VIW_IORODATA A,CA_SHOP_INFO B '+
         ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+strWhere+')jb '+
         ' left outer join VIW_ACCOUNT_INFO C on jb.TENANT_ID=C.TENANT_ID and jb.SHOP_ID=C.SHOP_ID and jb.ACCOUNT_ID=C.ACCOUNT_ID '+   
-        ' group by C.ACCT_NAME ';
+        ' group by C.ACCT_NAME,jb.ACCOUNT_ID ';
     end;
   end;
   Result := ParseSQL(Factor.iDbType,strSql);
@@ -323,10 +336,30 @@ begin
   //门店群主及时门店名称条件
   strWhere:=strWhere+' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'');
 
+  //往来客户:
+  if trim(fndP4_CLIENT_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.CLIENT_ID='''+trim(fndP4_CLIENT_ID.AsString)+''' ';
+
+  //帐户名称:
+  if trim(self.fndP4_ACCOUNT_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.ACCOUNT_ID='''+trim(fndP4_ACCOUNT_ID.AsString)+''' ';
+
+  //收支科目:
+  if trim(self.fndP4_ITEM_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.ITEM_ID='''+trim(fndP4_ITEM_ID.AsString)+''' ';
+
+  //收支方式:
+  if trim(fndP4_PAYM_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.PAYM_ID='''+trim(fndP4_PAYM_ID.AsString)+''' ';
+
+  //经手人:
+  if trim(fndP4_USER_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.IROR_USER='''+trim(fndP4_USER_ID.AsString)+''' ';
+
   //供应商+客户+企业资料
   case Factor.iDbType of
-   0,5: CLIENT_Tab:=' select TENANT_ID,cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
-   4:   CLIENT_Tab:=' select TENANT_ID,trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
+   0,5: CLIENT_Tab:='select TENANT_ID,cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
+   4:   CLIENT_Tab:='select TENANT_ID,trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
   end;
   CLIENT_Tab:=
      ' select TENANT_ID,CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO '+  //供应商表
@@ -420,6 +453,19 @@ begin
   fndP4_SHOP_VALUE.Text:=fndP3_SHOP_VALUE.Text;
   fndP4_SHOP_ID.KeyValue:=fndP3_SHOP_ID.KeyValue;
   fndP4_SHOP_ID.Text:=fndP3_SHOP_ID.Text;
+  case fndP3_SortType.ItemIndex of
+   0:
+    begin
+      fndP4_ITEM_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      fndP4_ITEM_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
+    end;
+   1:
+    begin
+      fndP4_ACCOUNT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+      fndP4_ACCOUNT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
+    end;
+  end;
+  
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -538,26 +584,6 @@ begin
   end;
 end;
 
-
-function TfrmIORODayReport.GetRckMaxDate(EndDate: integer): integer;
-var
-  rs:TZQuery;
-begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select max(CREA_DATE) as CREA_DATE from RCK_ACCT_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE ';
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('CREA_DATE').AsInteger := EndDate;
-    Factor.Open(rs);
-    if rs.Fields[0].AsString='' then
-      result := EndDate
-    else
-      result := rs.Fields[0].AsInteger;
-  finally
-    rs.Free;
-  end;
-end;
-
 procedure TfrmIORODayReport.CheckCalc(EndDate: integer);
 var
   rs:TZQuery;
@@ -630,6 +656,8 @@ begin
       fndP3_SORT_NAME.KeyField:='ACCOUNT_ID';
       fndP3_SORT_NAME.ListField:='ACCT_NAME';
       fndP3_SORT_NAME.FilterFields:='ACCOUNT_ID;ACCT_NAME;ACCT_SPELL';
+      //分页Title
+      TabSheet3.Caption:='科目收支汇总表';
     end;
    1:
     begin
@@ -637,6 +665,8 @@ begin
       fndP3_SORT_NAME.KeyField:='CODE_ID';
       fndP3_SORT_NAME.ListField:='CODE_NAME';
       fndP3_SORT_NAME.FilterFields:='CODE_NAME;CODE_ID;CODE_SPELL';
+      //分页Title
+      TabSheet3.Caption:='账户收支汇总表';
     end;
   end;
   fndP3_SORT_NAME.Columns[0].FieldName:=fndP3_SORT_NAME.ListField;
@@ -644,15 +674,32 @@ begin
     fndP3_SORT_NAME.Columns[1].FieldName:=fndP3_SORT_NAME.KeyField;
   case fndP3_SortType.ItemIndex of
    0: fndP3_SORT_NAME.DataSet:=Global.GeTZQueryFromName('ACC_ACCOUNT_INFO');
-   1: fndP3_SORT_NAME.DataSet:=Global.GeTZQueryFromName('ACC_ITEM_INFO');   
+   1: fndP3_SORT_NAME.DataSet:=Global.GeTZQueryFromName('ACC_ITEM_INFO');
   end;
   SetCol:=FindColumn(DBGridEh3, 'SORT_NAME');
   if SetCol<>nil then
   begin
     SetCol.Title.Caption:=trim(fndP3_SortType.Text);
   end;
-  //分页Title
-  TabSheet3.Caption:=trim(fndP3_SortType.Text)+'其他收支汇总表';
+end;
+
+procedure TfrmIORODayReport.SetFndP4_ClientID_DataSet;
+var
+  Sql: string;
+begin
+  //供应商+客户+企业资料
+  case Factor.iDbType of
+   0,5: Sql:=' select TENANT_ID,LOGIN_NAME as CLIENT_CODE,cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME,LICENSE_CODE,TENANT_SPELL as CLIENT_SPELL,TELEPHONE from CA_TENANT ';
+   4:   Sql:=' select TENANT_ID,LOGIN_NAME as CLIENT_CODE,trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME,LICENSE_CODE,TENANT_SPELL as CLIENT_SPELL,TELEPHONE from CA_TENANT ';
+  end;
+  Sql:=
+    ' select TENANT_ID,CLIENT_CODE,CLIENT_ID,CLIENT_NAME,LICENSE_CODE,CLIENT_SPELL,TELEPHONE2 as TELEPHONE from PUB_CLIENTINFO '+  //供应商表
+    ' union all select TENANT_ID,CUST_CODE as CLIENT_CODE,CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME,''  '' as LICENSE_CODE,CUST_SPELL as CLIENT_SPELL,MOVE_TELE as TELEPHONE from PUB_CUSTOMER '+  //客户表
+    ' union all '+Sql+' ';  //企业表
+  //打开数据集
+  PUB_CLient.Close;
+  PUB_CLient.SQL.Text:=Sql;
+  Factor.Open(PUB_CLient);
 end;
 
 end.

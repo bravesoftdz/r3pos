@@ -618,7 +618,7 @@ begin
   if DbGrid.DataSource=nil then Exit;
   if DBGrid.DataSource.DataSet = nil then Exit;
   if DBGrid.DataSource.DataSet.IsEmpty then Exit;
-  if TfrmBasic(Current).CheckCanExport then Raise Exception.Create('你没有此模块的导入权限，请和管理员联系。'); 
+  if TfrmBasic(Current).CheckCanExport then Raise Exception.Create('你没有此模块的导出权限，请和管理员联系。'); 
   SaveDialog := TSaveDialog.Create(Current);
   try
     SaveDialog.DefaultExt := '*.xls';

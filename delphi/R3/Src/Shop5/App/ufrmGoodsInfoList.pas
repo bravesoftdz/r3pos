@@ -50,6 +50,7 @@ type
     N9: TMenuItem;
     N10: TMenuItem;
     PrintDBGridEh1: TPrintDBGridEh;
+    edtProperty: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -108,7 +109,7 @@ type
 implementation
 
 uses
-  uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil,
+  uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint,
   uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort,
   ufrmGoodssortTree, ObjCommon;
    
@@ -753,89 +754,90 @@ end;
 procedure TfrmGoodsInfoList.PrintBarcode;
 procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
 function PubGetBarCode:string;
-var rs: TZQuery;
+var rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select BARCODE from PUB_BARCODE where GODS_ID='''+ID+''' and PROPERTY_01='''+P1+''' and PROPERTY_02='''+P2+''' and BATCH_NO=''#''';
-    Factor.Open(rs);
-    result := rs.Fields[0].AsString;
-  finally
-    rs.Free;
-  end;
+  rs := Global.GetZQueryFromName('PUB_BARCODE');
+  if rs.Locate('GODS_ID,PROPERTY_01,PROPERTY_02',VarArrayOf([ID,P1,P2]),[]) then
+    Result := rs.FieldbyName('BARCODE').AsString
+  else
+    Result := '';
+
 end;
 var
-  rs: TZQuery;
+  rs:TZQuery;
 begin
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if rs.Locate('GODS_ID',ID,[]) then
   begin
     DataSet.Append;
     DataSet.FieldByName('A').AsBoolean := true;
-    DataSet.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;;
-    //DataSet.FieldByName('BCODE').AsString := rs.FieldByName('BCODE').AsString;
+    DataSet.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
     DataSet.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
     DataSet.FieldByName('GODS_CODE').AsString := rs.FieldByName('GODS_CODE').AsString;;
     DataSet.FieldByName('NEW_OUTPRICE').AsString := rs.FieldByName('NEW_OUTPRICE').AsString;
-    DataSet.FieldByName('NEW_CUSTPRICE').AsString := rs.FieldByName('NEW_CUSTPRICE').AsString;
+    DataSet.FieldByName('NEW_OUTPRICE1').AsString := rs.FieldByName('NEW_OUTPRICE1').AsString;
+    DataSet.FieldByName('NEW_OUTPRICE2').AsString := rs.FieldByName('NEW_OUTPRICE2').AsString;
+    DataSet.FieldByName('NEW_LOWPRICE').AsString := rs.FieldByName('NEW_LOWPRICE').AsString;
+
     DataSet.FieldByName('PROPERTY_01').AsString := P1;
     DataSet.FieldByName('PROPERTY_02').AsString := P2;
-    //
-    DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
-    if (DataSet.FieldByName('BARCODE').AsString='') or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString) then
-       DataSet.FieldByName('BARCODE').AsString := GetBarCode(rs.FieldByName('GODS_CODE').AsString,P1,P2);
+    if (p1='#') and (p2='#') then
+      DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString
+    else
+      DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
+
+    {if (DataSet.FieldByName('BARCODE').AsString='') then  // or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString)
+       DataSet.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;}
     DataSet.FieldByName('AMOUNT').AsInteger := amt;
     DataSet.Post;
   end;
 end;
 var amt,i,RecNo:integer;
+
 begin
   inherited;
+
+  RecNo := cdsBrowser.RecNo;
   cdsBrowser.DisableControls;
   try
-    // cdsBrowser.MergeChangeLog;
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter := 'selFlag=1';
-    cdsBrowser.Filtered := true;
-    if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要打印条码的商品...');
-    { with TfrmBarCodePrint.Create(self) do
-      begin
-        try
-          adoPrint.Close;
-          adoPrint.CreateDataSet;
-          cdsBrowser.First;
-          while not cdsBrowser.Eof do
-            begin
-              if PropertyEnabled then
-                 begin
-                   GetProperty;
-                   edtProperty1.First;
-                   while not edtProperty1.Eof do
+  with TfrmBarCodePrint.Create(self) do
+    begin
+      try
+        adoPrint.Close;
+        adoPrint.CreateDataSet;
+        cdsBrowser.First;
+        while not cdsBrowser.Eof do
+          begin
+            if PropertyEnabled then
+               begin
+                 GetProperty;
+                 edtProperty1.First;
+                 while not edtProperty1.Eof do
+                    begin
+                      while not edtProperty2.Eof do
                       begin
-                        while not edtProperty2.Eof do
-                        begin
-                          AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,edtProperty1.FieldbyName('CODE_ID').AsString,edtProperty2.FieldbyName('CODE_ID').AsString,1);
-                          edtProperty2.Next;
-                        end;
-                        edtProperty1.Next;
+                        AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,edtProperty1.FieldbyName('CODE_ID').AsString,edtProperty2.FieldbyName('CODE_ID').AsString,1);
+                        edtProperty2.Next;
                       end;
-                 end
-              else
-                 begin
-                   AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,'#','#',1);
-                 end;
-              cdsBrowser.Next;
-            end;
-          ShowModal;
-        finally
-          free;
-        end;
+                      edtProperty1.Next;
+                    end;
+               end
+            else
+               begin
+                 AddTo(adoPrint,cdsBrowser.FieldbyName('GODS_ID').AsString,'#','#',1);
+               end;
+            cdsBrowser.Next;
+          end;
+        ShowModal;
+      finally
+        free;
       end;
-    }
+    end;
   finally
-    cdsBrowser.Filtered:=False;
+    if RecNo>0 then cdsBrowser.RecNo := RecNo;
     cdsBrowser.EnableControls;
   end;
+
 end;
 
 function TfrmGoodsInfoList.PropertyEnabled: boolean;

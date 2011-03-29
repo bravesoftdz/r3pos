@@ -515,7 +515,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
     end
     object N7: TMenuItem
       Action = actPrintBarCode
-      Visible = False
     end
     object N4: TMenuItem
       Caption = #26174#31034#25152#26377
@@ -613,5 +612,73 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
+  end
+  object edtProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 392
+    Top = 256
   end
 end

@@ -149,6 +149,8 @@ type
   end;
   TSyncStkIndentData=class(TSyncSingleTable)
   public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -171,12 +173,55 @@ type
   end;
   TSyncSalIndentData=class(TSyncSingleTable)
   public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
+  //10 synFlag
+  TSyncAccountInfo=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  //11 synFlag
+  TSyncIoroOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncIoroOrder=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncIoroData=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  //12 synFlag
+  TSyncTransOrder=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -814,10 +859,14 @@ begin
             begin
               if CheckUnique(E.Message) then
                  begin
-                   UpdateIntegralInfo;
-                   UpdateAbleInfo;
-                   FillParams(UpdateQuery);
-                   AGlobal.ExecQuery(UpdateQuery);
+                   if UpdateIntegralInfo then
+                      begin
+                        UpdateAbleInfo;
+                        FillParams(UpdateQuery);
+                        AGlobal.ExecQuery(UpdateQuery);
+                      end
+                   else
+                      Raise;
                  end
               else
                  Raise;
@@ -1176,53 +1225,15 @@ end;
 { TSyncStkIndentData }
 
 function TSyncStkIndentData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var
-  r:integer;
-  WasNull:boolean;
-  Comm:string;
 begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTDATA';
+       MaxCol := RowAccessor.ColumnCount-1;
      end;
   InitSQL(AGlobal);
-  Comm := RowAccessor.GetString(COMMIdx,WasNull);
-  if Comm='00' then
-     begin
-       try
-         FillParams(InsertQuery);
-         AGlobal.ExecQuery(InsertQuery);
-       except
-         on E:Exception do
-            begin
-              if CheckUnique(E.Message) then
-                 begin
-                   FillParams(UpdateQuery);
-                   AGlobal.ExecQuery(UpdateQuery);
-                 end
-              else
-                 Raise;
-            end;
-       end;
-     end
-  else
-     begin
-       FillParams(UpdateQuery);
-       r := AGlobal.ExecQuery(UpdateQuery);
-       if r=0 then
-          begin
-            try
-              FillParams(InsertQuery);
-              AGlobal.ExecQuery(InsertQuery);
-            except
-               on E:Exception do
-                  begin
-                    if not CheckUnique(E.Message) then
-                       Raise;
-                  end;
-            end;
-          end;
-     end;
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
 end;
 
 function TSyncStkIndentData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
@@ -1231,6 +1242,11 @@ var
 begin
   Str := 'select a.* from STK_INDENTDATA a where a.TENANT_ID=:TENANT_ID and a.INDE_ID=:INDE_ID';
   SelectSQL.Text := Str;
+end;
+
+function TSyncStkIndentData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from STK_INDENTDATA where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID',Params);
 end;
 
 { TSyncStockOrderList }
@@ -1407,6 +1423,71 @@ end;
 { TSyncSalIndentData }
 
 function TSyncSalIndentData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_INDENTDATA';
+       MaxCol := RowAccessor.ColumnCount-1;
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncSalIndentData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select a.* from SAL_INDENTDATA a where a.TENANT_ID=:TENANT_ID and a.INDE_ID=:INDE_ID';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncSalIndentData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from SAL_INDENTDATA where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID',Params);
+end;
+
+{ TSyncAccountInfo }
+
+function TSyncAccountInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,COMM,TIME_STAMP from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncIoroOrderList }
+
+function TSyncIoroOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncIoroOrder }
+
+function TSyncIoroOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and IORO_ID=:IORO_ID'),self);
+end;
+
+function TSyncIoroOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   r:integer;
   WasNull:boolean;
@@ -1414,7 +1495,7 @@ var
 begin
   if not Init then
      begin
-       Params.ParamByName('TABLE_NAME').AsString := 'SAL_INDENTDATA';
+       Params.ParamByName('TABLE_NAME').AsString := 'ACC_IOROORDER';
      end;
   InitSQL(AGlobal);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
@@ -1456,11 +1537,209 @@ begin
      end;
 end;
 
-function TSyncSalIndentData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+function TSyncIoroOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select a.* from SAL_INDENTDATA a where a.TENANT_ID=:TENANT_ID and a.INDE_ID=:INDE_ID';
+  Str := 'select * from ACC_IOROORDER where TENANT_ID=:TENANT_ID and IORO_ID=:IORO_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncIoroData }
+
+function TSyncIoroData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAccountInfo;
+begin
+  case FieldbyName('IORO_TYPE').AsInteger of
+  1:
+  AGlobal.ExecSQL(
+        ParseSQL(AGlobal.iDbType,
+        'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)+:IORO_MNY,BALANCE=isnull(BALANCE,0)+:IORO_MNY,'
+      + 'COMM=' + GetCommStr(iDbType) + ','
+      + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+      + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),self);
+  2:
+  AGlobal.ExecSQL(
+        ParseSQL(AGlobal.iDbType,
+        'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)+:IORO_MNY,BALANCE=isnull(BALANCE,0)-:IORO_MNY,'
+      + 'COMM=' + GetCommStr(iDbType) + ','
+      + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+      + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),self);
+  end;
+end;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'ACC_IORODATA';
+       MaxCol := RowAccessor.ColumnCount - 1;
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+  InsertAccountInfo;
+end;
+
+function TSyncIoroData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+       'select a.*,b.IORO_TYPE '+
+       'from ACC_IORODATA a,b.ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncIoroData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
+  ftParams:TftParamList;
+begin
+  rs := TZQuery.Create(nil);
+  ftParams := TftParamList.Create(nil);
+  try
+    rs.SQL.Text :=
+       'select a.TENANT_ID,a.ACCOUNT_ID,a.IORO_MNY,b.IORO_TYPE '+
+       'from ACC_IORODATA a,b.ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
+    rs.Params.AssignValues(Params); 
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        ftParams.ParamByName('TENANT_ID').AsInteger := rs.FieldbyName('TENANT_ID').AsInteger;
+        ftParams.ParamByName('ACCOUNT_ID').AsString := rs.FieldbyName('ACCOUNT_ID').AsString;
+        ftParams.ParamByName('IORO_MNY').AsFloat    := rs.FieldbyName('IORO_MNY').AsFloat;
+        case rs.FieldbyName('IORO_TYPE').AsInteger of
+        1:
+        AGlobal.ExecSQL(
+              ParseSQL(AGlobal.iDbType,
+              'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)-:IORO_MNY,BALANCE=isnull(BALANCE,0)-:IORO_MNY,'
+            + 'COMM=' + GetCommStr(iDbType) + ','
+            + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+            + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),ftParams);
+        2:
+        AGlobal.ExecSQL(
+              ParseSQL(AGlobal.iDbType,
+              'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)-:IORO_MNY,BALANCE=isnull(BALANCE,0)+:IORO_MNY,'
+            + 'COMM=' + GetCommStr(iDbType) + ','
+            + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+            + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),ftParams);
+        end;
+        rs.Next;
+      end;
+    AGlobal.ExecSQL('delete from ACC_IORODATA where TENANT_ID=:TENANT_ID and IORO_ID=:IORO_ID',Params);
+  finally
+    ftParams.Free;
+    rs.Free;
+  end;
+end;
+
+{ TSyncTransOrder}
+
+function TSyncTransOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and IORO_ID=:IORO_ID'),self);
+end;
+
+function TSyncTransOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAccountInfo;
+var Str:string;
+begin
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+
+end;
+function UpdateAccountInfo:boolean;
+var Str:string;
+begin
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+
+end;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'ACC_TRANSORDER';
+     end;
+  InitSQL(AGlobal);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if Comm='00' then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+         InsertAccountInfo;
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   if UpdateAccountInfo then
+                   begin
+                     FillParams(UpdateQuery);
+                     AGlobal.ExecQuery(UpdateQuery);
+                   end
+                   else
+                     Raise;
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       if UpdateAccountInfo then
+       begin
+         FillParams(UpdateQuery);
+         r := AGlobal.ExecQuery(UpdateQuery);
+       end
+       else
+         r := 0;
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+              InsertAccountInfo;
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncTransOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
   SelectSQL.Text := Str;
 end;
 
@@ -1485,6 +1764,11 @@ initialization
   RegisterClass(TSyncSalIndentOrderList);
   RegisterClass(TSyncSalIndentOrder);
   RegisterClass(TSyncSalIndentData);
+  RegisterClass(TSyncAccountInfo);
+  RegisterClass(TSyncIoroOrderList);
+  RegisterClass(TSyncIoroOrder);
+  RegisterClass(TSyncIoroData);
+  RegisterClass(TSyncTransOrder);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
@@ -1506,4 +1790,9 @@ finalization
   UnRegisterClass(TSyncSalIndentOrderList);
   UnRegisterClass(TSyncSalIndentOrder);
   UnRegisterClass(TSyncSalIndentData);
+  UnRegisterClass(TSyncAccountInfo);
+  UnRegisterClass(TSyncIoroOrderList);
+  UnRegisterClass(TSyncIoroOrder);
+  UnRegisterClass(TSyncIoroData);
+  UnRegisterClass(TSyncTransOrder);
 end.

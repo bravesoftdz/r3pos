@@ -111,6 +111,7 @@ end;
 
 function TAddToRelation.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
+  AGlobal.ExecSQL('delete from PUB_GOODS_RELATION where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and RELATION_ID=:RELATION_ID',self);
   AGlobal.ExecSQL('insert into PUB_GOODS_RELATION(ROWS_ID,TENANT_ID,RELATION_ID,GODS_ID,COMM,TIME_STAMP) values('''+newid(Params.ParambyName('SHOP_ID').asString)+''',:TENANT_ID,:RELATION_ID,:GODS_ID,''00'','+GetTimeStamp(AGlobal.iDbType)+')',self);
 end;
 

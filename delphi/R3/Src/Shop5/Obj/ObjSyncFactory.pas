@@ -14,7 +14,7 @@ type
     FMaxCol: integer;
     procedure SetMaxCol(const Value: integer);
   protected
-    procedure InitSQL(AGlobal: IdbHelp);virtual;
+    procedure InitSQL(AGlobal: IdbHelp;TimeStamp:boolean=true);virtual;
     function GetRowAccessor: TZRowAccessor;
     procedure FillParams(ZQuery: TZQuery);virtual;
   public
@@ -387,7 +387,7 @@ begin
   UpdateQuery := nil;
 end;
 
-procedure TSyncSingleTable.InitSQL(AGlobal: IdbHelp);
+procedure TSyncSingleTable.InitSQL(AGlobal: IdbHelp;TimeStamp:boolean=true);
 var
   i:integer;
   InsertFld,UpdateFld,ValueFld,WhereStr:string;
@@ -424,7 +424,12 @@ begin
   InsertQuery := TZQuery.Create(nil);
   InsertQuery.SQL.Text := 'insert into '+Params.ParambyName('TABLE_NAME').AsString+'('+InsertFld+') values('+ValueFld+')';
   UpdateQuery := TZQuery.Create(nil);
-  UpdateQuery.SQL.Text := 'update '+Params.ParambyName('TABLE_NAME').AsString+' set '+UpdateFld+' where '+WhereStr+' and TIME_STAMP<=:TIME_STAMP';
+  if TimeStamp then
+     begin
+       if WhereStr<>'' then WhereStr :=WhereStr+' and ';
+       WhereStr :=WhereStr+'TIME_STAMP<=:TIME_STAMP';
+     end;
+  UpdateQuery.SQL.Text := 'update '+Params.ParambyName('TABLE_NAME').AsString+' set '+UpdateFld+' where '+WhereStr;
 
   Init := true;
 end;
@@ -598,7 +603,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_STOCKORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -845,7 +850,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'SAL_SALESORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -994,7 +999,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STO_CHANGEORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -1170,7 +1175,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -1368,7 +1373,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -1497,7 +1502,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'ACC_IOROORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin
@@ -1679,7 +1684,7 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'ACC_TRANSORDER';
      end;
-  InitSQL(AGlobal);
+  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if Comm='00' then
      begin

@@ -434,21 +434,12 @@ begin
 end;
 
 procedure TfrmRelation.actNewExecute(Sender: TObject);
-var List:TList;
 begin
-  inherited;
-  if not ShopGlobal.GetChkRight('32700001',2) then Raise Exception.Create('你没有申请'+Caption+'的权限,请和管理员联系.');  
-  List := TList.Create;
-  try
-  CaFactory.queryServiceLines(Global.TENANT_ID,List);
-  finally
-    List.Free;
-  end;
-//  if TfrmJoinRelation.AddDialog(Self) then
-//     begin
-//       Prepare;
-//       LoadTree;
-//     end;
+  if TfrmJoinRelation.AddDialog(Self) then
+     begin
+       Prepare;
+       LoadTree;
+     end;
 end;
 
 procedure TfrmRelation.actEditExecute(Sender: TObject);

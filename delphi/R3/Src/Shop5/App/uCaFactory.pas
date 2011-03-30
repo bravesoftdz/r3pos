@@ -57,6 +57,32 @@ type
     REMARK:string;
   end;
 
+  PRelationInfo=^TRelationInfo;
+  TRelationInfo=record
+      //企业关系ID号
+    RELATIONS_ID:string;
+      //供应链ID号
+    RELATION_ID:integer;
+      //当前企业代码
+    TENANT_ID:integer;
+      //下级企业代码
+    RELATI_ID:integer;
+      //关系类型
+    RELATION_TYPE:string;
+      //结构树 000000 6位一级，最多支持5级 <在此不是一棵树，没有指企业供应链无法生成此代号>
+    LEVEL_ID:string;
+      //关系状态  1 申请 2 审核
+    RELATION_STATUS:string;
+      //创建日期
+    CREA_DATE:string;
+      //审核日期
+    CHK_DATE:string;
+      //通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+    COMM:string;
+      //更新时间 从2011-01-01开始的秒数  
+    TIME_STAMP:int64;
+  end;
+
   rsp = class(TSOAPHeader)
   private
     FencryptType: integer;
@@ -110,6 +136,9 @@ type
 
     function CreateServiceLine(var ServiceLine:TServiceLine):boolean;
     function queryServiceLines(tid:integer;List:TList):boolean;
+    function applyRelation(supTenantId,serviceLineId,subTenantId,relationType:integer):TRelationInfo;
+
+    function SyncAll:boolean;
 
     function CheckNetwork(addr:string=''):boolean;
     function coLogin(Account:string;PassWrd:string):TCaLogin;
@@ -312,6 +341,7 @@ var
   Node:IXMLDOMNode;
   code:string;
   h:rsp;
+  f:TIniFile;
 begin
   Audited := false;
   doc := CreateRspXML;
@@ -375,6 +405,12 @@ begin
               result.SRVR_PATH := GetNodeValue(caTenantLoginResp,'srvrPath');
               result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
               Audited := true;
+              f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+              try
+                f.WriteString('db','Connstr','connmode=2;hostname='+result.HOST_NAME+';port='+inttostr(result.SRVR_PORT)+';dbid='+inttostr(result.DB_ID));
+              finally
+                f.Free;
+              end;
             end;
        end
     else
@@ -900,11 +936,107 @@ begin
          line^.RELATION_SPELL := GetNodeValue(caServiceLineQueryResp,'serviceLineSpell');
          line^.REMARK := GetNodeValue(caServiceLineQueryResp,'remark');
          List.Add(line);
-         caServiceLineQueryResp := Node.nextSibling;
+         caServiceLineQueryResp := caServiceLineQueryResp.nextSibling;
        end;
   finally
     rio.Free;
   end;
+end;
+
+function TCaFactory.applyRelation(supTenantId, serviceLineId, subTenantId,
+  relationType: integer): TRelationInfo;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caRelationApplyResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  line:PServiceLine;
+  h:rsp;
+  i:integer;
+  code:string;
+begin
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('caRelationApplyReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('supTenantId');
+  Node.text := inttostr(supTenantId);
+  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
+
+  Node := doc.createElement('serviceLineId');
+  Node.text := inttostr(serviceLineId);
+  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
+
+  Node := doc.createElement('subTenantId');
+  Node.text := inttostr(subTenantId);
+  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
+
+  Node := doc.createElement('relationType');
+  Node.text := inttostr(relationType);
+  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio(10000);
+  try
+    h := SendHeader(rio,2);
+    try
+      try
+      doc := CreateXML(
+                   Decode(
+                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).applyRelation(Encode(inxml,sslpwd))
+                      ,sslpwd
+                   )
+             );
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+
+    GetHeader(rio).free;
+    CheckRecAck(doc);
+    caRelationApplyResp := FindNode(doc,'body\caRelationApplyResp');
+    code := GetNodeValue(caRelationApplyResp,'code');
+    if StrtoIntDef(code,0) in [1] then //注册成功
+       begin
+         result.RELATIONS_ID := GetNodeValue(caRelationApplyResp,'relationsId');
+         result.RELATION_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'serviceLineId'));
+         result.TENANT_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'supTenantId'));
+         result.RELATI_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'subTenantId'));
+         result.RELATION_TYPE := GetNodeValue(caRelationApplyResp,'relationType');
+         result.LEVEL_ID := GetNodeValue(caRelationApplyResp,'levelId');
+         result.RELATION_STATUS := GetNodeValue(caRelationApplyResp,'relationStatus');
+         result.CREA_DATE := GetNodeValue(caRelationApplyResp,'creaDate');
+         result.CHK_DATE := GetNodeValue(caRelationApplyResp,'chkDate');
+         result.COMM := GetNodeValue(caRelationApplyResp,'comm');
+         result.TIME_STAMP := StrtoInt(GetNodeValue(caRelationApplyResp,'timeStamp'));
+       end
+    else
+       Raise Exception.Create(GetNodeValue(caRelationApplyResp,'desc'));
+
+  finally
+    rio.Free;
+  end;
+end;
+
+function TCaFactory.SyncAll: boolean;
+begin
+
 end;
 
 { rsp }

@@ -1,18 +1,18 @@
 inherited frmJoinRelation: TfrmJoinRelation
-  Left = 568
-  Top = 220
+  Left = 425
+  Top = 200
   Caption = #30003#35831#20379#24212#38142
-  ClientHeight = 351
-  ClientWidth = 446
+  ClientHeight = 287
+  ClientWidth = 387
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 446
-    Height = 351
+    Width = 387
+    Height = 287
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Width = 436
-      Height = 301
+      Width = 377
+      Height = 237
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -22,36 +22,36 @@ inherited frmJoinRelation: TfrmJoinRelation
         Color = clWhite
         Caption = #20379#24212#38142#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 432
-          Height = 274
+          Width = 373
+          Height = 210
           BorderColor = clWhite
           Color = clWhite
           object RzPanel1: TRzPanel
             Left = 5
             Top = 5
-            Width = 422
-            Height = 44
+            Width = 363
+            Height = 36
             Align = alTop
             BorderOuter = fsBump
             Color = clWhite
             TabOrder = 0
             object Label8: TLabel
-              Left = 39
-              Top = 17
+              Left = 25
+              Top = 14
               Width = 72
               Height = 12
               Caption = #19978#32423#20225#19994#21495#65306
             end
             object edtKey: TcxTextEdit
-              Left = 113
-              Top = 13
-              Width = 196
+              Left = 99
+              Top = 10
+              Width = 128
               Height = 20
               TabOrder = 0
             end
             object btnFilter: TRzBitBtn
-              Left = 320
-              Top = 11
+              Left = 234
+              Top = 8
               Width = 59
               Height = 24
               Caption = #26597#25214'(&F5)'
@@ -60,14 +60,15 @@ inherited frmJoinRelation: TfrmJoinRelation
               HotTrack = True
               HotTrackColor = 3983359
               TabOrder = 1
+              OnClick = btnFilterClick
               NumGlyphs = 2
             end
           end
           object RzPanel3: TRzPanel
             Left = 5
-            Top = 49
-            Width = 422
-            Height = 220
+            Top = 41
+            Width = 363
+            Height = 164
             Align = alClient
             BorderOuter = fsBump
             Color = clWhite
@@ -75,8 +76,8 @@ inherited frmJoinRelation: TfrmJoinRelation
             object DBGridEh1: TDBGridEh
               Left = 2
               Top = 2
-              Width = 418
-              Height = 216
+              Width = 359
+              Height = 160
               Align = alClient
               DataSource = Ds_Telation
               Flat = True
@@ -88,6 +89,7 @@ inherited frmJoinRelation: TfrmJoinRelation
               FooterFont.Style = []
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+              ReadOnly = True
               RowHeight = 20
               TabOrder = 0
               TitleFont.Charset = GB2312_CHARSET
@@ -103,19 +105,11 @@ inherited frmJoinRelation: TfrmJoinRelation
               Columns = <
                 item
                   EditButtons = <>
-                  FieldName = 'TENANT_ID'
-                  Footers = <>
-                  Title.Alignment = taCenter
-                  Title.Caption = #20225#19994#32534#21495
-                  Width = 80
-                end
-                item
-                  EditButtons = <>
                   FieldName = 'RELATION_ID'
                   Footers = <>
                   Title.Alignment = taCenter
                   Title.Caption = #20379#24212#38142#32534#21495
-                  Width = 120
+                  Width = 66
                 end
                 item
                   EditButtons = <>
@@ -123,15 +117,15 @@ inherited frmJoinRelation: TfrmJoinRelation
                   Footers = <>
                   Title.Alignment = taCenter
                   Title.Caption = #20379#24212#38142#21517#31216
-                  Width = 120
+                  Width = 93
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'RELATION_SPELL'
+                  FieldName = 'REMARK'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Title.Caption = #25340#38899#30721
-                  Width = 80
+                  Title.Caption = #35828#26126
+                  Width = 173
                 end>
             end
           end
@@ -139,12 +133,12 @@ inherited frmJoinRelation: TfrmJoinRelation
       end
     end
     inherited btPanel: TRzPanel
-      Top = 306
-      Width = 436
+      Top = 242
+      Width = 377
       BorderColor = clWhite
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 267
+        Left = 208
         Top = 9
         Width = 67
         Height = 26
@@ -166,11 +160,12 @@ inherited frmJoinRelation: TfrmJoinRelation
         TabOrder = 0
         TextStyle = tsRaised
         ThemeAware = False
+        OnClick = btnOkClick
         NumGlyphs = 2
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 352
+        Left = 293
         Top = 9
         Width = 67
         Height = 26
@@ -199,23 +194,46 @@ inherited frmJoinRelation: TfrmJoinRelation
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 8
-    Top = 312
+    Left = 224
+    Top = 120
   end
   inherited actList: TActionList
-    Left = 48
-    Top = 312
+    Left = 264
+    Top = 120
   end
   object Cds_Relation: TZQuery
-    FieldDefs = <>
+    FieldDefs = <
+      item
+        Name = 'TENANT_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'RELATION_ID'
+        DataType = ftInteger
+      end
+      item
+        Name = 'RELATION_NAME'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'REMARK'
+        DataType = ftString
+        Size = 255
+      end
+      item
+        Name = 'RELATION_SPELL'
+        DataType = ftString
+        Size = 50
+      end>
     CachedUpdates = True
     Params = <>
-    Left = 85
-    Top = 314
+    Left = 301
+    Top = 122
   end
   object Ds_Telation: TDataSource
     DataSet = Cds_Relation
-    Left = 117
-    Top = 314
+    Left = 333
+    Top = 122
   end
 end

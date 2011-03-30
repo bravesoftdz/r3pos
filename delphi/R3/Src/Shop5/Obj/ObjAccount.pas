@@ -55,7 +55,7 @@ begin
     if FieldbyName('ORG_MNY').AsFloat<>0 then
        begin
          rs.Close;
-         rs.SQL.Text := 'select max(MONTH) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
+         rs.SQL.Text := 'select max(MONTH) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID ';
          rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
          AGlobal.Open(rs);
          if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录时期初金额只能是0...');
@@ -101,7 +101,7 @@ begin
          //if copy(rs.FieldbyName('COMM').AsString,1,1) = '1' then
          //   Raise Exception.Create('数据已经同步不能修改期初金额...');
          //rs.Close;
-         //rs.SQL.Text := 'select max(MONTH) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID ';
+         //rs.SQL.Text := 'select max(MONTH) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID ';
          //rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
          //AGlobal.Open(rs);
          //if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录不能修改期初金额...');

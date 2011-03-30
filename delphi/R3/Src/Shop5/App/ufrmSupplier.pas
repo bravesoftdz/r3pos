@@ -121,7 +121,7 @@ begin
       Cds_Client.Filtered := false;
       Cds_Client.Filter := 'selFlag=1';
       Cds_Client.Filtered := true;
-      if Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的会员...');
+      if Cds_Client.IsEmpty then Raise Exception.Create('请选择要删除的供应商...');
       Cds_Client.First;
       while not Cds_Client.Eof do
       begin

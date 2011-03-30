@@ -21,14 +21,15 @@ function TCodeInfo.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
     rs:TZQuery;
 begin
-  if FieldByName('CODE_TYPE').AsInteger in [5,6,9] then
+  if FieldByName('CODE_TYPE').AsInteger in [5,6,9,12] then
     begin
       rs := TZQuery.Create(nil);
       case FieldByName('CODE_TYPE').AsInteger of
         5:Str:='select CLIENT_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''2'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
         6:Str:='select CLIENT_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and SETTLE_CODE=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
         9:Str:='select CLIENT_ID from PUB_CLIENTINFO where COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' and SORT_ID=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
-      end;                 
+       12:Str:='select SHOP_ID from CA_SHOP_INFO where COMM not in (''02'',''12'') and SHOP_TYPE=:OLD_CODE_ID and TENANT_ID=:TENANT_ID ';
+     end;
       try
         rs.Close;
         rs.SQL.Text := Str;

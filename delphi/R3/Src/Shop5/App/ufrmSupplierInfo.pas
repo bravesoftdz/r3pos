@@ -313,7 +313,7 @@ begin
   if Saved and Assigned(OnSave) then OnSave(AObj);
   if Saved and Assigned(OnSave) and bl then //继续新增
   begin
-    if MessageBox(Handle,'是否继续新增单位?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+    if MessageBox(Handle,'是否继续新增供应商?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
     begin
       //保存继续新增前的单位类别、地区等等
       i:=edtINVOICE_Flag.ItemIndex;

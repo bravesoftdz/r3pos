@@ -145,10 +145,8 @@ begin
 end;
 
 procedure TfrmDutyInfoList.actDeleteExecute(Sender: TObject);
-  procedure UpdateToGlobal(str:string);
-  var Temp:TZQuery;
+  procedure UpdateToGlobal(Temp:TZQuery; str:string);
   begin
-    Temp := Global.GetZQueryFromName('CA_DUTY_INFO');
     Temp.Filtered :=false;
     if Temp.Locate('DUTY_ID',str,[]) then
     begin
@@ -157,6 +155,7 @@ procedure TfrmDutyInfoList.actDeleteExecute(Sender: TObject);
     end;
   end;
 var
+  rs: TZQuery;
   rzNode: TTreeNode;
   Params: TftParamList;
 begin
@@ -166,6 +165,8 @@ begin
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
   if MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
   begin
+    rs:=Global.GetZQueryFromName('CA_DUTY_INFO');
+    rs.CommitUpdates;
     Params:=TftParamList.Create(nil);
     try
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
@@ -177,7 +178,7 @@ begin
       Params.Free;
     end;
     //更新ShopGlobal缓存
-    UpdateToGlobal(cdsBrowser.FieldByName('DUTY_ID').AsString);
+    UpdateToGlobal(rs, cdsBrowser.FieldByName('DUTY_ID').AsString);
     //释放左侧面树节点
     rzNode:=FindNode(cdsBrowser.FieldByName('DUTY_ID').AsString);
     if rzNode<>nil then
@@ -185,7 +186,7 @@ begin
       TRecord_(rzNode.Data).Free;
       rzNode.Delete;
     end;
-    cdsBrowser.Delete;
+    //cdsBrowser.Delete; {Tree删除后触发到Open数据，不需要Delete操作}
   end;
 end;
 

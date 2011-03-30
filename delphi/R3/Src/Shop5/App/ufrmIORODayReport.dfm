@@ -839,7 +839,7 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #25910#25903#26126#32454#34920
+          Caption = #25910#20837#25903#20986#26126#32454#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0

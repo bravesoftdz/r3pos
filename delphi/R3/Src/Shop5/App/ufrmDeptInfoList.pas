@@ -150,6 +150,7 @@ procedure TfrmDeptInfoList.actDeleteExecute(Sender: TObject);
  var Temp:TZQuery;
  begin
    Temp := Global.GetZQueryFromName('CA_DEPT_INFO');
+   Temp.CommitUpdates;
    Temp.Filtered :=false;
    if Temp.Locate('DEPT_ID',str,[]) then
    begin
@@ -186,7 +187,7 @@ begin
       TRecord_(rzNode.Data).Free;
       rzNode.Delete;
     end;
-    cdsBrowser.Delete;
+    // cdsBrowser.Delete;  {Tree删除后触发到Open数据，不需要Delete操作}
   end;
 end;
 

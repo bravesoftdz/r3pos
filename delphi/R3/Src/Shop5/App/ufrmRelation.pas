@@ -49,6 +49,7 @@ type
     ToolButton12: TToolButton;
     actModify: TAction;
     ToolButton13: TToolButton;
+    ToolButton14: TToolButton;
     procedure actFindExecute(Sender: TObject);
     procedure ShowAllClick(Sender: TObject);
     procedure Cds_RelationAndGoodsAfterScroll(DataSet: TDataSet);
@@ -69,8 +70,7 @@ type
     procedure rb1Click(Sender: TObject);
     procedure rb2Click(Sender: TObject);
     procedure Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-      State: TGridDrawState);
+      const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
 
@@ -232,18 +232,23 @@ begin
 end;
 
 procedure TfrmRelation.InitGrid;
-var rs: TZQuery;
+var
+  rs: TZQuery;
+  SetCol: TColumnEh;
 begin
   inherited;
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-  rs.First;
-  while not rs.Eof do
+  SetCol:=FindColumn(Grid_RelationAndGoods,'UNIT_ID');
+  if (SetCol<>nil) and (rs.Active) and (rs.RecordCount>0) then
+  begin
+    rs.First;
+    while not rs.Eof do
     begin
-      Grid_RelationAndGoods.Columns[4].KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
-      Grid_RelationAndGoods.Columns[4].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
+      SetCol.KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
+      SetCol.PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
-
+  end;
   LoadTree;
 end;
 
@@ -328,8 +333,16 @@ begin
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
+    rs.IndexFieldNames:='GODS_CODE';
+    rs.SortedFields:='GODS_CODE';
     rs.SaveToStream(sm);
-    Cds_RelationAndGoods.AddFromStream(sm);
+    if trim(Id)='' then //ÐÂ²éÑ¯
+    begin
+      Cds_RelationAndGoods.LoadFromStream(sm);
+      Cds_RelationAndGoods.IndexFieldNames:='GODS_CODE';
+      Cds_RelationAndGoods.SortedFields:='GODS_CODE';
+    end else
+      Cds_RelationAndGoods.AddFromStream(sm);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
   finally
     Cds_RelationAndGoods.EnableControls;
@@ -675,17 +688,29 @@ begin
 end;
 
 procedure TfrmRelation.Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var
+  ColName: string;
+  ARect:TRect;
 begin
   inherited;
+  ColName:=trim(Lowercase(Column.FieldName));
+  if (ColName='a') or (ColName='seqno') then
+    Grid_RelationAndGoods.Canvas.Brush.Color:= clBtnFace;
+
   if (Rect.Top = Grid_RelationAndGoods.CellRect(Grid_RelationAndGoods.Col, Grid_RelationAndGoods.Row).Top) and (not
-    (gdFocused in State) or not Grid_RelationAndGoods.Focused) then
+     (gdFocused in State) or not Grid_RelationAndGoods.Focused) then
   begin
     Grid_RelationAndGoods.Canvas.Brush.Color := rowSelectColor;
   end;
   Grid_RelationAndGoods.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    Grid_RelationAndGoods.canvas.FillRect(ARect);
+    DrawText(Grid_RelationAndGoods.Canvas.Handle,pchar(Inttostr(Cds_RelationAndGoods.RecNo)),length(Inttostr(Cds_RelationAndGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
 end;
 
 function TfrmRelation.CheckCanExport: Boolean;

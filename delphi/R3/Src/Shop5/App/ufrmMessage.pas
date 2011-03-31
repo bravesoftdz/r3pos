@@ -64,8 +64,9 @@ type
     procedure actAuditExecute(Sender: TObject);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure GridDblClick(Sender: TObject);
     procedure cds_MessageAfterScroll(DataSet: TDataSet);
+    procedure GridDblClick(Sender: TObject);
+    procedure GridCellClick(Column: TColumnEh);
   private
     { Private declarations }
     MSG_Tpye:String;
@@ -347,26 +348,11 @@ begin
         Grid.canvas.FillRect(ARect);
         Grid.Canvas.Font.Color := clBlue;
         Grid.Canvas.Font.Style := [fsUnderline];
-        DrawText(Grid.Canvas.Handle,pchar('sdfsd'),length('查看门店'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+        DrawText(Grid.Canvas.Handle,pchar('查看门店'),length('查看门店'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
       finally
         Grid.Canvas.Font.Assign(AFont);
         AFont.Free;
       end;
-    end;
-end;
-
-procedure TfrmMessage.GridDblClick(Sender: TObject);
-var i:Integer;
-begin
-  inherited;
-  if cds_Message.IsEmpty then Exit;
-  for i := 0 to Grid.Columns.Count - 1 do
-    begin
-      if Grid.Columns[i].FieldName = 'LOOK' then
-        begin
-          TfrmPublishMessage.PrcCompList(Self,cds_Message.FieldbyName('MSG_ID').AsString);
-          Break;
-        end;
     end;
 end;
 
@@ -384,6 +370,24 @@ begin
   if cds_Message.RecNo<=0 then  str:='0'
   else str:=IntToStr(cds_Message.RecNo);
   stbPanel.Caption:='第'+str+'条/共'+inttostr(cds_Message.RecordCount)+'条';
+end;
+
+procedure TfrmMessage.GridDblClick(Sender: TObject);
+begin
+  inherited;
+  if Grid.Columns[Grid.SelectedIndex].FieldName<>'LOOK' then
+    actInfoExecute(Sender);
+end;
+
+procedure TfrmMessage.GridCellClick(Column: TColumnEh);
+begin
+  inherited;
+  if cds_Message.IsEmpty then Exit;
+
+  if Column.FieldName = 'LOOK' then
+    TfrmPublishMessage.PrcCompList(Self,cds_Message.FieldbyName('MSG_ID').AsString);
+
+
 end;
 
 end.

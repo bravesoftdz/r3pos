@@ -5605,6 +5605,7 @@ inherited frmMessage: TfrmMessage
                     CurrencySymbol = #65509
                     DecimalNumber = 2
                     DigitalNumber = 12
+                    OnCellClick = GridCellClick
                     OnDblClick = GridDblClick
                     OnDrawColumnCell = GridDrawColumnCell
                     Columns = <

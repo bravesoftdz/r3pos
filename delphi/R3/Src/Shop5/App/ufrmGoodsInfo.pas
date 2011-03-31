@@ -191,7 +191,7 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
-    procedure UpdateUNITSData; //更新当前选择单位
+    procedure UpdateUNITSData(IsEdit: Boolean=true); //更新当前选择单位
     function  IsChinese(str:string):Boolean;
     procedure OnGridKeyPress(Sender: TObject; var Key: Char);
     procedure EditKeyPress(Sender: TObject; var Key: Char);
@@ -321,12 +321,11 @@ procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
 var rs: TZQuery;
 begin
   inherited;
-  RzPage.ActivePageIndex := 0;    
+  RzPage.ActivePageIndex := 0;
   CheckCLVersionSetParams; //判断行业版本设置相应控件: 服装版本显示颜色和条码组
   TabGoodPrice.TabVisible:=False;  //价格管理分页 默认为False;
 
   AObj := TRecord_.Create;
-  UpdateUNITSData;  //单位下拉
   // edtCALC_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   // edtSMALL_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   // edtBIG_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
@@ -381,6 +380,12 @@ begin
       Factor.AddBatch(CdsMemberPrice,'TGoodsPrice',Params);
       Factor.OpenBatch;
       AObj.ReadFromDataSet(cdsGoods);
+      //根据单位:数据集DataSet
+      if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+        UpdateUNITSData 
+      else  //加盟供应链
+        UpdateUNITSData(False);
+
       ReadFromObject(AObj);
       edtGODS_SPELL.Text:=AObj.FieldByName('GODS_SPELL').AsString;
       if not ShopGlobal.GetChkRight('14500001',2) then
@@ -2650,7 +2655,7 @@ begin
   
 end;
 
-procedure tfrmGoodsInfo.UpdateUNITSData;
+procedure tfrmGoodsInfo.UpdateUNITSData(IsEdit: Boolean=true);
 var
   i: integer;
   Rs: TZQuery;
@@ -2663,30 +2668,21 @@ begin
     edtBIG_UNITS.DataSet:=DropUNITS_Ds;
   end;
   
-  {Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
-  if (Rs<>nil) and (Rs.Active) then
-  begin
-    DropUNITS_Ds.Close;
-    DropUNITS_Ds.Data:=Rs.Data;
-    if DropUNITS_Ds.Active then
-    begin
-      DropUNITS_Ds.Filtered:=False;
-      DropUNITS_Ds.Filter:=' RELATION_FLAG=''2'' ';
-      DropUNITS_Ds.Filtered:=true;
-    end;
-  end;}
-  
   Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
   if (Rs<>nil) and (Rs.Active) then
   begin
     DropUNITS_Ds.Close;
     DropUNITS_Ds.Data:=Rs.Data;
-    for i:=DropUNITS_Ds.RecordCount downto 1 do
+    //Add 2011.03.30 Add 自主经营的商品需要过滤条件
+    if IsEdit then
     begin
-      if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)<>'2' then //判断到非自主创建的
+      for i:=DropUNITS_Ds.RecordCount downto 1 do
       begin
-        DropUNITS_Ds.RecNo:=i;
-        DropUNITS_Ds.Delete;
+        if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)<>'2' then //判断到非自主创建的
+        begin
+          DropUNITS_Ds.RecNo:=i;
+          DropUNITS_Ds.Delete;
+        end;
       end;
     end;
   end;

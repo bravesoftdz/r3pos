@@ -432,7 +432,7 @@ begin
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);
   //暂关闭Gird表头排序
-  //TDbGridEhSort.InitForm(self);
+  TDbGridEhSort.InitForm(self);
 end;
 
 procedure TfrmGoodsInfoList.edtKeyKeyDown(Sender: TObject; var Key: Word;
@@ -716,7 +716,7 @@ begin
   edtProperty1.Free;
   edtProperty2.Free;
   //暂关闭Gird表头排序
-  //TDbGridEhSort.FreeForm(self);
+  TDbGridEhSort.FreeForm(self);
 end;
 
 procedure TfrmGoodsInfoList.N4Click(Sender: TObject);

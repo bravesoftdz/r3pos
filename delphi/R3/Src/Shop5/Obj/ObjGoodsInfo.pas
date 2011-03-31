@@ -150,13 +150,13 @@ begin
     //插入进货价扩展表:
     try
       vParam :=TftParamList.Create(nil);
-      vParam.ParamByName('TENANT_ID').AsString:=FieldbyName('TENANT_ID').AsString;
-      vParam.ParamByName('GODS_ID').AsString:=FieldbyName('GODS_ID').AsString;
+      vParam.ParamByName('TENANT_ID').AsString:=FieldbyName('TENANT_ID').AsOldString;
+      vParam.ParamByName('GODS_ID').AsString:=FieldbyName('GODS_ID').AsOldString;
       vParam.ParamByName('NEW_INPRICE').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat;
       vParam.ParamByName('NEW_INPRICE1').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('SMALLTO_CALC').AsFloat;
       vParam.ParamByName('NEW_INPRICE2').AsFloat:=FieldbyName('NEW_INPRICE').AsFloat * FieldbyName('BIGTO_CALC').AsFloat;     
       Str:='update PUB_GOODSINFOEXT set NEW_INPRICE=:NEW_INPRICE,NEW_INPRICE1=:NEW_INPRICE1,NEW_INPRICE2=:NEW_INPRICE2,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-           ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
+           ' Where TENANT_ID=:TENANT_ID and GODS_ID=:GODS_ID ';
       if AGlobal.ExecSQL(Str, vParam)=0 then
       begin
         Str:='insert Into PUB_GOODSINFOEXT(TENANT_ID,GODS_ID,NEW_INPRICE,NEW_INPRICE1,NEW_INPRICE2,LOWER_AMOUNT,UPPER_AMOUNT,LOWER_RATE,UPPER_RATE,COMM,TIME_STAMP) '+

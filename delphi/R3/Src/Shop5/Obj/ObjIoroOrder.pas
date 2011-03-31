@@ -1,7 +1,7 @@
 unit ObjIoroOrder;
 
 interface
-uses Dialogs,SysUtils,ZBase,Classes,ZDataSet,ZIntf,ObjCommon;
+uses SysUtils,ZBase,Classes,ZDataSet,ZIntf,ObjCommon;
 type
   TIoroOrder=class(TZFactory)
   public

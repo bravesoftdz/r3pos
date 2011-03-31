@@ -1893,19 +1893,19 @@ begin
     if edtSORT_ID1.CanFocus then edtSORT_ID1.SetFocus;
     raise Exception.Create('商品分类不能为空！');
   end;
-  if Trim(edtSORT_ID2.KeyValue)='' then
-  begin
+
+  { 2011.03.31  关闭掉指标允许为空
+   if Trim(edtSORT_ID2.KeyValue)='' then
+   begin
     if edtSORT_ID2.CanFocus then edtSORT_ID2.SetFocus;
     raise Exception.Create('商品类别不能为空！');
   end;
 
-  {
   if Trim(edtSORT_ID3.KeyValue)='' then
   begin
     if edtSORT_ID3.CanFocus then edtSORT_ID3.SetFocus;
     raise Exception.Create('商品主供应商不能为空！');
   end;
-  }
   if Trim(edtSORT_ID4.KeyValue)='' then
   begin
     if edtSORT_ID4.CanFocus then edtSORT_ID4.SetFocus;
@@ -1920,17 +1920,18 @@ begin
   begin
     if edtSORT_ID6.CanFocus then edtSORT_ID6.SetFocus;
     raise Exception.Create('商品是否是省内外不能为空！');
-  end;  
+  end;
   if Trim(edtSORT_ID7.KeyValue)='' then
   begin
     if edtSORT_ID7.CanFocus then edtSORT_ID7.SetFocus;
     raise Exception.Create('商品颜色组不能为空！');
-  end; 
+  end;
   if Trim(edtSORT_ID8.KeyValue)='' then
   begin
     if edtSORT_ID8.CanFocus then edtSORT_ID8.SetFocus;
     raise Exception.Create('商品尺码组不能为空！');
   end;
+  }
 
   //积分换算关系
   if (RB_USING_BARTER.Checked) and (edtBARTER_INTEGRAL.Enabled) and (edtBARTER_INTEGRAL.Value=0)  then
@@ -2317,7 +2318,7 @@ begin
   TabGoodPrice.TabVisible:=False;
   if edtUSING_PRICE.ItemIndex=1 then Exit; {==是否启用会员价==}
   if (trim(edtCALC_UNITS.Text)='') and (trim(edtSMALL_UNITS.Text)='') and (trim(edtBIG_UNITS.Text)='') then Exit;  //三个单位都同时为空情况;
-  if StrtoFloatDef(edtNEW_OUTPRICE.Text,0)<=0 then Exit;
+  // if StrtoFloatDef(edtNEW_OUTPRICE.Text,0)<=0 then Exit;
   TabGoodPrice.TabVisible:=true;
   //判断Columns的显示:
   for i:=0 to PriceGrid.Columns.Count-1 do

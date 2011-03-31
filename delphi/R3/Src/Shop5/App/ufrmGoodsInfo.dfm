@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
+      ActivePage = TabSheet3
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 2
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -649,6 +651,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             #21551#29992
             #31105#29992)
           TabOrder = 1
+          OnClick = edtUSING_PRICEClick
         end
         object edtUSING_BATCH_NO: TRadioGroup
           Left = 30

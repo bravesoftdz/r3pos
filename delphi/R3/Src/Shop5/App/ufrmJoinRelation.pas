@@ -108,7 +108,7 @@ begin
      Factor.ExecSQL(
      'insert into CA_RELATIONS(RELATION_ID,RELATIONS_ID,RELATI_ID,TENANT_ID,RELATION_TYPE,LEVEL_ID,RELATION_STATUS,CREA_DATE,CHK_DATE,COMM,TIME_STAMP) '+
      'values('+inttostr(RelationInfo.RELATION_ID)+','''+RelationInfo.RELATIONS_ID+''','+inttostr(RelationInfo.RELATI_ID)+','+inttostr(RelationInfo.TENANT_ID)+','''+RelationInfo.RELATION_TYPE+''','''+RelationInfo.LEVEL_ID+''','''+RelationInfo.RELATION_STATUS+''','''+RelationInfo.CREA_DATE+''','''+RelationInfo.CHK_DATE+''',''00'','+GetTimeStamp(Factor.iDbType)+')');
-  CaFactory.SyncAll;
+  CaFactory.SyncAll(2);
   //
   ModalResult := MROK;
 end;

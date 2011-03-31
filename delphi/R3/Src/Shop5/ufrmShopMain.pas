@@ -274,6 +274,7 @@ type
     N33: TMenuItem;
     N103: TMenuItem;
     N104: TMenuItem;
+    actfrmIoroDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -365,6 +366,7 @@ type
     procedure tlbCloseClick(Sender: TObject);
     procedure N103Click(Sender: TObject);
     procedure N104Click(Sender: TObject);
+    procedure actfrmIoroDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -415,13 +417,13 @@ uses
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
-  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory;
+  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
 begin
   inherited;
-//  if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
+//if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
 end;
 
 procedure TfrmShopMain.fdsfds1Click(Sender: TObject);
@@ -671,7 +673,10 @@ begin
                      Global.MoveToLocal;
                    end;
                  end;
-              //if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+              if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
+                 begin
+                   if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+                 end;
             end;
 
          Global.LoadBasic();
@@ -696,7 +701,7 @@ begin
        result := Logined;
        Application.Terminate;
      end;
-//  Label1.Caption := '使用权:'+ShopGlobal.GetCOMP_NAME;
+  LoadFrame;
   lblLogin.Caption := '登录用户:'+Global.UserName+'  登录门店:'+Global.SHOP_NAME;
 end;
 
@@ -830,12 +835,17 @@ begin
 end;
 
 procedure TfrmShopMain.LoadFrame;
-var F:TIniFile;
+var
+  F:TIniFile;
 begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     Caption :=  F.ReadString('soft','name','云盟软件R3')+' 版本:'+RzVersionInfo.FileVersion;
+    if ShopGlobal.offline then
+       Caption := Caption +'【脱机使用】'
+    else
+       Caption := Caption +'【联机使用】';
     Application.Title :=  F.ReadString('soft','name','云盟软件R3');
     SFVersion := F.ReadString('soft','SFVersion','.NET');
     CLVersion := F.ReadString('soft','CLVersion','.MKT');
@@ -1938,7 +1948,10 @@ begin
        AddFrom(Form);
      end;
   try
-    TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
+    if copy(ParamStr(3),1,8)='-xsmurl=' then
+       TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
+    else
+       TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
     Form.Show;
     Form.BringToFront;
   except
@@ -2544,6 +2557,28 @@ begin
   inherited;
   self.ArrangeIcons;
 
+end;
+
+procedure TfrmShopMain.actfrmIoroDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmIoroDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmIoroDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

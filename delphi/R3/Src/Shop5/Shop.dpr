@@ -177,7 +177,9 @@ uses
   CaProductService in 'App\CaProductService.pas',
   CaTenantService in 'App\CaTenantService.pas',
   CaServiceLineService in 'App\CaServiceLineService.pas',
-  ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint};
+  ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint},
+  ufrmIORODayReport in 'App\ufrmIORODayReport.pas' {frmIORODayReport},
+  RspDownloadService in 'App\RspDownloadService.pas';
 
 {$R *.res}
 var

@@ -147,7 +147,7 @@ begin
          end;
       result :=
          'select 0 as A,'+Sqlrid+' as RELATION_ID,j.TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,c.SECOND_ID,c.GODS_CODE as SECOND_CODE '+
-         'from PUB_GOODSINFO j,PUB_GOODSSORT b,PUB_GOODS_RELATION c where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and c.RELATION_ID=:TENANT_ID and c.COMM not in (''02'',''12'') '+w;
+         'from PUB_GOODSINFO j,PUB_GOODSSORT b,PUB_GOODS_RELATION c where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and c.RELATION_ID=:RELATION_ID and c.COMM not in (''02'',''12'') '+w;
     end;
   1:begin
       w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
@@ -163,7 +163,7 @@ begin
          end;
       result :=
          'select 0 as A,'+Sqlrid+' as RELATION_ID,j.TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.GODS_ID as SECOND_ID,j.GODS_CODE as SECOND_CODE '+
-         'from PUB_GOODSINFO j,PUB_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and not Exists(select * from PUB_GOODS_RELATION where TENANT_ID=j.TENANT_ID and GODS_ID=j.GODS_ID and RELATION_ID=:TENANT_ID and COMM not in (''02'',''12'')) '+w;
+         'from PUB_GOODSINFO j,PUB_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and not Exists(select * from PUB_GOODS_RELATION where TENANT_ID=j.TENANT_ID and GODS_ID=j.GODS_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12'')) '+w;
     end;
   2:begin
       w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
@@ -195,9 +195,9 @@ begin
          begin
           if w<>'' then w := w + ' and ';
           if (rzTree.Selected.Level>0) then
-             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and c.RELATION_ID=:RELATION_ID '
           else
-             w := w + 'b.RELATION_ID=:RELATION_ID ';
+             w := w + 'c.RELATION_ID=:RELATION_ID ';
          end;
       result :=
         'select 0 as A,'+Sqlrid+' as RELATION_ID,:TENANT_ID as TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.SECOND_ID,j.SECOND_CODE '+
@@ -548,6 +548,7 @@ procedure TfrmRelation.actSaveExecute(Sender: TObject);
 var Params:TftParamList;
 begin
   inherited;
+  if not Cds_RelationAndGoods.Active then Exit;
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
   Cds_RelationAndGoods.CommitUpdates;
   Cds_RelationAndGoods.DisableControls;
@@ -581,7 +582,9 @@ procedure TfrmRelation.actCancelExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
-//
+  CaFactory.SyncAll(1);
+  Prepare;
+  LoadTree;
 end;
 
 procedure TfrmRelation.actPrintExecute(Sender: TObject);
@@ -632,8 +635,8 @@ begin
   case flag of
   0:actSave.Caption := '撤消';
   1:actSave.Caption := '发布';
-  2:actSave.Caption := '启用';
-  3:actSave.Caption := '禁用';
+  2:actSave.Caption := '禁用';
+  3:actSave.Caption := '启用';
   end;
 end;
 

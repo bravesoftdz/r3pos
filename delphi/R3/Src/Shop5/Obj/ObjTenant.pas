@@ -62,7 +62,7 @@ begin
   ' values(:TENANT_ID,''1'',''门店销售'',''MDXS'',''2'',1,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''2'',''集团销售'',''JTXS'',''2'',2,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+  ' values(:TENANT_ID,''2'',''业务销售'',''JTXS'',''2'',2,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
   AGlobal.ExecSQL(Str,self);
 
   //收支项目 CODE_TYPE=3

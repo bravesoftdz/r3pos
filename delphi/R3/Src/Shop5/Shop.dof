@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=-DEBUG
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=3
 MinorVer=0
 Release=0
-Build=52
+Build=53
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=浪潮软件
 FileDescription=零售终端管理系统
-FileVersion=3.0.0.52
+FileVersion=3.0.0.53
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -150,10 +150,13 @@ Count=2
 Item0=D:\Delphi\R3\Src\Shop5\temp
 Item1=C:\Program Files\Developer Express Inc\ExpressEditors Library 4\Delphi 7\Lib
 [HistoryLists\hlOutputDirectorry]
-Count=3
-Item0=D:\Delphi\R3\Src
-Item1=D:\Delphi\R3\20110314\2003BR3V5
-Item2=D:\Delphi\Shop5\Shop5
+Count=6
+Item0=D:\Delphi\R3\Src\TestDemo\TestDemo\Fujian
+Item1=D:\r3 sadfadfads
+Item2=D:\r3sadfadfads
+Item3=D:\Delphi\R3\Src
+Item4=D:\Delphi\R3\20110314\2003BR3V5
+Item5=D:\Delphi\Shop5\Shop5
 [HistoryLists\hlDCPOutput]
 Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp

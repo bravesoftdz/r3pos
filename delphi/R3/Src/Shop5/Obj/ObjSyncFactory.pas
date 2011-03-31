@@ -2463,14 +2463,20 @@ end;
 
 function TSyncRckAcctMonthOrder.BeforeOpenRecord(
   AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
 begin
-
+  Str := 'select * from RCK_ACCT_MONTH where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and MONTH=:MONTH';
+  SelectSQL.Text := Str;
 end;
 
 function TSyncRckAcctMonthOrder.BeforeUpdateRecord(
   AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
 begin
-
+  Str := 'delete from RCK_ACCT_MONTH where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and MONTH=:MONTH';
+  AGlobal.ExecSQL(Str,Params); 
 end;
 
 { TSyncRckMonthCloseList }
@@ -2525,6 +2531,10 @@ initialization
   RegisterClass(TSyncRckDaysClose);
   RegisterClass(TSyncRckGodsDaysOrder);
   RegisterClass(TSyncRckAcctDaysOrder);
+  RegisterClass(TSyncRckMonthCloseList);
+  RegisterClass(TSyncRckMonthClose);
+  RegisterClass(TSyncRckGodsMonthOrder);
+  RegisterClass(TSyncRckAcctMonthOrder);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
@@ -2562,5 +2572,9 @@ finalization
   UnRegisterClass(TSyncRckDaysClose);
   UnRegisterClass(TSyncRckGodsDaysOrder);
   UnRegisterClass(TSyncRckAcctDaysOrder);
+  UnRegisterClass(TSyncRckMonthCloseList);
+  UnRegisterClass(TSyncRckMonthClose);
+  UnRegisterClass(TSyncRckGodsMonthOrder);
+  UnRegisterClass(TSyncRckAcctMonthOrder);
   
 end.

@@ -105,6 +105,7 @@ type
     FSessionId: string;
     timeout:Integer;
     FAudited: boolean;
+    FTimeStamp: int64;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -113,6 +114,7 @@ type
     procedure doAfterExecute(const MethodName: string;
       SOAPResponse: TStream);
     procedure SetAudited(const Value: boolean);
+    procedure SetTimeStamp(const Value: int64);
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
@@ -133,7 +135,7 @@ type
     function CheckNetwork(addr:string=''):boolean;
 
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
-    procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
+    procedure SetSynTimeStamp(tbName:string;_TimeStamp:int64;SHOP_ID:string='#');
 
     //产品服务
     function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
@@ -155,6 +157,7 @@ type
     function SyncAll(flag:integer):boolean;
 
     //企业服务
+    function AutoCoLogo:boolean;
     function coLogin(Account:string;PassWrd:string):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
@@ -169,6 +172,8 @@ type
     property SessionId:string read FSessionId write SetSessionId;
     //认证审核通过
     property Audited:boolean read FAudited write SetAudited;
+    //认证时的时间戳
+    property TimeStamp:int64 read FTimeStamp write SetTimeStamp;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -206,6 +211,12 @@ begin
      begin
        node := FindElement(node.parentNode,'msg');
        Raise Exception.Create(node.text);
+     end
+  else
+     begin
+       node := FindElement(node.parentNode,'timeStamp');
+       if node<>nil then
+          timeStamp := StrtoInt64(node.text);
      end;
 end;
 
@@ -821,6 +832,7 @@ var
   code:string;
   h:rsp;
 begin
+  AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
@@ -900,6 +912,7 @@ var
   h:rsp;
   i:integer;
 begin
+  AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
@@ -972,6 +985,7 @@ var
   i:integer;
   code:string;
 begin
+  AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
@@ -1052,6 +1066,7 @@ end;
 
 function TCaFactory.SyncAll(flag:integer): boolean;
 begin
+  AutoCoLogo;
   frmLogo.Show;
   try
     frmLogo.ProgressBar1.Max := 8;
@@ -1122,7 +1137,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(30000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1190,6 +1205,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
         Params.ParamByName('KEY_FIELDS').AsString := 'RELATIONS_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1218,14 +1234,14 @@ begin
   end;
 end;
 
-procedure TCaFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64;
+procedure TCaFactory.SetSynTimeStamp(tbName: string; _TimeStamp: int64;
   SHOP_ID: string);
 var
   r:integer;
 begin
-  r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
+  r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
   if r=0 then
-     Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(TimeStamp)+')');
+     Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
 end;
 
 function TCaFactory.downloadServiceLines(TenantId, flag: integer): boolean;
@@ -1247,7 +1263,7 @@ begin
   FindNode(doc,'header\pub').appendChild(Node);
 
   Node := doc.createElement('timeStamp');
-  Node.text := inttostr(GetSynTimeStamp('CA_RELATIONS','#'));
+  Node.text := inttostr(GetSynTimeStamp('CA_RELATION','#'));
   FindNode(doc,'header\pub').appendChild(Node);
 
   Node := doc.createElement('downloadReq');
@@ -1259,7 +1275,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(30000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1321,6 +1337,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATION';
         Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('CA_RELATION',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1351,7 +1368,7 @@ begin
   FindNode(doc,'header\pub').appendChild(Node);
 
   Node := doc.createElement('timeStamp');
-  Node.text := inttostr(GetSynTimeStamp('CA_RELATIONS','#'));
+  Node.text := inttostr(GetSynTimeStamp('CA_TENANT','#'));
   FindNode(doc,'header\pub').appendChild(Node);
 
   Node := doc.createElement('downloadReq');
@@ -1363,7 +1380,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(30000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1461,6 +1478,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'CA_TENANT';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('CA_TENANT',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1503,7 +1521,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1569,6 +1587,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('PUB_GOODSSORT',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1611,7 +1630,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1747,6 +1766,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSINFO';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('PUB_GOODSINFO',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1789,7 +1809,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -1851,6 +1871,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_MEAUNITS';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNIT_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('PUB_MEAUNITS',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -1893,7 +1914,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -2067,6 +2088,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODS_RELATION';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;RELATION_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -2109,7 +2131,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(60000);
   try
     h := SendHeader(rio,2);
     try
@@ -2177,6 +2199,7 @@ begin
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_BARCODE';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;PROPERTY_01;PROPERTY_02;UNIT_ID';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
       finally
         Params.free;
       end;
@@ -2186,6 +2209,25 @@ begin
   finally
     rio.Free;
   end;
+end;
+
+function TCaFactory.AutoCoLogo: boolean;
+var Temp:TZQuery;
+begin
+  Temp := TZQuery.Create(nil);
+  try
+    Temp.Close;
+    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+    Factor.Open(Temp);
+    coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY));
+  finally
+    Temp.Free;
+  end;
+end;
+
+procedure TCaFactory.SetTimeStamp(const Value: int64);
+begin
+  FTimeStamp := Value;
 end;
 
 { rsp }

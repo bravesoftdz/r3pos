@@ -17,14 +17,12 @@ type
     cdsShop: TZQuery;
     N1: TMenuItem;
     PopupMenu1: TPopupMenu;
-    N3: TMenuItem;
     procedure RzBitBtn2Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
-    procedure N3Click(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
   private
     MSG_ID:String;
@@ -176,21 +174,16 @@ begin
 
 end;
 
-procedure TfrmPublishMessage.N3Click(Sender: TObject);
+procedure TfrmPublishMessage.btnOkClick(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('500015') then Raise Exception.Create('只有拥有促销单编辑权限才能删除门店,请和管理员联系.');
   if cdsShop.IsEmpty then Exit;
-  if MessageBox(Handle,pchar('是否删除'+cdsShop.FieldbyName('SHOP_NAME').AsString),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,pchar('是否删除'+cdsShop.FieldbyName('SHOP_NAME').AsString),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsShop.Delete;
-end;
 
-procedure TfrmPublishMessage.btnOkClick(Sender: TObject);
-begin
-  inherited;
   try
     Factor.UpdateBatch(cdsShop,'TPublishMessage');
-    ModalResult := mrOk;
   Except
     Raise Exception.Create('修改失败!');
   end;

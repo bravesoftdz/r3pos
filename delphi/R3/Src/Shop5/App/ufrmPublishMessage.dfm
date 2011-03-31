@@ -142,7 +142,7 @@ inherited frmPublishMessage: TfrmPublishMessage
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #30830#35748
+        Caption = #25764#28040#38376#24215
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -211,9 +211,5 @@ inherited frmPublishMessage: TfrmPublishMessage
   object PopupMenu1: TPopupMenu
     Left = 78
     Top = 165
-    object N3: TMenuItem
-      Caption = #25764#38144#38376#24215
-      OnClick = N3Click
-    end
   end
 end

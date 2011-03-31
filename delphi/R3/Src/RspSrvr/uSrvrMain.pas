@@ -15,7 +15,7 @@ interface
 uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,Variants,
   Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,ZConst,
-  ActnList, DB,OleServer,ImgList,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile;
+  ActnList, DB,OleServer,ImgList,ActiveX,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile;
 
 const
   WM_MIDASICON    = WM_USER + 1;

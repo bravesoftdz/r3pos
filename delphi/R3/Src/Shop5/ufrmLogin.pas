@@ -138,7 +138,7 @@ begin
      begin
        rs := Global.GetZQueryFromName('CA_USERS');
        chk := copy(ParamStr(2),6,255);
-       if rs.Locate('MM',copy(s,5,255),[]) then
+       if rs.Locate('MM',lowercase(copy(s,5,255)),[]) or rs.Locate('MM',uppercase(copy(s,5,255)),[]) then
           begin
             lDate := Date();
             LoginParam.UserID := rs.FieldbyName('USER_ID').AsString;

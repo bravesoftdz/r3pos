@@ -2,7 +2,7 @@ unit uSyncFactory;
 
 interface
 uses
-  Windows, Messages, SysUtils, Classes,ZDataSet,ZBase,ObjCommon;
+  Windows, Messages, SysUtils, Classes,ZDataSet,ZBase,ObjCommon, ZLogFile;
 type
   PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
@@ -15,9 +15,13 @@ type
   private
     FParams: TftParamList;
     FList:TList;
+    _Start:Int64;
     FSyncTimeStamp: int64;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
+  protected
+    procedure SetTicket;
+    function GetTicket:Int64;
   public
     constructor Create;
     destructor Destroy;override;
@@ -66,7 +70,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo;
+uses uGlobal,ufrmLogo,uCaFactory;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -147,6 +151,11 @@ begin
   end;
 end;
 
+function TSyncFactory.GetTicket:int64;
+begin
+  result := GetTickCount-_Start;
+end;
+
 procedure TSyncFactory.InitList;
 var
   n:PSynTableInfo;
@@ -203,21 +212,9 @@ begin
   n^.tbtitle := '供应链';
   FList.Add(n);
   new(n);
-  n^.tbname := 'CA_RELATION';
-  n^.keyFields := 'TENANT_ID;RELATION_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '供应链';
-  FList.Add(n);
-  new(n);
   n^.tbname := 'PUB_CODE_INFO';
   n^.keyFields := 'TENANT_ID;CODE_ID;CODE_TYPE';
   n^.synFlag := 2;
-  n^.tbtitle := '其他编码';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_CODE_INFO';
-  n^.keyFields := 'TENANT_ID;CODE_ID;CODE_TYPE';
-  n^.synFlag := 0;
   n^.tbtitle := '其他编码';
   FList.Add(n);
   new(n);
@@ -235,20 +232,8 @@ begin
   new(n);
   n^.tbname := 'PUB_GOODSSORT';
   n^.keyFields := 'TENANT_ID;SORT_ID;SORT_TYPE';
-  n^.synFlag := 0;
-  n^.tbtitle := '货品分类';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_GOODSSORT';
-  n^.keyFields := 'TENANT_ID;SORT_ID;SORT_TYPE';
   n^.synFlag := 2;
   n^.tbtitle := '货品分类';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_COLOR_INFO';
-  n^.keyFields := 'TENANT_ID;COLOR_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '颜色档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_COLOR_INFO';
@@ -259,20 +244,8 @@ begin
   new(n);
   n^.tbname := 'PUB_SIZE_INFO';
   n^.keyFields := 'TENANT_ID;SIZE_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '尺码档案';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_SIZE_INFO';
-  n^.keyFields := 'TENANT_ID;SIZE_ID';
   n^.synFlag := 2;
   n^.tbtitle := '尺码档案';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_MEAUNITS';
-  n^.keyFields := 'TENANT_ID;UNIT_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '计量单位';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_MEAUNITS';
@@ -283,36 +256,18 @@ begin
   new(n);
   n^.tbname := 'PUB_GOODSINFO';
   n^.keyFields := 'TENANT_ID;GODS_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '商品档案';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_GOODSINFO';
-  n^.keyFields := 'TENANT_ID;GODS_ID';
   n^.synFlag := 2;
   n^.tbtitle := '商品档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_GOODS_RELATION';
-  n^.keyFields := 'TENANT_ID;ROWS_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '商品档案';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_GOODS_RELATION';
-  n^.keyFields := 'TENANT_ID;ROWS_ID';
+  n^.keyFields := 'TENANT_ID;GODS_ID;RELATION_ID';
   n^.synFlag := 2;
   n^.tbtitle := '商品档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_BARCODE';
-  n^.keyFields := 'TENANT_ID;ROWS_ID';
-  n^.synFlag := 0;
-  n^.tbtitle := '条码表';
-  FList.Add(n);
-  new(n);
-  n^.tbname := 'PUB_BARCODE';
-  n^.keyFields := 'TENANT_ID;ROWS_ID';
+  n^.keyFields := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02';
   n^.synFlag := 3;
   n^.tbtitle := '条码表';
   FList.Add(n);
@@ -486,12 +441,27 @@ begin
      Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
 end;
 
+procedure TSyncFactory.SetTicket;
+begin
+  _Start := GetTickCount;
+end;
+
 procedure TSyncFactory.SyncAll;
 var
   i:integer;
 begin
   frmLogo.Show;
   try
+  try
+    CaFactory.AutoCoLogo;
+  except
+    on E:Exception do
+      begin
+        LogFile.AddLogFile(0,'同步请求认证失败,错误:'+E.Message);
+        Raise;
+      end;
+  end;
+  SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
   for i:=0 to FList.Count -1 do
@@ -525,6 +495,7 @@ var
 begin
   frmLogo.Show;
   try
+  SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
   for i:=0 to FList.Count -1 do
@@ -1496,6 +1467,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try
@@ -1503,9 +1475,13 @@ begin
     //以服务器为优先下载
     cs.Close;
     rs.Close;
+    SetTicket;
     Global.RemoteFactory.Open(rs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+    SetTicket;
     cs.SyncDelta := rs.SyncDelta;
     Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     rs.Free;
     cs.Free;
@@ -1519,15 +1495,19 @@ begin
     rs.Close;
     Global.LocalFactory.BeginTrans;
     try
+      SetTicket;
       Global.LocalFactory.Open(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+      SetSynTimeStamp(tbName,SyncTimeStamp);
       if not cs.IsEmpty then
       begin
+        SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
         Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
 
-        SetSynTimeStamp(tbName,SyncTimeStamp);
         Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
       end;
       Global.LocalFactory.CommitTrans;
     except

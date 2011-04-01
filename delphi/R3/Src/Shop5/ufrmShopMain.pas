@@ -1087,7 +1087,8 @@ begin
   try
      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
      Global.RemoteFactory.Open(rs,'TTenant',Params);
-     if not rs.IsEmpty then Exit;
+     if rs.IsEmpty then
+     begin
      Global.LocalFactory.Open(ls,'TTenant',Params);
      rs.Edit;
      for i:=0 to ls.Fields.Count-1 do
@@ -1097,6 +1098,9 @@ begin
        end;
      rs.Post;
      Global.RemoteFactory.UpdateBatch(rs,'TTenant',nil);
+     end;
+     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable'); 
+     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable'); 
   finally
     Params.Free;
     rs.Free;

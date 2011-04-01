@@ -3,7 +3,7 @@ unit uCaFactory;
 interface
 uses
   Windows, Messages, SysUtils, Classes,InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns,Des,WinInet, xmldom, XMLIntf,
-  msxmldom, XMLDoc, MSHTML, ActiveX,msxml,ComObj,ZDataSet,DB,ZBase,Variants;
+  msxmldom, XMLDoc, MSHTML, ActiveX,msxml,ComObj,ZDataSet,DB,ZBase,Variants,ZLogFile;
 type
   TCaTenant=record
     TENANT_ID:integer;
@@ -106,6 +106,7 @@ type
     timeout:Integer;
     FAudited: boolean;
     FTimeStamp: int64;
+    _Start:int64;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -118,6 +119,8 @@ type
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
+    procedure SetTicket;
+    function GetTicket:Int64;
   public
     constructor Create;
     destructor Destroy;override;
@@ -197,6 +200,7 @@ procedure TCaFactory.CheckRecAck(doc: IXMLDomDocument);
 var
   node:IXMLDOMNode;
 begin
+  try
   if not Assigned(doc) then Raise Exception.Create('无效的XML文档...');
   node :=  doc.documentElement;
   if not Assigned(node) then Raise Exception.Create('无效的XML文档...');
@@ -218,6 +222,13 @@ begin
        if node<>nil then
           timeStamp := StrtoInt64(node.text);
      end;
+  except
+    on E:Exception do
+      begin
+        LogFile.AddLogFile(0,E.Message+' XML='+doc.xml);
+        Raise;
+      end;
+  end;
 end;
 
 function TCaFactory.CheckNetwork(addr:string=''): boolean;
@@ -287,7 +298,8 @@ var
   caTenant:IXMLDOMNode;
   Node:IXMLDOMNode;
   code:string;
-  h:rsp;
+  h,r:rsp;
+  OutXml:widestring;
 begin
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -308,12 +320,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-        doc := CreateXML(
-                     Decode(
-                        GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).getTenantInfo(Encode(inxml,sslpwd))
-                        ,sslpwd
-                     )
-               );
+        OutXml := GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).getTenantInfo(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -414,8 +431,8 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
+    GetHeader(rio).free;
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
     code := GetNodeValue(caTenantLoginResp,'code');
     result.RET := code;
@@ -570,6 +587,7 @@ begin
       h.Free;
     end;
     CheckRecAck(doc);
+    GetHeader(rio).free;
     caTenantRegisterResp := FindNode(doc,'body\caTenantRegisterResp');
     code := GetNodeValue(caTenantRegisterResp,'code');
     if StrtoIntDef(code,0) in [1] then //注册成功
@@ -756,7 +774,8 @@ var
   caProductCheckUpgradeResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   code:string;
-  h:rsp;
+  h,r:rsp;
+  OutXml:WideString;
 begin
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -785,12 +804,17 @@ begin
     h := SendHeader(rio,1);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio).checkUpgrade(Encode(inxml,pubpwd))
-                      ,pubpwd
-                   )
-             );
+        OutXml := GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio).checkUpgrade(Encode(inxml,pubpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -805,8 +829,6 @@ begin
     finally
       h.Free;
     end;
-
-    GetHeader(rio).free;
     CheckRecAck(doc);
     caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
     result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
@@ -830,7 +852,8 @@ var
   caServiceLineCreateResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   code:string;
-  h:rsp;
+  h,r:rsp;
+  OutXml:WideString;
 begin
   AutoCoLogo;
   doc := CreateRspXML;
@@ -864,12 +887,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).createServiceLine(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).createServiceLine(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -885,7 +913,6 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     caServiceLineCreateResp := FindNode(doc,'body\caServiceLineCreateResp');
     code := GetNodeValue(caServiceLineCreateResp,'code');
@@ -909,8 +936,9 @@ var
   caServiceLineQueryResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
+  OutXml:WideString;
 begin
   AutoCoLogo;
   doc := CreateRspXML;
@@ -932,12 +960,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).queryServiceLines(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).queryServiceLines(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -953,7 +986,6 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     caServiceLineQueryResp := Node.firstChild;
@@ -981,9 +1013,10 @@ var
   caRelationApplyResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   code:string;
+  OutXml:WideString;
 begin
   AutoCoLogo;
   doc := CreateRspXML;
@@ -1017,12 +1050,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).applyRelation(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml :=  GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).applyRelation(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1038,7 +1076,6 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     caRelationApplyResp := FindNode(doc,'body\caRelationApplyResp');
     code := GetNodeValue(caRelationApplyResp,'code');
@@ -1114,11 +1151,14 @@ var
   caRelationDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1127,6 +1167,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('CA_RELATIONS','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<供应关系>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1142,12 +1183,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadRelations(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadRelations(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1163,9 +1209,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<供应关系>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1209,12 +1256,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<供应关系>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<供应关系>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.GetSynTimeStamp(tbName, SHOP_ID: string): int64;
@@ -1252,11 +1304,14 @@ var
   caServiceLineDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1265,6 +1320,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('CA_RELATION','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<供应链>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1280,12 +1336,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadServiceLines(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadServiceLines(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1301,9 +1362,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<供应链>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1341,12 +1403,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<供应链>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<供应链>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadTenants(TenantId, flag: integer): boolean;
@@ -1357,11 +1424,14 @@ var
   caTenantDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1370,6 +1440,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('CA_TENANT','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<企业资料>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1385,12 +1456,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadTenants(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadTenants(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1405,10 +1481,10 @@ begin
     finally
       h.Free;
     end;
-
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<企业资料>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1482,12 +1558,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<企业资料>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<企业资料>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadSort(TenantId, flag: integer): boolean;
@@ -1498,11 +1579,14 @@ var
   pubGoodsSortDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1511,6 +1595,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('PUB_GOODSSORT','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<商品分类>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1526,12 +1611,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadSort(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadSort(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1547,9 +1637,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<商品分类>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1591,12 +1682,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<商品分类>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadGoods(TenantId, flag: integer): boolean;
@@ -1607,11 +1703,14 @@ var
   pubGoodsDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1620,6 +1719,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('PUB_GOODSINFO','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<商品资料>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1635,12 +1735,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadGoods(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadGoods(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1656,9 +1761,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<商品资料>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1770,12 +1876,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<商品资料>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<商品资料>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadUnit(TenantId, flag: integer): boolean;
@@ -1786,11 +1897,14 @@ var
   pubGoodsUnitDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1799,6 +1913,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('PUB_MEAUNITS','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<商品单位>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1814,12 +1929,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadUnit(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadUnit(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1835,9 +1955,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<计量单位>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -1875,12 +1996,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<计量单位>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<商品单位>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadDeployGoods(TenantId, flag: integer): boolean;
@@ -1891,11 +2017,14 @@ var
   pubDeployGoodsDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -1904,6 +2033,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('PUB_GOODS_RELATION','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<供应链商品>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -1919,12 +2049,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadDeployGoods(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadDeployGoods(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -1940,9 +2075,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<供应链商品>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -2092,12 +2228,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<供应链商品>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.downloadBarcode(TenantId, flag: integer): boolean;
@@ -2108,11 +2249,14 @@ var
   pubBarcodeDownloadResp:IXMLDOMNode;
   Node:IXMLDOMNode;
   line:PServiceLine;
-  h:rsp;
+  h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
+  OutXml:WideString;
 begin
+try
+  SetTicket;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
@@ -2121,6 +2265,7 @@ begin
   Node := doc.createElement('timeStamp');
   Node.text := inttostr(GetSynTimeStamp('PUB_BARCODE','#'));
   FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<商品条码>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('downloadReq');
   FindNode(doc,'body').appendChild(Node);
@@ -2136,12 +2281,17 @@ begin
     h := SendHeader(rio,2);
     try
       try
-      doc := CreateXML(
-                   Decode(
-                      GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadBarcode(Encode(inxml,sslpwd))
-                      ,sslpwd
-                   )
-             );
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadBarcode(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
       except
         on E:Exception do
            begin
@@ -2157,9 +2307,10 @@ begin
       h.Free;
     end;
 
-    GetHeader(rio).free;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<商品条码>打开时长:'+inttostr(GetTicket));
+    SetTicket;
     rs := TZQuery.Create(nil);
     try
       rs.Close;
@@ -2203,12 +2354,17 @@ begin
       finally
         Params.free;
       end;
+      LogFile.AddLogFile(0,'保存<下载条码>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
       rs.Free;
     end;
   finally
     rio.Free;
   end;
+except
+  LogFile.AddLogFile(0,'下载<商品条码>xml='+doc.xml);
+  Raise;
+end;
 end;
 
 function TCaFactory.AutoCoLogo: boolean;
@@ -2228,6 +2384,16 @@ end;
 procedure TCaFactory.SetTimeStamp(const Value: int64);
 begin
   FTimeStamp := Value;
+end;
+
+function TCaFactory.GetTicket: Int64;
+begin
+  result := GetTickCount-_Start;
+end;
+
+procedure TCaFactory.SetTicket;
+begin
+  _Start := GetTickCount;
 end;
 
 { rsp }

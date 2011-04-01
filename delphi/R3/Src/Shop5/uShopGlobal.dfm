@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 507
-  Top = 225
+  Left = 367
+  Top = 166
   Height = 616
   Width = 819
   object SYS_DEFINE: TZQuery

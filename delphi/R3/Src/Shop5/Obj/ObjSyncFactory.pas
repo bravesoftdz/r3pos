@@ -336,6 +336,15 @@ type
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  TSyncCloseForDAY=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -587,7 +596,7 @@ begin
   1,4,5:js := '||';
   end;
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
-   'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID)'),Params);
+   'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'),Params);
 end;
 
 function TSyncCaRelationInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
@@ -595,7 +604,8 @@ var
   Str:string;
 begin
   Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP))';
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
+  'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -612,8 +622,8 @@ begin
   1,4,5:js := '||';
   end;
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
-    'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID)) '+
-    'and Exists(select * from PUB_GOODS_RELATION where TENANT_ID='+Params.ParambyName('TABLE_NAME').AsString+'.TENANT_ID and GODS_ID='+Params.ParambyName('TABLE_NAME').AsString+'.GODS_ID) '+
+    'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID) '+
+    ' or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP) '+
     ''),Params);
 end;
 
@@ -623,8 +633,8 @@ var
 begin
   Str :=
   'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' b where '+
-  'TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or b.TIME_STAMP>:TIME_STAMP)) '+
-  'and Exists(select * from PUB_GOODS_RELATION where TENANT_ID=b.TENANT_ID and GODS_ID=b.GODS_ID) '+
+  '(TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or b.TIME_STAMP>:TIME_STAMP)) '+
+  'and Exists(select * from PUB_GOODS_RELATION where TENANT_ID=b.TENANT_ID and GODS_ID=b.GODS_ID)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP) '+
   '';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
@@ -2494,6 +2504,23 @@ begin
   SelectSQL.Text := Str;
 end;
 
+{ TSyncCloseForDAY }
+
+function TSyncCloseForDAY.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TSyncCloseForDAY.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TSyncCloseForDAY.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaRelationInfo);
@@ -2535,6 +2562,7 @@ initialization
   RegisterClass(TSyncRckMonthClose);
   RegisterClass(TSyncRckGodsMonthOrder);
   RegisterClass(TSyncRckAcctMonthOrder);
+  RegisterClass(TSyncCloseForDAY);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaRelationInfo);
@@ -2576,5 +2604,6 @@ finalization
   UnRegisterClass(TSyncRckMonthClose);
   UnRegisterClass(TSyncRckGodsMonthOrder);
   UnRegisterClass(TSyncRckAcctMonthOrder);
-  
+  UnRegisterClass(TSyncCloseForDAY);
+
 end.

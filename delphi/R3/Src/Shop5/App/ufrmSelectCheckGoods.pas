@@ -183,7 +183,8 @@ begin
      end;
 
   CodeID:=TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger;
-  if (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) and (CodeID<>1) then
+
+  if (CodeID<>1) and (rzTree.Selected<>nil) and (rzTree.Selected.Level>0) then
   begin
     if w<>'' then w := w + ' and ';
      w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';

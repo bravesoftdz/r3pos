@@ -1089,8 +1089,6 @@ var
   FieldName: string;
   FName: string;
 begin
-  FieldDefs.Clear;
-  Fields.Clear;
   Stream.Read(ColumnCount,SizeOf(ColumnCount));
   Stream.Read(ColumnsSize,SizeOf(ColumnsSize));
   Stream.Read(HasBlobs,SizeOf(HasBlobs));
@@ -1108,7 +1106,7 @@ begin
 
        if FieldName <> RowAccessor.GetColumnName(i) then Raise Exception.Create('数据包不配符，不能添加');
        if vType <> RowAccessor.GetColumnType(i) then Raise Exception.Create('数据包不配符，不能添加');
-       if FieldSize <> RowAccessor.GetColumnLength(i) then Raise Exception.Create('数据包不配符，不能添加');
+//       if FieldSize <> RowAccessor.GetColumnLength(i) then Raise Exception.Create('数据包不配符，不能添加');
     end;
 end;
 begin

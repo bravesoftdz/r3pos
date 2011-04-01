@@ -110,6 +110,7 @@ begin
   DisConnect;
   Enter;
   try
+    if FConnStr='' then Raise Exception.Create('连接字符串不能为空..'); 
     case ConnMode of
     2:dbResolver := TZClient.Create;
     else

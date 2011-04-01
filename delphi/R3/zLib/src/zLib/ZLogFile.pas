@@ -10,6 +10,7 @@ TZLogFilePool=class
     FList:TStringList;
     FThreadLock:TRTLCriticalSection;
     FDefaultPath: string;
+    F:TextFile;
     procedure Enter;
     procedure Leave;
     procedure SetDefaultPath(const Value: string);
@@ -30,8 +31,13 @@ procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:WideString;Info
 begin
    Enter;
    try
-     Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
-     if MainFormHandle>0 then PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
+     if FindCmdLineSwitch('DEBUG',['-','+'],false) then //µ÷ÊÔÄ£Ê½
+        Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
+     if MainFormHandle>0 then
+        begin
+          Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
+          PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
+        end;
    finally
      Leave;
    end;
@@ -51,6 +57,8 @@ end;
 constructor TZLogFilePool.Create;
 begin
   DefaultPath := ExtractFilePath(ParamStr(0))+'\log\';
+  AssignFile(F,DefaultPath+'debug.log');
+  if fileExists(DefaultPath+'debug.log') then Append(F) else rewrite(f);
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;
@@ -60,6 +68,7 @@ begin
   Enter;
   try
     inherited;
+    CloseFile(F);
     LogFile := nil;
   finally
     Leave;

@@ -4,7 +4,7 @@ interface
 uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, ExtCtrls,Forms, StdCtrls,
   ComCtrls, ScktComp, Registry,SyncObjs,ScktCnst,RTLConsts,MidConst,
-  DB, ZIntf, ZPacket,ZServer, OleServer,ZLogFile,ZWSock2,ZConst;
+  DB, ZIntf, ZPacket,ZServer, OleServer,ZLogFile,ZWSock2,ZConst, ActiveX;
 
 const
   SHUTDOWN_FLAG = WM_USER + 3;
@@ -1164,6 +1164,8 @@ var
   n,c:integer;
   _Start:int64;
 begin
+  CoInitialize(nil);
+  try
   ResetEvent(FhEvent);
   while not Terminated do
     begin
@@ -1214,6 +1216,9 @@ begin
       WaitForSingleObject(FhEvent, INFINITE);
       ResetEvent(FhEvent);
     end;
+  finally
+    CoUninitialize;
+  end;
 end;
 
 function TSocketDispatcher.LockClient(SessionId: Integer): boolean;

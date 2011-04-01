@@ -200,7 +200,7 @@ begin
              w := w + 'c.RELATION_ID=:RELATION_ID ';
          end;
       result :=
-        'select 0 as A,'+Sqlrid+' as RELATION_ID,:TENANT_ID as TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.SECOND_ID,j.SECOND_CODE '+
+        'select 0 as A,'+Sqlrid+' as RELATION_ID,j.TENANT_ID as TENANT_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,j.NEW_INPRICE,j.NEW_LOWPRICE,j.SECOND_ID,j.SECOND_CODE '+
         'from VIW_GOODSINFO j,VIW_GOODSSORT b,PUB_GOODS_RELATION c where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID and j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and c.RELATION_ID=:RELATION_ID and c.COMM not in (''02'',''12'') '+w+
         ' and not Exists(select * from PUB_GOODS_RELATION where TENANT_ID=:TENANT_ID and GODS_ID=j.GODS_ID and RELATION_ID=:RELATION_ID and COMM not in (''02'',''12''))';
     end;

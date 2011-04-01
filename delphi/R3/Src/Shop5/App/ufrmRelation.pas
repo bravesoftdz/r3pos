@@ -138,7 +138,7 @@ begin
       if Id<>'' then
          begin
           if w<>'' then w := w + ' and ';
-          w := w + 'j.GODS_ID>=:MAXID';
+          w := w + 'j.GODS_ID>:MAXID';
          end;
       if (rzTree.Selected<>nil) then
          begin
@@ -154,7 +154,7 @@ begin
       if Id<>'' then
          begin
           if w<>'' then w := w + ' and ';
-          w := w + 'j.GODS_ID>=:MAXID';
+          w := w + 'j.GODS_ID>:MAXID';
          end;
       if (rzTree.Selected<>nil) then
          begin
@@ -170,7 +170,7 @@ begin
       if Id<>'' then
          begin
           if w<>'' then w := w + ' and ';
-          w := w + 'j.GODS_ID>=:MAXID';
+          w := w + 'j.GODS_ID>:MAXID';
          end;
       if (rzTree.Selected<>nil) then
          begin
@@ -189,7 +189,7 @@ begin
       if Id<>'' then
          begin
           if w<>'' then w := w + ' and ';
-          w := w + 'j.GODS_ID>=:MAXID';
+          w := w + 'j.GODS_ID>:MAXID';
          end;
       if (rzTree.Selected<>nil) then
          begin

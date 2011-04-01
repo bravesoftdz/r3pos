@@ -179,7 +179,7 @@ begin
   if id<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + 'j.GODS_ID>=:MAXID';
+      w := w + 'j.GODS_ID>:MAXID';
      end;
 
   CodeID:=TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger;

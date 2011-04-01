@@ -239,7 +239,7 @@ begin
    }
 
   w := ' and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.COMM not in (''02'',''12'') ';
-  if id<>'' then w := w + ' and j.GODS_ID>=:MAXID';
+  if id<>'' then w := w + ' and j.GODS_ID>:MAXID';
 
   if rzTree.Selected<>nil then
   begin

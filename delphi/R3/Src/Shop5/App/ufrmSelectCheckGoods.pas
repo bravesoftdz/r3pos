@@ -508,23 +508,27 @@ var
 begin
   ClearTree(rzTree);
   case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-  2:rs := Global.GetZQueryFromName('PUB_CATE_INFO');
-  4:rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
-  5:rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
-  6:rs := Global.GetZQueryFromName('PUB_AREA_INFO');
-  7:rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-  8:rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+   2: rs := Global.GetZQueryFromName('PUB_CATE_INFO');
+   4: rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
+   5: rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
+   6: rs := Global.GetZQueryFromName('PUB_AREA_INFO');
+   7: rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+   8: rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
   end;
-  rs.First;
-  while not rs.Eof do
+
+  if (rs<>nil) and (rs.Active) then
+  begin
+    rs.First;
+    while not rs.Eof do
     begin
       AObj := TRecord_.Create(rs);
       AObj.ReadFromDataSet(rs);
-      rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj); 
+      rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj);
       rs.Next;
     end;
-  AddRoot(rzTree,'全部商品');
-  if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+    AddRoot(rzTree,'全部商品');
+    if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+  end;
 end;
 
 procedure TfrmSelectCheckGoods.LoadProv;

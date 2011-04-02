@@ -114,6 +114,7 @@ begin
   inherited;
   if (Not Cds_Users.Active) then Exit;
   if (Cds_Users.RecordCount = 0) then Exit;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31500001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
@@ -133,6 +134,7 @@ end;
 procedure TfrmUsers.actNewExecute(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
     begin
@@ -150,6 +152,7 @@ procedure TfrmUsers.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Users.Active) or (Cds_Users.IsEmpty) then exit;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31500001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmUsersInfo.Create(self) do
   begin
@@ -198,8 +201,8 @@ end;
 procedure TfrmUsers.actInfoExecute(Sender: TObject);
 begin
   inherited;
-  if not Cds_Users.Active then exit;
-  if Cds_Users.IsEmpty then exit;
+  if not Cds_Users.Active then Exception.Create('没有数据！');
+  if Cds_Users.IsEmpty then Exception.Create('没有数据！');
   with TfrmUsersInfo.Create(self) do
     begin
       try
@@ -288,6 +291,7 @@ begin
   inherited;
   if not Cds_Users.Active then exit;
   if Cds_Users.IsEmpty then exit;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31500001',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   ROLE_IDS:=Cds_Users.FieldByName('ROLE_IDS').AsString;
   if TfrmUserRights.ShowUserRight(Cds_Users.FieldByName('USER_ID').AsString,

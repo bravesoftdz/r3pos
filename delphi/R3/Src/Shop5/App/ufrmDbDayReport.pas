@@ -703,7 +703,7 @@ begin
   strSql :=
     'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
     'left outer join VIW_BARCODE b '+
-    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    'on b.BARCODE_TYPE in (''0'',''1'',''2'') and j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     ' order by j.GODS_CODE ';
 
@@ -807,8 +807,8 @@ begin
     ',d.USER_NAME as GUIDE_USER_TEXT '+
     ',e.USER_NAME as CREA_USER_TEXT '+
     ',f.USER_NAME as SEND_USER_TEXT '+
-    'from ('+strSql+') j '+
-    'left outer join VIW_BARCODE b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
+    'left outer join VIW_BARCODE b on b.BARCODE_TYPE in (''0'',''1'',''2'') and j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
     'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+

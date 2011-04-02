@@ -506,7 +506,7 @@ begin
   ' from SAL_IC_GLIDE A'+
   ' where IC_GLIDE_TYPE = ''1'' and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and CREA_DATE>:LAST_SALES_DATE and CREA_DATE<=:SALES_DATE group by TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE';
   Str :=
-  'select A.* from ('+Str+') A where not exists('+
+  'select A.* from ('+Str+') A where CLSE_DATE=:SALES_DATE or not exists('+
   'select * from ACC_CLOSE_FORDAY where TENANT_ID=A.TENANT_ID and SHOP_ID=A.SHOP_ID and CREA_USER=A.CREA_USER and CLSE_DATE=A.CLSE_DATE'+
   ')';
   Acc_Data.Close;
@@ -515,6 +515,7 @@ begin
   Acc_Data.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
   Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
+  if LastTime=ThatDay then LastTime := LastTime -1; 
   Acc_Data.Params.ParamByName('LAST_SALES_DATE').AsInteger := LastTime;
   Factor.Open(Acc_Data);
 end;

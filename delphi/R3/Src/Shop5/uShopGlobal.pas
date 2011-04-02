@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uGlobal, DB, ZdbFactory, Registry, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset;
+  ZAbstractDataset, ZDataset, ZBase;
 
 type
   TShopGlobal = class(TGlobal)
@@ -73,6 +73,8 @@ type
     function CheckHostLocal: boolean;
     function GetVersionFlag:integer;
 
+    //刷新最近同步时间
+    procedure SyncTimeStamp;
     function GetParameter(ParamName:string):string;
     procedure SetParameter(ParamName:string;Value:string);
     property Limit:integer read FLimit write SetLimit;
@@ -301,6 +303,19 @@ end;
 function TShopGlobal.GetNetVersion: boolean;
 begin
   result := (SFVersion='.NET');
+end;
+
+procedure TShopGlobal.SyncTimeStamp;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := TENANT_ID;
+    Factor.ExecProc('TGetSyncTimeStamp',Params);  
+  finally
+    Params.free;
+  end;
 end;
 
 initialization

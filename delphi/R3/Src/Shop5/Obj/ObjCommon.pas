@@ -684,6 +684,8 @@ begin
     rs.Params.AssignValues(Params);
     AGlobal.Open(rs);
     SyncTimeStamp := TLargeIntField(rs.Fields[0]).AsLargeInt;
+    result := true;
+    Msg := '同步时间';
   finally
     rs.Free;
   end;

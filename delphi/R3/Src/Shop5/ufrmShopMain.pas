@@ -685,6 +685,7 @@ begin
        finally
          frmLogo.Close;
        end;
+       ShopGlobal.SyncTimeStamp;
 //       Factor.ExecProc('TGetXDictInfo');
 //       MsgFactory.Load;
 //       Timer1.OnTimer(nil);
@@ -1098,8 +1099,11 @@ begin
      rs.Post;
      Global.RemoteFactory.UpdateBatch(rs,'TTenant',nil);
      end;
-     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable'); 
-     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable'); 
+     if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
+        begin
+          SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable');
+          SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable');
+        end;
   finally
     Params.Free;
     rs.Free;
@@ -2585,11 +2589,14 @@ begin
   inherited;
   rs := TZQuery.Create(nil);
   try
-//    for i:=0 to 10000 do
+    for i:=0 to 10000 do
     begin
     rs.Close;
     rs.SQL.Text := 'select * from PUB_GOODSINFO';
+    try
     Factor.Open(rs);
+    except
+    end;
     end; 
   finally
     rs.Free;

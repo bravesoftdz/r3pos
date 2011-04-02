@@ -337,7 +337,13 @@ type
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   TSyncCloseForDAY=class(TSyncSingleTable)
+  private
+    ps:TZQuery;
+    function GetPayment(s:string):string;
   public
+    procedure CreateNew(AOwner: TComponent);override;
+    destructor  Destroy;override;
+
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -2507,18 +2513,152 @@ end;
 { TSyncCloseForDAY }
 
 function TSyncCloseForDAY.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
 begin
-
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP'),Params);
 end;
 
 function TSyncCloseForDAY.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAccount;
+var
+  id:String;
+  rs:TZQuery;
 begin
-
+  id := newid(FieldbyName('SHOP_ID').asString);
+  rs := TZQuery.Create(nil);
+  try
+    if not ps.Active then
+       begin
+         ps.Close;
+         ps.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+         AGlobal.Open(ps); 
+       end;
+    rs.SQL.Text :=
+      'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,:ROWS_ID,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+    CopyToParams(rs.Params);
+    rs.ParambyName('ROWS_ID').AsString := id;
+    if FieldbyName('PAY_A').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('A')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'A';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_A').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_B').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('B')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'B';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_B').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_C').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('C')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'C';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_C').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_E').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('E')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'E';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_E').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_F').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('F')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'F';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_F').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_G').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('G')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'G';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_G').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_H').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('H')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'H';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_H').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_I').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('I')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'I';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_I').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+    if FieldbyName('PAY_J').AsFloat<>0 then
+       begin
+         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+         rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('J')+'】';
+         rs.ParambyName('PAYM_ID').AsString := 'J';
+         rs.ParambyName('RECV_MNY').AsFloat := FieldbyName('PAY_J').AsFloat;
+         AGlobal.ExecQuery(rs);
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+procedure DeleteAccount;
+begin
+end;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'ACC_CLOSE_FORDAY';
+     end;
+  InitSQL(AGlobal);
+  DeleteAccount;
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+  InsertAccount;
 end;
 
 function TSyncCloseForDAY.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
 begin
+  Str := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  SelectSQL.Text := Str;
+end;
 
+procedure TSyncCloseForDAY.CreateNew(AOwner: TComponent);
+begin
+  inherited;
+  ps := TZQuery.Create(nil);
+end;
+
+destructor TSyncCloseForDAY.Destroy;
+begin
+  ps.Free;
+  inherited;
+end;
+
+function TSyncCloseForDAY.GetPayment(s: string): string;
+begin
+  if ps.Locate('CODE_ID',s,[]) then
+     result := ps.FieldbyName('CODE_NAME').AsString
+  else
+     Raise Exception.Create(s+'支付方式没有找到'); 
 end;
 
 initialization

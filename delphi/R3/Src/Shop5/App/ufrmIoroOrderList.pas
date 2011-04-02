@@ -173,7 +173,7 @@ begin
   0:result := 'select top 600 * from ('+strSql+') jp order by IORO_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+strSql+') order by IORO_ID) tp fetch first 600  rows only';
+       'select * from ('+strSql+') j order by IORO_ID) tp fetch first 600  rows only';
   5:result := 'select * from ('+strSql+') order by IORO_ID limit 600';
   else
     result := 'select * from ('+strSql+') order by IORO_ID';

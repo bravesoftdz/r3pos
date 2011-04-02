@@ -267,7 +267,7 @@ begin
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_BARCODE';
-  n^.keyFields := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02';
+  n^.keyFields := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
   n^.synFlag := 3;
   n^.tbtitle := 'ÌõÂë±í';
   FList.Add(n);

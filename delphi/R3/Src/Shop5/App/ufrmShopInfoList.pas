@@ -94,6 +94,7 @@ end;
 procedure TfrmShopInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmShopInfo.Create(self) do
   begin
@@ -122,6 +123,7 @@ procedure TfrmShopInfoList.actDeleteExecute(Sender: TObject);
 var i:integer;
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
   if not ShopGlobal.GetChkRight('31100001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
@@ -259,6 +261,7 @@ end;
 procedure TfrmShopInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31100001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
   with TfrmShopInfo.Create(self) do

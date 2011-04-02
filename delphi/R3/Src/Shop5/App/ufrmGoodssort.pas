@@ -49,6 +49,7 @@ type
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsGoodsSortBeforeInsert(DataSet: TDataSet);
+    procedure FormCreate(Sender: TObject);
   private
     FFlag: integer;
     FSort_Type: integer;
@@ -84,6 +85,7 @@ end;
 procedure TfrmGoodssort.btnAppendClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
   if not cdsGoodsSort.IsEmpty then
   begin
@@ -117,6 +119,7 @@ end;
 procedure TfrmGoodssort.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if MessageBox(Handle,pchar('确认要删除"'+cdsGoodsSort.FieldbyName('SORT_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsGoodsSort.Delete;
   if cdsGoodsSort.State in [dsEdit,dsInsert] then cdsGoodsSort.Post;
@@ -146,6 +149,7 @@ end;
 procedure TfrmGoodssort.btnSaveClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsGoodsSort.State in [dsInsert,dsEdit] then cdsGoodsSort.Post;
   if (cdsGoodsSort.FieldbyName('SORT_NAME').AsString='') and (cdsGoodsSort.FieldbyName('SORT_SPELL').AsString='') and (cdsGoodsSort.FieldbyName('SORT_ID').AsString='')then
   begin
@@ -554,6 +558,18 @@ end;
 function TfrmGoodssort.CheckCanExport: boolean;
 begin
   Result := ShopGlobal.GetChkRight('32300001',6);
+end;
+
+procedure TfrmGoodssort.FormCreate(Sender: TObject);
+begin
+  inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then
+    begin
+      DBGridEh1.ReadOnly:=True;
+      btnAppend.Enabled:=False;
+      btnSave.Enabled:=False;
+      btnDelete.Enabled:=False;
+    end;  
 end;
 
 end.

@@ -339,6 +339,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前    
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadHeader;
@@ -354,7 +355,6 @@ begin
               TabSheet.Caption := gid;
             end;
        end;
-    dbState := dsBrowse;
     ShowOweInfo;
   finally
     Params.Free;
@@ -720,6 +720,7 @@ procedure TfrmSalRetuOrder.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
   if Locked then Exit;
+  if dbState=dsBrowse then Exit;
   if edtINVOICE_FLAG.ItemIndex < 0 then Exit;
   case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:AObj.FieldbyName('TAX_RATE').AsFloat := 0;

@@ -450,6 +450,7 @@ var
   SortID,SortName:string;
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   SortID:='';
   SortName:='';
   if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
@@ -497,6 +498,7 @@ begin
   inherited;
   if (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then Raise Exception.Create('   没有数据，请先查询！  ');
   if cdsBrowser.FieldByName('GODS_ID').AsString='' then Raise Exception.Create('   没有数据，请先查询！  ');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('32600001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
 
   with TfrmGoodsInfo.Create(self) do
@@ -518,10 +520,10 @@ var
   tmpGlobal: TZQuery;
 begin
   inherited;
-
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
   if cdsBrowser.State=dsEdit then cdsBrowser.Post;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('32600001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
 
   //2011.03.18 Add 判断是否选择非自主经营的商品:
@@ -1044,6 +1046,7 @@ procedure TfrmGoodsInfoList.N8Click(Sender: TObject);
 var CurObj: TRecord_;
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');  
   try
     CurObj:=TRecord_.Create;
     if TfrmGoodsSortTree.AddDialog(self,CurObj,1) then

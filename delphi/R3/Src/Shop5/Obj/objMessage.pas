@@ -23,6 +23,11 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;    
   end;
 
+  TSetRead=class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
+
 implementation
 
 
@@ -53,18 +58,18 @@ begin
   Str :=
   'select jb.*,b.USER_NAME as ISSUE_USER_TEXT from( '+
   'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from( '+
-  'select TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,SHOP_ID,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM from MSC_MESSAGE '+
+  'select TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,SHOP_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM from MSC_MESSAGE '+
   ' where COMM not in (''02'',''12'') and MSG_ID=:MSG_ID and TENANT_ID=:TENANT_ID ) ja '+
   ' left join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
   ' left join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and b.USER_ID=jb.ISSUE_USER';
 
   SelectSQL.Text := Str;
   IsSQLUpdate := True;
-  Str := 'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,SHOP_ID,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM,TIME_STAMP) '+
-  'values(:TENANT_ID,:MSG_ID,:MSG_CLASS,:ISSUE_DATE,:SHOP_ID,:ISSUE_USER,:MSG_TITLE,:MSG_CONTENT,:END_DATE,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,SHOP_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM,TIME_STAMP) '+
+  'values(:TENANT_ID,:MSG_ID,:MSG_CLASS,:ISSUE_DATE,:SHOP_ID,:MSG_SOURCE,:ISSUE_USER,:MSG_TITLE,:MSG_CONTENT,:END_DATE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
 
-  Str := 'update MSC_MESSAGE set MSG_CLASS=:MSG_CLASS,ISSUE_DATE=:ISSUE_DATE,SHOP_ID=:SHOP_ID,ISSUE_USER=:ISSUE_USER,'+
+  Str := 'update MSC_MESSAGE set MSG_CLASS=:MSG_CLASS,ISSUE_DATE=:ISSUE_DATE,SHOP_ID=:SHOP_ID,MSG_SOURCE=:MSG_SOURCE,ISSUE_USER=:ISSUE_USER,'+
   'MSG_TITLE=:MSG_TITLE,MSG_CONTENT=:MSG_CONTENT,END_DATE=:END_DATE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID and MSG_ID=:OLD_MSG_ID ';
   UpdateSQL.Text := Str;
@@ -89,7 +94,7 @@ begin
     rs.ParamByName('MSG_ID').AsString := FieldbyName('MSG_ID').AsString;
     AGlobal.Open(rs);
 
-    if (rs.FieldByName('MSG_FEEDBACK_STATUS').AsString <> '') or (rs.FieldByName('MSG_READ_STATUS').AsString <> '') then
+    if (rs.FieldByName('MSG_FEEDBACK_STATUS').AsString = '2') or (rs.FieldByName('MSG_READ_STATUS').AsString = '2') then
       Raise Exception.Create('已经阅读,不能删除!');
   finally
     rs.Free;
@@ -102,7 +107,7 @@ begin
   Str := ' update MSC_MESSAGE_LIST set COMM='+GetCommStr(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and MSG_ID=:OLD_MSG_ID ';
   if AGlobal.ExecSQL(Str,Self) = 0 then
     begin
-      Str := 'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,COMM,TIME_STAMP) values(:TENANT_ID,:MSG_ID,:SHOP_ID,''00'','+GetTimeStamp(iDbType)+')';
+      Str := 'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) values(:TENANT_ID,:MSG_ID,:SHOP_ID,1,1,''00'','+GetTimeStamp(iDbType)+')';
       AGlobal.ExecSQL(Str,Self);
     end;
   Result := True;
@@ -126,11 +131,27 @@ begin
   DeleteSQL.Text := Str;
 end;
 
+{ TSetRead }
+
+procedure TSetRead.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  KeyFields:='TENANT_ID,MSG_ID,SHOP_ID';
+
+  Str := 'update MSC_MESSAGE_LIST set READ_DATE=:READ_DATE,READ_USER=:READ_USER,MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=2 '+
+  ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and MSG_ID=:MSG_ID ';
+  UpdateSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TMessage);
   RegisterClass(TPublishMessage);
+  RegisterClass(TSetRead);
 finalization
   UnRegisterClass(TMessage);
   UnRegisterClass(TPublishMessage);
+  UnRegisterClass(TSetRead);
 
 end.

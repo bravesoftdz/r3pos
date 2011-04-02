@@ -624,7 +624,7 @@ begin
     strSql :=
         'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         'left outer join VIW_BARCODE b '+
-        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'on b.BARCODE_TYPE in (''0'',''1'',''2'') and j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
         ' order by j.GODS_CODE';
 
@@ -653,7 +653,7 @@ begin
     strSql :=
       'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
       'left outer join VIW_BARCODE b '+
-      'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+      'on b.BARCODE_TYPE in (''0'',''1'',''2'') and j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
       'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
       ' order by j.GODS_CODE ';
      
@@ -666,7 +666,21 @@ begin
   inherited;
   if adoReport1.IsEmpty then Exit;
   IsOnDblClick:=true;
-  self.DoAssignParamsValue(w1,RzPanel9);
+  //复制查询条件参数
+  fndP2_ReckType.ItemIndex:=fndP1_ReckType.ItemIndex;
+  P1_D1.Date := P2_D1.Date;
+  fndP2_SHOP_TYPE.ItemIndex:=0;
+  fndP2_SHOP_VALUE.KeyValue:=trim(adoReport1.fieldbyName('REGION_ID').AsString);
+  fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
+  fndP2_TYPE_ID.ItemIndex:=fndP1_TYPE_ID.ItemIndex;
+  fndP2_STAT_ID.KeyValue:=fndP1_STAT_ID.KeyValue;
+  fndP2_STAT_ID.Text:=fndP1_STAT_ID.Text;
+  sid2 := sid1;
+  srid2 := srid1;
+  fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text;
+  fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex;
+  rzPage.ActivePageIndex := 1;
+  actFind.OnExecute(nil);
 end;
 
 procedure TfrmStorageDayReport.DBGridEh2DblClick(Sender: TObject);

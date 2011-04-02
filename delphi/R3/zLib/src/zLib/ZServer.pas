@@ -530,13 +530,12 @@ function TDoInvokeDispatch.DoSKTOpenCommandText(Token, LocaleID: Integer;
 var
   CommandText,ParamsStr:Widestring;
   DataSet:TZQuery;
-  V:OleVariant;
   ftParams:TftParamList;
 begin
   try
   CommandText := OleVariant(PDispParams(@Params).rgvarg^[0]);
   ParamsStr := OleVariant(PDispParams(@Params).rgvarg^[1]);
-
+  Exit;
   if CheckIdTransact then
      begin
        try

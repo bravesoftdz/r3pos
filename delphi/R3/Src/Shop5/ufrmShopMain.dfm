@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 37
-  Top = 4
+  Left = 125
+  Top = 217
   Width = 932
   Height = 557
   Caption = ''
@@ -5768,6 +5768,7 @@ inherited frmShopMain: TfrmShopMain
               Font.Style = []
               ParentFont = False
               TabOrder = 3
+              OnClick = RzBmpButton5Click
             end
             object RzBmpButton6: TRzBmpButton
               Left = 1
@@ -19038,10 +19039,6 @@ inherited frmShopMain: TfrmShopMain
     object N103: TMenuItem
       Caption = #31383#20307#37325#25490
       OnClick = N103Click
-    end
-    object N104: TMenuItem
-      Caption = #31383#20307#24182#25490
-      OnClick = N104Click
     end
   end
 end

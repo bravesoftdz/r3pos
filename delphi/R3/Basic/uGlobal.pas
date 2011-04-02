@@ -322,7 +322,7 @@ end;
 
 procedure TGlobal.DataModuleCreate(Sender: TObject);
 begin
-  InstallPath := ExtractFilePath(Application.ExeName);
+  InstallPath := ExtractShortPathName(ExtractFilePath(Application.ExeName));
   DataDir    := 'temp';
   if not DirectoryExists(InstallPath+DataDir) then
      CreateDir(InstallPath+DataDir);

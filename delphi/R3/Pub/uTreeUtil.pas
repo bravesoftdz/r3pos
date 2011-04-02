@@ -104,6 +104,7 @@ var
   i:Integer;
   Node:TTreeNode;
 begin
+ ATree.Selected := nil;
  if RootNode=nil then
  begin
    for i:=0 to ATree.Items.Count-1 do

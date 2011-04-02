@@ -58,7 +58,7 @@ begin
       try
         LocalFactor := _LocalFactor;
         CreateDbFactroy := Factory;
-        CreateDbFactroy.CaptureError := true;
+        CreateDbFactroy.CaptureError := not FindCmdLineSwitch('DEBUG',['-','+'],false);
         CreateDbFactroy.onCreateDbCallBack := CallBack;
         if CreateDbFactroy.DbVersion<>'' then
         begin

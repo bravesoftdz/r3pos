@@ -273,7 +273,6 @@ type
     tlbClose: TMenuItem;
     N33: TMenuItem;
     N103: TMenuItem;
-    N104: TMenuItem;
     actfrmIoroDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
@@ -365,8 +364,8 @@ type
     procedure RzBmpButton2Click(Sender: TObject);
     procedure tlbCloseClick(Sender: TObject);
     procedure N103Click(Sender: TObject);
-    procedure N104Click(Sender: TObject);
     procedure actfrmIoroDayReportExecute(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -2556,13 +2555,6 @@ begin
   self.Cascade;
 end;
 
-procedure TfrmShopMain.N104Click(Sender: TObject);
-begin
-  inherited;
-  self.ArrangeIcons;
-
-end;
-
 procedure TfrmShopMain.actfrmIoroDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
@@ -2583,6 +2575,25 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.RzBmpButton5Click(Sender: TObject);
+var
+  rs:TZQuery;
+  i:integer;
+begin
+  inherited;
+  rs := TZQuery.Create(nil);
+  try
+//    for i:=0 to 10000 do
+    begin
+    rs.Close;
+    rs.SQL.Text := 'select * from PUB_GOODSINFO';
+    Factor.Open(rs);
+    end; 
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

@@ -32,10 +32,10 @@ begin
    Enter;
    try
      if FindCmdLineSwitch('DEBUG',['-','+'],false) then //µ÷ÊÔÄ£Ê½
-        Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
+        Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
      if MainFormHandle>0 then
         begin
-          Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+#13+Information);
+          Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
           PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
         end;
    finally
@@ -56,9 +56,10 @@ end;
 
 constructor TZLogFilePool.Create;
 begin
-  DefaultPath := ExtractFilePath(ParamStr(0))+'\log\';
-  AssignFile(F,DefaultPath+'debug.log');
-  if fileExists(DefaultPath+'debug.log') then Append(F) else rewrite(f);
+  DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
+  ForceDirectories(DefaultPath+'debug');
+  AssignFile(F,DefaultPath+'debug\debug.txt');
+  rewrite(f);
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;

@@ -949,12 +949,12 @@ begin
       if ResultSet.QueryInterface(IZCachedResultSet, FCachedResultSet) = 0 then
       begin
         CachedResultSet := ResultSet as IZCachedResultSet;
-        CachedResolver := TZGenericCachedResolver.Create(nil,nil); 
+        CachedResolver := CachedResultSet.GetResolver;
         CachedResultSet.SetCachedUpdates(CachedUpdates);
         if FUpdateObject <> nil then
-          CachedResultSet.SetResolver(FUpdateObject)
-        else
-          CachedResultSet.SetResolver(CachedResolver);
+           CachedResultSet.SetResolver(FUpdateObject);
+//        else
+//          CachedResultSet.SetResolver(CachedResolver);
       end;
       RowAccessor := TZRowAccessor.Create(ColumnList);
     finally
@@ -1109,19 +1109,29 @@ begin
 //       if FieldSize <> RowAccessor.GetColumnLength(i) then Raise Exception.Create('数据包不配符，不能添加');
     end;
 end;
+var
+  BM:TBookMarkStr;
 begin
   if Stream.Size = 0 then Raise Exception.Create('无效数据包...');
-  if not Active then
-     begin
-       LoadFromStream(Stream);
-       Exit;
-     end;
-  Stream.Position := 0;
-  ReadHeader;
-  self.CachedResultSet.ReadStream(Stream,forSync);
-  { Performs sorting. }
-  if SortedFields <> '' then
-      InternalSort;
+  DisableControls;
+  try
+    if not Active then
+       begin
+         LoadFromStream(Stream);
+         Exit;
+       end;
+    BM:=Bookmark;
+    Stream.Position := 0;
+    ReadHeader;
+    self.CachedResultSet.ReadStream(Stream,forSync);
+    { Performs sorting. }
+    if SortedFields <> '' then
+        InternalSort;
+    BookMark:=BM;
+    UpdateCursorPos;
+  finally
+    EnableControls;
+  end;
 end;
 
 procedure TZAbstractDataset.SetData(const Value: OleVariant);

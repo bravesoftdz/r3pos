@@ -1083,6 +1083,7 @@ begin
     else
     if IOData^.StreamLen = 0 then //·¢ËÍÍê±Ïºó
        begin
+          IOData^.Buffer := nil;
           IOData^.IOMode := IOIDLE;
        end
     else

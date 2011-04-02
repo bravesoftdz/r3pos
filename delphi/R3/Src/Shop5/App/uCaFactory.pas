@@ -180,7 +180,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses ufrmLogo,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,IniFiles;
+uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,IniFiles;
 { TCaFactory }
 
 procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
@@ -1294,6 +1294,13 @@ begin
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
   if r=0 then
      Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
+  if Global.RemoteFactory.Connected then
+  begin
+  r := Global.RemoteFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
+  if r=0 then
+     Global.RemoteFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
+  end;
+  ShopGlobal.SyncTimeStamp;
 end;
 
 function TCaFactory.downloadServiceLines(TenantId, flag: integer): boolean;

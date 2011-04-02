@@ -84,7 +84,7 @@ begin
             rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('RECV_DATE').AsOldInteger;
             rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
             AGlobal.Open(rs);
-            if not rs.IsEmpty then Raise Exception.Create('当前收款人在'+FieldbyName('RECV_DATE').AsString+'已经结账不能再开单.');
+            if not rs.IsEmpty then Raise Exception.Create('当前收款人在'+FieldbyName('RECV_DATE').AsString+'已经交班结账不能开现金收款.');
           finally
             rs.Free;
           end;

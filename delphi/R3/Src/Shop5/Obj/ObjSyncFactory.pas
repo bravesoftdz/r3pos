@@ -336,6 +336,7 @@ type
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //17 synFlag
   TSyncCloseForDAY=class(TSyncSingleTable)
   private
     ps:TZQuery;
@@ -2531,12 +2532,6 @@ begin
   id := newid(FieldbyName('SHOP_ID').asString);
   rs := TZQuery.Create(nil);
   try
-    if not ps.Active then
-       begin
-         ps.Close;
-         ps.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENANT_ID='+FieldbyName('TENANT_ID').AsString;
-         AGlobal.Open(ps); 
-       end;
     rs.SQL.Text :=
       'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
     + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,:ROWS_ID,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
@@ -2618,13 +2613,24 @@ begin
     rs.Free;
   end;
 end;
-procedure DeleteAccount;
+function DeleteAccount:boolean;
+var
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and
+  finally
+    rs.Free;
+  end;
 end;
 begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'ACC_CLOSE_FORDAY';
+       ps.Close;
+       ps.SQL.Text := 'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+       AGlobal.Open(ps);
      end;
   InitSQL(AGlobal);
   DeleteAccount;

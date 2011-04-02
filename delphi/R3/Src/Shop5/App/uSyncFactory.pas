@@ -70,7 +70,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uCaFactory;
+uses uGlobal,ufrmLogo,uCaFactory,uShopGlobal;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -129,6 +129,7 @@ begin
   14:result := 'TSyncPayOrderList';
   15:result := 'TSyncRckDaysCloseList';
   16:result := 'TSyncRckMonthCloseList';
+  17:result := 'TSyncCloseForDAY';
   else
     result := 'TSyncSingleTable';
   end;
@@ -390,6 +391,12 @@ begin
   n^.tbtitle := '存取款单';
   FList.Add(n);
 
+  new(n);
+  n^.tbname := 'ACC_CLOSE_FORDAY';
+  n^.keyFields := 'TENANT_ID;SHOP_ID;CLSE_DATE;CLSE_TYPE;CREA_USER';
+  n^.synFlag := 17;
+  n^.tbtitle := '交班结账';
+  FList.Add(n);
 
   new(n);
   n^.tbname := 'ACC_RECVORDER';
@@ -439,6 +446,10 @@ begin
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then
      Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
+  r := Global.RemoteFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
+  if r=0 then
+     Global.RemoteFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
+  ShopGlobal.SyncTimeStamp;
 end;
 
 procedure TSyncFactory.SetTicket;
@@ -484,6 +495,7 @@ begin
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
+    SetSynTimeStamp('#',SyncTimeStamp,'#');
   finally
     frmLogo.Close;
   end;
@@ -507,6 +519,7 @@ begin
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
+    SetSynTimeStamp('#',SyncTimeStamp,'#');
   finally
     frmLogo.Close;
   end;

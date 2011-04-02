@@ -43,10 +43,15 @@ TGetXDictInfo=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
+TGetSyncTimeStamp=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
 const
   ComVersion='5.0.0.1';
 var
   FldXdict:TZReadonlyQuery;
+  SyncTimeStamp:Int64;
 implementation
 function NewId(id:string): string;
 var
@@ -330,6 +335,7 @@ begin
    5:result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
   end;
+  result := 'case when ('+result+')<='+inttostr(SyncTimeStamp)+' then '+inttostr(SyncTimeStamp+60)+ ' else '+result+' end';
 end;
 //读取合法日期
 function GetReckDate(AGlobal:IdbHelp;TENANT_ID,SHOP_ID:string):string;
@@ -665,10 +671,30 @@ begin
   result := true;
 end;
 
+{ TGetSyncTimeStamp }
+
+function TGetSyncTimeStamp.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=''#'' and TABLE_NAME=''#''';
+    rs.Params.AssignValues(Params);
+    AGlobal.Open(rs);
+    SyncTimeStamp := TLargeIntField(rs.Fields[0]).AsLargeInt;
+  finally
+    rs.Free;
+  end;
+end;
+
 initialization
   RegisterClass(TGetXDictInfo);
+  RegisterClass(TGetSyncTimeStamp);
   FldXdict := nil;
 finalization
   if FldXdict<>nil then FldXdict.Free;
   UnRegisterClass(TGetXDictInfo);
+  UnRegisterClass(TGetSyncTimeStamp);
 end.

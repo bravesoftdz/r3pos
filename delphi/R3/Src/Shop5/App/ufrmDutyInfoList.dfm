@@ -1,6 +1,6 @@
 inherited frmDutyInfoList: TfrmDutyInfoList
-  Left = 347
-  Top = 178
+  Left = 335
+  Top = 160
   Width = 735
   Height = 521
   Caption = #32844#21153#26723#26696#31649#29702

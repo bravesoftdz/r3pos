@@ -84,6 +84,7 @@ end;
 procedure TfrmCodeInfo.btnAppendClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsCODE_INFO.State in [dsEdit,dsInsert] then cdsCODE_INFO.Post;
   if not cdsCODE_INFO.IsEmpty then
   begin
@@ -117,6 +118,7 @@ end;
 procedure TfrmCodeInfo.btnDeleteClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if MessageBox(Handle,pchar('确认要删除"'+cdsCODE_INFO.FieldbyName('CODE_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsCODE_INFO.Delete;
   if cdsCODE_INFO.State in [dsEdit,dsInsert] then cdsCODE_INFO.Post;
@@ -146,6 +148,7 @@ end;
 procedure TfrmCodeInfo.btnSaveClick(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsCODE_INFO.State in [dsInsert,dsEdit] then cdsCODE_INFO.Post;
   if (cdsCODE_INFO.FieldbyName('CODE_NAME').AsString='') and (cdsCODE_INFO.FieldbyName('CODE_SPELL').AsString='') and (cdsCODE_INFO.FieldbyName('CODE_ID').AsString='')then
   begin
@@ -196,6 +199,7 @@ end;
 procedure TfrmCodeInfo.cdsCODE_INFONewRecord(DataSet: TDataSet);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   cdsCODE_INFO.FieldByName('SEQ_NO').AsString:=IntToStr(cdsCODE_INFO.RecordCount+1);
   cdsCODE_INFO.FieldByName('CODE_ID').AsString := TSequence.NewId;
   cdsCODE_INFO.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;

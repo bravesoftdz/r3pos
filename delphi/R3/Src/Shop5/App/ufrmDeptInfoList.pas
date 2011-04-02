@@ -111,6 +111,7 @@ end;
 procedure TfrmDeptInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31200001',2) then Raise Exception.Create('你没有新增部门的权限,请和管理员联系.');
   with TfrmDeptInfo.Create(self) do
   begin
@@ -127,6 +128,7 @@ end;
 procedure TfrmDeptInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31200001',3)  then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
@@ -164,6 +166,7 @@ var
   Params:TftParamList;
 begin
   inherited;
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31200001',4)  then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');

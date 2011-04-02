@@ -569,7 +569,7 @@ begin
   if FConnection <> Value then
   begin
     //if Active then Close;
-    Statement := nil;
+    //if Statement then Statement.Close;
     if FConnection <> nil then
       FConnection.UnregisterDataSet(Self);
     FConnection := Value;

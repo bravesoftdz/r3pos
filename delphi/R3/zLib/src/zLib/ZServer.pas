@@ -447,7 +447,8 @@ begin
                Session.dbResolver.Open(DataSet,ZClassName,nil)
             else
                Session.dbResolver.Open(DataSet,ZClassName,ftParams);
-            PVariant(VarResult)^ := DataSet.Data;
+            V := DataSet.Data;
+            PVariant(VarResult)^ := V;
           finally
             ftParams.Free;
             DataSet.Free;
@@ -531,11 +532,11 @@ var
   CommandText,ParamsStr:Widestring;
   DataSet:TZQuery;
   ftParams:TftParamList;
+  V:OleVariant;
 begin
   try
   CommandText := OleVariant(PDispParams(@Params).rgvarg^[0]);
   ParamsStr := OleVariant(PDispParams(@Params).rgvarg^[1]);
-  Exit;
   if CheckIdTransact then
      begin
        try
@@ -546,7 +547,8 @@ begin
             TftParamList.Decode(ftParams,ParamsStr);
             DataSet.Params.AssignValues(ftParams);
             Session.dbResolver.Open(DataSet);
-            PVariant(VarResult)^ := DataSet.Data;
+            V := DataSet.Data;
+            PVariant(VarResult)^ := V;
           finally
             ftParams.Free;
             DataSet.Free;
@@ -591,7 +593,6 @@ function TDoInvokeDispatch.DoSKTUpdateBatchClassName(Token,
 var
   ZClassName,ParamsStr:Widestring;
   DataSet:TZQuery;
-  V:OleVariant;
   ftParams:TftParamList;
 begin
   try
@@ -696,7 +697,6 @@ function TDoInvokeDispatch.DoSKTUpdateBatchCommandText(Token,
 var
   CommandText,ParamsStr:Widestring;
   DataSet:TZQuery;
-  V:OleVariant;
   ftParams:TftParamList;
 begin
   try

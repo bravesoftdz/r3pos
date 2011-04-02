@@ -5630,14 +5630,22 @@ inherited frmMessage: TfrmMessage
                         FieldName = 'SEQNO'
                         Footers = <>
                         Title.Caption = #24207#21495
-                        Width = 40
+                        Width = 29
                       end
                       item
+                        DisplayFormat = '0000-00-00'
                         EditButtons = <>
                         FieldName = 'ISSUE_DATE'
                         Footers = <>
                         Title.Caption = #21457#24067#26085#26399
-                        Width = 83
+                        Width = 77
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'MSG_TITLE'
+                        Footers = <>
+                        Title.Caption = #26631'    '#39064
+                        Width = 308
                       end
                       item
                         EditButtons = <>
@@ -5656,14 +5664,7 @@ inherited frmMessage: TfrmMessage
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #21457#24067#29992#25143
-                        Width = 122
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'MSG_TITLE'
-                        Footers = <>
-                        Title.Caption = #26631'    '#39064
-                        Width = 150
+                        Width = 56
                       end
                       item
                         EditButtons = <>
@@ -5671,7 +5672,7 @@ inherited frmMessage: TfrmMessage
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #26377#38480#26399#38480
-                        Width = 80
+                        Width = 77
                       end
                       item
                         EditButtons = <>

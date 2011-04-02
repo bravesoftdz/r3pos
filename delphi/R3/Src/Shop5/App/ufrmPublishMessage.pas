@@ -29,7 +29,7 @@ type
     procedure AddNewShopInfo(CdsList: TDataSet; Aobj: TRecord_);
   public
     procedure Open;
-    class function PrcCompList(Owner:TForm; ID: String):boolean;
+    class function PrcCompList(Owner:TForm; ID: String):Integer;
   end;
 
 implementation
@@ -39,14 +39,15 @@ uses uGlobal,uDsUtil, uShopGlobal,ObjCommon,uframeSelectCompany, ufrmBasic;
 {$R *.dfm}
 
 { TfrmPublishMessage }
-class function TfrmPublishMessage.PrcCompList(Owner:TForm; ID:String): boolean;
+class function TfrmPublishMessage.PrcCompList(Owner:TForm; ID:String): Integer;
 begin
   with TfrmPublishMessage.Create(Owner) do
     begin
       try
         MSG_ID := ID;
         Open;
-        result := (ShowModal=MROK);
+        ShowModal;
+        result := cdsShop.RecordCount;
       finally
         free;
       end;

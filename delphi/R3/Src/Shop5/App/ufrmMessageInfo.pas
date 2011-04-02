@@ -38,6 +38,8 @@ type
     { Private declarations }
     Aobj:TRecord_;
     Saved:Boolean;
+    FMSG_CLASS_TYPE: integer;
+    procedure SetMSG_CLASS_TYPE(const Value: integer);
   public
     { Public declarations }
     procedure Init;
@@ -47,6 +49,7 @@ type
     procedure Append;
     procedure SetDBState(const Value:TDataSetState);override;
     function IsEdit(_Aobj:TRecord_;Data:TZQuery):Boolean;
+    property MSG_CLASS_TYPE: integer read FMSG_CLASS_TYPE write SetMSG_CLASS_TYPE;
     class function ShowDailog(Owner:TForm;ID:String):Boolean;
     class function EditDailog(Owner:TForm;ID:String;_Aobj:TRecord_):Boolean;
     class function AddDailog(Owner:TForm;_Aobj:TRecord_):Boolean;
@@ -83,7 +86,7 @@ procedure TfrmMessageInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  edtMSG_CLASS.ItemIndex := 0;
+  
   edtISSUE_DATE.Date := Global.SysDate;
   edtEND_DATE.Date := Global.SysDate;
   edtSHOP_ID_TEXT.Text := Global.SHORT_TENANT_NAME;
@@ -198,6 +201,7 @@ begin
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
     AObj.FieldbyName('ISSUE_USER').AsString := Global.UserID;
     AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
+    AObj.FieldbyName('MSG_SOURCE').AsString := Global.SHORT_TENANT_NAME;
   end;
   WriteToObject(Aobj,self);
   
@@ -268,6 +272,12 @@ begin
   end
   else
     ModalResult := MROK;
+end;
+
+procedure TfrmMessageInfo.SetMSG_CLASS_TYPE(const Value: integer);
+begin
+  FMSG_CLASS_TYPE := Value;
+  edtMSG_CLASS.ItemIndex := Value;
 end;
 
 end.

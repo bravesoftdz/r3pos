@@ -96,9 +96,12 @@ begin
   end
   else
   begin
-     cds_Message.Append;
-     _Aobj.WriteToDataSet(cds_Message,false);
-     cds_Message.Post;
+    if MSG_Tpye = _Aobj.FieldByName('MSG_CLASS').AsString then
+      begin
+        cds_Message.Append;
+        _Aobj.WriteToDataSet(cds_Message,false);
+        cds_Message.Post;
+      end;
   end;
 end;
 
@@ -106,21 +109,23 @@ function TfrmMessage.EnSql: String;
 var Str,Str_where:String;
 begin
   if MSG_Tpye <> '' then
-    Str_where := ' and MSG_CLASS='+QuotedStr(MSG_Tpye);
+    Str_where := ' and a.MSG_CLASS='+QuotedStr(MSG_Tpye);
   if edtISSUE_DATE.Text <> '' then
-    Str_where := Str_where + ' and ISSUE_DATE <= '+FormatDateTime('YYYYMMDD',edtISSUE_DATE.Date);
+    Str_where := Str_where + ' and a.ISSUE_DATE <= '+FormatDateTime('YYYYMMDD',edtISSUE_DATE.Date);
   if edtSHOP_ID.Text <> '' then
-    Str_where := Str_where + ' and SHOP_ID=' + QuotedStr(edtSHOP_ID.AsString);
+    Str_where := Str_where + ' and a.SHOP_ID=' + QuotedStr(edtSHOP_ID.AsString);
   if edtISSUE_USER.Text <> '' then
-    Str_where := Str_where + ' and ISSUE_USER=' + QuotedStr(edtISSUE_USER.AsString);
+    Str_where := Str_where + ' and a.ISSUE_USER=' + QuotedStr(edtISSUE_USER.AsString);
 
   Str :=
-  'select jb.*,b.USER_NAME as ISSUE_USER_TEXT,'''' as LOOK from( '+
-  'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from( '+
-  'select TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,SHOP_ID,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM from MSC_MESSAGE '+
-  ' where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' ) ja '+
-  ' left join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID) jb '+
-  ' left join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and b.USER_ID=jb.ISSUE_USER';
+  'select jd.*,d.USER_NAME as ISSUE_USER_TEXT,'''' as LOOK from( '+
+  'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from( '+
+  'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM,count(b.MSG_ID) as PUBLISH_NUM'+
+  ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
+  ' where a.COMM not in (''02'',''12'') and b.COMM not in (''02'',''12'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' group by a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,'+
+  'a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM ) jc '+
+  ' left join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID) jd '+
+  ' left join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and d.USER_ID=jd.ISSUE_USER';
 
   Result := Str;
 end;
@@ -177,6 +182,7 @@ begin
       try
         OnSave := AddRecord;
         Append;
+        MSG_CLASS_TYPE := StrToInt(MSG_Tpye);
         ShowModal;
       finally
         free;
@@ -260,7 +266,7 @@ end;
 procedure TfrmMessage.FormCreate(Sender: TObject);
 begin
   inherited;
-  MSG_Tpye := '';
+  MSG_Tpye := '0';
   edtISSUE_DATE.Date := Global.SysDate;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtISSUE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
@@ -283,7 +289,7 @@ begin
 end;
 
 procedure TfrmMessage.actAuditExecute(Sender: TObject);
-var i:integer;
+var i,Num:integer;
     curID: string;
     rs:TRecordList;
 begin
@@ -307,6 +313,7 @@ begin
     if not cdsShopList.IsEmpty then
       begin
         try
+          Num := cdsShopList.RecordCount;
           Factor.UpdateBatch(cdsShopList,'TPublishMessage');
         except
           Raise Exception.Create('信息发布失败!');
@@ -316,7 +323,9 @@ begin
   finally
     rs.Free;
   end;
-
+  cds_Message.Edit;
+  cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
+  cds_Message.Post;
 end;
 
 procedure TfrmMessage.GridDrawColumnCell(Sender: TObject;
@@ -324,12 +333,13 @@ procedure TfrmMessage.GridDrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 var  ARect: TRect;
   AFont:TFont;
+  Num:String;
 begin
   inherited;
   if (Rect.Top = Grid.CellRect(Grid.Col, Grid.Row).Top) and (not
     (gdFocused in State) or not Grid.Focused) then
   begin
-    Grid.Canvas.Brush.Color := clAqua;
+    Grid.Canvas.Brush.Color := $00FDF6EB;
   end;
   Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
@@ -339,6 +349,7 @@ begin
       Grid.canvas.FillRect(ARect);
       DrawText(Grid.Canvas.Handle,pchar(Inttostr(cds_Message.RecNo)),length(Inttostr(cds_Message.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+
   if Column.FieldName = 'LOOK' then
     begin
       ARect := Rect;
@@ -348,7 +359,8 @@ begin
         Grid.canvas.FillRect(ARect);
         Grid.Canvas.Font.Color := clBlue;
         Grid.Canvas.Font.Style := [fsUnderline];
-        DrawText(Grid.Canvas.Handle,pchar('查看门店'),length('查看门店'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+        Num := cds_Message.FieldByName('PUBLISH_NUM').AsString+'  查看..';
+        DrawText(Grid.Canvas.Handle,pchar(Num),length(Num),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
       finally
         Grid.Canvas.Font.Assign(AFont);
         AFont.Free;
@@ -380,14 +392,18 @@ begin
 end;
 
 procedure TfrmMessage.GridCellClick(Column: TColumnEh);
+var Num:integer;
 begin
   inherited;
   if cds_Message.IsEmpty then Exit;
 
   if Column.FieldName = 'LOOK' then
-    TfrmPublishMessage.PrcCompList(Self,cds_Message.FieldbyName('MSG_ID').AsString);
-
-
+    begin
+      Num := TfrmPublishMessage.PrcCompList(Self,cds_Message.FieldbyName('MSG_ID').AsString);
+      cds_Message.Edit;
+      cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
+      cds_Message.Post;
+    end;
 end;
 
 end.

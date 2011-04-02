@@ -1722,7 +1722,7 @@ var
 begin
   Str :=
        'select a.*,b.IORO_TYPE '+
-       'from ACC_IORODATA a,b.ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
+       'from ACC_IORODATA a,ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
   SelectSQL.Text := Str;
 end;
 
@@ -1736,7 +1736,7 @@ begin
   try
     rs.SQL.Text :=
        'select a.TENANT_ID,a.ACCOUNT_ID,a.IORO_MNY,b.IORO_TYPE '+
-       'from ACC_IORODATA a,b.ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
+       'from ACC_IORODATA a,ACC_IOROORDER b where a.TENANT_ID=b.TENANT_ID and a.IORO_ID=b.IORO_ID and a.TENANT_ID=:TENANT_ID and a.IORO_ID=:IORO_ID';
     rs.Params.AssignValues(Params); 
     AGlobal.Open(rs);
     rs.First;

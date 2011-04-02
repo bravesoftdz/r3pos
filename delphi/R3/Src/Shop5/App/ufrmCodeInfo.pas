@@ -343,14 +343,13 @@ end;
 
 procedure TfrmCodeInfo.FormCreate(Sender: TObject);
 begin
-  //IsCompany:=ShopGlobal.GetIsCompany(Global.UserID);
-  {if not IsCompany then
-  begin
-    DBGridEh1.ReadOnly:=True;
-    btnAppend.Enabled:=False;
-    btnSave.Enabled:=False;
-    btnDelete.Enabled:=False;
-  end;}
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then
+    begin
+      DBGridEh1.ReadOnly:=True;
+      btnAppend.Enabled:=False;
+      btnSave.Enabled:=False;
+      btnDelete.Enabled:=False;
+    end;
 
 end;
 

@@ -101,6 +101,7 @@ var
   AObj:TRecord_;
   i:integer;
 begin
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   for i:=0 to rzTree.Items.Count -1 do
   begin
@@ -159,7 +160,8 @@ var
   rzNode:TTreeNode;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有保存操作的权限,请和管理员联系.');  
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有保存操作的权限,请和管理员联系.');
   for i:=0 to rzTree.Items.Count -1 do
     begin
       AObj := TRecord_(rzTree.Items[i].Data);
@@ -270,6 +272,7 @@ end;
 procedure TfrmGoodsSortTree.edtSORT1Click(Sender: TObject);
 var i:integer;
 begin
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
   for i:=0 to rzTree.Items.Count -1 do
   begin
@@ -328,7 +331,8 @@ begin
 end;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('32100001',4) then Raise Exception.Create('你没有删除的权限,请和管理员联系.');  
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('32100001',4) then Raise Exception.Create('你没有删除的权限,请和管理员联系.');
   if dbState=dsBrowse then Exit;
   if rzTree.Selected = nil then Exit;
   if not rzTree.Selected.HasChildren then

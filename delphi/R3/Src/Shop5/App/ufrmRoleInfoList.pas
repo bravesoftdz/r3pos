@@ -92,7 +92,7 @@ end;
 procedure TfrmRoleInfoList.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if not IsCompany then  raise Exception.Create('不是总店，不能新增职务!');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31400001',2) then Raise Exception.Create('你没有新增职务的权限,请和管理员联系.');
   with TfrmRoleInfo.Create(self) do
   begin
@@ -109,9 +109,10 @@ end;
 procedure TfrmRoleInfoList.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('31400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmRoleInfo.Create(self) do
   begin
     try
@@ -144,9 +145,10 @@ var Params:TftParamList;
     rzNode:TTreeNode;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31400001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   if not cdsBrowser.Active then Raise Exception.Create('没有数据！');
   if cdsBrowser.IsEmpty then Raise Exception.Create('没有数据！');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('31400001',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
@@ -292,7 +294,7 @@ begin
   inherited;
   if not cdsBrowser.Active then exit;
   if cdsBrowser.IsEmpty then exit;
-  //  if not IsCompany then  Raise Exception.Create('不是总店,你没有授权'+Caption+'的权限.');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('31400001',5) then Raise Exception.Create('你没有授权'+Caption+'的权限,请和管理员联系.');
   with TfrmRoleRights.Create(self) do
   begin

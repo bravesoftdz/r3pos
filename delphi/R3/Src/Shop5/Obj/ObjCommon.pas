@@ -75,14 +75,28 @@ begin
      result := stringreplace(result,'nvl','isnull',[rfReplaceAll]);
      result := stringreplace(result,'Nvl','isnull',[rfReplaceAll]);
      result := stringreplace(result,'NVL','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'Coalesce','isnull',[rfReplaceAll]);
+     result := stringreplace(result,'coalesce','isnull',[rfReplaceAll]);
     end;
-  1,4:begin
+  1:begin
+     result := stringreplace(SQL,'ifnull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IfNull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IFNULL','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'isnull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'IsNull','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'ISNULL','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'Coalesce','nvl',[rfReplaceAll]);
+     result := stringreplace(result,'coalesce','nvl',[rfReplaceAll]);
+    end;
+  4:begin
      result := stringreplace(SQL,'ifnull','coalesce',[rfReplaceAll]);
      result := stringreplace(result,'IfNull','coalesce',[rfReplaceAll]);
      result := stringreplace(result,'IFNULL','coalesce',[rfReplaceAll]);
      result := stringreplace(result,'isnull','coalesce',[rfReplaceAll]);
      result := stringreplace(result,'IsNull','coalesce',[rfReplaceAll]);
      result := stringreplace(result,'ISNULL','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'nvl','coalesce',[rfReplaceAll]);
+     result := stringreplace(result,'Nvl','coalesce',[rfReplaceAll]);
     end;
   5:begin
      result := stringreplace(SQL,'nvl','ifnull',[rfReplaceAll]);
@@ -91,6 +105,8 @@ begin
      result := stringreplace(result,'isnull','ifnull',[rfReplaceAll]);
      result := stringreplace(result,'ISNULL','ifnull',[rfReplaceAll]);
      result := stringreplace(result,'IsNull','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'coalesce','ifnull',[rfReplaceAll]);
+     result := stringreplace(result,'Coalesce','ifnull',[rfReplaceAll]);
     end;
   end;
   {== 2011.02.25 Add字符函数substring与substr函数替换处理 [substring |substr| mid] ==}

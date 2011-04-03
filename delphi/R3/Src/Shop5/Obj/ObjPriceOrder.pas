@@ -248,7 +248,7 @@ var Str:string; n:Integer;
 begin
   AGlobal.BeginTrans; 
   try
-    Str:='update SAL_PRICEORDER set CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER where CHK_DATE IS NULL and TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';
+    Str:='update SAL_PRICEORDER set CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  where CHK_DATE IS NULL and TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';
     n:=AGlobal.ExecSQL(Str,Params);
    {
     if n=0 then
@@ -287,7 +287,7 @@ var Str:string; n:Integer;
 begin
    AGlobal.BeginTrans;
    try
-    Str := 'update SAL_PRICEORDER set CHK_DATE=null,CHK_USER=null where CHK_DATE IS NOT NULL and TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';
+    Str := 'update SAL_PRICEORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where CHK_DATE IS NOT NULL and TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';
     n := AGlobal.ExecSQL(Str, Params);
    {
     if n=0 then

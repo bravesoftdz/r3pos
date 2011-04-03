@@ -268,7 +268,7 @@ begin
   if ps.Locate('CODE_ID',s,[]) then
      result := ps.FieldbyName('CODE_NAME').AsString
   else
-     Raise Exception.Create(s+'支付方式没有找到'); 
+     result := 'H';
 end;
 
 procedure TCloseForDay.InitClass;

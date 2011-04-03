@@ -391,7 +391,7 @@ type
     { Publicdeclarations }
     procedure LoadMenu;
     procedure LoadFrame;
-    procedure InitVersioin;
+    procedure InitVersioin;                                             
     function GetDeskFlag:string;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);

@@ -447,10 +447,10 @@ begin
   0:result := 'select top 600 * from ('+strSql+') jp order by PAY_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+strSql+') order by PAY_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+strSql+') order by PAY_ID limit 600';
+       'select * from ('+strSql+') j order by PAY_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+strSql+') j order by PAY_ID limit 600';
   else
-    result := 'select * from ('+strSql+') order by PAY_ID';
+    result := 'select * from ('+strSql+') j order by PAY_ID';
   end;
 end;
 
@@ -692,7 +692,7 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
   begin
     ARect := Rect;
     DbGridEh1.canvas.FillRect(ARect);

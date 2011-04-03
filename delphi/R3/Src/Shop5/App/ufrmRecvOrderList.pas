@@ -701,7 +701,7 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if Column.FieldName = 'SEQ_NO' then
+  if Column.FieldName = 'SEQNO' then
   begin
     ARect := Rect;
     DbGridEh1.canvas.FillRect(ARect);

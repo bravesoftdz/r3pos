@@ -208,6 +208,22 @@ begin
     begin
       try
         flag := oFlag;
+        if sid<>'' then
+           begin
+             if fndSHOP_ID.DataSet.Locate('SHOP_ID',sid,[]) then
+                begin
+                  fndSHOP_ID.KeyValue := sid;
+                  fndSHOP_ID.Text := fndSHOP_ID.DataSet.FieldbyName('SHOP_NAME').AsString;
+                end;
+           end;
+        if cid<>'' then
+           begin
+             if fndCLIENT_ID.DataSet.Locate('CLIENT_ID',sid,[]) then
+                begin
+                  fndCLIENT_ID.KeyValue := cid;
+                  fndCLIENT_ID.Text := fndCLIENT_ID.DataSet.FieldbyName('CLIENT_NAME').AsString;
+                end;
+           end;
         Open('');
         if ShowModal=MROK then
            result := cdsList.FieldbyName('INDE_ID').AsString

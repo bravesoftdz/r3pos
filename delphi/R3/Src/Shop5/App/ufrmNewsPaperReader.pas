@@ -136,7 +136,7 @@ begin
   Str :=
   'select a.TENANT_ID,a.MSG_ID,''¡¤'''+StrJoin+'a.MSG_TITLE as MSG_TITLE,a.SHOP_ID,a.MSG_SOURCE,a.ISSUE_DATE,a.MSG_CLASS,b.READ_DATE,b.READ_USER,b.MSG_FEEDBACK_STATUS,b.MSG_READ_STATUS '+
   ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
-  ' where a.COMM not in (''12'',''02'') '+Str_where+' order by a.ISSUE_DATE desc,b.MSG_READ_STATUS ';
+  ' where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' order by a.ISSUE_DATE desc,b.MSG_READ_STATUS ';
 
   Result := Str;
 end;

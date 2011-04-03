@@ -156,7 +156,11 @@ begin
   if trim(fndP1_SORT_ID.Text)<>'' then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
-    strWhere := strWhere+' and B.RELATION_ID='''+srid1+''' ';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and B.RELATION_ID='+srid1+' ';
+     else
+        strWhere := strWhere+' and B.RELATION_ID='''+srid1+''' ';
+    end;
     if sid1<>'' then
       strWhere := strWhere+' and '+GetLikeCnd(Factor.iDbType,'B.LEVEL_ID',sid1,'','R',false)+' ';
   end else
@@ -197,8 +201,9 @@ begin
     'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
 
-  strSql:='select M.*,bar.BARCODE as BARCODE from ('+strSql+') M '+
-    ' left outer join VIW_BARCODE Bar '+
+  strSql:=
+    'select M.*,bar.BARCODE as BARCODE from ('+strSql+') M '+
+    ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) Bar '+
     ' on M.TENANT_ID=Bar.TENANT_ID and Bar.TENANT_ID='+inttostr(Global.TENANT_ID)+' and M.GODS_ID=Bar.GODS_ID and M.UNIT_ID=Bar.UNIT_ID and '+
     ' M.BATCH_NO=Bar.BATCH_NO and M.PROPERTY_01=Bar.PROPERTY_01 and M.PROPERTY_02=Bar.PROPERTY_02  ';
 

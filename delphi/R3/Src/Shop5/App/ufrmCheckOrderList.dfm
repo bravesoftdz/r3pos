@@ -9,19 +9,19 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 883
-    Height = 514
+    Height = 508
     inherited RzPanel2: TRzPanel
       Width = 873
-      Height = 504
+      Height = 498
       inherited RzPage: TRzPageControl
         Width = 867
-        Height = 498
+        Height = 492
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 865
-            Height = 471
+            Height = 465
             inherited RzPanel1: TRzPanel
               Width = 855
               Height = 91
@@ -232,7 +232,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 96
               Width = 855
-              Height = 370
+              Height = 364
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -308,17 +308,18 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   inherited RzPanel4: TRzPanel
     Width = 883
     inherited Image1: TImage
-      Left = 737
-      Width = 137
-    end
-    inherited Image14: TImage
-      Left = 874
+      Left = 581
+      Width = 282
     end
     inherited Image3: TImage
-      Left = 737
-      Width = 137
+      Left = 581
+      Width = 282
+    end
+    inherited Image14: TImage
+      Left = 863
     end
     inherited rzPanel5: TPanel
+      Left = 581
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #30424#28857#21333
@@ -333,7 +334,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 561
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 561

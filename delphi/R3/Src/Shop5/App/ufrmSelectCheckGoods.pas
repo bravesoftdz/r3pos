@@ -8,8 +8,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, ComCtrls, RzTreeVw, Grids, DBGridEh, cxControls, cxContainer,
-  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, zBase,
-  cxMaskEdit, cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset,
+  cxEdit, cxTextEdit, StdCtrls, cxRadioGroup, DB, zBase, cxMaskEdit,
+  cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset,
   ZDataset;
 
 type
@@ -75,6 +75,7 @@ type
     procedure Open(Id:string);
     procedure SetMultiSelect(const Value: boolean);
     procedure SetPRINT_DATE(const Value: string);
+    function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
   public
     { Public declarations }
     procedure InitGrid(PRINT_ID: string);
@@ -104,18 +105,25 @@ begin
 end;
 
 procedure TfrmSelectCheckGoods.InitGrid(PRINT_ID: string);
-var rs: TZQuery;
+var
+  rs: TZQuery;
+  SetCol: TColumnEh;
 begin
   inherited;
   PRINT_DATE:=PRINT_ID;
+  SetCol:=FindColumn(self.DBGridEh1,'UNIT_ID');
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-  rs.First;
-  while not rs.Eof do
+  if (SetCol<>nil) and (rs.Active) then
+  begin
+    rs.First;
+    while not rs.Eof do
     begin
-      DBGridEh1.Columns[5].KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
-      DBGridEh1.Columns[5].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
+      SetCol.KeyList.add(rs.Fieldbyname('UNIT_ID').asstring);
+      SetCol.PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
+  end;
+  
   rs := Global.GetZQueryFromName('PUB_PARAMS');
   rs.Filtered := false;
   rs.Filter := 'TYPE_CODE=''SORT_TYPE''';
@@ -124,45 +132,6 @@ begin
   fndGODS_FLAG1.ItemIndex := 0;
   LoadTree;
   rzTree.FullExpand; //展开树
-end;
-
-procedure TfrmSelectCheckGoods.Open(Id: string);
-var
-  rs:TZQuery;
-  sm:TMemoryStream;
-begin
-  if not Visible then Exit;
-  if Id='' then cdsList.close;
-  rs := TZQuery.Create(nil);
-  cdsList.DisableControls;
-  sm := TMemoryStream.Create;
-  try
-    rs.SQL.Text := EncodeSQL(Id);
-    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
-    if rs.Params.FindParam('MAXID')<>nil then
-       rs.Params.ParamByName('MAXID').AsString := MaxId;
-    if rs.Params.FindParam('KEYVALUE')<>nil then
-       rs.Params.ParamByName('KEYVALUE').AsString := trim(edtSearch.Text);
-    if rs.Params.FindParam('SORT_ID')<>nil then
-       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
-    if rs.Params.FindParam('LEVEL_ID')<>nil then
-       rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-    if rs.Params.FindParam('RELATION_ID')<>nil then
-       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
-    if rs.Params.FindParam('PRINT_DATE')<>nil then
-       rs.Params.ParamByName('PRINT_DATE').AsString := PRINT_DATE;
-    Factor.Open(rs);
-    rs.Last;
-    MaxId := rs.FieldbyName('GODS_ID').AsString;
-    rs.SaveToStream(sm);
-    cdsList.AddFromStream(sm);
-    if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
-  finally
-    cdsList.EnableControls;
-    sm.Free;
-    rs.Free;
-  end;
 end;
 
 function TfrmSelectCheckGoods.EncodeSQL(id: string): string;
@@ -208,22 +177,69 @@ begin
      end;
   case Factor.iDbType of
   0:
-  result := 'select top 600 0 as A,l.*,r.AMOUNT as AMOUNT from '+
-            ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-            '(select GODS_ID,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
-            ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
-            ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+   result :=
+     'select top 600 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' where l.GODS_ID=r.GODS_ID '+
+     ' order by l.GODS_ID';
   4:
-  result := 'select tp.* from ('+
-            'select 0 as A,l.*,r.AMOUNT as AMOUNT from '+
-            ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-            '(select GODS_ID,RCK_AMOUNT as AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE) r '+
-            ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
+  result :=
+     'select tp.* from ('+
+     'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
-  result := 'select 0 as A,l.*,r.AMOUNT as AMOUNT from '+
-            '(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l,'+
-            '(select GODS_ID,RCK_AMOUNT as AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE) r '+
-            ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600 ';
+  result :=
+     'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
+     '(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE '+
+     ' from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l,'+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' where l.GODS_ID=r.GODS_ID '+
+     ' order by l.GODS_ID limit 600 ';
+  end;
+end;
+
+procedure TfrmSelectCheckGoods.Open(Id: string);
+var
+  rs:TZQuery;
+  sm:TMemoryStream;
+begin
+  if not Visible then Exit;
+  if Id='' then cdsList.close;
+  rs := TZQuery.Create(nil);
+  cdsList.DisableControls;
+  sm := TMemoryStream.Create;
+  try
+    rs.SQL.Text := EncodeSQL(Id);
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
+    if rs.Params.FindParam('MAXID')<>nil then
+       rs.Params.ParamByName('MAXID').AsString := MaxId;
+    if rs.Params.FindParam('KEYVALUE')<>nil then
+       rs.Params.ParamByName('KEYVALUE').AsString := trim(edtSearch.Text);
+    if rs.Params.FindParam('SORT_ID')<>nil then
+       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+    if rs.Params.FindParam('LEVEL_ID')<>nil then
+       rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if rs.Params.FindParam('RELATION_ID')<>nil then
+       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    if rs.Params.FindParam('PRINT_DATE')<>nil then
+       rs.Params.ParamByName('PRINT_DATE').AsString := PRINT_DATE;
+    Factor.Open(rs);
+    rs.Last;
+    MaxId := rs.FieldbyName('GODS_ID').AsString;
+    rs.SaveToStream(sm);
+    cdsList.AddFromStream(sm);
+    if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
+  finally
+    cdsList.EnableControls;
+    sm.Free;
+    rs.Free;
   end;
 end;
 
@@ -319,9 +335,20 @@ begin
 end;
 
 procedure TfrmSelectCheckGoods.FormShow(Sender: TObject);
+var SetCol: TColumnEh;
 begin
   inherited;
   Open('');
+
+  //判断是否有查询库存权限
+  SetCol:=FindColumn(DBGridEh1,'NEW_INPRICE');
+  if SetCol<>nil then
+    SetCol.Visible:=ShopGlobal.GetChkRight('14500001',2);
+  SetCol:=self.FindColumn(DBGridEh1,'NEW_OUTPRICE');
+  if SetCol<>nil then
+    SetCol.Visible:=ShopGlobal.GetChkRight('14500001',2);
+  //判断软件版本：[服装版需颜色条码和尺寸条码]
+  
 end;
 
 procedure TfrmSelectCheckGoods.edtSearchKeyDown(Sender: TObject;
@@ -402,8 +429,6 @@ end;
 procedure TfrmSelectCheckGoods.FormCreate(Sender: TObject);
 begin
   inherited;
-  // 判断是否有查询库存权限
-  //DBGridEh1.Columns[3].Visible := ShopGlobal.GetChkRight('600041');
   N2.Enabled:=False;
   N3.Enabled:=False;
   N4.Enabled:=False;
@@ -588,6 +613,20 @@ end;
 procedure TfrmSelectCheckGoods.SetPRINT_DATE(const Value: string);
 begin
   FPRINT_DATE := Value;
+end;
+
+function TfrmSelectCheckGoods.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGrid.Columns.Count - 1 do
+  begin
+    if DBGrid.Columns[i].FieldName = FieldName then
+    begin
+      result := DBGrid.Columns[i];
+      Exit;
+    end;
+  end;
 end;
 
 end.

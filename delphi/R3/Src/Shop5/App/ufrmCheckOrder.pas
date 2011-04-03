@@ -59,14 +59,16 @@ type
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
     procedure UnitToCalc(UNIT_ID:string);override;
     procedure AmountToCalc(Amount:Real);override;
-    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
+    function  CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
+    function  GetCalcUnitValue(GODS_ID: string): Real; //2011.04.02 Add单位换算关系
+    procedure RefreshRckAMount(CalcValue: real=0); //2011.04.02 Add 刷新账面库存
   public
     //检测数据合法性
     procedure CheckInvaid;override;
     function CheckInput:boolean;override;
-    { Public declarations }
+    //输入批号
+    function GodsToBatchNo(id:string):boolean;override;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
-
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -534,49 +536,31 @@ end;
 procedure TfrmCheckOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
   rs: TZQuery;
-  PRINT_DATE: string;
-  SourceScale:real;
+  PRINT_DATE,GodsID: string;
+  SourceScale: real; //计量单位换算关系
 begin
-    PRINT_DATE:=InttoStr(cdsHeader.fieldbyName('PRINT_DATE').AsInteger);
-    if PRINT_DATE='' then PRINT_DATE:=FormatDatetime('YYYYMMDD',Date());
-    rs := Global.GetZQueryFromName('PUB_GOODSINFO');
-    if not rs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('在经营商品中没有找到"'+GODS_ID+'"'); 
-    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
-       begin
-        SourceScale := 1;
-       end
-    else
-    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
-       begin
-        SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
-       end
-    else
-    if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
-       begin
-        SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
-       end
-    else
-       begin
-        SourceScale := 1;
-       end;
-    edtTable.Edit;
-    edtTable.FieldbyName('NEW_INPRICE').AsFloat := rs.FieldbyName('NEW_INPRICE').AsFloat*SourceScale;
-    edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat*SourceScale;
-    if (PrintQry.Active) and (PrintQry.Locate('GODS_ID',GODS_ID,[])) then
-      begin
-        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat/SourceScale;
-        edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat;
-      end
-      else
-        edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;
-    edtTable.Post;
+  PRINT_DATE:=InttoStr(cdsHeader.fieldbyName('PRINT_DATE').AsInteger);
+  if PRINT_DATE='' then PRINT_DATE:=FormatDatetime('YYYYMMDD',Date());
+ 
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('在经营商品中没有找到"'+GODS_ID+'"');
+  //返回计量单位的换算关系
+  SourceScale := GetCalcUnitValue(GODS_ID);
+
+  edtTable.Edit;
+  edtTable.FieldbyName('NEW_INPRICE').AsFloat := rs.FieldbyName('NEW_INPRICE').AsFloat*SourceScale;
+  edtTable.FieldbyName('NEW_OUTPRICE').AsFloat := rs.FieldbyName('NEW_OUTPRICE').AsFloat*SourceScale;
+  edtTable.Post;
+
+  //2011.04.02 Add 刷新账面库存
+  RefreshRckAMount(SourceScale);
 end;
 
 procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean);
 begin
   if IsQry and (PrintQry.Active) then PrintQry.Close
   else if (not IsQry) and (PrintQry.Active) then Exit;
-  PrintQry.SQL.Text:='select GODS_ID,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
+  PrintQry.SQL.Text:='select GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
   if PrintQry.Params.FindParam('TENANT_ID')<>nil then PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
   if PrintQry.Params.FindParam('SHOP_ID')<>nil then PrintQry.ParamByName('SHOP_ID').AsString:=SHOP_ID;
   if PrintQry.Params.FindParam('PRINT_DATE')<>nil then PrintQry.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(PRINT_ID,0);
@@ -826,8 +810,8 @@ begin
             edtTable.FieldByName('NEW_OUTPRICE').AsString:=CurObj.FieldByName('NEW_OUTPRICE').AsString;
             edtTable.FieldByName('RCK_AMOUNT').AsString:=CurObj.FieldByName('AMOUNT').AsString;
             edtTable.Post;
-            CdsList.Next;
           end;
+          CdsList.Next;
         end;
       end;
     finally
@@ -1008,6 +992,66 @@ begin
     edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;
   end;
+end;
+
+function TfrmCheckOrder.GetCalcUnitValue(GODS_ID: string): Real;
+var
+  rs: TZQuery;
+begin
+  result:=1.0;  //默认返回:1.0
+  if not edtTable.Active then Exit;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('在经营商品中没有找到"'+GODS_ID+'"');
+  if trim(edtTable.FieldByName('UNIT_ID').AsString)=trim(rs.FieldByName('CALC_UNITS').AsString) then
+    result := 1
+  else if trim(edtTable.FieldByName('UNIT_ID').AsString)=trim(rs.FieldByName('BIG_UNITS').AsString) then
+    result := rs.FieldByName('BIGTO_CALC').asFloat
+  else if trim(edtTable.FieldByName('UNIT_ID').AsString)=trim(rs.FieldByName('SMALL_UNITS').AsString) then
+    result := rs.FieldByName('SMALLTO_CALC').asFloat;
+end;
+
+procedure TfrmCheckOrder.RefreshRckAMount(CalcValue: real=0);
+var
+  rs: TZQuery;
+  IsExists: Boolean;
+  SourceScale: real;
+  GodsID,BatchNo,PROPERTY_01,PROPERTY_02: string;
+begin
+  if (PrintQry.Active) and (edtTable.Active) then
+  begin
+    GodsID:=trim(edtTable.FieldbyName('GODS_ID').AsString);  
+    if CalcValue=0 then  //等于0则需要重新计算值
+      SourceScale:=GetCalcUnitValue(GodsID)
+    else
+      SourceScale:=CalcValue; //直接外部传入的换算值      
+
+    BatchNo:=trim(edtTable.FieldbyName('BATCH_NO').AsString);
+    PROPERTY_01:=trim(edtTable.FieldbyName('PROPERTY_01').AsString);
+    PROPERTY_02:=trim(edtTable.FieldbyName('PROPERTY_02').AsString);
+    if PROPERTY_01='' then PROPERTY_01:='#';
+    if PROPERTY_02='' then PROPERTY_02:='#';
+    IsExists:=PrintQry.Locate('GODS_ID;BATCH_NO;PROPERTY_01;PROPERTY_02',VarArrayOf([GodsID,BatchNo,PROPERTY_01,PROPERTY_02]),[]);
+
+    edtTable.Edit;
+    if IsExists then
+    begin
+      edtTable.FieldbyName('RCK_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat/SourceScale;
+      edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat := PrintQry.FieldbyName('RCK_AMOUNT').AsFloat;
+    end else
+    begin
+      edtTable.FieldbyName('RCK_AMOUNT').AsFloat := 0;
+      edtTable.FieldbyName('RCK_CALC_AMOUNT').AsFloat:=0;
+    end;
+    edtTable.Post;
+  end;
+end;
+
+
+function TfrmCheckOrder.GodsToBatchNo(id: string): boolean;
+begin
+  inherited GodsToBatchNo(id);
+  //2011.04.02 Add 刷新账面库存
+  RefreshRckAMount;
 end;
 
 end.

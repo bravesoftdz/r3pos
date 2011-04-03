@@ -3,36 +3,36 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
   Top = 108
   ActiveControl = DBGridEh1
   Caption = #21830#21697#36873#25321#26694
-  ClientHeight = 401
-  ClientWidth = 605
+  ClientHeight = 453
+  ClientWidth = 724
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 605
-    Height = 401
+    Width = 724
+    Height = 453
     inherited RzPage: TRzPageControl
-      Width = 595
-      Height = 355
+      Width = 714
+      Height = 407
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         TabVisible = False
         Caption = #21830#21697#36873#25321#26694
         inherited RzPanel2: TRzPanel
-          Width = 591
-          Height = 351
+          Width = 710
+          Height = 403
           object Splitter1: TSplitter
             Left = 161
             Top = 5
-            Height = 341
+            Height = 393
           end
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
             Width = 156
-            Height = 341
+            Height = 393
             Align = alLeft
             BorderOuter = fsFlatRounded
             TabOrder = 0
@@ -40,7 +40,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
               Left = 2
               Top = 38
               Width = 152
-              Height = 301
+              Height = 353
               SelectionPen.Color = clBtnShadow
               Align = alClient
               Ctl3D = True
@@ -83,16 +83,16 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
           object RzPanel4: TRzPanel
             Left = 164
             Top = 5
-            Width = 422
-            Height = 341
+            Width = 541
+            Height = 393
             Align = alClient
             BorderOuter = fsFlatRounded
             TabOrder = 1
             object DBGridEh1: TDBGridEh
               Left = 2
               Top = 38
-              Width = 418
-              Height = 301
+              Width = 537
+              Height = 353
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = dsList
@@ -158,7 +158,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   ReadOnly = True
                   Title.Caption = #21830#21697#21517#31216
                   Title.Color = clWhite
-                  Width = 122
+                  Width = 110
                 end
                 item
                   EditButtons = <>
@@ -167,6 +167,14 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Title.Caption = #26465#30721
                   Title.Color = clWhite
                   Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'BATCH_NO'
+                  Footers = <>
+                  Title.Caption = #25209#21495
+                  Title.Color = clWhite
+                  Width = 86
                 end
                 item
                   EditButtons = <>
@@ -200,13 +208,13 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Footers = <>
                   Title.Caption = #26631#20934#21806#20215
                   Title.Color = clWhite
-                  Width = 42
+                  Width = 40
                 end>
             end
             object fndPanel: TPanel
               Left = 2
               Top = 2
-              Width = 418
+              Width = 537
               Height = 36
               Align = alTop
               BevelOuter = bvLowered
@@ -215,7 +223,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
               object RzPanel5: TRzPanel
                 Left = 1
                 Top = 1
-                Width = 416
+                Width = 535
                 Height = 34
                 Align = alClient
                 BorderOuter = fsNone
@@ -272,11 +280,11 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
       end
     end
     inherited btPanel: TRzPanel
-      Top = 360
-      Width = 595
+      Top = 412
+      Width = 714
       Height = 36
       object btnOk: TRzBitBtn
-        Left = 391
+        Left = 510
         Top = 4
         Width = 67
         Height = 26
@@ -303,7 +311,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
         Spacing = 5
       end
       object RzBitBtn2: TRzBitBtn
-        Left = 471
+        Left = 590
         Top = 4
         Width = 67
         Height = 26

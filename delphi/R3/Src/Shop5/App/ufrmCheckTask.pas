@@ -63,9 +63,9 @@ begin
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
 
        
-     //判断今天否有盘点:
-     Temp.Close;                                                
-     Temp.SQL.Text:='select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
+     //判断今天否有盘点:             
+     Temp.Close;
+     Temp.SQL.Text:='select max(CREA_DATE) as PRINT_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';  //'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';     
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
      if Temp.Params.FindParam('SHOP_ID')<>nil then Temp.ParamByName('SHOP_ID').AsString:=SHOP_ID;
      Factor.Open(Temp);
@@ -84,7 +84,7 @@ begin
        B := Temp.Fields[0].AsString;
        if (formatDatetime('YYYYMMDD',date())<B) then Raise Exception.Create('系统检测盘点单'+b+'号比当前日期大，不能再盘点了');
      end;
-     
+
      //检查判断是否大于今天的业务单据
      Temp.Close;
      Temp.SQL.Text:='select sum(Resum) as Resum From '+
@@ -162,14 +162,14 @@ var
   rs: TZQuery;
   AObj: TRecord_;
   Str,CurDate,CurDateTime,Check_Type: string;
-  Rows_ID,GODS_ID,PROPERTY_01,PROPERTY_02: string;
+  Rows_ID,GODS_ID,BatchNo,PROPERTY_01,PROPERTY_02: string;
 begin
   CurDate:=formatdatetime('YYYYMMDD',mdate);  //当前日期
   CurDateTime:=formatdatetime('YYYY-MM-DD',mdate)+' '+formatdatetime('HH:MM:SS',Now());    //当前时间
   if RB_Single.Checked then Check_Type:='1' else Check_Type:='2';  //盘点方式: 1简单盘点; 2多人盘点
   try
     Aobj:=TRecord_.Create;
-    Str:='select GODS_ID,PROPERTY_01,PROPERTY_02,AMOUNT from STO_STORAGE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and '+
+    Str:='select GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMOUNT from STO_STORAGE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and '+
          ' not Exists(select GODS_ID from PUB_GOODSINFO A where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+
          ' and A.COMM in (''02'',''12'')  and A.GODS_ID=STO_STORAGE.GODS_ID and STO_STORAGE.AMOUNT=0)  ';  //过滤掉已经删除商品并且库存为0商品
     rs:=TZQuery.Create(nil);
@@ -188,11 +188,12 @@ begin
           Rows_ID:=TSequence.NewId();
           Aobj.ReadFromDataSet(rs);
           GODS_ID:=AObj.fieldbyName('GODS_ID').AsString;
+          BatchNo:=AObj.fieldbyName('BATCH_NO').AsString;
           PROPERTY_01:=AObj.fieldbyName('PROPERTY_01').AsString;
           PROPERTY_02:=AObj.fieldbyName('PROPERTY_02').AsString;            
           //生成结帐数据
           Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+',''#'',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,''1'')';
+               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+','''+BatchNo+''',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,''1'')';
           Factor.ExecSQL(Str);
           rs.Next;
         end;

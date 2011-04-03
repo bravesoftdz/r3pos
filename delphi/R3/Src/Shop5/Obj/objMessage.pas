@@ -23,11 +23,6 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;    
   end;
 
-  TSetRead=class(TZFactory)
-  public
-    procedure InitClass; override;
-  end;
-
 implementation
 
 
@@ -131,27 +126,11 @@ begin
   DeleteSQL.Text := Str;
 end;
 
-{ TSetRead }
-
-procedure TSetRead.InitClass;
-var
-  Str: string;
-begin
-  inherited;
-  KeyFields:='TENANT_ID,MSG_ID,SHOP_ID';
-
-  Str := 'update MSC_MESSAGE_LIST set READ_DATE=:READ_DATE,READ_USER=:READ_USER,MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=2 '+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and MSG_ID=:MSG_ID ';
-  UpdateSQL.Text := Str;
-end;
-
 initialization
   RegisterClass(TMessage);
   RegisterClass(TPublishMessage);
-  RegisterClass(TSetRead);
 finalization
   UnRegisterClass(TMessage);
   UnRegisterClass(TPublishMessage);
-  UnRegisterClass(TSetRead);
 
 end.

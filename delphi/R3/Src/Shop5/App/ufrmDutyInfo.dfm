@@ -1,6 +1,6 @@
 inherited frmDutyInfo: TfrmDutyInfo
-  Left = 270
-  Top = 292
+  Left = 743
+  Top = 318
   Caption = #32844#21153#26723#26696
   ClientHeight = 315
   ClientWidth = 421
@@ -43,7 +43,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             ParentFont = False
           end
           object Label2: TLabel
-            Left = 178
+            Left = 225
             Top = 20
             Width = 6
             Height = 12
@@ -136,7 +136,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Tag = 1
             Left = 106
             Top = 16
-            Width = 71
+            Width = 118
             Height = 20
             TabOrder = 0
           end

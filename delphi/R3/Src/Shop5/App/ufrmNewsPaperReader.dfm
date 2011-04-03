@@ -3,9 +3,10 @@ inherited frmNewPaperReader: TfrmNewPaperReader
   Top = 123
   Width = 797
   Height = 582
-  Caption = 'frmNewPaperReader'
+  Caption = #20449#24687#20114#21160
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]
@@ -44,10 +45,10 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabTittle
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           FixedDimension = 18
           object TabTittle: TRzTabSheet

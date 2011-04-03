@@ -68,6 +68,7 @@ begin
   with TfrmMessageInfo.Create(Owner) do
     begin
       try
+        MSG_CLASS_TYPE := 0;
         Append;
         if ShowModal = mrOk then
           begin
@@ -86,7 +87,7 @@ procedure TfrmMessageInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  
+  edtMSG_CLASS.ItemIndex := MSG_CLASS_TYPE;
   edtISSUE_DATE.Date := Global.SysDate;
   edtEND_DATE.Date := Global.SysDate;
   edtSHOP_ID_TEXT.Text := Global.SHORT_TENANT_NAME;
@@ -277,7 +278,6 @@ end;
 procedure TfrmMessageInfo.SetMSG_CLASS_TYPE(const Value: integer);
 begin
   FMSG_CLASS_TYPE := Value;
-  edtMSG_CLASS.ItemIndex := Value;
 end;
 
 end.

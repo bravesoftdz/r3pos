@@ -58,8 +58,10 @@ type
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
+    ID:String;
     MSG_Tpye:String;
     procedure InitMSGArr;
     procedure SetRecordNum;
@@ -74,7 +76,7 @@ type
 var MSGArr:array[0..4] of Integer = (0,0,0,0,0);
 
 implementation
-uses uShopUtil, uShopGlobal, uGlobal, uDsUtil;
+uses uShopUtil, uShopGlobal, uGlobal, uDsUtil, ufrmHintMsg;
 {$R *.dfm}
 
 { TfrmNewPaperReader }
@@ -84,6 +86,8 @@ begin
   with TfrmNewPaperReader.Create(Application.MainForm) do
     begin
       try
+        ID := Title_ID;
+        Open;
         ShowModal;
       finally
         Free;
@@ -107,6 +111,7 @@ begin
   MSG_Tpye := '';
   InitMSGArr;
   SetRecordNum;
+  ID := '';
 end;
 
 procedure TfrmNewPaperReader.DBGridEh1DblClick(Sender: TObject);
@@ -208,11 +213,11 @@ begin
   try
     rs.Close;
     rs.SQL.Text :=
-    'select MSG_CONTENT from MSC_MESSAGE where MSG_ID='+QuotedStr(MSG_ID);
+    'select MSG_TITLE,MSG_CONTENT,ISSUE_DATE from MSC_MESSAGE where MSG_ID='+QuotedStr(MSG_ID);
     Factor.Open(rs);
-    labTitle.Caption := CdsNewsPaper.FieldbyName('MSG_TITLE').AsString;
+    labTitle.Caption := rs.FieldbyName('MSG_TITLE').AsString;
     edtContents.Lines.Text := rs.FieldbyName('MSG_CONTENT').AsString;
-    Date_Str := CdsNewsPaper.FieldbyName('ISSUE_DATE').AsString;
+    Date_Str := rs.FieldbyName('ISSUE_DATE').AsString;
     if trim(Date_Str) <> '' then
       begin
         Date_Str := '发布日期:'+copy(Date_Str,1,4)+'-'+copy(Date_Str,5,2)+'-'+copy(Date_Str,7,2)+'    ';
@@ -274,6 +279,7 @@ begin
   MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger] := MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger]-1;
   RzPage.ActivePageIndex := 0;
   SetRecordNum;
+  MsgFactory.FindMsg(ID).Rdd := True;
 end;
 
 procedure TfrmNewPaperReader.SetRecordNum;
@@ -375,7 +381,22 @@ begin
         btnRead.Visible := False
       else
         btnRead.Visible := True;
-      GetInfomation(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
+      ID := CdsNewsPaper.FieldbyName('MSG_ID').AsString;
+      GetInfomation(ID);
+    end;
+end;
+
+procedure TfrmNewPaperReader.FormShow(Sender: TObject);
+begin
+  inherited;
+  if ID <> '' then
+    begin
+      RzPage.ActivePageIndex := 1;
+      GetInfomation(ID);
+    end
+  else
+    begin
+      RzPage.ActivePageIndex := 0;
     end;
 end;
 

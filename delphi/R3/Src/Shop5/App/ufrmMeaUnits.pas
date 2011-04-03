@@ -49,6 +49,7 @@ type
       Shift: TShiftState);
   private
     FFlag: integer;
+    IsOffline:Boolean;
     procedure SetFlag(const Value: integer);
     { Private declarations }
   protected
@@ -78,7 +79,7 @@ end;
 procedure TfrmMeaUnits.btnAppendClick(Sender: TObject);
 begin
   inherited;
-  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if not (ShopGlobal.GetChkRight('32200001',2) or ShopGlobal.GetChkRight('32200001',3)) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
   if cdsUnit.State in [dsEdit,dsInsert] then cdsUnit.Post;
   if not cdsUnit.IsEmpty then
@@ -112,7 +113,7 @@ end;
 procedure TfrmMeaUnits.btnDeleteClick(Sender: TObject);
 begin
   inherited;
-  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if not ShopGlobal.GetChkRight('32200001',4) then Raise Exception.Create('你没有删除计量单位的权限,请和管理员联系.');
   if MessageBox(Handle,pchar('确认要删除"'+cdsUnit.FieldbyName('UNIT_NAME').AsString+'"单位？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsUnit.Delete;
@@ -143,7 +144,7 @@ end;
 procedure TfrmMeaUnits.btnSaveClick(Sender: TObject);
 begin
   inherited;
-  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsUnit.State in [dsInsert,dsEdit] then cdsUnit.Post;
   if (cdsUnit.FieldbyName('UNIT_NAME').AsString='') and (cdsUnit.FieldbyName('Unit_SPELL').AsString='') and (cdsUnit.FieldbyName('UNIT_ID').AsString='')then
   begin
@@ -257,6 +258,7 @@ end;
 procedure TfrmMeaUnits.cdsUnitNewRecord(DataSet: TDataSet);
 begin
   inherited;
+  if IsOffline then Raise Exception.Create('连锁版不允许离线操作!'); 
   cdsUnit.FieldByName('SEQ_NO').AsString:=IntToStr(cdsUnit.RecordCount+1);
   cdsUnit.FieldByName('UNIT_ID').AsString := TSequence.NewId;
   cdsUnit.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;  
@@ -275,7 +277,7 @@ begin
   end;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then
     begin
-      DBGridEh1.ReadOnly := True;
+      IsOffline := True;
       btnAppend.Enabled:=False;
       btnSave.Enabled:=False;
       btnDelete.Enabled:=False;

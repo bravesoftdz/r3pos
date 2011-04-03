@@ -68,7 +68,7 @@ type
     procedure Open;
     function EncodeSql:String;
     procedure GetInfomation(MSG_ID:String);
-    class function ShowNewsPaper(Owner:TForm;Title_ID:String):Boolean;
+    class function ShowNewsPaper(Title_ID:String):Boolean;
   end;
 
 var MSGArr:array[0..4] of Integer = (0,0,0,0,0);
@@ -79,10 +79,9 @@ uses uShopUtil, uShopGlobal, uGlobal, uDsUtil;
 
 { TfrmNewPaperReader }
 
-class function TfrmNewPaperReader.ShowNewsPaper(Owner: TForm;
-  Title_ID: String): Boolean;
+class function TfrmNewPaperReader.ShowNewsPaper(Title_ID: String): Boolean;
 begin
-  with TfrmNewPaperReader.Create(Owner) do
+  with TfrmNewPaperReader.Create(Application.MainForm) do
     begin
       try
         ShowModal;

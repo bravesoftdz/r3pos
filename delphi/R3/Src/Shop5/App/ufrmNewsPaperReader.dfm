@@ -44,10 +44,10 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabTittle
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           FixedDimension = 18
           object TabTittle: TRzTabSheet

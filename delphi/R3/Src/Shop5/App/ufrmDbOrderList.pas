@@ -86,8 +86,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w1 := w1 +' where STOCK_USER is not null';
-       4:w1 := w1 +' where STOCK_USER is null';
+       3:w1 := w1 +' where STOCK_USER is null';
+       4:w1 := w1 +' where STOCK_USER is not null';
        end;
      end;
   if id<>'' then
@@ -104,10 +104,10 @@ begin
   0:result := 'select top 600 * from ('+result+') jp order by SALES_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by SALES_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+result+') order by SALES_ID limit 600';
+       'select * from ('+result+') j order by SALES_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by SALES_ID limit 600';
   else
-    result := 'select * from ('+result+') order by SALES_ID';
+    result := 'select * from ('+result+') j order by SALES_ID';
   end;
 end;
 

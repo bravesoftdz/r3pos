@@ -659,7 +659,7 @@ begin
 
          if CaFactory.Audited then
             begin
-              if not Global.RemoteFactory.Connected and ShopGlobal.offline then
+              if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
                  begin
                    Global.MoveToRemate;
                    try

@@ -10,6 +10,7 @@ type
     tbtitle:string;//说明
     keyFields:string;//关健字段
     synFlag:integer;
+    KeyFlag:integer; //0是按表结构关健字 1是按业务关健字
   end;
   TSyncFactory=class
   private
@@ -36,29 +37,31 @@ type
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     //双同同步
-    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string);
+    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步入库类单据
-    procedure SyncStockOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步出库类单据
-    procedure SyncSalesOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncSalesOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步库存类单据
-    procedure SyncChangeOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncChangeOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //进货订单单据
-    procedure SyncStkIndentOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncStkIndentOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //销售订单单据
-    procedure SyncSalIndentOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncSalIndentOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //收入支出单据
-    procedure SyncIoroOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncIoroOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //存取款单单据
-    procedure SyncTransOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncTransOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //收款单单据
-    procedure SyncRecvOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncRecvOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //付款单单据
-    procedure SyncPayOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncPayOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //日台账单据
-    procedure SyncDaysCloseOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncDaysCloseOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //月台账单据
-    procedure SyncMonthCloseOrder(tbName,KeyFields,ZClassName:string);
+    procedure SyncMonthCloseOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //交放结账
+    procedure SyncCloseForDay(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -168,6 +171,7 @@ begin
   n^.tbname := 'CA_TENANT';
   n^.keyFields := 'TENANT_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '企业资料';
   FList.Add(n);
   new(n);
@@ -198,95 +202,111 @@ begin
   n^.tbname := 'CA_USERS';
   n^.keyFields := 'TENANT_ID;USER_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '用户资料';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_RELATIONS';
   n^.keyFields := 'TENANT_ID;RELATIONS_ID';
   n^.synFlag := 1;
+  n^.KeyFlag := 1;
   n^.tbtitle := '供应关系';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_RELATION';
   n^.keyFields := 'TENANT_ID;RELATION_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '供应链';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_CODE_INFO';
   n^.keyFields := 'TENANT_ID;CODE_ID;CODE_TYPE';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '其他编码';
   FList.Add(n);
   new(n);
   n^.tbname := 'SYS_DEFINE';
   n^.keyFields := 'TENANT_ID;DEFINE';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '参数定义表';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_RIGHTS';
-  n^.keyFields := 'TENANT_ID;ROWS_ID';
+  n^.keyFields := 'TENANT_ID;MODU_ID;ROLE_ID;ROLE_TYPE';
   n^.synFlag := 0;
+  n^.KeyFlag := 1;
   n^.tbtitle := '操作权限';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_GOODSSORT';
   n^.keyFields := 'TENANT_ID;SORT_ID;SORT_TYPE';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '货品分类';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_COLOR_INFO';
   n^.keyFields := 'TENANT_ID;COLOR_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '颜色档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_SIZE_INFO';
   n^.keyFields := 'TENANT_ID;SIZE_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '尺码档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_MEAUNITS';
   n^.keyFields := 'TENANT_ID;UNIT_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '计量单位';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_GOODSINFO';
   n^.keyFields := 'TENANT_ID;GODS_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 0;
   n^.tbtitle := '商品档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_GOODS_RELATION';
   n^.keyFields := 'TENANT_ID;GODS_ID;RELATION_ID';
   n^.synFlag := 2;
+  n^.KeyFlag := 1;
   n^.tbtitle := '商品档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_BARCODE';
   n^.keyFields := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
   n^.synFlag := 3;
+  n^.KeyFlag := 1;
   n^.tbtitle := '条码表';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_PRICEGRADE';
   n^.keyFields := 'TENANT_ID;PRICE_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '客户等级';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_UNION_INFO';
   n^.keyFields := 'TENANT_ID;UNION_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '商盟档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_UNION_INDEX';
   n^.keyFields := 'TENANT_ID;UNION_ID;INDEX_ID';
+  n^.KeyFlag := 0;
   n^.synFlag := 0;
   n^.tbtitle := '商盟指标';
   FList.Add(n);
@@ -294,24 +314,28 @@ begin
   n^.tbname := 'PUB_CLIENTINFO';
   n^.keyFields := 'TENANT_ID;CLIENT_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '客户档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_CUSTOMER';
   n^.keyFields := 'TENANT_ID;CUST_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '会员档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_CUSTOMER_EXT';
   n^.keyFields := 'TENANT_ID;UNION_ID;CUST_ID;INDEX_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 1;
   n^.tbtitle := '会员档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_IC_INFO';
   n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
   n^.synFlag := 4;
+  n^.KeyFlag := 0;
   n^.tbtitle := 'IC档案';
   FList.Add(n);
 
@@ -319,6 +343,7 @@ begin
   n^.tbname := 'PUB_GOODSPRICE';
   n^.keyFields := 'TENANT_ID;GODS_ID;SHOP_ID;PRICE_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '最新售价';
   FList.Add(n);
   new(n);
@@ -326,12 +351,14 @@ begin
   n^.keyFields := 'TENANT_ID;GODS_ID';
   n^.synFlag := 0;
   n^.tbtitle := '最新进价';
+  n^.KeyFlag := 0;
   FList.Add(n);
   new(n);
   n^.tbname := 'LOG_PRICING_INFO';
   n^.keyFields := 'ROWS_ID';
   n^.synFlag := 0;
   n^.tbtitle := '变价日志';
+  n^.KeyFlag := 0;
   FList.Add(n);
   
   new(n);
@@ -339,6 +366,7 @@ begin
   n^.keyFields := 'TENANT_ID;ACCOUNT_ID';
   n^.synFlag := 10;
   n^.tbtitle := '账户资料';
+  n^.KeyFlag := 0;
   FList.Add(n);
 
   //同步业务数据
@@ -347,12 +375,14 @@ begin
   n^.keyFields := 'TENANT_ID;STOCK_ID';
   n^.synFlag := 5;
   n^.tbtitle := '入库单据';
+  n^.KeyFlag := 0;
   FList.Add(n);
   
   new(n);
   n^.tbname := 'SAL_SALESORDER';
   n^.keyFields := 'TENANT_ID;SALES_ID';
   n^.synFlag := 6;
+  n^.KeyFlag := 0;
   n^.tbtitle := '出库单据';
   FList.Add(n);
   
@@ -360,12 +390,14 @@ begin
   n^.tbname := 'STO_CHANGEORDER';
   n^.keyFields := 'TENANT_ID;CHANGE_ID';
   n^.synFlag := 7;
+  n^.KeyFlag := 0;
   n^.tbtitle := '存货单据';
   FList.Add(n);
 
   new(n);
   n^.tbname := 'STK_INDENTORDER';
   n^.keyFields := 'TENANT_ID;INDE_ID';
+  n^.KeyFlag := 0;
   n^.synFlag := 8;
   n^.tbtitle := '进货订单';
   FList.Add(n);
@@ -374,6 +406,7 @@ begin
   n^.tbname := 'SAL_INDENTORDER';
   n^.keyFields := 'TENANT_ID;INDE_ID';
   n^.synFlag := 9;
+  n^.KeyFlag := 0;
   n^.tbtitle := '销售订单';
   FList.Add(n);
 
@@ -381,6 +414,7 @@ begin
   n^.tbname := 'ACC_IOROORDER';
   n^.keyFields := 'TENANT_ID;IORO_ID';
   n^.synFlag := 11;
+  n^.KeyFlag := 0;
   n^.tbtitle := '收入支出';
   FList.Add(n);
 
@@ -388,6 +422,7 @@ begin
   n^.tbname := 'ACC_TRANSORDER';
   n^.keyFields := 'TENANT_ID;TRANS_ID';
   n^.synFlag := 12;
+  n^.KeyFlag := 0;
   n^.tbtitle := '存取款单';
   FList.Add(n);
 
@@ -395,6 +430,7 @@ begin
   n^.tbname := 'ACC_CLOSE_FORDAY';
   n^.keyFields := 'TENANT_ID;SHOP_ID;CLSE_DATE;CLSE_TYPE;CREA_USER';
   n^.synFlag := 17;
+  n^.KeyFlag := 1;
   n^.tbtitle := '交班结账';
   FList.Add(n);
 
@@ -403,6 +439,7 @@ begin
   n^.keyFields := 'TENANT_ID;RECV_ID';
   n^.synFlag := 13;
   n^.tbtitle := '收款单';
+  n^.KeyFlag := 0;
   FList.Add(n);
 
 
@@ -411,6 +448,7 @@ begin
   n^.keyFields := 'TENANT_ID;PAY_ID';
   n^.synFlag := 14;
   n^.tbtitle := '付款单';
+  n^.KeyFlag := 0;
   FList.Add(n);
 
   new(n);
@@ -418,6 +456,7 @@ begin
   n^.keyFields := 'TENANT_ID;SHOP_ID;CREA_DATE';
   n^.synFlag := 15;
   n^.tbtitle := '日台账';
+  n^.KeyFlag := 0;
   FList.Add(n);
   
 
@@ -426,6 +465,7 @@ begin
   n^.keyFields := 'TENANT_ID;SHOP_ID;MONTH';
   n^.synFlag := 16;
   n^.tbtitle := '月台账';
+  n^.KeyFlag := 0;
   FList.Add(n);
 end;
 
@@ -480,18 +520,19 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      8:SyncStkIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      9:SyncSalIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      11:SyncIoroOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      12:SyncTransOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      13:SyncRecvOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      14:SyncPayOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      15:SyncDaysCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
-      16:SyncMonthCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      0,1,2,3,4,10:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      8:SyncStkIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      9:SyncSalIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      11:SyncIoroOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      12:SyncTransOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      13:SyncRecvOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      14:SyncPayOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      15:SyncDaysCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      16:SyncMonthCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      17:SyncCloseForDay(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -515,7 +556,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])));
+      0,1,2,3,4,10:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -526,11 +567,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncChangeOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -639,12 +681,19 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncCloseForDay(tbName, KeyFields,
+  ZClassName: string; KeyFlag:integer=0);
+begin
+  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag);
+end;
+
 procedure TSyncFactory.SyncDaysCloseOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,cs_s,rs_h,rs_d,rs_s:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -772,11 +821,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncIoroOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -886,11 +936,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncMonthCloseOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,cs_s,rs_h,rs_d,rs_s:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1017,11 +1068,12 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncPayOrder(tbName, KeyFields, ZClassName: string);
+procedure TSyncFactory.SyncPayOrder(tbName, KeyFields, ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1131,11 +1183,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncRecvOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1245,11 +1298,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncSalesOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1359,11 +1413,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncSalIndentOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1472,11 +1527,12 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string);
+procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0);
 var
   cs,rs:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
@@ -1534,11 +1590,12 @@ begin
 end;
 
 procedure TSyncFactory.SyncStkIndentOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1647,11 +1704,12 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncStockOrder(tbName,KeyFields,ZClassName:string);
+procedure TSyncFactory.SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
 var
   ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
@@ -1761,9 +1819,9 @@ begin
 end;
 
 procedure TSyncFactory.SyncTransOrder(tbName, KeyFields,
-  ZClassName: string);
+  ZClassName: string;KeyFlag:integer=0);
 begin
-  SyncSingleTable(tbName,KeyFields,ZClassName);
+  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag);
 end;
 
 initialization

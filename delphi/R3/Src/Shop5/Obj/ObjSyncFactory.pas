@@ -2536,8 +2536,9 @@ begin
       'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
     + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
     us.SQL.Text :=
+      ParseSQL(AGlobal.iDbType,
       'update ACC_RECVABLE_INFO set ACCT_MNY=:RECV_MNY,RECK_MNY=:RECV_MNY - isnull(RECV_MNY,0) - isnull(REVE_MNY,0),ACCT_INFO=:ACCT_INFO,PAYM_ID=:PAYM_ID '+
-      'where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER and RECV_TYPE=''4'' ';
+      'where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER and RECV_TYPE=''4'' ');
     ss.First;
     while not ss.Eof do
     begin
@@ -2545,76 +2546,103 @@ begin
       rs.ParambyName('SHOP_ID').AsString := ss.FieldbyName('SHOP_ID').AsString;
       rs.ParambyName('CLSE_DATE').AsInteger := ss.FieldbyName('CLSE_DATE').AsInteger;
       rs.ParambyName('CREA_USER').AsString := ss.FieldbyName('CREA_USER').AsString;
-      if ss.FieldbyName('PAY_A').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('A')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'A';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_A').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_A').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('A')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'A';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_A').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_B').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('B')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'B';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_B').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_B').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('B')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'B';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_B').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_C').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('C')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'C';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_C').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_C').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('C')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'C';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_C').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_E').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('E')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'E';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_E').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_E').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('E')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'E';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_E').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_F').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('F')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'F';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_F').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_F').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('F')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'F';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_F').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_G').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('G')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'G';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_G').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_G').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('G')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'G';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_G').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_H').AsFloat<>0 then
+         
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('H')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'H';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_H').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_H').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('H')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'H';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_H').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_I').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('I')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'I';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_I').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_I').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('I')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'I';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_I').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
-      if ss.FieldbyName('PAY_J').AsFloat<>0 then
+
+      rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('J')+'】';
+      rs.ParambyName('PAYM_ID').AsString := 'J';
+      rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_J').AsFloat;
+      us.Params.AssignValues(rs.Params);
+      r := AGlobal.ExecQuery(us);
+      if (r = 0) and (ss.FieldbyName('PAY_J').AsFloat<>0) then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
-           rs.ParambyName('ACCT_INFO').AsString := '门店销售【'+GetPayment('J')+'】';
-           rs.ParambyName('PAYM_ID').AsString := 'J';
-           rs.ParambyName('RECV_MNY').AsFloat := ss.FieldbyName('PAY_J').AsFloat;
            AGlobal.ExecQuery(rs);
          end;
       ss.Next;

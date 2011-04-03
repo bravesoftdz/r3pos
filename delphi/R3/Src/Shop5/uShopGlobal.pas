@@ -156,9 +156,9 @@ begin
   Str:=
     'select j.* from ('+
     'select MODU_ID,R.ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
-    ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') '+
+    ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and R.COMM not in (''02'',''12'') and B.ROLE_ID in ('''+stringReplace(Roles,',',''',''',[rfReplaceAll])+''') '+
     ' union all '+
-    ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ) j';
+    ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID and COMM not in (''02'',''12'') ) j';
   CA_RIGHTS.Close;
   CA_RIGHTS.SQL.Text:=Str;
   if CA_RIGHTS.Params.FindParam('TENANT_ID')<>nil then
@@ -312,7 +312,8 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := TENANT_ID;
-    Factor.ExecProc('TGetSyncTimeStamp',Params);  
+    if not ShopGlobal.offline then LocalFactory.ExecProc('TGetSyncTimeStamp',Params); 
+    Factor.ExecProc('TGetSyncTimeStamp',Params);
   finally
     Params.free;
   end;

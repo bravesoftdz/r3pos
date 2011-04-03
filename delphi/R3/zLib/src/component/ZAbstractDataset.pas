@@ -950,11 +950,13 @@ begin
       begin
         CachedResultSet := ResultSet as IZCachedResultSet;
         CachedResolver := CachedResultSet.GetResolver;
+        if CachedResolver = nil then
+           CachedResolver := TZGenericCachedResolver.Create(nil,nil);
         CachedResultSet.SetCachedUpdates(CachedUpdates);
         if FUpdateObject <> nil then
-           CachedResultSet.SetResolver(FUpdateObject);
-//        else
-//          CachedResultSet.SetResolver(CachedResolver);
+          CachedResultSet.SetResolver(FUpdateObject)
+        else
+          CachedResultSet.SetResolver(CachedResolver);
       end;
       RowAccessor := TZRowAccessor.Create(ColumnList);
     finally
@@ -1048,7 +1050,9 @@ begin
       if ResultSet.QueryInterface(IZCachedResultSet, FCachedResultSet) = 0 then
       begin
         CachedResultSet := ResultSet as IZCachedResultSet;
-        CachedResolver := TZGenericCachedResolver.Create(nil,nil); 
+        CachedResolver := CachedResultSet.GetResolver;
+        if CachedResolver = nil then
+           CachedResolver := TZGenericCachedResolver.Create(nil,nil);
         CachedResultSet.SetCachedUpdates(CachedUpdates);
         if FUpdateObject <> nil then
           CachedResultSet.SetResolver(FUpdateObject)

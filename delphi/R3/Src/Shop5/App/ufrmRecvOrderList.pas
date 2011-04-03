@@ -322,7 +322,7 @@ begin
     strWhere:=strWhere+' A.ABLE_ID > '+QuotedStr(id);
   //帐款日期:
   if P1_D1.Date=P1_D2.Date then
-    strWhere := strWhere + ' and A.ABLE_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' ' 
+    strWhere := strWhere + ' and A.ABLE_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' '
   else
     strWhere := strWhere + ' and A.ABLE_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.ABLE_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+'';
   //门店条件:
@@ -359,12 +359,12 @@ begin
   0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+strSql+') order by ABLE_ID) tp fetch first 600  rows only';
+       'select * from ('+strSql+') j order by ABLE_ID) tp fetch first 600  rows only';
 
-  5:result := 'select * from ('+strSql+') order by ABLE_ID limit 600';
+  5:result := 'select * from ('+strSql+') j order by ABLE_ID limit 600';
   else
-    result := 'select * from ('+strSql+') order by ABLE_ID';
-  end;  
+    result := 'select * from ('+strSql+') j order by ABLE_ID';
+  end;
 end;
 
 function TfrmRecvOrderList.EncodeSQL2(id: string; var w: string): string;
@@ -411,10 +411,10 @@ begin
   0:result := 'select top 600 * from ('+strSql+') jp order by RECV_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+strSql+') order by RECV_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+strSql+') order by RECV_ID limit 600';
+       'select * from ('+strSql+') j order by RECV_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+strSql+') j order by RECV_ID limit 600';
   else
-    result := 'select * from ('+strSql+') order by RECV_ID';
+    result := 'select * from ('+strSql+') j order by RECV_ID';
   end;
 end;
 

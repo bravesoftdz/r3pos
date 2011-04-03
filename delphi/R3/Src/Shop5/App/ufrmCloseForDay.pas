@@ -66,6 +66,8 @@ type
     LastTime:integer;
     Is_Print: Boolean;
     MainRecord: TRecord_;
+    //检查是否有离线数据，必须上传后才能结账
+    procedure CheckOffData;
     procedure GetEverydayAcc(var Acc_Data:TZQuery;ThatDay:Integer);
     procedure GetLastDate;
     function  GetBalance:Boolean;
@@ -436,6 +438,8 @@ begin
   inherited;
   if Btn_Save.Tag = 0 then
     begin
+      if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+      CheckOffData;
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');
       if not Is_Print and (MessageBox(Handle,'你今天没有营业数据是否继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
       Save;
@@ -515,8 +519,10 @@ begin
   Acc_Data.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Acc_Data.Params.ParamByName('CREA_USER').AsString := Global.UserID;
   Acc_Data.Params.ParamByName('SALES_DATE').AsInteger := ThatDay;
-  if LastTime=ThatDay then LastTime := LastTime -1; 
-  Acc_Data.Params.ParamByName('LAST_SALES_DATE').AsInteger := LastTime;
+  if LastTime=ThatDay then
+     Acc_Data.Params.ParamByName('LAST_SALES_DATE').AsInteger := LastTime-1
+  else
+     Acc_Data.Params.ParamByName('LAST_SALES_DATE').AsInteger := LastTime;
   Factor.Open(Acc_Data);
 end;
 
@@ -554,6 +560,11 @@ begin
       cdsTable.Next;
     end;
   edtHIS_MNY.Text := formatfloat('#0.00',Balance);
+end;
+
+procedure TfrmCloseForDay.CheckOffData;
+begin
+
 end;
 
 end.

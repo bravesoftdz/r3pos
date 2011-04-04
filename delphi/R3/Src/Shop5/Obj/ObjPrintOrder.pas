@@ -45,6 +45,7 @@ type
 
   TPrintOrderAudit=class(TZProcFactory)
   private
+    function IntToVarchar(AGlobal:IdbHelp; FieldName: string): string;  
     function IsZero(AGlobal:IdbHelp;Params:TftParamList):boolean;
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
@@ -84,7 +85,7 @@ begin
   if ReRun=0 then  //没有更新到记录;
   begin
     Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,''#'',''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_CALC_AMOUNT,:CALC_AMOUNT,''2'')';
+         ' values (:ROWS_ID,:TENANT_ID,:SHOP_ID,:PRINT_DATE,:BATCH_NO,''#'',null,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:RCK_CALC_AMOUNT,:CALC_AMOUNT,''2'')';
     AGlobal.ExecSQL(str, self);
   end;
   result := true;
@@ -103,14 +104,14 @@ begin
     ParseSQL(iDbType,
     'select j.ROWS_ID as ROWS_ID,j.TENANT_ID as TENANT_ID,j.SHOP_ID as SHOP_ID,j.PRINT_DATE as PRINT_DATE,j.GODS_ID as GODS_ID,j.PROPERTY_01 as PROPERTY_01,'+
     'j.PROPERTY_02 as PROPERTY_02,j.BATCH_NO as BATCH_NO,j.LOCUS_NO as LOCUS_NO,j.BOM_ID as BOM_ID,B.UNIT_ID,0 as IS_PRESENT,0 as SEQNO,'+
-    'j.RCK_AMOUNT/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+  //账面库存量
+    'j.RCK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+  //账面库存量
     'j.RCK_AMOUNT as RCK_CALC_AMOUNT,'+  //账面库存量
-    'j.CHK_AMOUNT/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as AMOUNT,'+  //盘点库存量
+    'j.CHK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as AMOUNT,'+  //盘点库存量
     'j.CHK_AMOUNT as CALC_AMOUNT,'+  //盘点库存量
-    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PAL_AMOUNT,'+  //盈亏数量
+    '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PAL_AMOUNT,'+  //盈亏数量
     ' b.GODS_NAME as GODS_NAME,b.GODS_CODE as GODS_CODE,'+
-    ' b.NEW_INPRICE/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
-    ' b.NEW_OUTPRICE/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+
+    ' b.NEW_INPRICE*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
+    ' b.NEW_OUTPRICE*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_INPRICE,0) as PAL_INAMONEY,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_OUTPRICE,0) as PAL_OUTAMONEY  '+
     ' from STO_PRINTDATA j '+
@@ -243,7 +244,7 @@ end;
 function TPrintOrderAudit.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
   rs,ts: TZQuery;
-  SQL,id,gid,s,CurDate,CurTime,User:string;
+  SQL,id,gid,s,CurDate,CurTime,User: string;
   r,w:integer;
   cb,CHANGE_AMT,CHANGE_MNY: real;  //成本价 |调整数量 |调整金额
 begin
@@ -278,9 +279,9 @@ begin
       if not rs.IsEmpty then
       begin
         AGlobal.ExecSQL('insert into STO_CHANGEORDER(CHANGE_ID,GLIDE_NO,TENANT_ID,SHOP_ID,CHANGE_DATE,CHANGE_TYPE,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-                        'select '''+id+''','''+gid+''',TENANT_ID,SHOP_ID,PRINT_DATE,''2'',''1'','''+User+''',''盘点损益'','''+User+''','''+CurDate+''',PRINT_DATE,'''+CurTime+''','''+User+''',''00'','+GetTimeStamp(AGlobal.iDbType)+' '+
-                        'from STO_PRINTORDER where TENANT_ID='''+Params.ParambyName('TENANT_ID').asString+''' and '+
-                        ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='''+Params.ParambyName('PRINT_DATE').asString+''' ');
+                        'select '''+id+''','''+gid+''',TENANT_ID,SHOP_ID,PRINT_DATE,''2'',''1'','''+User+''',''盘点损益'','''+User+''','''+CurDate+''','+IntToVarchar(AGlobal,'PRINT_DATE')+','''+CurTime+''','''+User+''',''00'','+GetTimeStamp(AGlobal.iDbType)+' '+
+                        'from STO_PRINTORDER where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                        ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' ');
 
         //盘点明细数据插入调整单明细:
         rs.First;
@@ -291,7 +292,7 @@ begin
                                        rs.FieldbyName('BATCH_NO').AsString);
             AGlobal.ExecSQL('insert into STO_CHANGEDATA(TENANT_ID,SHOP_ID,SEQNO,CHANGE_ID,GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,COST_PRICE,APRICE,AMONEY,CALC_MONEY,IS_PRESENT,CALC_AMOUNT,REMARK) '+
                             'values('+
-                            ''''+Params.ParambyName('TENANT_ID').asString+''','+
+                            ''+Params.ParambyName('TENANT_ID').asString+','+
                             ''''+Params.ParambyName('SHOP_ID').asString+''','+inttostr(rs.RecNo+1)+','''+id+''','+
                             ''''+rs.FieldbyName('GODS_ID').AsString+''','+
                             ''''+rs.FieldbyName('BATCH_NO').AsString+''','+
@@ -299,10 +300,10 @@ begin
                             ''''+rs.FieldbyName('PROPERTY_02').AsString+''','+
                             ''''+rs.FieldbyName('UNIT_ID').AsString+''','+
                             ''+floattostr(rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
-                            ''''+formatfloat('#0.000000',cb)+''','+
-                            ''''+formatfloat('#0.000',rs.FieldbyName('NEW_OUTPRICE').AsFloat)+''','+
-                            ''''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+''','+
-                            ''''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+''','+
+                            ''+formatfloat('#0.000000',cb)+','+
+                            ''+formatfloat('#0.000',rs.FieldbyName('NEW_OUTPRICE').AsFloat)+','+
+                            ''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
+                            ''+formatfloat('#0.00',rs.FieldbyName('NEW_OUTPRICE').AsFloat*rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
                             '0,'+   //是否是赠品[盘点单没字段，默认为:0]
                             ''+floattostr(rs.FieldbyName('MDI_AMOUNT').AsFloat)+','+
                             '''盘点损益:'+rs.FieldbyName('RCK_AMOUNT').AsString+'->'+rs.FieldbyName('CHK_AMOUNT').AsString+''''+
@@ -323,14 +324,14 @@ begin
             CHANGE_MNY:=CHANGE_MNY+roundto(rs.FieldbyName('MDI_AMOUNT').AsFloat*cb,-2);
             rs.Next;
           end;
-      end;             
+      end;
 
       //更新调整单明细汇总数据
       AGlobal.ExecSQL('update STO_CHANGEORDER set CHANGE_AMT='+FloattoStr(CHANGE_AMT)+',CHANGE_MNY='+FloattoStr(CHANGE_MNY)+' '+
                       ' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and CHANGE_ID='''+id+''' ');
 
-      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''3'',CHK_USER='''+User+''',CHK_DATE='''+CurDate+''' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
-                           ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS<>''3''');
+      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=3,CHK_USER='''+User+''',CHK_DATE='''+CurDate+''' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                           ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS<>3');
       if r=0 then Raise Exception.Create('没找到待审核的盘点单，是否由另一用户审核完毕？');
       if not IsZero(AGlobal,Params) then
       begin
@@ -378,6 +379,15 @@ begin
   finally
     ts.Free;
     rs.Free;
+  end;
+end;
+
+function TPrintOrderAudit.IntToVarchar(AGlobal:IdbHelp; FieldName: string): string;
+begin
+  result:=trim(FieldName);
+  case AGlobal.iDbType of
+   0,5: result:='cast('+FieldName+' as varchar)';
+   4:   result:='trim(char('+FieldName+'))';
   end;
 end;
 
@@ -441,8 +451,8 @@ begin
                       ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
       AGlobal.ExecSQL('delete from STO_CHANGEORDER where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
                       ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
-      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=''2'',CHK_USER=null,CHK_DATE=null where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
-                         ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS=''3''');
+      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=2,CHK_USER=null,CHK_DATE=null where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+                         ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS=3');
       if r=0 then Raise Exception.Create('没找到已审核的盘点单，是否由另一用户审核完毕？');
       
       if not IsZero(AGlobal,Params) then

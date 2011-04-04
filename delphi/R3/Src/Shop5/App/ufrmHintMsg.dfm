@@ -467,7 +467,7 @@ object frmHintMsg: TfrmHintMsg
         Font.Color = 8146444
         Font.Height = -12
         Font.Name = #23435#20307
-        Font.Style = [fsBold, fsUnderline]
+        Font.Style = [fsBold]
         ParentFont = False
         OnClick = rzMsgClick
         OnMouseEnter = labTitleMouseEnter

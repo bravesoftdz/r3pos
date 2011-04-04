@@ -220,8 +220,10 @@ begin
        Exit;
      end;
   frmMsg.MsgInfo := Msg;
-  frmMsg.Left := Application.MainForm.Width-frmMsg.Width-8;
-  frmMsg.Top := Application.MainForm.Height-frmMsg.Height-8;
+  //frmMsg.Left := Application.MainForm.Width-frmMsg.Width-13;
+  //frmMsg.Top := Application.MainForm.Height-frmMsg.Height-13;
+  frmMsg.Left := Screen.WorkAreaWidth-frmMsg.Width-2;
+  frmMsg.Top := Screen.WorkAreaHeight-frmMsg.Height-2;
   frmMsg.MsgInfo := Msg;
   frmMsg.labTitle.Caption := Msg^.Title;
   Contents_M := Msg^.Contents;
@@ -233,7 +235,7 @@ begin
     begin
       frmMsg.edtContents.Caption := Contents_M;
     end;
-  case Msg^.sFlag of
+  case Msg^.sFlag of                                            
     0:frmMsg.labType.Caption := '最新消息';
     1:frmMsg.labType.Caption := '最新公告';
     2:frmMsg.labType.Caption := '最新政策';
@@ -247,8 +249,8 @@ end;
 
 procedure TfrmHintMsg.rzMsgClick(Sender: TObject);
 begin
-  MsgFactory.ShowMsg(MsgInfo);
   Close;
+  MsgFactory.ShowMsg(MsgInfo);  
 end;
 
 procedure TfrmHintMsg.RzBmpButton3Click(Sender: TObject);

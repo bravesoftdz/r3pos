@@ -103,8 +103,6 @@ type
     class function ShowDialog(Owner:TForm):boolean;
   end;
 
-var
-  frmPriceGradeInfo: TfrmPriceGradeInfo;
 
 implementation
 uses uGlobal,uTreeutil,uShopUtil,uFnUtil,ufrmSelectGoodSort,uShopGlobal,uDsUtil,Math,

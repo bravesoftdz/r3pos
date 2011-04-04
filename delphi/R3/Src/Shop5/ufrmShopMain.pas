@@ -274,6 +274,8 @@ type
     N33: TMenuItem;
     N103: TMenuItem;
     actfrmIoroDayReport: TAction;
+    actfrmMessage: TAction;
+    actfrmNewPaperReader: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -365,7 +367,8 @@ type
     procedure tlbCloseClick(Sender: TObject);
     procedure N103Click(Sender: TObject);
     procedure actfrmIoroDayReportExecute(Sender: TObject);
-    procedure RzBmpButton5Click(Sender: TObject);
+    procedure actfrmMessageExecute(Sender: TObject);
+    procedure actfrmNewPaperReaderExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -416,7 +419,8 @@ uses
   ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
-  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport;
+  ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
+  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -672,9 +676,9 @@ begin
                      Global.MoveToLocal;
                    end;
                  end;
-              if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
+              if not FindCmdLineSwitch('DEBUG',['-','+'],false) then //同步门店专用资料
                  begin
-                   if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic;
+                   if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
                  end;
             end;
 
@@ -824,14 +828,16 @@ begin
 end;
 
 procedure TfrmShopMain.Timer1Timer(Sender: TObject);
-//var P:PMsgInfo;
+var P:PMsgInfo;
 begin
   inherited;
-//  if SystemShutdown then Exit;
-//  if not Logined then Exit;
-//  if not Visible then Exit;
-//  P := MsgFactory.ReadMsg;
-//  if P<>nil then MsgFactory.HintMsg(P);
+  if SystemShutdown then Exit;
+  if not Logined then Exit;
+  if not Visible then Exit;
+  if not MsgFactory.Loaded then MsgFactory.Load;
+  actfrmNewPaperReader.Caption := '我的消息('+inttostr(MsgFactory.Count)+'条)';
+  P := MsgFactory.ReadMsg;
+  if P<>nil then MsgFactory.HintMsg(P);
 end;
 
 procedure TfrmShopMain.LoadFrame;
@@ -1111,6 +1117,18 @@ begin
   end;
   
 end;
+procedure InitTenant;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.ExecProc('TTenantInit',Params);   
+  finally
+    Params.Free;
+  end;
+end;
 begin
   frmLogo.Show;
   try
@@ -1165,9 +1183,38 @@ begin
            end;
          end;
      end;
-  //连接到远程时，可能远程端没有企业资料，
   try
-    if result and (Factor=Global.RemoteFactory) then SynTenantId;
+    frmLogo.Show;
+    try
+     if CaFactory.Audited then
+        begin
+          if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
+             begin
+               frmLogo.Label1.Caption := '正在连接远程服务...';
+               frmLogo.Label1.Update;
+               Global.MoveToRemate;
+               try
+                 try
+                   Global.Connect;
+                 except
+                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                 end;
+               finally
+                 Global.MoveToLocal;
+               end;
+             end;
+//          if not FindCmdLineSwitch('DEBUG',['-','+'],false) then //同步门店专用资料
+//             begin
+               if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(true);
+//             end;
+        end;
+      frmLogo.Label1.Caption := '正在初始化账套...';
+      frmLogo.Label1.Update;
+      InitTenant;
+    finally
+      frmLogo.Close;
+    end;
+//    if result and (Factor=Global.RemoteFactory) then SynTenantId;
   except
     on E:Exception do
       begin
@@ -2530,7 +2577,7 @@ begin
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
 //  SyncFactory.SyncStockOrder('STK_STOCKORDER','TENANT_ID;STOCK_ID','TSyncSingleTable');
   SyncFactory.SyncAll;
-
+  Global.LoadBasic; 
 end;
 
 procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
@@ -2581,26 +2628,41 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.RzBmpButton5Click(Sender: TObject);
+procedure TfrmShopMain.actfrmMessageExecute(Sender: TObject);
 var
-  rs:TZQuery;
-  i:integer;
+  Form:TfrmBasic;
 begin
   inherited;
-  rs := TZQuery.Create(nil);
-  try
-    for i:=0 to 10000 do
-    begin
-    rs.Close;
-    rs.SQL.Text := 'select * from PUB_GOODSINFO';
-    try
-    Factor.Open(rs);
-    except
-    end;
-    end; 
-  finally
-    rs.Free;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
   end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMessage);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmMessage.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmNewPaperReaderExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmNewPaperReader.ShowNewsPaper('');
 end;
 
 end.

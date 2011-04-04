@@ -69,7 +69,7 @@ type
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
-    procedure SyncBasic;
+    procedure SyncBasic(gbl:boolean=true);
 
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
@@ -466,6 +466,14 @@ begin
   FList.Add(n);
 
   new(n);
+  n^.tbname := 'STO_PRINTORDER';
+  n^.keyFields := 'TENANT_ID;SHOP_ID;PRINT_DATE';
+  n^.synFlag := 19;
+  n^.tbtitle := '盘点单';
+  n^.KeyFlag := 0;
+  FList.Add(n);
+
+  new(n);
   n^.tbname := 'RCK_DAYS_CLOSE';
   n^.keyFields := 'TENANT_ID;SHOP_ID;CREA_DATE';
   n^.synFlag := 15;
@@ -558,7 +566,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncBasic;
+procedure TSyncFactory.SyncBasic(gbl:boolean=true);
 var
   i:integer;
 begin
@@ -572,8 +580,8 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20:if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      18:if not gbl then SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;

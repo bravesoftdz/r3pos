@@ -7,10 +7,10 @@ inherited frmCheckOrder: TfrmCheckOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 766
-    Height = 441
+    Width = 758
+    Height = 430
     inherited RzPanel2: TRzPanel
-      Width = 756
+      Width = 748
       Height = 81
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -172,8 +172,8 @@ inherited frmCheckOrder: TfrmCheckOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 329
-      Width = 756
+      Top = 318
+      Width = 748
       Height = 35
       TabOrder = 2
       object Label8: TLabel
@@ -253,8 +253,8 @@ inherited frmCheckOrder: TfrmCheckOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 119
-      Width = 756
-      Height = 210
+      Width = 748
+      Height = 199
       TabOrder = 3
       UseMultiTitle = False
       Columns = <
@@ -304,6 +304,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'RCK_AMOUNT'
+          Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #36134#38754#24211#23384
@@ -325,6 +326,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           DisplayFormat = '#0.###'
           EditButtons = <>
           FieldName = 'PAL_AMOUNT'
+          Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #30424#28857#25439#30410
@@ -349,6 +351,7 @@ inherited frmCheckOrder: TfrmCheckOrder
         item
           EditButtons = <>
           FieldName = 'PAL_INAMONEY'
+          Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #36827#36135#37329#39069
@@ -357,6 +360,7 @@ inherited frmCheckOrder: TfrmCheckOrder
         item
           EditButtons = <>
           FieldName = 'PAL_OUTAMONEY'
+          Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #38144#21806#37329#39069
@@ -379,15 +383,15 @@ inherited frmCheckOrder: TfrmCheckOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 86
-      Width = 756
+      Width = 748
     end
     inherited stbHint: TRzPanel
-      Top = 412
-      Width = 756
+      Top = 401
+      Width = 748
     end
     inherited rzHelp: TRzPanel
-      Top = 364
-      Width = 756
+      Top = 353
+      Width = 748
     end
   end
   inherited actList: TActionList

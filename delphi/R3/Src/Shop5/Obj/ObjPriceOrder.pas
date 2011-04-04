@@ -7,8 +7,10 @@ uses
 
 type
   TPriceOrder=class(TZFactory)
+  private
+    Locked:boolean;
   public
-    function CheckTimeStamp(AGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(AGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -63,7 +65,7 @@ implementation
 
 function TPriceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then  Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if not Locked and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then  Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   result := true;
 end;
 
@@ -79,25 +81,28 @@ end;
 
 function TPriceOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  result := BeforeDeleteRecord(AGlobal);
-  result := BeforeInsertRecord(AGlobal);
+  Locked := true;
+  try
+    if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+    result := BeforeDeleteRecord(AGlobal);
+    result := BeforeInsertRecord(AGlobal);
+  finally
+    Locked := false;
+  end;
 end;
 
-function TPriceOrder.CheckTimeStamp(AGlobal: IdbHelp; s: string): boolean;
+function TPriceOrder.CheckTimeStamp(AGlobal: IdbHelp; s: string; comm:boolean=true): boolean;
 var rs: TZQuery;
 begin
   result:=false;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text:='select TIME_STAMP,COMM from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and PROM_ID=:PROM_ID ';;
-    if rs.Params.FindParam('TENANT_ID')<>nil then
-      rs.ParamByName('TENANT_ID').AsInteger:=fieldbyName('TENANT_ID').AsInteger;
-    if rs.Params.FindParam('PROM_ID')<>nil then
-      rs.ParamByName('PROM_ID').AsString:=FieldbyName('PROM_ID').AsString;
+    if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=fieldbyName('TENANT_ID').AsInteger;
+    if rs.Params.FindParam('PROM_ID')<>nil then rs.ParamByName('PROM_ID').AsString:=FieldbyName('PROM_ID').AsString;
     AGlobal.Open(rs);
-    if rs.Active then
-      result:=(rs.Fields[0].AsString=s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result:=(rs.Fields[0].AsString=s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)<>'1') then Raise Exception.Create('已经同步的数据不能修改或删除..'); 
   finally
     rs.Free;
   end;
@@ -108,6 +113,7 @@ var
   Str: string;
 begin
   inherited;
+  Locked := false;
   SelectSQL.Text :=
     'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
     'select jc.*,c.PRICE_NAME as PRICE_ID_TEXT from ('+

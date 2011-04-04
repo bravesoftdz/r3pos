@@ -63,7 +63,7 @@ begin
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
 
        
-     //判断今天否有盘点:             
+     //判断今天否有结账:             
      Temp.Close;
      Temp.SQL.Text:='select max(CREA_DATE) as PRINT_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';  //'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';     
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
@@ -82,7 +82,7 @@ begin
      end else
      begin
        B := Temp.Fields[0].AsString;
-       if (formatDatetime('YYYYMMDD',date())<B) then Raise Exception.Create('系统检测盘点单'+b+'号比当前日期大，不能再盘点了');
+       if (formatDatetime('YYYYMMDD',date())<=B) then Raise Exception.Create('系统检测盘点单'+b+'号比当前日期大，不能再盘点了');
      end;
 
      //检查判断是否大于今天的业务单据

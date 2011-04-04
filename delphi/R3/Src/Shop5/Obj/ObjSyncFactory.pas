@@ -2637,6 +2637,8 @@ begin
   Str := 'select TENANT_ID,SHOP_ID,PROM_ID from SAL_PRICEORDER j where TENANT_ID=:TENANT_ID and '+
          '(SHOP_ID=:SHOP_ID or SHOP_ID in (select SHOP_ID from SAL_PROM_SHOP where TENANT_ID=j.TENANT_ID and PROM_ID=j.PROM_ID and SHOP_ID=:SHOP_ID)) '+
          'and CHK_DATE is not null and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(j.COMM,1,1)<>''1''');
   SelectSQL.Text := Str;
 end;
 
@@ -2769,6 +2771,8 @@ var
   Str:string;
 begin
   Str := 'select TENANT_ID,SHOP_ID,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
   SelectSQL.Text := Str;
 end;
 

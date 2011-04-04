@@ -99,6 +99,8 @@ begin
       try
         frmLogo.Show;
         try
+        frmLogo.Label1.Caption := '正在获取企业证书...';
+        frmLogo.Label1.Update;
         rzPage.ActivePageIndex := 0;
         result := Check;
         if result then

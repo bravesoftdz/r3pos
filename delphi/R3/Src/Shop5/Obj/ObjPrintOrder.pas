@@ -248,6 +248,7 @@ var
   r,w:integer;
   cb,CHANGE_AMT,CHANGE_MNY: real;  //成本价 |调整数量 |调整金额
 begin
+  GetAccountRange(AGlobal,Params.ParambyName('TENANT_ID').asString,Params.ParambyName('SHOP_ID').asString,Params.ParambyName('PRINT_DATE').asString);
   //参数: Params.ParambyName('AUDIT_FLAG').asString 界面UI传过来的的作为，为0表示对于没录入盘点商品库存设置为0，为1其它表示不处理;
   rs := TZQuery.Create(nil);
   ts := TZQuery.Create(nil);
@@ -419,7 +420,7 @@ begin
   rs := TZQuery.Create(nil);
   ts := TZQuery.Create(nil);
   try
-    GetReckOning(AGlobal,Params.ParambyName('TENANT_ID').asString,Params.ParambyName('SHOP_ID').asString,Params.ParambyName('PRINT_DATE').asString,'');
+    GetAccountRange(AGlobal,Params.ParambyName('TENANT_ID').asString,Params.ParambyName('SHOP_ID').asString,Params.ParambyName('PRINT_DATE').asString);
 
     rs.Close;
     rs.SQL.Text := 'select COMM,CHANGE_ID,TENANT_ID,SHOP_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and FROM_ID=:PRINT_DATE and CHANGE_CODE=''1'' ';

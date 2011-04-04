@@ -925,7 +925,7 @@ begin
   'if OBJECT_ID(N''tempdb..'+tempTableName+''') is null '+
   'CREATE TABLE '+tempTableName+' ('+
   '	TENANT_ID int NOT NULL ,'+
-  '	SHOP_ID varchar (11) NOT NULL ,'+
+  '	SHOP_ID varchar (13) NOT NULL ,'+
   '	CREA_DATE int NOT NULL ,'+
   '	GODS_ID varchar (36)  NOT NULL ,'+
   '	BATCH_NO varchar (36) NOT NULL ,'+
@@ -989,7 +989,7 @@ begin
   SQL :=
   'declare global temporary table '+tempTableName+' ('+
   '	TENANT_ID int NOT NULL ,'+
-  '	SHOP_ID varchar (11) NOT NULL ,'+
+  '	SHOP_ID varchar (13) NOT NULL ,'+
   '	CREA_DATE int NOT NULL ,'+
   '	GODS_ID varchar (36)  NOT NULL ,'+
   '	BATCH_NO varchar (36) NOT NULL ,'+

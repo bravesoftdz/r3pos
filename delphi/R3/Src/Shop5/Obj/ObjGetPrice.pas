@@ -26,6 +26,7 @@ var
   rs,ss:TZQuery;
   vList:TStringList;
   agio:real;
+  lvl:string;
 begin
   if Params.ParamByName('CLIENT_ID').AsString = '' then
      begin
@@ -51,7 +52,16 @@ begin
                ss.Close;
                ss.SQL.Text :=
                  ParseSQL(AGlobal.iDbType,
-                 'select SORT_ID,LEVEL_ID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID order by length(LEVEL_ID) desc');
+                 'select LEVEL_ID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and SORT_ID=:SORT_ID1 and SORT_TYPE=1 ');
+               ss.ParambyName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').asInteger;
+               ss.ParambyName('RELATION_ID').asInteger := DataSet.FieldbyName('RELATION_ID').AsInteger;
+               ss.ParambyName('SORT_ID1').AsString := DataSet.FieldbyName('SORT_ID1').AsString;
+               AGlobal.Open(ss);
+               lvl := ss.Fields[0].AsString;
+               ss.Close;
+               ss.SQL.Text :=
+                 ParseSQL(AGlobal.iDbType,
+                 'select SORT_ID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and RELATION_ID=:RELATION_ID and LEVEL_ID='''+copy(lvl,1,4)+''' and SORT_TYPE=1 order by length(LEVEL_ID) desc');
                ss.ParambyName('TENANT_ID').AsInteger := Params.ParambyName('TENANT_ID').asInteger;
                ss.ParambyName('RELATION_ID').asInteger := DataSet.FieldbyName('RELATION_ID').AsInteger;
                AGlobal.Open(ss);

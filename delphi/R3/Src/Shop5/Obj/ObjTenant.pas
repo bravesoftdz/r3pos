@@ -13,6 +13,10 @@ type
     procedure InitClass;override;
   end;
 
+  TTenantInit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
 implementation
 
 { TTenant }
@@ -43,106 +47,13 @@ begin
 
   Str := 'insert into CA_SHOP_INFO(SHOP_ID,LICENSE_CODE,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,SEQ_NO,LINKMAN,'+
   'TELEPHONE,ADDRESS,POSTALCODE,FAXES,COMM,TIME_STAMP) values('+shopid+',:LICENSE_CODE,:SHORT_TENANT_NAME,:TENANT_SPELL,'+
-  '''1'',:TENANT_ID,:REGION_ID,1001,:LINKMAN,:TELEPHONE,:ADDRESS,:POSTALCODE,:FAXES,''00'',5497000)';
+  '''CA73FC48-985B-4EE7-9BDA-B7D638BD25F6'',:TENANT_ID,:REGION_ID,1001,:LINKMAN,:TELEPHONE,:ADDRESS,:POSTALCODE,:FAXES,''00'',5497000)';
   AGlobal.ExecSQL(Str,Self);
 
   //为每个门店初始化现金账户
   Str := 'insert into ACC_ACCOUNT_INFO(TENANT_ID,SHOP_ID,ACCOUNT_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE,comm,time_stamp)'+
   ' values(:TENANT_ID,'+shopid+','''+FieldbyName('TENANT_ID').asString+'000100000000000000000000000'+''',''现金'',''XJ'',''A'',0,0,0,0,''00'',5497000)';
   AGlobal.ExecSQL(Str,self);
-{
-  //管理组 CODE_TYPE=12
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''1'',''总店'',''ZD'',''12'',1,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-
-  //结算方式 CODE_TYPE=6
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''1'',''现金'',''XJ'',''6'',1,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''2'',''记账'',''JZ'',''6'',2,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-
-  //销售方式 CODE_TYPE=2
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''1'',''门店销售'',''MDXS'',''2'',1,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''2'',''业务销售'',''JTXS'',''2'',2,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-
-  //收支项目 CODE_TYPE=3
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''1'',''销售收入'',''XSSR'',''3'',1,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''2'',''销售成本'',''XSCB'',''3'',2,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''3'',''应交税金'',''YJSJ'',''3'',3,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''4'',''应付工资'',''YFGZ'',''3'',4,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''5'',''管理费用'',''GLFY'',''3'',5,''00'',5497000)';
-  AGlobal.ExecSQL(Str,self);
-
-  case AGlobal.iDbType of
-  0:dutyid := 'convert(varchar,:TENANT_ID)+''001''';
-  1:dutyid := 'to_char(:TENANT_ID)||''001''';
-  4:dutyid := ':TENANT_ID||''001''';
-  5:dutyid := 'cast(:TENANT_ID as varchar)||''001''';
-  end;
-  //为企业初始化职务
-  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'+dutyid+',''老板'',''001'',''LB'',''企业经营者'',''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
-  case AGlobal.iDbType of
-  0:dutyid := 'convert(varchar,:TENANT_ID)+''002''';
-  1:dutyid := 'to_char(:TENANT_ID)||''002''';
-  4:dutyid := ':TENANT_ID||''002''';
-  5:dutyid := 'cast(:TENANT_ID as varchar)||''002''';
-  end;
-  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'+dutyid+',''店长'',''001001'',''DZ'',''门店管理者'',''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
-  case AGlobal.iDbType of
-  0:dutyid := 'convert(varchar,:TENANT_ID)+''003''';
-  1:dutyid := 'to_char(:TENANT_ID)||''003''';
-  4:dutyid := ':TENANT_ID||''003''';
-  5:dutyid := 'cast(:TENANT_ID as varchar)||''003''';
-  end;
-  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'+dutyid+',''收银员'',''001001001'',''SYY'',''门店收银负责人'',''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
-  case AGlobal.iDbType of
-  0:dutyid := 'convert(varchar,:TENANT_ID)+''004''';
-  1:dutyid := 'to_char(:TENANT_ID)||''004''';
-  4:dutyid := ':TENANT_ID||''004''';
-  5:dutyid := 'cast(:TENANT_ID as varchar)||''004''';
-  end;
-  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'+dutyid+',''导购员'',''001001002'',''DGY'',''门店业务负责人'',''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
-
-  //为企业初始化部门
-  case AGlobal.iDbType of
-  0:dutyid := 'convert(varchar,:TENANT_ID)+''001''';
-  1:dutyid := 'to_char(:TENANT_ID)||''001''';
-  4:dutyid := ':TENANT_ID||''001''';
-  5:dutyid := 'cast(:TENANT_ID as varchar)||''001''';
-  end;
-  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'+dutyid+',''总店'',''001'',''ZD'',''后台仓库'',''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
-  //初始化会员等级
-  Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
-  'values(:TENANT_ID,'''+newid(shopid)+''',''普通会员'',''PTFY'',0,0,0,0,0,0,1,''00'',5497000)';
-  AGlobal.ExecSQL(Str,Self);
- }
-
   Result := True;
 
 end;
@@ -179,9 +90,142 @@ begin
 end;
 
 
+{ TTenantInit }
+
+function TTenantInit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from PUB_CODE_INFO where TENANT_ID='+Params.ParambyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       begin
+         result := true;
+         Exit;
+       end;
+  finally
+    rs.Free;
+  end;
+  //管理组 CODE_TYPE=12
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''CA73FC48-985B-4EE7-9BDA-B7D638BD25F6'',''总店'',''ZD'',''12'',1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //结算方式 CODE_TYPE=6        
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''4C430A2C-0C43-41A9-A286-4EF5AD0E041F'',''现金'',''XJ'',''6'',1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''62E7AC45-959E-4727-962F-A4098614A711'',''记账'',''JZ'',''6'',2,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+                                  
+  //销售方式 CODE_TYPE=2
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''6BD82B9E-3678-4F33-89ED-B8C26B6589BD'',''门店销售'',''MDXS'',''2'',1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''86329D7D-97D8-4031-9F0B-64F343104831'',''业务销售'',''JTXS'',''2'',2,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''FB72FAEF-9615-4F05-BA46-46D75728CD98'',''电话销售'',''DHXS'',''2'',3,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''F58DD749-7059-4F81-8933-0CEE71F0B88F'',''网络销售'',''WLXS'',''2'',4,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //收支项目 CODE_TYPE=3        
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''1EB4EFEB-2CF5-4CF0-99AF-1F07410A7E90'',''销售收入'',''XSSR'',''3'',1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''839B0E48-BFD2-40AE-9E0B-AD666AC4416B'',''销售成本'',''XSCB'',''3'',2,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''EDAE15F5-6CCE-4CFA-B071-ED601AE074D1'',''应交税金'',''YJSJ'',''3'',3,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''C82A681A-E956-40CC-ABA2-2FCA46136255'',''应付工资'',''YFGZ'',''3'',4,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''291A4198-8AAC-46F7-8AB0-193189BF82EC'',''管理费用'',''GLFY'',''3'',5,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //为企业初始化职务
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''总经理'',''001'',''LB'',''企业经营者'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''店长'',''001001'',''DZ'',''门店管理者'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''收银'',''001001001'',''SY'',''门店收银负责人'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''导购'',''001001002'',''DG'',''门店业务负责人'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'005'+''',''财务'',''001002'',''CW'',''财务管理者'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'006'+''',''仓管'',''001003'',''CG'',''仓库管理者'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //为企业初始化角色
+  Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''经理'',''LB'',''企业经营者拥有所有模块权限'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''店长'',''DZ'',''拥有门店管理所需相关权限'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''收银'',''SY'',''拥有销售及收款开单所需相关权限'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'005'+''',''财务'',''CW'',''拥有财务管理所需相关权限'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'006'+''',''仓管'',''CG'',''拥有存货管理所需相关权限'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //为企业初始化部门
+  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''营销部'',''001'',''ZD'',''业务销售部门'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''综合部'',''002'',''ZD'',''行政人事后台管理部门'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''财务部'',''003'',''ZD'',''财务会计及统计部门'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''拓展部'',''004'',''ZD'',''企业发展策略经营管理部'',''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //初始化会员等级
+  Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
+  'values(:TENANT_ID,''332E5CE8-D1FC-4D53-84C3-2A1EB07EF8AA'',''银卡'',''YK'',0,0,0,0,0,0,1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
+  'values(:TENANT_ID,''26AB5597-5AA5-49BC-8CBF-7A332CB1B6FA'',''金卡'',''JK'',0,0,0,0,0,0,1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
+  'values(:TENANT_ID,''4433497A-0A2E-4D72-BE0B-723850A6EFE8'',''钻石'',''ZS'',0,0,0,0,0,0,1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  Result := True;
+
+end;
+
 initialization
   RegisterClass(TTenant);
+  RegisterClass(TTenantInit);
 finalization
   UnRegisterClass(TTenant);
+  UnRegisterClass(TTenantInit);
 
 end.

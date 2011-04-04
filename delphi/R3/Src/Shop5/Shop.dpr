@@ -179,7 +179,13 @@ uses
   CaServiceLineService in 'App\CaServiceLineService.pas',
   ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint},
   ufrmIORODayReport in 'App\ufrmIORODayReport.pas' {frmIORODayReport},
-  RspDownloadService in 'App\RspDownloadService.pas';
+  RspDownloadService in 'App\RspDownloadService.pas',
+  ufrmHintMsg in 'App\ufrmHintMsg.pas' {frmHintMsg},
+  ufrmMessage in 'App\ufrmMessage.pas' {frmMessage},
+  ufrmMessageInfo in 'App\ufrmMessageInfo.pas' {frmMessageInfo},
+  ufrmNewsPaperReader in 'App\ufrmNewsPaperReader.pas' {frmNewPaperReader},
+  objMessage in 'Obj\objMessage.pas',
+  ufrmPublishMessage in 'App\ufrmPublishMessage.pas' {frmPublishMessage};
 
 {$R *.res}
 var
@@ -188,7 +194,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := 'DB1.0.0.1';
+  DBVersion := '1.0.0.2';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

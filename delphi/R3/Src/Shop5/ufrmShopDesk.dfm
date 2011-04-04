@@ -110,8 +110,7 @@ inherited frmShopDesk: TfrmShopDesk
         ColorDefault = False
         Items = <
           item
-            Caption = #20844#21578#36890#30693'(0'#26465')'
-            OnClick = RzGroup3Items0Click
+            Action = frmShopMain.actfrmNewPaperReader
           end
           item
             Caption = #38382#21367#35843#26597'(0'#26465')'
@@ -121,7 +120,7 @@ inherited frmShopDesk: TfrmShopDesk
             Caption = #25237#35785#24314#35758
           end
           item
-            Caption = #21457#24067#20844#21578
+            Action = frmShopMain.actfrmMessage
           end>
         Opened = True
         OpenedHeight = 108

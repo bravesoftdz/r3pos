@@ -5768,7 +5768,6 @@ inherited frmShopMain: TfrmShopMain
               Font.Style = []
               ParentFont = False
               TabOrder = 3
-              OnClick = RzBmpButton5Click
             end
             object RzBmpButton6: TRzBmpButton
               Left = 1
@@ -16613,6 +16612,14 @@ inherited frmShopMain: TfrmShopMain
       Tag = 41030001
       Caption = #20854#20182#25910#25903#25253#34920
       OnExecute = actfrmIoroDayReportExecute
+    end
+    object actfrmMessage: TAction
+      Caption = #20844#21578#21457#24067
+      OnExecute = actfrmMessageExecute
+    end
+    object actfrmNewPaperReader: TAction
+      Caption = #25105#30340#28040#24687
+      OnExecute = actfrmNewPaperReaderExecute
     end
   end
   inherited PopupMenu: TPopupMenu

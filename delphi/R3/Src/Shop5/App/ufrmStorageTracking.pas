@@ -182,7 +182,11 @@ begin
   AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);
   InitGrid;
-
+  if ShopGlobal.GetVersionFlag = 1 then
+    begin
+      Grid.Columns[6].Visible := False;
+      Grid.Columns[7].Visible := False;
+    end;
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);

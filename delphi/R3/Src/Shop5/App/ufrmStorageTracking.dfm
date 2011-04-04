@@ -160,13 +160,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         EditButtons = <>
-                        FieldName = 'SHOP_NAME'
-                        Footers = <>
-                        Title.Caption = #38376#24215#21517#31216
-                        Width = 83
-                      end
-                      item
-                        EditButtons = <>
                         FieldName = 'GODS_CODE'
                         Footer.Value = #35760#24405#25968#65306
                         Footer.ValueType = fvtStaticText
@@ -196,15 +189,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'UNIT_ID'
                         Footers = <>
                         ReadOnly = True
-                        Title.Caption = #35745#37327#21333#20301
-                        Width = 55
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'BATCH_NO'
-                        Footers = <>
-                        Title.Caption = #25209#21495
-                        Width = 102
+                        Title.Caption = #21333#20301
+                        Width = 40
                       end
                       item
                         EditButtons = <>
@@ -247,6 +233,20 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         Title.Caption = #38144#21806#37329#39069
                         Width = 67
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'SHOP_NAME'
+                        Footers = <>
+                        Title.Caption = #38376#24215#21517#31216
+                        Width = 83
+                      end
+                      item
+                        EditButtons = <>
+                        FieldName = 'BATCH_NO'
+                        Footers = <>
+                        Title.Caption = #25209#21495
+                        Width = 102
                       end>
                   end
                 end

@@ -9,25 +9,25 @@ inherited frmMessage: TfrmMessage
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1008
-    Height = 469
+    Width = 1000
+    Height = 458
     inherited RzPanel2: TRzPanel
-      Width = 998
-      Height = 459
+      Width = 990
+      Height = 448
       inherited RzPage: TRzPageControl
-        Width = 992
-        Height = 453
+        Width = 984
+        Height = 442
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20449#24687#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
-            Width = 990
-            Height = 426
+            Width = 982
+            Height = 415
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 980
-              Height = 416
+              Width = 972
+              Height = 405
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -36,10 +36,10 @@ inherited frmMessage: TfrmMessage
                 Left = 5
                 Top = 49
                 Width = 148
-                Height = 362
+                Height = 351
                 Align = alLeft
                 BorderOuter = fsBump
-                Color = clInactiveCaption
+                Color = clGray
                 TabOrder = 0
                 object RzBmpButton1: TRzBmpButton
                   Left = 2
@@ -5536,16 +5536,16 @@ inherited frmMessage: TfrmMessage
               object RzPanel6: TRzPanel
                 Left = 153
                 Top = 49
-                Width = 822
-                Height = 362
+                Width = 814
+                Height = 351
                 Align = alClient
                 BorderOuter = fsBump
                 TabOrder = 1
                 object Grid: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 818
-                  Height = 332
+                  Width = 810
+                  Height = 321
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   BorderStyle = bsNone
@@ -5652,8 +5652,8 @@ inherited frmMessage: TfrmMessage
                 end
                 object stbPanel: TRzPanel
                   Left = 2
-                  Top = 334
-                  Width = 818
+                  Top = 323
+                  Width = 810
                   Height = 26
                   Align = alBottom
                   BorderOuter = fsNone
@@ -5665,7 +5665,7 @@ inherited frmMessage: TfrmMessage
               object RzPanel9: TRzPanel
                 Left = 5
                 Top = 5
-                Width = 970
+                Width = 962
                 Height = 44
                 Align = alTop
                 BorderOuter = fsNone
@@ -5690,7 +5690,7 @@ inherited frmMessage: TfrmMessage
                 object Panel2: TPanel
                   Left = 148
                   Top = 0
-                  Width = 822
+                  Width = 814
                   Height = 44
                   Align = alClient
                   Alignment = taLeftJustify
@@ -5853,17 +5853,17 @@ inherited frmMessage: TfrmMessage
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1008
+    Width = 1000
     inherited Image1: TImage
       Left = 372
-      Width = 616
+      Width = 608
     end
     inherited Image3: TImage
       Left = 372
-      Width = 616
+      Width = 608
     end
     inherited Image14: TImage
-      Left = 988
+      Left = 980
     end
     inherited rzPanel5: TPanel
       Left = 372

@@ -473,7 +473,6 @@ object frmHintMsg: TfrmHintMsg
         OnMouseEnter = labTitleMouseEnter
         OnMouseLeave = labTitleMouseLeave
         BorderColor = clCaptionText
-        BorderWidth = 1
         FlyByEnabled = True
         UnvisitedColor = 8146444
         VisitedColor = 8146444

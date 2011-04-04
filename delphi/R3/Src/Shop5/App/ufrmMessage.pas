@@ -120,7 +120,7 @@ begin
   Str :=
   'select jd.*,d.USER_NAME as ISSUE_USER_TEXT,'''' as LOOK from( '+
   'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from( '+
-  'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM,count(b.MSG_ID) as PUBLISH_NUM'+
+  'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM,sum(case when b.COMM in (''02'',''12'') then 0 else 1 end) as PUBLISH_NUM'+
   ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''02'',''12'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' group by a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,'+
   'a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM ) jc '+
@@ -315,6 +315,9 @@ begin
         try
           Num := cdsShopList.RecordCount;
           Factor.UpdateBatch(cdsShopList,'TPublishMessage');
+          cds_Message.Edit;
+          cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
+          cds_Message.Post;
         except
           Raise Exception.Create('信息发布失败!');
         end;
@@ -323,9 +326,7 @@ begin
   finally
     rs.Free;
   end;
-  cds_Message.Edit;
-  cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
-  cds_Message.Post;
+
 end;
 
 procedure TfrmMessage.GridDrawColumnCell(Sender: TObject;

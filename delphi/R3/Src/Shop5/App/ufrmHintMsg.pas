@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, RzBHints, ExtCtrls, RzForms, RzPanel, StdCtrls, RzLabel, jpeg ,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBckgnd;
 
 type
   TMsgInfo=record
@@ -40,9 +40,10 @@ type
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
-    RzLabel1: TRzLabel;
-    rzMsg: TRzLabel;
-    Image1: TImage;
+    RzPanel2: TRzPanel;
+    RzPanel3: TRzPanel;
+    RzPanel4: TRzPanel;
+    RzBackground1: TRzBackground;
     procedure rzMsgClick(Sender: TObject);
   private
     { Private declarations }

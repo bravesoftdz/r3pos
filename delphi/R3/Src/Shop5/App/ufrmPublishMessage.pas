@@ -186,7 +186,7 @@ begin
   try
     Factor.UpdateBatch(cdsShop,'TPublishMessage');
   Except
-    Raise Exception.Create('ÐÞ¸ÄÊ§°Ü!');
+    Raise;
   end;
 end;
 

@@ -42,14 +42,15 @@ begin
   result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and INTEGRAL<>0 and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_ID').AsString := FieldByName('PRICE_ID').AsString;
     rs.ParamByName('INTEGRAL').AsInteger := FieldByName('INTEGRAL').AsInteger;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-      Raise Exception.Create('在客户等积中,有积分设置相同的情况.请检查..');
+      Raise Exception.Create('在客户等级中,有积分设置相同的情况.请检查..');
 
+    rs.Close;
     rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_NAME=:PRICE_NAME';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_NAME').AsString := FieldByName('PRICE_NAME').AsString;
@@ -79,14 +80,15 @@ begin
   result := False;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and COMM not in (''02'',''12'')';
+    rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and INTEGRAL<>0 and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_ID').AsString := FieldByName('PRICE_ID').AsString;
     rs.ParamByName('INTEGRAL').AsInteger := FieldByName('INTEGRAL').AsInteger;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-      Raise Exception.Create('在客户等积中,有积分设置相同的情况.请检查..');
+      Raise Exception.Create('在客户等级中,有积分设置相同的情况.请检查..');
 
+    rs.Close;  
     rs.SQL.Text := 'select PRICE_ID,COMM from PUB_PRICEGRADE where TENANT_ID=:OLD_TENANT_ID and PRICE_ID<>:OLD_PRICE_ID and PRICE_NAME=:PRICE_NAME ';
     rs.ParamByName('OLD_TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('OLD_PRICE_ID').AsString := FieldByName('PRICE_ID').AsOldString;

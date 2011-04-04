@@ -5,12 +5,13 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, RzBHints, ExtCtrls, RzForms, RzPanel, StdCtrls, RzLabel, jpeg ,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBckgnd;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBckgnd, RzBmpBtn;
 
 type
   TMsgInfo=record
     ID:string;
     Title:string;
+    Contents:String;
     SndDate:string;
     Rdd:boolean;
     //0公告 1系统提示
@@ -44,7 +45,15 @@ type
     RzPanel3: TRzPanel;
     RzPanel4: TRzPanel;
     RzBackground1: TRzBackground;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    edtContents: TMemo;
+    Image1: TImage;
+    labType: TLabel;
+    RzBmpButton3: TRzBmpButton;
+    labTitle: TRzURLLabel;
     procedure rzMsgClick(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -98,7 +107,7 @@ begin
   Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=''1''';
 
   Str_Sql :=
-  'select a.MSG_ID,a.MSG_TITLE,a.ISSUE_DATE,a.MSG_CLASS from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
+  'select a.MSG_ID,a.MSG_TITLE,a.MSG_CONTENT,a.ISSUE_DATE,a.MSG_CLASS from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' order by a.ISSUE_DATE desc';
 
   Result := Str_Sql;
@@ -149,9 +158,10 @@ begin
         new(MsgInfo);
         MsgInfo^.ID := rs.Fields[0].AsString;
         MsgInfo^.Title := rs.Fields[1].AsString;
-        MsgInfo^.SndDate := rs.Fields[2].AsString;
+        MsgInfo^.Contents := rs.Fields[2].AsString;
+        MsgInfo^.SndDate := rs.Fields[3].AsString;
         MsgInfo^.Rdd := false;
-        MsgInfo^.sFlag := rs.Fields[3].AsInteger;
+        MsgInfo^.sFlag := rs.Fields[4].AsInteger;
         FList.Add(MsgInfo);
         rs.Next;
       end;
@@ -182,6 +192,7 @@ end;
 { TfrmMsg }
 
 class procedure TfrmHintMsg.ShowInfo(Msg: PMsgInfo);
+var Contents_M:WideString;
 begin
   if frmMsg=nil then frmMsg := TfrmHintMsg.Create(Application.MainForm);
   if Pointer(frmMsg.MsgInfo)=Pointer(Msg) then
@@ -198,7 +209,23 @@ begin
   frmMsg.Left := Application.MainForm.Width-frmMsg.Width-8;
   frmMsg.Top := Application.MainForm.Height-frmMsg.Height-8;
   frmMsg.MsgInfo := Msg;
-  frmMsg.rzMsg.Caption := '[' + Msg^.SndDate + ']' + Msg^.Title;
+  frmMsg.labTitle.Caption := Msg^.Title;
+  Contents_M := Msg^.Contents;
+  if Length(Contents_M) >= 100 then
+    begin
+      frmMsg.edtContents.Text := Copy(Contents_M,1,98)+'..';
+    end
+  else
+    begin
+      frmMsg.edtContents.Text := Contents_M;
+    end;
+  case Msg^.sFlag of
+    0:frmMsg.labType.Caption := '最新消息';
+    1:frmMsg.labType.Caption := '最新公告';
+    2:frmMsg.labType.Caption := '最新政策';
+    3:frmMsg.labType.Caption := '最新广告';
+    4:frmMsg.labType.Caption := '最新提醒';
+  end;
   frmMsg.Show;
   frmMsg.Visible := true;
   frmMsg.BringToFront;
@@ -207,6 +234,11 @@ end;
 procedure TfrmHintMsg.rzMsgClick(Sender: TObject);
 begin
   MsgFactory.ShowMsg(MsgInfo);
+  Close;
+end;
+
+procedure TfrmHintMsg.RzBmpButton3Click(Sender: TObject);
+begin
   Close;
 end;
 

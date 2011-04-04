@@ -22,13 +22,15 @@ type
   private
     FList:TList;
     FMsgInfo:PMsgInfo;
+    FLoaded: Boolean;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
+    procedure SetLoaded(const Value: Boolean);
   public
     constructor Create;
     destructor Destroy; override;
     function EncodeSQL:String;
-    procedure Load;
+    function Load:Boolean;
     procedure Add(MsgInfo:PMsgInfo);
     procedure ShowMsg(MsgInfo:PMsgInfo);
     procedure HintMsg(MsgInfo:PMsgInfo);
@@ -38,6 +40,7 @@ type
     property MsgInfo[itemindex:integer]:PMsgInfo read GetMsgInfo;
     property Count:integer read GetCount;
     property Info:PMsgInfo read FMsgInfo;
+    property Loaded:Boolean read FLoaded write SetLoaded;
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
@@ -47,16 +50,18 @@ type
     RzBackground1: TRzBackground;
     RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
-    edtContents: TMemo;
     Image1: TImage;
     labType: TLabel;
     RzBmpButton3: TRzBmpButton;
     labTitle: TRzURLLabel;
     RzFormShape1: TRzFormShape;
+    edtContents: TLabel;
     procedure rzMsgClick(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure labTitleMouseEnter(Sender: TObject);
     procedure labTitleMouseLeave(Sender: TObject);
+    procedure edtContentsMouseEnter(Sender: TObject);
+    procedure edtContentsMouseLeave(Sender: TObject);
   private
     { Private declarations }
   public
@@ -145,7 +150,7 @@ begin
   TfrmHintMsg.ShowInfo(MsgInfo); 
 end;
 
-procedure TMsgFactory.Load;
+function TMsgFactory.Load:Boolean;
 var Str_where:String;
     rs:TZQuery;
     MsgInfo:PMsgInfo;
@@ -155,6 +160,7 @@ begin
   try
     rs.SQL.Text := EncodeSQL;
     Factor.Open(rs);
+    Loaded := True;
     rs.First;
     while not rs.Eof do
       begin
@@ -187,6 +193,11 @@ begin
     end;
 end;
 
+procedure TMsgFactory.SetLoaded(const Value: Boolean);
+begin
+  FLoaded := Value;
+end;
+
 procedure TMsgFactory.ShowMsg(MsgInfo: PMsgInfo);
 begin
   TfrmNewPaperReader.ShowNewsPaper(MsgInfo^.ID);
@@ -216,11 +227,11 @@ begin
   Contents_M := Msg^.Contents;
   if Length(Contents_M) >= 100 then
     begin
-      frmMsg.edtContents.Text := Copy(Contents_M,1,98)+'..';
+      frmMsg.edtContents.Caption := Copy(Contents_M,1,98)+'..';
     end
   else
     begin
-      frmMsg.edtContents.Text := Contents_M;
+      frmMsg.edtContents.Caption := Contents_M;
     end;
   case Msg^.sFlag of
     0:frmMsg.labType.Caption := '最新消息';
@@ -247,12 +258,22 @@ end;
 
 procedure TfrmHintMsg.labTitleMouseEnter(Sender: TObject);
 begin
-  labTitle.Font.Color := $007C4E0C;
+  labTitle.Font.Color := $00EB7A16;
 end;
 
 procedure TfrmHintMsg.labTitleMouseLeave(Sender: TObject);
 begin
-  labTitle.Font.Color := $00EB7A16;
+  labTitle.Font.Color := $007C4E0C;
+end;
+
+procedure TfrmHintMsg.edtContentsMouseEnter(Sender: TObject);
+begin
+  edtContents.Font.Color := $00EB7A16;
+end;
+
+procedure TfrmHintMsg.edtContentsMouseLeave(Sender: TObject);
+begin
+  edtContents.Font.Color := $007C4E0C;
 end;
 
 initialization

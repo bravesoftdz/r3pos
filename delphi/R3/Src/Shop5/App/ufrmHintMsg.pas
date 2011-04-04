@@ -52,8 +52,11 @@ type
     labType: TLabel;
     RzBmpButton3: TRzBmpButton;
     labTitle: TRzURLLabel;
+    RzFormShape1: TRzFormShape;
     procedure rzMsgClick(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
+    procedure labTitleMouseEnter(Sender: TObject);
+    procedure labTitleMouseLeave(Sender: TObject);
   private
     { Private declarations }
   public
@@ -240,6 +243,16 @@ end;
 procedure TfrmHintMsg.RzBmpButton3Click(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfrmHintMsg.labTitleMouseEnter(Sender: TObject);
+begin
+  labTitle.Font.Color := $007C4E0C;
+end;
+
+procedure TfrmHintMsg.labTitleMouseLeave(Sender: TObject);
+begin
+  labTitle.Font.Color := $00EB7A16;
 end;
 
 initialization

@@ -48,12 +48,12 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabTittle
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -70,6 +70,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               Align = alClient
               BorderStyle = bsNone
               DataSource = DsNewsPaper
+              FixedColor = clAqua
               Flat = True
               FooterColor = clWindow
               FooterFont.Charset = GB2312_CHARSET
@@ -100,6 +101,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   EditButtons = <>
                   FieldName = 'MSG_TITLE'
                   Footers = <>
+                  ReadOnly = True
                   Title.Alignment = taCenter
                   Width = 435
                 end
@@ -157,7 +159,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   Alignment = taCenter
                   Color = clWhite
                   Font.Charset = GB2312_CHARSET
-                  Font.Color = clRed
+                  Font.Color = 8146444
                   Font.Height = -24
                   Font.Name = #23435#20307
                   Font.Style = [fsBold]
@@ -458,14 +460,14 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 TabOrder = 2
                 object labPublishDate: TLabel
                   Left = 3
-                  Top = 330
+                  Top = 332
                   Width = 617
-                  Height = 14
+                  Height = 12
                   Align = alBottom
                   Alignment = taRightJustify
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clWindowText
-                  Font.Height = -14
+                  Font.Height = -12
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
@@ -474,7 +476,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   Left = 3
                   Top = 3
                   Width = 617
-                  Height = 327
+                  Height = 329
                   Align = alClient
                   BorderStyle = bsNone
                   TabOrder = 0

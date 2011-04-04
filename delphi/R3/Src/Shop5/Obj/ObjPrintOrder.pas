@@ -7,8 +7,10 @@ uses
 
 type
   TPrintOrder=class(TZFactory)
+  private
+    lock:boolean;
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -124,7 +126,7 @@ end;
 
 function TPrintOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   result := true;
 end;
 
@@ -134,9 +136,14 @@ end;
 
 function TPrintOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  result := BeforeDeleteRecord(AGlobal);
-  result := BeforeInsertRecord(AGlobal);   
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  lock := true;
+  try
+    result := BeforeDeleteRecord(AGlobal);
+    result := BeforeInsertRecord(AGlobal);
+  finally
+    lock := false;
+  end;
 end;
 
 function TPrintOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -153,7 +160,7 @@ begin
       
 end;
 
-function TPrintOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+function TPrintOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -161,7 +168,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from STO_PRINTORDER where SHOP_ID='''+FieldbyName('SHOP_ID').AsString+''' and PRINT_DATE='+FieldbyName('PRINT_DATE').AsString+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;
@@ -172,6 +180,7 @@ var
   Str: string;
 begin
   inherited;
+  lock := false;
   SelectSQL.Text:=
     'select jc.*,c.USER_NAME as CREA_USER_TEXT,d.USER_NAME as CHK_USER_TEXT from ('+
     ' select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE,COMM,TIME_STAMP from STO_PRINTORDER '+

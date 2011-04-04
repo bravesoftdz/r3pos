@@ -7,7 +7,7 @@ type
   private
     lock:boolean;
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -242,7 +242,7 @@ end;
 
 function TChangeOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if not Lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
 //  if not lock then
 //  begin
 //  if FieldbyName('CHANGE_CODE').AsString='1' then
@@ -265,7 +265,7 @@ end;
 
 function TChangeOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。'); 
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。'); 
   lock := true;
   try
     result := BeforeDeleteRecord(AGlobal);
@@ -296,7 +296,7 @@ begin
       
 end;
 
-function TChangeOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+function TChangeOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -304,7 +304,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from STO_CHANGEORDER where CHANGE_ID='''+FieldbyName('CHANGE_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;

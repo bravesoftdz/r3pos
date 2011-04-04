@@ -5,8 +5,10 @@ uses Dialogs,SysUtils,zBase,Classes,DB,ZIntf,ZDataset,ObjCommon;
 
 type
   TTransOrder = class(TZFactory)
+  private
+    lock:boolean;
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     procedure InitClass; override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -31,7 +33,7 @@ implementation
 function TTransOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:OLD_TRANS_MNY-ifnull(IN_MNY,0),BALANCE=:OLD_TRANS_MNY-ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
@@ -65,9 +67,14 @@ end;
 
 function TTransOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  lock := true;
+  try
   result := BeforeDeleteRecord(AGlobal);
   result := BeforeInsertRecord(AGlobal);
+  finally
+    lock := false;
+  end;
 end;
 
 function TTransOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -85,7 +92,7 @@ begin
       Result := true;
 end;
 
-function TTransOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string): boolean;
+function TTransOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -93,7 +100,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_TRANSORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and TRANS_ID='''+FieldbyName('TRANS_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;
@@ -103,6 +111,7 @@ procedure TTransOrder.InitClass;
 var Str:String;
 begin
   inherited;
+  lock := false;
   KeyFields := 'TENANT_ID;TRANS_ID';
 
   Str :=

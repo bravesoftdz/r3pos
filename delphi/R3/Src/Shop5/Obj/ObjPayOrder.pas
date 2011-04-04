@@ -5,7 +5,7 @@ uses Dialogs,SysUtils,zBase,Classes,DB, ZDataSet,zIntf,ObjCommon;
 type
   TPayOrder=class(TZFactory)
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -42,7 +42,7 @@ implementation
 
 function TPayOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   result := true;
 end;
 
@@ -58,7 +58,7 @@ end;
 
 function TPayOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   result := true;
 end;
 
@@ -78,7 +78,7 @@ begin
 end;
 
 function TPayOrder.CheckTimeStamp(aGlobal: IdbHelp;
-  s: string): boolean;
+  s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -86,7 +86,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_PAYORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and PAY_ID='''+FieldbyName('PAY_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;

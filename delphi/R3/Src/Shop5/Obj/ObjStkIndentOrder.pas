@@ -4,8 +4,10 @@ interface
 uses Dialogs,SysUtils,ZBase,Classes,ZIntf,ObjCommon,DB,ZDataSet;
 type
   TStkIndentOrder=class(TZFactory)
+  private
+    Locked:boolean;
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -142,7 +144,7 @@ end;
 function TStkIndentOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if not Locked and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   if FieldbyName('ADVA_MNY').AsOldFloat <> 0 then
      begin
        rs := TZQuery.Create(nil);
@@ -177,10 +179,14 @@ end;
 
 function TStkIndentOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  result := BeforeDeleteRecord(AGlobal);
-  result := BeforeInsertRecord(AGlobal);
-
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  Locked := true;
+  try
+    result := BeforeDeleteRecord(AGlobal);
+    result := BeforeInsertRecord(AGlobal);
+  finally
+    Locked := false;
+  end;
 end;
 
 function TStkIndentOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -198,7 +204,7 @@ begin
 end;
 
 function TStkIndentOrder.CheckTimeStamp(aGlobal: IdbHelp;
-  s: string): boolean;
+  s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -206,7 +212,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from STK_INDENTORDER where INDE_ID='''+FieldbyName('INDE_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+'';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;
@@ -217,6 +224,7 @@ var
   Str: string;
 begin
   inherited;
+  Locked := false;
   SelectSQL.Text :=
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+

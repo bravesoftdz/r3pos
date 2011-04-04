@@ -9878,7 +9878,7 @@ CREATE TABLE [STO_PRINTDATA] (
         --ÅÌµã¿â´æ
 	[CHK_AMOUNT] [decimal](18, 3) NULL ,
         --ÅÌµã×´Ì¬ 
-	[CHECK_STATUS] [varchar] (6) NOT NULL ,
+	[CHECK_STATUS] [varchar] (1) NOT NULL ,
 	CONSTRAINT [PK_STO_PRINTDATA] PRIMARY KEY  
 	(
 		[ROWS_ID]

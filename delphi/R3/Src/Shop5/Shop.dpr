@@ -128,7 +128,6 @@ uses
   ufrmCheckOrder in 'App\ufrmCheckOrder.pas' {frmCheckOrder},
   ufrmCheckAudit in 'App\ufrmCheckAudit.pas' {frmCheckAudit},
   ufrmCheckTask in 'App\ufrmCheckTask.pas' {frmCheckTask},
-  ufrmCheckTaskDelete in 'App\ufrmCheckTaskDelete.pas' {frmCheckTaskDelete},
   ufrmSelectCheckGoods in 'App\ufrmSelectCheckGoods.pas',
   ObjIoroOrder in 'Obj\ObjIoroOrder.pas',
   ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},

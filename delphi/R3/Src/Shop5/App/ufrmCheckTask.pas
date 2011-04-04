@@ -61,7 +61,6 @@ begin
      if Temp.Params.FindParam('PRINT_DATE')<>nil then Temp.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(formatDatetime('YYYYMMDD',date()),0);
      Factor.Open(Temp);
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
-
        
      //判断今天否有结账:             
      Temp.Close;
@@ -82,7 +81,7 @@ begin
      end else
      begin
        B := Temp.Fields[0].AsString;
-       if (formatDatetime('YYYYMMDD',date())<=B) then Raise Exception.Create('系统检测盘点单'+b+'号比当前日期大，不能再盘点了');
+       if (formatDatetime('YYYYMMDD',date())<=B) then Raise Exception.Create('系统已经结帐到'+b+'号，不能再盘点了');
      end;
 
      //检查判断是否大于今天的业务单据

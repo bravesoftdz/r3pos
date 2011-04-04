@@ -5,7 +5,7 @@ uses SysUtils,ZBase,Classes,ZDataSet,ZIntf,ObjCommon;
 type
   TIoroOrder=class(TZFactory)
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string):boolean;
+    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -40,7 +40,7 @@ implementation
 
 function TIoroOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再删除。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再删除。');
   result := true;
 end;
 
@@ -56,7 +56,7 @@ end;
 
 function TIoroOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再保存。');
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前账款已经被另一用户修改，你不能再保存。');
   result := true;
 end;
 
@@ -76,7 +76,7 @@ begin
 end;
 
 function TIoroOrder.CheckTimeStamp(aGlobal: IdbHelp;
-  s: string): boolean;
+  s: string;comm:boolean=true): boolean;
 var
   rs:TZQuery;
 begin
@@ -84,7 +84,8 @@ begin
   try
     rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_IOROORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and IORO_ID='''+FieldbyName('IORO_ID').AsString+'''';
     aGlobal.Open(rs);
-    result := (rs.Fields[0].AsString = s) and (copy(rs.Fields[1].asString,1,1)<>'1');
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;

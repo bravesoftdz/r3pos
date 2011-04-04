@@ -68,12 +68,15 @@ type
   private
     { Private declarations }
     MSG_Tpye:String;
+    FMSG_CLASS: String;
+    procedure SetMSG_CLASS(const Value: String);
   public
     { Public declarations }
     function EnSql:String;
     procedure AddRecord(_Aobj:TRecord_);
     procedure Open;
     procedure OpenCdsShopList;
+    property MSG_CLASS:String read FMSG_CLASS write SetMSG_CLASS;
   end;
 
 implementation
@@ -94,7 +97,7 @@ begin
   end
   else
   begin
-    if MSG_Tpye = _Aobj.FieldByName('MSG_CLASS').AsString then
+    if MSG_CLASS = _Aobj.FieldByName('MSG_CLASS').AsString then
       begin
         cds_Message.Append;
         _Aobj.WriteToDataSet(cds_Message,false);
@@ -106,8 +109,8 @@ end;
 function TfrmMessage.EnSql: String;
 var Str,Str_where:String;
 begin
-  if MSG_Tpye <> '' then
-    Str_where := ' and a.MSG_CLASS='+QuotedStr(MSG_Tpye);
+  if MSG_CLASS <> '' then
+    Str_where := ' and a.MSG_CLASS='+QuotedStr(MSG_CLASS);
   if edtISSUE_DATE.Text <> '' then
     Str_where := Str_where + ' and a.ISSUE_DATE <= '+FormatDateTime('YYYYMMDD',edtISSUE_DATE.Date);
   if edtSHOP_ID.Text <> '' then
@@ -118,7 +121,7 @@ begin
   Str :=
   'select jd.*,d.USER_NAME as ISSUE_USER_TEXT,'''' as LOOK from( '+
   'select jc.*,c.SHOP_NAME as SHOP_ID_TEXT from( '+
-  'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM,sum(case when b.COMM in (''02'',''12'') then 0 else 1 end) as PUBLISH_NUM'+
+  'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM,sum(case when b.COMM in (''02'',''12'') or b.COMM is null then 0 else 1 end) as PUBLISH_NUM'+
   ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''02'',''12'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' group by a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,'+
   'a.ISSUE_DATE,a.SHOP_ID,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM ) jc '+
@@ -139,6 +142,7 @@ end;
 procedure TfrmMessage.RzBmpButton1Click(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '0';
   MSG_Tpye := '0';
   Open;
 end;
@@ -146,6 +150,7 @@ end;
 procedure TfrmMessage.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '1';
   MSG_Tpye := '1';
   Open;
 end;
@@ -153,6 +158,7 @@ end;
 procedure TfrmMessage.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '2';
   MSG_Tpye := '2';
   Open;
 end;
@@ -160,6 +166,7 @@ end;
 procedure TfrmMessage.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '3';
   MSG_Tpye := '3';
   Open;
 end;
@@ -167,6 +174,7 @@ end;
 procedure TfrmMessage.RzBmpButton5Click(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '4';
   MSG_Tpye := '4';
   Open;
 end;
@@ -179,13 +187,37 @@ begin
     begin
       try
         OnSave := AddRecord;
+        MSG_CLASS_TYPE := StrToInt(MSG_CLASS);
         Append;
-        MSG_CLASS_TYPE := StrToInt(MSG_Tpye);
         ShowModal;
+        MSG_CLASS := IntToStr(MSG_CLASS_TYPE);
       finally
         free;
       end;
     end;
+  if MSG_Tpye = MSG_CLASS then Exit;
+  case StrToInt(MSG_CLASS) of
+    0:begin
+      RzBmpButton1.Down := True;
+      RzBmpButton1.OnClick(Self);
+      end;
+    1:begin
+      RzBmpButton2.Down := True;
+      RzBmpButton2.OnClick(Self);
+      end;
+    2:begin
+      RzBmpButton3.Down := True;
+      RzBmpButton3.OnClick(Self);
+      end;
+    3:begin
+      RzBmpButton4.Down := True;
+      RzBmpButton4.OnClick(Self);
+      end;
+    4:begin
+      RzBmpButton5.Down := True;
+      RzBmpButton5.OnClick(Self);
+      end;
+  end;
 end;
 
 procedure TfrmMessage.actDeleteExecute(Sender: TObject);
@@ -220,9 +252,33 @@ begin
       OnSave := AddRecord;
       Edit(cds_Message.FieldByName('MSG_ID').AsString);
       ShowModal;
+      MSG_CLASS := IntToStr(MSG_CLASS_TYPE);
     finally
       free;
     end;
+  end;
+  if MSG_Tpye = MSG_CLASS then Exit;
+  case StrToInt(MSG_CLASS) of
+    0:begin
+      RzBmpButton1.Down := True;
+      RzBmpButton1.OnClick(Self);
+      end;
+    1:begin
+      RzBmpButton2.Down := True;
+      RzBmpButton2.OnClick(Self);
+      end;
+    2:begin
+      RzBmpButton3.Down := True;
+      RzBmpButton3.OnClick(Self);
+      end;
+    3:begin
+      RzBmpButton4.Down := True;
+      RzBmpButton4.OnClick(Self);
+      end;
+    4:begin
+      RzBmpButton5.Down := True;
+      RzBmpButton5.OnClick(Self);
+      end;
   end;
 end;
 
@@ -264,6 +320,7 @@ end;
 procedure TfrmMessage.FormCreate(Sender: TObject);
 begin
   inherited;
+  MSG_CLASS := '0';
   MSG_Tpye := '0';
   edtISSUE_DATE.Date := Global.SysDate;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -403,6 +460,11 @@ begin
       cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
       cds_Message.Post;
     end;
+end;
+
+procedure TfrmMessage.SetMSG_CLASS(const Value: String);
+begin
+  FMSG_CLASS := Value;
 end;
 
 end.

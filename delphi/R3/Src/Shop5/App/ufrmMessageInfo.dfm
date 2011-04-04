@@ -6,6 +6,7 @@ inherited frmMessageInfo: TfrmMessageInfo
   ClientWidth = 506
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -135,7 +136,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Top = 81
             Width = 362
             Height = 20
-            TabOrder = 0
+            TabOrder = 2
           end
           object edtMSG_CLASS: TcxComboBox
             Left = 105
@@ -143,14 +144,14 @@ inherited frmMessageInfo: TfrmMessageInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 1
+            TabOrder = 0
           end
           object edtMSG_CONTENT: TcxMemo
             Left = 105
             Top = 109
             Width = 362
             Height = 173
-            TabOrder = 2
+            TabOrder = 3
           end
           object edtISSUE_DATE: TcxDateEdit
             Left = 346
@@ -158,7 +159,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 3
+            TabOrder = 4
           end
           object edtSHOP_ID_TEXT: TcxTextEdit
             Left = 105
@@ -166,7 +167,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Width = 184
             Height = 20
             Enabled = False
-            TabOrder = 4
+            TabOrder = 5
           end
           object edtISSUE_USER_TEXT: TcxTextEdit
             Left = 105
@@ -174,14 +175,14 @@ inherited frmMessageInfo: TfrmMessageInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 5
+            TabOrder = 6
           end
           object edtEND_DATE: TcxDateEdit
             Left = 346
             Top = 56
             Width = 121
             Height = 20
-            TabOrder = 6
+            TabOrder = 1
           end
         end
       end

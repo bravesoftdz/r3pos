@@ -34,6 +34,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     Aobj:TRecord_;
@@ -92,6 +93,7 @@ begin
   edtEND_DATE.Date := Global.SysDate;
   edtSHOP_ID_TEXT.Text := Global.SHORT_TENANT_NAME;
   edtISSUE_USER_TEXT.Text := Global.UserName;
+
 end;
 
 procedure TfrmMessageInfo.Edit(ID: String);
@@ -205,7 +207,7 @@ begin
     AObj.FieldbyName('MSG_SOURCE').AsString := Global.SHORT_TENANT_NAME;
   end;
   WriteToObject(Aobj,self);
-  
+  MSG_CLASS_TYPE := edtMSG_CLASS.ItemIndex;
   cdsMessage.Edit;
   Aobj.WriteToDataSet(cdsMessage);
   cdsMessage.Post;
@@ -273,11 +275,18 @@ begin
   end
   else
     ModalResult := MROK;
+
 end;
 
 procedure TfrmMessageInfo.SetMSG_CLASS_TYPE(const Value: integer);
 begin
   FMSG_CLASS_TYPE := Value;
+end;
+
+procedure TfrmMessageInfo.FormShow(Sender: TObject);
+begin
+  inherited;
+  edtMSG_TITLE.SetFocus;
 end;
 
 end.

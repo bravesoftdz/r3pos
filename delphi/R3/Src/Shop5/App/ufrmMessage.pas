@@ -15,10 +15,6 @@ type
     RzPanel1: TRzPanel;
     RzPanel7: TRzPanel;
     RzPanel6: TRzPanel;
-    Panel1: TPanel;
-    stbPanel: TPanel;
-    Label1: TLabel;
-    Grid: TDBGridEh;
     RzPanel9: TRzPanel;
     Panel3: TPanel;
     Panel2: TPanel;
@@ -46,6 +42,7 @@ type
     cds_Message: TZQuery;
     dsMessage: TDataSource;
     cdsShopList: TZQuery;
+    Grid: TDBGridEh;
     procedure RzBmpButton1Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);

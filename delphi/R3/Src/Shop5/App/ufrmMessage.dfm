@@ -38,10 +38,7 @@ inherited frmMessage: TfrmMessage
                 Width = 148
                 Height = 362
                 Align = alLeft
-                BorderInner = fsFlat
-                BorderOuter = fsNone
-                BorderSides = [sdLeft, sdTop, sdBottom]
-                BorderWidth = 1
+                BorderOuter = fsBump
                 Color = clInactiveCaption
                 TabOrder = 0
                 object RzBmpButton1: TRzBmpButton
@@ -5542,146 +5539,116 @@ inherited frmMessage: TfrmMessage
                 Width = 822
                 Height = 362
                 Align = alClient
-                BorderOuter = fsNone
+                BorderOuter = fsBump
                 TabOrder = 1
-                object Panel1: TPanel
-                  Left = 0
-                  Top = 0
-                  Width = 822
-                  Height = 362
+                object Grid: TDBGridEh
+                  Left = 2
+                  Top = 2
+                  Width = 818
+                  Height = 358
                   Align = alClient
-                  Caption = 'Panel1'
+                  AllowedOperations = [alopUpdateEh]
+                  BorderStyle = bsNone
+                  DataSource = dsMessage
+                  Flat = True
+                  FooterColor = clWindow
+                  FooterFont.Charset = GB2312_CHARSET
+                  FooterFont.Color = clWindowText
+                  FooterFont.Height = -12
+                  FooterFont.Name = #23435#20307
+                  FooterFont.Style = []
+                  FrozenCols = 1
+                  Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                  RowHeight = 20
+                  SumList.Active = True
                   TabOrder = 0
-                  object stbPanel: TPanel
-                    Left = 1
-                    Top = 342
-                    Width = 820
-                    Height = 19
-                    Align = alBottom
-                    BevelOuter = bvNone
-                    Color = clWhite
-                    Font.Charset = GB2312_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -12
-                    Font.Name = #23435#20307
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                    TabOrder = 0
-                    object Label1: TLabel
-                      Left = 4
-                      Top = 8
-                      Width = 7
-                      Height = 12
+                  TitleFont.Charset = GB2312_CHARSET
+                  TitleFont.Color = clWindowText
+                  TitleFont.Height = -12
+                  TitleFont.Name = #23435#20307
+                  TitleFont.Style = []
+                  UseMultiTitle = True
+                  IsDrawNullRow = False
+                  CurrencySymbol = #65509
+                  DecimalNumber = 2
+                  DigitalNumber = 12
+                  OnCellClick = GridCellClick
+                  OnDblClick = GridDblClick
+                  OnDrawColumnCell = GridDrawColumnCell
+                  Columns = <
+                    item
+                      Checkboxes = True
+                      EditButtons = <>
+                      FieldName = 'A'
+                      Footers = <>
+                      KeyList.Strings = (
+                        '1'
+                        '0')
+                      PickList.Strings = (
+                        '0'
+                        '1')
+                      Tag = -1
+                      Title.Caption = #36873#25321
+                      Visible = False
+                      Width = 21
                     end
-                  end
-                  object Grid: TDBGridEh
-                    Left = 1
-                    Top = 1
-                    Width = 820
-                    Height = 341
-                    Align = alClient
-                    AllowedOperations = [alopUpdateEh]
-                    DataSource = dsMessage
-                    Flat = True
-                    FooterColor = clWindow
-                    FooterFont.Charset = GB2312_CHARSET
-                    FooterFont.Color = clWindowText
-                    FooterFont.Height = -12
-                    FooterFont.Name = #23435#20307
-                    FooterFont.Style = []
-                    FrozenCols = 1
-                    Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-                    OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-                    RowHeight = 20
-                    SumList.Active = True
-                    TabOrder = 1
-                    TitleFont.Charset = GB2312_CHARSET
-                    TitleFont.Color = clWindowText
-                    TitleFont.Height = -12
-                    TitleFont.Name = #23435#20307
-                    TitleFont.Style = []
-                    UseMultiTitle = True
-                    IsDrawNullRow = False
-                    CurrencySymbol = #65509
-                    DecimalNumber = 2
-                    DigitalNumber = 12
-                    OnCellClick = GridCellClick
-                    OnDblClick = GridDblClick
-                    OnDrawColumnCell = GridDrawColumnCell
-                    Columns = <
-                      item
-                        Checkboxes = True
-                        EditButtons = <>
-                        FieldName = 'A'
-                        Footers = <>
-                        KeyList.Strings = (
-                          '1'
-                          '0')
-                        PickList.Strings = (
-                          '0'
-                          '1')
-                        Tag = -1
-                        Title.Caption = #36873#25321
-                        Visible = False
-                        Width = 21
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'SEQNO'
-                        Footers = <>
-                        Title.Caption = #24207#21495
-                        Width = 29
-                      end
-                      item
-                        DisplayFormat = '0000-00-00'
-                        EditButtons = <>
-                        FieldName = 'ISSUE_DATE'
-                        Footers = <>
-                        Title.Caption = #21457#24067#26085#26399
-                        Width = 77
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'MSG_TITLE'
-                        Footers = <>
-                        Title.Caption = #26631'    '#39064
-                        Width = 308
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'SHOP_ID_TEXT'
-                        Footer.Value = #35760#24405#25968#65306
-                        Footer.ValueType = fvtStaticText
-                        Footers = <>
-                        ReadOnly = True
-                        Title.Caption = #21457#24067#38376#24215
-                        Width = 120
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'ISSUE_USER_TEXT'
-                        Footer.ValueType = fvtCount
-                        Footers = <>
-                        ReadOnly = True
-                        Title.Caption = #21457#24067#29992#25143
-                        Width = 56
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'END_DATE'
-                        Footers = <>
-                        ReadOnly = True
-                        Title.Caption = #26377#38480#26399#38480
-                        Width = 77
-                      end
-                      item
-                        EditButtons = <>
-                        FieldName = 'LOOK'
-                        Footers = <>
-                        Title.Caption = #25509#25910#38376#24215
-                        Width = 80
-                      end>
-                  end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SEQNO'
+                      Footers = <>
+                      Title.Caption = #24207#21495
+                      Width = 29
+                    end
+                    item
+                      DisplayFormat = '0000-00-00'
+                      EditButtons = <>
+                      FieldName = 'ISSUE_DATE'
+                      Footers = <>
+                      Title.Caption = #21457#24067#26085#26399
+                      Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'MSG_TITLE'
+                      Footers = <>
+                      Title.Caption = #26631'    '#39064
+                      Width = 308
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SHOP_ID_TEXT'
+                      Footer.Value = #35760#24405#25968#65306
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #21457#24067#38376#24215
+                      Width = 120
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'ISSUE_USER_TEXT'
+                      Footer.ValueType = fvtCount
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #21457#24067#29992#25143
+                      Width = 56
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'END_DATE'
+                      Footers = <>
+                      ReadOnly = True
+                      Title.Caption = #26377#38480#26399#38480
+                      Width = 77
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'LOOK'
+                      Footers = <>
+                      Title.Caption = #25509#25910#38376#24215
+                      Width = 80
+                    end>
                 end
               end
               object RzPanel9: TRzPanel
@@ -5691,13 +5658,12 @@ inherited frmMessage: TfrmMessage
                 Height = 44
                 Align = alTop
                 BorderOuter = fsNone
-                BorderWidth = 1
                 TabOrder = 2
                 object Panel3: TPanel
-                  Left = 1
-                  Top = 1
+                  Left = 0
+                  Top = 0
                   Width = 148
-                  Height = 42
+                  Height = 44
                   Align = alLeft
                   BevelInner = bvLowered
                   Caption = #20449#24687#20114#21160#31649#29702
@@ -5711,10 +5677,10 @@ inherited frmMessage: TfrmMessage
                   TabOrder = 0
                 end
                 object Panel2: TPanel
-                  Left = 149
-                  Top = 1
-                  Width = 820
-                  Height = 42
+                  Left = 148
+                  Top = 0
+                  Width = 822
+                  Height = 44
                   Align = alClient
                   Alignment = taLeftJustify
                   BevelInner = bvLowered
@@ -5971,9 +5937,11 @@ inherited frmMessage: TfrmMessage
       OnExecute = actEditExecute
     end
     inherited actPrint: TAction
+      Visible = False
       OnExecute = actPrintExecute
     end
     inherited actPreview: TAction
+      Visible = False
       OnExecute = actPreviewExecute
     end
     inherited actFind: TAction

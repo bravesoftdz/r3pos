@@ -5545,7 +5545,7 @@ inherited frmMessage: TfrmMessage
                   Left = 2
                   Top = 2
                   Width = 818
-                  Height = 358
+                  Height = 332
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   BorderStyle = bsNone
@@ -5649,6 +5649,17 @@ inherited frmMessage: TfrmMessage
                       Title.Caption = #25509#25910#38376#24215
                       Width = 80
                     end>
+                end
+                object stbPanel: TRzPanel
+                  Left = 2
+                  Top = 334
+                  Width = 818
+                  Height = 26
+                  Align = alBottom
+                  BorderOuter = fsNone
+                  BorderColor = clWhite
+                  Color = clCream
+                  TabOrder = 1
                 end
               end
               object RzPanel9: TRzPanel

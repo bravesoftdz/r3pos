@@ -43,6 +43,7 @@ type
     dsMessage: TDataSource;
     cdsShopList: TZQuery;
     Grid: TDBGridEh;
+    stbPanel: TRzPanel;
     procedure RzBmpButton1Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);

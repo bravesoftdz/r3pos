@@ -11,24 +11,24 @@ inherited frmInvoice: TfrmInvoice
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 855
-    Height = 494
+    Height = 488
     inherited RzPanel2: TRzPanel
       Width = 845
-      Height = 484
+      Height = 478
       inherited RzPage: TRzPageControl
         Width = 839
-        Height = 478
+        Height = 472
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#20449#24687#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 837
-            Height = 451
+            Height = 445
             object RzPanel1: TRzPanel
               Left = 5
               Top = 121
               Width = 827
-              Height = 325
+              Height = 319
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -37,7 +37,7 @@ inherited frmInvoice: TfrmInvoice
                 Left = 5
                 Top = 5
                 Width = 817
-                Height = 296
+                Height = 290
                 Align = alClient
                 DataSource = Ds_Invoice
                 Flat = True
@@ -154,7 +154,7 @@ inherited frmInvoice: TfrmInvoice
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 301
+                Top = 295
                 Width = 817
                 Height = 19
                 Align = alBottom
@@ -412,17 +412,18 @@ inherited frmInvoice: TfrmInvoice
   inherited RzPanel4: TRzPanel
     Width = 855
     inherited Image1: TImage
-      Left = 480
-      Width = 366
-    end
-    inherited Image14: TImage
-      Left = 846
+      Left = 324
+      Width = 511
     end
     inherited Image3: TImage
-      Left = 480
-      Width = 366
+      Left = 324
+      Width = 511
+    end
+    inherited Image14: TImage
+      Left = 835
     end
     inherited rzPanel5: TPanel
+      Left = 324
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #21457#31080#20449#24687
@@ -437,11 +438,10 @@ inherited frmInvoice: TfrmInvoice
           FixedSize = True
           ImageIndex = -1
           MinHeight = 304
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 304
-        ButtonHeight = 30
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0

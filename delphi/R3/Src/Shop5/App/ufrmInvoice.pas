@@ -87,11 +87,16 @@ begin
     str :=str + ' and CREA_USER='+QuotedStr(edtCREA_USER.AsString);
 
   if (edtCREA_DATE1.EditValue=NULL) and (edtCREA_DATE2.EditValue<>NULL) then
-     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtCREA_DATE2.Date));
+     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE2.Date));
   if (edtCREA_DATE1.EditValue<>NULL) and (edtCREA_DATE2.EditValue=NULL) then
-     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtCREA_DATE1.Date));
+     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date));
   if (edtCREA_DATE1.EditValue<>NULL) and (edtCREA_DATE2.EditValue<>NULL) then
-     str:=str+' and CREA_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtCREA_DATE1.Date))+' and CREA_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtCREA_DATE2.Date));
+  begin
+    if edtCREA_DATE1.Date=edtCREA_DATE2.Date then
+      str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date))+' '
+    else
+      str:=str+' and CREA_DATE>='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date))+' and CREA_DATE<='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE2.Date));
+  end;
   if edtKey.Text<>'' then
      str:= str + ' and INVH_NO LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%');
   Cds_Invoice.Close;

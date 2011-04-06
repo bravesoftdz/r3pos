@@ -184,8 +184,8 @@ begin
   InitGrid;
   if ShopGlobal.GetVersionFlag = 1 then
     begin
-      Grid.Columns[6].Visible := False;
-      Grid.Columns[7].Visible := False;
+      Grid.Columns.Items[6].Visible := False;
+      Grid.Columns.Items[7].Visible := False;
     end;
 end;
 

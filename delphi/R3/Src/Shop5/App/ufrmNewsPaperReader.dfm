@@ -48,12 +48,12 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabContents
+          ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -103,14 +103,14 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   Footers = <>
                   ReadOnly = True
                   Title.Alignment = taCenter
-                  Width = 435
+                  Width = 395
                 end
                 item
                   EditButtons = <>
                   FieldName = 'MSG_SOURCE'
                   Footers = <>
                   Title.Alignment = taCenter
-                  Width = 80
+                  Width = 120
                 end
                 item
                   DisplayFormat = '0000-00-00'

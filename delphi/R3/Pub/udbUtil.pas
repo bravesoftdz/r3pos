@@ -206,6 +206,8 @@ begin
           ((iDbType = 4) and (uppercase(ExtractFileExt(FList[i]))='.DB2'))
          or
           ((iDbType = 5) and (uppercase(ExtractFileExt(FList[i]))='.SQLITE'))
+         or
+          (uppercase(ExtractFileExt(FList[i]))='.SQL')
          )
          and
          CompareVersion(Version,CurVersion)

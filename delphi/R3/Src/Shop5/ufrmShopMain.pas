@@ -399,6 +399,7 @@ type
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
     function Login(Locked:boolean=false):boolean;
+    procedure WriteAction(s:string;flag:integer);
     procedure AddFrom(form:TForm);
     procedure RemoveFrom(form:TForm);
     property Logined:boolean read FLogined write SetLogined;
@@ -494,7 +495,7 @@ begin
   FList.Add(button);
   SortToolButton;
   button.Down := true;
-  TfrmBasic(Form).OnFreeForm := DoFreeForm;     
+  TfrmBasic(Form).OnFreeForm := DoFreeForm;
   rzChildTitle.Caption := '当前位置->'+form.Caption;
 end;
 
@@ -831,13 +832,13 @@ procedure TfrmShopMain.Timer1Timer(Sender: TObject);
 var P:PMsgInfo;
 begin
   inherited;
-  if SystemShutdown then Exit;
+{  if SystemShutdown then Exit;
   if not Logined then Exit;
   if not Visible then Exit;
   if not MsgFactory.Loaded then MsgFactory.Load;
   actfrmNewPaperReader.Caption := '我的消息('+inttostr(MsgFactory.Count)+'条)';
   P := MsgFactory.ReadMsg;
-  if P<>nil then MsgFactory.HintMsg(P);
+  if P<>nil then MsgFactory.HintMsg(P);  }
 end;
 
 procedure TfrmShopMain.LoadFrame;
@@ -2663,6 +2664,21 @@ begin
   Application.Restore;
   frmShopDesk.SaveToFront;
   TfrmNewPaperReader.ShowNewsPaper('');
+end;
+
+procedure TfrmShopMain.WriteAction(s: string;flag:integer);
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+Global.UserID);
+  try
+    if flag=0 then
+       F.WriteInteger('MenuMoudle',s,F.ReadInteger('Menu',s,0)+1)
+    else
+       F.WriteInteger('MenuReport',s,F.ReadInteger('Menu',s,0)+1);
+  finally
+    F.Free;
+  end;
 end;
 
 end.

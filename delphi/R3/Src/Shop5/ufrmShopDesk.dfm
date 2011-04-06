@@ -50,24 +50,30 @@ inherited frmShopDesk: TfrmShopDesk
         Items = <
           item
             Action = frmShopMain.actfrmStockOrderList
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmSalesOrderList
+            IndentLevel = 1
           end
           item
-            Action = frmShopMain.actfrmXsmBrowser
+            Action = frmShopMain.actfrmPosMain
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmChangeOrderList2
+            IndentLevel = 1
           end
           item
-            Action = frmShopMain.actfrmGoodsInfoList
+            Action = frmShopMain.actfrmStorageTracking
+            IndentLevel = 1
           end>
+        ItemIndent = 10
         Opened = True
         OpenedHeight = 138
         DividerVisible = True
         UseGradients = True
-        Caption = #25105#30340#26368#36817#19994#21153
+        Caption = #26368#36817#24120#29992#21151#33021
         ParentColor = False
       end
       object RzGroup2: TRzGroup
@@ -81,24 +87,30 @@ inherited frmShopDesk: TfrmShopDesk
         Items = <
           item
             Action = frmShopMain.actfrmSaleDayReport
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmStorageDayReport
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmRckDayReport
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmStockDayReport
+            IndentLevel = 1
           end
           item
-            Action = frmShopMain.actfrmChange1DayReport
+            Action = frmShopMain.actfrmJxcTotalReport
+            IndentLevel = 1
           end>
+        ItemIndent = 10
         Opened = True
         OpenedHeight = 138
         DividerVisible = True
         UseGradients = True
-        Caption = #26368#36817#26597#35810#25253#34920
+        Caption = #26368#36817#24120#29992#25253#34920
         ParentColor = False
       end
       object RzGroup3: TRzGroup
@@ -111,21 +123,26 @@ inherited frmShopDesk: TfrmShopDesk
         Items = <
           item
             Action = frmShopMain.actfrmNewPaperReader
+            IndentLevel = 1
           end
           item
             Caption = #38382#21367#35843#26597'(0'#26465')'
+            IndentLevel = 1
             OnClick = RzGroup3Items1Click
           end
           item
             Caption = #25237#35785#24314#35758
+            IndentLevel = 1
           end
           item
             Action = frmShopMain.actfrmMessage
+            IndentLevel = 1
           end>
+        ItemIndent = 10
         Opened = True
         OpenedHeight = 108
         UseGradients = True
-        Caption = #20449#24687#20114#21160
+        Caption = #21363#26102#20449#24687#20114#21160
         ParentColor = False
       end
     end
@@ -18842,7 +18859,7 @@ inherited frmShopDesk: TfrmShopDesk
     Left = 248
     Top = 305
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000400040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000000000008C7859008C7859008C78
       59008D795A009A867100A6937B00A6927500AA977B00A48E7800917E63008D79
@@ -18978,7 +18995,6 @@ inherited frmShopDesk: TfrmShopDesk
       0000000000000000000000000000000000000000000000000000200000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      000000000000}
+      00000000000000000000000000000000}
   end
 end

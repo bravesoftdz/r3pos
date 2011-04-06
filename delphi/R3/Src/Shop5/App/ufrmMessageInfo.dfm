@@ -106,7 +106,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #21457#24067#38376#24215
+            Caption = #20449#24687#26469#28304
           end
           object Label4: TLabel
             Left = 468
@@ -161,7 +161,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Enabled = False
             TabOrder = 4
           end
-          object edtSHOP_ID_TEXT: TcxTextEdit
+          object edtMSG_SOURCE: TcxTextEdit
             Left = 105
             Top = 7
             Width = 184

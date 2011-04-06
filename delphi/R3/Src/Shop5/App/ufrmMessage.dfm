@@ -5617,12 +5617,12 @@ inherited frmMessage: TfrmMessage
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_ID_TEXT'
+                      FieldName = 'MSG_SOURCE'
                       Footer.Value = #35760#24405#25968#65306
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       ReadOnly = True
-                      Title.Caption = #21457#24067#38376#24215
+                      Title.Caption = #20449#24687#28304
                       Width = 120
                     end
                     item

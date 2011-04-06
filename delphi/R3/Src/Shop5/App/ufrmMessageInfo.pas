@@ -23,7 +23,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     edtISSUE_DATE: TcxDateEdit;
-    edtSHOP_ID_TEXT: TcxTextEdit;
+    edtMSG_SOURCE: TcxTextEdit;
     Label4: TLabel;
     edtISSUE_USER_TEXT: TcxTextEdit;
     Label6: TLabel;
@@ -91,7 +91,7 @@ begin
   edtMSG_CLASS.ItemIndex := MSG_CLASS_TYPE;
   edtISSUE_DATE.Date := Global.SysDate;
   edtEND_DATE.Date := Global.SysDate;
-  edtSHOP_ID_TEXT.Text := Global.SHORT_TENANT_NAME;
+  edtMSG_SOURCE.Text := Global.SHOP_NAME;
   edtISSUE_USER_TEXT.Text := Global.UserName;
 
 end;
@@ -197,14 +197,18 @@ begin
   begin
     raise Exception.Create('有效期限不能小于发布日期！');
   end;
+  if Length(edtMSG_CONTENT.Text) > 500 then
+  begin
+    raise Exception.Create('信息内容超出预计长度,请相对精减！');
+  end;
 
   if dbState = dsInsert then
   begin
     AObj.FieldbyName('MSG_ID').AsString := TSequence.NewId;
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
     AObj.FieldbyName('ISSUE_USER').AsString := Global.UserID;
-    AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
-    AObj.FieldbyName('MSG_SOURCE').AsString := Global.SHORT_TENANT_NAME;
+    AObj.FieldbyName('ISSUE_TENANT_ID').AsInteger := Global.TENANT_ID;
+    //AObj.FieldbyName('MSG_SOURCE').AsString := Global.SHOP_NAME;
   end;
   WriteToObject(Aobj,self);
   MSG_CLASS_TYPE := edtMSG_CLASS.ItemIndex;

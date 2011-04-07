@@ -53,7 +53,7 @@ CREATE TABLE MSC_MESSAGE_LIST(
 	READ_DATE varchar(19),
     --阅读用户
 	READ_USER varchar(36),
-    --反馈状态
+    --反馈状态<指是否向上级单据提交>
 	MSG_FEEDBACK_STATUS int,
     --阅读标志
 	MSG_READ_STATUS int,
@@ -164,7 +164,7 @@ CREATE TABLE MSC_INVEST_LIST(
 	ANSWER_USER varchar(36),
     --答题时长
 	ANSWER_USE_TIME int,
-    --反馈状态
+    --反馈状态<指是否向上级单位或第三方提交>
 	QUESTION_FEEDBACK_STATUS int,
     --阅读标志
 	QUESTION_ANSWER_STATUS int,
@@ -197,3 +197,58 @@ CREATE TABLE MSC_INVEST_ANSWER(
     CONSTRAINT PK_MSC_IVT_ANSWER PRIMARY KEY(ROWS_ID)
 );
 CREATE INDEX IX_MSC_INVEST_ANSWER_QUESTION_ID ON MSC_INVEST_ANSWER(TENANT_ID,QUESTION_ID);
+
+--投诉类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','投诉','IMPEACH_CLASS','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','建议','IMPEACH_CLASS','00',5497000);
+--反馈状态
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','未反馈','IMPEACH_FEEDBACK_STATUS','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','已反馈','IMPEACH_FEEDBACK_STATUS','00',5497000);
+--处理状态
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','新增','IMPEACH_PROC_STATUS','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','处理','IMPEACH_PROC_STATUS','00',5497000);
+ 
+--投诉建议
+CREATE TABLE MSC_IMPEACH(
+    --行号
+	ROWS_ID char(36) NOT NULL,
+    --提交企业
+	TENANT_ID int NOT NULL,
+    --提交门店
+	SHOP_ID varchar (13) NOT NULL,
+    --向指定企业投诉
+	IMPH_TENANT_ID int NOT NULL,
+	  --投诉日期
+	IMPH_DATE int NOT NULL,
+	  --投诉时间
+	CREA_DATE varchar(19),
+	  --投诉用户
+	CREA_USER varchar(36) NOT NULL,
+	  --类型
+	IMPEACH_CLASS varchar(36) NOT NULL,
+	  --反馈状态<指是否向上级单位或第三方提交>
+	IMPEACH_FEEDBACK_STATUS varchar(36) NOT NULL,
+    --是否重复投拆 1重复 0否
+	IS_REPEAT char(1) NOT NULL,
+    --是否紧急 1紧急 0否
+	IS_URGENCY char(1) NOT NULL,
+    --是否要求回复 1回复 0否
+	IS_REPLY char(1) NOT NULL,
+	  --投诉及建议内容
+	CONTENT varchar(500) NOT NULL,
+	  --投诉或建议对象<人>
+	IMPEACH_USER varchar(300) NOT NULL,
+	  --处理状态
+	IMPEACH_PROC_STATUS varchar(36) NOT NULL,
+	  --处理方法
+	IMPEACH_PROC_INFO varchar(200),
+	  --处理时间
+	IMPEACH_PROC_DATE varchar(19),
+    --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
+	COMM varchar(2) NOT NULL  DEFAULT '00',
+    --更新时间 从2011-01-01开始的秒数  
+	TIME_STAMP bigint NOT NULL,
+    CONSTRAINT PK_MSC_IMPEACH PRIMARY KEY(ROWS_ID)
+);
+CREATE INDEX IX_MSC_IMPEACH_TENANT_ID ON MSC_IMPEACH(TENANT_ID);
+CREATE INDEX IX_MSC_IMPEACH_TIME_STAMP ON MSC_IMPEACH(TENANT_ID,TIME_STAMP);

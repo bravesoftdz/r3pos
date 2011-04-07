@@ -267,6 +267,18 @@ begin
 end;
 
 procedure TfrmTenant.btnOkClick(Sender: TObject);
+procedure InitTenant;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.ExecProc('TTenantInit',Params);   
+  finally
+    Params.Free;
+  end;
+end;
 begin
   inherited;
   if Trim(edtLOGIN_NAME.Text) = '' then
@@ -307,6 +319,7 @@ begin
     end;
   //前后检测——以上检测只判断注册界面不允许为空的字段
   Save;
+  InitTenant;
   ModalResult := mrok;
 end;
 

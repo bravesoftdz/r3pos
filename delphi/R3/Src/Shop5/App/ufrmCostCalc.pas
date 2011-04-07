@@ -318,38 +318,42 @@ begin
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
   DBLock;
   try
-    Label11.Caption := '核算前检测数据...';
-    Label11.Update;
-    RzProgressBar1.Percent := 1;
-    CheckForRck;
-    if flag in [1,2,4,6] then CreateTempTable;
-    Label11.Caption := '准备核算数据...';
-    Label11.Update;
-    //数据准备
-    if flag in [1,2,4,6] then PrepareDataForRck;
-    Label11.Caption := '正在核算成本...';
-    Label11.Update;
-    RzProgressBar1.Percent := 5;
-    //计算成本
-    if flag in [1,2,4,6] then
-    case calc_flag of
-    0:Calc0;
-    1:Calc1;
-    2:Calc2;
+    if Factor.iDbType=5 then Factor.BeginTrans; //对SQLite启动事务，减少IO
+    try
+      Label11.Caption := '核算前检测数据...';
+      Label11.Update;
+      RzProgressBar1.Percent := 1;
+      CheckForRck;
+      if flag in [1,2,4,6] then CreateTempTable;
+      Label11.Caption := '准备核算数据...';
+      Label11.Update;
+      //数据准备
+      if flag in [1,2,4,6] then PrepareDataForRck;
+      Label11.Caption := '正在核算成本...';
+      Label11.Update;
+      RzProgressBar1.Percent := 5;
+      //计算成本
+      if flag in [1,2,4,6] then
+      case calc_flag of
+      0:Calc0;
+      1:Calc1;
+      2:Calc2;
+      end;
+      Label11.Caption := '正在计算商品月台账...';
+      Label11.Update;
+      if flag in [1,2,6] then CalcMth;
+      Label11.Caption := '正在计算账户日台账...';
+      Label11.Update;
+      AutoPosReck;
+      //数据准备
+      if flag in [1,2,3,5] then PrepareDataForAcct;
+      if flag in [1,2,3,5] then CalcAcctDay;
+      Label11.Caption := '正在计算账户月台账...';
+      Label11.Update;
+      if flag in [1,2,5] then CalcAcctMth;
+    finally
+      if Factor.iDbType=5 then Factor.CommitTrans;  //对SQLite启动事务，减少IO
     end;
-    Label11.Caption := '正在计算商品月台账...';
-    Label11.Update;
-    if flag in [1,2,6] then CalcMth;
-    Label11.Caption := '正在计算账户日台账...';
-    Label11.Update;
-    AutoPosReck;
-    //数据准备
-    if flag in [1,2,3,5] then PrepareDataForAcct;
-    if flag in [1,2,3,5] then CalcAcctDay;
-    Label11.Caption := '正在计算账户月台账...';
-    Label11.Update;
-    if flag in [1,2,5] then CalcAcctMth;
-
     Label11.Caption := '输出数据中...';
     Label11.Update;
     ClseRck;

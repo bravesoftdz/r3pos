@@ -121,7 +121,6 @@ procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 var
   ARect:TRect;
-  s:string;
 begin
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then
@@ -136,86 +135,6 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsBrowser.RecNo)),length(Inttostr(cdsBrowser.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-  if cdsBrowser.FieldByName('flag').AsInteger = 2 then
-  begin
-  if Column.FieldName = 'CLSE_DATE' then
-    begin
-      ARect := Rect;
-      s := '';
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'TOTAL_MNY' then
-    begin
-      ARect := Rect;
-      s := 'ÏúÊÛ½ð¶î';
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'PAY_A' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['A'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'ORG_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['B'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'PUSH_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['C'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'RECV_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['D'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'PAY_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['E'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'OTH_IN_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['F'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'OTH_OUT_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['G'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'TRN_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['H'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  if Column.FieldName = 'BAL_MNY' then
-    begin
-      ARect := Rect;
-      s := VPay.Values['I'];
-      DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
-  end;
 end;
 
 procedure TfrmRckMng.DBGridEh1GetCellParams(Sender: TObject;

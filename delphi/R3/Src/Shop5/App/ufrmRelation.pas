@@ -599,6 +599,7 @@ begin
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
   CaFactory.SyncAll(1);
   Global.LoadBasic;
+  InitGrid;
   Prepare;
   LoadTree;
 end;
@@ -693,14 +694,9 @@ end;
 procedure TfrmRelation.Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var
-  ColName: string;
   ARect:TRect;
 begin
   inherited;
-  ColName:=trim(Lowercase(Column.FieldName));
-  if (ColName='a') or (ColName='seqno') then
-    Grid_RelationAndGoods.Canvas.Brush.Color:= clBtnFace;
-
   if (Rect.Top = Grid_RelationAndGoods.CellRect(Grid_RelationAndGoods.Col, Grid_RelationAndGoods.Row).Top) and (not
      (gdFocused in State) or not Grid_RelationAndGoods.Focused) then
   begin

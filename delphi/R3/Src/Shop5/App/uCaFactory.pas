@@ -451,7 +451,11 @@ begin
               f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
               try
                 if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
-                   f.WriteString('db','Connstr','connmode=2;hostname='+result.HOST_NAME+';port='+inttostr(result.SRVR_PORT)+';dbid='+inttostr(result.DB_ID));
+                   begin
+                     f.WriteString('db','Connstr','connmode=2;hostname='+result.HOST_NAME+';port='+inttostr(result.SRVR_PORT)+';dbid='+inttostr(result.DB_ID));
+                     f.WriteString('db','dbid',inttostr(result.DB_ID));
+                     f.WriteString('db','hostid',result.HOST_NAME);
+                   end;
               finally
                 f.Free;
               end;

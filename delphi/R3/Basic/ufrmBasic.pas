@@ -48,6 +48,7 @@ type
     destructor Destroy;override;
     //权限控制
     function CheckCanExport:boolean;virtual;
+    function DoBeforeExport:boolean;virtual;
     //设置Child方式显示时的窗体类型
     procedure SetChildDisplay(MainForm:TForm);
     //设置镶入显示方式
@@ -600,6 +601,11 @@ end;
 function TfrmBasic.GetFactor: TdbFactory;
 begin
   result := uGlobal.Factor;
+end;
+
+function TfrmBasic.DoBeforeExport: boolean;
+begin
+
 end;
 
 end.

@@ -1,10 +1,10 @@
 object frmInstall: TfrmInstall
-  Left = 97
-  Top = 193
+  Left = 305
+  Top = 218
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = #23433#35013#31243#24207#21521#23548
-  ClientHeight = 271
+  ClientHeight = 275
   ClientWidth = 411
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
@@ -394,14 +394,14 @@ object frmInstall: TfrmInstall
   end
   object Label9: TLabel
     Left = 26
-    Top = 120
+    Top = 123
     Width = 60
     Height = 12
     Caption = #23458#26381#22312#32447#65306
   end
   object Label10: TLabel
     Left = 85
-    Top = 118
+    Top = 121
     Width = 91
     Height = 12
     Caption = 'www.rspcn.com'
@@ -414,17 +414,17 @@ object frmInstall: TfrmInstall
   end
   object Label11: TLabel
     Left = 26
-    Top = 140
+    Top = 143
     Width = 60
     Height = 12
     Caption = #23458#26381'QQ'#21495#65306
   end
   object Label12: TLabel
     Left = 86
-    Top = 140
+    Top = 143
     Width = 112
     Height = 12
-    Caption = '(86)0592-5807033'
+    Caption = '(86)0592-0000000'
     Font.Charset = GB2312_CHARSET
     Font.Color = clNavy
     Font.Height = -12

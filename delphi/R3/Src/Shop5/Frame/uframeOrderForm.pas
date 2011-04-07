@@ -174,6 +174,11 @@ type
   protected
     // 最近输的货品
     vgds,vP1,vP2,vBtNo:string;
+
+    procedure GodsInfoFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
+    procedure BarcodeFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
     procedure SetdbState(const Value: TDataSetState); virtual;
     procedure SetIsAudit(const Value: boolean);virtual;
     procedure SetInputFlag(const Value: integer);virtual;
@@ -279,7 +284,7 @@ type
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods, uframeListDialog;
+uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods, ufrmGoodsInfo, uframeListDialog;
 {$R *.dfm}
 
 { TframeOrderFrom }
@@ -862,26 +867,36 @@ begin
      end
   else
   begin
-  rs := TZQuery.Create(nil);
+//  rs := TZQuery.Create(nil);
   try
     if InputMode=0 then
     begin
-      case Factor.iDbType of
-      0,3:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''+:BARCODE and A.COMM not in (''02'',''12'')';
-      1,4,5:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''||:BARCODE and A.COMM not in (''02'',''12'')';
-      end;
-      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      rs.ParamByName('BARCODE').AsString := Barcode;
-      Factor.Open(rs);
-      end;
-      if rs.IsEmpty then
+      rs := Global.GetZQueryFromName('PUB_BARCODE');
+      rs.OnFilterRecord := BarcodeFilterRecord;
+      rs.Filtered := true;
+      //case Factor.iDbType of
+      //0,3:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''+:BARCODE and A.COMM not in (''02'',''12'')';
+      //1,4,5:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''||:BARCODE and A.COMM not in (''02'',''12'')';
+      //end;
+      //rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      //rs.ParamByName('BARCODE').AsString := Barcode;
+      //Factor.Open(rs);
+    end
+    else
+      rs := nil;
+      if not assigned(rs) or ((InputMode=0) and rs.IsEmpty) then
          begin
             //看看货号是否存在
-            rs.Close;
-            rs.SQL.Text := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
-            rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            rs.ParamByName('GODS_CODE').AsString := Barcode;
-            Factor.Open(rs);
+            rs.Filtered := false;
+            rs.OnFilterRecord := nil;
+            rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+            rs.OnFilterRecord := GodsInfoFilterRecord;
+            rs.Filtered := true;
+            //rs.Close;
+            //rs.SQL.Text := 'select GODS_ID,UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+            //rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            //rs.ParamByName('GODS_CODE').AsString := Barcode;
+            //Factor.Open(rs);
             if rs.IsEmpty then
                begin
                  Exit;
@@ -921,7 +936,12 @@ begin
                end;
        end;
   finally
-    rs.Free;
+    if Assigned(rs) then
+    begin
+    rs.OnFilterRecord := nil;
+    rs.filtered := false;
+    end;
+//    rs.Free;
   end;
   end;
 
@@ -2956,7 +2976,7 @@ begin
   inherited;
   if not edtTable.Active then exit;
   if edtTable.FieldByName('GODS_ID').AsString='' then exit;
-{  with TfrmGoodsInfo.Create(self) do
+  with TfrmGoodsInfo.Create(self) do
     begin
       try
         Open(edtTable.FieldByName('GODS_ID').AsString);
@@ -2965,7 +2985,7 @@ begin
         free;
       end;
     end;
-}
+
 end;
 
 procedure TframeOrderForm.SetCanAppend(const Value: boolean);
@@ -3313,6 +3333,20 @@ begin
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not rs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('当前商品库中没找到此经营商品');
   if rs.FieldByName('NEW_LOWPRICE').AsCurrency > aprc then Raise Exception.Create('修改的价格不能低于当前商品最低售价,最低售价为:'+rs.FieldByName('NEW_LOWPRICE').AsString);
+end;
+
+procedure TframeOrderForm.BarcodeFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  Accept := copy(DataSet.FieldbyName('BARCODE').AsString,length(DataSet.FieldbyName('BARCODE').AsString)-length(fndStr)+1,length(fndStr))=fndStr;
+end;
+
+procedure TframeOrderForm.GodsInfoFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  Accept :=
+    (pos(fndStr,DataSet.FieldbyName('GODS_CODE').AsString)>0)
+
 end;
 
 end.

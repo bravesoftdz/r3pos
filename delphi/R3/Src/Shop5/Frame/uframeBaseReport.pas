@@ -317,7 +317,7 @@ begin
     Stream := TMemoryStream.Create;
     try
       Stream.Position := 0;
-      with TDBGridEhExportAsXLS.Create do
+      with TDBGridEhExportAsHTML.Create do
       begin
         try
           DBGridEh := self.DBGridEh;

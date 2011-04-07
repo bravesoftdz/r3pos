@@ -570,7 +570,7 @@ begin
        end
     else
        fndMY_AMOUNT.Text := '0';
-    if not rs.IsEmpty and rs.Locate('SHOP_ID',edtSHOP_ID.AsString,[]) then
+    if not rs.IsEmpty and rs.Locate('SHOP_ID',edtCLIENT_ID.AsString,[]) then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
             fndMY1_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)

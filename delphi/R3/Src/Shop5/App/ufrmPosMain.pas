@@ -188,6 +188,10 @@ type
     procedure Createparams(Var Params:TCreateParams);override;
     procedure Setgid(const Value: string);
     procedure SetInputMode(const Value: integer);
+    procedure GodsInfoFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
+    procedure BarcodeFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
   protected
     //进位法则
     CarryRule:integer;
@@ -1803,26 +1807,36 @@ begin
      end
   else
   begin
-  rs := TZQuery.Create(nil);
+//  rs := TZQuery.Create(nil);
   try
     if InputMode=0 then
     begin
-      case Factor.iDbType of
-      0,3:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''+:BARCODE and A.COMM not in (''02'',''12'')';
-      1,4,5:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''||:BARCODE and A.COMM not in (''02'',''12'')';
-      end;
-      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      rs.ParamByName('BARCODE').AsString := Barcode;
-      Factor.Open(rs);
-      end;
-      if rs.IsEmpty then
+      rs := Global.GetZQueryFromName('PUB_BARCODE');
+      rs.OnFilterRecord := BarcodeFilterRecord;
+      rs.Filtered := true;
+//      case Factor.iDbType of
+//      0,3:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''+:BARCODE and A.COMM not in (''02'',''12'')';
+//      1,4,5:rs.SQL.Text := 'select A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.UNIT_ID,A.BATCH_NO from VIW_BARCODE A where TENANT_ID=:TENANT_ID and A.BARCODE like ''%''||:BARCODE and A.COMM not in (''02'',''12'')';
+//      end;
+//      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+//      rs.ParamByName('BARCODE').AsString := Barcode;
+//      Factor.Open(rs);
+    end
+    else
+      rs := nil;
+      if not assigned(rs) or ((InputMode=0) and rs.IsEmpty) then
          begin
             //看看货号是否存在
-            rs.Close;
-            rs.SQL.Text := 'select GODS_ID,CALC_UNITS as UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
-            rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            rs.ParamByName('GODS_CODE').AsString := Barcode;
-            Factor.Open(rs);
+            rs.Filtered := false;
+            rs.OnFilterRecord := nil;
+            rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+            rs.OnFilterRecord := GodsInfoFilterRecord;
+            rs.Filtered := true;
+            //rs.Close;
+            //rs.SQL.Text := 'select GODS_ID,CALC_UNITS as UNIT_ID from VIW_GOODSINFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and GODS_CODE=:GODS_CODE';
+            //rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            //rs.ParamByName('GODS_CODE').AsString := Barcode;
+            //Factor.Open(rs);
             if rs.IsEmpty then
                begin
                  Exit;
@@ -1862,7 +1876,12 @@ begin
                end;
        end;
   finally
-    rs.Free;
+    if Assigned(rs) then
+    begin
+    rs.OnFilterRecord := nil;
+    rs.filtered := false;
+    end;
+//    rs.Free;
   end;
   end;
 
@@ -3420,6 +3439,21 @@ procedure TfrmPosMain.RzStatusPane7Click(Sender: TObject);
 begin
   inherited;
   self.WindowState := wsMinimized;
+end;
+
+procedure TfrmPosMain.BarcodeFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  Accept := copy(DataSet.FieldbyName('BARCODE').AsString,length(DataSet.FieldbyName('BARCODE').AsString)-length(fndStr)+1,length(fndStr))=fndStr;
+
+end;
+
+procedure TfrmPosMain.GodsInfoFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  Accept :=
+    (pos(fndStr,DataSet.FieldbyName('GODS_CODE').AsString)>0)
+
 end;
 
 end.

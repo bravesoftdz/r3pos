@@ -702,7 +702,8 @@ begin
         Caption := '月结账';
         eDate := Date()-1;
         Prepare;
-        Label2.Caption := '结账月份:'+formatDatetime('YYYY-MM-DD',eDate);
+        Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+        if eDate<Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。'); 
         result :=(ShowModal=MROK);
       finally
         free;

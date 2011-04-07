@@ -93,6 +93,7 @@ inherited frmDbOrder: TfrmDbOrder
         Top = 5
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 3
       end
       object edtREMARK: TcxTextEdit
@@ -101,6 +102,7 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 313
         Height = 20
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGUIDE_USER: TzrComboBoxList
         Left = 251
@@ -190,6 +192,7 @@ inherited frmDbOrder: TfrmDbOrder
         Top = 26
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 4
       end
       object edtSTOCK_USER: TzrComboBoxList
@@ -356,6 +359,7 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 99
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
         Tag = 1
@@ -364,6 +368,7 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 98
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndMY_AMOUNT: TcxTextEdit
         Tag = 1
@@ -378,6 +383,7 @@ inherited frmDbOrder: TfrmDbOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndMY1_AMOUNT: TcxTextEdit
         Tag = 1
@@ -392,6 +398,7 @@ inherited frmDbOrder: TfrmDbOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited DBGridEh1: TDBGridEh

@@ -245,6 +245,7 @@ begin
       TabSheet1.Caption := '进货订单';
       RzLabel4.Caption := '供 应 商';
       DBGridEh1.Columns[3].Title.Caption := '供应商名称';
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
     end;
   2:begin
       Caption := '销售订单查询';
@@ -252,6 +253,7 @@ begin
       TabSheet1.Caption := '销售订单';
       RzLabel4.Caption := '客户名称';
       DBGridEh1.Columns[3].Title.Caption := '客户名称';
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('VIW_CUSTOMER');
     end;
   3:begin
       Caption := '进货单查询';
@@ -259,6 +261,7 @@ begin
       TabSheet1.Caption := '进货单';
       RzLabel4.Caption := '供 应 商';
       DBGridEh1.Columns[3].Title.Caption := '供应商名称';
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
     end;
   4:begin
       Caption := '销售单查询';
@@ -266,6 +269,7 @@ begin
       TabSheet1.Caption := '销售单';
       RzLabel4.Caption := '客户名称';
       DBGridEh1.Columns[3].Title.Caption := '客户名称';
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('VIW_CUSTOMER');
     end;
   end;
 end;

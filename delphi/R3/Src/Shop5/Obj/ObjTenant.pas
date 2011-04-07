@@ -111,6 +111,8 @@ begin
   finally
     rs.Free;
   end;
+AGlobal.BeginTrans;
+try
   //管理组 CODE_TYPE=12
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
   ' values(:TENANT_ID,''CA73FC48-985B-4EE7-9BDA-B7D638BD25F6'',''总店'',''ZD'',''12'',1,''00'',5497000)';
@@ -218,7 +220,11 @@ begin
   AGlobal.ExecSQL(Str,Params);
 
   Result := True;
-
+  AGlobal.CommitTrans;
+except
+  AGlobal.RollbackTrans;
+  Raise;
+end;
 end;
 
 initialization

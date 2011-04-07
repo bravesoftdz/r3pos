@@ -559,7 +559,7 @@ end;
 
 function TfrmStkRetuOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('32600001',7);
+  result:=ShopGlobal.GetChkRight('11300001',7);
 end;
 
 end.

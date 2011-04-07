@@ -89,6 +89,7 @@ type
     //保留小数位
     Deci:integer;
     procedure ReadHeader;
+    function  CheckCanExport: boolean; override;    
   protected
     procedure SetInputFlag(const Value: integer);override;
     function IsKeyPress:boolean;override;
@@ -1196,6 +1197,11 @@ begin
   else
      PresentToCalc(0);
   end;
+end;
+
+function TfrmSalIndentOrder.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('12300001',10);
 end;
 
 end.

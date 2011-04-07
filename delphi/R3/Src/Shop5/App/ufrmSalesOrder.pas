@@ -98,6 +98,7 @@ type
     Deci:integer;
     procedure ReadHeader;
     procedure WMNextRecord(var Message: TMessage);
+    function  CheckCanExport: boolean; override;      
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -1413,6 +1414,11 @@ begin
          d.Free;
        end;
      end;
+end;
+
+function TfrmSalesOrder.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('12400001',10);  
 end;
 
 end.

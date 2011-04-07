@@ -560,7 +560,7 @@ end;
 
 function TfrmStkIndentOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('32600001',7);
+  result:=ShopGlobal.GetChkRight('11100001',7);
 end;
 
 end.

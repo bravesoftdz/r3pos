@@ -1,4 +1,4 @@
-{  12500001	0	销售退货  1	查询  2	新增  3	修改  4	删除  5	变价  6	增送  7	审核 8	打印  }
+{  12500001	0	销售退货  1	查询  2	新增  3	修改  4	删除  5	变价  6	增送  7	审核 8	打印  10 导出 }
 
 unit ufrmSalRetuOrderList;
 
@@ -58,6 +58,7 @@ type
   private
     { Private declarations }
     oid:string;
+    function  CheckCanExport: boolean; override;    
   public
     { Public declarations }
     IsEnd: boolean;
@@ -565,6 +566,11 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+end;
+
+function TfrmSalRetuOrderList.CheckCanExport: boolean;
+begin
+  result:=ShopGlobal.GetChkRight('12500001',10);
 end;
 
 end.

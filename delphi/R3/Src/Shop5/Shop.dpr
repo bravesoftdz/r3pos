@@ -184,7 +184,8 @@ uses
   ufrmMessageInfo in 'App\ufrmMessageInfo.pas' {frmMessageInfo},
   ufrmNewsPaperReader in 'App\ufrmNewsPaperReader.pas' {frmNewPaperReader},
   objMessage in 'Obj\objMessage.pas',
-  ufrmPublishMessage in 'App\ufrmPublishMessage.pas' {frmPublishMessage};
+  ufrmPublishMessage in 'App\ufrmPublishMessage.pas' {frmPublishMessage},
+  ufrmHostDialog in 'App\ufrmHostDialog.pas' {frmHostDialog};
 
 {$R *.res}
 var
@@ -193,7 +194,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.1';
+  DBVersion := '1.0.0.2';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

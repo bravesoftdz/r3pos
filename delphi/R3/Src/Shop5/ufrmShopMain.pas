@@ -267,7 +267,6 @@ type
     actfrmDbDayReport: TAction;
     actfrmGodsRunningReport: TAction;
     RzBmpButton4: TRzBmpButton;
-    lblLogin: TLabel;
     lblUserInfo: TRzLabel;
     tlbPage: TPopupMenu;
     tlbClose: TMenuItem;
@@ -707,7 +706,6 @@ begin
        Application.Terminate;
      end;
   LoadFrame;
-  lblLogin.Caption := '登录用户:'+Global.UserName+'  登录门店:'+Global.SHOP_NAME;
 end;
 
 procedure TfrmShopMain.wm_Login(var Message: TMessage);
@@ -743,7 +741,7 @@ begin
   Timer1.Enabled := Value;
 //  if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
   if Value then
-     lblUserInfo.Caption := s+' 欢迎您【'+Global.UserName+'】'//+' 登录门店：'+Global.SHOP_NAME+''
+     lblUserInfo.Caption := '用户名:'+Global.UserName
   else
      lblUserInfo.Caption := '未登录...';
 end;
@@ -850,14 +848,14 @@ begin
   try
     Caption :=  F.ReadString('soft','name','云盟软件R3')+' 版本:'+RzVersionInfo.FileVersion;
     if ShopGlobal.offline then
-       Caption := Caption +'【脱机使用】'
+       Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME
     else
-       Caption := Caption +'【联机使用】';
+       Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
     Application.Title :=  F.ReadString('soft','name','云盟软件R3');
     SFVersion := F.ReadString('soft','SFVersion','.NET');
     CLVersion := F.ReadString('soft','CLVersion','.MKT');
     ProductID := F.ReadString('soft','ProductID','R3_RYC');
-    RzLabel1.Caption := F.ReadString('soft','copyright','');
+    RzLabel1.Caption := F.ReadString('soft','copyright','')+' | 使用单位:'+Global.TENANT_NAME;
   finally
     F.Free;
   end;
@@ -1082,54 +1080,6 @@ begin
 end;
 
 function TfrmShopMain.ConnectToDb:boolean;
-procedure SynTenantId;
-var
-  Params:TftParamList;
-  rs,ls:TZQuery;
-  i:integer;
-begin
-  Params := TftParamList.Create;
-  rs := TZQuery.Create(nil);
-  ls := TZQuery.Create(nil);
-  try
-     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     Global.RemoteFactory.Open(rs,'TTenant',Params);
-     if rs.IsEmpty then
-     begin
-     Global.LocalFactory.Open(ls,'TTenant',Params);
-     rs.Edit;
-     for i:=0 to ls.Fields.Count-1 do
-       begin
-         if rs.FindField(ls.Fields[i].FieldName)<>nil then
-            rs.FindField(ls.Fields[i].FieldName).Value := ls.Fields[i].Value;
-       end;
-     rs.Post;
-     Global.RemoteFactory.UpdateBatch(rs,'TTenant',nil);
-     end;
-     if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
-        begin
-          SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable');
-          SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable');
-        end;
-  finally
-    Params.Free;
-    rs.Free;
-    ls.Free;
-  end;
-  
-end;
-procedure InitTenant;
-var
-  Params:TftParamList;
-begin
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.ExecProc('TTenantInit',Params);   
-  finally
-    Params.Free;
-  end;
-end;
 begin
   frmLogo.Show;
   try
@@ -1204,18 +1154,11 @@ begin
                  Global.MoveToLocal;
                end;
              end;
-//          if not FindCmdLineSwitch('DEBUG',['-','+'],false) then //同步门店专用资料
-//             begin
-               if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(true);
-//             end;
+          if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(true);
         end;
-      frmLogo.Label1.Caption := '正在初始化账套...';
-      frmLogo.Label1.Update;
-      InitTenant;
     finally
       frmLogo.Close;
     end;
-//    if result and (Factor=Global.RemoteFactory) then SynTenantId;
   except
     on E:Exception do
       begin

@@ -473,21 +473,21 @@ inherited frmLogin: TfrmLogin
   end
   object lblName: TLabel [1]
     Left = 51
-    Top = 123
+    Top = 119
     Width = 60
     Height = 12
     Caption = #29992#25143#24080#21495#65306
   end
   object lblPass: TLabel [2]
     Left = 51
-    Top = 149
+    Top = 142
     Width = 60
     Height = 12
     Caption = #25805#20316#21475#20196#65306
   end
   object Label3: TLabel [3]
     Left = 299
-    Top = 148
+    Top = 141
     Width = 52
     Height = 12
     Cursor = crHandPoint
@@ -502,7 +502,7 @@ inherited frmLogin: TfrmLogin
   end
   object Label6: TLabel [4]
     Left = 109
-    Top = 177
+    Top = 167
     Width = 186
     Height = 12
     Caption = #40664#35748#31649#29702#21592#24080#21495'/'#21475#20196#65306'admin/1234'
@@ -534,9 +534,24 @@ inherited frmLogin: TfrmLogin
     ParentFont = False
     Transparent = True
   end
-  object cxBtnOk: TRzBitBtn [7]
+  object RzLabel1: TRzLabel [7]
+    Left = 27
+    Top = 230
+    Width = 26
+    Height = 12
+    Cursor = crHandPoint
+    Caption = #35774#32622
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = [fsBold, fsUnderline]
+    ParentFont = False
+    OnClick = RzLabel1Click
+  end
+  object cxBtnOk: TRzBitBtn [8]
     Left = 174
-    Top = 215
+    Top = 224
     Caption = #30331#24405'(&O)'
     Color = 15791348
     HighlightColor = 16026986
@@ -597,9 +612,9 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxbtnCancel: TRzBitBtn [8]
+  object cxbtnCancel: TRzBitBtn [9]
     Left = 254
-    Top = 215
+    Top = 224
     Cancel = True
     ModalResult = 2
     Caption = #36864#20986'(&C)'
@@ -661,9 +676,9 @@ inherited frmLogin: TfrmLogin
       E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8}
     NumGlyphs = 2
   end
-  object cxcbSave: TcxCheckBox [9]
-    Left = 46
-    Top = 217
+  object cxcbSave: TcxCheckBox [10]
+    Left = 104
+    Top = 186
     Width = 103
     Height = 21
     Properties.DisplayUnchecked = 'False'
@@ -672,16 +687,16 @@ inherited frmLogin: TfrmLogin
     TabOrder = 2
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object cxedtPasswrd: TcxTextEdit [10]
+  object cxedtPasswrd: TcxTextEdit [11]
     Left = 111
-    Top = 144
+    Top = 137
     Width = 184
     Height = 20
     Properties.EchoMode = eemPassword
     TabOrder = 0
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
-  object edtOPER_DATE: TcxDateEdit [11]
+  object edtOPER_DATE: TcxDateEdit [12]
     Left = 111
     Top = 93
     Width = 184
@@ -689,9 +704,9 @@ inherited frmLogin: TfrmLogin
     Properties.DateOnError = deToday
     TabOrder = 4
   end
-  object cxedtUsers: TcxTextEdit [12]
+  object cxedtUsers: TcxTextEdit [13]
     Left = 111
-    Top = 119
+    Top = 115
     Width = 184
     Height = 20
     TabOrder = 5
@@ -702,6 +717,6 @@ inherited frmLogin: TfrmLogin
   end
   inherited actList: TActionList
     Left = 40
-    Top = 184
+    Top = 186
   end
 end

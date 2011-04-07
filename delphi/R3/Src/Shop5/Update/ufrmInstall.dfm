@@ -24,7 +24,7 @@ object frmInstall: TfrmInstall
     Top = 74
     Width = 354
     Height = 36
-    Caption = #31995#32479#26816#27979#21040'                       '#65292#26356#26032#20869#23481#35831#21040#20844#21496#32593#31449#26597#35810#13#13#21319#32423#36807#31243#20986#29616#24322#24120#35831#32852#31995#25105#20204#23458#26381#20154#21592#12290
+    Caption = #31995#32479#26816#27979#21040'                       '#65292#26356#26032#20869#23481#35831#21040#20844#21496#32593#31449#26597#35810#13#13#23433#35013#36807#31243#20986#29616#24322#24120#35831#32852#31995#25105#20204#23458#26381#20154#21592#12290
   end
   object RzBackground1: TRzBackground
     Left = 0
@@ -40,26 +40,12 @@ object frmInstall: TfrmInstall
     ShowImage = False
     ShowTexture = False
   end
-  object Label1: TLabel
-    Left = 25
-    Top = 14
-    Width = 164
-    Height = 12
-    Caption = #31995#32479#27491#22312#21319#32423#20013#65292#35831#31245#20505'...'
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clNavy
-    Font.Height = -12
-    Font.Name = #23435#20307
-    Font.Style = [fsBold]
-    ParentFont = False
-    Transparent = True
-  end
   object Label2: TLabel
     Left = 25
-    Top = 47
+    Top = 45
     Width = 59
     Height = 12
-    Caption = #24403#21069#29256#26412':'
+    Caption = #36719#20214#29256#26412':'
     Font.Charset = GB2312_CHARSET
     Font.Color = clNavy
     Font.Height = -12
@@ -437,7 +423,21 @@ object frmInstall: TfrmInstall
     Top = 175
     Width = 114
     Height = 12
-    Caption = #19979#36733#21319#32423#21253#35831#31245#20505'...'
+    Caption = #19979#36733#23433#35013#21253#35831#31245#20505'...'
+  end
+  object Label1: TLabel
+    Left = 25
+    Top = 14
+    Width = 177
+    Height = 12
+    Caption = #27491#22312#23433#35013#36719#20214#65292#35831#19981#35201#36864#20986'...'
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = [fsBold]
+    ParentFont = False
+    Transparent = True
   end
   object PrsBar: TProgressBar
     Left = 29
@@ -458,6 +458,18 @@ object frmInstall: TfrmInstall
     HotTrackColor = 3983359
     TabOrder = 1
     OnClick = cxbtnCancelClick
+    NumGlyphs = 2
+  end
+  object btnInstall: TRzBitBtn
+    Left = 207
+    Top = 236
+    Caption = #23433#35013
+    Color = 15791348
+    Enabled = False
+    HighlightColor = 16026986
+    HotTrack = True
+    HotTrackColor = 3983359
+    TabOrder = 2
     NumGlyphs = 2
   end
 end

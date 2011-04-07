@@ -8,7 +8,7 @@ uses
   cxDropDownEdit, cxControls, cxContainer, cxEdit, cxCheckBox, RzButton,
   jpeg, ExtCtrls, StdCtrls, cxSpinEdit, IniFiles, cxButtonEdit,
   zrComboBoxList, DB, cxCalendar, ZAbstractRODataset, ZDataset,
-  Grids, DBGridEh, ZAbstractDataset;
+  Grids, DBGridEh, ZAbstractDataset, RzLabel;
 type
   TLoginParam=Record
     UserID:String;
@@ -34,12 +34,14 @@ type
     edtOPER_DATE: TcxDateEdit;
     cxedtUsers: TcxTextEdit;
     lblTenantName: TLabel;
+    RzLabel1: TRzLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxcbxLoginParamPropertiesChange(Sender: TObject);
     procedure Label3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure RzLabel1Click(Sender: TObject);
   private
     FLoginParam:TLoginParam;
     FSysID: TGuid;
@@ -55,7 +57,7 @@ type
   end;
 
 implementation
-uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil;
+uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -160,7 +162,7 @@ begin
   with TfrmLogin.Create(Application) do
     begin
       try
-        Label6.Visible := _ok;
+        //Label6.Visible := _ok;
         FSysID := pSysID;
         if Locked then cxBtnOk.Caption := '解锁';
         if Locked then Caption := '屏幕解锁';
@@ -347,6 +349,13 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmLogin.RzLabel1Click(Sender: TObject);
+begin
+  inherited;
+  if TfrmHostDialog.HostDialog(self) then
+     MessageBox(Handle,'设置连接主机成功，请退出软件重新登录后生效.','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

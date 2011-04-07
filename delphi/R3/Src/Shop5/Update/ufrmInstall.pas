@@ -11,7 +11,6 @@ type
   TfrmInstall = class(TForm)
     PrsBar: TProgressBar;
     cxbtnCancel: TRzBitBtn;
-    Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
@@ -25,6 +24,8 @@ type
     Label11: TLabel;
     Label12: TLabel;
     Label7: TLabel;
+    Label1: TLabel;
+    btnInstall: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
@@ -137,33 +138,6 @@ begin
   end;
 end;
 
-procedure CloseApplication;
-var
-  i : ICOMAdminCatalog;
-  l : ICatalogCollection;
-  k : ICatalogObject;
-  r:Integer;
-  vProgId:TStrings;
-begin
-//  CoInitialize(nil);
-  try
-    i:=CoCOMAdminCatalog.Create;
-    l:=i.GetCollection('Applications') as ICatalogCollection;
-    l.Populate;
-    for r:= 0 to l.Count -1 do
-      begin
-        k:= l.Item[r] as ICatalogObject;
-        if k.Name = 'ADOScktSrvr' then
-           Break
-        else
-           k := nil;
-      end;
-    if k<>nil then
-       i.ShutdownApplication(k.Name);
-  finally
-    //CoUninitialize;
-  end;
-end;
 {文件是否在使用中}
 function IsFileInUse(fName:string):boolean;
 var
@@ -260,7 +234,8 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption := '欢迎使用'+ F.ReadString('soft','name','云盟软件R3')+'系列产品';
+    Label1.Caption := '欢迎使用'+ F.ReadString('soft','name','云盟软件R3')+'系列产品';
+
     Label10.Caption :=  F.ReadString('home','url','www.rspcn.com');
     Label12.Caption :=  F.ReadString('home','qq','30355701');
   finally
@@ -281,8 +256,7 @@ end;
 
 procedure TfrmInstall.cxbtnCancelClick(Sender: TObject);
 begin
-  if cxbtnCancel.Caption = '取消' then
-     Aborted := true;
+  Aborted := true;
 end;
 
 function TfrmInstall.CheckExeFile(filename: string): boolean;
@@ -319,7 +293,7 @@ begin
 end;
 procedure TfrmInstall.SetCurVersion(const Value: string);
 begin
-  Label2.Caption := '当前版本：'+ Value;
+  Label2.Caption := '软件版本：'+ Value;
 end;
 
 procedure TfrmInstall.SetNewVersion(const Value: string);

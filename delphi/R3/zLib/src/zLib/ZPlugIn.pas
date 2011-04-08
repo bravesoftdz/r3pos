@@ -424,14 +424,15 @@ var
   _DLLShowPlugin:function :integer; stdcall;
 begin
   try
-    @_DLLShowPlugin := GetProcAddress(Handle, 'ShowPlugIn');
-    if @_DLLShowPlugin=nil then Raise Exception.Create('ShowPlugIn方法没有实现');
+    @_DLLShowPlugin := GetProcAddress(Handle, 'ShowPlugin');
+    if @_DLLShowPlugin=nil then Raise Exception.Create('ShowPlugin方法没有实现');
     if _DLLShowPlugin<>0 then
        Raise Exception.Create(DLLGetLastError);
   except
     on E:Exception do
        begin
          LogFile.AddLogFile(0,E.Message,PlugInDisplayName);
+         Raise;
        end;
   end;
 end;
@@ -486,6 +487,7 @@ function TPlugInList.Find(id: integer): TPlugIn;
 var
   i:integer;
 begin
+  result := nil;
   for i:=0 to Count-1 do
     begin
       if Items[i].PlugInId = id then

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, COMAdmin,CmAdmCtl,ExtCtrls;
+  Dialogs, StdCtrls, Buttons,ExtCtrls;
 
 type
   TfrmSvcMgr = class(TForm)
@@ -123,40 +123,6 @@ begin
   end;
 end;
 
-procedure CloseApplication;
-var
-  i : ICOMAdminCatalog;
-  l : ICatalogCollection;
-  k : ICatalogObject;
-  r:Integer;
-  vProgId:TStrings;
-begin
-//  CoInitialize(nil);
-  try
-    i:=CoCOMAdminCatalog.Create;
-    l:=i.GetCollection('Applications') as ICatalogCollection;
-    l.Populate;
-    for r:= 0 to l.Count -1 do
-      begin
-        k:= l.Item[r] as ICatalogObject;
-        if k.Name = 'RSPScktSrvr' then
-           Break
-        else
-           k := nil;
-      end;
-    if k=nil then
-       begin
-         k:=l.Add as ICatalogObject;
-         k.Value['Name']:='RSPScktSrvr';
-         l.SaveChanges;
-       end;
-    if k<>nil then
-       i.ShutdownApplication(k.Name);
-  finally
-    //CoUninitialize;
-  end;
-end;
-
 {$R *.dfm}
 
 procedure TfrmSvcMgr.SpeedButton1Click(Sender: TObject);
@@ -167,7 +133,6 @@ end;
 procedure TfrmSvcMgr.SpeedButton2Click(Sender: TObject);
 begin
   StopService('RSPScktSrvr');
-  CloseApplication;
 end;
 
 procedure TfrmSvcMgr.SpeedButton4Click(Sender: TObject);

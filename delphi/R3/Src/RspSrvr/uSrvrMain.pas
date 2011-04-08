@@ -157,6 +157,11 @@ type
     procedure actfrmDbConfigExecute(Sender: TObject);
     procedure dbListDblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure actPlugInTimerExecute(Sender: TObject);
+    procedure actShowPlugInExecute(Sender: TObject);
+    procedure actPlugInExecuteExecute(Sender: TObject);
+    procedure actPlugInCloseExecute(Sender: TObject);
+    procedure actPlugInLoadExecute(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -253,6 +258,10 @@ end;
 procedure TSocketForm.UpdateTimerTimer(Sender: TObject);
 var
   Found: Boolean;
+  i:integer;
+  Timer:TTaskTimer;
+  F:TIniFile;
+  s:string;
 begin
   Found := FindWindow('Progman', nil) <> 0;
   if Found <> FProgmanOpen then
@@ -261,6 +270,31 @@ begin
     if Found then AddIcon;
     Refresh;
   end;
+  if Pages.ActivePageIndex = 3 then
+     begin
+       Timer := TTaskTimer.Create;
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
+       try
+         for i:=0 to TaskList.Items.Count -1 do
+         begin        
+           Timer.Decode(F.ReadString('PlugIn'+TaskList.Items[i].Caption,'Timer',''));
+           case Timer.TimerType of
+           ttNone:TaskList.Items[i].SubItems[1] := '关闭';
+           ttDay:TaskList.Items[i].SubItems[1] := '每天...';
+           ttWeek:TaskList.Items[i].SubItems[1] := '每周...';
+           ttMonth:TaskList.Items[i].SubItems[1] := '每月...';
+           end;
+           s := F.ReadString('PlugIn'+TaskList.Items[i].Caption,'NearTime','');
+           if s='' then
+              TaskList.Items[i].SubItems[2] := '没执行'
+           else
+              TaskList.Items[i].SubItems[2] := copy(s,1,4)+'-'+copy(s,5,2)+'-'+copy(s,7,2)+' '+copy(s,9,2)+':'+copy(s,11,2)+':'+copy(s,13,2);
+         end;
+       finally
+         F.Free;
+         Timer.Free;
+       end;
+     end;
   if Pages.ActivePageIndex = 5 then
      begin
        Label2.Caption :=  '当前线程数:'+inttostr(WorkThreadCount);
@@ -916,6 +950,83 @@ begin
  TaskThread.TaskSetEvent;
  TaskThread.WaitFor;
  FreeAndNil(TaskThread);
+end;
+
+procedure TSocketForm.actPlugInTimerExecute(Sender: TObject);
+var
+  Timer:TTaskTimer;
+  PlugIn:TPlugIn;
+  F:TIniFile;
+begin
+  if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
+  PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
+  if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
+  if PlugIn.Data = nil then PlugIn.Data := TTaskTimer.Create;
+  Timer := TTaskTimer(PlugIn.Data);
+  if TfrmTimer.Designer(self,Timer) then
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
+       try
+         F.WriteString('PlugIn'+inttostr(PlugIn.PlugInId),'Timer',Timer.EnCode);
+       finally
+         F.Free;
+       end;
+     end;
+end;
+
+procedure TSocketForm.actShowPlugInExecute(Sender: TObject);
+var
+  PlugIn:TPlugIn;
+begin
+  if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
+  PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
+  if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
+  try
+    PlugIn.DLLShowPlugIn;
+  except
+    on E:Exception do
+       MessageBox(Handle,Pchar(E.Message),'错误提示..',MB_OK+MB_ICONERROR);
+  end;
+end;
+
+procedure TSocketForm.actPlugInExecuteExecute(Sender: TObject);
+var
+  PlugIn:TPlugIn;
+  F:TIniFile;
+begin
+  if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
+  PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
+  if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
+  try
+    PlugIn.DLLDoExecute('');
+    F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
+    try
+      F.WriteString('PlugIn'+TaskList.Selected.Caption,'NearTime',formatdatetime('YYYYMMDDHHNNSS',now()));
+    finally
+      F.Free;
+    end;
+  except
+    on E:Exception do
+       MessageBox(Handle,Pchar(E.Message),'错误提示..',MB_OK+MB_ICONERROR);
+  end;
+end;
+
+procedure TSocketForm.actPlugInCloseExecute(Sender: TObject);
+var
+  PlugIn:TPlugIn;
+begin
+  if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
+  PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
+  if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
+  PlugInList.Delete(StrtoInt(TaskList.Selected.Caption));
+  TaskList.Selected.Delete;
+end;
+
+procedure TSocketForm.actPlugInLoadExecute(Sender: TObject);
+begin
+  PlugInList.Clear;
+  PlugInList.LoadAll;
+  ReadPlugIn;
 end;
 
 initialization

@@ -48,7 +48,8 @@ uses
   objRelation in '..\Shop5\Obj\objRelation.pas',
   ObjSyncFactory in '..\Shop5\Obj\ObjSyncFactory.pas',
   uTask in 'uTask.pas',
-  ZPlugIn in '..\..\zLib\src\zLib\ZPlugIn.pas';
+  ZPlugIn in '..\..\zLib\src\zLib\ZPlugIn.pas',
+  ufrmTimer in 'ufrmTimer.pas' {frmTimer};
 
 {$R *.res}
 
@@ -69,7 +70,7 @@ begin
   Mgr := OpenSCManager(nil, nil, SC_MANAGER_ALL_ACCESS);
   if Mgr <> 0 then
   begin
-    Svc := OpenService(Mgr, PChar('ADOScktSrvr'), SERVICE_ALL_ACCESS);
+    Svc := OpenService(Mgr, PChar('RSPScktSrvr'), SERVICE_ALL_ACCESS);
     Result := Svc <> 0;
     if Result then
     begin

@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = PropPage
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -619,18 +619,23 @@ object SocketForm: TSocketForm
     end
     object actPlugInClose: TAction
       Caption = #20851#38381#25554#20214
+      OnExecute = actPlugInCloseExecute
     end
     object actPlugInExecute: TAction
       Caption = #31435#21363#25191#34892
+      OnExecute = actPlugInExecuteExecute
     end
     object actShowPlugIn: TAction
       Caption = #31649#29702#25554#20214
+      OnExecute = actShowPlugInExecute
     end
     object actPlugInTimer: TAction
       Caption = #25554#20214#35843#24230
+      OnExecute = actPlugInTimerExecute
     end
     object actPlugInLoad: TAction
       Caption = #35013#36733#25554#20214
+      OnExecute = actPlugInLoadExecute
     end
   end
   object ImageList1: TImageList

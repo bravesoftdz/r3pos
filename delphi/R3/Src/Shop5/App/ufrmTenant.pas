@@ -135,6 +135,12 @@ begin
   inherited;
   for i:=0 to RzPage.PageCount -1 do
     RzPage.Pages[i].TabVisible := false;
+
+  if not Global.LocalFactory.Connected then
+     begin
+       Global.MoveToLocal;
+       Global.Connect;
+     end;
   edtREGION_ID.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
   Obj := TRecord_.Create;
 end;

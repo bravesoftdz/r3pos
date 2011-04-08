@@ -19,7 +19,6 @@ uses
   uXDictFactory in 'Frame\uXDictFactory.pas',
   uframeToolForm in 'Frame\uframeToolForm.pas' {frameToolForm},
   ObjCommon in 'Obj\ObjCommon.pas',
-  uDownByHttp in 'Update\uDownByHttp.pas',
   ufrmInstall in 'Update\ufrmInstall.pas' {frmInstall},
   uDevFactory in 'App\uDevFactory.pas',
   ufrmPswModify in 'ufrmPswModify.pas' {frmPswModify},

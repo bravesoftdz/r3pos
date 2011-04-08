@@ -1255,6 +1255,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
         Params.ParamByName('KEY_FIELDS').AsString := 'RELATIONS_ID';
+        Params.ParamByName('KEY_FLAG').AsInteger := 1;
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
       finally
@@ -2234,6 +2235,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODS_RELATION';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;RELATION_ID';
+        Params.ParamByName('KEY_FLAG').AsInteger := 1;
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
       finally
@@ -2359,7 +2361,8 @@ try
       try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_BARCODE';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;PROPERTY_01;PROPERTY_02;UNIT_ID';
+        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
+        Params.ParamByName('KEY_FLAG').AsInteger := 1;
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
       finally

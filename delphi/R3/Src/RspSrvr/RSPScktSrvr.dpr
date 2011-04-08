@@ -47,7 +47,8 @@ uses
   ObjUsers in '..\Shop5\Obj\ObjUsers.pas',
   objRelation in '..\Shop5\Obj\objRelation.pas',
   ObjSyncFactory in '..\Shop5\Obj\ObjSyncFactory.pas',
-  ZPlusIn in '..\..\zLib\src\zLib\ZPlusIn.pas';
+  uTask in 'uTask.pas',
+  ZPlugIn in '..\..\zLib\src\zLib\ZPlugIn.pas';
 
 {$R *.res}
 

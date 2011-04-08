@@ -1,6 +1,6 @@
 object frmTimer: TfrmTimer
-  Left = 545
-  Top = 136
+  Left = 286
+  Top = 277
   BorderStyle = bsDialog
   Caption = #20219#21153#35843#24230
   ClientHeight = 262
@@ -51,8 +51,8 @@ object frmTimer: TfrmTimer
         end
       end
       object GroupBox3: TGroupBox
-        Left = 143
-        Top = 33
+        Left = 95
+        Top = 9
         Width = 308
         Height = 113
         Caption = #27599#21608

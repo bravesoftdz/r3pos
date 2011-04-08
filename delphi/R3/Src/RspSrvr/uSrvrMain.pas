@@ -27,7 +27,6 @@ type
     pmuSystem: TPopupMenu;
     miClose: TMenuItem;
     N1: TMenuItem;
-    miProperties: TMenuItem;
     UpdateTimer: TTimer;
     MainMenu1: TMainMenu;
     miPorts: TMenuItem;
@@ -83,7 +82,7 @@ type
     mnuMgr: TMenuItem;
     TabSheet2: TTabSheet;
     Memo1: TMemo;
-    ListView2: TListView;
+    TaskList: TListView;
     OpenDialog1: TOpenDialog;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
@@ -114,6 +113,18 @@ type
     N2: TMenuItem;
     Label14: TLabel;
     Label18: TLabel;
+    pupTask: TPopupMenu;
+    actPlugInClose: TAction;
+    actPlugInExecute: TAction;
+    actShowPlugIn: TAction;
+    actPlugInTimer: TAction;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N8: TMenuItem;
+    N9: TMenuItem;
+    N10: TMenuItem;
+    actPlugInLoad: TAction;
+    N11: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -145,6 +156,7 @@ type
     procedure actfrmDeleteDbExecute(Sender: TObject);
     procedure actfrmDbConfigExecute(Sender: TObject);
     procedure dbListDblClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -183,6 +195,8 @@ type
 
     //数据库连接管理
     procedure ReadDbList;
+    //读取任务插件
+    procedure ReadPlugIn;
   public
     procedure Initialize(FromService: Boolean);
     property ItemIndex: Integer read GetItemIndex write SetItemIndex;
@@ -206,7 +220,7 @@ var
 
 implementation
 
-uses IniFiles,Registry,ScktCnst,ufrmDbSetup;
+uses IniFiles,Registry,ScktCnst,ufrmDbSetup,ZPlugIn,uTask,ufrmTimer;
 
 {$R *.dfm}
 
@@ -352,7 +366,9 @@ begin
   mnuMgr.Visible := FromService;
   UpdateStatus;
   ReadDbList;
+  ReadPlugIn;
   AddIcon;
+  TaskThread := TTaskThread.Create;
   if IE4Installed then
     FTaskMessage := RegisterWindowMessage('TaskbarCreated');
   UpdateTimer.Enabled := True;
@@ -484,7 +500,7 @@ begin
       begin
         SetForegroundWindow(Handle);
         GetCursorPos(pt);
-        PopupMenu.Popup(pt.x, pt.y);
+        pmuSystem.Popup(pt.x, pt.y);
       end else
         SetForegroundWindow(Handle);
     end;
@@ -807,7 +823,7 @@ begin
              begin
              Item := dbList.Items.Add;
              Item.Caption := copy(db[i],3,20);
-             Item.SubItems.Add(F.ReadString(db[i],'hostname','')+'  <数据库名:'+F.ReadString(db[i],'databasename','')+'>'); 
+             Item.SubItems.Add(F.ReadString(db[i],'hostname','')+'  <数据库名:'+F.ReadString(db[i],'databasename','')+'>');
              Item.SubItems.Add('数据库类型:'+F.ReadString(db[i],'provider',''));
              end;
            end;
@@ -816,6 +832,21 @@ begin
     db.Free;
     F.Free;
   end;
+end;
+
+procedure TSocketForm.ReadPlugIn;
+var
+  i:integer;
+  item:TListItem;
+begin
+  for i:=0 to PlugInList.Count-1 do
+    begin
+      Item := TaskList.Items.Add;
+      Item.Caption := inttostr(PlugInList.Items[i].PlugInId);
+      Item.SubItems.Add(PlugInList.Items[i].PlugInDisplayName);
+      Item.SubItems.Add('');
+      Item.SubItems.Add('');
+    end;
 end;
 
 { TSocketService }
@@ -877,6 +908,14 @@ end;
 procedure TSocketForm.dbListDblClick(Sender: TObject);
 begin
   actfrmDbConfigExecute(nil);
+end;
+
+procedure TSocketForm.FormDestroy(Sender: TObject);
+begin
+ TaskThread.Terminate;
+ TaskThread.TaskSetEvent;
+ TaskThread.WaitFor;
+ FreeAndNil(TaskThread);
 end;
 
 initialization

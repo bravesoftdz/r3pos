@@ -16,11 +16,11 @@ object SocketForm: TSocketForm
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = True
-  PopupMenu = pmuSystem
   Position = poScreenCenter
   ScreenSnap = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = TabSheet4
+    ActivePage = PropPage
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -311,7 +311,7 @@ object SocketForm: TSocketForm
     object TabSheet1: TTabSheet
       Caption = ' '#20219#21153
       ImageIndex = 4
-      object ListView2: TListView
+      object TaskList: TListView
         Left = 0
         Top = 0
         Width = 511
@@ -337,6 +337,7 @@ object SocketForm: TSocketForm
         MultiSelect = True
         ReadOnly = True
         RowSelect = True
+        PopupMenu = pupTask
         TabOrder = 0
         ViewStyle = vsReport
         OnColumnClick = ConnectionListColumnClick
@@ -521,13 +522,8 @@ object SocketForm: TSocketForm
       Caption = '-'
     end
     object mnuMgr: TMenuItem
-      Caption = #31649#29702#26381#21153'(&M)'
+      Caption = #26381#21153#31649#29702'(&M)'
       OnClick = mnuMgrClick
-    end
-    object miProperties: TMenuItem
-      Caption = #25511#21046#20013#24515'(&P)'
-      Default = True
-      OnClick = miPropertiesClick
     end
   end
   object UpdateTimer: TTimer
@@ -620,6 +616,21 @@ object SocketForm: TSocketForm
     object actfrmDbConfig: TAction
       Caption = #23646#24615
       OnExecute = actfrmDbConfigExecute
+    end
+    object actPlugInClose: TAction
+      Caption = #20851#38381#25554#20214
+    end
+    object actPlugInExecute: TAction
+      Caption = #31435#21363#25191#34892
+    end
+    object actShowPlugIn: TAction
+      Caption = #31649#29702#25554#20214
+    end
+    object actPlugInTimer: TAction
+      Caption = #25554#20214#35843#24230
+    end
+    object actPlugInLoad: TAction
+      Caption = #35013#36733#25554#20214
     end
   end
   object ImageList1: TImageList
@@ -801,6 +812,28 @@ object SocketForm: TSocketForm
     end
     object N2: TMenuItem
       Action = actfrmDeleteDb
+    end
+  end
+  object pupTask: TPopupMenu
+    Left = 184
+    Top = 176
+    object N5: TMenuItem
+      Action = actPlugInExecute
+    end
+    object N10: TMenuItem
+      Caption = '-'
+    end
+    object N4: TMenuItem
+      Action = actPlugInTimer
+    end
+    object N8: TMenuItem
+      Action = actShowPlugIn
+    end
+    object N11: TMenuItem
+      Action = actPlugInLoad
+    end
+    object N9: TMenuItem
+      Action = actPlugInClose
     end
   end
 end

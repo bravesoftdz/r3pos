@@ -545,22 +545,26 @@ begin
     Factory.DataSet := DataSet;
     if Assigned(Params) then Factory.Params.Assign(Params);
     Factory.InitClass;
-    Factory.ReadFromDataSet(DataSet);
+    DataSet.Close;
+//    Factory.ReadFromDataSet(DataSet);
     Factory.BeforeOpenRecord(dbHelp);
-    if DataSet.ClassNameIs('TZQuery') then
-       begin
-         TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-         if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
-       end
-    else
-    if DataSet.ClassNameIs('TZReadOnlyQuery') then
-       begin
-         TZReadOnlyQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
-         if Assigned(Params) then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
-       end
-    else
-       Raise Exception.Create('不支持的数据集.');
-    result := Open(DataSet);
+    if not DataSet.Active then
+      begin
+        if DataSet.ClassNameIs('TZQuery') then
+           begin
+             TZQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
+             if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
+           end
+        else
+        if DataSet.ClassNameIs('TZReadOnlyQuery') then
+           begin
+             TZReadOnlyQuery(DataSet).SQL.Text := Factory.SelectSQL.Text;
+             if Assigned(Params) then TZReadOnlyQuery(DataSet).Params.AssignValues(Params);
+           end
+        else
+           Raise Exception.Create('不支持的数据集.');
+        result := Open(DataSet);
+      end;
   finally
     Factory.Free;
   end;
@@ -778,14 +782,18 @@ begin
       begin
         with TZFactory(FList[i]) do
           begin
-            ReadFromDataSet(DataSet);
+            //ReadFromDataSet(DataSet);
+            DataSet.Close;
             BeforeOpenRecord(dbHelp);
-            if ZClassName<>'' then
-               begin
-                 if SelectSQL.Text<>'' then TZQuery(DataSet).SQL.Text := SelectSQL.Text;
-                 if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
-               end;
-            result := dbHelp.Open(DataSet);
+            if not DataSet.Active then
+              begin
+                if ZClassName<>'' then
+                   begin
+                     if SelectSQL.Text<>'' then TZQuery(DataSet).SQL.Text := SelectSQL.Text;
+                     if Assigned(Params) then TZQuery(DataSet).Params.AssignValues(Params);
+                   end;
+                result := dbHelp.Open(DataSet);
+              end;
           end;
       end;
     for i:=0 to FList.Count -1 do TObject(FList[i]).Free;

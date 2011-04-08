@@ -71,7 +71,7 @@ begin
   result := 1001;
 end;
 //RSP调用插件时执行此方法
-function DoExecute:Integer; stdcall;
+function DoExecute(Params:Pchar):Integer; stdcall;
 begin
   try
     //开始执行插件该做的工作.

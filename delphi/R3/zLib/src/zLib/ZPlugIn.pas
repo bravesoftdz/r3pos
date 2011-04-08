@@ -91,7 +91,7 @@ type
     destructor Destroy; override;
 
     function DLLGetLastError:string;
-    procedure DLLDoExecute;
+    procedure DLLDoExecute(Params:string);
     procedure DLLShowPlugIn;
 
     property Handle:THandle read FHandle write SetHandle;
@@ -203,14 +203,14 @@ begin
   inherited;
 end;
 
-procedure TPlugIn.DLLDoExecute;
+procedure TPlugIn.DLLDoExecute(Params:string);
 var
-  _DLLDoExecute:function :integer; stdcall;
+  _DLLDoExecute:function(Params:Pchar) :integer; stdcall;
 begin
   try
     @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
     if @_DLLDoExecute=nil then Raise Exception.Create('DoExecute方法没有实现');
-    if _DLLDoExecute<>0 then
+    if _DLLDoExecute(Pchar(Params))<>0 then
        Raise Exception.Create(DLLGetLastError);
   except
     on E:Exception do

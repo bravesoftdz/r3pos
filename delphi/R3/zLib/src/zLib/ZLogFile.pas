@@ -58,8 +58,11 @@ constructor TZLogFilePool.Create;
 begin
   DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
   ForceDirectories(DefaultPath+'debug');
-  AssignFile(F,DefaultPath+'debug\debug.txt');
-  rewrite(f);
+  if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
+  begin
+    AssignFile(F,DefaultPath+'debug\debug.txt');
+    rewrite(f);
+  end;
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;
@@ -69,7 +72,8 @@ begin
   Enter;
   try
     inherited;
-    CloseFile(F);
+    if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
+       CloseFile(F);
     LogFile := nil;
   finally
     Leave;

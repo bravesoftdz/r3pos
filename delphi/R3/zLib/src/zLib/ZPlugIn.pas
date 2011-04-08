@@ -117,6 +117,8 @@ type
     procedure LoadAll;
     procedure Delete(id:integer);
 
+    function Find(id:integer):TPlugIn;
+
     property Items[ItemIndex:Integer]:TPlugIn read GetItems;
     property Count:Integer read GetCount;
    end;
@@ -216,6 +218,7 @@ begin
     on E:Exception do
        begin
          LogFile.AddLogFile(0,E.Message,PlugInDisplayName);
+         Raise;
        end;
   end;
 end;
@@ -477,6 +480,20 @@ begin
   Clear;
   FList.Free;
   inherited;
+end;
+
+function TPlugInList.Find(id: integer): TPlugIn;
+var
+  i:integer;
+begin
+  for i:=0 to Count-1 do
+    begin
+      if Items[i].PlugInId = id then
+         begin
+           result := Items[i];
+           break;
+         end;
+    end;
 end;
 
 function TPlugInList.GetCount: Integer;

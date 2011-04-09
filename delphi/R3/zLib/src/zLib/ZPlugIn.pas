@@ -126,7 +126,7 @@ type
 var
   PlugInList:TPlugInList;
 implementation
-
+uses IniFiles;
 { TPlugIn }
 
 function TPlugIn.BeginTrans(TimeOut: integer): integer;
@@ -176,6 +176,7 @@ var
   DLLGetPlugInDisplayName:function :Pchar; stdcall;
   DLLGetPlugInId:function :Integer; stdcall;
   DLLSetParams:function(PlugIn:IPlugIn) :Integer; stdcall;
+  f:TiniFile;
 begin
   dbResolver := nil;
   FData := nil;
@@ -194,6 +195,12 @@ begin
     if @DLLSetParams=nil then Raise Exception.Create('SetParams方法没有实现');
     GetInterface(StringtoGuid('{34E06C0E-34E5-4BB8-A10F-3F1ECB983AD8}'),IParams);
     DLLSetParams(IParams);
+    f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+    try
+       dbid := f.ReadInteger('db','dbid',0);
+    finally
+       f.free;
+    end;
   except
     FreeLibrary(Handle);
     Handle := 0;

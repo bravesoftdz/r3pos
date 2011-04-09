@@ -25,7 +25,7 @@ type
     function iDbType(var dbType:integer):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
     //提交数据集
     function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
     //返回执行影响记录数
@@ -73,7 +73,7 @@ type
     function iDbType(var dbType:integer):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
     //提交数据集
     function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
     //返回执行影响记录数
@@ -294,7 +294,7 @@ begin
   end;
 end;
 
-function TPlugIn.Open(SQL: Pchar; Data: OleVariant): integer;
+function TPlugIn.Open(SQL: Pchar;var Data: OleVariant): integer;
 var
   rs:TZQuery;
 begin

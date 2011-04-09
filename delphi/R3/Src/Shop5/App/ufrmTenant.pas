@@ -324,8 +324,14 @@ begin
       raise Exception.Create('两次密码输入不一致！');
     end;
   //前后检测——以上检测只判断注册界面不允许为空的字段
-  Save;
-  InitTenant;
+  MessageBox(Handle,'注册过程大约需要1分钟时间，请稍候...','友情提示...',MB_OK+MB_ICONINFORMATION);
+  Screen.Cursor := crSQLWait;
+  try
+    Save;
+    InitTenant;
+  finally
+    Screen.Cursor := crDefault;
+  end;
   ModalResult := mrok;
 end;
 

@@ -6,6 +6,7 @@ uses
   MultInst in 'MultInst.pas';
 
 {$R *.res}
+{$R JclCommCtrlAdmin.RES}
 
 begin
   Application.Initialize;

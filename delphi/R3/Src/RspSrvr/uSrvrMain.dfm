@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = TabSheet1
+    ActivePage = PropPage
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -72,6 +72,7 @@ object SocketForm: TSocketForm
           Top = 16
           Width = 73
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           TabOrder = 0
           Text = '8063'
           OnExit = IntegerExit
@@ -125,6 +126,7 @@ object SocketForm: TSocketForm
           Top = 12
           Width = 73
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           TabOrder = 0
           Text = '10'
           OnExit = IntegerExit
@@ -177,6 +179,7 @@ object SocketForm: TSocketForm
           Top = 15
           Width = 73
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           TabOrder = 0
           Text = '0'
           OnExit = IntegerExit
@@ -207,6 +210,7 @@ object SocketForm: TSocketForm
         Top = 10
         Width = 89
         Height = 245
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         ItemHeight = 12
         TabOrder = 3
         OnClick = PortListClick
@@ -359,6 +363,7 @@ object SocketForm: TSocketForm
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = []
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         ParentFont = False
         PopupMenu = pmuLogFile
         TabOrder = 0
@@ -840,5 +845,10 @@ object SocketForm: TSocketForm
     object N9: TMenuItem
       Action = actPlugInClose
     end
+  end
+  object RzTrayIcon1: TRzTrayIcon
+    PopupMenu = pmuSystem
+    Left = 332
+    Top = 174
   end
 end

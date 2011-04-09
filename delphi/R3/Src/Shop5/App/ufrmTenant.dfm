@@ -924,6 +924,7 @@ inherited frmTenant: TfrmTenant
         Width = 90
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTENANT_NAME: TcxTextEdit
         Tag = 1
@@ -932,6 +933,7 @@ inherited frmTenant: TfrmTenant
         Width = 185
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSHORT_TENANT_NAME: TcxTextEdit
         Tag = 2
@@ -940,6 +942,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLEGAL_REPR: TcxTextEdit
         Tag = 7
@@ -948,6 +951,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLINKMAN: TcxTextEdit
         Tag = 9
@@ -956,6 +960,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTELEPHONE: TcxTextEdit
         Tag = 10
@@ -964,6 +969,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         TabOrder = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtFAXES: TcxTextEdit
         Tag = 8
@@ -972,6 +978,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLICENSE_CODE: TcxTextEdit
         Tag = 3
@@ -980,6 +987,7 @@ inherited frmTenant: TfrmTenant
         Width = 159
         Height = 20
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtADDRESS: TcxTextEdit
         Tag = 11
@@ -988,6 +996,7 @@ inherited frmTenant: TfrmTenant
         Width = 183
         Height = 20
         TabOrder = 11
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPOSTALCODE: TcxTextEdit
         Tag = 12
@@ -996,6 +1005,7 @@ inherited frmTenant: TfrmTenant
         Width = 71
         Height = 20
         TabOrder = 12
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPASSWRD: TcxTextEdit
         Tag = 4
@@ -1005,6 +1015,7 @@ inherited frmTenant: TfrmTenant
         Height = 20
         Properties.EchoMode = eemPassword
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPASSWRD1: TcxTextEdit
         Tag = 5
@@ -1014,6 +1025,7 @@ inherited frmTenant: TfrmTenant
         Height = 20
         Properties.EchoMode = eemPassword
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object btnOk: TRzBitBtn
         Left = 209

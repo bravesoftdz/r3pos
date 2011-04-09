@@ -49,9 +49,12 @@ uses
   ObjSyncFactory in '..\Shop5\Obj\ObjSyncFactory.pas',
   uTask in 'uTask.pas',
   ZPlugIn in '..\..\zLib\src\zLib\ZPlugIn.pas',
-  ufrmTimer in 'ufrmTimer.pas' {frmTimer};
+  ufrmTimer in 'ufrmTimer.pas' {frmTimer},
+  TrayDesktop in 'TrayDesktop.pas',
+  objMessage in '..\Shop5\Obj\objMessage.pas';
 
 {$R *.res}
+//{$R JclCommCtrlAdmin.RES}
 
 function Installing: Boolean;
 begin
@@ -80,7 +83,7 @@ begin
         QueryServiceConfig(Svc, Config, Size, Size);
         ServiceStartName := PQueryServiceConfig(Config)^.lpServiceStartName;
         if CompareText(ServiceStartName, 'LocalSystem') = 0 then
-          ServiceStartName := 'SYSTEM';
+           ServiceStartName := 'SYSTEM';
       finally
         Dispose(Config);
       end;
@@ -119,7 +122,7 @@ begin
   begin
     Forms.Application.Initialize;
     SocketService := nil;
-    Forms.Application.ShowMainForm := False;
+//    Forms.Application.ShowMainForm := False;
     Forms.Application.Title := '数据访问服务组件(DAS)';
     Forms.Application.CreateForm(TSocketForm, SocketForm);
     SocketForm.Initialize(False);

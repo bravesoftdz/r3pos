@@ -380,11 +380,12 @@ var
   inxml:string;
   doc:IXMLDomDocument;
   rio:THTTPRIO;
-  caTenantLoginResp:IXMLDOMNode;
+  caTenantLoginResp,ServerInfo:IXMLDOMNode;
   Node:IXMLDOMNode;
-  code:string;
+  code,hsname,srvrId,cstr:string;
   h:rsp;
   f:TIniFile;
+  finded:boolean;
 begin
   Audited := false;
   doc := CreateRspXML;
@@ -443,18 +444,89 @@ begin
          result.SLL := sslpwd;
          if code = '1' then
             begin
-              result.HOST_NAME := GetNodeValue(caTenantLoginResp,'hostNmae');
-              result.SRVR_PORT := StrtoInt(GetNodeValue(caTenantLoginResp,'srvrPort'));
-              result.SRVR_PATH := GetNodeValue(caTenantLoginResp,'srvrPath');
-              result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
-              Audited := true;
               f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
               try
-                if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
+                 srvrId := f.readString('db','srvrId','');
+                 result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
+                 f.WriteString('db','dbid',inttostr(result.DB_ID));
+                 if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
+                    hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
+                 else
+                    hsname := GetNodeValue(caTenantLoginResp,'dbHostName')+':'+GetNodeValue(caTenantLoginResp,'databasePort');
+                 f.WriteString('db'+inttostr(result.DB_ID),'hostname',hsname);
+                 f.WriteString('db'+inttostr(result.DB_ID),'databasename',GetNodeValue(caTenantLoginResp,'databaseName'));
+                 f.WriteString('db'+inttostr(result.DB_ID),'uid',GetNodeValue(caTenantLoginResp,'dbUserName'));
+                 f.WriteString('db'+inttostr(result.DB_ID),'password',EncStr(GetNodeValue(caTenantLoginResp,'dbPassword'),ENC_KEY));
+                 f.WriteString('db'+inttostr(result.DB_ID),'dbid',inttostr(result.DB_ID));
+                 case StrtoInt(GetNodeValue(caTenantLoginResp,'databaseType')) of
+                 0:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','mssql');
+                     cstr := 'provider=mssql;hostname='+hsname+';databasename='+GetNodeValue(caTenantLoginResp,'databaseName')+';uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 1:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','oracle');
+                     cstr := 'provider=oracle-9i;hostname='+hsname+';databasename='+GetNodeValue(caTenantLoginResp,'databaseName')+';uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 2:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','sybase');
+                     cstr := 'provider=sybase;hostname='+hsname+';databasename='+GetNodeValue(caTenantLoginResp,'databaseName')+';uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 3:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','access');
+                     cstr := 'provider=ado;"databasename=Provider=IBMDADB2;Persist Security Info=True;Data Source='+GetNodeValue(caTenantLoginResp,'databaseName')+';Location='+hsname+'";uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 4:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','db2');
+                     cstr := 'provider=ado;"databasename=Provider=IBMDADB2;Persist Security Info=True;Data Source='+GetNodeValue(caTenantLoginResp,'databaseName')+';Location='+hsname+'";uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 5:begin
+                     f.WriteString('db'+inttostr(result.DB_ID),'provider','sqlite');
+                     cstr := 'provider=sqlite-3;hostname='+hsname+';databasename='+GetNodeValue(caTenantLoginResp,'databaseName')+';uid='+GetNodeValue(caTenantLoginResp,'dbUserName')+';password='+GetNodeValue(caTenantLoginResp,'dbPassword');
+                   end;
+                 end;
+                 f.WriteString('db'+inttostr(result.DB_ID),'connstr',cstr);
+                 Audited := true;
+                 finded := false;
+                 if not FindCmdLineSwitch('DEBUG',['-','+'],false) then
                    begin
-                     f.WriteString('db','Connstr','connmode=2;hostname='+result.HOST_NAME+';port='+inttostr(result.SRVR_PORT)+';dbid='+inttostr(result.DB_ID));
-                     f.WriteString('db','dbid',inttostr(result.DB_ID));
-                     f.WriteString('db','hostid',result.HOST_NAME);
+                     ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
+                     ServerInfo := ServerInfo.firstChild;
+                     while ServerInfo<>nil do
+                       begin
+                         f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrName',GetNodeValue(ServerInfo,'srvrName'));
+                         f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'hostName',GetNodeValue(ServerInfo,'hostName'));
+                         f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPort',GetNodeValue(ServerInfo,'srvrPort'));
+                         f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrPath',GetNodeValue(ServerInfo,'srvrPath'));
+                         case strtoint(GetNodeValue(ServerInfo,'srvrStatus')) of
+                         1: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
+                         2: f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','爆满');
+                         9: begin
+                              f.EraseSection(GetNodeValue(ServerInfo,'srvrId'));
+                              ServerInfo := ServerInfo.nextSibling;
+                              continue;
+                            end;
+                         else
+                            f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
+                         end;
+                         if not finded then
+                            begin
+                              if srvrId=GetNodeValue(ServerInfo,'srvrId') then
+                                 begin
+                                   f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
+                                 end;
+                            end;
+                         ServerInfo := ServerInfo.nextSibling;
+                       end;
+                     if not finded then //一直没找到设置，默认第一个
+                       begin
+                         ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
+                         ServerInfo := ServerInfo.firstChild;
+                         if ServerInfo<>nil then
+                            begin
+                              f.WriteString('db','srvrId',GetNodeValue(ServerInfo,'srvrId'));
+                              f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
+                            end;
+                      end;
                    end;
               finally
                 f.Free;

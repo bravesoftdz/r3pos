@@ -63,10 +63,10 @@ begin
            begin
             Item := rzDbList.Items.Add;
             Item.Caption := copy(Host[i],3,255);
-            Item.SubItems.Add(f.ReadString(Host[i],'displayname',''));
-            Item.SubItems.Add(f.ReadString(Host[i],'status',''));
-            Item.SubItems.Add(f.ReadString(Host[i],'hostname',''));
-            Item.SubItems.Add(f.ReadString(Host[i],'port',''));
+            Item.SubItems.Add(f.ReadString(Host[i],'srvrName',''));
+            Item.SubItems.Add(f.ReadString(Host[i],'srvrStatus',''));
+            Item.SubItems.Add(f.ReadString(Host[i],'hostName',''));
+            Item.SubItems.Add(f.ReadString(Host[i],'srvrPort',''));
            end;
       end;
   finally
@@ -90,7 +90,7 @@ begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   try
     f.WriteString('db','Connstr','connmode=2;hostname='+rzDbList.Selected.SubItems[2]+';port='+rzDbList.Selected.SubItems[3]+';dbid='+f.ReadString('db','dbid','0'));
-    f.WriteString('db','hostid',rzDbList.Selected.Caption);
+    f.WriteString('db','srvrId',rzDbList.Selected.Caption);
   finally
     f.Free;
   end;

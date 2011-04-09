@@ -53,7 +53,7 @@ type
   end;
 
 implementation
-uses uDownByHttp,uGlobal, COMAdmin,CmAdmCtl,WinSvc;
+uses uDownByHttp,uGlobal,WinSvc;
 var IsStop:boolean;
 {$R *.dfm}
 

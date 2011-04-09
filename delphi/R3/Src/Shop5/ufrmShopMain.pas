@@ -420,7 +420,7 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader;
+  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -579,7 +579,7 @@ begin
     ts.Delimiter :='/';
     ts.DelimitedText := url;
     if ts.Count > 0 then
-      Result := ts[ts.Count - 1];
+       Result := ts[ts.Count - 1];
   finally
     ts.Free;
   end;
@@ -663,19 +663,19 @@ begin
 
          if CaFactory.Audited then
             begin
-              if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
-                 begin
-                   Global.MoveToRemate;
-                   try
-                     try
-                       Global.Connect;
-                     except
-                       MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
-                     end;
-                   finally
-                     Global.MoveToLocal;
-                   end;
-                 end;
+              //if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
+              //   begin
+              //     Global.MoveToRemate;
+              //     try
+              //       try
+              //         Global.Connect;
+              //       except
+              //         MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+              //       end;
+              //     finally
+              //       Global.MoveToLocal;
+              //     end;
+              //   end;
               if not FindCmdLineSwitch('DEBUG',['-','+'],false) then //同步门店专用资料
                  begin
                    if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
@@ -766,6 +766,8 @@ begin
       if TAction(actList.Actions[i]).Tag > 0 then
          TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
     end;
+  actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (SFVersion='.NET');
+  actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (SFVersion='.NET');
 end;
 
 procedure TfrmShopMain.FormCloseQuery(Sender: TObject;
@@ -1908,7 +1910,9 @@ begin
 end;
 
 procedure TfrmShopMain.actfrmShopInfoListExecute(Sender: TObject);
-var Form:TfrmBasic;
+var
+  Form:TfrmBasic;
+  AObj:TRecord_;
 begin
   inherited;
   if not Logined then
@@ -1918,14 +1922,26 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmShopInfoList);
-  if not Assigned(Form) then
+  if SFVersion='.LCL' then
      begin
-       Form := TfrmShopInfoList.Create(self);
-       AddFrom(Form);
+       AObj := TRecord_.Create;
+       try
+         TfrmShopInfo.EditDialog(self,Global.SHOP_ID,Aobj);
+       finally
+         AObj.Free;
+       end;
+     end
+  else
+     begin
+        Form := FindChildForm(TfrmShopInfoList);
+        if not Assigned(Form) then
+           begin
+             Form := TfrmShopInfoList.Create(self);
+             AddFrom(Form);
+           end;
+        Form.Show;
+        Form.BringToFront;
      end;
-  Form.Show;
-  Form.BringToFront;
 end;
 
 procedure TfrmShopMain.actfrmXsmBrowserExecute(Sender: TObject);
@@ -2512,7 +2528,7 @@ begin
          try
            Global.Connect;
          except
-           Raise Exception.Create('连接远程数据库失败,完成数据同步...'); 
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...'); 
          end;
        finally
          Global.MoveToLocal;

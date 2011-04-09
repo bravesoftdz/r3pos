@@ -15,7 +15,8 @@ interface
 uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,Variants,
   Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,ZConst,
-  ActnList, DB,OleServer,ImgList,ActiveX,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile;
+  ActnList, DB,OleServer,ImgList,ActiveX,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile,
+  RzTray;
 
 const
   WM_MIDASICON    = WM_USER + 1;
@@ -125,6 +126,7 @@ type
     N10: TMenuItem;
     actPlugInLoad: TAction;
     N11: TMenuItem;
+    RzTrayIcon1: TRzTrayIcon;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -247,29 +249,29 @@ end;
 
 procedure TSocketForm.WndProc(var Message: TMessage);
 begin
-  if Message.Msg = FTaskMessage then
-  begin
-    AddIcon;
-    Refresh;
-  end;
+//  if Message.Msg = FTaskMessage then
+//  begin
+//    AddIcon;
+//    Refresh;
+//  end;
   inherited WndProc(Message);
 end;
 
 procedure TSocketForm.UpdateTimerTimer(Sender: TObject);
 var
-  Found: Boolean;
+//  Found: Boolean;
   i:integer;
   Timer:TTaskTimer;
   F:TIniFile;
   s:string;
 begin
-  Found := FindWindow('Progman', nil) <> 0;
-  if Found <> FProgmanOpen then
-  begin
-    FProgmanOpen := Found;
-    if Found then AddIcon;
-    Refresh;
-  end;
+//  Found := FindWindow('Progman', nil) <> 0;
+//  if Found <> FProgmanOpen then
+//  begin
+//    FProgmanOpen := Found;
+//    if Found then AddIcon;
+//    Refresh;
+//  end;
   if Pages.ActivePageIndex = 3 then
      begin
        Timer := TTaskTimer.Create;
@@ -401,10 +403,10 @@ begin
   UpdateStatus;
   ReadDbList;
   ReadPlugIn;
-  AddIcon;
+//  AddIcon;
   TaskThread := TTaskThread.Create;
-  if IE4Installed then
-    FTaskMessage := RegisterWindowMessage('TaskbarCreated');
+//  if IE4Installed then
+//    FTaskMessage := RegisterWindowMessage('TaskbarCreated');
   UpdateTimer.Enabled := True;
 end;
 
@@ -417,19 +419,19 @@ begin
 //  Timer1.Enabled := False;
   UpdateTimer.Enabled := False;
   try
-    if not SystemShutDown and not Application.Terminated then
-       begin
-          CanClose := False;
-          if ApplyAction.Enabled then ApplyAction.Execute;
-          if FClosing and (not FFromService) and (ConnectionList.Items.Count > 0) then
-          begin
-            FClosing := False;
-            if MessageDlg(SErrClose, mtConfirmation, [mbYes, mbNo], 0) <> idYes then
-              Exit;
-          end;
-       end;
+    CanClose := (MessageBox(Handle,'是否真想退出服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+//    if not SystemShutDown and not Application.Terminated then
+//       begin
+//          CanClose := False;
+//          if ApplyAction.Enabled then ApplyAction.Execute;
+//          if FClosing and (not FFromService) and (ConnectionList.Items.Count > 0) then
+//          begin
+//            FClosing := False;
+//            if MessageDlg(SErrClose, mtConfirmation, [mbYes, mbNo], 0) <> idYes then
+//              Exit;
+//          end;
+//       end;
     WriteSettings;
-    CanClose := True;
   finally
     if TimerEnabled and (not CanClose) then
        begin
@@ -517,10 +519,11 @@ begin
 end;
 
 procedure TSocketForm.miCloseClick(Sender: TObject);
-var stop:boolean;
+//var stop:boolean;
 begin
-  FClosing := True;
-  Application.Terminate;
+  Close;
+//  FClosing := True;
+//  Application.Terminate;
 end;
 
 procedure TSocketForm.WMMIDASIcon(var Message: TMessage);

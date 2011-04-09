@@ -27,6 +27,7 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     //初始化
     procedure InitClass;override;
+    destructor  Destroy;override;
     property RowAccessor:TZRowAccessor read GetRowAccessor;
     property MaxCol:integer read FMaxCol write SetMaxCol;
   end;
@@ -48,11 +49,19 @@ type
   end;
   //3 synFlag
   TSyncPubBarcode=class(TSyncSingleTable)
+  private
+    temp:TZQuery;
   public
+    procedure InitSQL(AGlobal: IdbHelp;TimeStamp:boolean=true);override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //初始化
+    procedure InitClass;override;
+    destructor  Destroy;override;
   end;
   //4 synFlag
   TSyncPubIcInfo=class(TSyncSingleTable)
@@ -644,6 +653,13 @@ begin
   FMaxCol := Value;
 end;
 
+destructor TSyncSingleTable.Destroy;
+begin
+  if InsertQuery<>nil then InsertQuery.Free;
+  if UpdateQuery<>nil then UpdateQuery.Free;
+  inherited;
+end;
+
 { TSyncCaRelations }
 
 function TSyncCaRelations.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
@@ -709,6 +725,22 @@ begin
     ''),Params);
 end;
 
+function TSyncPubBarcode.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var sv:TZQuery;
+begin
+  InitSQL(AGlobal,false);
+  sv := UpdateQuery;
+  try
+     if not(FieldbyName('BARCODE_TYPE').AsInteger in [0,1,2]) then
+     begin
+       UpdateQuery := temp;
+     end;
+     inherited BeforeInsertRecord(AGlobal);
+  finally
+     UpdateQuery := sv;
+  end;
+end;
+
 function TSyncPubBarcode.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
@@ -722,6 +754,24 @@ begin
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
   SelectSQL.Text := Str;
+end;
+
+destructor TSyncPubBarcode.Destroy;
+begin
+  if temp<>nil then temp.Free;
+  inherited;
+end;
+
+procedure TSyncPubBarcode.InitClass;
+begin
+  inherited;
+  temp := TZQuery.Create(nil);
+end;
+
+procedure TSyncPubBarcode.InitSQL(AGlobal: IdbHelp; TimeStamp: boolean);
+begin
+  inherited;
+  if not Init then Temp.SQL.Text := UpdateQuery.SQL.Text+' and BARCODE=:BARCODE';
 end;
 
 { TSyncPubIcInfo }
@@ -810,8 +860,8 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_STOCKORDER';
        MaxCol := RowAccessor.ColumnCount - 1;
+       InitSQL(AGlobal,false);
      end;
-  InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
   if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
      begin
@@ -884,8 +934,8 @@ begin
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_STOCKDATA';
        MaxCol := RowAccessor.ColumnCount-1;
+       InitSQL(AGlobal);
      end;
-  InitSQL(AGlobal);
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
   InsertStorageInfo;
@@ -2542,8 +2592,8 @@ begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'RCK_ACCT_MONTH';
+       InitSQL(AGlobal);
      end;
-  InitSQL(AGlobal);
   FillParams(InsertQuery);
   AGlobal.ExecQuery(InsertQuery);
 end;

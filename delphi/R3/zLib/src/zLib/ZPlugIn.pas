@@ -541,7 +541,7 @@ begin
       repeat
         if (sr.Attr and FileAttrs) = sr.Attr then
           begin
-            Load(sr.Name);
+            Load(ExtractFilePath(ParamStr(0))+'PlugIn\'+ExtractFileName(sr.Name));
           end;
       until FindNext(sr) <> 0;
       SysUtils.FindClose(sr);

@@ -38,7 +38,7 @@ type
 
    end;
 
-  TPlugIn = class(TInterfacedObject, IPlugIn)
+  TPlugIn = class(TInterfacedPersistent, IPlugIn)
    private
     FPlugInId: integer;
     FHandle: THandle;
@@ -56,6 +56,7 @@ type
     procedure SetLastError(const Value: string);
     procedure SetData(const Value: Pointer);
    protected
+    IParams:IPlugIn;
     //设置当前插件参数,指定连锁ID号
     function SetParams(DbID:integer):integer; stdcall;
     //读取执行出错信息说明
@@ -174,6 +175,7 @@ constructor TPlugIn.Create(FileName: string);
 var
   DLLGetPlugInDisplayName:function :Pchar; stdcall;
   DLLGetPlugInId:function :Integer; stdcall;
+  DLLSetParams:function(PlugIn:IPlugIn) :Integer; stdcall;
 begin
   dbResolver := nil;
   FData := nil;
@@ -183,10 +185,15 @@ begin
     @DLLGetPlugInDisplayName := GetProcAddress(Handle, 'GetPlugInDisplayName');
     if @DLLGetPlugInDisplayName=nil then Raise Exception.Create('GetPlugInDisplayName方法没有实现');
     PlugInDisplayName := DLLGetPlugInDisplayName;
-    
+
     @DLLGetPlugInId := GetProcAddress(Handle, 'GetPlugInId');
     if @DLLGetPlugInId=nil then Raise Exception.Create('GetPlugInId方法没有实现');
     PlugInId := DLLGetPlugInId;
+
+    @DLLSetParams := GetProcAddress(Handle, 'SetParams');
+    if @DLLSetParams=nil then Raise Exception.Create('SetParams方法没有实现');
+    GetInterface(StringtoGuid('{34E06C0E-34E5-4BB8-A10F-3F1ECB983AD8}'),IParams);
+    DLLSetParams(IParams);
   except
     FreeLibrary(Handle);
     Handle := 0;
@@ -195,12 +202,18 @@ begin
 end;
 
 destructor TPlugIn.Destroy;
+var
+  DLLSetParams:function(PlugIn:IPlugIn) :Integer; stdcall;
 begin
   if assigned(dbResolver) then
      begin
        ConnCache.Push(dbResolver);
        dbResolver := nil;
      end;
+  @DLLSetParams := GetProcAddress(Handle, 'SetParams');
+  if @DLLSetParams=nil then Raise Exception.Create('SetParams方法没有实现');
+  DLLSetParams(nil);
+  IParams := nil;
   FreeLibrary(Handle);
   inherited;
 end;

@@ -1,3 +1,5 @@
+{  32700001 供应链管理  1 查询  2	申请  3	创建 4	删除 5	维护 6	导出 7	打印 }
+
 unit ufrmRelation;
 
 interface
@@ -71,9 +73,8 @@ type
     procedure rb2Click(Sender: TObject);
     procedure Grid_RelationAndGoodsDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure actAuditExecute(Sender: TObject);
   private
-    { Private declarations }
-
     IsEnd: boolean;
     MaxId:string;
     FIsRel: Boolean;
@@ -87,10 +88,9 @@ type
     procedure Open(Id:String);
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure SetIsRel(const Value: Boolean);
-    function getflag: integer;
-    function CheckCanExport:Boolean;
+    function  getflag: integer;
+    function  CheckCanExport:Boolean;
   public
-    { Public declarations }
     property IsRel:Boolean read FIsRel write SetIsRel;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
@@ -102,7 +102,7 @@ implementation
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmRelationInfo,
   ufrmEhLibReport,ufrmSelectGoodSort,ufrmGoodssortTree, ObjCommon, ufrmJoinRelation,
-  ufrmBasic, Math ,uCaFactory;
+  ufrmBasic, Math ,uCaFactory, ufrmRelationUpdateMode;
    
 
 {$R *.dfm}
@@ -111,9 +111,9 @@ uses
 constructor TfrmRelation.Create(AOwner: TComponent);
 begin
   inherited;
+  TDbGridEhSort.InitForm(Self);
   InitGrid;
   LoadTree;
-  TDbGridEhSort.InitForm(Self);
 end;
 
 destructor TfrmRelation.Destroy;
@@ -242,6 +242,8 @@ begin
   SetCol:=FindColumn(Grid_RelationAndGoods,'UNIT_ID');
   if (SetCol<>nil) and (rs.Active) and (rs.RecordCount>0) then
   begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
     rs.First;
     while not rs.Eof do
     begin
@@ -250,7 +252,6 @@ begin
       rs.Next;
     end;
   end;
-//  LoadTree;
 end;
 
 procedure TfrmRelation.LoadTree;
@@ -718,5 +719,17 @@ function TfrmRelation.CheckCanExport: Boolean;
 begin
   Result := ShopGlobal.GetChkRight('32700001',6);
 end;
+
+{ 对照: 000000000000138  000000000230014  000000000231197 }
+procedure TfrmRelation.actAuditExecute(Sender: TObject);
+var
+  ReValue: Boolean; //执行后返回结果
+  UpdateMode: integer;
+begin                                        
+  inherited;
+  if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护"'+Caption+'"权限,请和管理员联系.');
+  TfrmRelationUpdateMode.FrmShow;
+end;
+
 
 end.

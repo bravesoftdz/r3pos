@@ -189,6 +189,7 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //Ìí¼ÓTitle    
   public
     procedure PrintBefore;override;
+    function  DoBeforeExport:boolean;override;
     function  GetRowType:integer;override;
   end;
 
@@ -1129,6 +1130,12 @@ procedure TfrmStockDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
+end;
+
+function TfrmStockDayReport.DoBeforeExport: boolean;
+begin
+ 
+
 end;
 
 end.

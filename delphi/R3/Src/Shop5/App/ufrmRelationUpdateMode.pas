@@ -96,10 +96,10 @@ begin
     end;
    1:
     begin
-      self.Top:=self.Top-62;
-      self.Left:=self.Left-72;
-      Width:=530;
-      Height:=400;
+      self.Top:=self.Top-70;
+      self.Left:=self.Left-80;
+      Width:=570;
+      Height:=445;
       btnCancel.Left:=BottonPanel.Width - btnCancel.Width - 30;
       btnCancel.Caption:='¹Ø±Õ(&C)';
       if RB_ALL.Checked then

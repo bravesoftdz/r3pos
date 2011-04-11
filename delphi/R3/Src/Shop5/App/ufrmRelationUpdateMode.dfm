@@ -208,28 +208,35 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
               Footers = <>
               ReadOnly = True
               Title.Caption = #21830#21697#21517#31216
-              Width = 147
+              Width = 139
+            end
+            item
+              EditButtons = <>
+              FieldName = 'PACK_BARCODE'
+              Footers = <>
+              Title.Caption = #26465#26465#30721
+              Width = 91
             end
             item
               EditButtons = <>
               FieldName = 'NEW_INPRICE'
               Footers = <>
               Title.Caption = #36827#36135#20215
-              Width = 78
+              Width = 54
             end
             item
               EditButtons = <>
               FieldName = 'NEW_OUTPRICE'
               Footers = <>
               Title.Caption = #38646#21806#20215
-              Width = 67
+              Width = 53
             end
             item
               EditButtons = <>
               FieldName = 'UpdateCase'
               Footers = <>
               Title.Caption = #26356#26032#24773#20917
-              Width = 79
+              Width = 63
             end>
         end
         object stbPanel: TPanel

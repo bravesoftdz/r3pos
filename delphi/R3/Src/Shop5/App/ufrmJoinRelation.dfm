@@ -48,6 +48,7 @@ inherited frmJoinRelation: TfrmJoinRelation
               Width = 128
               Height = 20
               TabOrder = 0
+              OnKeyPress = edtKeyKeyPress
             end
             object btnFilter: TRzBitBtn
               Left = 234

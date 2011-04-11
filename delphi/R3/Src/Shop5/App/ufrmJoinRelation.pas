@@ -23,6 +23,7 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure btnFilterClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure edtKeyKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -113,6 +114,13 @@ begin
     CaFactory.SyncAll(2);
     ModalResult := MROK;
   end
+end;
+
+procedure TfrmJoinRelation.edtKeyKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if not (Key in ['0'..'9',#8]) then
+    Key:=#0;
 end;
 
 end.

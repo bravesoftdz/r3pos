@@ -64,11 +64,11 @@ begin
 
   Str := 'update MSC_MESSAGE set MSG_CLASS=:MSG_CLASS,ISSUE_DATE=:ISSUE_DATE,ISSUE_TENANT_ID=:ISSUE_TENANT_ID,MSG_SOURCE=:MSG_SOURCE,ISSUE_USER=:ISSUE_USER,'+
   'MSG_TITLE=:MSG_TITLE,MSG_CONTENT=:MSG_CONTENT,END_DATE=:END_DATE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID and MSG_ID=:OLD_MSG_ID ';
+  ' where TENANT_ID=:OLD_TENANT_ID and MSG_ID=:OLD_MSG_ID ';
   UpdateSQL.Text := Str;
 
   Str := 'update MSC_MESSAGE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where COMM not in (''02'',''12'') and TENANT_ID=:OLD_TENANT_ID and MSG_ID=:OLD_MSG_ID ';
+  ' where TENANT_ID=:OLD_TENANT_ID and MSG_ID=:OLD_MSG_ID ';
   DeleteSQL.Text := Str;
 end;
 
@@ -89,6 +89,7 @@ begin
 
     if (rs.FieldByName('MSG_FEEDBACK_STATUS').AsString = '2') or (rs.FieldByName('MSG_READ_STATUS').AsString = '2') then
       Raise Exception.Create('已经阅读,不能删除!');
+      
   finally
     rs.Free;
   end;
@@ -100,7 +101,9 @@ begin
   Str := ' update MSC_MESSAGE_LIST set COMM='+GetCommStr(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and MSG_ID=:OLD_MSG_ID ';
   if AGlobal.ExecSQL(Str,Self) = 0 then
     begin
-      Str := 'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) values(:TENANT_ID,:MSG_ID,:SHOP_ID,1,1,''00'','+GetTimeStamp(iDbType)+')';
+      Str :=
+        'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) '+
+        'values(:TENANT_ID,:MSG_ID,:SHOP_ID,1,1,''00'','+GetTimeStamp(iDbType)+')';
       AGlobal.ExecSQL(Str,Self);
     end;
   Result := True;
@@ -120,7 +123,7 @@ begin
   SelectSQL.Text := Str;
 
   Str := 'update MSC_MESSAGE_LIST set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
-  ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:SHOP_ID and MSG_ID=:OLD_MSG_ID ';
+  ' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and MSG_ID=:OLD_MSG_ID ';
   DeleteSQL.Text := Str;
 end;
 

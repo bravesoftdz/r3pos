@@ -112,6 +112,7 @@ constructor TfrmRelation.Create(AOwner: TComponent);
 begin
   inherited;
   InitGrid;
+  LoadTree;
   TDbGridEhSort.InitForm(Self);
 end;
 
@@ -249,7 +250,7 @@ begin
       rs.Next;
     end;
   end;
-  LoadTree;
+//  LoadTree;
 end;
 
 procedure TfrmRelation.LoadTree;
@@ -377,6 +378,7 @@ procedure TfrmRelation.rzTreeChange(Sender: TObject;
 begin
   inherited;
   if rzTree.Selected = nil then Exit;
+  if rzTree.Selected.Data = nil then Exit;
   Open('');
   ChangeButton;
 end;

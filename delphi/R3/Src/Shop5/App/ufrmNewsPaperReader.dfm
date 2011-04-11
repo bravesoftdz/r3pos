@@ -12,8 +12,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 789
-    Height = 555
+    Width = 781
+    Height = 544
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -21,8 +21,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
     object RzPanel2: TRzPanel
       Left = 0
       Top = 37
-      Width = 789
-      Height = 488
+      Width = 781
+      Height = 477
       Align = alClient
       BorderOuter = fsNone
       BorderSides = [sdLeft]
@@ -32,8 +32,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
       object RzPanel6: TRzPanel
         Left = 156
         Top = 19
-        Width = 633
-        Height = 469
+        Width = 625
+        Height = 458
         Align = alClient
         BevelWidth = 2
         BorderOuter = fsNone
@@ -46,8 +46,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
         object RzPage: TRzPageControl
           Left = 5
           Top = 5
-          Width = 623
-          Height = 459
+          Width = 615
+          Height = 448
           ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
@@ -65,8 +65,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
             object DBGridEh1: TDBGridEh
               Left = 0
               Top = 0
-              Width = 623
-              Height = 441
+              Width = 615
+              Height = 430
               Align = alClient
               BorderStyle = bsNone
               DataSource = DsNewsPaper
@@ -78,6 +78,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               FooterFont.Height = -12
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgEditing, dgColumnResize, dgTabs, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               RowHeight = 20
@@ -148,12 +149,12 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 Color = clWhite
                 TabOrder = 0
                 DesignSize = (
-                  623
+                  615
                   49)
                 object labTitle: TLabel
                   Left = 1
                   Top = 1
-                  Width = 621
+                  Width = 613
                   Height = 47
                   Align = alClient
                   Alignment = taCenter
@@ -167,7 +168,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   ParentFont = False
                 end
                 object btnReturn: TRzBmpButton
-                  Left = 546
+                  Left = 539
                   Top = 17
                   Width = 58
                   Height = 17
@@ -279,8 +280,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               end
               object RzPanel11: TRzPanel
                 Left = 0
-                Top = 396
-                Width = 623
+                Top = 385
+                Width = 615
                 Height = 45
                 Align = alBottom
                 BorderOuter = fsNone
@@ -290,10 +291,10 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 Color = clWhite
                 TabOrder = 1
                 DesignSize = (
-                  623
+                  615
                   45)
                 object btnRead: TRzBmpButton
-                  Left = 264
+                  Left = 260
                   Top = 13
                   Width = 69
                   Height = 21
@@ -449,8 +450,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 49
-                Width = 623
-                Height = 347
+                Width = 615
+                Height = 336
                 Align = alClient
                 BevelWidth = 2
                 BorderOuter = fsNone
@@ -459,9 +460,9 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 Color = clWhite
                 TabOrder = 2
                 object labPublishDate: TLabel
-                  Left = 3
+                  Left = 614
                   Top = 332
-                  Width = 617
+                  Width = 6
                   Height = 12
                   Align = alBottom
                   Alignment = taRightJustify
@@ -479,6 +480,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   Height = 329
                   Align = alClient
                   BorderStyle = bsNone
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 0
                 end
               end
@@ -490,7 +492,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
         Left = 0
         Top = 19
         Width = 156
-        Height = 469
+        Height = 458
         Align = alLeft
         BorderOuter = fsNone
         BorderSides = [sdTop, sdRight]
@@ -7417,7 +7419,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
       object RzPanel10: TRzPanel
         Left = 0
         Top = 0
-        Width = 789
+        Width = 781
         Height = 19
         Align = alTop
         BorderOuter = fsNone
@@ -7427,7 +7429,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
         Color = 16182753
         TabOrder = 2
         DesignSize = (
-          789
+          781
           19)
         object Image2: TImage
           Left = 149
@@ -8291,7 +8293,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
     object RzPanel3: TRzPanel
       Left = 0
       Top = 0
-      Width = 789
+      Width = 781
       Height = 37
       Align = alTop
       BevelWidth = 2
@@ -8302,7 +8304,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
       object RzBackground1: TRzBackground
         Left = 1
         Top = 1
-        Width = 787
+        Width = 779
         Height = 35
         Active = True
         Align = alClient
@@ -8566,8 +8568,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
     end
     object RzPanel7: TRzPanel
       Left = 0
-      Top = 526
-      Width = 789
+      Top = 515
+      Width = 781
       Height = 29
       Align = alBottom
       BorderOuter = fsButtonUp
@@ -8575,7 +8577,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
       Color = 16767656
       TabOrder = 2
       DesignSize = (
-        789
+        781
         29)
       object btn_Close: TRzBmpButton
         Left = 685
@@ -8872,8 +8874,8 @@ inherited frmNewPaperReader: TfrmNewPaperReader
     end
     object RzPanel8: TRzPanel
       Left = 0
-      Top = 525
-      Width = 789
+      Top = 514
+      Width = 781
       Height = 1
       Align = alBottom
       BorderOuter = fsNone

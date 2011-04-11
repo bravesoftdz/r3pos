@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ImgList, ExtCtrls, RzPanel, ActnList, Menus, RzBckgnd,
   RzBmpBtn, RzTabs, Grids, DBGridEh, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset, StdCtrls, ComCtrls;
+  ZAbstractDataset, ZDataset, StdCtrls, ComCtrls,ObjCommon;
 
 type
   TfrmNewPaperReader = class(TfrmBasic)
@@ -213,7 +213,7 @@ begin
   try
     rs.Close;
     rs.SQL.Text :=
-    'select MSG_TITLE,MSG_CONTENT,ISSUE_DATE from MSC_MESSAGE where MSG_ID='+QuotedStr(MSG_ID);
+       'select MSG_TITLE,MSG_CONTENT,ISSUE_DATE from MSC_MESSAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MSG_ID='+QuotedStr(MSG_ID);
     Factor.Open(rs);
     labTitle.Caption := rs.FieldbyName('MSG_TITLE').AsString;
     edtContents.Lines.Text := rs.FieldbyName('MSG_CONTENT').AsString;
@@ -269,8 +269,8 @@ var ExcSql:String;
 begin
   inherited;
   ExcSql :=
-  'update MSC_MESSAGE_LIST set READ_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD HH:MM:SS',Now))+',READ_USER='+QuotedStr(Global.UserID)+',MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=2 '+
-  ' where COMM not in (''02'',''12'') and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and MSG_ID='+QuotedStr(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
+  'update MSC_MESSAGE_LIST set READ_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD HH:MM:SS',Now))+',READ_USER='+QuotedStr(Global.UserID)+',MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=2,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' '+
+  ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and MSG_ID='+QuotedStr(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
   if Factor.ExecSQL(ExcSql) = 0 then
     Raise Exception.Create('²Ù×÷Ê§°Ü!');
   CdsNewsPaper.Edit;

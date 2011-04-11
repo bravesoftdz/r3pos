@@ -63,7 +63,6 @@ type
     RzPanel29: TRzPanel;
     labQUESTION_ITEM_AMT: TLabel;
     RzPanel30: TRzPanel;
-    RzPanel31: TRzPanel;
     RzPanel32: TRzPanel;
     RzPanel11: TRzPanel;
     RzPanel13: TRzPanel;
@@ -93,6 +92,7 @@ type
     btnReturn: TRzBmpButton;
     btnLook: TRzBmpButton;
     btnRetrun_Main: TRzBmpButton;
+    RzPanel31: TRzPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnAnswerClick(Sender: TObject);
@@ -131,6 +131,7 @@ type
     procedure GetAnswer;
     procedure SetListAnswer;
     procedure SaveAnswer;
+    class function ShowForm(AOwner:TForm):boolean;
   end;
 
 implementation
@@ -254,7 +255,7 @@ begin
   '}'+
   '</style>'+
 	'</head>'+
-	'<body>'+
+	'<body border="0">'+
 	'		<form name="tryForm" id="tryForm">'+
 	'			<table cellpadding="4" cellspacing="1" width="100%" bgcolor="#FFFFFF">'+
   '			<tr>'+
@@ -578,7 +579,8 @@ begin
   cdsQuestionList.Close;
   cdsQuestionList.SQL.Text :=
   'select a.QUESTION_ID,a.QUESTION_CLASS,a.ISSUE_DATE,a.QUESTION_SOURCE,a.QUESTION_TITLE,a.ANSWER_FLAG,a.END_DATE,b.QUESTION_ANSWER_STATUS '+
-  'from MSC_QUESTION a left join MSC_INVEST_LIST b on a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID where b.TENANT_ID=:TENANT_ID and b.SHOP_ID=:SHOP_ID and a.END_DATE>=:END_DATE ';
+  'from MSC_QUESTION a inner join MSC_INVEST_LIST b on a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID '+
+  'where b.TENANT_ID=:TENANT_ID and b.SHOP_ID=:SHOP_ID and a.END_DATE>=:END_DATE and a.COMM not in (''02'',''12'') and b.COMM not in (''02'',''12'') ';
   cdsQuestionList.Params.ParamByName('END_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
   cdsQuestionList.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsQuestionList.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
@@ -743,6 +745,18 @@ begin
   edtANSWER_DATE.Caption := '';
   ledANSWER_USE_TIME.Caption := '00:00';
   RzPanel3.Visible := False;
+end;
+
+class function TfrmQuestionnaire.ShowForm(AOwner: TForm): boolean;
+begin
+  with TfrmQuestionnaire.Create(AOwner) do
+    begin
+      try
+        result := (ShowModal=MROK);
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

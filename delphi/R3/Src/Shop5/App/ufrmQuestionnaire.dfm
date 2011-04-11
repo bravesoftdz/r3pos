@@ -12,8 +12,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
   object RzPanel2: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 731
-    Height = 523
+    Width = 739
+    Height = 534
     Align = alClient
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -24,7 +24,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       Left = 0
       Top = 19
       Width = 142
-      Height = 504
+      Height = 515
       Align = alLeft
       BorderOuter = fsNone
       BorderSides = [sdTop, sdRight]
@@ -115,7 +115,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
     object RzPanel10: TRzPanel
       Left = 0
       Top = 0
-      Width = 731
+      Width = 739
       Height = 19
       Align = alTop
       BorderOuter = fsNone
@@ -125,7 +125,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       Color = 16182753
       TabOrder = 1
       DesignSize = (
-        731
+        739
         19)
       object Image2: TImage
         Left = 135
@@ -988,8 +988,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
     object RzPanel1: TRzPanel
       Left = 142
       Top = 19
-      Width = 589
-      Height = 504
+      Width = 597
+      Height = 515
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -997,8 +997,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       object RzPanel6: TRzPanel
         Left = 0
         Top = 0
-        Width = 589
-        Height = 459
+        Width = 597
+        Height = 470
         Align = alClient
         BevelWidth = 2
         BorderOuter = fsNone
@@ -1011,14 +1011,14 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         object RzPage: TRzPageControl
           Left = 5
           Top = 5
-          Width = 579
-          Height = 449
-          ActivePage = TabContents
+          Width = 587
+          Height = 460
+          ActivePage = TabSheet1
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 2
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1030,8 +1030,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
             object RzPanel5: TRzPanel
               Left = 0
               Top = 0
-              Width = 579
-              Height = 431
+              Width = 587
+              Height = 442
               Align = alClient
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -1040,9 +1040,10 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 579
-                Height = 431
+                Width = 587
+                Height = 442
                 Align = alClient
+                AutoFitColWidths = True
                 BorderStyle = bsNone
                 DataSource = dsQuestionList
                 FixedColor = clAqua
@@ -1484,8 +1485,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 319
-                    Height = 135
+                    Width = 36
+                    Height = 12
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET
@@ -1576,12 +1577,12 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 Color = clWhite
                 TabOrder = 8
                 DesignSize = (
-                  579
+                  587
                   39)
                 object btnReturn: TRzBmpButton
                   Left = 210
                   Top = 10
-                  Width = 69
+                  Width = 77
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -1873,7 +1874,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object btnLook: TRzBmpButton
                   Left = 325
                   Top = 10
-                  Width = 69
+                  Width = 77
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -2165,7 +2166,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object btnAnswer: TRzBmpButton
                   Left = 325
                   Top = 10
-                  Width = 69
+                  Width = 77
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -2463,8 +2464,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
             object RzPanel4: TRzPanel
               Left = 0
               Top = 0
-              Width = 579
-              Height = 431
+              Width = 587
+              Height = 442
               Align = alClient
               BorderInner = fsGroove
               BorderOuter = fsNone
@@ -2474,13 +2475,13 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object WebBrowser1: TWebBrowser
                 Left = 2
                 Top = 2
-                Width = 575
-                Height = 427
+                Width = 583
+                Height = 438
                 Align = alClient
                 DragMode = dmAutomatic
                 TabOrder = 0
                 ControlData = {
-                  4C0000006E3B0000222C00000000000000000000000000000000000000000000
+                  4C000000413C0000452D00000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000
@@ -2492,8 +2493,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       end
       object RzPanel3: TRzPanel
         Left = 0
-        Top = 459
-        Width = 589
+        Top = 470
+        Width = 597
         Height = 45
         Align = alBottom
         BorderOuter = fsNone
@@ -2503,7 +2504,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         Color = 16182753
         TabOrder = 1
         DesignSize = (
-          589
+          597
           45)
         object Label1: TLabel
           Left = 11

@@ -74,7 +74,7 @@ item: Remark
 end
 item: Set Variable
   Variable=GROUP
-  Value=浪潮软件
+  Value=浪潮零售终端管理系统
   Flags=10000000
 end
 item: Remark
@@ -1158,14 +1158,16 @@ item: Set Variable
 end
 item: Create Shortcut
   Source=%MAINDIR%\Shop.exe
-  Destination=%GROUP%\浪潮零售终端管理软件(R3-RYC).lnk
+  Destination=%GROUP%\浪潮零售终端管理系统(R3-RYC).lnk
   Icon Number=0
+  Key Type=1536
+  Flags=00000001
 end
 item: Else Statement
 end
 item: Add ProgMan Icon
   Group=%GROUP%
-  Icon Name=零售终端
+  Icon Name=浪潮零售终端管理系统
   Command Line=%MAINDIR%\Shop.exe
   Flags=01000000
 end

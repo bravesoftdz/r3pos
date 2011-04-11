@@ -42,7 +42,6 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure RzGroup3Items0Click(Sender: TObject);
-    procedure RzGroup3Items1Click(Sender: TObject);
     procedure RzBmpButton9Click(Sender: TObject);
   private
     FHookLocked: boolean;
@@ -238,13 +237,6 @@ procedure TfrmShopDesk.RzGroup3Items0Click(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'没有找到公告.','友情提示...',MB_OK+MB_ICONINFORMATION);
-end;
-
-procedure TfrmShopDesk.RzGroup3Items1Click(Sender: TObject);
-begin
-  inherited;
-  MessageBox(Handle,'没有找到问卷.','友情提示...',MB_OK+MB_ICONINFORMATION);
-
 end;
 
 procedure TfrmShopDesk.RzBmpButton9Click(Sender: TObject);

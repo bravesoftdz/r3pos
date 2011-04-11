@@ -1741,7 +1741,7 @@ inherited frmShopMain: TfrmShopMain
         object Image6: TImage
           Left = 451
           Top = 0
-          Width = 3
+          Width = 14
           Height = 69
           Align = alClient
           AutoSize = True
@@ -6263,6 +6263,7 @@ inherited frmShopMain: TfrmShopMain
               Font.Style = []
               ParentFont = False
               TabOrder = 4
+              OnClick = RzBmpButton6Click
             end
             object RzBmpButton4: TRzBmpButton
               Left = 261
@@ -16607,6 +16608,10 @@ inherited frmShopMain: TfrmShopMain
     object actfrmNewPaperReader: TAction
       Caption = #25105#30340#28040#24687
       OnExecute = actfrmNewPaperReaderExecute
+    end
+    object actfrmQuestionnaire: TAction
+      Caption = #38382#21367#35843#26597
+      OnExecute = actfrmQuestionnaireExecute
     end
   end
   inherited PopupMenu: TPopupMenu

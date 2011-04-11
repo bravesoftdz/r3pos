@@ -82,8 +82,6 @@ uses
   ufrmSalIndentOrderList in 'App\ufrmSalIndentOrderList.pas' {frmSalIndentOrderList},
   ObjDbOrder in 'Obj\ObjDbOrder.pas',
   ObjStockOrder in 'Obj\ObjStockOrder.pas',
-  ufrmStkIndentOrder in 'App\ufrmStkIndentOrder.pas' {frmStkIndentOrder},
-  ufrmStkIndentOrderList in 'App\ufrmStkIndentOrderList.pas' {frmStkIndentOrderList},
   ufrmPosPrice in 'App\ufrmPosPrice.pas' {frmPosPrice},
   ufrmPosMain in 'App\ufrmPosMain.pas' {frmPosMain},
   uframeSelectCustomer in 'Frame\uframeSelectCustomer.pas' {frameSelectCustomer},
@@ -184,7 +182,11 @@ uses
   ufrmNewsPaperReader in 'App\ufrmNewsPaperReader.pas' {frmNewPaperReader},
   objMessage in 'Obj\objMessage.pas',
   ufrmPublishMessage in 'App\ufrmPublishMessage.pas' {frmPublishMessage},
-  ufrmHostDialog in 'App\ufrmHostDialog.pas' {frmHostDialog};
+  ufrmHostDialog in 'App\ufrmHostDialog.pas' {frmHostDialog},
+  ufrmStkIndentOrderList in 'App\ufrmStkIndentOrderList.pas' {frmStkIndentOrderList},
+  ufrmStkIndentOrder in 'App\ufrmStkIndentOrder.pas' {frmStkIndentOrder},
+  ufrmQuestionnaire in 'App\ufrmQuestionnaire.pas' {frmQuestionnaire},
+  ObjQuestionnaire in 'Obj\ObjQuestionnaire.pas';
 
 {$R *.res}
 var

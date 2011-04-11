@@ -275,6 +275,7 @@ type
     actfrmIoroDayReport: TAction;
     actfrmMessage: TAction;
     actfrmNewPaperReader: TAction;
+    actfrmQuestionnaire: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -368,6 +369,7 @@ type
     procedure actfrmIoroDayReportExecute(Sender: TObject);
     procedure actfrmMessageExecute(Sender: TObject);
     procedure actfrmNewPaperReaderExecute(Sender: TObject);
+    procedure actfrmQuestionnaireExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -420,7 +422,7 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo;
+  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -759,7 +761,9 @@ begin
 end;
 
 procedure TfrmShopMain.CheckEnabled;
-var i:integer;
+var
+  i:integer;
+  rs:TZQuery;
 begin
   for i:=0 to actList.ActionCount -1 do
     begin
@@ -768,6 +772,9 @@ begin
     end;
   actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (SFVersion='.NET');
   actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (SFVersion='.NET');
+  rs := Global.GetZQueryFromName('CA_TENANT');
+  if rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
+     actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3);
 end;
 
 procedure TfrmShopMain.FormCloseQuery(Sender: TObject;
@@ -2536,6 +2543,7 @@ begin
      end;
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
 //  SyncFactory.SyncStockOrder('STK_STOCKORDER','TENANT_ID;STOCK_ID','TSyncSingleTable');
+  CaFactory.SyncAll(1);
   SyncFactory.SyncAll;
   Global.LoadBasic; 
 end;
@@ -2638,6 +2646,21 @@ begin
   finally
     F.Free;
   end;
+end;
+
+procedure TfrmShopMain.actfrmQuestionnaireExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmQuestionnaire.ShowForm(self);
 end;
 
 end.

@@ -226,7 +226,7 @@ begin
                readln(f,s);
                CurSize := CurSize + length(s);
                s := trim(s);
-               if trim(s)='' then Continue;
+               if s='' then Continue;
                if (uppercase(s)='GO') or (s[length(s)]=';') then
                   begin
                     try
@@ -307,16 +307,16 @@ procedure TCreateDbFactory.UpdateVersion;
 var n:integer;
 begin
   try
-    n := Factor.ExecSQL('update SYS_DEFINE set [VALUE]='''+NewVersion+''' where TENANT_ID=0 and DEFINE=''DBVERSION''');
-    if n=0 then  Factor.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,[VALUE],VALUE_TYPE,COMM,TIME_STAMP) values(0,''DBVERSION'','''+NewVersion+''',0,''00'',5497000)');
+    n := Factor.ExecSQL('update SYS_DEFINE set VALUE='''+NewVersion+''' where TENANT_ID=0 and DEFINE=''DBVERSION''');
+    if n=0 then  Factor.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''DBVERSION'','''+NewVersion+''',0,''00'',5497000)');
   except
     on E:Exception do
       begin
-        if pos('SYS_DEFINE',E.Message)=0 then
-           begin
+       // if pos('SYS_DEFINE',E.Message)=0 then
+       //    begin
              WriteLog(E.Message);
              Raise;
-           end;
+       //    end;
       end;
   end;
 end;

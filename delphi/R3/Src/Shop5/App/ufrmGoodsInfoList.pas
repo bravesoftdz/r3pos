@@ -183,9 +183,6 @@ procedure TfrmGoodsInfoList.DBGridEh1DrawColumnCell(Sender: TObject;
 var ARect:TRect;
 begin
   if not DBGridEh1.DataSource.DataSet.active then Exit;  
-  if (trim(Lowercase(Column.FieldName))='selflag') and
-     (trim(DBGridEh1.DataSource.DataSet.FieldByName('RELATION_ID').AsString)<>'0') then
-    DBGridEh1.Canvas.Brush.Color:= clGray;  
 
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
     (gdFocused in State) or not DBGridEh1.Focused) then

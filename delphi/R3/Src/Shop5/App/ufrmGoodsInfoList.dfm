@@ -215,20 +215,6 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     Width = 28
                   end
                   item
-                    EditButtons = <>
-                    FieldName = 'RELATION_FLAG'
-                    Footers = <>
-                    KeyList.Strings = (
-                      '1'
-                      '2')
-                    PickList.Strings = (
-                      #36830#38145#32463#33829
-                      #33258#20027#32463#33829)
-                    ReadOnly = True
-                    Title.Caption = #32463#33829#31867#22411
-                    Width = 66
-                  end
-                  item
                     Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'GODS_CODE'
@@ -338,6 +324,20 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     ReadOnly = True
                     Title.Caption = #31649#29702#24211#23384
                     Width = 32
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'RELATION_FLAG'
+                    Footers = <>
+                    KeyList.Strings = (
+                      '1'
+                      '2')
+                    PickList.Strings = (
+                      #36830#38145#32463#33829
+                      #33258#20027#32463#33829)
+                    ReadOnly = True
+                    Title.Caption = #32463#33829#31867#22411
+                    Width = 66
                   end>
               end
               object stbPanel: TPanel

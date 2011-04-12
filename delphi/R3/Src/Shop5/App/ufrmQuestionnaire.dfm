@@ -1,9 +1,10 @@
 inherited frmQuestionnaire: TfrmQuestionnaire
-  Left = 601
-  Top = 109
-  Width = 714
-  Height = 504
+  Left = 464
+  Top = 139
+  BorderStyle = bsDialog
   Caption = #38382#21367#35843#26597
+  ClientHeight = 477
+  ClientWidth = 706
   OldCreateOrder = True
   OnCreate = FormCreate
   OnShow = FormShow
@@ -226,7 +227,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           ParentFont = False
         end
         object QUESTION4_SUM: TLabel
-          Left = 60
+          Left = 57
           Top = 155
           Width = 78
           Height = 12

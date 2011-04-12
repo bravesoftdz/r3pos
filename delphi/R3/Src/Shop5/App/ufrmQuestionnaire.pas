@@ -226,7 +226,8 @@ begin
   GetAnswer;
   IsEnable := True;
   RzPanel3.Visible := True;
-  btnCommit.BringToFront;
+  btnRetrun_Main.Visible := False;
+  btnCommit.Visible := True;
   labSUM.Caption := IntToStr(Sum_Num);
   RzPage.ActivePageIndex := 2;
   RzPanel35.Visible := False;
@@ -407,6 +408,7 @@ end;
 
 procedure TfrmQuestionnaire.SetQuestionNum;
 begin
+  SetAlready;
   labCURRENT.Caption := cdsQuestion.FieldbyName('SEQ_NO').AsString;
   labALREADY.Caption := IntToStr(Already_Num);
 end;
@@ -420,7 +422,6 @@ begin
     BrowserRead;
   cdsQuestion.Next;
   WriteBrowser;
-  SetAlready;
   SetQuestionNum;
 end;
 
@@ -433,7 +434,6 @@ begin
     BrowserRead;
   cdsQuestion.Prior;
   WriteBrowser;
-  SetAlready;
   SetQuestionNum;
 end;
 
@@ -666,7 +666,8 @@ procedure TfrmQuestionnaire.btnLookClick(Sender: TObject);
 begin
   inherited;
   RzPanel3.Visible := True;
-  btnRetrun_Main.BringToFront;
+  btnRetrun_Main.Visible := True;
+  btnCommit.Visible := False;
   IsEnable := False;
   labSUM.Caption := IntToStr(Sum_Num);
   RzPage.ActivePageIndex := 2;

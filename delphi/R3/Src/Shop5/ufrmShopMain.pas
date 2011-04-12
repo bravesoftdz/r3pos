@@ -255,7 +255,6 @@ type
     Page3: TRzBmpButton;
     Page4: TRzBmpButton;
     Page5: TRzBmpButton;
-    RzLabel1: TRzLabel;
     Panel24: TPanel;
     Image26: TImage;
     Panel26: TPanel;
@@ -276,6 +275,7 @@ type
     actfrmMessage: TAction;
     actfrmNewPaperReader: TAction;
     actfrmQuestionnaire: TAction;
+    RzLabel1: TRzLabel;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -393,6 +393,7 @@ type
     procedure SetSystemShutdown(const Value: boolean);
   public
     { Publicdeclarations }
+    procedure LoadPic32;
     procedure LoadMenu;
     procedure LoadFrame;
     procedure InitVersioin;                                             
@@ -443,6 +444,7 @@ var
   F:TextFile;
 begin
   inherited;
+  LoadPic32;
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
@@ -607,8 +609,8 @@ begin
      end;
   end
   else
-     CaUpgrade.UpGrade := 0;
-  if CaUpgrade.UpGrade<>0 then
+     CaUpgrade.UpGrade := 3;
+  if CaUpgrade.UpGrade<>3 then
     begin
       frmInstall := TfrmInstall.Create(Application);
       try
@@ -774,13 +776,26 @@ begin
   actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (SFVersion='.NET');
   rs := Global.GetZQueryFromName('CA_TENANT');
   if rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
-     actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3);
+     actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3)
+  else
+     actfrmRelation.Enabled := false;
 end;
 
 procedure TfrmShopMain.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
+function CheckUpdateStatus:boolean;
+begin
+  result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
+end;
 begin
   inherited;
+  if CaFactory.Audited and not ShopGlobal.NetVersion and CheckUpdateStatus then
+     begin
+       if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
+          begin
+            SyncFactory.SyncAll;
+          end;
+     end;
   if not SystemShutdown and (MessageBox(Handle,'是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
@@ -868,8 +883,8 @@ begin
   finally
     F.Free;
   end;
-  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
-    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
+//  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
+//    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
 end;
 
 procedure TfrmShopMain.SetLoging(const Value: boolean);
@@ -1107,7 +1122,7 @@ begin
   if result and CaFactory.Audited then result := CheckVersion;
   if result then
      begin
-      if SFVersion='.NET' then
+      if ShopGlobal.NetVersion then
          begin
            frmLogo.Show;
            try
@@ -1163,7 +1178,11 @@ begin
                  Global.MoveToLocal;
                end;
              end;
-          if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(true);
+          if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
+             begin
+               CaFactory.SyncAll(1);
+               SyncFactory.SyncBasic(true);
+             end;
         end;
     finally
       frmLogo.Close;
@@ -2542,10 +2561,8 @@ begin
        end;
      end;
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-//  SyncFactory.SyncStockOrder('STK_STOCKORDER','TENANT_ID;STOCK_ID','TSyncSingleTable');
-  CaFactory.SyncAll(1);
   SyncFactory.SyncAll;
-  Global.LoadBasic; 
+  Global.LoadBasic;
 end;
 
 procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
@@ -2661,6 +2678,135 @@ begin
   Application.Restore;
   frmShopDesk.SaveToFront;
   TfrmQuestionnaire.ShowForm(self);
+end;
+
+procedure TfrmShopMain.LoadPic32;
+var
+  DllHandle: THandle;
+function GetBitmap(ResName:string):TBITMAP;
+var
+  Stream: TStream;
+begin
+  result := nil;
+  //装载Logo
+  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
+    try
+      result := TBITMAP.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
+    end;
+  end;
+end;
+function GetJpeg(ResName:string):TJPEGImage;
+var
+  Stream: TStream;
+begin
+  result := nil;
+  //装载Logo
+  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
+    try
+      result := TJPEGImage.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
+    end;
+  end;
+end;
+function GetResString(ResName:integer):string;
+var
+  iRet:array[0..254] of char;
+begin
+  result := '';
+  LoadString(DllHandle, ResName, iRet, 254);
+  result := StrPas(iRet);
+end;
+
+var
+  sflag:string;
+  pic:TGraphic;
+begin
+  DllHandle := LoadLibrary('Pic32.dll');
+  sflag := 's'+GetResString(1)+'_';
+  if DllHandle > 0 then
+  try
+    //logo
+    Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
+    Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
+    Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
+    Image17.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
+    Image8.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
+    Image7.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
+    
+    Image14.Picture.Graphic  := GetJpeg(sflag+'memu_title');
+
+    Image11.Picture.Graphic  := GetJpeg(sflag+'tool_01');
+    Image10.Picture.Graphic  := GetJpeg(sflag+'tool_02');
+    Image16.Picture.Graphic  := GetJpeg(sflag+'tool_03');
+    Image27.Picture.Graphic  := GetJpeg(sflag+'tool_04');
+    Image21.Picture.Graphic  := GetJpeg(sflag+'tool_05');
+
+    Image18.Picture.Graphic  := GetJpeg(sflag+'page_bg');
+    Image19.Picture.Graphic  := GetJpeg(sflag+'split');
+
+    Image22.Picture.Graphic  := GetJpeg(sflag+'foot_1');
+    Image15.Picture.Graphic  := GetJpeg(sflag+'foot_2');
+    Image23.Picture.Graphic  := GetJpeg(sflag+'foot_3');
+    Image24.Picture.Graphic  := GetJpeg(sflag+'foot_4');
+    Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
+
+
+    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
+    toolButton.Bitmaps.Hot := GetBitmap(sflag+'toolbutton_hot');
+    RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'desktop');
+    RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
+
+    RzBmpButton10.Bitmaps.Up := GetBitmap(sflag+'password');
+    RzBmpButton10.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
+    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'logout');
+    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'logout_hot');
+    RzBmpButton8.Bitmaps.Up := GetBitmap(sflag+'exit');
+    RzBmpButton8.Bitmaps.Hot := GetBitmap(sflag+'exit_hot');
+
+    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
+    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
+    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
+    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
+    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
+    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
+    RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'upload');
+    RzBmpButton4.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
+    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
+    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
+
+    Page1.Bitmaps.Up := GetBitmap(sflag+'page1');
+    Page1.Bitmaps.Hot := GetBitmap(sflag+'page1_hot');
+    Page2.Bitmaps.Up := GetBitmap(sflag+'page2');
+    Page2.Bitmaps.Hot := GetBitmap(sflag+'page2_hot');
+    Page3.Bitmaps.Up := GetBitmap(sflag+'page3');
+    Page3.Bitmaps.Hot := GetBitmap(sflag+'page3_hot');
+    Page4.Bitmaps.Up := GetBitmap(sflag+'page4');
+    Page4.Bitmaps.Hot := GetBitmap(sflag+'page4_hot');
+    Page5.Bitmaps.Up := GetBitmap(sflag+'page5');
+    Page5.Bitmaps.Hot := GetBitmap(sflag+'page5_hot');
+    
+  finally
+    FreeLibrary(DllHandle);
+  end;
 end;
 
 end.

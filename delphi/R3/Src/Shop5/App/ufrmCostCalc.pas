@@ -99,7 +99,7 @@ type
 
   end;
 implementation
-uses uGlobal,uFnUtil,uShopGlobal,ObjCommon;
+uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory;
 {$R *.dfm}
 
 { TfrmCostCalc }
@@ -311,6 +311,11 @@ end;
 procedure TfrmCostCalc.btnStartClick(Sender: TObject);
 begin
   inherited;
+  if flag in [1,2] then
+     begin
+       if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+       if (ShopGlobal.NetVersion) then SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
+     end;
   Label11.Caption := '读取参数...';
   Label11.Update;
   //读取参数

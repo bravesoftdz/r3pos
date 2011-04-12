@@ -107,6 +107,7 @@ type
     FAudited: boolean;
     FTimeStamp: int64;
     _Start:int64;
+    FTenantType: integer;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -116,6 +117,7 @@ type
       SOAPResponse: TStream);
     procedure SetAudited(const Value: boolean);
     procedure SetTimeStamp(const Value: int64);
+    procedure SetTenantType(const Value: integer);
   protected
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
@@ -177,6 +179,8 @@ type
     property Audited:boolean read FAudited write SetAudited;
     //认证时的时间戳
     property TimeStamp:int64 read FTimeStamp write SetTimeStamp;
+    //是否是零售商
+    property TenantType:integer read FTenantType write SetTenantType;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -225,7 +229,10 @@ begin
   except
     on E:Exception do
       begin
-        LogFile.AddLogFile(0,E.Message+' XML='+doc.xml);
+        if doc<>nil then
+           LogFile.AddLogFile(0,E.Message+' XML='+doc.xml)
+        else
+           LogFile.AddLogFile(0,E.Message+' XML=无');
         Raise;
       end;
   end;
@@ -513,6 +520,7 @@ begin
                               if srvrId=GetNodeValue(ServerInfo,'srvrId') then
                                  begin
                                    f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
+                                   finded := true;
                                  end;
                             end;
                          ServerInfo := ServerInfo.nextSibling;
@@ -1194,6 +1202,8 @@ begin
     frmLogo.Label1.Caption := '下载企业资料...';
     frmLogo.Label1.Update;
     downloadTenants(Global.TENANT_ID,flag);
+    if TenantType <> 3 then //零售商不需要下载
+    begin
     frmLogo.ProgressBar1.Position := 3;
     frmLogo.Label1.Caption := '下载商品分类...';
     frmLogo.Label1.Update;
@@ -1214,6 +1224,8 @@ begin
     frmLogo.Label1.Caption := '下载条码信息...';
     frmLogo.Label1.Update;
     downloadBarcode(Global.TENANT_ID,flag);
+    end;
+    frmLogo.ProgressBar1.Position := 8;
   finally
     frmLogo.Close;
   end;
@@ -1328,6 +1340,7 @@ try
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
         Params.ParamByName('KEY_FIELDS').AsString := 'RELATIONS_ID';
         Params.ParamByName('KEY_FLAG').AsInteger := 1;
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
       finally
@@ -1341,7 +1354,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<供应关系>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<供应关系>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<供应关系>xml=无');
   Raise;
 end;
 end;
@@ -1482,6 +1498,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATION';
         Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('CA_RELATION',timeStamp,'#');
       finally
@@ -1495,7 +1512,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<供应链>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<供应链>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<供应链>xml=无');
   Raise;
 end;
 end;
@@ -1637,6 +1657,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'CA_TENANT';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('CA_TENANT',timeStamp,'#');
       finally
@@ -1650,7 +1671,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<企业资料>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<企业资料>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<企业资料>xml=无');
   Raise;
 end;
 end;
@@ -1761,6 +1785,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_GOODSSORT',timeStamp,'#');
       finally
@@ -1774,7 +1799,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商品分类>xml=无');
   Raise;
 end;
 end;
@@ -1955,6 +1983,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSINFO';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_GOODSINFO',timeStamp,'#');
       finally
@@ -1968,7 +1997,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<商品资料>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商品资料>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商品资料>xml=无');
   Raise;
 end;
 end;
@@ -2075,6 +2107,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_MEAUNITS';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNIT_ID';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_MEAUNITS',timeStamp,'#');
       finally
@@ -2088,7 +2121,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<商品单位>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商品单位>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商品单位>xml=无');
   Raise;
 end;
 end;
@@ -2308,6 +2344,7 @@ try
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODS_RELATION';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;RELATION_ID';
         Params.ParamByName('KEY_FLAG').AsInteger := 1;
+        Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
         SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
       finally
@@ -2321,7 +2358,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商品分类>xml=无');
   Raise;
 end;
 end;
@@ -2435,7 +2475,8 @@ try
         Params.ParamByName('TABLE_NAME').AsString := 'PUB_BARCODE';
         Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
         Params.ParamByName('KEY_FLAG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+        Params.ParamByName('COMM_LOCK').AsString := '1';
+        Factor.UpdateBatch(rs,'TSyncPubBarcode',Params);
         SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
       finally
         Params.free;
@@ -2448,7 +2489,10 @@ try
     rio.Free;
   end;
 except
-  LogFile.AddLogFile(0,'下载<商品条码>xml='+doc.xml);
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商品条码>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商品条码>xml=无');
   Raise;
 end;
 end;
@@ -2459,9 +2503,10 @@ begin
   Temp := TZQuery.Create(nil);
   try
     Temp.Close;
-    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
     Factor.Open(Temp);
     coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY));
+    TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
   finally
     Temp.Free;
   end;
@@ -2480,6 +2525,11 @@ end;
 procedure TCaFactory.SetTicket;
 begin
   _Start := GetTickCount;
+end;
+
+procedure TCaFactory.SetTenantType(const Value: integer);
+begin
+  FTenantType := Value;
 end;
 
 { rsp }

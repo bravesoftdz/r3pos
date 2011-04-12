@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=D:\Delphi\R3\Src\Shop5
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -110,7 +110,7 @@ ActiveLang=
 ProjectLang=
 RootDir=
 [Version Info]
-IncludeVerInfo=1
+IncludeVerInfo=0
 AutoIncBuild=1
 MajorVer=1
 MinorVer=0
@@ -150,14 +150,15 @@ Count=2
 Item0=D:\Delphi\R3\Src\Shop5\temp
 Item1=C:\Program Files\Developer Express Inc\ExpressEditors Library 4\Delphi 7\Lib
 [HistoryLists\hlOutputDirectorry]
-Count=7
-Item0=D:\r3
-Item1=D:\Delphi\R3\Src\TestDemo\TestDemo\Fujian
-Item2=D:\r3 sadfadfads
-Item3=D:\r3sadfadfads
-Item4=D:\Delphi\R3\Src
-Item5=D:\Delphi\R3\20110314\2003BR3V5
-Item6=D:\Delphi\Shop5\Shop5
+Count=8
+Item0=D:\Delphi\R3\Src\Shop5
+Item1=D:\r3
+Item2=D:\Delphi\R3\Src\TestDemo\TestDemo\Fujian
+Item3=D:\r3 sadfadfads
+Item4=D:\r3sadfadfads
+Item5=D:\Delphi\R3\Src
+Item6=D:\Delphi\R3\20110314\2003BR3V5
+Item7=D:\Delphi\Shop5\Shop5
 [HistoryLists\hlDCPOutput]
 Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp

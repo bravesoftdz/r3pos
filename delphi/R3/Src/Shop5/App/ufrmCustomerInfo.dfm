@@ -308,6 +308,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Height = 20
             Properties.OnChange = edtCUST_NAMEPropertiesChange
             TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbID_NUMBERKeyPress
           end
           object cmbBALANCE: TcxTextEdit
@@ -318,6 +319,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Enabled = False
             Properties.OnChange = edtCUST_NAMEPropertiesChange
             TabOrder = 6
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbBALANCEKeyPress
           end
           object cmbRULE_INTEGRAL: TcxTextEdit
@@ -327,6 +329,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Height = 20
             Enabled = False
             TabOrder = 7
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbRULE_INTEGRALKeyPress
           end
           object cmbSND_DATE: TcxDateEdit
@@ -334,6 +337,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 53
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 2
           end
           object cmbEND_DATE: TcxDateEdit
@@ -341,6 +345,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 99
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 4
           end
           object cmbCON_DATE: TcxDateEdit
@@ -348,6 +353,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 76
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 3
           end
           object cmbREMARK: TcxMemo
@@ -356,12 +362,14 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 360
             Height = 56
             TabOrder = 5
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIDN_TYPE: TcxComboBox
             Left = 109
             Top = 7
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             TabOrder = 0
           end
@@ -372,6 +380,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Height = 20
             Enabled = False
             TabOrder = 8
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbINTEGRALKeyPress
           end
           object edtACCU_INTEGRAL: TcxTextEdit
@@ -381,6 +390,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Height = 20
             Enabled = False
             TabOrder = 9
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
       end
@@ -583,6 +593,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 9
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbOFFI_TELEKeyPress
           end
           object cmbFAMI_ADDR: TcxTextEdit
@@ -591,6 +602,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 360
             Height = 20
             TabOrder = 11
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtREGION_ID: TzrComboBoxList
             Left = 109
@@ -641,6 +653,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 5
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtQQ: TcxTextEdit
             Left = 348
@@ -648,6 +661,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 6
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtMSN: TcxTextEdit
             Left = 348
@@ -655,6 +669,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 7
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtEMAIL: TcxTextEdit
             Left = 348
@@ -662,6 +677,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 8
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtFAMI_TELE: TcxTextEdit
             Left = 348
@@ -669,12 +685,14 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             TabOrder = 10
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtDEGREES: TcxComboBox
             Left = 109
             Top = 36
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 1
           end
           object edtMONTH_PAY: TcxComboBox
@@ -682,6 +700,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 82
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 3
           end
           object edtOCCUPATION: TcxComboBox
@@ -689,6 +708,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 59
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             TabOrder = 2
           end
           object edtJOBUNIT: TcxTextEdit
@@ -697,6 +717,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 150
             Height = 20
             TabOrder = 4
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
       end
@@ -720,6 +741,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           FooterFont.Height = -12
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           RowHeight = 20
@@ -829,6 +851,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           FooterFont.Height = -12
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           RowHeight = 20
@@ -903,6 +926,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           FooterFont.Height = -12
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           RowHeight = 20
@@ -989,6 +1013,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           FooterFont.Height = -12
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           RowHeight = 20
@@ -1415,6 +1440,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Width = 121
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object cmbCUST_NAME: TcxTextEdit
         Left = 113
@@ -1423,6 +1449,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Height = 20
         Properties.OnChange = edtCUST_NAMEPropertiesChange
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object cmbCUST_SPELL: TcxTextEdit
         Left = 348
@@ -1431,6 +1458,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Height = 20
         TabStop = False
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object cmbPRICE_ID: TzrComboBoxList
         Left = 113
@@ -1474,6 +1502,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 79
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 7
       end
       object cmbMOVE_TELE: TcxTextEdit
@@ -1483,6 +1512,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Height = 20
         Properties.OnChange = edtCUST_NAMEPropertiesChange
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = cmbMOVE_TELEKeyPress
       end
       object cmbSEX: TRadioGroup

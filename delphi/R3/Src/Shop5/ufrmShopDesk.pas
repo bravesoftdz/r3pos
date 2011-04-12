@@ -65,29 +65,92 @@ uses ufrmShopMain,udmIcon,uShopGlobal,uDevFactory,Registry;
 
 procedure TfrmShopDesk.LoadRes;
 var
-  i:integer;
-  id:integer;
-  sDllName:string;
-  bmp:TBitmap;
+  DllHandle: THandle;
+function GetBitmap(ResName:string):TBITMAP;
+var
+  Stream: TStream;
 begin
-  sDllName := 'Icon64.dll';
-  if FileExists(ExtractFilePath(ParamStr(0))+sDllName) then
-  for i:= 0 to ComponentCount -1 do
-    begin
-      if Components[i] is TRzBmpButton then
-         begin
-           TRzBmpButton(Components[i]).PopupMenu := PopupMenu1;
-           if TRzBmpButton(Components[i]).Action=nil then continue;
-           id := TRzBmpButton(Components[i]).Action.Tag;
-           bmp := TBitmap.Create;
-           dmIcon.HsResOpr.GetDllBmpRes(bmp,'u'+inttostr(id),sDllName);
-           TRzBmpButton(Components[i]).Bitmaps.Up := bmp;
-
-           bmp := TBitmap.Create;
-           dmIcon.HsResOpr.GetDllBmpRes(bmp,'d'+inttostr(id),sDllName);
-           TRzBmpButton(Components[i]).Bitmaps.Disabled := bmp;
-         end;
+  result := nil;
+  //×°ÔØLogo
+  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
+    try
+      result := TBITMAP.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
     end;
+  end;
+end;
+function GetJpeg(ResName:string):TJPEGImage;
+var
+  Stream: TStream;
+begin
+  result := nil;
+  //×°ÔØLogo
+  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
+    try
+      result := TJPEGImage.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
+    end;
+  end;
+end;
+function GetResString(ResName:integer):string;
+var
+  iRet:array[0..254] of char;
+begin
+  result := '';
+  LoadString(DllHandle, ResName, iRet, 254);
+  result := StrPas(iRet);
+end;
+
+var
+  sflag:string;
+  pic:TGraphic;
+begin
+  DllHandle := LoadLibrary('Pic32.dll');
+  sflag := 's'+GetResString(1)+'_';
+  if DllHandle > 0 then
+  try
+    //logo
+    Image1.Picture.Graphic  := GetJpeg(sflag+'desk_bg');
+
+    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'db_btn');
+    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'db_btn_hot');
+    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'c1_btn');
+    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'c1_btn_hot');
+    RzBmpButton7.Bitmaps.Up := GetBitmap(sflag+'sale_btn');
+    RzBmpButton7.Bitmaps.Hot := GetBitmap(sflag+'sale_btn_hot');
+    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'slr_btn');
+    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'slr_btn_hot');
+    RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'c2_btn');
+    RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'c2_btn_hot');
+    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'sfd_btn');
+    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'sfd_btn_hot');
+    RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'str_btn');
+    RzBmpButton4.Bitmaps.Hot := GetBitmap(sflag+'str_btn_hot');
+    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'stk_btn');
+    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'stk_btn_hot');
+    RzBmpButton8.Bitmaps.Up := GetBitmap(sflag+'pos_btn');
+    RzBmpButton8.Bitmaps.Hot := GetBitmap(sflag+'pos_btn_hot');
+  finally
+    FreeLibrary(DllHandle);
+  end;
 end;
 
 procedure TfrmShopDesk.RzBmpButton16Click(Sender: TObject);

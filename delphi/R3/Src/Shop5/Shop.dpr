@@ -186,7 +186,8 @@ uses
   ufrmStkIndentOrderList in 'App\ufrmStkIndentOrderList.pas' {frmStkIndentOrderList},
   ufrmStkIndentOrder in 'App\ufrmStkIndentOrder.pas' {frmStkIndentOrder},
   ufrmQuestionnaire in 'App\ufrmQuestionnaire.pas' {frmQuestionnaire},
-  ObjQuestionnaire in 'Obj\ObjQuestionnaire.pas';
+  ObjQuestionnaire in 'Obj\ObjQuestionnaire.pas',
+  ufrmRelationUpdateMode in 'App\ufrmRelationUpdateMode.pas' {frmRelationUpdateMode};
 
 {$R *.res}
 var

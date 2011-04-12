@@ -436,6 +436,24 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+
+  //21 synFlag
+  TSyncGodsRelation=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  //22 synFlag
+  TSyncGodsInfo=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
 implementation
 
 { TSyncSingleTable }
@@ -503,7 +521,7 @@ begin
       else
         Raise Exception.Create('不支持的数据类型');
       end;
-      if i=(COMMIdx-1) then //把通讯标志位改为 1
+      if (i=(COMMIdx-1)) and (Params.FindParam('COMM_LOCK')=nil) then //把通讯标志位改为 1
          begin
            Comm := ZQuery.Params[i].AsString;
            Comm[1] := '1';
@@ -746,12 +764,14 @@ var
   Str:string;
 begin
   Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' b where '+
-  '(TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or b.TIME_STAMP>:TIME_STAMP)) '+
-  'and Exists(select * from PUB_GOODS_RELATION where TENANT_ID=b.TENANT_ID and GODS_ID=b.GODS_ID)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP) '+
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+  ' union all '+
+  'select b.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' b,PUB_GOODS_RELATION c,CA_RELATION j,CA_RELATIONS s '+
+  'where b.TENANT_ID=j.TENANT_ID and b.GODS_ID=c.GODS_ID and c.RELATION_ID=j.RELATION_ID and c.RELATION_ID=s.RELATION_ID and j.RELATION_ID=s.RELATION_ID and c.TENANT_ID=s.TENANT_ID '+
+  ' and s.RELATI_ID=:TENANT_ID and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) '+
   '';
   if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+     Str := 'select * from ('+Str+') j where '+ParseSQL(AGlobal.iDbType,'substring(COMM,1,1)<>''1''');
 
   SelectSQL.Text := Str;
 end;
@@ -769,9 +789,11 @@ begin
 end;
 
 procedure TSyncPubBarcode.InitSQL(AGlobal: IdbHelp; TimeStamp: boolean);
+var Inted:boolean;
 begin
+  Inted := Init;
   inherited;
-  if not Init then Temp.SQL.Text := UpdateQuery.SQL.Text+' and BARCODE=:BARCODE';
+  if not Inted then Temp.SQL.Text := UpdateQuery.SQL.Text+' and BARCODE=:BARCODE';
 end;
 
 { TSyncPubIcInfo }
@@ -3021,11 +3043,69 @@ begin
   AGlobal.ExecSQL(Str,Params);
 end;
 
+{ TSyncGodsRelation }
+
+function TSyncGodsRelation.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
+   'where TENANT_ID in (select s.TENANT_ID from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'),Params);
+end;
+
+function TSyncGodsRelation.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
+  'where TENANT_ID in (select s.TENANT_ID from CA_RELATIONS s where s.RELATION_ID=i.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncGodsInfo }
+
+function TSyncGodsInfo.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
+   'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'),Params);
+end;
+
+function TSyncGodsInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+
+  ' union all '+
+  'select b.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' b,PUB_GOODS_RELATION c,CA_RELATION j,CA_RELATIONS s '+
+  'where b.TENANT_ID=j.TENANT_ID and b.GODS_ID=c.GODS_ID and c.RELATION_ID=j.RELATION_ID and c.RELATION_ID=s.RELATION_ID and j.RELATION_ID=s.RELATION_ID and c.TENANT_ID=s.TENANT_ID '+
+  ' and s.RELATI_ID=:TENANT_ID and (b.TIME_STAMP>:TIME_STAMP or c.TIME_STAMP>:TIME_STAMP or s.TIME_STAMP>:TIME_STAMP) '+
+  '';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := 'select * from ('+Str+') j where '+ParseSQL(AGlobal.iDbType,'substring(COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
   RegisterClass(TSyncCaRelationInfo);
   RegisterClass(TSyncCaRelations);
+  RegisterClass(TSyncGodsInfo);
+  RegisterClass(TSyncGodsRelation);
   RegisterClass(TSyncPubBarcode);
   RegisterClass(TSyncPubIcInfo);
   RegisterClass(TSyncStockOrderList);
@@ -3080,6 +3160,8 @@ finalization
   UnRegisterClass(TSyncCaTenant);
   UnRegisterClass(TSyncCaRelationInfo);
   UnRegisterClass(TSyncCaRelations);
+  UnRegisterClass(TSyncGodsInfo);
+  UnRegisterClass(TSyncGodsRelation);
   UnRegisterClass(TSyncPubBarcode);
   UnRegisterClass(TSyncPubIcInfo);
   UnRegisterClass(TSyncStockOrderList);

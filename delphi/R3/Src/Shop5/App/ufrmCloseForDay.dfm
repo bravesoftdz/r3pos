@@ -142,6 +142,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndCREA_USER: TcxTextEdit
         Tag = 1
@@ -158,6 +159,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object RzPanel3: TRzPanel
@@ -402,6 +404,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_B: TcxTextEdit
         Tag = 1
@@ -418,6 +421,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_C: TcxTextEdit
         Tag = 1
@@ -434,6 +438,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_D: TcxTextEdit
         Tag = 1
@@ -450,6 +455,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_E: TcxTextEdit
         Tag = 1
@@ -466,6 +472,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_F: TcxTextEdit
         Tag = 1
@@ -482,6 +489,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_G: TcxTextEdit
         Tag = 1
@@ -499,6 +507,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 6
         Visible = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_H: TcxTextEdit
         Tag = 1
@@ -516,6 +525,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 7
         Visible = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_I: TcxTextEdit
         Tag = 1
@@ -533,6 +543,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 8
         Visible = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_J: TcxTextEdit
         Tag = 1
@@ -550,6 +561,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Style = [fsBold]
         TabOrder = 9
         Visible = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtRECV_MNY: TcxTextEdit
         Tag = 1
@@ -566,6 +578,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPAY_MNY: TcxTextEdit
         Tag = 1
@@ -582,6 +595,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 11
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtHIS_MNY: TcxTextEdit
         Tag = 1
@@ -598,6 +612,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 12
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
   end

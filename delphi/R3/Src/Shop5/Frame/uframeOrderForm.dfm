@@ -327,6 +327,7 @@ inherited frameOrderForm: TframeOrderForm
       FooterFont.Style = []
       FooterRowCount = 1
       FrozenCols = 2
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
       PopupMenu = PopupMenu1
@@ -503,6 +504,7 @@ inherited frameOrderForm: TframeOrderForm
         Style.Font.Name = #40657#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnEnter = edtInputEnter
         OnExit = edtInputExit
         OnKeyDown = edtInputKeyDown
@@ -544,6 +546,7 @@ inherited frameOrderForm: TframeOrderForm
       Top = 160
       Width = 49
       Height = 20
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       PopupMenu = PopupMenu1
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = fndUNIT_IDPropertiesChange

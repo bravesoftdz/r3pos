@@ -4502,16 +4502,22 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按毛利积分','INTE_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按数量积分','INTE_TYPE','00',5497000);
 
+--等级类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','企业会员','PRICE_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','商盟会员','PRICE_TYPE','00',5497000);
+
 --客户分类
 CREATE TABLE [PUB_PRICEGRADE] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --编码
+        --编码<如果是商盟会员时，PRICE_ID=UNION_ID>
 	[PRICE_ID] [char] (36) NOT NULL ,
         --名称
 	[PRICE_NAME] [varchar] (30) NOT NULL ,
         --拼音码
 	[PRICE_SPELL] [varchar] (30) NOT NULL ,
+        --等级类型
+	[PRICE_TYPE] [char] (1) NULL ,
         --积分标准
 	[INTEGRAL] [numeric](18, 3) NULL ,
         --积分方法

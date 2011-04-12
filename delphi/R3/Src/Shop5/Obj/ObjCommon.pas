@@ -47,11 +47,15 @@ TGetSyncTimeStamp=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
+TGetLastUpdateStatus=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
 const
   ComVersion='5.0.0.1';
 var
   FldXdict:TZReadonlyQuery;
-  SyncTimeStamp:Int64;
+  SyncTimeStamp,LastUpdateTimeStamp:Int64;
 implementation
 function NewId(id:string): string;
 var
@@ -352,6 +356,8 @@ begin
    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
   end;
   result := 'case when ('+result+')<='+inttostr(SyncTimeStamp)+' then '+inttostr(SyncTimeStamp+60)+ ' else '+result+' end';
+
+  LastUpdateTimeStamp := SyncTimeStamp + 60;
 end;
 //读取合法日期
 function GetReckDate(AGlobal:IdbHelp;TENANT_ID,SHOP_ID:string):string;
@@ -707,12 +713,26 @@ begin
   end;
 end;
 
+{ TGetLastUpdateStatus }
+
+function TGetLastUpdateStatus.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+begin
+  if LastUpdateTimeStamp>SyncTimeStamp then
+     Msg := '1' else Msg := '0';
+  result := true;
+end;
+
 initialization
   RegisterClass(TGetXDictInfo);
   RegisterClass(TGetSyncTimeStamp);
+  RegisterClass(TGetLastUpdateStatus);
   FldXdict := nil;
+  LastUpdateTimeStamp := 0;
 finalization
+
   if FldXdict<>nil then FldXdict.Free;
   UnRegisterClass(TGetXDictInfo);
   UnRegisterClass(TGetSyncTimeStamp);
+  UnRegisterClass(TGetLastUpdateStatus);
 end.

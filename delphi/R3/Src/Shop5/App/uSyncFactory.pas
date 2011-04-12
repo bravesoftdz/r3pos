@@ -140,6 +140,8 @@ begin
   18:result := 'TSyncPriceOrderList';
   19:result := 'TSyncCheckOrderList';
   20:result := 'TSyncCaTenant';
+  21:result := 'TSyncGodsRelation';
+  22:result := 'TSyncGodsInfo';
   else
     result := 'TSyncSingleTable';
   end;
@@ -278,16 +280,16 @@ begin
   new(n);
   n^.tbname := 'PUB_GOODSINFO';
   n^.keyFields := 'TENANT_ID;GODS_ID';
-  n^.synFlag := 2;
+  n^.synFlag := 22;
   n^.KeyFlag := 0;
   n^.tbtitle := '商品档案';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_GOODS_RELATION';
   n^.keyFields := 'TENANT_ID;GODS_ID;RELATION_ID';
-  n^.synFlag := 2;
+  n^.synFlag := 21;
   n^.KeyFlag := 1;
-  n^.tbtitle := '商品档案';
+  n^.tbtitle := '供应链商品';
   FList.Add(n);
   new(n);
   n^.tbname := 'PUB_BARCODE';
@@ -542,7 +544,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20,21,22:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -580,7 +582,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20:if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20,21,22:if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       18:if not gbl then SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;

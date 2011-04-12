@@ -473,21 +473,21 @@ inherited frmLogin: TfrmLogin
   end
   object lblName: TLabel [1]
     Left = 51
-    Top = 119
+    Top = 127
     Width = 60
     Height = 12
     Caption = #29992#25143#24080#21495#65306
   end
   object lblPass: TLabel [2]
     Left = 51
-    Top = 142
+    Top = 150
     Width = 60
     Height = 12
     Caption = #25805#20316#21475#20196#65306
   end
   object Label3: TLabel [3]
     Left = 299
-    Top = 141
+    Top = 149
     Width = 52
     Height = 12
     Cursor = crHandPoint
@@ -502,7 +502,7 @@ inherited frmLogin: TfrmLogin
   end
   object Label6: TLabel [4]
     Left = 109
-    Top = 167
+    Top = 175
     Width = 186
     Height = 12
     Caption = #40664#35748#31649#29702#21592#24080#21495'/'#21475#20196#65306'admin/1234'
@@ -515,14 +515,14 @@ inherited frmLogin: TfrmLogin
   end
   object Label4: TLabel [5]
     Left = 51
-    Top = 97
+    Top = 105
     Width = 60
     Height = 12
     Caption = #19994#21153#26085#26399#65306
   end
   object lblTenantName: TLabel [6]
     Left = 51
-    Top = 71
+    Top = 76
     Width = 60
     Height = 12
     Caption = #24403#21069#20225#19994#65306
@@ -678,7 +678,7 @@ inherited frmLogin: TfrmLogin
   end
   object cxcbSave: TcxCheckBox [10]
     Left = 104
-    Top = 186
+    Top = 194
     Width = 103
     Height = 21
     Properties.DisplayUnchecked = 'False'
@@ -689,7 +689,7 @@ inherited frmLogin: TfrmLogin
   end
   object cxedtPasswrd: TcxTextEdit [11]
     Left = 111
-    Top = 137
+    Top = 145
     Width = 184
     Height = 20
     Properties.EchoMode = eemPassword
@@ -698,18 +698,20 @@ inherited frmLogin: TfrmLogin
   end
   object edtOPER_DATE: TcxDateEdit [12]
     Left = 111
-    Top = 93
+    Top = 101
     Width = 184
     Height = 20
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     Properties.DateOnError = deToday
     TabOrder = 4
   end
   object cxedtUsers: TcxTextEdit [13]
     Left = 111
-    Top = 115
+    Top = 123
     Width = 184
     Height = 20
     TabOrder = 5
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
   end
   inherited mmMenu: TMainMenu
     Left = 65528

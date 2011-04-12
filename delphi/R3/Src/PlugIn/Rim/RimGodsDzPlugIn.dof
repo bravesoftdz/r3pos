@@ -90,11 +90,11 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=E:\Delphi\R3\Src\RspSrvr\PlugIn
+OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=
+SearchPath=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOffice2k;asgd7;FR7;Rz30Ctls70;Rz30DBCtls70;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;VCLZipD7_3;llPDFLibD7;inetdb;zsr
 Conditionals=
 DebugSourceDirs=
@@ -134,8 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files\borland\delphi7\Projects\Bpl\dclusr70.bpl=Borland User Components
 [HistoryLists\hlConditionals]
 Count=1
 Item0=LIBV4.0
@@ -143,10 +141,11 @@ Item0=LIBV4.0
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=3
-Item0=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
-Item1=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
-Item2=D:\Delphi\R3\zLib\src\zLib
+Count=4
+Item0=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
+Item1=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
+Item2=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
+Item3=D:\Delphi\R3\zLib\src\zLib
 [HistoryLists\hlOutputDirectorry]
 Count=4
 Item0=E:\Delphi\R3\Src\RspSrvr\PlugIn

@@ -106,8 +106,8 @@ begin
     RsBarPub:=TZQuery.Create(nil);  //R3ÌõÂë_¹©Ó¦Á´
     StrSQL:=Pchar(
       'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
-      'left outer join PUB_GOODS_RELATION B on A.GODS_ID=B.GODS_ID '+
-      ' where B.TENANT_ID=110000001 and A.TENANT_ID='+TENANT_ID+' and A.BARCODE_TYPE=''1'' ');
+      'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+') B on A.GODS_ID=B.GODS_ID '+
+      ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ');
     OpenData(PlugIntf, RsBarPub, StrSQL);
     RimSQL:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ';
     OpenData(PlugIntf, RsRim, PChar(RimSQL));

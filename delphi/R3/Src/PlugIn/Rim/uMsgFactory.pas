@@ -1,12 +1,11 @@
 unit uMsgFactory;
 
 interface
-uses windows,SysUtils,Classes,EncdDecd,ZLib,WsdlComm,
+uses windows,SysUtils,Classes,EncdDecd,ZLib,WsdlComm,ZDataSet,Forms,SoapInvestigate,Variants,
   xmldom,
   XMLIntf,
   msxmldom,
   XMLDoc;
-
 procedure DoSyncQuestion(tid,lscode:string);
 implementation
 procedure DoSyncQuestion(tid,lscode:string);
@@ -17,6 +16,8 @@ var
   ErrorInfo,msg:string;
   i:integer;
   OrgId,ComId:string;
+  rs:TZQuery;
+  iRet:OleVariant;
 begin
   OrgId := GetOrgId(lsCode);
   ComId := GetComId(lsCode);
@@ -34,29 +35,38 @@ begin
      xmlDoc.XML.Text :=decodeZipBase64(GetInvestigateService(true,url+'/Investigate?wsdl',nil).getInvestigate(txt));
      xmlDoc.Active :=true;
 
-     Node :=  XMLDocument1.DocumentElement;
+     Node :=  xmlDoc.DocumentElement;
      P1 := Node.ChildNodes.First;
      V := P1.ChildNodes.First;
      ErrorInfo:= V.Attributes['MSG'];
      if V.Attributes['REC_ACK']<>'0000' then// 返回 0000 才是执行成功
         Raise Exception.Create(Msg);
-
-     P1 := Node.ChildNodes.Last;
-     if P1<>nil then
-     begin
-       for i:=0 to  P1.ChildNodes.Count-1 do
+     rs := TZQuery.Create(nil);
+     try
+       P1 := Node.ChildNodes.Last;
+       if P1<>nil then
        begin
-         V := P1.ChildNodes[i];
-         if V.Attributes['INVEST_ID']=nil then continue;
-
-         
-
-         AObj := TRecord_.Create;
-         AObj.AddField('INVEST_ID',V.Attributes['INVEST_ID']);
-         AObj.AddField('INVEST_NAME',V.Attributes['INVEST_NAME']);
-         AObj.AddField('VOLUME_ID',V.Attributes['VOLUME_ID']);
-         edtQList.Properties.Items.AddObject(AObj.FieldbyName('INVEST_NAME').AsString,AObj);
+         for i:=0 to  P1.ChildNodes.Count-1 do
+         begin
+           V := P1.ChildNodes[i];
+           if VarIsNull(V.Attributes['INVEST_ID']) then continue;
+           rs.close;
+           rs.SQL.Text := 'select count(*) from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID='''+V.Attributes['INVEST_ID']+'''';
+           if GPlugIn.Open(pchar(rs.SQL.Text),iRet)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+           rs.Data := iRet;
+           if rs.Fields[0].AsInteger = 0 then
+              begin
+                if GPlugIn.ExecSQL('insert into MSC_QUESTION()')<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+              end;
+           AObj := TRecord_.Create;
+           AObj.AddField('INVEST_ID',V.Attributes['INVEST_ID']);
+           AObj.AddField('INVEST_NAME',V.Attributes['INVEST_NAME']);
+           AObj.AddField('VOLUME_ID',V.Attributes['VOLUME_ID']);
+           edtQList.Properties.Items.AddObject(AObj.FieldbyName('INVEST_NAME').AsString,AObj);
+         end;
        end;
+     finally
+       rs.free;
      end;
      except
        on E:Exception do

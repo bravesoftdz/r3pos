@@ -44,6 +44,8 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure btn_SaveClick(Sender: TObject);
     procedure btn_CloseClick(Sender: TObject);
+    procedure edtIS_REPEATKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -215,10 +217,31 @@ begin
 end;
 
 procedure TfrmImpeach.Append;
+var rs:TZQuery;
 begin
   Open;
   edtIS_REPEAT.ItemIndex := 0;
   edtIS_URGENCY.ItemIndex := 0;
+  
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+    'select b.TENANT_ID,b.CLIENT_NAME from CA_RELATIONS a left join VIW_CLIENTINFO b on a.TENANT_ID=b.TENANT_ID where a.RELATI_ID=:TENANT_ID';
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs);
+    if not rs.IsEmpty then
+      begin
+        edtIMPH_TENANT_ID.KeyValue := rs.FieldbyName('TENANT_ID').AsString;
+        edtIMPH_TENANT_ID.Text := rs.FieldbyName('CLIENT_NAME').AsString;
+      end
+    else
+      begin
+        edtIMPH_TENANT_ID.KeyValue := IntToStr(Global.TENANT_ID);
+        edtIMPH_TENANT_ID.Text := Global.TENANT_NAME;
+      end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmImpeach.FormDestroy(Sender: TObject);
@@ -238,6 +261,14 @@ procedure TfrmImpeach.btn_CloseClick(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmImpeach.edtIS_REPEATKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_RETURN then
+    edtCONTENT.SetFocus;
 end;
 
 end.

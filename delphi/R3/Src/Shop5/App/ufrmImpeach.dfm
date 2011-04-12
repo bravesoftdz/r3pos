@@ -1,10 +1,11 @@
 inherited frmImpeach: TfrmImpeach
-  Left = 371
-  Top = 144
-  Width = 539
-  Height = 364
+  Left = 379
+  Top = 164
   BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsDialog
   Caption = #25237#35785#24314#35758
+  ClientHeight = 337
+  ClientWidth = 531
   OldCreateOrder = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -131,7 +132,7 @@ inherited frmImpeach: TfrmImpeach
           end
           object Label9: TLabel
             Left = 14
-            Top = 166
+            Top = 132
             Width = 90
             Height = 24
             Alignment = taRightJustify
@@ -156,6 +157,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 38
             Width = 232
             Height = 20
+            Properties.AutoSelect = False
             Properties.Buttons = <
               item
                 Default = True
@@ -172,17 +174,17 @@ inherited frmImpeach: TfrmImpeach
                 FieldName = 'CLIENT_CODE'
                 Footers = <>
                 Title.Caption = #20225#19994#32534#30721
-                Width = 90
+                Width = 70
               end
               item
                 EditButtons = <>
                 FieldName = 'CLIENT_NAME'
                 Footers = <>
                 Title.Caption = #20225#19994#21517#31216
-                Width = 140
+                Width = 160
               end>
             DropWidth = 235
-            DropHeight = 228
+            DropHeight = 110
             ShowTitle = True
             AutoFitColWidth = True
             ShowButton = True
@@ -205,6 +207,7 @@ inherited frmImpeach: TfrmImpeach
             Width = 74
             Height = 20
             TabOrder = 4
+            OnKeyDown = edtIS_REPEATKeyDown
           end
           object edtIS_URGENCY: TcxComboBox
             Left = 109

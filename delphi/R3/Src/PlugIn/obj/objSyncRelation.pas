@@ -72,7 +72,7 @@ begin
     begin
       //更新已对应:
       UpSQL:='update A Set '+UpFields+UpComm+' from PUB_GOODS_RELATION A,INF_GOODS_RELATION B '+
-             ' where A.TENANT_ID='+TENANT_ID+' and A.GODS_ID=B.GODS_ID and UPDATE_FLAG=1 ';
+             ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and A.GODS_ID=B.GODS_ID and UPDATE_FLAG=1 ';
       AGlobal.ExecSQL(UpSQL);
       //插入不存在：
       UpSQL:=
@@ -98,7 +98,7 @@ begin
       //更新字段:
       UpSQL:='update A set A.NEW_INPRICE=B.NEW_INPRICE,A.NEW_OUTPRICE=B.NEW_OUTPRICE '+UpComm+' '+
              ' from PUB_GOODS_RELATION A,INF_GOODS_RELATION B '+
-             ' where A.TENANT_ID='+TENANT_ID+' and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 ';
+             ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 ';
       AGlobal.ExecSQL(UpSQL);
     end;
   end;
@@ -126,7 +126,7 @@ begin
       UpSQL:=
         'update PUB_GOODS_RELATION A set ('+UpFields+',COMM,TIME_STAMP)= '+
         ' (select '+UpFields+','+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1 and A.TENANT_ID='+TENANT_ID+')'+
-        ' where A.TENANT_ID='+TENANT_ID+' and exists(select 1 from INF_GOODS_RELATION B where A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1) ';
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and exists(select 1 from INF_GOODS_RELATION B where A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1) ';
       AGlobal.ExecSQL(UpSQL);
 
       //插入新记录:
@@ -155,7 +155,7 @@ begin
         'update PUB_GOODS_RELATION A '+
         ' set (NEW_INPRICE,NEW_OUTPRICE,COMM,TIME_STAMP)= '+
         ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+') '+
-        ' where A.TENANT_ID='+TENANT_ID+' and exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
 
       AGlobal.ExecSQL(UpSQL);
      end;

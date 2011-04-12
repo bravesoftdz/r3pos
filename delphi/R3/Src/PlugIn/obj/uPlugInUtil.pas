@@ -74,17 +74,20 @@ end;
 
 function OpenData(PlugIntf: IPlugIn; Qry: TZQuery; SQL: string): Boolean;
 var
+  ReRun: integer;
   vData: OleVariant;
 begin
   result:=False;
   try
-    PlugIntf.Open(Pchar(SQL),vData);
-    if VarIsArray(vData) then
+    ReRun:=PlugIntf.Open(Pchar(SQL),vData);
+    if (ReRun=0) and (VarIsArray(vData)) then
     begin
       Qry.Close;
       Qry.Data:=vData;
       Result:=Qry.Active;
     end;
+    if ReRun<>0 then
+      Exception.Create(StrPas(GPlugIn.GetLastError));
   except
     on E:Exception do
     begin

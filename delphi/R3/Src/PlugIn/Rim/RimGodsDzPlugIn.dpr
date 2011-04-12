@@ -64,6 +64,7 @@ var
   GPlugIn:IPlugIn;
   GLastError:string;
 
+
 function NewId(id:string=''): string;
 var
   g:TGuid;
@@ -76,34 +77,12 @@ begin
      result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
-function GetORGAN_ID(PlugIntf: IPlugIn; TENANT_ID: string): string;
+function OpenData(PlugIntf: IPlugIn; Qry: TZQuery; SQL: string): Boolean;
 var
-  str: string;
-  Rs: TZQuery;
   vData: OleVariant;
 begin
-  result:='';
-  str:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where A.ORGAN_CODE=B.LOGIN_NAME and B.TENANT_ID='+TENANT_ID+' ';
-  PlugIntf.Open(Pchar(str),vData);
-  if VarIsArray(vData) then
-  begin
-    try
-      Rs:=TZQuery.Create(nil);
-      Rs.Data:=vData;
-      if Rs.Active then
-        result:=trim(Rs.fieldbyName('ORGAN_ID').AsString);
-    finally
-      Rs.Free;
-    end;
-  end;
-end;
-
-//2011.04.08 Pm  Add [RIM_GOODSINFO] === [INF_GOODS_RELATION]
-function DoUpdateINF_GOODSINFO(PlugIntf: IPlugIn; TENANT_ID: string): Integer;
-  function OpenData(Qry: TZQuery; SQL: string): Boolean;
-  var vData: OleVariant;
-  begin
-    result:=False;
+  result:=False;
+  try
     PlugIntf.Open(Pchar(SQL),vData);
     if VarIsArray(vData) then
     begin
@@ -111,13 +90,48 @@ function DoUpdateINF_GOODSINFO(PlugIntf: IPlugIn; TENANT_ID: string): Integer;
       Qry.Data:=vData;
       Result:=Qry.Active;
     end;
+  except
+    on E:Exception do
+    begin
+      GLastError := E.Message;
+      PlugIntf.WriteLogFile(Pchar('PlugIntf.Open:('+Qry.Name+') 出错：'+E.Message));
+    end;
   end;
+end;  
+
+function GetORGAN_ID(PlugIntf: IPlugIn; TENANT_ID: string): string;
 var
-  TestStr,
-  Sort_ID2,      //价格分类
-  Sort_ID6,      //是否是省内外
-  CALC_UNIT,     //计量单位
-  Box_InPrice,   //包的入库价
+  str: string;
+  Rs: TZQuery;
+  vData: OleVariant;
+begin
+  result:='';
+  try
+    str:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where A.ORGAN_CODE=B.LOGIN_NAME and B.TENANT_ID='+TENANT_ID+' ';
+    try
+      Rs:=TZQuery.Create(nil);
+      OpenData(PlugIntf, Rs, str);
+      if Rs.Active then
+        result:=trim(Rs.fieldbyName('ORGAN_ID').AsString);
+    finally
+      Rs.Free;
+    end;
+  except
+    on E:Exception do
+    begin
+      GLastError := E.Message;
+      PlugIntf.WriteLogFile(Pchar('传入R3企业ID:('+TENANT_ID+') 返回Rim的企业ID出错：'+E.Message));
+    end;
+  end;
+end;
+
+//2011.04.08 Pm  Add [RIM_GOODSINFO] === [INF_GOODS_RELATION]
+function DoUpdateINF_GOODSINFO(PlugIntf: IPlugIn; TENANT_ID: string): Integer;
+var
+  Sort_ID2,     //价格分类
+  Sort_ID6,     //是否是省内外
+  CALC_UNIT,    //计量单位
+  Box_InPrice,  //包的入库价
   Box_OutPrice: string;  //包的零售价
   StrSQL: Pchar;
   ORGAN_ID,    //RIM公司ID
@@ -151,6 +165,7 @@ begin
   //先删除本企业中数据；
   StrSQL:=PChar('delete from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' ');
   PlugIntf.ExecSQL(StrSQL,iRet);
+
   //插入所有商品
   try
     AObj:=TRecord_.Create;
@@ -161,48 +176,56 @@ begin
       'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
       'left outer join PUB_GOODS_RELATION B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ');
-    OpenData(RsBarPub, StrSQL);
+    OpenData(PlugIntf, RsBarPub, StrSQL);
     RimSQL:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ';
-    OpenData(RsRim, PChar(RimSQL));
-    OpenData(RsInf, Pchar('select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID));
+    OpenData(PlugIntf, RsRim, PChar(RimSQL));
+    OpenData(PlugIntf, RsInf, Pchar('select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID));
 
-    if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then
-    begin
-      RsRim.First;
-      while not RsRim.Eof do
+    try
+      if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then
       begin
-        AObj.ReadFromDataSet(RsRim);
-        BarCode:=trim(AObj.fieldbyName('PACK_BARCODE').AsString);
-        if RsBarPub.Locate('BARCODE',BarCode,[]) then  //条码能关联上
+        RsRim.First;
+        while not RsRim.Eof do
         begin
-          if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
-          AObj.WriteToDataSet(RsInf,False);  //Aobj写入DataSet;
-          if trim(RsBarPub.fieldbyName('ROWS_ID').AsString)<>'' then
-            RsInf.FieldByName('ROWS_ID').AsString:=RsBarPub.fieldbyName('ROWS_ID').AsString
-          else
+          AObj.ReadFromDataSet(RsRim);
+          BarCode:=trim(AObj.fieldbyName('PACK_BARCODE').AsString);
+          if RsBarPub.Locate('BARCODE',BarCode,[]) then  //条码能关联上
+          begin
+            if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
+            AObj.WriteToDataSet(RsInf,False);  //Aobj写入DataSet;
+            if trim(RsBarPub.fieldbyName('ROWS_ID').AsString)<>'' then
+              RsInf.FieldByName('ROWS_ID').AsString:=RsBarPub.fieldbyName('ROWS_ID').AsString
+            else
+              RsInf.FieldByName('ROWS_ID').AsString:=NewId();
+            RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
+            RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
+            RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString; //国家卷烟供应链
+            RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
+            RsInf.FieldByName('UPDATE_FLAG').AsInteger:=RsBarPub.fieldbyName('IsFlag').AsInteger; //状态[1表示新对上，2表示原已对上]
+            RsInf.Post;
+          end else  {==对不上，作为返回显示结果查看==}
+          begin
+            if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
+            AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
             RsInf.FieldByName('ROWS_ID').AsString:=NewId();
-          RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
-          RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
-          RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString; //国家卷烟供应链
-          RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
-          RsInf.FieldByName('UPDATE_FLAG').AsInteger:=RsBarPub.fieldbyName('IsFlag').AsInteger; //状态[1表示新对上，2表示原已对上]
-          RsInf.Post;
-        end else  {==对不上，作为返回显示结果查看==}
-        begin
-          if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
-          AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
-          RsInf.FieldByName('ROWS_ID').AsString:=NewId();
-          RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
-          RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
-          RsInf.FieldByName('GODS_ID').AsString:='#';  //对应不上默认为：#
-          RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码          
-          RsInf.FieldByName('UPDATE_FLAG').AsInteger:=0; //状态[1对不上]
-          RsInf.Post;
-        end;         
-        RsRim.Next;
+            RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
+            RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
+            RsInf.FieldByName('GODS_ID').AsString:='#';  //对应不上默认为：#
+            RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
+            RsInf.FieldByName('UPDATE_FLAG').AsInteger:=0; //状态[1对不上]
+            RsInf.Post;
+          end;
+          RsRim.Next;
+        end; //end (循环: while not RsRim.Eof do)
+        PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation');  //提交RsInf保存中间表:INF_GOODS_RELATION;
+      end; //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
+    except
+      on E:Exception do
+      begin
+        GLastError := E.Message;
+        PlugIntf.WriteLogFile(Pchar('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message));
       end;
-      PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation');  // RsInf
-    end;
+    end
   finally
     AObj.Free;
     RsRim.Free;
@@ -211,15 +234,6 @@ begin
   end;
   result:=iRet;
 end;
- {StrSQL:=PChar(
-    'insert into INF_GOODS_RELATION '+
-    ' (TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME,SORT_ID2,SORT_ID6,NEW_INPRICE,NEW_OUTPRICE,UPDATE_FLAG) '+
-    ' select '+TENANT_ID+' as TENANT_ID,1000006 as RELATION_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',(case when coalesce(B.GODS_ID,'''')<>'''' then 1 else 0 end) as UPDATE_FLAG '+
-    ' from RIM_GOODS_RELATION A '+
-    ' left join VIW_BARCODE B on A.BOX_BARCODE=B.BARCODE '+
-    ' where A.TENANT_ID='''+ORGAN_ID+''' ');
-  PlugIntf.ExecSQL(StrSQL,iRet);  }
-
 
 //RSP装载插件时调用，传插件可访问的服务接口
 function SetParams(PlugIn: IPlugIn):integer; stdcall;
@@ -234,7 +248,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := '对照RSP平台 与 RIM系统卷烟档案';
+  result := 'RSP平台与RIM系统卷烟档案对照';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999
@@ -244,7 +258,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 begin
   try
     //2011.04.08 Pm  Add 执行从[RIM_GOODSINFO] ==> [INF_GOODS_RELATION]导入
@@ -280,3 +294,19 @@ exports
 begin
 
 end.
+
+
+
+
+
+
+
+ { ////用SQL语句插入中间表:
+  StrSQL:=PChar(
+    'insert into INF_GOODS_RELATION '+
+    ' (TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME,SORT_ID2,SORT_ID6,NEW_INPRICE,NEW_OUTPRICE,UPDATE_FLAG) '+
+    ' select '+TENANT_ID+' as TENANT_ID,1000006 as RELATION_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',(case when coalesce(B.GODS_ID,'''')<>'''' then 1 else 0 end) as UPDATE_FLAG '+
+    ' from RIM_GOODS_RELATION A '+
+    ' left join VIW_BARCODE B on A.BOX_BARCODE=B.BARCODE '+
+    ' where A.TENANT_ID='''+ORGAN_ID+''' ');
+  PlugIntf.ExecSQL(StrSQL,iRet);  }

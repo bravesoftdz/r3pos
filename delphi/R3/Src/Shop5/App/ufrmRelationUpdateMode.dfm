@@ -51,7 +51,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       ParentFont = False
     end
     object LblMsg: TLabel
-      Left = 175
+      Left = 326
       Top = 16
       Width = 65
       Height = 12
@@ -63,6 +63,72 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       Font.Style = [fsBold]
       ParentFont = False
       Visible = False
+    end
+    object RB_ViewAll: TRadioButton
+      Left = 96
+      Top = 14
+      Width = 48
+      Height = 16
+      Caption = #25152#26377
+      Checked = True
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      TabStop = True
+      Visible = False
+      OnClick = RB_ViewAllClick
+    end
+    object RB_ViewOld: TRadioButton
+      Left = 279
+      Top = 14
+      Width = 63
+      Height = 16
+      Caption = #21407#23545#29031
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      Visible = False
+      OnClick = RB_ViewAllClick
+    end
+    object RB_ViewNot: TRadioButton
+      Left = 148
+      Top = 14
+      Width = 61
+      Height = 16
+      Caption = #26410#23545#19978
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      Visible = False
+      OnClick = RB_ViewAllClick
+    end
+    object RB_ViewNew: TRadioButton
+      Left = 214
+      Top = 14
+      Width = 62
+      Height = 16
+      Caption = #26032#23545#29031
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+      Visible = False
+      OnClick = RB_ViewAllClick
     end
   end
   object RzPage: TRzPageControl [1]
@@ -157,7 +223,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           Left = 5
           Top = 5
           Width = 399
-          Height = 107
+          Height = 105
           Align = alClient
           AllowedOperations = [alopUpdateEh]
           DataSource = Ds
@@ -208,14 +274,14 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
               Footers = <>
               ReadOnly = True
               Title.Caption = #21830#21697#21517#31216
-              Width = 139
+              Width = 172
             end
             item
               EditButtons = <>
               FieldName = 'PACK_BARCODE'
               Footers = <>
               Title.Caption = #26465#26465#30721
-              Width = 91
+              Width = 95
             end
             item
               EditButtons = <>
@@ -239,23 +305,40 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
               Width = 63
             end>
         end
-        object stbPanel: TPanel
+        object PnlMsg: TPanel
           Left = 5
-          Top = 112
+          Top = 110
           Width = 399
-          Height = 16
+          Height = 18
           Align = alBottom
           Alignment = taLeftJustify
           BevelOuter = bvNone
           Caption = ' '#32418#23383#34920#31034#27809#26377#23545#19978#65281
           Color = clWhite
           Font.Charset = GB2312_CHARSET
-          Font.Color = clRed
+          Font.Color = clNavy
           Font.Height = -12
           Font.Name = #23435#20307
           Font.Style = []
           ParentFont = False
           TabOrder = 1
+          DesignSize = (
+            399
+            18)
+          object LblMemo: TLabel
+            Left = 228
+            Top = 4
+            Width = 169
+            Height = 12
+            Anchors = [akTop, akRight]
+            Caption = #65288#27880#65306#32418#23383#34920#31034#27809#26377#23545#19978#65281#65289
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clRed
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
         end
       end
     end
@@ -302,12 +385,12 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 360
-    Top = 16
+    Left = 384
+    Top = 48
   end
   inherited actList: TActionList
-    Left = 304
-    Top = 8
+    Left = 344
+    Top = 40
   end
   object CdsTable: TZQuery
     FieldDefs = <>

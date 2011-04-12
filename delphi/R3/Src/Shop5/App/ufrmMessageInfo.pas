@@ -35,6 +35,8 @@ type
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure edtMSG_TITLEKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     Aobj:TRecord_;
@@ -291,6 +293,14 @@ procedure TfrmMessageInfo.FormShow(Sender: TObject);
 begin
   inherited;
   edtMSG_TITLE.SetFocus;
+end;
+
+procedure TfrmMessageInfo.edtMSG_TITLEKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_RETURN then
+    edtMSG_CONTENT.SetFocus;
 end;
 
 end.

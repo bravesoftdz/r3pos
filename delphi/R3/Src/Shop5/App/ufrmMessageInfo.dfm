@@ -137,6 +137,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Width = 362
             Height = 20
             TabOrder = 2
+            OnKeyDown = edtMSG_TITLEKeyDown
           end
           object edtMSG_CLASS: TcxComboBox
             Left = 105

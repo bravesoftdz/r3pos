@@ -1093,6 +1093,7 @@ var
   inKeepAlive,OutKeepAlive:TTCP_KEEPALIVE;
   opt ,insize,outsize: Integer;
 begin
+  Exit;
   //加入心跳代码
   opt:=1;
   if setsockopt(Socket,SOL_SOCKET,SO_KEEPALIVE,@opt,sizeof(opt))=SOCKET_ERROR then
@@ -1165,7 +1166,6 @@ var
   R:LongWord;
 begin
   CheckSocketConnected;
-
   DispParams.cArgs := 1;
   DispParams.rgdispidNamedArgs := nil;
   DispParams.cNamedArgs := 0;
@@ -1176,11 +1176,15 @@ begin
     DispParams.rgvarg[0].vt := varInteger;
     TVarData(DispParams.rgvarg[0]).VInteger := dbid;
 
-    R := FInterpreter.CallInvoke(Ord(SKTParameter),0,0,DispParams,nil, @ExcepInfo,nil);
+    try
+       R := FInterpreter.CallInvoke(Ord(SKTParameter),0,0,DispParams,nil, @ExcepInfo,nil);
 
-    if R = DISP_E_EXCEPTION then
-       Raise Exception.Create(ExcepInfo.bstrDescription);
-       
+       if R = DISP_E_EXCEPTION then
+          Raise Exception.Create(ExcepInfo.bstrDescription);
+    except
+      DisConnect;
+      Raise;
+    end;
   finally
     if DispParams.rgdispidNamedArgs <> nil then
       FreeMem(DispParams.rgdispidNamedArgs);

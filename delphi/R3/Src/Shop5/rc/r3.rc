@@ -1,0 +1,14 @@
+;--风格定义
+sFlag=1
+;---门店资料
+uhome BMP Img\100003.bmp
+d100003 BMP Img\100003.bmp
+;---职务资料
+u100009 BMP Img\100009.bmp
+d100009 BMP Img\100009.bmp
+;---员工资料
+u100016 BMP Img\100016.bmp
+d100016 BMP Img\100016.bmp
+;---尺码资料
+u200023 BMP Img\200023.bmp
+d200023 BMP Img\200023.bmp

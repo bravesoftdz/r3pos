@@ -1,0 +1,153 @@
+--下面创建远程RIM数据接口试图：
+--(1)、RIM数据库：RIMDB  
+--(2)、RIM登录名：db2admin   (默认DB2的用户)
+--(3)、RIM 密 码：@Rsp2011   (根据实际情况替换) 
+--第一步：创建WRAPPER: (若存在先删除：DROP WRAPPER DRDA) 
+ CREATE WRAPPER DRDA LIBRARY 'db2drda.dll' OPTIONS(DB2_FENCED 'N')
+--第二步：创建远程SERVER 指平台的数据库：(参数1：AUTHORIZATION 登陆名; 参数2:PASSWORD 密码; 参数3：DBNAME '数据库名')
+ CREATE SERVER RSer TYPE DB2/UDB VERSION 8.1 WRAPPER DRDA AUTHORIZATION db2admin PASSWORD @Rsp2011 OPTIONS(DBNAME 'DB_R3')
+--第三步：指平台的数据库：(参数1：FOR db2admin 指定R3创建登陆名; 参数2：REMOTE_AUTHID远程登陆名; REMOTE_PASSWORD:远程登陆密码)
+  CREATE USER MAPPING FOR db2admin SERVER Rser OPTIONS (REMOTE_AUTHID 'db2admin',REMOTE_PASSWORD '@Rsp2011')
+--第四步：创建NICKNAME、视图：
+--CREATE NICKNAME 本地链接TabName FOR RSer.远程登陆名.远程TabName    
+CREATE NICKNAME Tab FOR Rser.db2admin.Ca_TENANT
+create view VIW_TENANT as select * from Tab
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+--2011.04.06 PM Add 创建前RSer链接：(1)、RIM数据库：RIMDB; (2)、RIM登录名：db2admin (默认DB2的用户); (3)、RIM 密 码：@Rsp2011 (根据实际情况替换) 
+CREATE WRAPPER DRDA LIBRARY 'db2drda.dll' OPTIONS(DB2_FENCED 'N');
+CREATE SERVER RSer TYPE DB2/UDB VERSION 9.1 WRAPPER DRDA AUTHORIZATION db2admin PASSWORD @Rsp2011 OPTIONS(DBNAME 'DB_R3');
+CREATE USER MAPPING FOR db2admin SERVER Rser OPTIONS (REMOTE_AUTHID 'db2admin',REMOTE_PASSWORD '@Rsp2011');
+--创建Link到远程对象表：
+CREATE NICKNAME SD_UM FOR RSER.DB2ADMIN.SD_UM; 
+CREATE NICKNAME SD_ITEM FOR RSER.DB2ADMIN.SD_ITEM;
+CREATE NICKNAME SD_ITEM_UM FOR RSER.DB2ADMIN.SD_ITEM_UM;  
+CREATE NICKNAME SD_ITEM_PRI FOR RSER.DB2ADMIN.SD_ITEM_PRI;
+CREATE NICKNAME SD_ITEM_COM FOR RSER.DB2ADMIN.SD_ITEM_COM;
+CREATE NICKNAME SD_ITEM_TOBACCO FOR RSER.DB2ADMIN.SD_ITEM_TOBACCO; 
+--PUB_ORGAN
+CREATE NICKNAME PUB_ORGAN FOR RSER.DB2ADMIN.PUB_ORGAN; 
+
+--2011.04.07 PM Add 创建视图：RIM_PUB_ORGAN
+create view RIM_PUB_ORGAN
+as
+select * from PUB_ORGAN;
+
+
+--2011.04.07 PM Add 创建视图：RIM_GOODS_RELATION
+create view RIM_GOODS_RELATION
+as
+select
+  e.com_id as TENANT_ID,      --企业（公司）ID（包括省级、地市公司）
+  a.item_id as GODS_ID,       --商品内码
+  a.item_code as GODS_CODE,   --商品编码
+  a.item_name as GODS_NAME,   --商品名称
+  a.short_name as GODS_SNAME, --商品简称 
+  b.kind as SORT_ID2,      --烟分类（1：一类烟..6:无价类）
+  b.IS_IMPORTED as SORT_ID6,  --省内外烟 
+  b.spec as GODS_SPEC,     --商品规格
+  '条' as CALC_UNIT,       --单位
+  PACK_BAR as PACK_BARCODE,   --条条码
+  BOX_BAR as BOX_BARCODE,     --盒条码
+  um2.um_size/um1.um_size as CAlC_AMT, --条换算成合的换算关系
+  c.pri as PACK_INPRICE,  --批发价
+  d.pri as PACK_OUTPRICE    --零售价
+from sd_item a,sd_item_tobacco b,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID )um1,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID)um2,
+     sd_item_pri c,
+     sd_item_pri d,
+     sd_item_com e
+where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_id=b.item_id and a.item_id=um1.item_id and a.item_id=um2.item_id and um1.UM_ID='02' and um2.UM_ID='03' and
+      a.item_id=c.item_id and a.item_id=d.item_id and a.item_id=e.item_id and  c.pri_type='03' and d.pri_type='04' and a.is_mrb='1' and 
+      c.is_mrb='1' and e.is_mrb='1';   
+      
+--国家烟草供应链：1000006      
+      
+--2011.04.07 PM Add 创建对接的表：INF_GOODS_RELATION
+CREATE TABLE INF_GOODS_RELATION (
+	ROWS_ID char (36) NOT NULL ,
+     --企业代码 
+	TENANT_ID int NOT NULL ,
+     --供应链
+	RELATION_ID int NOT NULL ,
+     --货品代码
+	GODS_ID char (36) NOT NULL , 
+     --行业内码<第三方系统内码>
+	SECOND_ID varchar (36), 
+     --货号<识别码>
+	GODS_CODE varchar (36), 
+     --品名+规格
+	GODS_NAME varchar (50) ,
+     --拼音码
+	GODS_SPELL varchar (50) ,
+     --分类1
+	SORT_ID1 varchar (36),
+     --分类2
+	SORT_ID2 varchar (36),
+     --分类3
+	SORT_ID3 varchar (36),
+     --分类4
+	SORT_ID4 varchar (36),
+     --分类5
+	SORT_ID5 varchar (36),
+     --分类6
+	SORT_ID6 varchar (36),
+     --颜色组
+	SORT_ID7 varchar (36),
+     --尺码组
+	SORT_ID8 varchar (36),
+     --自定义9
+	SORT_ID9 varchar (36),
+     --自定义10
+	SORT_ID10 varchar (36),
+     --自定义11
+	SORT_ID11 varchar (36),
+     --自定义12
+	SORT_ID12 varchar (36),
+     --自定义13
+	SORT_ID13 varchar (36),
+     --自定义14
+	SORT_ID14 varchar (36),
+     --自定义15
+	SORT_ID15 varchar (36),
+     --自定义16
+	SORT_ID16 varchar (36),
+     --自定义17
+	SORT_ID17 varchar (36),
+     --自定义18
+	SORT_ID18 varchar (36),
+     --自定义19
+	SORT_ID19 varchar (36),
+     --自定义20
+	SORT_ID20 varchar (36),
+     --标准进价
+	NEW_INPRICE decimal(18, 3),
+     --标准售价
+	NEW_OUTPRICE decimal(18, 3),
+     --最低售价
+	NEW_LOWPRICE decimal(18, 3),
+     --是否启用折扣率 1启用,2禁用
+	USING_PRICE int ,
+     --是否参考积分
+	HAS_INTEGRAL int ,
+     --是否使用批号管制
+	USING_BATCH_NO int ,
+     --是否管制积分换购
+	USING_BARTER int ,
+     --是否管制物流跟踪码
+	USING_LOCUS_NO int ,
+     --积分换购积分
+	BARTER_INTEGRAL int ,
+	   --条条码
+  PACK_BARCODE varchar(30),
+     --更新标记位(0:表示没有更新对应; 1:表示修改; 2: 表示插入)、
+  UPDATE_FLAG int NOT NULL,
+  CONSTRAINT PK_INF_GODS_RELATION PRIMARY KEY (ROWS_ID)
+) ;
+
+-- 表上创建索引
+CREATE INDEX IX_INF_GOODS_RELATION_TENANT_ID ON INF_GOODS_RELATION(TENANT_ID,RELATION_ID,GODS_ID);

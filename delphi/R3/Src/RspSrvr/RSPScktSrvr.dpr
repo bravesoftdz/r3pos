@@ -51,7 +51,8 @@ uses
   ZPlugIn in '..\..\zLib\src\zLib\ZPlugIn.pas',
   ufrmTimer in 'ufrmTimer.pas' {frmTimer},
   TrayDesktop in 'TrayDesktop.pas',
-  objMessage in '..\Shop5\Obj\objMessage.pas';
+  objMessage in '..\Shop5\Obj\objMessage.pas',
+  objSyncRelation in '..\PlugIn\obj\objSyncRelation.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

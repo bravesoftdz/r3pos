@@ -304,6 +304,7 @@ var
   ErrId:integer;
   PlugIn:TPlugIn;
   StartTime:Int64;
+  V:OleVariant;
 begin
   inherited;
   PlugIn := nil;
@@ -332,7 +333,7 @@ begin
       try
         StartTime := GetTickCount;
         try
-          PlugIn.DLLDoExecute('');
+          PlugIn.DLLDoExecute('',V);
           WriteLogFile('<'+PlugIn.PlugInDisplayName+'>执行完毕,总用时:'+inttostr((GetTickCount-StartTime) div 1000)+'秒');
           GetTimer(PlugIn).NearTime := formatdatetime('YYYYMMDDHHNNSS',now());
           WriteTimer(PlugIn);

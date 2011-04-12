@@ -996,12 +996,13 @@ procedure TSocketForm.actPlugInExecuteExecute(Sender: TObject);
 var
   PlugIn:TPlugIn;
   F:TIniFile;
+  V:OleVariant;
 begin
   if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
   PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
   if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
   try
-    PlugIn.DLLDoExecute('');
+    PlugIn.DLLDoExecute('',V);
     F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
     try
       F.WriteString('PlugIn'+TaskList.Selected.Caption,'NearTime',formatdatetime('YYYYMMDDHHNNSS',now()));

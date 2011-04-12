@@ -75,15 +75,7 @@ type
     Timer1: TTimer;
     cdsAnswer: TZQuery;
     WebBrowser1: TWebBrowser;
-    labShopName: TLabel;
-    labANSWER_USER: TLabel;
-    labANSWER_DATE: TLabel;
-    edtSHOP_ID: TLabel;
-    edtANSWER_USER: TLabel;
-    edtANSWER_DATE: TLabel;
     cdsListAnswer: TZQuery;
-    Label4: TLabel;
-    ledANSWER_USE_TIME: TRzLEDDisplay;
     TabSheet1: TRzTabSheet;
     RzPanel5: TRzPanel;
     DBGridEh1: TDBGridEh;
@@ -93,6 +85,26 @@ type
     btnLook: TRzBmpButton;
     btnRetrun_Main: TRzBmpButton;
     RzPanel31: TRzPanel;
+    RzPanel12: TRzPanel;
+    labShopName: TLabel;
+    labANSWER_USER: TLabel;
+    labANSWER_DATE: TLabel;
+    edtSHOP_ID: TLabel;
+    edtANSWER_USER: TLabel;
+    edtANSWER_DATE: TLabel;
+    RzPanel35: TRzPanel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label13: TLabel;
+    QUESTION_SUM: TLabel;
+    QUESTION1_SUM: TLabel;
+    QUESTION2_SUM: TLabel;
+    Label18: TLabel;
+    ledANSWER_USE_TIME: TRzLEDDisplay;
+    Label4: TLabel;
+    QUESTION3_SUM: TLabel;
+    Label15: TLabel;
+    QUESTION4_SUM: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnAnswerClick(Sender: TObject);
@@ -149,7 +161,7 @@ begin
     'select ja.*,a.CODE_NAME as QUESTION_CLASS_TEXT from( '+
     'select QUESTION_CLASS,ISSUE_DATE,QUESTION_SOURCE,QUESTION_TITLE,ANSWER_FLAG,QUESTION_ITEM_AMT,REMARK,END_DATE from MSC_QUESTION '+
     'where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID) ja '+
-    'left join (select CODE_ID,CODE_NAME,TYPE_CODE from PUB_PARAMS where TYPE_CODE=''QUESTION_ITEM_TYPE'') a on ja.QUESTION_CLASS=a.CODE_ID ';
+    'left join (select CODE_ID,CODE_NAME,TYPE_CODE from PUB_PARAMS where TYPE_CODE=''QUESTION_CLASS'') a on ja.QUESTION_CLASS=a.CODE_ID ';
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('QUESTION_ID').AsString := cdsQuestionList.FieldByName('QUESTION_ID').AsString;
     Factor.Open(rs);
@@ -217,7 +229,8 @@ begin
   btnCommit.BringToFront;
   labSUM.Caption := IntToStr(Sum_Num);
   RzPage.ActivePageIndex := 2;
-  //
+  RzPanel35.Visible := False;
+  RzPanel12.Visible := True;
   InitAnswerInfo;
   SetListAnswer;
   GetQuestions;
@@ -521,6 +534,8 @@ begin
   cdsQuestionList.Post;
   RzPage.ActivePageIndex := 0;
   RzPanel3.Visible := False;
+  RzPanel35.Visible := True;
+  RzPanel12.Visible := False;
   edtSHOP_ID.Caption := '';
   edtANSWER_USER.Caption := '';
   edtANSWER_DATE.Caption := '';
@@ -575,6 +590,7 @@ begin
 end;
 
 procedure TfrmQuestionnaire.GetQuestionList;
+var C1,C2,C3,C4:Integer;
 begin
   cdsQuestionList.Close;
   cdsQuestionList.SQL.Text :=
@@ -585,6 +601,35 @@ begin
   cdsQuestionList.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsQuestionList.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Factor.Open(cdsQuestionList);
+
+  cdsQuestionList.DisableControls;
+  try
+    C1 := 0;
+    C2 := 0;
+    C3 := 0;
+    C4 := 0;
+    cdsQuestionList.First;
+    while not cdsQuestionList.Eof do
+      begin
+        if cdsQuestionList.FieldByName('QUESTION_CLASS').AsString = '1' then
+          Inc(C1)
+        else if cdsQuestionList.FieldByName('QUESTION_CLASS').AsString = '2' then
+          Inc(C2)
+        else if cdsQuestionList.FieldByName('QUESTION_CLASS').AsString = '3' then
+          Inc(C3)
+        else
+          Inc(C4);
+        cdsQuestionList.Next;
+      end;
+    QUESTION_SUM.Caption := IntToStr(C1+C2+C3+C4);
+    QUESTION1_SUM.Caption := IntToStr(C1);
+    QUESTION2_SUM.Caption := IntToStr(C2);
+    QUESTION3_SUM.Caption := IntToStr(C3);
+    QUESTION4_SUM.Caption := IntToStr(C4);
+  finally
+    cdsQuestionList.EnableControls;
+  end;
+  RzPanel12.Visible := False;
 end;
 
 procedure TfrmQuestionnaire.DBGridEh1CellClick(Column: TColumnEh);
@@ -595,12 +640,12 @@ begin
   if Column.FieldName = 'QUESTION_TITLE' then
     begin
       RzPage.ActivePageIndex := 1;
-      if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '1' then
+      if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
         begin
           btnLook.Visible := False;
           btnAnswer.Visible := True;
         end
-      else if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
+      else if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '1' then
         begin
           if cdsQuestionList.FieldByName('ANSWER_FLAG').AsString = '2' then
             begin
@@ -625,6 +670,8 @@ begin
   IsEnable := False;
   labSUM.Caption := IntToStr(Sum_Num);
   RzPage.ActivePageIndex := 2;
+  RzPanel12.Visible := True;
+  RzPanel35.Visible := False;
   AlreadyAnswerInfo;
   GetAnswer;
   GetQuestions;
@@ -683,7 +730,7 @@ begin
   if cdsQuestionList.IsEmpty then Exit;
 
   RzPage.ActivePageIndex := 1;
-  if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
+  if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '1' then
     begin
       if cdsQuestionList.FieldByName('ANSWER_FLAG').AsString = '2' then
         begin
@@ -696,7 +743,7 @@ begin
           btnAnswer.Visible := True;
         end;
     end
-  else if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '1' then
+  else if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
     begin
       btnLook.Visible := False;
       btnAnswer.Visible := True;;
@@ -740,6 +787,8 @@ procedure TfrmQuestionnaire.btnRetrun_MainClick(Sender: TObject);
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
+  RzPanel12.Visible := False;
+  RzPanel35.Visible := True;
   edtSHOP_ID.Caption := '';
   edtANSWER_USER.Caption := '';
   edtANSWER_DATE.Caption := '';

@@ -1,8 +1,8 @@
 inherited frmQuestionnaire: TfrmQuestionnaire
-  Left = 372
-  Top = 123
-  Width = 747
-  Height = 561
+  Left = 601
+  Top = 109
+  Width = 714
+  Height = 504
   Caption = #38382#21367#35843#26597
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -12,8 +12,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
   object RzPanel2: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 739
-    Height = 534
+    Width = 706
+    Height = 477
     Align = alClient
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -24,7 +24,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       Left = 0
       Top = 19
       Width = 142
-      Height = 515
+      Height = 458
       Align = alLeft
       BorderOuter = fsNone
       BorderSides = [sdTop, sdRight]
@@ -32,90 +32,212 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       BorderWidth = 1
       Color = 16182753
       TabOrder = 0
-      object labShopName: TLabel
-        Left = 8
-        Top = 23
-        Width = 65
-        Height = 12
-        Caption = #38376#24215#21517#31216#65306
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
+      object RzPanel12: TRzPanel
+        Left = 1
+        Top = 217
+        Width = 140
+        Height = 256
+        Align = alTop
+        BorderOuter = fsNone
+        BorderColor = 16765589
+        Color = 16182753
+        TabOrder = 0
+        object labShopName: TLabel
+          Left = 8
+          Top = 23
+          Width = 65
+          Height = 12
+          Caption = #38376#24215#21517#31216#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object labANSWER_USER: TLabel
+          Left = 8
+          Top = 67
+          Width = 66
+          Height = 12
+          Caption = #31572' '#21367' '#20154#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object labANSWER_DATE: TLabel
+          Left = 8
+          Top = 110
+          Width = 65
+          Height = 12
+          Caption = #31572#21367#26102#38388#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object edtSHOP_ID: TLabel
+          Left = 8
+          Top = 41
+          Width = 42
+          Height = 12
+          Caption = 'SHOP_ID'
+        end
+        object edtANSWER_USER: TLabel
+          Left = 8
+          Top = 85
+          Width = 66
+          Height = 12
+          Caption = 'ANSWER_USER'
+        end
+        object edtANSWER_DATE: TLabel
+          Left = 8
+          Top = 129
+          Width = 66
+          Height = 12
+          Caption = 'ANSWER_DATE'
+        end
+        object ledANSWER_USE_TIME: TRzLEDDisplay
+          Left = 7
+          Top = 172
+          Width = 91
+          Caption = '00:00'
+        end
+        object Label4: TLabel
+          Left = 8
+          Top = 155
+          Width = 39
+          Height = 12
+          Caption = #29992#26102#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
       end
-      object labANSWER_USER: TLabel
-        Left = 8
-        Top = 67
-        Width = 66
-        Height = 12
-        Caption = #31572' '#21367' '#20154#65306
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object labANSWER_DATE: TLabel
-        Left = 8
-        Top = 110
-        Width = 65
-        Height = 12
-        Caption = #31572#21367#26102#38388#65306
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object edtSHOP_ID: TLabel
-        Left = 8
-        Top = 41
-        Width = 42
-        Height = 12
-        Caption = 'SHOP_ID'
-      end
-      object edtANSWER_USER: TLabel
-        Left = 8
-        Top = 85
-        Width = 66
-        Height = 12
-        Caption = 'ANSWER_USER'
-      end
-      object edtANSWER_DATE: TLabel
-        Left = 8
-        Top = 129
-        Width = 66
-        Height = 12
-        Caption = 'ANSWER_DATE'
-      end
-      object Label4: TLabel
-        Left = 8
-        Top = 155
-        Width = 39
-        Height = 12
-        Caption = #29992#26102#65306
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object ledANSWER_USE_TIME: TRzLEDDisplay
-        Left = 7
-        Top = 172
-        Width = 91
-        Caption = '00:00'
+      object RzPanel35: TRzPanel
+        Left = 1
+        Top = 1
+        Width = 140
+        Height = 216
+        Align = alTop
+        BorderOuter = fsNone
+        BorderColor = 16765589
+        Color = 16182753
+        TabOrder = 1
+        object Label9: TLabel
+          Left = 8
+          Top = 21
+          Width = 52
+          Height = 12
+          Caption = #38382#21367#25968#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label10: TLabel
+          Left = 8
+          Top = 56
+          Width = 52
+          Height = 12
+          Caption = #38382#31572#21367#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label13: TLabel
+          Left = 8
+          Top = 91
+          Width = 52
+          Height = 12
+          Caption = #28385#24847#24230#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object QUESTION_SUM: TLabel
+          Left = 57
+          Top = 21
+          Width = 72
+          Height = 12
+          Caption = 'QUESTION_SUM'
+        end
+        object QUESTION1_SUM: TLabel
+          Left = 57
+          Top = 55
+          Width = 78
+          Height = 12
+          Caption = 'QUESTION1_SUM'
+        end
+        object QUESTION2_SUM: TLabel
+          Left = 57
+          Top = 90
+          Width = 78
+          Height = 12
+          Caption = 'QUESTION2_SUM'
+        end
+        object Label18: TLabel
+          Left = 8
+          Top = 125
+          Width = 52
+          Height = 12
+          Caption = #32771#35797#39064#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object QUESTION3_SUM: TLabel
+          Left = 57
+          Top = 124
+          Width = 78
+          Height = 12
+          Caption = 'QUESTION3_SUM'
+        end
+        object Label15: TLabel
+          Left = 20
+          Top = 156
+          Width = 39
+          Height = 12
+          Caption = #20854#23427#65306
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object QUESTION4_SUM: TLabel
+          Left = 60
+          Top = 155
+          Width = 78
+          Height = 12
+          Caption = 'QUESTION4_SUM'
+        end
       end
     end
     object RzPanel10: TRzPanel
       Left = 0
       Top = 0
-      Width = 739
+      Width = 706
       Height = 19
       Align = alTop
       BorderOuter = fsNone
@@ -125,7 +247,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       Color = 16182753
       TabOrder = 1
       DesignSize = (
-        739
+        706
         19)
       object Image2: TImage
         Left = 135
@@ -174,7 +296,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       object Image3: TImage
         Left = 156
         Top = 5
-        Width = 586
+        Width = 553
         Height = 14
         Anchors = [akLeft, akTop, akRight, akBottom]
         ParentShowHint = False
@@ -988,8 +1110,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
     object RzPanel1: TRzPanel
       Left = 142
       Top = 19
-      Width = 597
-      Height = 515
+      Width = 564
+      Height = 458
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -997,8 +1119,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       object RzPanel6: TRzPanel
         Left = 0
         Top = 0
-        Width = 597
-        Height = 470
+        Width = 564
+        Height = 413
         Align = alClient
         BevelWidth = 2
         BorderOuter = fsNone
@@ -1011,14 +1133,14 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         object RzPage: TRzPageControl
           Left = 5
           Top = 5
-          Width = 587
-          Height = 460
-          ActivePage = TabSheet1
+          Width = 554
+          Height = 403
+          ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1030,8 +1152,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
             object RzPanel5: TRzPanel
               Left = 0
               Top = 0
-              Width = 587
-              Height = 442
+              Width = 554
+              Height = 385
               Align = alClient
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -1040,8 +1162,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 587
-                Height = 442
+                Width = 554
+                Height = 385
                 Align = alClient
                 AutoFitColWidths = True
                 BorderStyle = bsNone
@@ -1089,7 +1211,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                     Title.Alignment = taCenter
                     Title.Caption = #38382#21367#26631#39064
                     Title.Color = clWhite
-                    Width = 387
+                    Width = 350
                   end
                   item
                     EditButtons = <>
@@ -1119,8 +1241,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
             object RzPanel7: TRzPanel
               Left = 0
               Top = 0
-              Width = 579
-              Height = 431
+              Width = 554
+              Height = 385
               Align = alClient
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -1129,7 +1251,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel8: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 579
+                Width = 554
                 Height = 121
                 Align = alTop
                 BevelWidth = 20
@@ -1157,7 +1279,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 121
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1194,7 +1316,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel17: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1219,7 +1341,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 137
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1255,7 +1377,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel20: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1280,7 +1402,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 153
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1316,7 +1438,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel23: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1341,7 +1463,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel24: TRzPanel
                 Left = 0
                 Top = 169
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1377,7 +1499,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel26: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1402,7 +1524,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel27: TRzPanel
                 Left = 0
                 Top = 185
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1438,7 +1560,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel29: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1463,8 +1585,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel30: TRzPanel
                 Left = 0
                 Top = 217
-                Width = 579
-                Height = 175
+                Width = 554
+                Height = 129
                 Align = alClient
                 AlignmentVertical = avTop
                 BorderOuter = fsNone
@@ -1476,8 +1598,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel32: TRzPanel
                   Left = 137
                   Top = 20
-                  Width = 319
-                  Height = 135
+                  Width = 294
+                  Height = 89
                   Align = alClient
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1485,8 +1607,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 36
-                    Height = 12
+                    Width = 294
+                    Height = 89
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET
@@ -1499,10 +1621,10 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   end
                 end
                 object RzPanel33: TRzPanel
-                  Left = 456
+                  Left = 431
                   Top = 20
                   Width = 103
-                  Height = 135
+                  Height = 89
                   Align = alRight
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1512,7 +1634,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   Left = 20
                   Top = 20
                   Width = 117
-                  Height = 135
+                  Height = 89
                   Align = alLeft
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1522,7 +1644,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 201
-                Width = 579
+                Width = 554
                 Height = 16
                 Align = alTop
                 AlignmentVertical = avTop
@@ -1559,7 +1681,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object RzPanel14: TRzPanel
                   Left = 297
                   Top = 2
-                  Width = 280
+                  Width = 255
                   Height = 12
                   Align = alClient
                   BorderOuter = fsNone
@@ -1569,20 +1691,20 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               end
               object RzPanel34: TRzPanel
                 Left = 0
-                Top = 392
-                Width = 579
+                Top = 346
+                Width = 554
                 Height = 39
                 Align = alBottom
                 BorderOuter = fsNone
                 Color = clWhite
                 TabOrder = 8
                 DesignSize = (
-                  587
+                  554
                   39)
                 object btnReturn: TRzBmpButton
                   Left = 210
                   Top = 10
-                  Width = 77
+                  Width = 69
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -1874,7 +1996,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object btnLook: TRzBmpButton
                   Left = 325
                   Top = 10
-                  Width = 77
+                  Width = 69
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -2166,7 +2288,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 object btnAnswer: TRzBmpButton
                   Left = 325
                   Top = 10
-                  Width = 77
+                  Width = 69
                   Height = 21
                   GroupIndex = 1
                   Bitmaps.Hot.Data = {
@@ -2493,8 +2615,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
       end
       object RzPanel3: TRzPanel
         Left = 0
-        Top = 470
-        Width = 597
+        Top = 413
+        Width = 564
         Height = 45
         Align = alBottom
         BorderOuter = fsNone
@@ -2504,7 +2626,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         Color = 16182753
         TabOrder = 1
         DesignSize = (
-          597
+          564
           45)
         object Label1: TLabel
           Left = 11
@@ -2580,7 +2702,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           Caption = #39064
         end
         object btnPrevious: TRzBmpButton
-          Left = 352
+          Left = 319
           Top = 14
           Width = 69
           Height = 21
@@ -2874,7 +2996,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           OnClick = btnPreviousClick
         end
         object btnNext: TRzBmpButton
-          Left = 432
+          Left = 399
           Top = 14
           Width = 69
           Height = 21
@@ -3166,7 +3288,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           OnClick = btnNextClick
         end
         object btnRetrun_Main: TRzBmpButton
-          Left = 512
+          Left = 479
           Top = 14
           Width = 69
           Height = 21
@@ -3458,7 +3580,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           OnClick = btnRetrun_MainClick
         end
         object btnCommit: TRzBmpButton
-          Left = 512
+          Left = 479
           Top = 14
           Width = 69
           Height = 21
@@ -3753,49 +3875,50 @@ inherited frmQuestionnaire: TfrmQuestionnaire
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 0
-    Top = 496
+    Left = 5
+    Top = 444
   end
   inherited actList: TActionList
-    Left = 0
-    Top = 436
+    Left = 71
+    Top = 415
   end
   object cdsQuestion: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 65
-    Top = 496
+    Left = 70
+    Top = 444
   end
   object Timer1: TTimer
     Enabled = False
     OnTimer = Timer1Timer
-    Top = 467
+    Left = 5
+    Top = 415
   end
   object cdsAnswer: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 97
-    Top = 496
+    Left = 102
+    Top = 444
   end
   object cdsListAnswer: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 97
-    Top = 464
+    Left = 102
+    Top = 412
   end
   object cdsQuestionList: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 33
-    Top = 496
+    Left = 38
+    Top = 444
   end
   object dsQuestionList: TDataSource
     DataSet = cdsQuestionList
-    Left = 33
-    Top = 464
+    Left = 38
+    Top = 412
   end
 end

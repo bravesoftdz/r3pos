@@ -1,9 +1,10 @@
 inherited frmNewPaperReader: TfrmNewPaperReader
   Left = 500
   Top = 125
-  Width = 797
-  Height = 582
+  BorderStyle = bsDialog
   Caption = #20449#24687#20114#21160
+  ClientHeight = 555
+  ClientWidth = 789
   OldCreateOrder = True
   OnCreate = FormCreate
   OnShow = FormShow

@@ -6,23 +6,9 @@ uses
   SysUtils,Classes,Dialogs,ZBase,zIntf;
 
 type
-  {===类似STK_StockOrder单据===}
-  TInf_StockOrder=class(TZFactory)
-  private
-  public
-    procedure InitClass; override;
-  end;
-
-  TInf_StockDATA=class(TZFactory)
-  private 
-  public
-    procedure InitClass; override;
-  end;
-
-
   TDownOrder=class(TZFactory)
-  private
   public
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;  
     procedure InitClass; override;
   end;
 
@@ -32,6 +18,30 @@ uses ZPlugIn;
 
 { TDownOrder }       
 
+function TDownOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  PlugIn: TPlugIn;
+  vParamStr: string;
+  vData: oldVariant;
+begin
+  result:=False;
+  //下载Rim订单ID: 1002
+  PlugIn := PlugInList.Find(1002);
+  try
+    vParamStr:=Params.Encode(Params); //格式化字符串参数列表;
+
+    //第一步: 从第三方视图[RIM_SD_CO] 到 RSP中间表 [INF_INDEORDER];
+    PlugIn.DLLDoExecute(vParamStr,vData);
+
+    //第二步: 从RSP中间表查询返回显示
+    SelectSQL.Text:=
+      'select * from  ';
+    result:=true;
+  except
+    Raise Exception.Create(PlugIn.DLLGetLastError);
+  end;
+end;
+
 procedure TDownOrder.InitClass;
 begin
   inherited;
@@ -39,40 +49,10 @@ begin
 end;
  
 
-{ TInf_StockOrder }
-
-procedure TInf_StockOrder.InitClass;
-var
-  str: string;
-begin
-  inherited;
-  SelectSQL.Text:='select * from INF_STOCKORDER where STOCK_ID=:STOCK_ID ';
-  Str:='insert into INF_STOCKORDER(TENANT_ID,SHOP_ID, STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,FROM_ID,FIG_ID,ADVA_MNY,STOCK_AMT,NEED_AMT,STOCK_MNY,INVOICE_FLAG,TAX_RATE,REMARK,CREA_DATE,CREA_USER)'+
-       ' values(:TENANT_ID,:SHOP_ID,:STOCK_ID,:GLIDE_NO,:STOCK_TYPE,:STOCK_DATE,:GUIDE_USER,:CLIENT_ID,:FROM_ID,:FIG_ID,:ADVA_MNY,:STOCK_AMT,:NEED_AMT,:STOCK_MNY,:INVOICE_FLAG,:TAX_RATE,:REMARK,:CREA_DATE,:CREA_USER)';
-  InsertSQL.Add(Str);
-end;
-
-{ TInf_StockDATA }
-
-procedure TInf_StockDATA.InitClass;
-var
-  Str: string;
-begin
-  inherited;
-  SelectSQL.Text:='select * from INF_STOCKDATA where STOCK_ID=:STOCK_ID ';
-  str:='insert into INF_STOCKDATA(TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_NO,UNIT_ID,BOM_ID,AMOUNT,NEED_AMT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK)';
-       'values (:TENANT_ID,:SHOP_ID,:STOCK_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_NO,:UNIT_ID,:BOM_ID,:AMOUNT,:NEED_AMT,:ORG_PRICE,:IS_PRESENT,:APRICE,:AMONEY,:AGIO_RATE,:AGIO_MONEY,:CALC_AMOUNT,:CALC_MONEY,:REMARK)';
-  InsertSQL.Add(str);  
-end;
-
 initialization
-  RegisterClass(TInf_StockOrder);
-  RegisterClass(TInf_StockDATA);
   RegisterClass(TDownOrder);
-  
+
 finalization
-  UnRegisterClass(TInf_StockOrder);
-  UnRegisterClass(TInf_StockDATA);
   UnRegisterClass(TDownOrder);
 
 end.

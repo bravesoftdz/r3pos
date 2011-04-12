@@ -168,6 +168,7 @@ var
   PlugIn: TPlugIn;
   TENANT_ID,Str: string;
   UpdateMode: integer;
+  vData: oleVariant;
 begin
   result:=False;
   //供应链对照同步组件ID: 1001
@@ -176,7 +177,7 @@ begin
     TENANT_ID:=InttoStr(Params.ParamByName('TENANT_ID').AsInteger);
     UpdateMode:=Params.ParamByName('UPDATE_MODE').AsInteger;
     //第一步: 从第三方视图 到 RSP中间表;
-    PlugIn.DLLDoExecute(TENANT_ID);
+    PlugIn.DLLDoExecute(TENANT_ID, vData);
     //第二步: 从RSP中间表 到 RSP的关系表;
     case AGlobal.iDbType of
      0: DoUpdateRelation_MSSQL(AGlobal,TENANT_ID,UpdateMode);

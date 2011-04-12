@@ -1,6 +1,6 @@
 inherited frmNewPaperReader: TfrmNewPaperReader
-  Left = 261
-  Top = 123
+  Left = 500
+  Top = 125
   Width = 797
   Height = 582
   Caption = #20449#24687#20114#21160
@@ -461,9 +461,9 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 Color = clWhite
                 TabOrder = 2
                 object labPublishDate: TLabel
-                  Left = 614
+                  Left = 3
                   Top = 332
-                  Width = 6
+                  Width = 617
                   Height = 12
                   Align = alBottom
                   Alignment = taRightJustify

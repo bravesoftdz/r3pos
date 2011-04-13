@@ -88,7 +88,8 @@ type
     InRate2:real;
     //增值税率
     InRate3:real;
-    function  CheckCanExport: boolean; override;    
+    FDownOrderID: string; //下载订单ID 
+    function  CheckCanExport: boolean; override;
   protected
     procedure ReadHeader;
     function CheckInput:boolean;override;
@@ -117,6 +118,8 @@ type
     procedure AuditOrder;override;
     procedure Open(id:string);override;
     procedure PrintBarcode;
+    //2011.04.12 晚 增加 到货确认填充 订单
+    function  IndeOrderWriteToStock(AObj: TRecord_): Boolean;    
   end;
 
 implementation
@@ -182,6 +185,7 @@ end;
 procedure TfrmStockOrder.FormCreate(Sender: TObject);
 begin
   inherited;
+  FDownOrderID:='';
   CanAppend := true;
   fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label6.Visible := fndMY_AMOUNT.Visible;
@@ -294,6 +298,11 @@ begin
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  //下载订单:COMM_ID
+  if (not edtCLIENT_ID.Enabled) and (not edtSHOP_ID.Enabled) and (DBGridEh1.ReadOnly) and (FDownOrderID<>'') then
+    AObj.FieldByName('COMM_ID').AsString:=FDownOrderID
+  else
+    AObj.FieldByName('COMM_ID').AsString:='';
   Calc;
   Factor.BeginBatch;
   try
@@ -325,6 +334,12 @@ begin
 
     Factor.CommitBatch;
     Saved := true;
+
+    //导入订单则复位处理
+    FDownOrderID:='';
+    edtCLIENT_ID.Enabled:=true;  //供应商选择
+    edtSHOP_ID.Enabled:=True;    //入库门店
+    DBGridEh1.ReadOnly:=False;     //明细Grid
   except
     Factor.CancelBatch;
     cdsHeader.CancelUpdates;
@@ -1160,6 +1175,98 @@ end;
 function TfrmStockOrder.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('11200001',7);
+end;
+
+function TfrmStockOrder.IndeOrderWriteToStock(AObj: TRecord_): Boolean;
+var
+  i: integer;
+  Rs, RsGods, RsUnit: TZQuery;
+  TenantID,ShopID,CurName: string;
+begin
+  result:=False;
+  //根据传入的AObj填充主表字段；
+  FDownOrderID:=trim(AObj.fieldbyName('INDE_ID').AsString);
+  TenantID:=trim(Aobj.FieldbyName('TENANT_ID').AsString); //企业ID
+  ShopID:=trim(Aobj.FieldbyName('SHOP_ID').AsString);     //门店ID
+  //读取(供应商)企业ID:
+  edtCLIENT_ID.KeyValue:=TenantID;
+  edtCLIENT_ID.Text:=Global.TENANT_NAME;
+  //读取门店ID
+  edtSHOP_ID.KeyValue:=Global.SHOP_ID;
+  edtSHOP_ID.Text:=Global.SHOP_NAME;
+  edtSTOCK_DATE.Date:=fnTime.fnStrtoDate(AObj.fieldbyName('INDE_DATE').AsString); //订单日期
+
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where INDE_ID='''+FDownOrderID+''' ';
+    Factor.Open(Rs);
+
+    RsGods := Global.GetZQueryFromName('PUB_GOODSINFO');
+    RsUnit := Global.GetZQueryFromName('PUB_MEAUNITS');
+    edtTable.Close;
+    edtTable.CreateDataSet;
+    edtTable.IndexFieldNames:='SEQNO';
+    edtTable.SortedFields:='SEQNO';
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      edtTable.Append;
+      edtTable.FieldbyName('SEQNO').AsInteger := Rs.RecNo;
+      edtTable.FieldbyName('GODS_ID').AsString := Rs.FieldbyName('GODS_ID').AsString;
+      if RsGods.Locate('GODS_ID',Rs.FieldbyName('GODS_ID').AsString,[]) then
+      begin
+        edtTable.FieldbyName('GODS_NAME').AsString := RsGods.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := RsGods.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;        
+        edtTable.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_INPRICE').AsFloat;
+        //edtTable.FieldbyName('GODS_SPEC').AsString := RsGods.FieldbyName('GODS_SPEC').AsString;
+      end else
+      begin
+        edtTable.Close;
+        edtTable.CreateDataSet;
+        edtCLIENT_ID.KeyValue := null;
+        edtCLIENT_ID.Text := '';
+        MessageBox(Handle,'检测到没下载的经营品牌,点确定系统将自动下载资料','友情提示...',MB_OK+MB_ICONINFORMATION);
+        Raise Exception.Create('资料下载完毕，请重新选择供应商进行入库操作');
+      end;
+      //单位换算:
+      edtTable.FieldbyName('UNIT_ID').AsString := Rs.FieldbyName('UNIT_ID').AsString;
+      UnitToCalc(edtTable.FieldbyName('UNIT_ID').AsString);
+
+      edtTable.FieldbyName('AMOUNT').AsFloat := Rs.FieldbyName('AMOUNT').AsFloat;   //数量
+      edtTable.FieldbyName('AMONEY').AsFloat := Rs.FieldbyName('AMONEY').AsFloat;   //金额
+      edtTable.FieldbyName('AGIO_MONEY').AsFloat := Rs.FieldbyName('AGIO_MONEY').AsFloat;  //折扣（让利）金额
+      if Rs.FieldbyName('AMOUNT').AsFloat<>0 then
+        edtTable.FieldbyName('APRICE').AsString := formatFloat('#0.000', Rs.FieldbyName('AMONEY').AsFloat / Rs.FieldbyName('AMOUNT').AsFloat);
+
+      AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+      edtTable.FieldbyName('REMARK').AsString := '';
+      if Rs.FieldbyName('NEED_AMT').AsFloat<>0 then
+         edtTable.FieldbyName('REMARK').AsString := '需求量:'+Rs.FieldbyName('NEED_AMT').AsString;
+      if Rs.FieldbyName('CHK_AMT').AsFloat<>0 then
+         edtTable.FieldbyName('REMARK').AsString := edtTable.FieldbyName('REMARK').AsString+'审核量:'+Rs.FieldbyName('CHK_AMT').AsString;
+      //处理不为空字段:
+      edtTable.FieldbyName('BATCH_NO').AsString:='#';
+      edtTable.FieldbyName('IS_PRESENT').AsInteger:=0;
+            
+      edtTable.Post;
+      Rs.Next;
+    end;
+    rowid := rs.RecordCount;
+  finally
+    Rs.Free;
+  end;
+  //控制控件不可修改属性:
+  edtCLIENT_ID.Enabled:=False;  //供应商选择
+  edtSHOP_ID.Enabled:=False;    //入库门店
+  DBGridEh1.ReadOnly:=true;     //明细Grid
+  {for i:=0 to DBGridEh1.PopupMenu.Items.Count-1 do
+  begin
+    CurName:=trim(LowerCase(DBGridEh1.PopupMenu.Items[i].Name));
+    if CurName='mnubatchno' then Continue;
+      DBGridEh1.PopupMenu.Items[i].Enabled:=False;
+  end;}
+  result:=true;
 end;
 
 end.

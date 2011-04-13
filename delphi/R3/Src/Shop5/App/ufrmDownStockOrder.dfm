@@ -1,11 +1,12 @@
 inherited frmDownStockOrder: TfrmDownStockOrder
-  Left = 313
-  Top = 177
+  Left = 385
+  Top = 145
   BorderStyle = bsDialog
   Caption = #21040#36135#30830#35748
   ClientHeight = 329
   ClientWidth = 472
   OldCreateOrder = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]
@@ -29,7 +30,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       Height = 248
       Align = alClient
       AutoFitColWidths = True
-      DataSource = DataSource1
+      DataSource = Ds
       Flat = True
       FooterColor = clWindow
       FooterFont.Charset = GB2312_CHARSET
@@ -57,35 +58,42 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       Columns = <
         item
           EditButtons = <>
-          FieldName = 'CRT_DATE'
+          FieldName = 'SEQNO'
+          Footers = <>
+          Title.Caption = #24207#21495
+          Width = 31
+        end
+        item
+          EditButtons = <>
+          FieldName = 'INDE_DATE'
           Footers = <>
           Title.Caption = #35746#36135#26085#26399
           Width = 78
         end
         item
           EditButtons = <>
-          FieldName = 'CLIENT_NAME'
+          FieldName = 'TENANT_ID'
           Footers = <>
           Title.Caption = #20379#24212#21830
-          Width = 156
+          Width = 150
         end
         item
           EditButtons = <>
-          FieldName = 'ORD_AMT'
+          FieldName = 'INDE_AMT'
           Footers = <>
           Title.Caption = #35746#36135#25968#37327
           Width = 68
         end
         item
           EditButtons = <>
-          FieldName = 'ORD_MNY'
+          FieldName = 'INDE_MNY'
           Footers = <>
           Title.Caption = #35746#36135#37329#39069
           Width = 66
         end
         item
           EditButtons = <>
-          FieldName = 'RE_AMT'
+          FieldName = 'NEED_AMT'
           Footers = <>
           Title.Caption = #38656#27714#25968#37327
           Width = 63
@@ -183,7 +191,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     Left = 312
     Top = 120
   end
-  object DataSource1: TDataSource
+  object Ds: TDataSource
+    DataSet = cdsTable
     Left = 64
     Top = 96
   end
@@ -193,12 +202,5 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     Params = <>
     Left = 32
     Top = 96
-  end
-  object DataSet: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 32
-    Top = 152
   end
 end

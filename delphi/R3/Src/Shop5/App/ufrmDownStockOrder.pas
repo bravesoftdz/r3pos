@@ -14,14 +14,13 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzButton, cxControls, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, StdCtrls, DB, 
   ExtCtrls, RzPanel, DBClient, Grids, DBGridEh, cxButtonEdit, zrComboBoxList,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, zBase;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, zBase, DBGrids;
 
 type
   TfrmDownStockOrder = class(TfrmBasic)
     RzPanel1: TRzPanel;
-    DataSource1: TDataSource;
+    Ds: TDataSource;
     cdsTable: TZQuery;
-    DataSet: TZQuery;
     TitlePanel: TPanel;
     labTitle: TLabel;
     Bevel2: TBevel;
@@ -35,13 +34,16 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure FormCreate(Sender: TObject);
   private
-    FParam: TftParamList;
+    function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh; 
     function GetOrderDate: TDate;
-    procedure InitalParams(InParam: TftParamList);
+    function GetINDE_ID: string;
   public
-    procedure OpenOrder(ClientID: string);  //查询订单的主表数据
-    class function DownStockOrder(var vParam: TftParamList; var OutCds: TZQuery):boolean;
+    FAobj: TRecord_;
+    procedure OpenIndeOrderList;  //查询订单主表数据
+    procedure DoCopyIndeOrderData;    //将选中的订单明细处理到中间表
+    class function DownStockOrder(var Aobj: TRecord_):boolean;
     property OrderDate: TDate read GetOrderDate;
   end;
 
@@ -55,21 +57,17 @@ uses
 
 { TfrmDownStockOrder }
 
-class function TfrmDownStockOrder.DownStockOrder(var vParam: TftParamList;var OutCds: TZQuery):boolean;
+class function TfrmDownStockOrder.DownStockOrder(var Aobj: TRecord_):boolean;
 var
   FrmObj: TfrmDownStockOrder;
 begin
   Result:=False;
   try
     FrmObj:=TfrmDownStockOrder.Create(nil);
-    FrmObj.InitalParams(vParam);
+    FrmObj.FAobj:=Aobj;
+    FrmObj.OpenIndeOrderList;  //查询订单的主表数据
     if FrmObj.ShowModal=MROK then
-    begin
       result:=true;
-      vParam:=FrmObj.FParam;
-      OutCds.Close;
-      OutCds.Data:=FrmObj.DataSet.Data;
-    end;
   finally
     FrmObj.Free;
   end;
@@ -82,30 +80,16 @@ begin
 end;
 
 procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
-var
-  IsTrue: Boolean;
-  CurDate: string;
-  rs: TZQuery;
 begin
   inherited;
-  if cdsTable.IsEmpty then Raise Exception.Create('请选择正确的订货日期、供应商...');
-  ShopGlobal.GlobalAtteProc('6004',1,IsTrue);
-  if not IsTrue then Raise Exception.Create('你没有权限操作到货确认（生成入库单！）');
-
-  CurDate:=FormatDatetime('YYYYMMDD',OrderDate);
-  try
-    rs:= TZQuery.Create(nil);
-    rs.Close;
-    // rs.SQL.Text:='select count(*) from STK_STOCKORDER where COMP_ID='''+CompID+''' and CLIENT_ID='''+edtCLIENT_ID.AsString+''' and COMM_ID=''DWN'+CurDate+'''';
-    Factor.Open(rs);
-    if rs.Fields[0].AsInteger >0 then Raise Exception.Create('系统检测'+formatDatetime('YYYY/MM/DD', OrderDate)+'已经有入库不能再新增了');
-  finally
-    rs.Free;
+  if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有权限操作到货确认（生成入库单！）');
+  if cdsTable.IsEmpty then Raise Exception.Create(' 没有订单！ ');
+  if trim(CdsTable.fieldbyName('INDE_ID').AsString)<>'' then
+  begin
+    self.DoCopyIndeOrderData;  //复制明细数据
+    FAobj.ReadFromDataSet(cdsTable);  //读取返回值
+    ModalResult:=MROK; //正常返回
   end;
-
-  //下在单据明细
-  // if not SysQueryFrom(CurDate,DataSet,CompID) then Raise Exception.Create('下载销售单错误，无法完成入库...');
-  ModalResult:=MROK; //正常返回
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1GetCellParams(Sender: TObject;
@@ -117,8 +101,8 @@ begin
 end;
 
 procedure TfrmDownStockOrder.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var ARect:TRect;
 begin
   inherited;
   if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
@@ -127,89 +111,94 @@ begin
     Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
   end;
   Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-end;
 
-procedure TfrmDownStockOrder.OpenOrder(ClientID: string);
-var
-  s: string;
-  rs: TZQuery;
-begin
-  rs := TZQuery.Create(nil);
- { try
-    rs.SQL.Text := 'select top 1 COMP_ID,COMP_NAME from CA_COMPANY where COMP_ID='''+Global.SHOP_ID+''' and INTF_CODE='''+ClientID+'''';
-    Factor.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('此供应商在当前接口设置中没找到...');
-    CompID:=trim(Rs.FieldbyName('COMP_ID').AsString);
-    CompName:=trim(Rs.FieldbyName('COMP_NAME').AsString);
-  finally
-    rs.Free;
-  end;
-  }
-
-  cdsTable.Close;
-  cdsTable.IndexFieldNames:='';
-  //接口调用Rin取数据:
-  //SysQueryFromHeader(cdsTable,CompID);
-
-  if not cdsTable.IsEmpty then
+  if Column.FieldName = 'SEQNO' then
   begin
-    rs := TZQuery.Create(nil);
-    cdsTable.DisableControls;
-    try
-    {  cdsTable.AddIndex('CRT_DATE','CRT_DATE',[ixCaseInsensitive],'CRT_DATE');
-      cdsTable.IndexName := 'CRT_DATE';
-      cdsTable.First;
-     }
-      while not cdsTable.Eof do
-      begin
-        if s<>'' then s := s + ',';
-        s := s+'''DWN'+cdsTable.FieldbyName('CRT_DATE').AsString+'''';
-        cdsTable.Next;
-      end;
-
-     // rs.SQL.Text := 'select COMM_ID from STK_STOCKORDER where COMM_ID in ('+s+') and CLIENT_ID='' '' and COMP_ID='''+CompID+'''';
-      Factor.Open(rs);
-      cdsTable.First;
-      while not cdsTable.Eof do
-      begin
-        if rs.Locate('COMM_ID','DWN'+cdsTable.FieldbyName('CRT_DATE').AsString,[]) then
-          cdsTable.Delete
-        else
-          cdsTable.Next;
-      end;
-    finally
-      cdsTable.First;
-      cdsTable.EnableControls;
-      rs.free;
-    end;
-  end;
-
-  //判断是否可下载: 
-  if cdsTable.Active then
-  begin
-    btnOK.Enabled:=(cdsTable.RecordCount>0);
+    ARect := Rect;
+    DBGridEh1.canvas.Brush.Color := $0000F2F2;
+    DBGridEh1.canvas.FillRect(ARect);
+    DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsTable.RecNo)),length(Inttostr(cdsTable.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 end;
-
-procedure TfrmDownStockOrder.InitalParams(InParam: TftParamList);
-var
-  rs: TZQuery;
-begin
-  btnOK.Enabled:=(not cdsTable.Active);
-
-  //选择供应商的数据集
-  try
-    rs:=TZQuery.Create(nil);
-  finally
-    rs.Free;
-  end;
-end;
- 
 
 function TfrmDownStockOrder.GetOrderDate: TDate;
 begin
   if cdsTable.Active then
     fnTime.fnStrtoDate(cdsTable.fieldbyName('CRT_DATE').AsString);
+end;
+
+function TfrmDownStockOrder.GetINDE_ID: string;
+begin
+  if cdsTable.Active then
+    result:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
+end;
+
+procedure TfrmDownStockOrder.OpenIndeOrderList;
+var
+  vParam: TftParamList;
+begin
+  try
+    vParam:=TftParamList.Create(nil);
+    vParam.ParamByName('ExeType').AsInteger:=1;
+    vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    vParam.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
+    Factor.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
+  finally
+    vParam.Free;
+  end;
+end;
+
+procedure TfrmDownStockOrder.DoCopyIndeOrderData;
+var
+  vParam: TftParamList;
+begin
+  try
+    vParam:=TftParamList.Create(nil);
+    vParam.ParamByName('ExeType').AsInteger:=2;
+    vParam.ParamByName('INDE_ID').AsString:=GetINDE_ID;
+    vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+    Factor.ExecProc('TDownIndeData',vParam);  //==RspServer连接模式时执行
+  finally
+    vParam.Free;
+  end;
+end;
+ 
+
+function TfrmDownStockOrder.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGrid.Columns.Count - 1 do
+  begin
+    if DBGrid.Columns[i].FieldName = FieldName then
+    begin
+      result := DBGrid.Columns[i];
+      Exit;
+    end;
+  end;
+end;
+
+procedure TfrmDownStockOrder.FormCreate(Sender: TObject);
+var
+  Rs: TZQuery;
+  SetCol: TColumnEh;
+begin
+  inherited;
+  Rs:=Global.GetZQueryFromName('CA_TENANT'); 
+  SetCol:=FindColumn(DBGridEh1,'TENANT_ID');
+  if (SetCol<>nil) and (Rs.Active) then
+  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      SetCol.KeyList.Add(trim(Rs.FieldByName('TENANT_ID').AsString));
+      SetCol.PickList.Add(trim(Rs.FieldByName('TENANT_NAME').AsString));  
+      Rs.Next;
+    end;
+  end;
 end;
 
 end.

@@ -67,6 +67,7 @@ type
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
+    function  DoIndeOrderWriteToStock(AObj: TRecord_): Boolean;
   end;
 
 implementation
@@ -559,6 +560,11 @@ end;
 function TfrmStockOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('11200001',7);
+end;
+
+function TfrmStockOrderList.DoIndeOrderWriteToStock(AObj: TRecord_): Boolean;
+begin
+  Result:=TfrmStockOrder(CurOrder).IndeOrderWriteToStock(AObj); 
 end;
 
 end.

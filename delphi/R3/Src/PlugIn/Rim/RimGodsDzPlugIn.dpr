@@ -51,8 +51,7 @@ begin
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
-      PlugIntf.WriteLogFile(Pchar('传入R3企业ID:('+TENANT_ID+') 返回Rim的企业ID出错：'+E.Message));
+      Raise Exception.Create('传入R3企业ID:('+TENANT_ID+') 返回Rim的企业ID出错：'+E.Message);
     end;
   end;
 end;
@@ -94,11 +93,11 @@ begin
   Box_InPrice:='(case when CAlC_AMT>0 then PACK_INPRICE/CAlC_AMT else PACK_INPRICE end) as NEW_INPRICE ';   //盒单位的 入库价
   Box_OutPrice:='(case when CAlC_AMT>0 then PACK_OUTPRICE/CAlC_AMT else PACK_OUTPRICE end) as NEW_OUTPRICE ';  //盒单位的 零售价
 
-  //先删除本企业中数据；
+  //1、先删除供应关系中间表:
   StrSQL:=PChar('delete from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' ');
-  PlugIntf.ExecSQL(StrSQL,iRet);
+  if PlugIntf.ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:'); 
 
-  //插入所有商品
+  //2、插入传入企业商品供应链:
   try
     AObj:=TRecord_.Create;
     RsRim:=TZQuery.Create(nil);  //Rim视图
@@ -149,13 +148,16 @@ begin
           end;
           RsRim.Next;
         end; //end (循环: while not RsRim.Eof do)
-        PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation');  //提交RsInf保存中间表:INF_GOODS_RELATION;
-      end; //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
+        result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;  
+        if result<>0 then
+          Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
+      end //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
+      else
+        Raise Exception.Create(' 存在数据集没有Open！');
     except
       on E:Exception do
       begin
-        GLastError := E.Message;
-        PlugIntf.WriteLogFile(Pchar('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message));
+        Raise Exception.Create('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message);
       end;
     end
   finally
@@ -164,7 +166,6 @@ begin
     RsInf.Free;
     RsBarPub.Free;
   end;
-  result:=iRet;
 end;
 
 
@@ -198,14 +199,14 @@ begin
   try
     //2011.04.08 Pm  Add 执行从[RIM_GOODSINFO] ==> [INF_GOODS_RELATION]导入
     //调试使用: DoUpdateINF_GOODSINFO(GPlugIn, '100011'); //StrPas(Params)
-    DoUpdateINF_GOODSINFO(GPlugIn, StrPas(Params));  //StrPas(Params)
-    result := 0;
+    result:=DoUpdateINF_GOODSINFO(GPlugIn, StrPas(Params));  //StrPas(Params)
   except
     on E:Exception do
-      begin
-        GLastError := E.Message;
-        result := 2001;
-      end;
+    begin
+      GLastError := E.Message;
+      GPlugIn.WriteLogFile(PChar(GLastError));
+      result := 2001;
+    end;
   end;
 end;
 
@@ -229,9 +230,6 @@ exports
 begin
 
 end.
-
-
-
 
 
 

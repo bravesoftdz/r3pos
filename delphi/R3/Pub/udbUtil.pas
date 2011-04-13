@@ -227,6 +227,7 @@ begin
                CurSize := CurSize + length(s);
                s := trim(s);
                if s='' then Continue;
+               if copy(s,1,2)='--' then Continue;
                if (uppercase(s)='GO') or (s[length(s)]=';') then
                   begin
                     try

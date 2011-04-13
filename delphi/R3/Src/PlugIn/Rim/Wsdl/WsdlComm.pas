@@ -34,14 +34,18 @@ type
     function WriteLogFile(s:Pchar):integer;stdcall;
 
    end;
+TRimCaTenant=record
+  OrgId:string;
+  ComId:string;
+  P_TENANT_NAME:string;
+  P_TENANT_ID:string;
+end;
 
 function decodeZipBase64(inXml:string):string;
 function EncodeZipBase64(inXml:string):string;
 
 //通过许可证号取公司代码
-function GetOrgId(lsCode:string):string;
-function GetComId(lsCode:string):string;
-
+function GetRimInfo(tid,lsCode:string):TRimCaTenant;
 var
   GPlugIn:IPlugIn;
   GLastError:string;
@@ -97,17 +101,7 @@ begin
   else
      result := inXml;
 end;
-function GetOrgId(lsCode:string):string;
-var
-  rs:TZQuery;
-begin
-  rs := TZQuery.Create(nil);
-  try
-  finally
-    rs.free;
-  end;
-end;
-function GetComId(lsCode:string):string;
+function GetRimInfo(tid,lsCode:string):TRimCaTenant;
 var
   rs:TZQuery;
 begin

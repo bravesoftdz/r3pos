@@ -21,9 +21,6 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     fdsfds1: TMenuItem;
-    RzPanel1: TRzPanel;
-    Panel1: TPanel;
-    Panel4: TPanel;
     rzLeft: TRzPanel;
     N4: TMenuItem;
     N5: TMenuItem;
@@ -125,12 +122,6 @@ type
     N100: TMenuItem;
     N101: TMenuItem;
     N102: TMenuItem;
-    Image5: TImage;
-    Image6: TImage;
-    Panel2: TPanel;
-    Image4: TImage;
-    Label1: TLabel;
-    rzTool: TPanel;
     Panel7: TPanel;
     Panel8: TPanel;
     Panel10: TPanel;
@@ -203,31 +194,6 @@ type
     actfrmRckDayReport: TAction;
     actfrmRelation: TAction;
     Label2: TLabel;
-    Panel12: TPanel;
-    Panel13: TPanel;
-    Image1: TImage;
-    Panel14: TPanel;
-    Image9: TImage;
-    Image14: TImage;
-    Panel15: TPanel;
-    Image10: TImage;
-    Image11: TImage;
-    Panel3: TPanel;
-    Panel16: TPanel;
-    Panel6: TPanel;
-    Panel19: TPanel;
-    Image20: TImage;
-    Panel18: TPanel;
-    Panel17: TPanel;
-    Image7: TImage;
-    Image8: TImage;
-    RzBmpButton10: TRzBmpButton;
-    RzBmpButton9: TRzBmpButton;
-    RzBmpButton8: TRzBmpButton;
-    Image17: TImage;
-    Image21: TImage;
-    Panel20: TPanel;
-    Image12: TImage;
     Panel21: TPanel;
     Image2: TImage;
     Panel22: TPanel;
@@ -238,18 +204,9 @@ type
     Image24: TImage;
     Image25: TImage;
     ImageList3: TImageList;
-    Image16: TImage;
-    rzToolButton: TPanel;
-    Image27: TImage;
     Panel25: TPanel;
     Image18: TImage;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
     toolButton: TRzBmpButton;
-    rzChildTitle: TRzLabel;
-    RzBmpButton3: TRzBmpButton;
-    RzBmpButton6: TRzBmpButton;
     Page1: TRzBmpButton;
     Page2: TRzBmpButton;
     Page3: TRzBmpButton;
@@ -259,14 +216,11 @@ type
     Image26: TImage;
     Panel26: TPanel;
     Image28: TImage;
-    Panel9: TPanel;
     actfrmPayDayReport: TAction;
     actfrmPayAbleReport: TAction;
     actfrmRecvAbleReport: TAction;
     actfrmDbDayReport: TAction;
     actfrmGodsRunningReport: TAction;
-    RzBmpButton4: TRzBmpButton;
-    lblUserInfo: TRzLabel;
     tlbPage: TPopupMenu;
     tlbClose: TMenuItem;
     N33: TMenuItem;
@@ -275,6 +229,105 @@ type
     actfrmMessage: TAction;
     actfrmNewPaperReader: TAction;
     actfrmQuestionnaire: TAction;
+    rzLogo: TRzPageControl;
+    TabSheet1: TRzTabSheet;
+    TabSheet2: TRzTabSheet;
+    RzPanel1: TRzPanel;
+    Panel1: TPanel;
+    Panel4: TPanel;
+    Image5: TImage;
+    Image6: TImage;
+    Panel2: TPanel;
+    Image4: TImage;
+    Label1: TLabel;
+    Panel6: TPanel;
+    Panel19: TPanel;
+    Image20: TImage;
+    lblUserInfo: TRzLabel;
+    Panel18: TPanel;
+    Image17: TImage;
+    Panel17: TPanel;
+    Image7: TImage;
+    Image8: TImage;
+    RzBmpButton10: TRzBmpButton;
+    RzBmpButton9: TRzBmpButton;
+    RzBmpButton8: TRzBmpButton;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton5: TRzBmpButton;
+    RzBmpButton6: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    rzTool: TPanel;
+    Image21: TImage;
+    Panel12: TPanel;
+    Image14: TImage;
+    Panel14: TPanel;
+    Image9: TImage;
+    Panel13: TPanel;
+    Image1: TImage;
+    Panel15: TPanel;
+    Image10: TImage;
+    Image11: TImage;
+    rzChildTitle: TRzLabel;
+    RzBmpButton3: TRzBmpButton;
+    Panel3: TPanel;
+    Panel16: TPanel;
+    Image16: TImage;
+    rzToolButton: TPanel;
+    Image27: TImage;
+    Panel20: TPanel;
+    Image12: TImage;
+    Panel9: TPanel;
+    RzPanel2: TRzPanel;
+    Panel27: TPanel;
+    Panel28: TPanel;
+    Image29: TImage;
+    Image30: TImage;
+    Panel29: TPanel;
+    Image31: TImage;
+    Label3: TLabel;
+    Panel30: TPanel;
+    Panel31: TPanel;
+    Panel32: TPanel;
+    Image33: TImage;
+    Panel33: TPanel;
+    Image34: TImage;
+    Image35: TImage;
+    RzBmpButton7: TRzBmpButton;
+    RzBmpButton11: TRzBmpButton;
+    RzBmpButton12: TRzBmpButton;
+    s2_Page1: TRzBmpButton;
+    s2_Page2: TRzBmpButton;
+    s2_Page4: TRzBmpButton;
+    RzBmpButton16: TRzBmpButton;
+    s2_Page3: TRzBmpButton;
+    Panel34: TPanel;
+    Image36: TImage;
+    Panel35: TPanel;
+    Image37: TImage;
+    Panel36: TPanel;
+    Image38: TImage;
+    Panel37: TPanel;
+    Image39: TImage;
+    Panel38: TPanel;
+    Image40: TImage;
+    Image41: TImage;
+    RzLabel3: TRzLabel;
+    Panel39: TPanel;
+    Panel40: TPanel;
+    rzs2ToolButton: TPanel;
+    Panel42: TPanel;
+    Image44: TImage;
+    Panel43: TPanel;
+    s2_Page5: TRzBmpButton;
+    Image32: TImage;
+    Image45: TImage;
+    Image42: TImage;
+    Image43: TImage;
+    RzBmpButton13: TRzBmpButton;
+    RzBmpButton14: TRzBmpButton;
+    RzBmpButton15: TRzBmpButton;
+    rzUserInfo: TRzLabel;
     RzLabel1: TRzLabel;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
@@ -370,6 +423,14 @@ type
     procedure actfrmMessageExecute(Sender: TObject);
     procedure actfrmNewPaperReaderExecute(Sender: TObject);
     procedure actfrmQuestionnaireExecute(Sender: TObject);
+    procedure RzBmpButton11Click(Sender: TObject);
+    procedure RzBmpButton12Click(Sender: TObject);
+    procedure RzBmpButton7Click(Sender: TObject);
+    procedure RzBmpButton13Click(Sender: TObject);
+    procedure RzBmpButton14Click(Sender: TObject);
+    procedure RzBmpButton15Click(Sender: TObject);
+    procedure s2_Page1Click(Sender: TObject);
+    procedure RzBmpButton16Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -378,6 +439,7 @@ type
     frmInstall:TfrmInstall;
     FLoging: boolean;
     FSystemShutdown: boolean;
+    sflag:string;
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
@@ -442,9 +504,12 @@ end;
 procedure TfrmShopMain.FormCreate(Sender: TObject);
 var
   F:TextFile;
+  i:integer;
 begin
   inherited;
+  for i:=0 to rzLogo.PageCount -1 do rzLogo.Pages[i].TabVisible := false;
   LoadPic32;
+  Panel25.Visible := (sflag='s1_');
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
@@ -493,7 +558,10 @@ begin
   button.Tag := Integer(Pointer(form));
   button.OnClick := DoActiveForm;
   button.Visible := true;
-  button.Parent := rzToolButton;
+  if sflag='s1_' then
+    button.Parent := rzToolButton
+  else
+    button.Parent := rzs2ToolButton;
   button.PopupMenu := tlbPage;
   FList.Add(button);
   SortToolButton;
@@ -748,6 +816,7 @@ begin
      lblUserInfo.Caption := '用户名:'+Global.UserName
   else
      lblUserInfo.Caption := '未登录...';
+  rzUserInfo.Caption := lblUserInfo.Caption;
 end;
 
 procedure TfrmShopMain.miCloseClick(Sender: TObject);
@@ -883,8 +952,8 @@ begin
   finally
     F.Free;
   end;
-//  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
-//    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
+  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
+    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
 end;
 
 procedure TfrmShopMain.SetLoging(const Value: boolean);
@@ -2059,6 +2128,8 @@ procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 function GetFlag:integer;
 begin
+  if sflag = 's1_' then
+  begin
   result := 0;
   if Page1.Down then
      result := 1
@@ -2074,6 +2145,25 @@ begin
   else
   if Page5.Down then
      result := 9;
+  end;
+  if sflag = 's2_' then
+  begin
+  result := 0;
+  if s2_Page1.Down then
+     result := 1
+  else
+  if s2_Page2.Down then
+     result := 2
+  else
+  if s2_Page3.Down then
+     result := 3
+  else
+  if s2_Page4.Down then
+     result := 4
+  else
+  if s2_Page5.Down then
+     result := 9;
+  end;
 end;
 begin
   inherited;
@@ -2737,14 +2827,18 @@ begin
 end;
 
 var
-  sflag:string;
   pic:TGraphic;
 begin
   DllHandle := LoadLibrary('Pic32.dll');
   sflag := 's'+GetResString(1)+'_';
-  if DllHandle > 0 then
+  if DllHandle > 0 then 
   try
+    rzUserInfo.Visible := (sflag='s2_');
     //logo
+    if sflag='s1_' then
+    begin
+    rzLogo.ActivePageIndex := 0;
+    rzLogo.Height := 105;
     Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
     Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
     Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
@@ -2752,7 +2846,7 @@ begin
     Image8.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
     Image7.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
     
-    Image14.Picture.Graphic  := GetJpeg(sflag+'memu_title');
+    Image14.Picture.Graphic  := GetJpeg(sflag+'menu_title');
 
     Image11.Picture.Graphic  := GetJpeg(sflag+'tool_01');
     Image10.Picture.Graphic  := GetJpeg(sflag+'tool_02');
@@ -2794,19 +2888,154 @@ begin
     RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
 
     Page1.Bitmaps.Up := GetBitmap(sflag+'page1');
-    Page1.Bitmaps.Hot := GetBitmap(sflag+'page1_hot');
+    Page1.Bitmaps.Down := GetBitmap(sflag+'page1_hot');
     Page2.Bitmaps.Up := GetBitmap(sflag+'page2');
-    Page2.Bitmaps.Hot := GetBitmap(sflag+'page2_hot');
+    Page2.Bitmaps.Down := GetBitmap(sflag+'page2_hot');
     Page3.Bitmaps.Up := GetBitmap(sflag+'page3');
-    Page3.Bitmaps.Hot := GetBitmap(sflag+'page3_hot');
+    Page3.Bitmaps.Down := GetBitmap(sflag+'page3_hot');
     Page4.Bitmaps.Up := GetBitmap(sflag+'page4');
-    Page4.Bitmaps.Hot := GetBitmap(sflag+'page4_hot');
-    Page5.Bitmaps.Up := GetBitmap(sflag+'page5');
-    Page5.Bitmaps.Hot := GetBitmap(sflag+'page5_hot');
-    
+    Page4.Bitmaps.Down := GetBitmap(sflag+'page4_hot');
+    Page5.Bitmaps.Up := GetBitmap(sflag+'page9');
+    Page5.Bitmaps.Down := GetBitmap(sflag+'page9_hot');
+    end
+    else
+    begin
+    rzLogo.ActivePageIndex := 1;
+    rzLogo.Height := 105;
+    Image29.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
+    Image30.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
+    Image32.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
+    Image33.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
+    Image35.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
+    Image34.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
+
+    Image37.Picture.Graphic  := GetJpeg(sflag+'menu_title');
+
+    Image41.Picture.Graphic  := GetJpeg(sflag+'tool_01');
+    Image40.Picture.Graphic  := GetJpeg(sflag+'tool_02');
+    Image42.Picture.Graphic  := GetJpeg(sflag+'tool_03');
+    Image43.Picture.Graphic  := GetJpeg(sflag+'tool_04');
+    Image36.Picture.Graphic  := GetJpeg(sflag+'tool_05');
+
+    Image45.Picture.Graphic  := GetJpeg(sflag+'page_bg');
+    Image19.Picture.Graphic  := GetJpeg(sflag+'split');
+
+    Image22.Picture.Graphic  := GetJpeg(sflag+'foot_1');
+    Image15.Picture.Graphic  := GetJpeg(sflag+'foot_2');
+    Image23.Picture.Graphic  := GetJpeg(sflag+'foot_3');
+    Image24.Picture.Graphic  := GetJpeg(sflag+'foot_4');
+    Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
+
+
+    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
+    toolButton.Bitmaps.Hot := GetBitmap(sflag+'toolbutton_hot');
+    RzBmpButton16.Bitmaps.Up := GetBitmap(sflag+'desktop');
+    RzBmpButton16.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
+
+    RzBmpButton11.Bitmaps.Up := GetBitmap(sflag+'password');
+    RzBmpButton11.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
+//    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'logout');
+//    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'logout_hot');
+    RzBmpButton12.Bitmaps.Up := GetBitmap(sflag+'exit');
+    RzBmpButton12.Bitmaps.Hot := GetBitmap(sflag+'exit_hot');
+
+//    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
+//    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
+//    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
+//    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
+    RzBmpButton13.Bitmaps.Up := GetBitmap(sflag+'down');
+    RzBmpButton13.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
+    RzBmpButton7.Bitmaps.Up := GetBitmap(sflag+'upload');
+    RzBmpButton7.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
+//    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
+//    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
+    RzBmpButton14.Bitmaps.Up := GetBitmap(sflag+'question');
+    RzBmpButton14.Bitmaps.Hot := GetBitmap(sflag+'question_hot');
+    RzBmpButton15.Bitmaps.Up := GetBitmap(sflag+'message');
+    RzBmpButton15.Bitmaps.Hot := GetBitmap(sflag+'message_hot');
+
+    s2_Page1.Bitmaps.Up := GetBitmap(sflag+'page1');
+    s2_Page1.Bitmaps.Down := GetBitmap(sflag+'page1_hot');
+    s2_Page2.Bitmaps.Up := GetBitmap(sflag+'page2');
+    s2_Page2.Bitmaps.Down := GetBitmap(sflag+'page2_hot');
+    s2_Page3.Bitmaps.Up := GetBitmap(sflag+'page3');
+    s2_Page3.Bitmaps.Down := GetBitmap(sflag+'page3_hot');
+    s2_Page4.Bitmaps.Up := GetBitmap(sflag+'page4');
+    s2_Page4.Bitmaps.Down := GetBitmap(sflag+'page4_hot');
+    s2_Page5.Bitmaps.Up := GetBitmap(sflag+'page9');
+    s2_Page5.Bitmaps.Down := GetBitmap(sflag+'page9_hot');
+    end;
   finally
-    FreeLibrary(DllHandle);
+    if DllHandle > 0 then FreeLibrary(DllHandle);
   end;
+end;
+
+procedure TfrmShopMain.RzBmpButton11Click(Sender: TObject);
+begin
+  inherited;
+  TfrmPswModify.ShowExecute(Global.UserId,Global.UserName);
+
+end;
+
+procedure TfrmShopMain.RzBmpButton12Click(Sender: TObject);
+begin
+  inherited;
+  Close;
+
+end;
+
+procedure TfrmShopMain.RzBmpButton7Click(Sender: TObject);
+begin
+  inherited;
+  if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+     begin
+       Global.MoveToRemate;
+       try
+         try
+           Global.Connect;
+         except
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...'); 
+         end;
+       finally
+         Global.MoveToLocal;
+       end;
+     end;
+  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+  SyncFactory.SyncAll;
+  Global.LoadBasic;
+
+end;
+
+procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'没有找到可下载订单.','友情提示...',MB_OK+MB_ICONINFORMATION);
+
+end;
+
+procedure TfrmShopMain.RzBmpButton14Click(Sender: TObject);
+begin
+  inherited;
+  actfrmQuestionnaire.OnExecute(actfrmQuestionnaire);
+end;
+
+procedure TfrmShopMain.RzBmpButton15Click(Sender: TObject);
+begin
+  inherited;
+  actfrmMessage.OnExecute(actfrmMessage);
+end;
+
+procedure TfrmShopMain.s2_Page1Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu;
+
+end;
+
+procedure TfrmShopMain.RzBmpButton16Click(Sender: TObject);
+begin
+  inherited;
+  RzBmpButton3Click(nil);
 end;
 
 end.

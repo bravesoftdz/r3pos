@@ -410,85 +410,6 @@ item: Custom Dialog Set
   end
 end
 item: Custom Dialog Set
-  名称=自述文件
-  Display Variable=DISPLAY
-  item: Dialog
-    Title=自述文件
-    Title French=Fichier Lisez-moi
-    Title German=Liesmich-Datei
-    Title Portuguese=Ficheiro Leia-me
-    Title Spanish=Archivo L閑me
-    Title Italian=File Leggimi
-    Title Danish=Vigtigt fil
-    Title Dutch=Leesmij-bestand
-    Title Norwegian=Informasjonsfil
-    Title Swedish=L鋝 mig-fil
-    Width=280
-    Height=224
-    Font Name=宋体
-    Font Size=9
-    item: Push Button
-      Rectangle=172 185 214 199
-      Variable=DIRECTION
-      Value=N
-      Create Flags=01010000000000010000000000000001
-      Text=下一步(&N) >
-      Text French=&Suivant>
-      Text German=&Weiter>
-      Text Portuguese=&Pr髕imo>
-      Text Spanish=&Siguiente >
-      Text Italian=&Avanti >
-      Text Danish=&N鎠te>
-      Text Dutch=&Volgende>
-      Text Norwegian=&Neste>
-      Text Swedish=&N鋝ta >
-    end
-    item: Push Button
-      Rectangle=222 185 264 199
-      Action=3
-      Create Flags=01010000000000010000000000000000
-      Text=取消
-      Text French=Annuler
-      Text German=Abbrechen
-      Text Portuguese=Cancelar
-      Text Spanish=Cancelar
-      Text Italian=Annulla
-      Text Danish=Slet
-      Text Dutch=Annuleren
-      Text Norwegian=Avbryt
-      Text Swedish=Avbryt
-    end
-    item: Static
-      Rectangle=9 177 263 178
-      Action=3
-      Create Flags=01010000000000000000000000000111
-    end
-    item: Editbox
-      Rectangle=85 11 254 170
-      Value=%TEMP%\%READMEFILE%
-      Help Context=16711681
-      Create Flags=01010000101000000000100000000100
-    end
-    item: Push Button
-      Rectangle=130 185 172 199
-      Variable=DIRECTION
-      Value=B
-      Create Flags=01010000000000010000000000000000
-      Flags=0000000000000001
-      Text=< 上一步(&B)
-      Text French=<&Retour
-      Text German=<&Zur點k
-      Text Portuguese=<&Retornar
-      Text Spanish=<&Retroceder
-      Text Italian=< &Indietro
-      Text Danish=<&Back
-      Text Dutch=<&Terug
-      Text Norwegian=<&Tilbake
-      Text Swedish=< &Tillbaka
-    end
-  end
-end
-item: Custom Dialog Set
   名称=选择目标位置
   Display Variable=DISPLAY
   item: Dialog
@@ -1026,6 +947,14 @@ end
 item: Install File
   Source=Icon16.dll
   Destination=%MAINDIR%\Icon16.dll
+  Flags=0000000010000010
+  File Size=161280
+  File Date=20040816 162508
+  EXE Type=32
+end
+item: Install File
+  Source=s1_32.dll
+  Destination=%MAINDIR%\Pic32.dll
   Flags=0000000010000010
   File Size=161280
   File Date=20040816 162508

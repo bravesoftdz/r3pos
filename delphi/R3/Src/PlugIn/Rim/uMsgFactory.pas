@@ -9,13 +9,17 @@ uses windows,SysUtils,Classes,EncdDecd,ZLib,WsdlComm,ZDataSet,Forms,SoapInvestig
 procedure DoSyncQuestion(tid,lscode:string);
 implementation
 procedure DoSyncQuestion(tid,lscode:string);
+function GetYesNo(s:string):string
+begin
+  if s='Y' then result := '1' else result := '2';
+end;
 var
   txt:widestring;
   xmlDoc:TXMLDocument;
   Node,P1,P2,V:IXMLNode;
   ErrorInfo,msg:string;
   i:integer;
-  OrgId,ComId:string;
+  RimCaTenant:TRimCaTenant;
   rs:TZQuery;
   iRet:OleVariant;
 begin
@@ -56,7 +60,9 @@ begin
            rs.Data := iRet;
            if rs.Fields[0].AsInteger = 0 then
               begin
-                if GPlugIn.ExecSQL('insert into MSC_QUESTION()')<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+                if GPlugIn.ExecSQL('insert into MSC_QUESTION(TENANT_ID,QUESTION_ID,QUESTION_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,QUESTION_SOURCE,ISSUE_USER,QUESTION_TITLE,ANSWER_FLAG,COMM_ID)'+
+                  'values(''ÑÌ²Ý¹«Ë¾'',''system'','''+V.Attributes['INVEST_NAME']+''','''+GetYesNo(V.Attributes['IS_REPEAT'])+''','''+V.Attributes['INVEST_ID']+''')'
+                )<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
               end;
            AObj := TRecord_.Create;
            AObj.AddField('INVEST_ID',V.Attributes['INVEST_ID']);

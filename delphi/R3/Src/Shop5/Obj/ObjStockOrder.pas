@@ -344,7 +344,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+''' and TENANT_ID='''+FieldbyName('TENANT_ID').AsString+'''';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
     if comm and result and (copy(rs.Fields[1].asString,1,1)<>'1') then Raise Exception.Create('已经同步的数据不能删除..');

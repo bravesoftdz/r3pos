@@ -48,7 +48,7 @@ type
 
 implementation
 
-uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort, ufrmCostCalc;
+uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, uShopUtil, ufrmSelectGoodSort, ufrmCostCalc;
 
 {$R *.dfm}
 
@@ -63,6 +63,14 @@ begin
 
   SetRzPageActivePage(false); //…Ë÷√ƒ¨»œ∑÷“≥
   RefreshColumn;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      fndP1_SHOP_ID.Properties.ReadOnly := False;
+      fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
+      fndP1_SHOP_ID.Text := Global.SHOP_NAME;
+      SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
+      fndP1_SHOP_ID.Properties.ReadOnly := True;
+    end;
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;

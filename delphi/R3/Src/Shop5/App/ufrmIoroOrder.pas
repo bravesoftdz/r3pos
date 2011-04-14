@@ -179,6 +179,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     cid := AObj.FieldbyName('GLIDE_NO').AsString;
@@ -232,10 +233,16 @@ begin
   edtITEM_ID.DataSet.Locate('CODE_ID',inttostr(IoroType),[]);
   edtITEM_ID.KeyValue := edtITEM_ID.DataSet.FieldbyName('CODE_ID').asString;
   edtITEM_ID.Text := edtITEM_ID.DataSet.FieldbyName('CODE_NAME').asString;
+  edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
   dbState := dsInsert;
   InitRecord;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
 end;
 
 procedure TfrmIoroOrder.CancelOrder;
@@ -248,6 +255,11 @@ begin
   Open(id);
   dbState := dsEdit;
   InitRecord;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
 end;
 
 procedure TfrmIoroOrder.SaveOrder;

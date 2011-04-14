@@ -1,6 +1,6 @@
 inherited frmInvoice: TfrmInvoice
-  Left = 529
-  Top = 146
+  Left = 364
+  Top = 169
   Width = 863
   Height = 551
   Caption = #21457#31080#31649#29702

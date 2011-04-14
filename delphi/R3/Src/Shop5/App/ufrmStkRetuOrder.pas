@@ -164,6 +164,11 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改'); 
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
   if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
 end;
 
@@ -213,8 +218,14 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
+  edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
   cid := edtSHOP_ID.KeyValue;
   AObj.FieldbyName('STOCK_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('STOCK_ID').asString;
@@ -248,7 +259,8 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前    
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
+    edtSHOP_ID.Properties.ReadOnly := True;  
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadHeader;

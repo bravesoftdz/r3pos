@@ -184,15 +184,20 @@ begin
   TRANS_DATE1.Date := FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01',Date));
   TRANS_DATE2.Date := FnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD',Date));
 
-  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
   
   fndIN_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndOUT_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndTRANS_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-  //fndTRANS_USER.KeyValue := Global.UserID;
-  //fndTRANS_USER.ListField := Global.UserName;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,fndSHOP_ID.Style);
+      fndSHOP_ID.Properties.ReadOnly := True;
+    end;
+
 end;
 
 procedure TfrmTransOrderList.InitGrid;

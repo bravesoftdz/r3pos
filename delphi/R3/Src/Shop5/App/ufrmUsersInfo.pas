@@ -111,6 +111,7 @@ begin
   edtWORK_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  
   edtDEGREES.ItemIndex :=2;  
   if (edtDUTY_IDS.DataSet.Active) and (not edtDUTY_IDS.DataSet.IsEmpty) then
     begin

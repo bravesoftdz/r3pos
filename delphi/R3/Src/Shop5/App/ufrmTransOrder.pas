@@ -95,6 +95,7 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('TRANS_ID').AsString := id;
     Factor.Open(cdsHeader,'TTransOrder',Params);
+    edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,Self);
     if AObj.FieldbyName('GLIDE_NO').AsString<>'' then
@@ -144,18 +145,29 @@ begin
   edtTRANS_DATE.Date := Date();
   edtTRANS_USER.KeyValue := Global.UserID;
   edtTRANS_USER.Text := Global.UserName;
+  edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+
   AObj.FieldByName('TRANS_ID').AsString := TSequence.NewId;
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   dbState := dsInsert;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;  
 end;
 
 procedure TfrmTransOrder.Edit(id: string);
 begin
   Open(id);
   dbState := dsEdit;
-  
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;  
   btnOk.Enabled:=False;
 end;
 

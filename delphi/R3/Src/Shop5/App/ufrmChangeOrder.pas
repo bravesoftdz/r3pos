@@ -162,6 +162,11 @@ begin
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   if cdsHeader.FieldByName('FROM_ID').AsString<>'' then Raise Exception.Create('盘点任务生成的单据不能在此操作,请到盘点模块使用此功能...');
   dbState := dsEdit;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
   if edtCHANGE_DATE.CanFocus then edtCHANGE_DATE.SetFocus;
 end;
 
@@ -226,8 +231,14 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
-  edtSHOP_ID.KeyValue := Global.SHOP_ID;
-  edtSHOP_ID.Text := Global.SHOP_NAME;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      edtSHOP_ID.Properties.ReadOnly := False;
+      edtSHOP_ID.KeyValue := Global.SHOP_ID;
+      edtSHOP_ID.Text := Global.SHOP_NAME;
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('CHANGE_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('CHANGE_ID').asString;
@@ -265,6 +276,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);

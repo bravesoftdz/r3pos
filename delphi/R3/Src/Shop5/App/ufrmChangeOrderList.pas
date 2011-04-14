@@ -172,6 +172,11 @@ begin
   fndDUTY_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   D1.Date := date();
   D2.Date := date();
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,fndSHOP_ID.Style);
+      fndSHOP_ID.Properties.ReadOnly := True;
+    end;
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1CellClick(Column: TColumnEh);

@@ -254,6 +254,16 @@ begin
   fndSTATUS.ItemIndex := 0;
   InitGrid;
   RzPage.ActivePageIndex := 0;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    fndSHOP_ID.Properties.ReadOnly := False;
+    fndSHOP_ID.KeyValue := Global.SHOP_ID;
+    fndSHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndSHOP_ID.Style);
+    fndSHOP_ID.Properties.ReadOnly := True;
+  end;
+
 end;
 
 procedure TfrmIoroOrderList.actFindExecute(Sender: TObject);

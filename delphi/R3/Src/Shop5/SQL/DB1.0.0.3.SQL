@@ -2,8 +2,13 @@
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','企业会员','PRICE_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','商盟会员','PRICE_TYPE','00',5497000);
 
-alter table PUB_PRICEGRADE add PRICE_TYPE add char(1);
+--是否必答
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','必答','QUESTION_IS_MUST','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','可选','QUESTION_IS_MUST','00',5497000);
 
+alter table PUB_PRICEGRADE add PRICE_TYPE char(1);
+
+update PUB_PRICEGRADE set PRICE_TYPE='1';
 --加添接口内码
 alter table STK_STOCKORDER add COMM_ID varchar(50);
 
@@ -20,6 +25,10 @@ alter table MSC_MESSAGE add COMM_ID varchar(50);
 alter table MSC_QUESTION add COMM_ID varchar(50);
 
 alter table MSC_QUESTION_ITEM add COMM_ID varchar(50);
+
+alter table MSC_QUESTION_ITEM add QUESTION_IS_MUST varchar(1);
+
+update MSC_QUESTION_ITEM set QUESTION_IS_MUST='1';
 
 alter table MSC_IMPEACH add COMM_ID varchar(50);
 

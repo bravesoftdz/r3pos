@@ -1093,8 +1093,8 @@ var i: integer;
 begin
   if (IsGroupReport) and (RzPage.PageCount>1) then
   begin
-    rzPage.Pages[0].TabVisible := HasChild;
-    rzPage.Pages[1].TabVisible := HasChild;
+    rzPage.Pages[0].TabVisible := HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
+    rzPage.Pages[1].TabVisible := HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   end;
   for i:=0 to rzPage.PageCount -1 do
   begin

@@ -118,6 +118,7 @@ begin
         Factor.CancelBatch;
         Raise;
       end;
+      edtSHOP_ID.Properties.ReadOnly := False;
       AObj.ReadFromDataSet(cdsHeader);
       ReadFromObject(AObj,self);
       dbState := dsBrowse;
@@ -158,6 +159,12 @@ begin
   edtRECV_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
   AObj.FieldbyName('RECV_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
   edtPAYM_ID.ItemIndex := 0;
@@ -179,6 +186,11 @@ begin
   Open(id);
   dbState := dsEdit;
   btnOk.Enabled:=False;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;  
 end;
 
 procedure TfrmRecvOrder.SaveOrder;

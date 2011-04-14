@@ -9,26 +9,28 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 526
+    Width = 900
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 516
+      Width = 890
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 510
+        Width = 884
+        Height = 521
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#25910#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -229,16 +231,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel1: TPanel
               Left = 6
               Top = 90
-              Width = 862
-              Height = 387
+              Width = 870
+              Height = 398
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 385
+                Width = 868
+                Height = 396
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -385,8 +387,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -395,7 +397,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -768,16 +770,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 862
-              Height = 348
+              Width = 870
+              Height = 359
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 346
+                Width = 868
+                Height = 357
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -924,17 +926,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image3: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited rzPanel5: TPanel
       Left = 374

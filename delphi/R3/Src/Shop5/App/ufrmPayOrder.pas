@@ -119,6 +119,7 @@ begin
         Factor.CancelBatch;
         Raise;
       end;
+      edtSHOP_ID.Properties.ReadOnly := False;      
       AObj.ReadFromDataSet(cdsHeader);
       ReadFromObject(AObj,self);
       isAudit := (AObj.FieldByName('CHK_DATE').AsString<>''); 
@@ -157,8 +158,14 @@ begin
   Open('');
   dbState := dsInsert;
   edtPAY_DATE.Date := Global.SysDate;
+  edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
   AObj.FieldbyName('PAY_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
   edtPAYM_ID.ItemIndex := 0;
@@ -179,6 +186,11 @@ procedure TfrmPayOrder.Edit(id: string);
 begin
   Open(id);
   dbState := dsEdit;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+      edtSHOP_ID.Properties.ReadOnly := True;
+    end;
   btnOk.Enabled:=False;
 end;
 

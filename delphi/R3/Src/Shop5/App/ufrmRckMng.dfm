@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 207
-  Top = 191
+  Left = 236
+  Top = 122
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -9,26 +9,28 @@ inherited frmRckMng: TfrmRckMng
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 775
-    Height = 503
+    Width = 783
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 765
-      Height = 493
+      Width = 773
+      Height = 504
       inherited RzPage: TRzPageControl
-        Width = 759
-        Height = 487
+        Width = 767
+        Height = 498
+        ActivePage = TabSheet3
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 757
-            Height = 460
+            Width = 765
+            Height = 471
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 745
+              Width = 753
               Height = 70
               Align = alTop
               BorderOuter = fsNone
@@ -166,16 +168,16 @@ inherited frmRckMng: TfrmRckMng
             object Panel1: TPanel
               Left = 6
               Top = 76
-              Width = 745
-              Height = 378
+              Width = 753
+              Height = 389
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 743
-                Height = 376
+                Width = 751
+                Height = 387
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -281,8 +283,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 757
-            Height = 460
+            Width = 765
+            Height = 471
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -291,8 +293,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel9: TRzPanel
               Left = 6
               Top = 79
-              Width = 745
-              Height = 375
+              Width = 753
+              Height = 386
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -300,8 +302,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh3: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 745
-                Height = 375
+                Width = 753
+                Height = 386
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -392,7 +394,7 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel11: TRzPanel
               Left = 6
               Top = 6
-              Width = 745
+              Width = 753
               Height = 73
               Align = alTop
               BorderOuter = fsNone
@@ -786,17 +788,17 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 775
+    Width = 783
     inherited Image1: TImage
       Left = 245
-      Width = 510
+      Width = 518
     end
     inherited Image3: TImage
       Left = 245
-      Width = 510
+      Width = 518
     end
     inherited Image14: TImage
-      Left = 755
+      Left = 763
     end
     inherited rzPanel5: TPanel
       Left = 245

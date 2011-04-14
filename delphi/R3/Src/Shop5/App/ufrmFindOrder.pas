@@ -1,5 +1,5 @@
 unit ufrmFindOrder;
-
+                                                                                          
 interface
 
 uses
@@ -54,7 +54,7 @@ type
 
 implementation
 
-uses uGlobal;
+uses uGlobal,uShopUtil;
 
 {$R *.dfm}
 
@@ -176,7 +176,11 @@ begin
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   D1.Date := date();
   D2.Date := date();
-
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      SetEditStyle(dsBrowse,fndSHOP_ID.Style);
+      fndSHOP_ID.Properties.ReadOnly := True;
+    end;
 end;
 
 procedure TfrmFindOrder.btnFindClick(Sender: TObject);
@@ -253,7 +257,7 @@ begin
       TabSheet1.Caption := '销售订单';
       RzLabel4.Caption := '客户名称';
       DBGridEh1.Columns[3].Title.Caption := '客户名称';
-      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('VIW_CUSTOMER');
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
     end;
   3:begin
       Caption := '进货单查询';
@@ -269,7 +273,7 @@ begin
       TabSheet1.Caption := '销售单';
       RzLabel4.Caption := '客户名称';
       DBGridEh1.Columns[3].Title.Caption := '客户名称';
-      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('VIW_CUSTOMER');
+      fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
     end;
   end;
 end;

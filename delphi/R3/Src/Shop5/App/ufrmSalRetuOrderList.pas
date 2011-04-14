@@ -170,6 +170,11 @@ begin
   inherited;
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,fndSHOP_ID.Style);
+    fndSHOP_ID.Properties.ReadOnly := True;
+  end;  
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');

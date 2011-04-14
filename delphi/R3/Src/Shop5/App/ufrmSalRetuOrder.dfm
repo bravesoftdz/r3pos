@@ -1,6 +1,6 @@
 inherited frmSalRetuOrder: TfrmSalRetuOrder
   Left = 308
-  Top = 239
+  Top = 186
   Width = 796
   Height = 552
   Caption = #36864#36135#21333

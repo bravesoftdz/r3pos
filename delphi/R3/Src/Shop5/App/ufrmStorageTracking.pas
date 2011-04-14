@@ -187,6 +187,14 @@ begin
       Grid.Columns.Items[6].Visible := False;
       Grid.Columns.Items[7].Visible := False;
     end;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    edtSHOP_ID.Properties.ReadOnly := False;
+    edtSHOP_ID.KeyValue := Global.SHOP_ID;
+    edtSHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);

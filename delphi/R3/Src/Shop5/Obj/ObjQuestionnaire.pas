@@ -13,7 +13,7 @@ type
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  TQuestionData=class(TZFactory)
+  TQuestionItem=class(TZFactory)
   public
     procedure InitClass; override;
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -46,24 +46,24 @@ type
   
 implementation
 
-{ TQuestionData }
+{ TQuestionItem }
 
-function TQuestionData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+function TQuestionItem.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-function TQuestionData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function TQuestionItem.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-function TQuestionData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+function TQuestionItem.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-procedure TQuestionData.InitClass;
+procedure TQuestionItem.InitClass;
 var
   Str: string;
 begin
@@ -221,12 +221,12 @@ end;
 
 initialization
   RegisterClass(TQuestion);
-  RegisterClass(TQuestionData);
+  RegisterClass(TQuestionItem);
   RegisterClass(TInvest);
   RegisterClass(TInvestData);
 finalization
   UnRegisterClass(TQuestion);
-  UnRegisterClass(TQuestionData);
+  UnRegisterClass(TQuestionItem);
   UnRegisterClass(TInvest);
   UnRegisterClass(TInvestData);
 

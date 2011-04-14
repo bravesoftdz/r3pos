@@ -172,6 +172,27 @@ begin
 
   InitGrid;
   RefreshColumn;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    fndP3_SHOP_ID.Properties.ReadOnly := False;
+    fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP3_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
+    fndP3_SHOP_ID.Properties.ReadOnly := True;
+    
+    fndP4_SHOP_ID.Properties.ReadOnly := False;
+    fndP4_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP4_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
+    fndP4_SHOP_ID.Properties.ReadOnly := True;
+
+    fndP5_SHOP_ID.Properties.ReadOnly := False;
+    fndP5_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP5_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
+    fndP5_SHOP_ID.Properties.ReadOnly := True;
+  end;
 end;
 
 function TfrmRecvAbleReport.GetGroupSQL(chk:boolean=true): string;

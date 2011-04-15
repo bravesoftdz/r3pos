@@ -184,8 +184,8 @@ begin
   InitGrid;
   if ShopGlobal.GetVersionFlag = 1 then
     begin
-      Grid.Columns.Items[6].Visible := False;
-      Grid.Columns.Items[7].Visible := False;
+      Grid.Columns.Items[7].free;
+      Grid.Columns.Items[6].free;
     end;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin

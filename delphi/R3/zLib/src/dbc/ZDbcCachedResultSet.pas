@@ -528,11 +528,13 @@ begin
     Index := LocateRow(FInitialRowsList, FSelectedRow.Index);
     if Index >= 0 then
     begin
-      //zhangsr 修改
-      FSelectedRow := FInitialRowsList[Index];
-      FRowAccessor.RowBuffer := FSelectedRow;
+      //zhangsr 修改  <存在问题没办法回到当前行>
+      //FSelectedRow := FInitialRowsList[Index];
+      //FRowAccessor.RowBuffer := FSelectedRow;
+
+      
       //改后的
-      //FRowAccessor.RowBuffer := FInitialRowsList[Index];
+      FRowAccessor.RowBuffer := FInitialRowsList[Index];
     end
     else
       FRowAccessor.RowBuffer := nil;

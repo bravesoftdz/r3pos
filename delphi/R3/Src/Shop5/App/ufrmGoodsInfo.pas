@@ -112,6 +112,9 @@ type
     Label21: TLabel;
     edtDefault1: TcxCheckBox;
     edtDefault2: TcxCheckBox;
+    TabSheet2: TRzTabSheet;
+    Label22: TLabel;
+    edtREMARK: TcxTextEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

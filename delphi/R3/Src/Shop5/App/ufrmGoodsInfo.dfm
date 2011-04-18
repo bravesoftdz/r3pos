@@ -49,13 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = TabSheet3
+      ActivePage = TabSheet2
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 2
+      TabIndex = 4
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -1054,6 +1054,31 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           DropListStyle = lsFixed
           OnSaveValue = edtSORT_ID3SaveValue
           MultiSelect = False
+        end
+      end
+      object TabSheet2: TRzTabSheet
+        Color = clWhite
+        Caption = #21830#21697#25551#36848
+        object Label22: TLabel
+          Left = 12
+          Top = 15
+          Width = 42
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #22791'   '#27880
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clBlack
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+        end
+        object edtREMARK: TcxTextEdit
+          Left = 60
+          Top = 11
+          Width = 442
+          Height = 20
+          TabOrder = 0
         end
       end
     end

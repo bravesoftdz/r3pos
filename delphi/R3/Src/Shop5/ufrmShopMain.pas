@@ -409,7 +409,6 @@ type
     procedure Page1Click(Sender: TObject);
     procedure actfrmRecvDayReportExecute(Sender: TObject);
     procedure actfrmPayDayReportExecute(Sender: TObject);
-    procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmRecvAbleReportExecute(Sender: TObject);
     procedure actfrmPayAbleReportExecute(Sender: TObject);
     procedure actfrmStorageTrackingExecute(Sender: TObject);
@@ -431,6 +430,7 @@ type
     procedure RzBmpButton15Click(Sender: TObject);
     procedure s2_Page1Click(Sender: TObject);
     procedure RzBmpButton16Click(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -550,7 +550,7 @@ var
 begin
   if FList.Count > 5 then Exit;
   button := TrzBmpButton.Create(rzToolButton);
-  button.GroupIndex := 1;
+  button.GroupIndex := 999;
   button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
   button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
   button.Font.Assign(toolButton.Font);
@@ -858,7 +858,7 @@ begin
 end;
 begin
   inherited;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and CheckUpdateStatus then
+  if CaFactory.Audited and not ShopGlobal.NetVersion and Global.RemoteFactory.Connected and CheckUpdateStatus then
      begin
        if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
@@ -923,13 +923,13 @@ procedure TfrmShopMain.Timer1Timer(Sender: TObject);
 var P:PMsgInfo;
 begin
   inherited;
-{  if SystemShutdown then Exit;
+  if SystemShutdown then Exit;
   if not Logined then Exit;
   if not Visible then Exit;
   if not MsgFactory.Loaded then MsgFactory.Load;
-  actfrmNewPaperReader.Caption := '我的消息('+inttostr(MsgFactory.Count)+'条)';
+  actfrmNewPaperReader.Caption := '最新消息('+inttostr(MsgFactory.Count)+'条)';
   P := MsgFactory.ReadMsg;
-  if P<>nil then MsgFactory.HintMsg(P);  }
+  if P<>nil then MsgFactory.HintMsg(P);  
 end;
 
 procedure TfrmShopMain.LoadFrame;
@@ -1173,6 +1173,18 @@ begin
 end;
 
 function TfrmShopMain.ConnectToDb:boolean;
+procedure InitTenant;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.ExecProc('TTenantInit',Params);   
+  finally
+    Params.Free;
+  end;
+end;
 begin
   frmLogo.Show;
   try
@@ -1191,7 +1203,7 @@ begin
   if result and CaFactory.Audited then result := CheckVersion;
   if result then
      begin
-      if ShopGlobal.NetVersion then
+      if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
          begin
            frmLogo.Show;
            try
@@ -1203,6 +1215,12 @@ begin
                  try
                     if CheckVersion(DBVersion,Global.RemoteFactory) then
                     begin
+                      if ShopGlobal.ONLVersion then
+                         begin
+                           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                           result := false;
+                           Exit;
+                         end;
                       result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
                       if result then
                         begin
@@ -1215,6 +1233,12 @@ begin
                  end;
                end;
              except
+               if ShopGlobal.ONLVersion then
+                  begin
+                    MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                    result := false;
+                    Exit;
+                  end;
                result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
                if result then
                   begin
@@ -1230,7 +1254,7 @@ begin
   try
     frmLogo.Show;
     try
-     if CaFactory.Audited then
+     if CaFactory.Audited and not ShopGlobal.ONLVersion then
         begin
           if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
              begin
@@ -1251,8 +1275,10 @@ begin
              begin
                CaFactory.SyncAll(1);
                SyncFactory.SyncBasic(true);
+               InitTenant;
              end;
-        end;
+        end
+     else InitTenant;
     finally
       frmLogo.Close;
     end;
@@ -2060,7 +2086,11 @@ begin
     if copy(ParamStr(3),1,8)='-xsmurl=' then
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
-       TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
+       begin
+         MessageBox(Handle,'你没有新商盟账号无法完成登录','友情提示..',MB_OK+MB_ICONINFORMATION);
+         Exit;
+         TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
+       end;
     Form.Show;
     Form.BringToFront;
   except
@@ -2517,13 +2547,6 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
-begin
-  inherited;
-  if not actfrmXsmBrowser.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...'); 
-  actfrmXsmBrowser.OnExecute(nil);
-end;
-
 procedure TfrmShopMain.actfrmRecvAbleReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
@@ -2667,9 +2690,9 @@ var
 begin
   for i:=0 to FList.Count -1 do
     begin
-      if TrzBmpButton(FList[i]).Down then
+      if TrzBmpButton(FList[i]).Down and (TrzBmpButton(FList[i]).Tag>0) then
          begin
-           TfrmBasic(FList[i]).Close;
+           TfrmBasic(TrzBmpButton(FList[i]).Tag).Close;
            break;
          end;
     end;
@@ -3036,6 +3059,12 @@ procedure TfrmShopMain.RzBmpButton16Click(Sender: TObject);
 begin
   inherited;
   RzBmpButton3Click(nil);
+end;
+
+procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'谢谢你的关注，网站正在更新中...','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

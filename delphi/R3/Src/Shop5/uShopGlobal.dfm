@@ -40,7 +40,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
-        'OP_ID,MM from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
+        'OP_ID,MM,DEPT_ID from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
       'and TENANT_ID=:TENANT_ID order by ACCOUNT')
     Params = <
       item
@@ -347,8 +347,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,TELEPHONE,LINKMAN,' +
-        'FAXES,REMARK,SEQ_NO '
+        'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHON' +
+        'E,LINKMAN,FAXES,REMARK,SEQ_NO '
       
         'from CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in ('#39'0' +
         '2'#39','#39'12'#39') order by LEVEL_ID')

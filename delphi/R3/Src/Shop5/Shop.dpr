@@ -187,7 +187,8 @@ uses
   ufrmStkIndentOrder in 'App\ufrmStkIndentOrder.pas' {frmStkIndentOrder},
   ufrmQuestionnaire in 'App\ufrmQuestionnaire.pas' {frmQuestionnaire},
   ObjQuestionnaire in 'Obj\ObjQuestionnaire.pas',
-  ufrmRelationUpdateMode in 'App\ufrmRelationUpdateMode.pas' {frmRelationUpdateMode};
+  ufrmRelationUpdateMode in 'App\ufrmRelationUpdateMode.pas' {frmRelationUpdateMode},
+  ufrmLocusNoProperty in 'App\ufrmLocusNoProperty.pas' {frmLocusNoProperty};
 
 {$R *.res}
 var
@@ -196,7 +197,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.2';
+  DBVersion := '1.0.0.3';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

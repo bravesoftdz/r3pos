@@ -124,8 +124,8 @@ DLL=0
 Locale=2052
 CodePage=936
 [Version Info Keys]
-CompanyName=浪潮软件
-FileDescription=零售终端管理系统
+CompanyName=
+FileDescription=R3
 FileVersion=3.0.0.55
 InternalName=
 LegalCopyright=

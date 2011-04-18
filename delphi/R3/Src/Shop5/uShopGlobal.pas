@@ -56,6 +56,7 @@ type
     procedure Setokline(const Value: boolean);
     function Getoffline: boolean;
     function GetNetVersion: boolean;
+    function GetONLVersion: boolean;
     { Private declarations }
   protected
     function GetSysDate: TDate;override;
@@ -72,7 +73,8 @@ type
     //检测数据库主机
     function CheckHostLocal: boolean;
     function GetVersionFlag:integer;
-
+    //得到当前是登录用户所有部门记录
+    function GetDeptInfo:TZQuery;
     //刷新最近同步时间
     procedure SyncTimeStamp;
     function GetParameter(ParamName:string):string;
@@ -84,7 +86,8 @@ type
     property offline:boolean read Getoffline;
     //判断是否连锁版
     property NetVersion:boolean read GetNetVersion;
-
+    //判断是否网络版
+    property ONLVersion:boolean read GetONLVersion;
   end;
 
 const
@@ -317,6 +320,24 @@ begin
   finally
     Params.free;
   end;
+end;
+
+function TShopGlobal.GetDeptInfo: TZQuery;
+var DeptId:string;
+begin
+  CA_USERS.Filtered := false;
+  if CA_USERS.Locate('USER_ID',UserId,[]) then
+     begin
+       DeptId := CA_USERS.FieldbyName('DEPT_ID').AsString;
+     end;
+  result := Global.GetZQueryFromName('CA_DEPT_INFO');
+  if not(result.Locate('DEPT_ID',DeptId,[]) and (result.FieldbyName('DEPT_TYPE').AsString='1')) then
+     result.Locate('DEPT_ID',inttostr(TENANT_ID)+'001',[]);
+end;
+
+function TShopGlobal.GetONLVersion: boolean;
+begin
+  result := (SFVersion='.ONL');
 end;
 
 initialization

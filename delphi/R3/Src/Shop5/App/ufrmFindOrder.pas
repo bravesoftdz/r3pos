@@ -64,10 +64,10 @@ function TfrmFindOrder.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
   case flag of
-  1:w := ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 and not Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-  2:w := ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 and not Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-  3:w := ' where A.TENANT_ID=:TENANT_ID and STOCK_TYPE=1 and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2';
-  4:w := ' where A.TENANT_ID=:TENANT_ID and SALES_TYPE=1 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  1:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is null and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 and not Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
+  2:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is null and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 and not Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
+  3:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is null and STOCK_TYPE=1 and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2';
+  4:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is null and SALES_TYPE=1 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   end;
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';

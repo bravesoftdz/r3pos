@@ -7,10 +7,10 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 788
-    Height = 525
+    Width = 780
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 778
+      Width = 770
       Height = 140
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -39,7 +39,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object Label5: TLabel [3]
         Left = 563
-        Top = 72
+        Top = 94
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -78,7 +78,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object Label16: TLabel [8]
         Left = 405
-        Top = 72
+        Top = 51
         Width = 36
         Height = 12
         Alignment = taRightJustify
@@ -86,15 +86,15 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object Label17: TLabel [9]
         Left = 562
-        Top = 30
+        Top = 52
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36864#36135#26041#24335
+        Caption = #38144#21806#26041#24335
       end
       object Label13: TLabel [10]
         Left = 563
-        Top = 51
+        Top = 73
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -102,36 +102,37 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object Label11: TLabel [11]
         Left = 563
-        Top = 93
+        Top = 115
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #38144#39033#31246#29575
       end
       object Label21: TLabel [12]
-        Left = 195
-        Top = 51
+        Left = 563
+        Top = 30
         Width = 48
         Height = 12
         Caption = #38144#21806#21333#21495
       end
-      object Label4: TLabel [13]
-        Left = 564
-        Top = 114
+      object Label3: TLabel [13]
+        Left = 195
+        Top = 51
         Width = 48
         Height = 12
+        Caption = #25152#23646#37096#38376
+      end
+      object Label14: TLabel [14]
+        Left = 676
+        Top = 115
+        Width = 6
+        Height = 12
         Alignment = taRightJustify
-        Caption = #32467#31639#31246#39069
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
+        Caption = '%'
       end
       inherited RzPanel4: TRzPanel
         Height = 83
-        TabOrder = 12
+        TabOrder = 14
         inherited Shape1: TShape
           Top = 33
         end
@@ -228,23 +229,26 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 5
         Width = 121
         Height = 20
-        TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        TabOrder = 8
       end
       object edtREMARK: TcxTextEdit
         Left = 251
         Top = 110
         Width = 286
         Height = 20
-        TabOrder = 6
+        TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtINVOICE_FLAG: TcxComboBox
         Left = 619
-        Top = 68
+        Top = 90
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-        TabOrder = 10
+        TabOrder = 12
       end
       object edtGUIDE_USER: TzrComboBoxList
         Left = 448
@@ -257,7 +261,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 1
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -289,37 +293,41 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object edtTAX_RATE: TcxSpinEdit
         Left = 619
-        Top = 89
+        Top = 111
         Width = 50
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         Properties.ValueType = vtFloat
-        TabOrder = 11
+        TabOrder = 13
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSEND_ADDR: TcxTextEdit
         Left = 251
         Top = 89
         Width = 286
         Height = 20
-        TabOrder = 5
+        TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTELEPHONE: TcxTextEdit
         Left = 251
         Top = 68
-        Width = 131
+        Width = 286
         Height = 20
-        TabOrder = 3
+        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLINKMAN: TcxTextEdit
         Left = 448
-        Top = 68
+        Top = 47
         Width = 89
         Height = 20
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSALE_STYLE: TzrComboBoxList
         Left = 619
-        Top = 26
+        Top = 48
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -328,7 +336,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 8
+        TabOrder = 10
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -355,15 +363,16 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       end
       object edtPLAN_DATE: TcxDateEdit
         Left = 619
-        Top = 47
+        Top = 69
         Width = 121
         Height = 20
-        TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        TabOrder = 11
       end
       object edtSAL_GLIDE_NO: TcxButtonEdit
-        Left = 251
-        Top = 47
-        Width = 131
+        Left = 619
+        Top = 26
+        Width = 121
         Height = 20
         Properties.Buttons = <
           item
@@ -371,22 +380,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Kind = bkEllipsis
           end>
         Properties.OnButtonClick = edtSAL_GLIDE_NOPropertiesButtonClick
-        TabOrder = 2
-      end
-      object edtTAX_MONEY: TcxTextEdit
-        Tag = 1
-        Left = 619
-        Top = 110
-        Width = 120
-        Height = 20
-        TabStop = False
-        ParentFont = False
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clNavy
-        Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 13
+        TabOrder = 9
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 251
@@ -399,7 +393,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 14
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -430,40 +424,46 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
       end
+      object edtDEPT_ID: TzrComboBoxList
+        Left = 251
+        Top = 47
+        Width = 131
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 3
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'DEPT_NAME;DEPT_SPELL'
+        KeyField = 'DEPT_ID'
+        ListField = 'DEPT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'DEPT_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
     end
     inherited RzPanel3: TRzPanel
-      Top = 421
-      Width = 778
+      Top = 410
+      Width = 770
       Height = 62
       TabOrder = 2
-      object Label19: TLabel
-        Left = 29
-        Top = 39
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #26412#21333#24050#36864
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label7: TLabel
-        Left = 204
-        Top = 39
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #26412#21333#27424#36864
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-      end
       object Label8: TLabel
         Left = 28
         Top = 15
@@ -480,8 +480,36 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Alignment = taRightJustify
         Caption = #23457#26680#29992#25143
       end
+      object Label19: TLabel
+        Left = 205
+        Top = 39
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #26412#21333#23454#25910
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label7: TLabel
+        Left = 388
+        Top = 39
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #26412#21333#27424#27454
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object Label10: TLabel
-        Left = 395
+        Left = 587
         Top = 39
         Width = 48
         Height = 12
@@ -494,9 +522,16 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Font.Style = []
         ParentFont = False
       end
+      object Label22: TLabel
+        Left = 27
+        Top = 39
+        Width = 48
+        Height = 12
+        Caption = #39044#25910#20914#36134
+      end
       object Label1: TLabel
         Left = 587
-        Top = 39
+        Top = 15
         Width = 48
         Height = 12
         Caption = #26368#26032#24211#23384
@@ -507,33 +542,19 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Font.Style = []
         ParentFont = False
       end
-      object edtRECV_MNY: TcxTextEdit
-        Tag = 1
-        Left = 83
-        Top = 35
-        Width = 99
-        Height = 20
+      object Label4: TLabel
+        Left = 388
+        Top = 15
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32467#31639#31246#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
         ParentFont = False
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clNavy
-        Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 0
-      end
-      object edtRECK_MNY: TcxTextEdit
-        Tag = 1
-        Left = 259
-        Top = 35
-        Width = 98
-        Height = 20
-        ParentFont = False
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clNavy
-        Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 1
       end
       object edtCHK_DATE: TcxTextEdit
         Tag = 1
@@ -541,7 +562,8 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 11
         Width = 99
         Height = 20
-        TabOrder = 2
+        TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
         Tag = 1
@@ -549,11 +571,42 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Top = 11
         Width = 98
         Height = 20
+        TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtRECV_MNY: TcxTextEdit
+        Tag = 1
+        Left = 259
+        Top = 35
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtRECK_MNY: TcxTextEdit
+        Tag = 1
+        Left = 443
+        Top = 35
+        Width = 120
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndRECK_MNY: TcxTextEdit
         Tag = 1
-        Left = 449
+        Left = 641
         Top = 35
         Width = 99
         Height = 20
@@ -564,12 +617,22 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtADVA_MNY: TcxTextEdit
+        Tag = 1
+        Left = 83
+        Top = 35
+        Width = 99
+        Height = 20
+        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndMY_AMOUNT: TcxTextEdit
         Tag = 1
         Left = 641
-        Top = 35
-        Width = 98
+        Top = 11
+        Width = 99
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -577,13 +640,30 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         Style.Font.Height = -12
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
-        TabOrder = 5
+        TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtTAX_MONEY: TcxTextEdit
+        Tag = 1
+        Left = 443
+        Top = 11
+        Width = 120
+        Height = 20
+        TabStop = False
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 778
-      Height = 243
+      Width = 770
+      Height = 232
       TabOrder = 3
       Columns = <
         item
@@ -709,15 +789,15 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 145
-      Width = 778
+      Width = 770
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 778
+      Top = 472
+      Width = 770
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 778
+      Top = 496
+      Width = 770
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

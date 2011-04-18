@@ -42,6 +42,7 @@ var Str:String;
     rs:TZQuery;
 begin
   result := False;
+  if FieldByName('SORT_TYPE').AsInteger = 1 then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -53,7 +54,6 @@ begin
     rs.First;
     while not rs.Eof do
       begin
-        if FieldByName('SORT_TYPE').AsInteger = 1 then Exit;
         if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then //如果原来删除的分组，重新启动原有编码
            begin
              FieldbyName('SORT_ID').AsString := rs.FieldbyName('SORT_ID').AsString;
@@ -74,6 +74,7 @@ var
   rs:TZQuery;
 begin
   result := true;
+  if FieldByName('SORT_TYPE').AsInteger = 1 then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;

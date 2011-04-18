@@ -12,18 +12,18 @@ inherited frmFindOrder: TfrmFindOrder
     inherited RzPage: TRzPageControl
       Top = 91
       Width = 482
-      Height = 251
+      Height = 240
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Caption = #26597#35810#21015#34920
         inherited RzPanel2: TRzPanel
           Width = 478
-          Height = 224
+          Height = 213
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 468
-            Height = 214
+            Height = 203
             Align = alClient
             AllowedOperations = []
             DataSource = dsList
@@ -34,6 +34,7 @@ inherited frmFindOrder: TfrmFindOrder
             FooterFont.Height = -12
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
             ReadOnly = True
@@ -220,6 +221,7 @@ inherited frmFindOrder: TfrmFindOrder
         Top = 1
         Width = 104
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
         TabOrder = 0
       end
@@ -228,6 +230,7 @@ inherited frmFindOrder: TfrmFindOrder
         Top = 1
         Width = 109
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
         TabOrder = 1
       end
@@ -237,6 +240,7 @@ inherited frmFindOrder: TfrmFindOrder
         Width = 104
         Height = 20
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object btnFind: TRzBitBtn
         Left = 336

@@ -52,10 +52,17 @@ type
     edtADVA_MNY: TcxTextEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    Label4: TLabel;
-    edtTAX_MONEY: TcxTextEdit;
     edtSHOP_ID: TzrComboBoxList;
     actCustomer: TAction;
+    Label4: TLabel;
+    edtTAX_MONEY: TcxTextEdit;
+    Label19: TLabel;
+    Label7: TLabel;
+    edtRECV_MNY: TcxTextEdit;
+    edtRECK_MNY: TcxTextEdit;
+    Label3: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label14: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -219,6 +226,9 @@ begin
   RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
 
   // 0是现场领取 1是后台领取
   RtlPSTFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_PST_FLAG'),0);
@@ -292,6 +302,9 @@ begin
     edtSHOP_ID.Properties.ReadOnly := True;
   end;
   cid := edtSHOP_ID.AsString;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   AObj.FieldbyName('INDE_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('INDE_ID').asString;
   gid := '..新增..';// AObj.FieldbyName('GLIDE_NO').asString;
@@ -350,6 +363,7 @@ begin
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadHeader;
+    edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := id;
@@ -396,6 +410,7 @@ begin
   Calc;
   AObj.FieldByName('INDE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('INDE_MNY').AsFloat := TotalFee;
+  AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
@@ -673,7 +688,7 @@ begin
   2:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
   3:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
   end;
-  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
   Calc;
 end;
 
@@ -1030,7 +1045,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select sum(RECK_MNY) from ACC_RECVABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+    rs.SQL.Text := 'select sum(RECK_MNY),sum(case when SALES_ID='''+oid+''' then RECK_MNY else 0 end),sum(case when SALES_ID='''+oid+''' then RECV_MNY else 0 end) from ACC_RECVABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
     Factor.Open(rs);
@@ -1038,6 +1053,14 @@ begin
        fndRECK_MNY.Text := formatFloat('#0.0##',rs.Fields[0].AsFloat)
     else
        fndRECK_MNY.Text := formatFloat('#0.0##',0);
+    if rs.Fields[1].asString<>'' then
+       edtRECK_MNY.Text := formatFloat('#0.0##',rs.Fields[1].AsFloat)
+    else
+       edtRECK_MNY.Text := formatFloat('#0.0##',0);
+    if rs.Fields[2].asString<>'' then
+       edtRECV_MNY.Text := formatFloat('#0.0##',rs.Fields[2].AsFloat)
+    else
+       edtRECV_MNY.Text := formatFloat('#0.0##',0);
   finally
     rs.Free;
   end;

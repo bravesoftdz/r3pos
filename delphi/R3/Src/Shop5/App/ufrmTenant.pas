@@ -273,18 +273,6 @@ begin
 end;
 
 procedure TfrmTenant.btnOkClick(Sender: TObject);
-procedure InitTenant;
-var
-  Params:TftParamList;
-begin
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.ExecProc('TTenantInit',Params);   
-  finally
-    Params.Free;
-  end;
-end;
 begin
   inherited;
   if Trim(edtLOGIN_NAME.Text) = '' then
@@ -328,7 +316,6 @@ begin
   Screen.Cursor := crSQLWait;
   try
     Save;
-    InitTenant;
   finally
     Screen.Cursor := crDefault;
   end;
@@ -394,8 +381,8 @@ var
   login:TCaLogin;
 begin
   Result := False;
+  Temp := TZQuery.Create(nil);
   try
-    Temp := TZQuery.Create(nil);
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME,SHORT_TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
     Factor.Open(Temp);

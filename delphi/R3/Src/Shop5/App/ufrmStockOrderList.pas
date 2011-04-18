@@ -34,6 +34,8 @@ type
     ToolButton17: TToolButton;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    Label3: TLabel;
+    fndDEPT_ID: TzrComboBoxList;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -83,6 +85,8 @@ begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=1';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndDEPT_ID.AsString <> '' then
+     w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndSTOCK_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndSTOCK_ID.Text)+'''';
   if fndSTATUS.ItemIndex > 0 then
@@ -136,6 +140,7 @@ begin
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
+    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('STOCK_ID').AsString;
@@ -175,6 +180,9 @@ begin
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndDEPT_ID.RangeField := 'DEPT_TYPE';
+  fndDEPT_ID.RangeValue := '1';
   D1.Date := date();
   D2.Date := date();
 
@@ -369,6 +377,7 @@ begin
    '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID and STOCK_ID='''+id+''') as ORDER_OWE_MNY,'+
    '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID) as TOTAL_OWE_MNY '+
    'from ('+
+   'select jm.*,m.DEPT_NAME as DEPT_ID_TEXT from ('+
    'select jl.*,l.CODE_NAME as SETTLE_CODE_TEXT from ('+
    'select jk.*,k.UNIT_NAME from ('+
    'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
@@ -380,7 +389,7 @@ begin
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as MOVE_TELE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS,b.FAXES CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.STOCK_AMT,A.STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,'+
    'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,B.CALC_MONEY,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from STK_STOCKORDER A,STK_STOCKDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' ) jb '+
@@ -394,7 +403,8 @@ begin
    'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID)j order by SEQNO';
+   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID) jm '+
+   'left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID ) j order by SEQNO';
 end;
 
 procedure TfrmStockOrderList.actPrintExecute(Sender: TObject);

@@ -1,6 +1,6 @@
 inherited frmStockOrderList: TfrmStockOrderList
-  Left = 193
-  Top = 103
+  Left = 202
+  Top = 252
   Width = 868
   Height = 612
   Caption = #36827#36135#21333
@@ -8,23 +8,23 @@ inherited frmStockOrderList: TfrmStockOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 860
-    Height = 549
+    Width = 852
+    Height = 538
     inherited RzPanel2: TRzPanel
-      Width = 850
-      Height = 539
+      Width = 842
+      Height = 528
       inherited RzPage: TRzPageControl
-        Width = 844
-        Height = 533
+        Width = 836
+        Height = 522
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 842
-            Height = 506
+            Width = 834
+            Height = 495
             inherited RzPanel1: TRzPanel
-              Width = 832
-              Height = 100
+              Width = 824
+              Height = 110
               object RzLabel2: TRzLabel
                 Left = 33
                 Top = 4
@@ -42,7 +42,7 @@ inherited frmStockOrderList: TfrmStockOrderList
               end
               object RzLabel4: TRzLabel
                 Left = 33
-                Top = 44
+                Top = 64
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -50,7 +50,7 @@ inherited frmStockOrderList: TfrmStockOrderList
               end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 64
+                Top = 84
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -58,7 +58,7 @@ inherited frmStockOrderList: TfrmStockOrderList
               end
               object Label1: TLabel
                 Left = 201
-                Top = 65
+                Top = 85
                 Width = 120
                 Height = 12
                 Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
@@ -76,11 +76,19 @@ inherited frmStockOrderList: TfrmStockOrderList
                 Height = 12
                 Caption = #36827#36135#38376#24215
               end
+              object Label3: TLabel
+                Left = 33
+                Top = 44
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
+              end
               object D1: TcxDateEdit
                 Left = 89
                 Top = 0
                 Width = 104
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -89,12 +97,13 @@ inherited frmStockOrderList: TfrmStockOrderList
                 Top = 0
                 Width = 109
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 89
-                Top = 40
+                Top = 60
                 Width = 236
                 Height = 20
                 Properties.AutoSelect = False
@@ -164,10 +173,11 @@ inherited frmStockOrderList: TfrmStockOrderList
               end
               object fndSTOCK_ID: TcxTextEdit
                 Left = 89
-                Top = 60
+                Top = 80
                 Width = 104
                 Height = 20
                 TabOrder = 3
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
                 Left = 504
@@ -264,11 +274,45 @@ inherited frmStockOrderList: TfrmStockOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndDEPT_ID: TzrComboBoxList
+                Left = 89
+                Top = 40
+                Width = 236
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 7
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 105
-              Width = 832
-              Height = 396
+              Top = 115
+              Width = 824
+              Height = 375
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -333,14 +377,14 @@ inherited frmStockOrderList: TfrmStockOrderList
                   EditButtons = <>
                   FieldName = 'PAYM_MNY'
                   Footers = <>
-                  Title.Caption = #26412#21333#24050#20184
+                  Title.Caption = #24050#32467#31639
                   Width = 56
                 end
                 item
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #26412#21333#27424#27454
+                  Title.Caption = #26410#32467#31639
                   Width = 57
                 end
                 item
@@ -370,44 +414,44 @@ inherited frmStockOrderList: TfrmStockOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 860
+    Width = 852
     inherited Image1: TImage
-      Left = 632
-      Width = 208
+      Left = 636
+      Width = 196
     end
     inherited Image3: TImage
-      Left = 632
-      Width = 208
+      Left = 636
+      Width = 196
     end
     inherited Image14: TImage
-      Left = 840
+      Left = 832
     end
     inherited rzPanel5: TPanel
-      Left = 632
+      Left = 636
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 612
+      Width = 616
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 612
+          MinHeight = 616
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 612
+        Width = 616
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actfrmPayOrder
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -415,7 +459,7 @@ inherited frmStockOrderList: TfrmStockOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 569
+          Left = 573
           Top = 0
           Action = actExit
         end

@@ -2504,7 +2504,7 @@ begin
   try
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-    Factor.Open(Temp);
+    Global.LocalFactory.Open(Temp);
     coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY));
     TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
   finally

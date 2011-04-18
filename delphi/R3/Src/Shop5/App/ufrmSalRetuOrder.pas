@@ -24,19 +24,11 @@ type
     edtGUIDE_USER: TzrComboBoxList;
     Label6: TLabel;
     edtTAX_RATE: TcxSpinEdit;
-    edtRECV_MNY: TcxTextEdit;
-    Label19: TLabel;
-    edtRECK_MNY: TcxTextEdit;
-    Label7: TLabel;
     Label8: TLabel;
     edtCHK_DATE: TcxTextEdit;
     edtCHK_USER_TEXT: TcxTextEdit;
     Label9: TLabel;
-    Label10: TLabel;
-    fndRECK_MNY: TcxTextEdit;
     Label40: TLabel;
-    Label1: TLabel;
-    fndMY_AMOUNT: TcxTextEdit;
     Label12: TLabel;
     edtSEND_ADDR: TcxTextEdit;
     Label15: TLabel;
@@ -53,10 +45,23 @@ type
     edtSAL_GLIDE_NO: TcxButtonEdit;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
-    Label4: TLabel;
-    edtTAX_MONEY: TcxTextEdit;
     edtSHOP_ID: TzrComboBoxList;
     actCustomer: TAction;
+    Label19: TLabel;
+    Label7: TLabel;
+    Label10: TLabel;
+    edtRECV_MNY: TcxTextEdit;
+    edtRECK_MNY: TcxTextEdit;
+    fndRECK_MNY: TcxTextEdit;
+    Label22: TLabel;
+    edtADVA_MNY: TcxTextEdit;
+    fndMY_AMOUNT: TcxTextEdit;
+    Label1: TLabel;
+    edtTAX_MONEY: TcxTextEdit;
+    Label4: TLabel;
+    Label3: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label14: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -225,6 +230,9 @@ begin
   RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
 
   // 0是现场领取 1是后台领取
   RtlPSTFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_PST_FLAG'),0);
@@ -298,6 +306,9 @@ begin
     edtSHOP_ID.Properties.ReadOnly := True;
   end;  
   cid := edtSHOP_ID.AsString;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('SALES_ID').asString;
   gid := '..新增..';// AObj.FieldbyName('GLIDE_NO').asString;
@@ -355,6 +366,7 @@ begin
     edtSHOP_ID.Properties.ReadOnly := False;  
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
@@ -418,6 +430,7 @@ begin
   AObj.FieldByName('PAY_H').AsFloat := 0;
   AObj.FieldByName('PAY_I').AsFloat := 0;
   AObj.FieldByName('PAY_J').AsFloat := 0;
+  AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
   //结算对话框
   //if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
   //end 
@@ -740,7 +753,7 @@ begin
   2:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
   3:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
   end;
-  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
   Calc;
 end;
 
@@ -1386,6 +1399,8 @@ begin
       self.edtSHOP_ID.Text := edtSHOP_ID.Text;
       self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
       self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
+      self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+      self.edtDEPT_ID.Text := edtDEPT_ID.Text;
       self.edtTELEPHONE.Text := edtTELEPHONE.Text;
       self.edtLINKMAN.Text := edtLINKMAN.Text;
       self.edtSALE_STYLE.KeyValue := edtSALE_STYLE.KeyValue;

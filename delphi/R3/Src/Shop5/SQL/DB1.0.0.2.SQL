@@ -148,7 +148,7 @@ CREATE TABLE MSC_QUESTION_ITEM(
 	QUESTION_ITEM_TYPE varchar(1) NOT NULL,
     --题目内容
 	QUESTION_INFO varchar (200) NOT NULL,
-    --题目选项 如:"A=满意";"B=不满意";"C=很不满意"
+    --题目选项 如:"A=满意","B=不满意","C=很不满意"
 	QUESTION_OPTIONS varchar (400) NOT NULL,
   CONSTRAINT PK_MSC_QST_ITEM PRIMARY KEY(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID)
 );

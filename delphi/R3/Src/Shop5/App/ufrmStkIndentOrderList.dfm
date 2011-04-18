@@ -1,30 +1,30 @@
 inherited frmStkIndentOrderList: TfrmStkIndentOrderList
   Left = 196
-  Top = 104
+  Top = 159
   Width = 868
-  Height = 612
+  Height = 557
   Caption = #36827#36135#35746#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 860
-    Height = 549
+    Width = 852
+    Height = 483
     inherited RzPanel2: TRzPanel
-      Width = 850
-      Height = 539
+      Width = 842
+      Height = 473
       inherited RzPage: TRzPageControl
-        Width = 844
-        Height = 533
+        Width = 836
+        Height = 467
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#35746#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 842
-            Height = 506
+            Width = 834
+            Height = 440
             inherited RzPanel1: TRzPanel
-              Width = 832
-              Height = 100
+              Width = 824
+              Height = 115
               object RzLabel2: TRzLabel
                 Left = 33
                 Top = 4
@@ -42,7 +42,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
               end
               object RzLabel4: TRzLabel
                 Left = 33
-                Top = 44
+                Top = 65
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -50,7 +50,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
               end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 64
+                Top = 86
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -58,7 +58,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
               end
               object Label1: TLabel
                 Left = 201
-                Top = 65
+                Top = 87
                 Width = 120
                 Height = 12
                 Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
@@ -76,11 +76,19 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                 Height = 12
                 Caption = #35746#36135#38376#24215
               end
+              object Label3: TLabel
+                Left = 33
+                Top = 44
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
+              end
               object D1: TcxDateEdit
                 Left = 89
                 Top = 0
                 Width = 104
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -89,12 +97,13 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                 Top = 0
                 Width = 109
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 89
-                Top = 40
+                Top = 61
                 Width = 236
                 Height = 20
                 Properties.AutoSelect = False
@@ -103,7 +112,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 2
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -164,13 +173,14 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
               end
               object fndINDE_ID: TcxTextEdit
                 Left = 89
-                Top = 60
+                Top = 82
                 Width = 104
                 Height = 20
-                TabOrder = 3
+                TabOrder = 5
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
-                Left = 504
+                Left = 560
                 Top = 56
                 Width = 67
                 Height = 26
@@ -189,7 +199,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 7
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -199,7 +209,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
               object fndSTATUS: TcxRadioGroup
                 Left = 344
                 Top = -5
-                Width = 145
+                Width = 201
                 Height = 86
                 ItemIndex = 0
                 Properties.Columns = 2
@@ -218,8 +228,14 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   end
                   item
                     Caption = #24050#20837#24211
+                  end
+                  item
+                    Caption = #24453#32467#31639
+                  end
+                  item
+                    Caption = #24050#32467#31639
                   end>
-                TabOrder = 4
+                TabOrder = 6
                 Caption = ''
               end
               object fndSHOP_ID: TzrComboBoxList
@@ -234,7 +250,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -264,11 +280,45 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndDEPT_ID: TzrComboBoxList
+                Left = 89
+                Top = 40
+                Width = 236
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 105
-              Width = 832
-              Height = 396
+              Top = 120
+              Width = 824
+              Height = 315
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -333,21 +383,21 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   EditButtons = <>
                   FieldName = 'ADVA_MNY'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#24212#20184
+                  Title.Caption = #39044#20184#27454'|'#39044#20184#27454
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'PAYM_MNY'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#23454#20184
+                  Title.Caption = #39044#20184#27454'|'#24050#32467#31639
                   Width = 58
                 end
                 item
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#27424#20184
+                  Title.Caption = #39044#20184#27454'|'#26410#32467#31639
                   Width = 63
                 end
                 item
@@ -377,44 +427,44 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 860
+    Width = 852
     inherited Image1: TImage
-      Left = 632
-      Width = 208
+      Left = 636
+      Width = 196
     end
     inherited Image3: TImage
-      Left = 632
-      Width = 208
+      Left = 636
+      Width = 196
     end
     inherited Image14: TImage
-      Left = 840
+      Left = 832
     end
     inherited rzPanel5: TPanel
-      Left = 632
+      Left = 636
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 612
+      Width = 616
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 612
+          MinHeight = 616
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 612
+        Width = 616
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actfrmPayOrder
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -422,7 +472,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 569
+          Left = 573
           Top = 0
           Action = actExit
         end

@@ -34,6 +34,8 @@ CREATE TABLE MSC_MESSAGE(
 	MSG_CONTENT varchar(500) NOT NULL,
     --有效期限
 	END_DATE varchar(10),
+	      --通讯ID号
+	COMM_ID varchar(50),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  
@@ -106,6 +108,8 @@ CREATE TABLE MSC_QUESTION(
 	REMARK varchar(100) NOT NULL,
     --结束日期
 	END_DATE varchar(10),
+	      --通讯ID号
+	COMM_ID varchar(50),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  
@@ -122,6 +126,9 @@ CREATE INDEX IX_MSC_QUESTION_QUESTION_CLASS ON MSC_QUESTION(TENANT_ID,QUESTION_C
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','单选','QUESTION_ITEM_TYPE','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','多选','QUESTION_ITEM_TYPE','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','录入','QUESTION_ITEM_TYPE','00',5497000);
+--是否必答
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','必答','QUESTION_IS_MUST','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','可选','QUESTION_IS_MUST','00',5497000);
  
 --题目内容
 CREATE TABLE MSC_QUESTION_ITEM(
@@ -135,10 +142,14 @@ CREATE TABLE MSC_QUESTION_ITEM(
 	SEQ_NO int NOT NULL,
     --题目类型
 	QUESTION_ITEM_TYPE varchar(1) NOT NULL,
+    --是否必答
+	QUESTION_IS_MUST varchar(1) NOT NULL,
     --题目内容
 	QUESTION_INFO varchar (200) NOT NULL,
     --题目选项 如:"A=满意";"B=不满意";"C=很不满意"
 	QUESTION_OPTIONS varchar (400) NOT NULL,
+	      --通讯ID号
+	COMM_ID varchar(50),
   CONSTRAINT PK_MSC_QST_ITEM PRIMARY KEY(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID)
 );
 CREATE INDEX IX_MSC_QUESTION_ITEM_QUESTION_ID ON MSC_QUESTION_ITEM(TENANT_ID,QUESTION_ID);
@@ -244,6 +255,8 @@ CREATE TABLE MSC_IMPEACH(
 	IMPEACH_PROC_INFO varchar(200),
 	  --处理时间
 	IMPEACH_PROC_DATE varchar(19),
+	      --通讯ID号
+	COMM_ID varchar(50),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  

@@ -337,11 +337,11 @@ begin
   try
     s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+ F.ReadString('soft','name','云盟软件R3')+'系列产品"';
     if F.ReadString('home','url','')<>'' then
-       s := '  网址：'+F.ReadString('home','url','');
+       s := s+'  网址：'+F.ReadString('home','url','');
     if F.ReadString('soft','copyright','')<>'' then
-       s := '  版权：'+F.ReadString('soft','copyright','');
+       s := s+'  版权：'+F.ReadString('soft','copyright','');
     if F.ReadString('soft','telephone','')<>'' then
-       s := '  客服：'+F.ReadString('soft','telephone','');
+       s := s+'  客服：'+F.ReadString('soft','telephone','');
     RzStatusPane2.Caption := s;
   finally
     F.Free;

@@ -30,8 +30,6 @@ type
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     Label12: TLabel;
-    Label13: TLabel;
-    edtADVA_MNY: TcxTextEdit;
     Label14: TLabel;
     edtINDE_GLIDE_NO: TcxButtonEdit;
     Label19: TLabel;
@@ -46,11 +44,16 @@ type
     edtCHK_USER_TEXT: TcxTextEdit;
     fndRECK_MNY: TcxTextEdit;
     fndMY_AMOUNT: TcxTextEdit;
-    Label4: TLabel;
-    edtTAX_MONEY: TcxTextEdit;
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
+    Label4: TLabel;
+    edtTAX_MONEY: TcxTextEdit;
+    Label3: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label13: TLabel;
+    edtADVA_MNY: TcxTextEdit;
+    Label11: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -197,6 +200,9 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1'; 
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
@@ -230,19 +236,24 @@ begin
 end;
 
 procedure TfrmStockOrder.NewOrder;
+var
+  rs:TZQuery;
 begin
   inherited;
   Open('');
   dbState := dsInsert;
-  edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
       SetEditStyle(dsBrowse,edtSHOP_ID.Style);
       edtSHOP_ID.Properties.ReadOnly := True;
-    end; 
+    end;
   cid := edtSHOP_ID.KeyValue;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
+  
   AObj.FieldbyName('STOCK_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('STOCK_ID').asString;
   gid := '..新增..';
@@ -279,6 +290,7 @@ begin
     edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
 
     ReadFrom(cdsDetail);
@@ -310,6 +322,7 @@ begin
   AObj.FieldByName('STOCK_TYPE').AsInteger := 1;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
   //下载订单:COMM_ID
   if (not edtCLIENT_ID.Enabled) and (not edtSHOP_ID.Enabled) and (DBGridEh1.ReadOnly) and (FDownOrderID<>'') then
     AObj.FieldByName('COMM_ID').AsString:=FDownOrderID
@@ -458,14 +471,14 @@ procedure TfrmStockOrder.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
   if Locked then Exit;
-  if dbState=dsBrowse then Exit;  
+  if dbState=dsBrowse then Exit;
   if edtINVOICE_FLAG.ItemIndex < 0 then Exit;
   case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:AObj.FieldbyName('TAX_RATE').AsFloat := 0;
   2:AObj.FieldbyName('TAX_RATE').AsFloat := InRate2;
   3:AObj.FieldbyName('TAX_RATE').AsFloat := InRate3;
   end;
-  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
 //  edtTAX_RATE.Visible := (TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger<>1);
   Calc;
 end;
@@ -1055,6 +1068,8 @@ begin
       self.edtSHOP_ID.Text := edtSHOP_ID.Text;
       self.edtGUIDE_USER.KeyValue := edtGUIDE_USER.KeyValue;
       self.edtGUIDE_USER.Text := edtGUIDE_USER.Text;
+      self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+      self.edtDEPT_ID.Text := edtDEPT_ID.Text;
       self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('INDE_ID').AsString;
       self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtADVA_MNY.Text := edtADVA_MNY.Text;

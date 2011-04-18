@@ -7,10 +7,10 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 838
-    Height = 495
+    Width = 830
+    Height = 484
     inherited RzPanel2: TRzPanel
-      Width = 828
+      Width = 820
       Height = 96
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -36,7 +36,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       object Label2: TLabel [3]
         Left = 194
-        Top = 51
+        Top = 72
         Width = 48
         Height = 12
         Caption = #22791'    '#27880
@@ -56,8 +56,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Caption = #35746#36135#38376#24215
       end
       object Label13: TLabel [6]
-        Left = 203
-        Top = 72
+        Left = 409
+        Top = 51
         Width = 39
         Height = 12
         Caption = #39044#20184#27454
@@ -75,24 +75,24 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Height = 12
         Caption = #36827#39033#31246#29575
       end
-      object Label4: TLabel [8]
-        Left = 563
-        Top = 72
+      object Label11: TLabel [8]
+        Left = 680
+        Top = 51
+        Width = 6
+        Height = 12
+        Caption = '%'
+      end
+      object Label3: TLabel [9]
+        Left = 194
+        Top = 51
         Width = 48
         Height = 12
-        Alignment = taRightJustify
-        Caption = #36827#39033#31246#39069
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
+        Caption = #25152#23646#37096#38376
       end
       inherited RzPanel4: TRzPanel
         Top = 5
         Height = 76
-        TabOrder = 8
+        TabOrder = 9
         inherited Image1: TImage
           Left = 103
           Top = 31
@@ -106,14 +106,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Top = 5
         Width = 121
         Height = 20
-        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        TabOrder = 6
       end
       object edtREMARK: TcxTextEdit
         Left = 250
-        Top = 47
+        Top = 68
         Width = 287
         Height = 20
-        TabOrder = 4
+        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGUIDE_USER: TzrComboBoxList
         Left = 456
@@ -162,9 +164,10 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Top = 26
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-        TabOrder = 6
+        TabOrder = 7
       end
       object edtTAX_RATE: TcxSpinEdit
         Left = 623
@@ -173,7 +176,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         Properties.ValueType = vtFloat
-        TabOrder = 7
+        TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 250
@@ -291,8 +295,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         MultiSelect = False
       end
       object edtADVA_MNY: TcxTextEdit
-        Left = 250
-        Top = 68
+        Left = 456
+        Top = 47
         Width = 81
         Height = 20
         ParentFont = False
@@ -301,28 +305,48 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Style.Font.Height = -12
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
-        TabOrder = 3
+        TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtTAX_MONEY: TcxTextEdit
-        Tag = 1
-        Left = 623
-        Top = 68
-        Width = 121
+      object edtDEPT_ID: TzrComboBoxList
+        Left = 250
+        Top = 47
+        Width = 131
         Height = 20
-        TabStop = False
-        ParentFont = False
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clNavy
-        Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 9
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 3
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'DEPT_NAME;DEPT_SPELL'
+        KeyField = 'DEPT_ID'
+        ListField = 'DEPT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'DEPT_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 414
-      Width = 828
-      Height = 33
+      Top = 374
+      Width = 820
+      Height = 62
       TabOrder = 2
       object Label8: TLabel
         Left = 28
@@ -341,8 +365,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Caption = #23457#26680#29992#25143
       end
       object Label10: TLabel
-        Left = 395
-        Top = 15
+        Left = 587
+        Top = 39
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -367,6 +391,48 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Font.Style = []
         ParentFont = False
       end
+      object Label19: TLabel
+        Left = 193
+        Top = 39
+        Width = 60
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #24050#32467#31639#37329#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label7: TLabel
+        Left = 382
+        Top = 39
+        Width = 60
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #26410#32467#31639#37329#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label4: TLabel
+        Left = 392
+        Top = 15
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #36827#39033#31246#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtCHK_DATE: TcxTextEdit
         Tag = 1
         Left = 83
@@ -374,6 +440,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Width = 99
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
         Tag = 1
@@ -382,12 +449,13 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Width = 98
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndRECK_MNY: TcxTextEdit
         Tag = 1
-        Left = 449
-        Top = 10
-        Width = 99
+        Left = 641
+        Top = 34
+        Width = 98
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -396,11 +464,12 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object fndMY_AMOUNT: TcxTextEdit
         Tag = 1
         Left = 641
-        Top = 10
+        Top = 11
         Width = 98
         Height = 20
         ParentFont = False
@@ -410,12 +479,59 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtRECV_MNY: TcxTextEdit
+        Tag = 1
+        Left = 259
+        Top = 35
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtRECK_MNY: TcxTextEdit
+        Tag = 1
+        Left = 449
+        Top = 35
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtTAX_MONEY: TcxTextEdit
+        Tag = 1
+        Left = 449
+        Top = 11
+        Width = 98
+        Height = 20
+        TabStop = False
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited DBGridEh1: TDBGridEh
       Top = 135
-      Width = 828
-      Height = 279
+      Width = 820
+      Height = 239
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <
@@ -569,16 +685,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 101
-      Width = 828
+      Width = 820
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 447
-      Width = 828
+      Top = 436
+      Width = 820
     end
     inherited rzHelp: TRzPanel
-      Top = 471
-      Width = 828
+      Top = 460
+      Width = 820
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

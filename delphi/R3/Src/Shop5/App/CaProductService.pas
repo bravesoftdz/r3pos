@@ -11,7 +11,7 @@ unit CaProductService;
 
 interface
 
-uses InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns;
+uses SysUtils,InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns;
 
 type
 
@@ -118,6 +118,7 @@ begin
     if (Result = nil) and (HTTPRIO = nil) then
       RIO.Free;
   end;
+  if result=nil then Raise Exception.Create('无法访问CaProductWebService服务');
 end;
 
 

@@ -269,7 +269,7 @@ var ExcSql:String;
 begin
   inherited;
   ExcSql :=
-  'update MSC_MESSAGE_LIST set READ_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD HH:MM:SS',Now))+',READ_USER='+QuotedStr(Global.UserID)+',MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=2,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' '+
+  'update MSC_MESSAGE_LIST set READ_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD HH:MM:SS',Now))+',READ_USER='+QuotedStr(Global.UserID)+',MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=1,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' '+
   ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and MSG_ID='+QuotedStr(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
   if Factor.ExecSQL(ExcSql) = 0 then
     Raise Exception.Create('²Ù×÷Ê§°Ü!');

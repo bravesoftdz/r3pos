@@ -446,6 +446,10 @@ CREATE INDEX IX_CA_RELATIONS_LEVEL_ID ON CA_RELATIONS(LEVEL_ID);
 
 CREATE INDEX IX_CA_RELATIONS_TIME_STAMP ON CA_RELATIONS(TIME_STAMP);
 
+--部门类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','营销部','DEPT_TYPE','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','财务部','DEPT_TYPE','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','管理部','DEPT_TYPE','00',5497000);
 --部门资料
 CREATE TABLE [CA_DEPT_INFO](
     --部门代码 企业代码+3位序号
@@ -462,6 +466,10 @@ CREATE TABLE [CA_DEPT_INFO](
 	[TELEPHONE] [varchar](30) NULL,
     --联系人
 	[LINKMAN] [varchar](20) NULL,
+    --部门类型
+	[DEPT_TYPE] [char] (1) NOT NULL,
+    --发货仓库(默认)
+	[SHOP_ID] [char] (13) NULL,
     --传真
 	[FAXES] [varchar](30) NULL,
     --备注

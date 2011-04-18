@@ -9,26 +9,26 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 537
+    Width = 892
+    Height = 526
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 527
+      Width = 882
+      Height = 516
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 521
+        Width = 876
+        Height = 510
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 494
+            Width = 874
+            Height = 483
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -70,6 +70,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Top = 7
                 Width = 97
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -78,6 +79,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Top = 7
                 Width = 98
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
@@ -229,16 +231,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel3: TPanel
               Left = 6
               Top = 90
-              Width = 870
-              Height = 398
+              Width = 862
+              Height = 387
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 396
+                Width = 860
+                Height = 385
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -251,6 +253,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 FooterFont.Style = []
                 FooterRowCount = 1
                 FrozenCols = 2
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 RowHeight = 20
@@ -468,6 +471,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Top = 7
                 Width = 97
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -476,6 +480,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Top = 7
                 Width = 98
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
@@ -718,6 +723,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Top = 69
                 Width = 97
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DropDownListStyle = lsFixedList
                 TabOrder = 8
               end
@@ -788,6 +794,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
                 FrozenCols = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 RowHeight = 20
@@ -923,17 +930,17 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image1: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image3: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited rzPanel5: TPanel
       Left = 374

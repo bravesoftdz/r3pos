@@ -1,6 +1,6 @@
 inherited frmNewPaperReader: TfrmNewPaperReader
-  Left = 500
-  Top = 125
+  Left = 291
+  Top = 107
   BorderStyle = bsDialog
   Caption = #20449#24687#20114#21160
   ClientHeight = 555
@@ -49,12 +49,12 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabTittle
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight

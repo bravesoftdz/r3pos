@@ -193,6 +193,7 @@ inherited frmTransOrder: TfrmTransOrder
         Top = 12
         Width = 115
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtTRANS_DATEPropertiesChange
         TabOrder = 0
       end
@@ -607,6 +608,7 @@ inherited frmTransOrder: TfrmTransOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREMARK: TcxTextEdit
         Left = 78
@@ -615,6 +617,7 @@ inherited frmTransOrder: TfrmTransOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTRANS_USER: TzrComboBoxList
         Left = 78

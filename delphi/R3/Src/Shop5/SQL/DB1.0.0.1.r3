@@ -279,6 +279,8 @@ CREATE TABLE [STK_STOCKORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+	      --通讯ID号
+	[COMM_ID] varchar(50) NULL,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STK_STOCKORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
@@ -438,6 +440,8 @@ CREATE TABLE [SAL_SALESORDER] (
 	[TELEPHONE] [varchar] (30) NULL ,
         --送货地址
 	[SEND_ADDR] [varchar] (255) NULL ,
+	      --通讯ID号
+	[COMM_ID] varchar(50) NULL,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_SALESORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
@@ -693,6 +697,8 @@ CREATE TABLE [STO_CHANGEORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+	      --通讯ID号
+	[COMM_ID] varchar(50) NULL,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_CHANGEORDER_COMM] DEFAULT ('00'),
         --时间戳 
@@ -807,6 +813,8 @@ CREATE TABLE [STK_INDENTORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+	      --通讯ID号
+	[COMM_ID] varchar(50) NULL,
         --时间戳 当前系统日期*86400000
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_STK_INDENTORDER] PRIMARY KEY 
@@ -931,6 +939,8 @@ CREATE TABLE [SAL_INDENTORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+	      --通讯ID号
+	[COMM_ID] varchar(50) NULL,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INDENTORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
@@ -2466,3 +2476,144 @@ CREATE INDEX IX_RCK_ACCT_MONTH_TENANT_ID ON RCK_ACCT_MONTH(TENANT_ID);
 CREATE INDEX IX_RCK_ACCT_MONTH_TIME_STAMP ON RCK_ACCT_MONTH(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_RCK_ACCT_MONTH_MONTH ON RCK_ACCT_MONTH(TENANT_ID,MONTH);
 CREATE INDEX IX_RCK_ACCT_MONTH_ACCOUNT_ID ON RCK_ACCT_MONTH(TENANT_ID,ACCOUNT_ID);
+
+--扫码出库
+CREATE TABLE SAL_LOCUS_FORSALE(
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar (13) NOT NULL ,
+        --销售单号
+	SALES_ID char (36) NOT NULL ,
+        --序号
+	SEQNO int NOT NULL ,
+        --货品
+	GODS_ID char (36) NOT NULL ,
+        --尺码<不分时用 # 号>
+	PROPERTY_01 varchar (36) NOT NULL ,
+        --颜色<不分时用 # 号>
+	PROPERTY_02 varchar (36) NOT NULL ,
+        --批号
+	BATCH_NO varchar (36) NOT NULL ,
+        --扫码日期
+	LOCUS_DATE int NOT NULL ,
+        --物流跟踪号
+	LOCUS_NO varchar (36) NOT NULL ,
+        --单位
+	UNIT_ID varchar (36) NOT NULL ,
+        --数量
+	AMOUNT decimal(18, 3) ,
+        --计量单位数据
+	CALC_AMOUNT decimal(18, 3) ,
+
+        --操作时间
+	CREA_DATE varchar (30) ,
+        --操作人员
+	CREA_USER varchar (36) ,
+        --通讯标志
+	COMM varchar (2) NOT NULL DEFAULT '00',
+        --时间戳 当前系统日期*86400000
+  TIME_STAMP bigint NOT NULL,
+	
+	CONSTRAINT PK_SAL_LS_FORSALE PRIMARY KEY  
+	(
+		TENANT_ID,
+		SALES_ID,
+		SEQNO
+	)
+);
+
+--扫码出库<领用，损益等的出库>
+CREATE TABLE STO_LOCUS_FORCHAG(
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar (13) NOT NULL ,
+        --调整单号
+	CHANGE_ID char (36) NOT NULL ,
+        --序号
+	SEQNO int NOT NULL ,
+        --货品
+	GODS_ID char (36) NOT NULL ,
+        --尺码<不分时用 # 号>
+	PROPERTY_01 varchar (36) NOT NULL ,
+        --颜色<不分时用 # 号>
+	PROPERTY_02 varchar (36) NOT NULL ,
+        --批号
+	BATCH_NO varchar (36) NOT NULL ,
+        --扫码日期
+	LOCUS_DATE int NOT NULL ,
+        --物流跟踪号
+	LOCUS_NO varchar (36) NOT NULL ,
+        --单位
+	UNIT_ID varchar (36) NOT NULL ,
+        --数量
+	AMOUNT decimal(18, 3) ,
+        --计量单位数据
+	CALC_AMOUNT decimal(18, 3) ,
+
+        --操作时间
+	CREA_DATE varchar (30) ,
+        --操作人员
+	CREA_USER varchar (36) ,
+        --通讯标志
+	COMM varchar (2) NOT NULL DEFAULT '00',
+        --时间戳 当前系统日期*86400000
+  TIME_STAMP bigint NOT NULL,
+	
+	CONSTRAINT PK_STO_LS_FORCHAG PRIMARY KEY  
+	(
+		TENANT_ID,
+		CHANGE_ID,
+		SEQNO
+	)
+);
+
+
+--扫码入库
+CREATE TABLE STK_LOCUS_FORSTCK(
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar (13) NOT NULL ,
+        --销售单号
+	STOCK_ID char (36) NOT NULL ,
+        --序号
+	SEQNO int NOT NULL ,
+        --货品
+	GODS_ID char (36) NOT NULL ,
+        --尺码<不分时用 # 号>
+	PROPERTY_01 varchar (36) NOT NULL ,
+        --颜色<不分时用 # 号>
+	PROPERTY_02 varchar (36) NOT NULL ,
+        --批号
+	BATCH_NO varchar (36) NOT NULL ,
+        --扫码日期
+	LOCUS_DATE int NOT NULL ,
+        --物流跟踪号
+	LOCUS_NO varchar (36) NOT NULL ,
+        --单位
+	UNIT_ID varchar (36) NOT NULL ,
+        --数量
+	AMOUNT decimal(18, 3) ,
+        --计量单位数据
+	CALC_AMOUNT decimal(18, 3) ,
+
+        --操作时间
+	CREA_DATE varchar (30) ,
+        --操作人员
+	CREA_USER varchar (36) ,
+        --通讯标志
+	COMM varchar (2) NOT NULL DEFAULT '00',
+        --时间戳 当前系统日期*86400000
+  TIME_STAMP bigint NOT NULL,
+	
+	CONSTRAINT PK_STK_LS_FORSTCK PRIMARY KEY  
+	(
+		TENANT_ID,
+		STOCK_ID,
+		SEQNO
+	)
+);
+
+

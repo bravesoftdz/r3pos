@@ -276,13 +276,16 @@ begin
        if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text :=
-           'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-         + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'进货货款【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''4'',:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
-         CopyToParams(rs.Params);
-         rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
-         rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
-         AGlobal.ExecQuery(rs);
+         if roundto(FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat,3)<>0 then
+         begin
+           rs.SQL.Text :=
+             'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+           + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'进货货款【单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''4'',:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+           CopyToParams(rs.Params);
+           rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
+           rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
+           AGlobal.ExecQuery(rs);
+         end;
 //       修改成支持 DB2模式         
 //         AGlobal.ExecSQL(
 //           'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,NEAR_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
@@ -344,7 +347,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+    rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
     if comm and result and (copy(rs.Fields[1].asString,1,1)<>'1') then Raise Exception.Create('已经同步的数据不能删除..');
@@ -359,25 +362,27 @@ var
 begin
   inherited;
   SelectSQL.Text :=
+               'select jh.*,h.DEPT_NAME as DEPT_ID_TEXT from ('+
                'select jg.*,g.GLIDE_NO as INDE_GLIDE_NO from ('+
                'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
                'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
-               '(select TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
+               '(select TENANT_ID,SHOP_ID,DEPT_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
                'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
                ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_SHOP_INFO e on  je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
                ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
-               ' left outer join STK_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID';
+               ' left outer join STK_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID ) jh '+
+               ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
   IsSQLUpdate := True;
-  Str := 'insert into STK_STOCKORDER(TENANT_ID,SHOP_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,STOCK_MNY,STOCK_AMT,ADVA_MNY,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,COMM_ID,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:STOCK_ID,:GLIDE_NO,:STOCK_TYPE,:STOCK_DATE,:GUIDE_USER,:CLIENT_ID,:STOCK_MNY,:STOCK_AMT,:ADVA_MNY,:CHK_DATE,:CHK_USER,:FROM_ID,:FIG_ID,:INVOICE_FLAG,:TAX_RATE,:REMARK,''00'',:CREA_DATE,:CREA_USER,:COMM_ID,'+GetTimeStamp(iDbType)+')';
+  Str := 'insert into STK_STOCKORDER(TENANT_ID,SHOP_ID,DEPT_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,STOCK_MNY,STOCK_AMT,ADVA_MNY,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,COMM_ID,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:STOCK_ID,:GLIDE_NO,:STOCK_TYPE,:STOCK_DATE,:GUIDE_USER,:CLIENT_ID,:STOCK_MNY,:STOCK_AMT,:ADVA_MNY,:CHK_DATE,:CHK_USER,:FROM_ID,:FIG_ID,:INVOICE_FLAG,:TAX_RATE,:REMARK,''00'',:CREA_DATE,:CREA_USER,:COMM_ID,'+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := str;
-  Str := 'update STK_STOCKORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,STOCK_ID=:STOCK_ID,GLIDE_NO=:GLIDE_NO,STOCK_TYPE=:STOCK_TYPE,STOCK_DATE=:STOCK_DATE,GUIDE_USER=:GUIDE_USER,CLIENT_ID=:CLIENT_ID,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
+  Str := 'update STK_STOCKORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,STOCK_ID=:STOCK_ID,GLIDE_NO=:GLIDE_NO,STOCK_TYPE=:STOCK_TYPE,STOCK_DATE=:STOCK_DATE,GUIDE_USER=:GUIDE_USER,CLIENT_ID=:CLIENT_ID,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
          'FROM_ID=:FROM_ID,FIG_ID=:FIG_ID,INVOICE_FLAG=:INVOICE_FLAG,TAX_RATE=:TAX_RATE,STOCK_MNY=:STOCK_MNY,STOCK_AMT=:STOCK_AMT,ADVA_MNY=:ADVA_MNY,REMARK=:REMARK,COMM_ID=:COMM_ID,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '

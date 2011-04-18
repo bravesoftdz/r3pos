@@ -40,11 +40,18 @@ type
     edtCHK_USER_TEXT: TcxTextEdit;
     fndRECK_MNY: TcxTextEdit;
     fndMY_AMOUNT: TcxTextEdit;
-    Label4: TLabel;
-    edtTAX_MONEY: TcxTextEdit;
     N2: TMenuItem;
     N3: TMenuItem;
     N4: TMenuItem;
+    Label11: TLabel;
+    Label3: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label19: TLabel;
+    Label7: TLabel;
+    edtRECV_MNY: TcxTextEdit;
+    edtRECK_MNY: TcxTextEdit;
+    Label4: TLabel;
+    edtTAX_MONEY: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -180,6 +187,9 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
@@ -213,6 +223,7 @@ begin
 end;
 
 procedure TfrmStkIndentOrder.NewOrder;
+var rs:TZQuery;
 begin
   inherited;
   Open('');
@@ -226,6 +237,9 @@ begin
     edtSHOP_ID.Properties.ReadOnly := True;
   end;
   cid := edtSHOP_ID.KeyValue;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   AObj.FieldbyName('INDE_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('INDE_ID').asString;
   gid := '..ÐÂÔö..';
@@ -262,6 +276,7 @@ begin
     edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
 
     ReadFrom(cdsDetail);
@@ -292,6 +307,7 @@ begin
   cid := edtSHOP_ID.asString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
   Calc;
   Factor.BeginBatch;
   try
@@ -434,7 +450,7 @@ begin
   2:AObj.FieldbyName('TAX_RATE').AsFloat := InRate2;
   3:AObj.FieldbyName('TAX_RATE').AsFloat := InRate3;
   end;
-  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
 //  edtTAX_RATE.Visible := (TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger<>1);
   Calc;
 end;
@@ -757,7 +773,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+    rs.SQL.Text := 'select sum(RECK_MNY),sum(case when STOCK_ID='''+oid+''' then RECK_MNY else 0 end),sum(case when STOCK_ID='''+oid+''' then PAYM_MNY else 0 end) from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
     Factor.Open(rs);
@@ -765,6 +781,14 @@ begin
        fndRECK_MNY.Text := formatFloat('#0.00',rs.Fields[0].AsFloat)
     else
        fndRECK_MNY.Text := formatFloat('#0.00',0);
+    if rs.Fields[1].asString<>'' then
+       edtRECK_MNY.Text := formatFloat('#0.0##',rs.Fields[1].AsFloat)
+    else
+       edtRECK_MNY.Text := formatFloat('#0.0##',0);
+    if rs.Fields[2].asString<>'' then
+       edtRECV_MNY.Text := formatFloat('#0.0##',rs.Fields[2].AsFloat)
+    else
+       edtRECV_MNY.Text := formatFloat('#0.0##',0);
   finally
     rs.Free;
   end;

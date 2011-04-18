@@ -48,6 +48,7 @@ inherited frmPayOrder: TfrmPayOrder
             FooterFont.Style = []
             FooterRowCount = 1
             FrozenCols = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -120,8 +121,8 @@ inherited frmPayOrder: TfrmPayOrder
                 Footer.ValueType = fvtSum
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #36134#27454#24635#39069
-                Width = 63
+                Title.Caption = #21512#35745#37329#39069
+                Width = 66
               end
               item
                 Alignment = taRightJustify
@@ -133,8 +134,8 @@ inherited frmPayOrder: TfrmPayOrder
                 Footers = <>
                 ReadOnly = True
                 Tag = 1
-                Title.Caption = #27424#20184#37329#39069
-                Width = 63
+                Title.Caption = #24403#21069#27424#27454
+                Width = 66
               end
               item
                 Alignment = taRightJustify
@@ -155,8 +156,8 @@ inherited frmPayOrder: TfrmPayOrder
                 Footers = <>
                 ReadOnly = True
                 Tag = 1
-                Title.Caption = #32467#20313#24212#20184
-                Width = 62
+                Title.Caption = #32467#20313#37329#39069
+                Width = 68
               end
               item
                 EditButtons = <>
@@ -350,6 +351,7 @@ inherited frmPayOrder: TfrmPayOrder
         Top = 13
         Width = 131
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
         TabOrder = 2
       end
@@ -360,6 +362,7 @@ inherited frmPayOrder: TfrmPayOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
         Left = 8
@@ -707,6 +710,7 @@ inherited frmPayOrder: TfrmPayOrder
         Top = 34
         Width = 120
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 5
       end
@@ -795,6 +799,7 @@ inherited frmPayOrder: TfrmPayOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
   end

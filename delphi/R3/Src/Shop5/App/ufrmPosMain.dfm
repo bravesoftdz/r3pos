@@ -238,6 +238,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndCLIENT_CODEEnter
         end
         object fndCLIENT_ID_TEXT: TcxTextEdit
@@ -255,6 +256,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndCLIENT_CODEEnter
         end
         object fndGLIDE_NO: TcxTextEdit
@@ -272,6 +274,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndCLIENT_CODEEnter
         end
         object fndSALES_DATE: TcxTextEdit
@@ -289,6 +292,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 3
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndCLIENT_CODEEnter
         end
         object edtAMONEY: TcxTextEdit
@@ -306,6 +310,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 4
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object edtAGIO_MONEY: TcxTextEdit
@@ -323,6 +328,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 5
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object fndCREA_USER: TcxTextEdit
@@ -340,6 +346,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 6
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object fndACCU_INTEGRAL: TcxTextEdit
@@ -357,6 +364,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 7
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object edtINTEGRAL: TcxTextEdit
@@ -374,6 +382,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 8
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object fndGUIDE_USER: TcxTextEdit
@@ -391,6 +400,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 9
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object fndBALANCE: TcxTextEdit
@@ -408,6 +418,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 10
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndBARCODEEnter
         end
         object fndPRICE_ID: TcxTextEdit
@@ -425,6 +436,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 11
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = fndCLIENT_CODEEnter
         end
         object Panel1: TPanel
@@ -457,6 +469,7 @@ inherited frmPosMain: TfrmPosMain
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
           FrozenCols = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           RowHeight = 23
@@ -669,6 +682,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Style = [fsBold]
           TabOrder = 0
           Visible = False
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = rckPAY_1Enter
         end
         object priPAY_DIBS: TcxTextEdit
@@ -686,6 +700,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Name = #23435#20307
           Style.Font.Style = [fsBold]
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = rckPAY_1Enter
         end
         object pnlBarCode: TRzPanel
@@ -734,6 +749,7 @@ inherited frmPosMain: TfrmPosMain
             Style.Font.Style = [fsBold]
             TabOrder = 0
             ImeMode = imClose
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyDown = edtInputKeyDown
             OnKeyPress = edtInputKeyPress
           end
@@ -754,6 +770,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Style = [fsBold]
           TabOrder = 3
           Visible = False
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = rckPAY_1Enter
         end
         object rckPAY_3: TcxTextEdit
@@ -772,6 +789,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Style = [fsBold]
           TabOrder = 4
           Visible = False
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = rckPAY_1Enter
         end
         object rckPAY_4: TcxTextEdit
@@ -790,6 +808,7 @@ inherited frmPosMain: TfrmPosMain
           Style.Font.Style = [fsBold]
           TabOrder = 5
           Visible = False
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnEnter = rckPAY_1Enter
         end
       end
@@ -834,6 +853,7 @@ inherited frmPosMain: TfrmPosMain
       FooterRowCount = 1
       FrozenCols = 1
       HorzScrollBar.Visible = False
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
       OptionsEh = [dghHighlightFocus, dghClearSelection]
       ParentFont = False

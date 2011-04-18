@@ -33,6 +33,8 @@ type
     ToolButton17: TToolButton;
     Label1: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    Label3: TLabel;
+    fndDEPT_ID: TzrComboBoxList;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -82,6 +84,8 @@ begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=3 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndDEPT_ID.AsString <> '' then
+     w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndSALES_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+'''';
   if fndSTATUS.ItemIndex > 0 then
@@ -134,6 +138,7 @@ begin
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('SALES_ID').AsString;
@@ -178,6 +183,9 @@ begin
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndDEPT_ID.RangeField := 'DEPT_TYPE';
+  fndDEPT_ID.RangeValue := '1';
   D1.Date := date();
   D2.Date := date();
 end;
@@ -354,6 +362,7 @@ begin
    '(select -sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
    '(select -sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY '+
    'from ('+
+   'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
    'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
    'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
    'select jk.*,k.UNIT_NAME from ('+
@@ -366,7 +375,7 @@ begin
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,-A.SALE_AMT as SALE_AMT,-A.SALE_MNY as SALE_MNY,A.CASH_MNY,A.PAY_ZERO,-A.PAY_DIBS as PAY_DIBS,-A.PAY_A as PAY_A,-A.PAY_B as PAY_B,-A.PAY_C as PAY_C,-A.PAY_D as PAY_D,'+
    '-A.PAY_E as PAY_E,-A.PAY_F as PAY_F,-A.PAY_G as PAY_G,-A.PAY_H as PAY_H,-A.PAY_I as PAY_I,-A.PAY_J as PAY_J,-A.INTEGRAL as INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
    '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,-B.CALC_MONEY as CALC_MONEY,-A.BARTER_INTEGRAL as BARTER_INTEGRAL,'+
@@ -383,7 +392,8 @@ begin
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) j order by SEQNO ';
+   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
+   'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
 end;
 
 procedure TfrmSalRetuOrderList.frfSalRetuOrderUserFunction(const Name: String;

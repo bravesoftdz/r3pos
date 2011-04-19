@@ -695,7 +695,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #22269#31246#21495
+            Caption = #31246#21153#30331#35760#35777#21495
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12

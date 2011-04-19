@@ -531,7 +531,7 @@ begin
     if edtKey.Text<>'' then
       Cnd:=Cnd+GetLikeCnd(Factor.iDbType,['DEPT_ID','DEPT_NAME','DEPT_SPELL'],':KEYVALUE','and');
 
-    SQL:='Select 1 as SEQ_NO,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
+    SQL:='Select 1 as SEQ_NO,DEPT_ID,DEPT_NAME,LEVEL_ID,DEPT_SPELL,TENANT_ID,TELEPHONE,LINKMAN,FAXES,DEPT_TYPE,REMARK,SubString(LEVEL_ID,1,Len(LEVEL_ID)-3) as UPDEPT_ID '+
          'From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+Cnd+' order by DEPT_ID';
     SQL:=ParseSQL(Factor.iDbType,SQL); //º¯ÊýÆ¥Åä×ª»»
 

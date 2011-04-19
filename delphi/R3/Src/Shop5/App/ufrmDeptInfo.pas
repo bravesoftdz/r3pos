@@ -34,6 +34,9 @@ type
     Label10: TLabel;
     edtFAXES: TcxTextEdit;
     drpDept: TZQuery;
+    edtDEPT_TYPE: TzrComboBoxList;
+    Label11: TLabel;
+    Label12: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -44,6 +47,8 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtFAXESKeyPress(Sender: TObject; var Key: Char);
   private
+    FDeptType: TZQuery;
+    procedure SetDeptType;
     function  GetLevelID(oldLevelID: string): string;
     function  IsEdit(Aobj:TRecord_; cdsTable: TZQuery):Boolean; virtual; //判断是Aobj对象与与数据集Value是否改变
     procedure CheckDEPTNameIsExists;  //判断部门是否存在
@@ -75,6 +80,8 @@ begin
   Open('');
   dbState:=dsInsert;
   edtDEPT_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DEPT_ID','CA_DEPT_INFO','000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
+  edtDEPT_TYPE.KeyValue:=trim(edtDEPT_TYPE.DataSet.fieldbyName('CODE_ID').AsString);
+  edtDEPT_TYPE.Text:=trim(edtDEPT_TYPE.DataSet.fieldbyName('CODE_NAME').AsString);
 end;
 
 procedure TfrmDeptInfo.Edit(code: string);
@@ -172,13 +179,18 @@ begin
   if trim(edtDEPT_NAME.Text)='' then
   begin
     if not edtDEPT_NAME.CanFocus then edtDEPT_NAME.SetFocus;
-    Raise Exception.Create('名称不能为空！'); 
+    Raise Exception.Create('名称不能为空！');
   end;
   if trim(edtDEPT_SPELL.Text)='' then
   begin
     if not edtDEPT_SPELL.CanFocus then edtDEPT_SPELL.SetFocus;
     Raise Exception.Create('拼音码不能为空！');
   end;
+  if trim(edtDEPT_TYPE.Text)='' then
+  begin
+    if not edtDEPT_TYPE.CanFocus then edtDEPT_TYPE.SetFocus;
+    Raise Exception.Create('部门类型不能为空！');
+  end; 
 
   CheckDEPTNameIsExists; //判断部门是否存在
 
@@ -197,6 +209,7 @@ procedure TfrmDeptInfo.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
+  SetDeptType; //设置部门DataSet
 end;
 
 procedure TfrmDeptInfo.FormDestroy(Sender: TObject);
@@ -436,6 +449,40 @@ procedure TfrmDeptInfo.edtFAXESKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if key=#13 then edtREMARK.SetFocus;
+end;
+
+procedure TfrmDeptInfo.SetDeptType; //设置部门DataSet
+var
+  Rs: TZQuery;
+  vData: OleVariant;
+  i,allCount: integer;
+begin
+  try
+    //设置部门类型
+    FDeptType:=TZQuery.Create(self);
+    FDeptType.Close;
+    Rs:=Global.GetZQueryFromName('PUB_PARAMS');
+    if Rs<>nil then
+    begin
+      vData:=Rs.Data;
+      if VarIsArray(vData) then
+      begin
+        FDeptType.Data:=vData;
+        if (FDeptType.Active) and (FDeptType.RecordCount>0) then
+        begin
+          allCount:=FDeptType.RecordCount;
+          for i:=allCount downto 1 do
+          begin
+            FDeptType.RecNo:=i;
+            if trim(FDeptType.FieldByName('TYPE_CODE').AsString)<>'DEPT_TYPE' then  
+              FDeptType.Delete; 
+          end;
+        end;
+      end;
+    end;
+    edtDEPT_TYPE.DataSet:=FDeptType;
+  finally
+  end;
 end;
 
 end.

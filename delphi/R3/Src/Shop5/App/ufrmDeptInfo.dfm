@@ -1,9 +1,9 @@
 inherited frmDeptInfo: TfrmDeptInfo
-  Left = 198
+  Left = 205
   Top = 110
   Caption = #37096#38376#26723#26696
-  ClientHeight = 361
-  ClientWidth = 446
+  ClientHeight = 351
+  ClientWidth = 487
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,25 +11,25 @@ inherited frmDeptInfo: TfrmDeptInfo
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 446
-    Height = 361
+    Width = 487
+    Height = 351
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 436
-      Height = 311
+      Width = 477
+      Height = 301
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #37096#38376#26723#26696
         inherited RzPanel2: TRzPanel
-          Width = 432
-          Height = 284
+          Width = 473
+          Height = 274
           BorderColor = clWhite
           Color = clWhite
           object Label1: TLabel
-            Left = 17
-            Top = 20
+            Left = 8
+            Top = 15
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -43,8 +43,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label2: TLabel
-            Left = 178
-            Top = 20
+            Left = 168
+            Top = 15
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -57,8 +57,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label3: TLabel
-            Left = 17
-            Top = 49
+            Left = 8
+            Top = 42
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -72,8 +72,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label4: TLabel
-            Left = 287
-            Top = 49
+            Left = 272
+            Top = 42
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -86,9 +86,9 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label7: TLabel
-            Left = 17
-            Top = 78
-            Width = 80
+            Left = 291
+            Top = 42
+            Width = 39
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
@@ -101,8 +101,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label6: TLabel
-            Left = 225
-            Top = 78
+            Left = 458
+            Top = 42
             Width = 6
             Height = 12
             Alignment = taRightJustify
@@ -115,8 +115,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label9: TLabel
-            Left = 17
-            Top = 108
+            Left = 8
+            Top = 98
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -124,8 +124,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             Caption = #19978#32423#37096#38376
           end
           object Label26: TLabel
-            Left = 19
-            Top = 226
+            Left = 8
+            Top = 210
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -133,8 +133,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             Caption = #25551#36848
           end
           object Label5: TLabel
-            Left = 17
-            Top = 166
+            Left = 8
+            Top = 154
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -148,8 +148,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label8: TLabel
-            Left = 19
-            Top = 138
+            Left = 8
+            Top = 126
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -163,8 +163,8 @@ inherited frmDeptInfo: TfrmDeptInfo
             ParentFont = False
           end
           object Label10: TLabel
-            Left = 20
-            Top = 196
+            Left = 8
+            Top = 183
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -177,33 +177,56 @@ inherited frmDeptInfo: TfrmDeptInfo
             Font.Style = []
             ParentFont = False
           end
+          object Label11: TLabel
+            Left = 8
+            Top = 70
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #37096#38376#31867#22411
+          end
+          object Label12: TLabel
+            Left = 215
+            Top = 70
+            Width = 6
+            Height = 12
+            Alignment = taRightJustify
+            Caption = '*'
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clRed
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object edtDEPT_ID: TcxTextEdit
             Tag = 1
-            Left = 106
-            Top = 16
+            Left = 95
+            Top = 11
             Width = 71
             Height = 20
             TabOrder = 0
           end
           object edtDEPT_NAME: TcxTextEdit
-            Left = 106
-            Top = 45
-            Width = 180
+            Left = 95
+            Top = 38
+            Width = 175
             Height = 20
             Properties.OnChange = edtDEPT_NAMEPropertiesChange
             TabOrder = 1
           end
           object edtDEPT_SPELL: TcxTextEdit
-            Left = 106
-            Top = 74
-            Width = 118
+            Left = 332
+            Top = 38
+            Width = 124
             Height = 20
             TabStop = False
             TabOrder = 2
           end
           object edtUPDEPT_ID: TzrComboBoxList
-            Left = 106
-            Top = 104
+            Left = 95
+            Top = 94
             Width = 118
             Height = 20
             Properties.AutoSelect = False
@@ -245,43 +268,78 @@ inherited frmDeptInfo: TfrmDeptInfo
             MultiSelect = False
           end
           object edtREMARK: TcxMemo
-            Left = 106
-            Top = 221
+            Left = 95
+            Top = 208
             Width = 263
             Height = 43
             TabOrder = 7
           end
           object edtTELEPHONE: TcxTextEdit
-            Left = 106
-            Top = 163
+            Left = 95
+            Top = 151
             Width = 118
             Height = 20
             TabOrder = 5
           end
           object edtLINKMAN: TcxTextEdit
-            Left = 106
-            Top = 134
+            Left = 95
+            Top = 122
             Width = 118
             Height = 20
             TabOrder = 4
           end
           object edtFAXES: TcxTextEdit
-            Left = 106
-            Top = 192
+            Left = 95
+            Top = 179
             Width = 118
             Height = 20
             TabOrder = 6
             OnKeyPress = edtFAXESKeyPress
           end
+          object edtDEPT_TYPE: TzrComboBoxList
+            Left = 95
+            Top = 66
+            Width = 118
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            TabOrder = 8
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_NAME;CODE_ID'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #37096#38376#31867#22411
+              end>
+            DropWidth = 180
+            DropHeight = 200
+            ShowTitle = True
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsEditFixed
+            OnBeforeDropList = edtUPDEPT_IDBeforeDropList
+            MultiSelect = False
+          end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 316
-      Width = 436
+      Top = 306
+      Width = 477
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 267
+        Left = 308
         Top = 9
         Width = 67
         Height = 26
@@ -308,7 +366,7 @@ inherited frmDeptInfo: TfrmDeptInfo
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 361
+        Left = 402
         Top = 9
         Width = 67
         Height = 26

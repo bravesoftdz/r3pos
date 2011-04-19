@@ -1,6 +1,6 @@
 inherited frmDeptInfoList: TfrmDeptInfoList
-  Left = 188
-  Top = 111
+  Left = 195
+  Top = 108
   Width = 735
   Height = 521
   Caption = #37096#38376#31649#29702
@@ -229,6 +229,13 @@ inherited frmDeptInfoList: TfrmDeptInfoList
                     Footers = <>
                     Title.Caption = #19978#32423#37096#38376
                     Width = 94
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_TYPE'
+                    Footers = <>
+                    Title.Caption = #37096#38376#31867#22411
+                    Width = 75
                   end
                   item
                     EditButtons = <>

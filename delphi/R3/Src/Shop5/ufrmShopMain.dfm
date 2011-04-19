@@ -1,8 +1,8 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 89
-  Top = 162
-  Width = 1071
-  Height = 598
+  Left = 181
+  Top = 292
+  Width = 958
+  Height = 558
   Caption = ''
   Menu = nil
   Position = poDesigned
@@ -27,8 +27,8 @@ inherited frmShopMain: TfrmShopMain
     Transparent = True
   end
   inherited stbBottom: TStatusBar
-    Top = 559
-    Width = 1055
+    Top = 519
+    Width = 942
     Height = 1
     Panels = <
       item
@@ -47,8 +47,8 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel5: TPanel [2]
     Left = 0
-    Top = 525
-    Width = 1055
+    Top = 485
+    Width = 942
     Height = 0
     Align = alBottom
     BevelOuter = bvNone
@@ -57,7 +57,7 @@ inherited frmShopMain: TfrmShopMain
     object Image3: TImage
       Left = 0
       Top = 0
-      Width = 1055
+      Width = 942
       Height = 0
       Align = alClient
       Picture.Data = {
@@ -457,7 +457,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 2
     Top = 123
     Width = 172
-    Height = 402
+    Height = 362
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -467,7 +467,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 29
       Top = 0
       Width = 143
-      Height = 402
+      Height = 362
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -481,7 +481,7 @@ inherited frmShopMain: TfrmShopMain
       Left = 0
       Top = 0
       Width = 29
-      Height = 402
+      Height = 362
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
@@ -489,7 +489,7 @@ inherited frmShopMain: TfrmShopMain
         Left = 0
         Top = 0
         Width = 29
-        Height = 402
+        Height = 362
         Align = alClient
         Stretch = True
       end
@@ -595,17 +595,17 @@ inherited frmShopMain: TfrmShopMain
     Left = 0
     Top = 123
     Width = 2
-    Height = 402
+    Height = 362
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
     TabOrder = 2
   end
   object Panel8: TPanel [5]
-    Left = 1053
+    Left = 940
     Top = 123
     Width = 2
-    Height = 402
+    Height = 362
     Align = alRight
     BevelOuter = bvNone
     Color = 6241037
@@ -613,15 +613,15 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel10: TPanel [6]
     Left = 0
-    Top = 525
-    Width = 1055
+    Top = 485
+    Width = 942
     Height = 3
     Align = alBottom
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 4
     object Image15: TImage
-      Left = 1047
+      Left = 934
       Top = 0
       Width = 6
       Height = 3
@@ -637,7 +637,7 @@ inherited frmShopMain: TfrmShopMain
       AutoSize = True
     end
     object Panel21: TPanel
-      Left = 1053
+      Left = 940
       Top = 0
       Width = 2
       Height = 3
@@ -1933,7 +1933,7 @@ inherited frmShopMain: TfrmShopMain
     Left = 174
     Top = 123
     Width = 6
-    Height = 402
+    Height = 362
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -1950,8 +1950,8 @@ inherited frmShopMain: TfrmShopMain
   end
   object Panel23: TPanel [8]
     Left = 0
-    Top = 528
-    Width = 1055
+    Top = 488
+    Width = 942
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
@@ -1965,7 +1965,7 @@ inherited frmShopMain: TfrmShopMain
       AutoSize = True
     end
     object Image24: TImage
-      Left = 1044
+      Left = 931
       Top = 0
       Width = 11
       Height = 31
@@ -1975,7 +1975,7 @@ inherited frmShopMain: TfrmShopMain
     object Image25: TImage
       Left = 9
       Top = 0
-      Width = 1035
+      Width = 922
       Height = 31
       Align = alClient
       Stretch = True
@@ -1983,7 +1983,7 @@ inherited frmShopMain: TfrmShopMain
     object RzLabel1: TRzLabel
       Left = 9
       Top = 0
-      Width = 1035
+      Width = 922
       Height = 31
       Align = alClient
       Alignment = taCenter
@@ -2019,7 +2019,7 @@ inherited frmShopMain: TfrmShopMain
   object rzLogo: TRzPageControl [10]
     Left = 0
     Top = 0
-    Width = 1055
+    Width = 942
     Height = 123
     ActivePage = TabSheet1
     Align = alTop
@@ -2032,7 +2032,7 @@ inherited frmShopMain: TfrmShopMain
       object RzPanel1: TRzPanel
         Left = 0
         Top = 0
-        Width = 1055
+        Width = 942
         Height = 105
         Align = alTop
         BorderOuter = fsNone
@@ -2041,7 +2041,7 @@ inherited frmShopMain: TfrmShopMain
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 1055
+          Width = 942
           Height = 69
           Align = alTop
           AutoSize = True
@@ -2050,7 +2050,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel4: TPanel
             Left = 0
             Top = 0
-            Width = 1055
+            Width = 942
             Height = 69
             Align = alTop
             BevelOuter = bvNone
@@ -2066,14 +2066,14 @@ inherited frmShopMain: TfrmShopMain
             object Image6: TImage
               Left = 451
               Top = 0
-              Width = 173
+              Width = 60
               Height = 69
               Align = alClient
               AutoSize = True
               Stretch = True
             end
             object Panel2: TPanel
-              Left = 624
+              Left = 511
               Top = 0
               Width = 431
               Height = 69
@@ -2358,13 +2358,13 @@ inherited frmShopMain: TfrmShopMain
         object rzTool: TPanel
           Left = 0
           Top = 67
-          Width = 1055
+          Width = 942
           Height = 38
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
           object Image21: TImage
-            Left = 1044
+            Left = 931
             Top = 2
             Width = 9
             Height = 36
@@ -3086,7 +3086,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel3: TPanel
             Left = 480
             Top = 2
-            Width = 564
+            Width = 451
             Height = 36
             Align = alClient
             BevelOuter = bvNone
@@ -3094,7 +3094,7 @@ inherited frmShopMain: TfrmShopMain
             object Panel16: TPanel
               Left = 0
               Top = 0
-              Width = 564
+              Width = 451
               Height = 8
               Align = alTop
               BevelOuter = bvNone
@@ -3102,7 +3102,7 @@ inherited frmShopMain: TfrmShopMain
               object Image16: TImage
                 Left = 0
                 Top = 0
-                Width = 564
+                Width = 451
                 Height = 8
                 Align = alClient
                 Stretch = True
@@ -3111,7 +3111,7 @@ inherited frmShopMain: TfrmShopMain
             object rzToolButton: TPanel
               Left = 0
               Top = 8
-              Width = 564
+              Width = 451
               Height = 28
               Align = alClient
               BevelOuter = bvNone
@@ -3119,7 +3119,7 @@ inherited frmShopMain: TfrmShopMain
               object Image27: TImage
                 Left = 0
                 Top = 0
-                Width = 564
+                Width = 451
                 Height = 28
                 Align = alClient
                 Stretch = True
@@ -3127,7 +3127,7 @@ inherited frmShopMain: TfrmShopMain
             end
           end
           object Panel20: TPanel
-            Left = 1053
+            Left = 940
             Top = 2
             Width = 2
             Height = 36
@@ -3452,7 +3452,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel9: TPanel
             Left = 0
             Top = 0
-            Width = 1055
+            Width = 942
             Height = 2
             Align = alTop
             BevelOuter = bvNone
@@ -7648,6 +7648,14 @@ inherited frmShopMain: TfrmShopMain
     object actfrmQuestionnaire: TAction
       Caption = #38382#21367#35843#26597
       OnExecute = actfrmQuestionnaireExecute
+    end
+    object actfrmInLocusOrderList: TAction
+      Caption = #25195#30721#20837#24211
+      OnExecute = actfrmInLocusOrderListExecute
+    end
+    object actfrmOutLocusOrderList: TAction
+      Caption = #25195#30721#20986#24211
+      OnExecute = actfrmOutLocusOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

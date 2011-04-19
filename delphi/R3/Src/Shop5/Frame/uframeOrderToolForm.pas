@@ -374,6 +374,7 @@ end;
 procedure TframeOrderToolForm.RzPageChange(Sender: TObject);
 begin
   inherited;
+  BtnStatus;
   if CurOrder<>nil then
      begin
        if CurOrder.IsAudit then
@@ -386,8 +387,8 @@ begin
      begin
        actAudit.Caption := '…Û∫À';
        ToolButton1.Visible := false;
+       actAudit.Enabled := false;
      end;
-  BtnStatus;
 end;
 
 procedure TframeOrderToolForm.actPrintExecute(Sender: TObject);

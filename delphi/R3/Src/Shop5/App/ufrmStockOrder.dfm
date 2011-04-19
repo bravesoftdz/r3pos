@@ -1,6 +1,6 @@
 inherited frmStockOrder: TfrmStockOrder
-  Left = 194
-  Top = 196
+  Left = 195
+  Top = 49
   Width = 786
   Height = 523
   Caption = #36827#36135#21333
@@ -666,14 +666,6 @@ inherited frmStockOrder: TfrmStockOrder
         end
         item
           EditButtons = <>
-          FieldName = 'LOCUS_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #29289#27969#36319#36394#21495
-          Width = 83
-        end
-        item
-          EditButtons = <>
           FieldName = 'BATCH_NO'
           Footers = <>
           ReadOnly = True
@@ -726,15 +718,15 @@ inherited frmStockOrder: TfrmStockOrder
     object N1: TMenuItem [2]
       Action = actPrintBarcode
     end
-    object N3: TMenuItem [11]
+    object N3: TMenuItem
       Caption = #25972#21333#36864#36135
       OnClick = N3Click
     end
-    object N4: TMenuItem [12]
+    object N4: TMenuItem
       Caption = #21333#31508#36864#36135
       OnClick = N4Click
     end
-    object N2: TMenuItem [13]
+    object N2: TMenuItem
       Caption = '-'
     end
   end

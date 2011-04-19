@@ -65,7 +65,6 @@ type
     actUnitConvert: TAction;
     actIsPressent: TAction;
     mnuBatchNo: TMenuItem;
-    mnuLocusNo: TMenuItem;
     munUnitConvert: TMenuItem;
     mnuIsPressent: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -223,7 +222,7 @@ type
     //修改单价
     procedure PriceToGods(id:string);virtual;
     //输入跟踪号
-    function GodsToLocusNo(id:string):boolean;virtual;
+    //function GodsToLocusNo(id:string):boolean;virtual;
     //输入批号
     function GodsToBatchNo(id:string):boolean;virtual;
     //输入数量
@@ -362,7 +361,7 @@ begin
        InputFlag := 0;
      end
   else
-     InputFlag := 7;
+     InputFlag := 0;
 end;
 
 destructor TframeOrderForm.Destroy;
@@ -963,6 +962,7 @@ begin
   finally
     AObj.Free;
   end;
+  if result=0 then MessageBeep(0);
 end;
 procedure TframeOrderForm.AmountToCalc(Amount: Real);
 var
@@ -1451,7 +1451,7 @@ begin
            edtInput.Text := '';
            Exit;
          end;
-      if InputFlag=7 then //物流跟踪号
+{      if InputFlag=7 then //物流跟踪号
          begin
            if s<>'' then if not GodsToLocusNo(s) then Exit;
            InputFlag := 0;
@@ -1459,6 +1459,7 @@ begin
            edtInput.Text := '';
            Exit;
          end;
+}         
       if InputFlag=8 then //商品批号
          begin
            if s<>'' then if not GodsToBatchNo(s) then Exit;
@@ -2042,7 +2043,7 @@ begin
       begin
         if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
         if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
-        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FieldbyName('LOCUS_NO').AsString='') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品物流跟踪号。');
+        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FieldbyName('AMOUNT').AsCurrency<>edtTable.FieldbyName('AMOUNT').AsInteger) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品不能输入小数的数量。');
         edtTable.Next;
       end;
     if r>0 then edtTable.RecNo := r;
@@ -2398,12 +2399,12 @@ begin
        Exit;
      end;
 
-  if (Shift=[]) and (Key = VK_F7) then
-     begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
-       InputFlag := 7;
-       Exit;
-     end;
+//  if (Shift=[]) and (Key = VK_F7) then
+//     begin
+//       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+//       InputFlag := 7;
+//       Exit;
+//     end;
 
   if (Shift=[]) and (Key = VK_F8) then
      begin
@@ -2536,9 +2537,9 @@ begin
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'IS_PRESENT' then
                InputFlag := 6
             else
-            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
-               InputFlag := 7
-            else
+//            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
+//               InputFlag := 7
+//            else
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'BATCH_NO' then
                InputFlag := 8
             else
@@ -2567,9 +2568,9 @@ begin
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'IS_PRESENT' then
                InputFlag := 6
             else
-            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
-               InputFlag := 7
-            else
+//            if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'LOCUS_NO' then
+//               InputFlag := 7
+//            else
             if DBGridEh1.Columns[DBGridEh1.Col].FieldName = 'BATCH_NO' then
                InputFlag := 8
             else
@@ -3188,7 +3189,7 @@ begin
   end;
 end;
 
-function TframeOrderForm.GodsToLocusNo(id: string):boolean;
+{function TframeOrderForm.GodsToLocusNo(id: string):boolean;
 var
   rs,bs:TZQuery;
   AObj:TRecord_;
@@ -3258,7 +3259,7 @@ begin
     rs.Free;
   end;
 end;
-
+}
 procedure TframeOrderForm.GodsToAmount(id: string);
 var
   Field:TField;

@@ -98,8 +98,8 @@ uses
   ufrmDbOrder in 'App\ufrmDbOrder.pas' {frmDbOrder},
   ufrmDbOrderList in 'App\ufrmDbOrderList.pas' {frmDbOrderList},
   ObjSalIndentOrder in 'Obj\ObjSalIndentOrder.pas',
-  ufrmStockOrder in 'App\ufrmStockOrder.pas' {frmStockOrder},
-  ufrmStockOrderList in 'App\ufrmStockOrderList.pas' {frmStockOrderList},
+  ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
+  ufrmOutLocusOrderList in 'App\ufrmOutLocusOrderList.pas' {frmOutLocusOrderList},
   ObjStkIndentOrder in 'Obj\ObjStkIndentOrder.pas',
   ufrmInvoice in 'App\ufrmInvoice.pas' {frmInvoice},
   ufrmInvoiceInfo in 'App\ufrmInvoiceInfo.pas' {frmInvoiceInfo},
@@ -188,7 +188,12 @@ uses
   ufrmQuestionnaire in 'App\ufrmQuestionnaire.pas' {frmQuestionnaire},
   ObjQuestionnaire in 'Obj\ObjQuestionnaire.pas',
   ufrmRelationUpdateMode in 'App\ufrmRelationUpdateMode.pas' {frmRelationUpdateMode},
-  ufrmLocusNoProperty in 'App\ufrmLocusNoProperty.pas' {frmLocusNoProperty};
+  ufrmLocusNoProperty in 'App\ufrmLocusNoProperty.pas' {frmLocusNoProperty},
+  ufrmStockOrderList in 'App\ufrmStockOrderList.pas' {frmStockOrderList},
+  ufrmStockOrder in 'App\ufrmStockOrder.pas' {frmStockOrder},
+  ufrmInLocusOrderList in 'App\ufrmInLocusOrderList.pas' {frmInLocusOrderList},
+  ufrmStkLocusOrder in 'App\ufrmStkLocusOrder.pas' {frmStkLocusOrder},
+  ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide};
 
 {$R *.res}
 var
@@ -197,7 +202,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.3';
+  DBVersion := '1.0.0.4';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

@@ -329,6 +329,8 @@ type
     RzBmpButton15: TRzBmpButton;
     rzUserInfo: TRzLabel;
     RzLabel1: TRzLabel;
+    actfrmInLocusOrderList: TAction;
+    actfrmOutLocusOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -431,6 +433,8 @@ type
     procedure s2_Page1Click(Sender: TObject);
     procedure RzBmpButton16Click(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
+    procedure actfrmInLocusOrderListExecute(Sender: TObject);
+    procedure actfrmOutLocusOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -485,7 +489,7 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire;
+  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -3065,6 +3069,50 @@ procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'谢谢你的关注，网站正在更新中...','友情提示..',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmShopMain.actfrmInLocusOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmInLocusOrderList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmInLocusOrderList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmOutLocusOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmOutLocusOrderList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmOutLocusOrderList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

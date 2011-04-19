@@ -3,7 +3,7 @@ inherited frmSalesOrder: TfrmSalesOrder
   Top = 174
   Width = 796
   Height = 552
-  Caption = #38144#21806#21333
+  Caption = '销售单'
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
@@ -19,7 +19,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #38144#21806#26085#26399
+        Caption = '销售日期'
       end
       object lblCLIENT_ID: TLabel [1]
         Left = 195
@@ -27,7 +27,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #23458#25143#21517#31216
+        Caption = '客户名称'
       end
       object Label2: TLabel [2]
         Left = 195
@@ -35,7 +35,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #22791'    '#27880
+        Caption = '备    注'
       end
       object Label5: TLabel [3]
         Left = 563
@@ -43,7 +43,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #31080#25454#31867#22411
+        Caption = '票据类型'
       end
       object Label6: TLabel [4]
         Left = 404
@@ -51,14 +51,14 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #23548#36141#21592
+        Caption = '导购员'
       end
       object Label40: TLabel [5]
         Left = 195
         Top = 30
         Width = 48
         Height = 12
-        Caption = #38144#21806#38376#24215
+        Caption = '销售门店'
       end
       object Label12: TLabel [6]
         Left = 195
@@ -66,7 +66,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36865#36135#22320#22336
+        Caption = '送货地址'
       end
       object Label15: TLabel [7]
         Left = 195
@@ -74,7 +74,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #32852#31995#30005#35805
+        Caption = '联系电话'
       end
       object Label16: TLabel [8]
         Left = 405
@@ -82,7 +82,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #32852#31995#20154
+        Caption = '联系人'
       end
       object Label17: TLabel [9]
         Left = 562
@@ -90,7 +90,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #38144#21806#26041#24335
+        Caption = '销售方式'
       end
       object Label13: TLabel [10]
         Left = 563
@@ -98,7 +98,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36865#36135#26085#26399
+        Caption = '送货日期'
       end
       object Label11: TLabel [11]
         Left = 563
@@ -106,21 +106,21 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #38144#39033#31246#29575
+        Caption = '销项税率'
       end
       object Label21: TLabel [12]
         Left = 563
         Top = 30
         Width = 48
         Height = 12
-        Caption = #35746#36135#21333#21495
+        Caption = '订货单号'
       end
       object Label3: TLabel [13]
         Left = 195
         Top = 51
         Width = 48
         Height = 12
-        Caption = #25152#23646#37096#38376
+        Caption = '所属部门'
       end
       object Label14: TLabel [14]
         Left = 676
@@ -138,7 +138,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         end
         inherited lblCaption: TLabel
           Left = 11
-          Caption = #21333#21495':'#33258#21160#32534#21495
+          Caption = '单号:自动编号'
         end
         inherited Image1: TImage
           Left = 95
@@ -147,7 +147,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         inherited lblState: TLabel
           Left = 8
           Top = 48
-          Caption = #25910#27454':'
+          Caption = '收款:'
         end
       end
       object edtCLIENT_ID: TzrComboBoxList
@@ -173,42 +173,42 @@ inherited frmSalesOrder: TfrmSalesOrder
             EditButtons = <>
             FieldName = 'CLIENT_CODE'
             Footers = <>
-            Title.Caption = #23458#25143#21495
+            Title.Caption = '客户号'
             Width = 60
           end
           item
             EditButtons = <>
             FieldName = 'CLIENT_NAME'
             Footers = <>
-            Title.Caption = #23458#25143#21517#31216
+            Title.Caption = '客户名称'
             Width = 150
           end
           item
             EditButtons = <>
             FieldName = 'LINKMAN'
             Footers = <>
-            Title.Caption = #32852#31995#20154
+            Title.Caption = '联系人'
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'TELEPHONE2'
             Footers = <>
-            Title.Caption = #32852#31995#30005#35805
+            Title.Caption = '联系电话'
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'LICENSE_CODE'
             Footers = <>
-            Title.Caption = #35777#20214#21495
+            Title.Caption = '证件号'
             Width = 70
           end
           item
             EditButtons = <>
             FieldName = 'ADDRESS'
             Footers = <>
-            Title.Caption = #22320#22336
+            Title.Caption = '地址'
             Width = 150
           end>
         DropWidth = 314
@@ -229,7 +229,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Top = 5
         Width = 121
         Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
         TabOrder = 8
       end
       object edtREMARK: TcxTextEdit
@@ -238,14 +238,14 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 286
         Height = 20
         TabOrder = 7
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtINVOICE_FLAG: TcxComboBox
         Left = 619
         Top = 90
         Width = 121
         Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtINVOICE_FLAGPropertiesChange
         TabOrder = 12
@@ -272,13 +272,13 @@ inherited frmSalesOrder: TfrmSalesOrder
             EditButtons = <>
             FieldName = 'ACCOUNT'
             Footers = <>
-            Title.Caption = #24080#21495
+            Title.Caption = '帐号'
           end
           item
             EditButtons = <>
             FieldName = 'USER_NAME'
             Footers = <>
-            Title.Caption = #22995#21517
+            Title.Caption = '姓名'
             Width = 130
           end>
         DropWidth = 180
@@ -299,7 +299,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Properties.MaxValue = 100.000000000000000000
         Properties.ValueType = vtFloat
         TabOrder = 13
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 251
@@ -323,13 +323,13 @@ inherited frmSalesOrder: TfrmSalesOrder
             EditButtons = <>
             FieldName = 'SHOP_NAME'
             Footers = <>
-            Title.Caption = #21517#31216
+            Title.Caption = '名称'
           end
           item
             EditButtons = <>
             FieldName = 'SEQ_NO'
             Footers = <>
-            Title.Caption = #24207#21495
+            Title.Caption = '序号'
             Width = 20
           end>
         DropWidth = 185
@@ -349,7 +349,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 286
         Height = 20
         TabOrder = 6
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtTELEPHONE: TcxTextEdit
         Left = 251
@@ -357,7 +357,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 286
         Height = 20
         TabOrder = 5
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtLINKMAN: TcxTextEdit
         Left = 448
@@ -365,7 +365,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 89
         Height = 20
         TabOrder = 4
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtSALE_STYLE: TzrComboBoxList
         Left = 619
@@ -389,7 +389,7 @@ inherited frmSalesOrder: TfrmSalesOrder
             EditButtons = <>
             FieldName = 'CODE_NAME'
             Footers = <>
-            Title.Caption = #23610#30721#32452
+            Title.Caption = '尺码组'
             Width = 121
           end>
         DropWidth = 121
@@ -408,7 +408,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Top = 69
         Width = 121
         Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
         TabOrder = 11
       end
       object edtINDE_GLIDE_NO: TcxButtonEdit
@@ -446,7 +446,7 @@ inherited frmSalesOrder: TfrmSalesOrder
             EditButtons = <>
             FieldName = 'DEPT_NAME'
             Footers = <>
-            Title.Caption = #21517#31216
+            Title.Caption = '名称'
           end>
         DropWidth = 185
         DropHeight = 180
@@ -470,11 +470,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #26412#21333#23454#25910
+        Caption = '本单实收'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = #23435#20307
+        Font.Name = '宋体'
         Font.Style = []
         ParentFont = False
       end
@@ -484,11 +484,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #26412#21333#27424#27454
+        Caption = '本单欠款'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = #23435#20307
+        Font.Name = '宋体'
         Font.Style = []
         ParentFont = False
       end
@@ -498,7 +498,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #23457#26680#26085#26399
+        Caption = '审核日期'
       end
       object Label9: TLabel
         Left = 204
@@ -506,7 +506,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #23457#26680#29992#25143
+        Caption = '审核用户'
       end
       object Label10: TLabel
         Left = 587
@@ -514,11 +514,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #32047#35745#27424#27454
+        Caption = '累计欠款'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = #23435#20307
+        Font.Name = '宋体'
         Font.Style = []
         ParentFont = False
       end
@@ -527,11 +527,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Top = 15
         Width = 48
         Height = 12
-        Caption = #26368#26032#24211#23384
+        Caption = '最新库存'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = #23435#20307
+        Font.Name = '宋体'
         Font.Style = []
         ParentFont = False
       end
@@ -540,7 +540,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Top = 39
         Width = 48
         Height = 12
-        Caption = #39044#25910#20914#36134
+        Caption = '预收冲账'
       end
       object Label4: TLabel
         Left = 388
@@ -548,11 +548,11 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #32467#31639#31246#39069
+        Caption = '结算税额'
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
-        Font.Name = #23435#20307
+        Font.Name = '宋体'
         Font.Style = []
         ParentFont = False
       end
@@ -566,10 +566,10 @@ inherited frmSalesOrder: TfrmSalesOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
+        Style.Font.Name = '宋体'
         Style.Font.Style = [fsBold]
         TabOrder = 0
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtRECK_MNY: TcxTextEdit
         Tag = 1
@@ -581,10 +581,10 @@ inherited frmSalesOrder: TfrmSalesOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
+        Style.Font.Name = '宋体'
         Style.Font.Style = [fsBold]
         TabOrder = 1
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtCHK_DATE: TcxTextEdit
         Tag = 1
@@ -593,7 +593,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 99
         Height = 20
         TabOrder = 2
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtCHK_USER_TEXT: TcxTextEdit
         Tag = 1
@@ -602,7 +602,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 98
         Height = 20
         TabOrder = 3
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object fndRECK_MNY: TcxTextEdit
         Tag = 1
@@ -614,10 +614,10 @@ inherited frmSalesOrder: TfrmSalesOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clMaroon
         Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
+        Style.Font.Name = '宋体'
         Style.Font.Style = [fsBold]
         TabOrder = 4
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object fndMY_AMOUNT: TcxTextEdit
         Tag = 1
@@ -629,10 +629,10 @@ inherited frmSalesOrder: TfrmSalesOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clMaroon
         Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
+        Style.Font.Name = '宋体'
         Style.Font.Style = [fsBold]
         TabOrder = 5
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtADVA_MNY: TcxTextEdit
         Tag = 1
@@ -641,7 +641,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Width = 99
         Height = 20
         TabOrder = 6
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
       object edtTAX_MONEY: TcxTextEdit
         Tag = 1
@@ -654,10 +654,10 @@ inherited frmSalesOrder: TfrmSalesOrder
         Style.Font.Charset = GB2312_CHARSET
         Style.Font.Color = clNavy
         Style.Font.Height = -12
-        Style.Font.Name = #23435#20307
+        Style.Font.Name = '宋体'
         Style.Font.Style = [fsBold]
         TabOrder = 7
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        ImeName = '中文(简体) - 搜狗五笔输入法'
       end
     end
     inherited DBGridEh1: TDBGridEh
@@ -670,15 +670,15 @@ inherited frmSalesOrder: TfrmSalesOrder
           EditButtons = <>
           FieldName = 'SEQNO'
           Footers = <>
-          Title.Caption = #24207#21495
+          Title.Caption = '序号'
           Width = 31
         end
         item
           EditButtons = <>
           FieldName = 'GODS_NAME'
           Footers = <>
-          Title.Caption = #21830#21697#21517#31216
-          Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
+          Title.Caption = '商品名称'
+          Title.Hint = '支持 "货号、商品名称、拼音码" 查询'
           Width = 150
           Control = fndGODS_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
@@ -688,7 +688,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           FieldName = 'GODS_CODE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #36135#21495
+          Title.Caption = '货号'
           Width = 72
         end
         item
@@ -696,7 +696,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           FieldName = 'BARCODE'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #26465#30721
+          Title.Caption = '条码'
           Width = 95
         end
         item
@@ -704,8 +704,8 @@ inherited frmSalesOrder: TfrmSalesOrder
           EditButtons = <>
           FieldName = 'UNIT_ID'
           Footers = <>
-          Title.Caption = #21333#20301
-          Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
+          Title.Caption = '单位'
+          Title.Hint = '按 "空格键(SPACE)" 进行单位转换'
           Width = 41
         end
         item
@@ -714,7 +714,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #25968#37327
+          Title.Caption = '数量'
           Width = 56
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
           OnUpdateData = DBGridEh1Columns4UpdateData
@@ -723,7 +723,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           EditButtons = <>
           FieldName = 'APRICE'
           Footers = <>
-          Title.Caption = #21333#20215
+          Title.Caption = '单价'
           Width = 63
           OnUpdateData = DBGridEh1Columns5UpdateData
         end
@@ -732,7 +732,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           FieldName = 'AMONEY'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #37329#39069
+          Title.Caption = '金额'
           Width = 83
           OnUpdateData = DBGridEh1Columns6UpdateData
         end
@@ -741,7 +741,7 @@ inherited frmSalesOrder: TfrmSalesOrder
           EditButtons = <>
           FieldName = 'AGIO_RATE'
           Footers = <>
-          Title.Caption = #25240#25187#29575
+          Title.Caption = '折扣率'
           Width = 52
           OnUpdateData = DBGridEh1Columns7UpdateData
         end
@@ -755,31 +755,23 @@ inherited frmSalesOrder: TfrmSalesOrder
             '1'
             '0')
           ReadOnly = True
-          Title.Caption = #36192#21697
-          Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#36192#21697#36716#25442
+          Title.Caption = '赠品'
+          Title.Hint = '按 "空格键(SPACE)" 进行赠品转换'
           Width = 36
-        end
-        item
-          EditButtons = <>
-          FieldName = 'LOCUS_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #29289#27969#36319#36394#21495
-          Width = 94
         end
         item
           EditButtons = <>
           FieldName = 'BATCH_NO'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #25209#21495
+          Title.Caption = '批号'
           Width = 95
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
-          Title.Caption = #22791#27880
+          Title.Caption = '备注'
           Width = 140
         end>
     end
@@ -806,10 +798,10 @@ inherited frmSalesOrder: TfrmSalesOrder
   end
   inherited actList: TActionList
     inherited actIsPressent: TAction
-      Caption = #20999#25442'('#38144#21806'-'#36192#21697'-'#20817#25442')'
+      Caption = '切换(销售-赠品-兑换)'
     end
     object actCustomer: TAction
-      Caption = #36755#20837#20250#21592#21345#21495
+      Caption = '输入会员卡号'
       ShortCut = 116
       OnExecute = actCustomerExecute
     end
@@ -819,11 +811,11 @@ inherited frmSalesOrder: TfrmSalesOrder
       Action = actCustomer
     end
     object N2: TMenuItem [11]
-      Caption = #25972#21333#36864#36135
+      Caption = '整单退货'
       OnClick = N2Click
     end
     object N3: TMenuItem [12]
-      Caption = #21333#31508#36864#36135
+      Caption = '单笔退货'
       OnClick = N3Click
     end
     object N4: TMenuItem [13]

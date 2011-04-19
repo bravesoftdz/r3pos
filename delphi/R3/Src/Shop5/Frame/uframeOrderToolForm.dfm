@@ -1,6 +1,5 @@
 inherited frameOrderToolForm: TframeOrderToolForm
-  Left = 352
-  Top = 96
+  Top = 51
   Width = 862
   Height = 522
   Caption = 'frameOrderToolForm'
@@ -11,13 +10,13 @@ inherited frameOrderToolForm: TframeOrderToolForm
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 846
-    Height = 454
+    Height = 448
     inherited RzPanel2: TRzPanel
       Width = 836
-      Height = 444
+      Height = 438
       inherited RzPage: TRzPageControl
         Width = 830
-        Height = 438
+        Height = 432
         Color = clWindow
         FlatColor = clBtnFace
         ParentColor = False
@@ -33,7 +32,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
           Caption = #21333#25454#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 828
-            Height = 411
+            Height = 405
             BorderShadow = clWindow
             Color = clWindow
             FlatColor = clWindow
@@ -51,7 +50,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               Left = 5
               Top = 78
               Width = 818
-              Height = 328
+              Height = 322
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -63,6 +62,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               FooterFont.Height = -12
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               ReadOnly = True
@@ -89,12 +89,18 @@ inherited frameOrderToolForm: TframeOrderToolForm
   inherited RzPanel4: TRzPanel
     Width = 846
     inherited Image1: TImage
-      Left = 546
-      Width = 300
+      Left = 542
+      Width = 284
     end
     inherited Image3: TImage
-      Left = 546
-      Width = 300
+      Left = 542
+      Width = 284
+    end
+    inherited Image14: TImage
+      Left = 826
+    end
+    inherited rzPanel5: TPanel
+      Left = 542
     end
     inherited CoolBar1: TCoolBar
       Width = 522
@@ -105,11 +111,10 @@ inherited frameOrderToolForm: TframeOrderToolForm
           FixedSize = True
           ImageIndex = -1
           MinHeight = 522
-          Width = 30
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
         Width = 522
-        ButtonHeight = 30
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0

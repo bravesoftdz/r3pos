@@ -705,7 +705,7 @@ begin
     rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=''#'' and TABLE_NAME=''#''';
     rs.Params.AssignValues(Params);
     AGlobal.Open(rs);
-    SyncTimeStamp := TLargeIntField(rs.Fields[0]).AsLargeInt;
+    SyncTimeStamp := StrtoInt64Def(rs.Fields[0].asString,0);
     result := true;
     Msg := '同步时间';
   finally

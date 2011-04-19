@@ -38,7 +38,6 @@ inherited frmShopDesk: TfrmShopDesk
       Color = 16381681
       ParentColor = False
       TabOrder = 0
-      Visible = False
       object RzGroup1: TRzGroup
         BorderColor = 13871254
         CaptionColor = 16109714

@@ -129,6 +129,7 @@ type
     RzStatusPane7: TRzStatusPane;
     DBGridEh2: TDBGridEh;
     RzClockStatus1: TRzClockStatus;
+    cdsLocusNo: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -1903,6 +1904,7 @@ begin
   finally
     AObj.Free;
   end;
+  if result=0 then MessageBeep(0);
 end;
 
 procedure TfrmPosMain.DelRecord(AObj: TRecord_);
@@ -2021,6 +2023,7 @@ begin
     try
       Factor.AddBatch(cdsHeader,'TSalesOrder',Params);
       Factor.AddBatch(cdsTable,'TSalesData',Params);
+      Factor.AddBatch(cdsLocusNo,'TSalesForLocusNo',Params);
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
@@ -2035,12 +2038,30 @@ begin
   finally
     Params.Free;
   end;
+  cdsTable.DisableControls;
+  try
+    cdsLocusNo.First;
+    while not cdsLocusNo.Eof do
+      begin
+        if cdsTable.Locate('SEQNO',cdsLocusNo.FieldbyName('SEQNO').AsInteger,[]) then
+           begin
+             cdsTable.Edit;
+             cdsTable.FieldByName('LOCUS_NO').AsString := cdsLocusNo.FieldByName('LOCUS_NO').AsString;
+             cdsTable.Post; 
+           end;
+        cdsLocusNo.Next;
+      end;
+  finally
+    cdsTable.EnableControls;
+  end;
   ShowHeader;
   calc;
 end;
 
 procedure TfrmPosMain.SaveOrder;
-var s:string;
+var
+  s:string;
+  ls:TRecord_;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
@@ -2061,6 +2082,8 @@ begin
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',now());
+  AObj.FieldByName('CHK_USER').AsString := Global.UserID;
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
 
@@ -2075,6 +2098,10 @@ begin
     cdsHeader.Edit;
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
+    cdsLocusNo.First;
+    while not cdsLocusNo.Eof do cdsLocusNo.Delete;
+    ls := TRecord_.Create;
+    try
     cdsTable.First;
     while not cdsTable.Eof do
        begin
@@ -2083,10 +2110,24 @@ begin
          cdsTable.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
          cdsTable.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
          cdsTable.Post;
+         if cdsTable.FieldbyName('LOCUS_NO').AsString<>'' then
+           begin
+             ls.ReadFromDataSet(cdsTable);
+             cdsLocusNo.Append;
+             ls.WriteToDataSet(cdsLocusNo,false);
+             cdsLocusNo.FieldByName('CREA_DATE').AsString := cdsHeader.FieldByName('CREA_DATE').AsString;
+             cdsLocusNo.FieldByName('CREA_USER').AsString := cdsHeader.FieldByName('CREA_USER').AsString;
+             cdsLocusNo.FieldByName('LOCUS_DATE').AsInteger := cdsHeader.FieldByName('SALES_DATE').AsInteger;
+             cdsLocusNo.Post;
+           end;
          cdsTable.Next;
        end;
+    finally
+       ls.Free;
+    end;
     Factor.AddBatch(cdsHeader,'TSalesOrder');
     Factor.AddBatch(cdsTable,'TSalesData');
+    Factor.AddBatch(cdsLocusNo,'TSalesForLocusNo');
     Factor.CommitBatch;
     cdsTable.EnableControls;
     Saved := true;
@@ -3287,7 +3328,7 @@ begin
   try
     rs.SQL.Text :=
       'select j.* from ('+
-      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,A.AMOUNT,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' and A.LOCUS_NO='''+id+''' ) j';
+      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.BATCH_NO,A.AMOUNT,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_LOCUS_FORSTCK A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' and A.LOCUS_NO='''+id+''' ) j';
     Factor.Open(rs);
     if rs.IsEmpty and (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1') then
        begin

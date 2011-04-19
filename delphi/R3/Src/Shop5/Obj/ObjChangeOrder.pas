@@ -48,6 +48,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TChangeForLocusNo=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
 implementation
 
 { TChangeData }
@@ -418,6 +423,30 @@ begin
          Msg := '∑¥…Û∫À¥ÌŒÛ:'+E.Message;
        end;
   end;
+end;
+
+{ TChangeForLocusNo }
+
+procedure TChangeForLocusNo.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select TENANT_ID,SHOP_ID,CHANGE_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
+               'from STO_LOCUS_FORCHAG j where j.TENANT_ID=:TENANT_ID and j.CHANGE_ID=:CHANGE_ID order by SEQNO';
+  IsSQLUpdate := True;
+  Str := 'insert into STO_LOCUS_FORCHAG(TENANT_ID,SHOP_ID,CHANGE_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:CHANGE_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := str;
+  Str := 'update STO_LOCUS_FORCHAG set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,CHANGE_ID=:CHANGE_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID and SEQNO=:OLD_SEQNO';
+  UpdateSQL.Text := str;
+  Str := 'delete from STO_LOCUS_FORCHAG where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID and SEQNO=:OLD_SEQNO';
+  DeleteSQL.Text := str;
 end;
 
 initialization

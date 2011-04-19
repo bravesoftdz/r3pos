@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 191
-  Top = 104
+  Left = 287
+  Top = 152
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -1505,5 +1505,13 @@ inherited frmPosMain: TfrmPosMain
   object dsGodsInfo: TDataSource
     Left = 198
     Top = 392
+  end
+  object cdsLocusNo: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    AfterPost = cdsTableAfterPost
+    Params = <>
+    Left = 144
+    Top = 253
   end
 end

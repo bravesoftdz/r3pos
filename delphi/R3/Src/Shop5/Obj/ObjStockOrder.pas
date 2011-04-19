@@ -49,6 +49,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TStockForLocusNo=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
 implementation
 
 { TStockData }
@@ -350,7 +355,7 @@ begin
     rs.SQL.Text := 'select TIME_STAMP,COMM from STK_STOCKORDER where STOCK_ID='''+FieldbyName('STOCK_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
-    if comm and result and (copy(rs.Fields[1].asString,1,1)<>'1') then Raise Exception.Create('已经同步的数据不能删除..');
+    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;
@@ -468,6 +473,30 @@ begin
   end;
 end;
 
+{ TStockForLocusNo }
+
+procedure TStockForLocusNo.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+      'select TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
+      'from STK_LOCUS_FORSTCK j where j.TENANT_ID=:TENANT_ID and j.STOCK_ID=:STOCK_ID order by SEQNO';
+  IsSQLUpdate := True;
+  Str := 'insert into STK_LOCUS_FORSTCK(TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:STOCK_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := str;
+  Str := 'update STK_LOCUS_FORSTCK set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,STOCK_ID=:STOCK_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID and SEQNO=:OLD_SEQNO';
+  UpdateSQL.Text := str;
+  Str := 'delete from STK_LOCUS_FORSTCK where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID and SEQNO=:OLD_SEQNO';
+  DeleteSQL.Text := str;
+end;
+
 initialization
   RegisterClass(TStockOrder);
   RegisterClass(TStockData);
@@ -475,6 +504,7 @@ initialization
   RegisterClass(TStockOrderGetNext);
   RegisterClass(TStockOrderAudit);
   RegisterClass(TStockOrderUnAudit);
+  RegisterClass(TStockForLocusNo);
 finalization
   UnRegisterClass(TStockOrder);
   UnRegisterClass(TStockData);
@@ -482,4 +512,5 @@ finalization
   UnRegisterClass(TStockOrderGetNext);
   UnRegisterClass(TStockOrderAudit);
   UnRegisterClass(TStockOrderUnAudit);
+  UnRegisterClass(TStockForLocusNo);
 end.

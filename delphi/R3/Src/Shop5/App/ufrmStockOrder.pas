@@ -103,7 +103,7 @@ type
     procedure ShowOweInfo;
     function  Calc:real;
     // ‰»Î∏˙◊Ÿ∫≈
-    function GodsToLocusNo(id:string):boolean;override;
+//    function GodsToLocusNo(id:string):boolean;override;
     // ‰»Î≈˙∫≈
     function GodsToBatchNo(id:string):boolean;override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
@@ -974,7 +974,7 @@ begin
   inherited;
 end;
 
-function TfrmStockOrder.GodsToLocusNo(id: string): boolean;
+{function TfrmStockOrder.GodsToLocusNo(id: string): boolean;
 var
   rs,bs:TZQuery;
   AObj:TRecord_;
@@ -1027,7 +1027,7 @@ begin
     rs.Free;
   end;
 end;
-
+}
 function TfrmStockOrder.GodsToBatchNo(id: string): boolean;
 var bs:TZQuery;
 begin

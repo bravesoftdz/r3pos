@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 348
-  Top = 163
+  Left = 349
+  Top = 124
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
@@ -618,9 +618,6 @@ inherited frameOrderForm: TframeOrderForm
     end
     object mnuBatchNo: TMenuItem
       Action = actBatchNo
-    end
-    object mnuLocusNo: TMenuItem
-      Action = actLocusNo
     end
     object mnuIsPressent: TMenuItem
       Action = actIsPressent

@@ -751,14 +751,6 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         end
         item
           EditButtons = <>
-          FieldName = 'LOCUS_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #29289#27969#36319#36394#21495
-          Width = 94
-        end
-        item
-          EditButtons = <>
           FieldName = 'BATCH_NO'
           Footers = <>
           ReadOnly = True

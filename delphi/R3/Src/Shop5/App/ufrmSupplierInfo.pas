@@ -11,7 +11,6 @@ uses
 
 type
   TfrmSupplierInfo = class(TframeDialogForm)
-    labHOMEPAGE: TRzLabel;
     Btn_Save: TRzBitBtn;
     Btn_Close: TRzBitBtn;
     RzPanel1: TRzPanel;
@@ -21,7 +20,6 @@ type
     edtCLIENT_SPELL: TcxTextEdit;
     RzLabel6: TRzLabel;
     edtSORT_ID: TzrComboBoxList;
-    edtREMARK: TcxMemo;
     RzLabel13: TRzLabel;
     RzLabel7: TRzLabel;
     RzLabel2: TRzLabel;
@@ -29,8 +27,6 @@ type
     edtREGION_ID: TzrComboBoxList;
     RzLabel1: TRzLabel;
     edtCLIENT_CODE: TcxTextEdit;
-    RzLabel15: TRzLabel;
-    edtTAX_RATE: TcxTextEdit;
     RzLabel11: TRzLabel;
     cdsTable: TZQuery;
     labSHOP_ID: TRzLabel;
@@ -39,36 +35,62 @@ type
     RzLabel8: TRzLabel;
     RzLabel22: TRzLabel;
     edtSHOP_ID: TzrComboBoxList;
-    RzLabel9: TRzLabel;
-    RzLabel10: TRzLabel;
-    edtACCOUNT: TcxTextEdit;
-    RzLabel3: TRzLabel;
-    edtINVOICE_FLAG: TcxComboBox;
     labLINKMAN: TRzLabel;
     labTELEPHONE1: TRzLabel;
-    labPOSTALCODE: TRzLabel;
     labFAXES: TRzLabel;
     labEMAIL: TRzLabel;
     labTELEPHONE2: TRzLabel;
     RzLabel5: TRzLabel;
-    labADDRESS: TRzLabel;
     labMSN: TRzLabel;
     RzLabel12: TRzLabel;
     edtLINKMAN: TcxTextEdit;
     edtTELEPHONE1: TcxTextEdit;
-    edtPOSTALCODE: TcxTextEdit;
     edtFAXES: TcxTextEdit;
     edtEMAIL: TcxTextEdit;
     edtQQ: TcxTextEdit;
     edtTELEPHONE2: TcxTextEdit;
-    edtADDRESS: TcxTextEdit;
     edtMSN: TcxTextEdit;
     edtHOMEPAGE: TcxTextEdit;
-    RzLabel23: TRzLabel;
-    edtLICENSE_CODE: TcxTextEdit;
-    edtBANK_ID: TcxComboBox;
     edtSETTLE_CODE: TzrComboBoxList;
     RzLabel4: TRzLabel;
+    TabSheet3: TRzTabSheet;
+    RzPanel4: TRzPanel;
+    RzLabel25: TRzLabel;
+    RzLabel26: TRzLabel;
+    RzLabel27: TRzLabel;
+    RzLabel28: TRzLabel;
+    RzLabel29: TRzLabel;
+    RzLabel30: TRzLabel;
+    edtSEND_LINKMAN: TcxTextEdit;
+    edtSEND_ADDR: TcxTextEdit;
+    edtRECV_TELE: TcxTextEdit;
+    edtSEND_TELE: TcxTextEdit;
+    edtRECV_LINKMAN: TcxTextEdit;
+    edtRECV_ADDR: TcxTextEdit;
+    labPOSTALCODE: TRzLabel;
+    edtPOSTALCODE: TcxTextEdit;
+    RzLabel21: TRzLabel;
+    RzLabel24: TRzLabel;
+    RzLabel31: TRzLabel;
+    RzLabel32: TRzLabel;
+    edtLEGAL_REPR: TcxTextEdit;
+    edtINVO_NAME: TcxTextEdit;
+    edtTAX_NO: TcxTextEdit;
+    edtTELEPHONE3: TcxTextEdit;
+    edtADDRESS: TcxTextEdit;
+    labADDRESS: TRzLabel;
+    RzLabel9: TRzLabel;
+    RzLabel10: TRzLabel;
+    edtACCOUNT: TcxTextEdit;
+    edtBANK_ID: TcxComboBox;
+    RzLabel3: TRzLabel;
+    edtINVOICE_FLAG: TcxComboBox;
+    labHOMEPAGE: TRzLabel;
+    edtREMARK: TcxMemo;
+    RzLabel15: TRzLabel;
+    edtTAX_RATE: TcxTextEdit;
+    RzLabel23: TRzLabel;
+    edtLICENSE_CODE: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -81,6 +103,8 @@ type
     procedure edtCLIENT_TYPEPropertiesChange(Sender: TObject);
     procedure edtREGION_IDAddClick(Sender: TObject);
     procedure edtSETTLE_CODEAddClick(Sender: TObject);
+    procedure edtADDRESSKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     ccid:string;
     { Private declarations }
@@ -510,6 +534,14 @@ begin
   finally
     AObj.Free;
   end;
+end;
+
+procedure TfrmSupplierInfo.edtADDRESSKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_RETURN then
+    edtREMARK.SetFocus;
 end;
 
 end.

@@ -7,7 +7,8 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel, RzButton,
   cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxMaskEdit, DB, cxCalendar, zBase,
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMemo, StdCtrls, RzLabel, uShopUtil,
-  cxRadioGroup, Grids, DBGridEh,ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  cxRadioGroup, Grids, DBGridEh,ZAbstractRODataset, ZAbstractDataset, ZDataset,
+  ufrmCustomerExt;
 
 type
   TfrmCustomerInfo = class(TframeDialogForm)
@@ -53,25 +54,13 @@ type
     cmbREMARK: TcxMemo;
     labHOMEPAGE: TRzLabel;
     cmbSEX: TRadioGroup;
-    TabSheet3: TRzTabSheet;
-    DBGridEh1: TDBGridEh;
-    dsGlide: TDataSource;
     TabSheet2: TRzTabSheet;
-    TabSheet4: TRzTabSheet;
-    dsCustomerData: TDataSource;
-    dsDeposit: TDataSource;
-    DBGridEh3: TDBGridEh;
-    DBGridEh2: TDBGridEh;
-    TabSheet5: TRzTabSheet;
-    DBGridEh4: TDBGridEh;
-    dsRenew: TDataSource;
+    dsUnionCard: TDataSource;
+    DBGridEh1: TDBGridEh;
     edtSORT_ID: TzrComboBoxList;
     RzLabel29: TRzLabel;
     RzLabel30: TRzLabel;
-    adoGlide: TZQuery;
-    adoCustomerData: TZQuery;
-    adoDeposit: TZQuery;
-    adoRenew: TZQuery;
+    cdsUnionCard: TZQuery;
     cdsTable: TZQuery;
     labIDN_TYPE: TRzLabel;
     edtIDN_TYPE: TcxComboBox;
@@ -111,6 +100,7 @@ type
     edtACCU_INTEGRAL: TcxTextEdit;
     RzLabel12: TRzLabel;
     RzLabel33: TRzLabel;
+    cdsCustomerExt: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -130,13 +120,18 @@ type
     procedure edtSORT_IDAddClick(Sender: TObject);
     procedure cmbSHOP_IDAddClick(Sender: TObject);
     procedure edtREGION_IDAddClick(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
   private
     { Private declarations }
+    procedure GetUnionCard;
   public
     { Public declarations }
     Aobj:TRecord_;
     Saved:Boolean;
     procedure SetdbState(const Value: TDataSetState); override;
+    procedure ReadFrom(AObj:TRecord_);
     procedure WriteTo(AObj:TRecord_);
     procedure Open(code:string);
     procedure Append;
@@ -160,10 +155,6 @@ procedure TfrmCustomerInfo.Append;
 var rs:TZQuery;
 begin
   Open('');
-  TabSheet2.TabVisible:=False;
-  TabSheet3.TabVisible:=False;
-  TabSheet4.TabVisible:=False;
-  TabSheet5.TabVisible:=False;
   dbState := dsInsert;
   cmbCUST_CODE.Text := '◊‘∂Ø±‡∫≈..';
   cmbBIRTHDAY.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
@@ -199,10 +190,21 @@ begin
     Params.ParamByName('CUST_ID').asString := code;
     Params.ParamByName('UNION_ID').AsString := '#';
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsTable.Close;
-    Factor.Open(cdsTable,'TCustomer',Params);
+    {cdsTable.Close;
+    cdsUnionCard.Close;}
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsTable,'TCustomer',Params);
+      Factor.AddBatch(cdsCustomerExt,'TCustomerExt',Params);
+      Factor.AddBatch(cdsUnionCard,'TPubIcInfo',Params);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      raise;
+    end;
+    //Factor.Open(cdsTable,'TCustomer',Params);              
     Aobj.ReadFromDataSet(cdsTable);
-    ReadFromObject(Aobj,Self);
+    ReadFrom(AObj);
     cmbSHOP_ID.KeyValue := Aobj.FieldbyName('SHOP_ID').AsString;
     cmbSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldbyName('SHOP_ID').AsString);
     if Aobj.FieldByName('REGION_ID').AsString = '#' then
@@ -384,9 +386,6 @@ end;
 procedure TfrmCustomerInfo.FormCreate(Sender: TObject);
 begin
   inherited;
-  DBGridEh2.FieldColumns['COLORNAME'].Visible:=(CLVersion='FIG');
-  DBGridEh2.FieldColumns['SIZENAME'].Visible:=(CLVersion='FIG');
-
   RzPage.ActivePageIndex := 0;
   cmbSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   cmbPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
@@ -597,58 +596,14 @@ begin
 end;
 
 procedure TfrmCustomerInfo.RzPageChange(Sender: TObject);
-var
-  Params:TftParamList;
+var Params:TftParamList;
 begin
   inherited;
   if RzPage.ActivePageIndex=2 then
   begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('CUST_ID').asString :=cdsTable.FieldByName('CUST_ID').AsString;
-      Params.ParamByName('USER_ID').asString :=Global.UserID;
-      adoCustomerData.Close;
-      Factor.Open(adoCustomerData,'TCustomerSalesData',Params);
-    finally
-      Params.Free;
-    end;
+
   end;
 
-  if RzPage.ActivePageIndex=3 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('CUST_ID').asString :=cdsTable.FieldByName('CUST_ID').AsString;
-      adoGlide.Close;
-      Factor.Open(adoGlide,'TSelectIntegralGlide',Params);
-    finally
-      Params.Free;
-    end;
-  end;
-
-  if RzPage.ActivePageIndex=4 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('CUST_ID').asString :=cdsTable.FieldByName('CUST_ID').AsString;
-      adoDeposit.Close;
-      Factor.Open(adoDeposit,'TSelectDeposit',Params);
-    finally
-      Params.Free;
-    end;
-  end;
-
-  if RzPage.ActivePageIndex=5 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('CUST_ID').asString :=cdsTable.FieldByName('CUST_ID').AsString;
-      adoRenew.Close;
-      Factor.Open(adoRenew,'TSelectRenew',Params);
-    finally
-      Params.Free;
-    end;                                   
-  end;
 end;
 
 procedure TfrmCustomerInfo.cmbID_NUMBERKeyPress(Sender: TObject;
@@ -742,6 +697,109 @@ begin
   finally
     AObj_5.Free;
   end;
+end;
+
+procedure TfrmCustomerInfo.GetUnionCard;
+var Str_Sql:String;
+begin
+  Str_Sql :=
+  '';
+  cdsUnionCard.SQL.Text := Str_Sql;
+  Factor.Open(cdsUnionCard);
+
+end;
+
+procedure TfrmCustomerInfo.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var  ARect: TRect;
+  AFont:TFont;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := $00FDF6EB;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'IC_CARDNO' then
+    begin
+      if (cdsUnionCard.FieldByName('IC_CARDNO').AsString = '') then 
+        begin
+          ARect := Rect;
+          AFont := TFont.Create;
+          AFont.Assign(DBGridEh1.Canvas.Font);
+          try
+            DBGridEh1.canvas.FillRect(ARect);
+            DBGridEh1.Canvas.Font.Color := clBlue;
+            DBGridEh1.Canvas.Font.Style := [fsUnderline];
+            DrawText(DBGridEh1.Canvas.Handle,pchar('…Í«Î'),length('…Í«Î'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+          finally
+            DBGridEh1.Canvas.Font.Assign(AFont);
+            AFont.Free;
+          end;
+        end;
+    end;
+end;
+
+procedure TfrmCustomerInfo.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  inherited;
+  if cdsUnionCard.IsEmpty then Exit;
+
+  if Column.FieldName = 'IC_CARDNO' then
+    begin
+      if cdsUnionCard.FieldByName('IC_CARDNO').AsString <> '' then Exit;
+
+    end;
+
+  if Column.FieldName = 'UNION_INFO' then
+    begin
+
+    end;
+end;
+
+procedure TfrmCustomerInfo.ReadFrom(AObj: TRecord_);
+var
+  tab:TrzTabSheet;
+  Instance: TWinControl;
+  frame:TfrmCustomerExt;
+begin
+  ReadFromObject(Aobj,Self);
+  cdsUnionCard.First;
+  while not cdsUnionCard.Eof do
+    begin
+      if (cdsUnionCard.FieldbyName('UNION_ID').AsString<>'#')
+          and
+         (cdsUnionCard.FieldbyName('IC_CARDNO').AsString<>'')
+      then
+         begin
+           tab := TrzTabSheet.Create(RzPage);
+           tab.PageControl := RzPage;
+           tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
+           try
+             frame := TfrmCustomerExt.Create(tab);
+             frame.Parent:=tab;
+             frame.DataSet := cdsCustomerExt;
+             frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+           except
+
+           end;
+          {
+           TfrmCustomerExt.NewInstance
+           Instance := TWinControl(InstanceClass.NewInstance);
+           TWinControl(Reference) := Instance;
+            try
+              Instance.Create(Sheet);
+            except
+              TWinControl(Reference) := nil;
+              TWinControl(Reference).Parent := nil;
+              raise;
+            end;}
+         end;
+      cdsUnionCard.Next;
+    end;
 end;
 
 end.

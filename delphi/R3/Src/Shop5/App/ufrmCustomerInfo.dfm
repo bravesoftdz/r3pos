@@ -1,9 +1,9 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 476
-  Top = 171
+  Left = 669
+  Top = 194
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
-  ClientWidth = 530
+  ClientWidth = 535
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,7 +11,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 530
+    Width = 535
     Height = 414
     BorderColor = clWhite
     Color = clWhite
@@ -137,9 +137,11 @@ inherited frmCustomerInfo: TfrmCustomerInfo
     end
     inherited RzPage: TRzPageControl
       Top = 162
-      Width = 520
+      Width = 525
       Height = 212
+      ActivePage = TabSheet2
       Align = alBottom
+      TabIndex = 2
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -400,7 +402,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         object RzPanel3: TRzPanel
           Left = 0
           Top = 0
-          Width = 516
+          Width = 521
           Height = 185
           Align = alClient
           BorderOuter = fsNone
@@ -723,126 +725,16 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       end
       object TabSheet2: TRzTabSheet
         Color = clWhite
-        TabVisible = False
-        Caption = #28040#36153#35760#24405
-        object DBGridEh2: TDBGridEh
-          Left = 0
-          Top = 0
-          Width = 516
-          Height = 185
-          Align = alClient
-          AllowedOperations = []
-          DataSource = dsCustomerData
-          FixedColor = clWhite
-          Flat = True
-          FooterColor = clWindow
-          FooterFont.Charset = GB2312_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -12
-          FooterFont.Name = #23435#20307
-          FooterFont.Style = []
-          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-          RowHeight = 20
-          TabOrder = 0
-          TitleFont.Charset = GB2312_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -12
-          TitleFont.Name = #23435#20307
-          TitleFont.Style = []
-          TitleHeight = 20
-          UseMultiTitle = True
-          IsDrawNullRow = False
-          CurrencySymbol = #65509
-          DecimalNumber = 2
-          DigitalNumber = 12
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SALES_DATE'
-              Footers = <>
-              Title.Caption = #26085#26399
-              Width = 65
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SALES_TYPE'
-              Footers = <>
-              Title.Caption = #31867#22411
-              Width = 42
-            end
-            item
-              EditButtons = <>
-              FieldName = 'GODS_NAME'
-              Footers = <>
-              Title.Caption = #21830#21697#21517#31216
-              Width = 119
-            end
-            item
-              EditButtons = <>
-              FieldName = 'COLORNAME'
-              Footers = <>
-              Title.Caption = #39068#33394
-              Width = 42
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SIZENAME'
-              Footers = <>
-              Title.Caption = #23610#30721
-              Width = 34
-            end
-            item
-              EditButtons = <>
-              FieldName = 'AMOUNT'
-              Footers = <>
-              Title.Caption = #25968#37327
-              Width = 48
-            end
-            item
-              EditButtons = <>
-              FieldName = 'UNIT_NAME'
-              Footers = <>
-              Title.Caption = #21333#20301
-              Width = 24
-            end
-            item
-              EditButtons = <>
-              FieldName = 'APRICE'
-              Footers = <>
-              Title.Caption = #21333#20215
-              Width = 46
-            end
-            item
-              EditButtons = <>
-              FieldName = 'AMONEY'
-              Footers = <>
-              Title.Caption = #37329#39069
-              Width = 59
-            end
-            item
-              EditButtons = <>
-              FieldName = 'COMP_NAME'
-              Footers = <>
-              Title.Caption = #38376#24215#21517#31216
-              Width = 114
-            end>
-        end
-      end
-      object TabSheet3: TRzTabSheet
-        Color = clWhite
-        TabVisible = False
-        Caption = #20817#25442#35760#24405
+        Caption = #21830#30431#20449#24687
         object DBGridEh1: TDBGridEh
           Left = 0
           Top = 0
-          Width = 516
+          Width = 521
           Height = 185
           Align = alClient
           AllowedOperations = []
           AutoFitColWidths = True
-          DataSource = dsGlide
+          DataSource = dsUnionCard
           FixedColor = clWhite
           Flat = True
           FooterColor = clWindow
@@ -867,254 +759,78 @@ inherited frmCustomerInfo: TfrmCustomerInfo
           CurrencySymbol = #65509
           DecimalNumber = 2
           DigitalNumber = 12
+          OnCellClick = DBGridEh1CellClick
+          OnDrawColumnCell = DBGridEh1DrawColumnCell
           Columns = <
             item
               EditButtons = <>
-              FieldName = 'CREA_DATE'
+              FieldName = 'UNION_NAME'
               Footers = <>
-              Title.Caption = #20817#25442#26085#26399
-              Width = 69
-            end
-            item
-              EditButtons = <>
-              FieldName = 'INTEGRAL_FLAG'
-              Footers = <>
-              Title.Caption = #20817#25442#26041#24335
-              Width = 79
-            end
-            item
-              EditButtons = <>
-              FieldName = 'FLAG_AMT'
-              Footers = <>
-              Title.Caption = #20817#25442#25968#37327
-              Width = 61
-            end
-            item
-              EditButtons = <>
-              FieldName = 'INTEGRAL'
-              Footers = <>
-              Title.Caption = #23545#25442#31215#20998
-              Width = 61
-            end
-            item
-              EditButtons = <>
-              FieldName = 'GLIDE_INFO'
-              Footers = <>
-              Title.Caption = #25688#35201#35828#26126
-              Width = 247
-            end>
-        end
-      end
-      object TabSheet4: TRzTabSheet
-        Color = clWhite
-        TabVisible = False
-        Caption = #20805#20540#35760#24405
-        object DBGridEh3: TDBGridEh
-          Left = 0
-          Top = 0
-          Width = 516
-          Height = 185
-          Align = alClient
-          AllowedOperations = []
-          AutoFitColWidths = True
-          DataSource = dsDeposit
-          FixedColor = clWhite
-          Flat = True
-          FooterColor = clWindow
-          FooterFont.Charset = GB2312_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -12
-          FooterFont.Name = #23435#20307
-          FooterFont.Style = []
-          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-          RowHeight = 20
-          TabOrder = 0
-          TitleFont.Charset = GB2312_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -12
-          TitleFont.Name = #23435#20307
-          TitleFont.Style = []
-          TitleHeight = 20
-          UseMultiTitle = True
-          IsDrawNullRow = False
-          CurrencySymbol = #65509
-          DecimalNumber = 2
-          DigitalNumber = 12
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'CREA_DATE'
-              Footers = <>
-              Title.Caption = #20805#20540#26085#26399
-              Width = 69
+              Title.Caption = #21830#30431#21517#31216
+              Width = 70
             end
             item
               EditButtons = <>
               FieldName = 'IC_CARDNO'
               Footers = <>
-              Title.Caption = #20805#20540#21345#21495
-              Width = 74
-            end
-            item
-              EditButtons = <>
-              FieldName = 'IC_AMONEY'
-              Footers = <>
-              Title.Caption = #20805#20540#37329#39069
-              Width = 61
-            end
-            item
-              EditButtons = <>
-              FieldName = 'PAY_CASH'
-              Footers = <>
-              Title.Caption = #29616#37329#25903#20184
-              Width = 61
-            end
-            item
-              EditButtons = <>
-              FieldName = 'PAY_A'
-              Footers = <>
-              Title.Caption = #38134#32852#25903#20184
-            end
-            item
-              EditButtons = <>
-              FieldName = 'OPER_USER_TEXT'
-              Footers = <>
-              Title.Caption = #25805#20316#21592
-              Width = 79
-            end
-            item
-              EditButtons = <>
-              FieldName = 'GLIDE_INFO'
-              Footers = <>
-              Title.Caption = #25688#35201
-              Width = 118
-            end>
-        end
-      end
-      object TabSheet5: TRzTabSheet
-        Color = clWhite
-        TabVisible = False
-        Caption = #32493#20250#35760#24405
-        object DBGridEh4: TDBGridEh
-          Left = 0
-          Top = 0
-          Width = 516
-          Height = 185
-          Align = alClient
-          AllowedOperations = []
-          DataSource = dsRenew
-          FixedColor = clWhite
-          Flat = True
-          FooterColor = clWindow
-          FooterFont.Charset = GB2312_CHARSET
-          FooterFont.Color = clWindowText
-          FooterFont.Height = -12
-          FooterFont.Name = #23435#20307
-          FooterFont.Style = []
-          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
-          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-          RowHeight = 20
-          TabOrder = 0
-          TitleFont.Charset = GB2312_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -12
-          TitleFont.Name = #23435#20307
-          TitleFont.Style = []
-          TitleHeight = 20
-          UseMultiTitle = True
-          IsDrawNullRow = False
-          CurrencySymbol = #65509
-          DecimalNumber = 2
-          DigitalNumber = 12
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'CREA_DATE'
-              Footers = <>
-              Title.Caption = #32493#20250#26085#26399
-              Width = 74
-            end
-            item
-              EditButtons = <>
-              FieldName = 'AMONEY'
-              Footers = <>
-              Title.Caption = #32493#20250#29616#37329
-              Width = 54
-            end
-            item
-              EditButtons = <>
-              FieldName = 'PAY_A'
-              Footers = <>
-              Title.Caption = #32493#20250#38134#32852
-              Width = 56
+              Title.Caption = #21345'  '#21495
+              Width = 120
             end
             item
               EditButtons = <>
               FieldName = 'ACCU_INTEGRAL'
               Footers = <>
-              Title.Caption = #24635#31215#20998
-              Width = 59
+              Title.Caption = #32047#35745#31215#20998
+              Width = 60
             end
             item
               EditButtons = <>
-              FieldName = 'INTEGRAL1'
+              FieldName = 'RULE_INTEGRAL'
               Footers = <>
-              Title.Caption = #32493#21069#21487#29992#31215#20998
-              Width = 52
+              Title.Caption = #20351#29992#31215#20998
+              Width = 60
             end
             item
               EditButtons = <>
-              FieldName = 'INTEGRAL2'
+              FieldName = 'INTEGRAL'
               Footers = <>
-              Title.Caption = #32493#21518#21487#29992#31215#20998
-              Width = 59
+              Title.Caption = #21487#29992#31215#20998
+              Width = 60
             end
             item
               EditButtons = <>
-              FieldName = 'END_DATE1'
+              FieldName = 'BALANCE'
               Footers = <>
-              Title.Caption = #32493#21069#25130#27490#26085#26399
-              Width = 63
+              Title.Caption = #21487#29992#20313#39069
+              Width = 60
             end
             item
+              Alignment = taCenter
               EditButtons = <>
-              FieldName = 'END_DATE2'
+              FieldName = 'UNION_INFO'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlue
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsUnderline]
               Footers = <>
-              Title.Caption = #32493#21518#25130#27490#26085#26399
-              Width = 63
-            end
-            item
-              EditButtons = <>
-              FieldName = 'OPER_USER_TEXT'
-              Footers = <>
-              Title.Alignment = taLeftJustify
-              Title.Caption = #25805#20316#21592
-              Width = 73
-            end
-            item
-              EditButtons = <>
-              FieldName = 'GLIDE_INFO'
-              Footers = <>
-              Title.Caption = #25688#35201
-              Width = 121
+              Title.Caption = #35814#24773
+              Width = 50
             end>
         end
       end
     end
     inherited btPanel: TRzPanel
       Top = 374
-      Width = 520
+      Width = 525
       Height = 35
       BorderColor = clWhite
       Color = clWhite
       DesignSize = (
-        520
+        525
         35)
       object Btn_Save: TRzBitBtn
-        Left = 348
+        Left = 353
         Top = 5
         Width = 67
         Height = 26
@@ -1141,7 +857,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 439
+        Left = 444
         Top = 5
         Width = 67
         Height = 26
@@ -1171,7 +887,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 520
+      Width = 525
       Height = 157
       Align = alClient
       BorderOuter = fsNone
@@ -1609,53 +1325,17 @@ inherited frmCustomerInfo: TfrmCustomerInfo
     Left = 426
     Top = 134
   end
-  object dsGlide: TDataSource
-    DataSet = adoGlide
-    Left = 515
-    Top = 221
-  end
-  object dsCustomerData: TDataSource
-    DataSet = adoCustomerData
-    Left = 515
-    Top = 253
-  end
-  object dsDeposit: TDataSource
-    DataSet = adoDeposit
-    Left = 515
-    Top = 285
-  end
-  object dsRenew: TDataSource
-    DataSet = adoRenew
-    Left = 515
+  object dsUnionCard: TDataSource
+    DataSet = cdsUnionCard
+    Left = 483
     Top = 325
   end
-  object adoGlide: TZQuery
+  object cdsUnionCard: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 482
-    Top = 222
-  end
-  object adoCustomerData: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 482
-    Top = 254
-  end
-  object adoDeposit: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 482
-    Top = 286
-  end
-  object adoRenew: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 482
-    Top = 326
+    Left = 402
+    Top = 310
   end
   object cdsTable: TZQuery
     FieldDefs = <>
@@ -1663,5 +1343,12 @@ inherited frmCustomerInfo: TfrmCustomerInfo
     Params = <>
     Left = 463
     Top = 132
+  end
+  object cdsCustomerExt: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 370
+    Top = 310
   end
 end

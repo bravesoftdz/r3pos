@@ -1,6 +1,6 @@
 inherited frmClientInfo: TfrmClientInfo
-  Left = 529
-  Top = 214
+  Left = 413
+  Top = 215
   Caption = #23458#25143#26723#26696
   ClientHeight = 364
   ClientWidth = 528
@@ -142,7 +142,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 84
             Width = 397
             Height = 64
-            TabOrder = 4
+            TabOrder = 6
           end
           object edtBALANCE: TcxTextEdit
             Left = 96
@@ -150,7 +150,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 0
+            TabOrder = 2
           end
           object edtACCU_INTEGRAL: TcxTextEdit
             Left = 372
@@ -158,7 +158,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 1
+            TabOrder = 3
           end
           object edtRULE_INTEGRAL: TcxTextEdit
             Left = 372
@@ -166,7 +166,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 2
+            TabOrder = 4
           end
           object edtINTEGRAL: TcxTextEdit
             Left = 372
@@ -174,7 +174,7 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Enabled = False
-            TabOrder = 3
+            TabOrder = 5
           end
           object edtSHOP_ID: TzrComboBoxList
             Left = 96
@@ -188,7 +188,7 @@ inherited frmClientInfo: TfrmClientInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 5
+            TabOrder = 0
             InGrid = False
             KeyValue = Null
             FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -224,7 +224,8 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 35
             Width = 121
             Height = 20
-            TabOrder = 6
+            TabOrder = 1
+            OnKeyDown = edtLICENSE_CODEKeyDown
           end
         end
       end
@@ -540,49 +541,49 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 33
             Width = 121
             Height = 20
-            TabOrder = 0
+            TabOrder = 1
           end
           object edtSEND_ADDR: TcxTextEdit
             Left = 97
             Top = 9
             Width = 395
             Height = 20
-            TabOrder = 1
+            TabOrder = 0
           end
           object edtRECV_TELE: TcxTextEdit
             Left = 96
             Top = 130
             Width = 121
             Height = 20
-            TabOrder = 2
+            TabOrder = 6
           end
           object edtSEND_TELE: TcxTextEdit
             Left = 97
             Top = 56
             Width = 121
             Height = 20
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtRECV_LINKMAN: TcxTextEdit
             Left = 96
             Top = 107
             Width = 121
             Height = 20
-            TabOrder = 4
+            TabOrder = 5
           end
           object edtRECV_ADDR: TcxTextEdit
             Left = 96
             Top = 83
             Width = 395
             Height = 20
-            TabOrder = 5
+            TabOrder = 4
           end
           object edtPOSTALCODE: TcxTextEdit
             Left = 371
             Top = 33
             Width = 121
             Height = 20
-            TabOrder = 6
+            TabOrder = 3
           end
         end
       end
@@ -724,14 +725,14 @@ inherited frmClientInfo: TfrmClientInfo
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 0
+            TabOrder = 5
           end
           object edtACCOUNT: TcxTextEdit
             Left = 96
             Top = 95
             Width = 170
             Height = 20
-            TabOrder = 1
+            TabOrder = 3
           end
           object edtBANK_ID: TcxComboBox
             Left = 96
@@ -744,23 +745,23 @@ inherited frmClientInfo: TfrmClientInfo
           object edtADDRESS: TcxTextEdit
             Left = 96
             Top = 122
-            Width = 289
+            Width = 394
             Height = 20
-            TabOrder = 3
+            TabOrder = 7
           end
           object edtLEGAL_REPR: TcxTextEdit
             Left = 96
             Top = 42
             Width = 121
             Height = 20
-            TabOrder = 4
+            TabOrder = 1
           end
           object edtINVO_NAME: TcxTextEdit
             Left = 96
             Top = 16
             Width = 241
             Height = 20
-            TabOrder = 5
+            TabOrder = 0
           end
           object edtTAX_NO: TcxTextEdit
             Left = 369
@@ -774,7 +775,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 42
             Width = 121
             Height = 20
-            TabOrder = 7
+            TabOrder = 4
           end
         end
       end

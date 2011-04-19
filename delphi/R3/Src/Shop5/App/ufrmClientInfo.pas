@@ -112,6 +112,8 @@ type
     procedure edtCLIENT_TYPEPropertiesChange(Sender: TObject);
     procedure edtPRICE_IDAddClick(Sender: TObject);
     procedure edtSETTLE_CODEAddClick(Sender: TObject);
+    procedure edtLICENSE_CODEKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     ccid:string;
     { Private declarations }
@@ -567,6 +569,14 @@ begin
   finally
     Aobj_1.Free;
   end;
+end;
+
+procedure TfrmClientInfo.edtLICENSE_CODEKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if Key = VK_RETURN then
+    edtREMARK.SetFocus;
 end;
 
 end.

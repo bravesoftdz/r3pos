@@ -121,8 +121,8 @@ begin
   'select a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,a.ISSUE_DATE,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.MSG_SOURCE,a.END_DATE,a.COMM,sum(case when b.COMM in (''02'',''12'') or b.COMM is null then 0 else 1 end) as PUBLISH_NUM'+
   ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''02'',''12'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' group by a.TENANT_ID,a.MSG_ID,a.MSG_CLASS,'+
-  'a.ISSUE_DATE,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.END_DATE,a.COMM order by a.ISSUE_DATE desc) jc '+
-  ' left join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and c.USER_ID=jc.ISSUE_USER';
+  'a.ISSUE_DATE,a.ISSUE_USER,a.MSG_TITLE,a.MSG_CONTENT,a.MSG_SOURCE,a.END_DATE,a.COMM ) jc '+
+  ' left join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and c.USER_ID=jc.ISSUE_USER order by jc.ISSUE_DATE desc';
 
   Result := Str;
 end;

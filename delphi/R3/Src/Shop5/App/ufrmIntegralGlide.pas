@@ -213,9 +213,15 @@ begin
   inherited;
   edtGLIDE_INFO.Text := edtINTEGRAL_FLAG.Text;
   if edtINTEGRAL_FLAG.ItemIndex = 0 then
-    labUnit.Caption := '张'
+    begin
+      labUnit.Caption := '张';
+      Label9.Caption := '兑换礼券';
+    end
   else
-    labUnit.Caption := '元';
+    begin
+      labUnit.Caption := '元';
+      Label9.Caption := '兑换金额';
+    end;
   edtUSING_INTEGRALPropertiesChange(Sender);
 end;
 

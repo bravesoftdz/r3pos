@@ -1073,11 +1073,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Font.Style = []
           ParentFont = False
         end
-        object edtREMARK: TcxTextEdit
-          Left = 60
-          Top = 11
+        object edtREMARK: TcxMemo
+          Left = 58
+          Top = 13
           Width = 442
-          Height = 20
+          Height = 101
           TabOrder = 0
         end
       end

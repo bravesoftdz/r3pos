@@ -16,23 +16,25 @@ inherited frmClientInfo: TfrmClientInfo
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 113
+      Top = 135
       Width = 518
-      Height = 206
+      Height = 184
+      ActivePage = TabSheet4
       Color = clWhite
       ParentColor = False
+      TabIndex = 3
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #35814#32454#20449#24687
+        Caption = #22522#26412#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 514
-          Height = 179
+          Height = 157
           BorderColor = clWhite
           Color = clWhite
           object labHOMEPAGE: TRzLabel
             Left = -10
-            Top = 108
+            Top = 87
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -45,54 +47,9 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object RzLabel3: TRzLabel
-            Left = -9
-            Top = 84
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #21457#31080#31867#22411
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object RzLabel9: TRzLabel
-            Left = -9
-            Top = 35
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #24320#25143#38134#34892
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
-          object RzLabel10: TRzLabel
-            Left = -10
-            Top = 59
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #36134#21495
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
           object RzLabel18: TRzLabel
-            Left = 267
-            Top = 84
+            Left = -9
+            Top = 63
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -107,7 +64,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel19: TRzLabel
             Left = 267
-            Top = 12
+            Top = 15
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -122,7 +79,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel20: TRzLabel
             Left = 267
-            Top = 36
+            Top = 39
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -137,7 +94,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel21: TRzLabel
             Left = 267
-            Top = 60
+            Top = 63
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -152,7 +109,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labSHOP_ID: TRzLabel
             Left = -11
-            Top = 11
+            Top = 14
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -165,71 +122,63 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object edtINVOICE_FLAG: TcxComboBox
-            Left = 96
-            Top = 80
-            Width = 121
-            Height = 20
-            Properties.DropDownListStyle = lsFixedList
-            TabOrder = 2
-          end
-          object edtACCOUNT: TcxTextEdit
-            Left = 96
-            Top = 56
-            Width = 170
-            Height = 20
-            TabOrder = 1
+          object RzLabel23: TRzLabel
+            Left = -11
+            Top = 39
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #32463#33829#35768#21487#35777
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
           end
           object edtREMARK: TcxMemo
             Left = 96
-            Top = 105
-            Width = 398
-            Height = 67
-            TabOrder = 7
+            Top = 84
+            Width = 397
+            Height = 64
+            TabOrder = 4
           end
           object edtBALANCE: TcxTextEdit
+            Left = 96
+            Top = 59
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 0
+          end
+          object edtACCU_INTEGRAL: TcxTextEdit
             Left = 372
-            Top = 80
+            Top = 11
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 1
+          end
+          object edtRULE_INTEGRAL: TcxTextEdit
+            Left = 372
+            Top = 35
+            Width = 121
+            Height = 20
+            Enabled = False
+            TabOrder = 2
+          end
+          object edtINTEGRAL: TcxTextEdit
+            Left = 372
+            Top = 59
             Width = 121
             Height = 20
             Enabled = False
             TabOrder = 3
           end
-          object edtACCU_INTEGRAL: TcxTextEdit
-            Left = 372
-            Top = 8
-            Width = 121
-            Height = 20
-            Enabled = False
-            TabOrder = 4
-          end
-          object edtRULE_INTEGRAL: TcxTextEdit
-            Left = 372
-            Top = 32
-            Width = 121
-            Height = 20
-            Enabled = False
-            TabOrder = 5
-          end
-          object edtINTEGRAL: TcxTextEdit
-            Left = 372
-            Top = 56
-            Width = 121
-            Height = 20
-            Enabled = False
-            TabOrder = 6
-          end
-          object edtBANK_ID: TcxComboBox
-            Left = 96
-            Top = 32
-            Width = 121
-            Height = 20
-            Properties.DropDownListStyle = lsFixedList
-            TabOrder = 0
-          end
           object edtSHOP_ID: TzrComboBoxList
             Left = 96
-            Top = 8
+            Top = 11
             Width = 121
             Height = 20
             Enabled = False
@@ -239,7 +188,7 @@ inherited frmClientInfo: TfrmClientInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 8
+            TabOrder = 5
             InGrid = False
             KeyValue = Null
             FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -270,6 +219,13 @@ inherited frmClientInfo: TfrmClientInfo
             DropListStyle = lsFixed
             MultiSelect = False
           end
+          object edtLICENSE_CODE: TcxTextEdit
+            Left = 96
+            Top = 35
+            Width = 121
+            Height = 20
+            TabOrder = 6
+          end
         end
       end
       object TabSheet2: TRzTabSheet
@@ -279,14 +235,14 @@ inherited frmClientInfo: TfrmClientInfo
           Left = 0
           Top = 0
           Width = 514
-          Height = 179
+          Height = 157
           Align = alClient
           BorderColor = clWhite
           Color = clWhite
           TabOrder = 0
           object labLINKMAN: TRzLabel
             Left = -10
-            Top = 18
+            Top = 24
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -301,7 +257,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labTELEPHONE1: TRzLabel
             Left = -10
-            Top = 70
+            Top = 86
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -314,24 +270,9 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object labPOSTALCODE: TRzLabel
-            Left = -10
-            Top = 120
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #37038#32534
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
           object labFAXES: TRzLabel
             Left = -10
-            Top = 45
+            Top = 56
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -346,7 +287,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labEMAIL: TRzLabel
             Left = 264
-            Top = 95
+            Top = 87
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -361,7 +302,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object labTELEPHONE2: TRzLabel
             Left = 264
-            Top = 45
+            Top = 27
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -376,7 +317,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel5: TRzLabel
             Left = -10
-            Top = 95
+            Top = 116
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -389,24 +330,9 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object labADDRESS: TRzLabel
-            Left = -10
-            Top = 144
-            Width = 100
-            Height = 12
-            Alignment = taRightJustify
-            AutoSize = False
-            Caption = #22320#22336
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = []
-            ParentFont = False
-          end
           object labMSN: TRzLabel
             Left = 264
-            Top = 70
+            Top = 57
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -421,7 +347,7 @@ inherited frmClientInfo: TfrmClientInfo
           end
           object RzLabel12: TRzLabel
             Left = 264
-            Top = 119
+            Top = 116
             Width = 99
             Height = 12
             Alignment = taRightJustify
@@ -434,14 +360,84 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object RzLabel23: TRzLabel
-            Left = 264
+          object edtLINKMAN: TcxTextEdit
+            Left = 97
             Top = 21
+            Width = 121
+            Height = 20
+            TabOrder = 0
+          end
+          object edtTELEPHONE1: TcxTextEdit
+            Left = 97
+            Top = 82
+            Width = 121
+            Height = 20
+            TabOrder = 2
+          end
+          object edtFAXES: TcxTextEdit
+            Left = 97
+            Top = 52
+            Width = 121
+            Height = 20
+            TabOrder = 1
+          end
+          object edtEMAIL: TcxTextEdit
+            Left = 371
+            Top = 83
+            Width = 121
+            Height = 20
+            TabOrder = 6
+          end
+          object edtQQ: TcxTextEdit
+            Left = 371
+            Top = 23
+            Width = 121
+            Height = 20
+            TabOrder = 4
+          end
+          object edtTELEPHONE2: TcxTextEdit
+            Left = 97
+            Top = 112
+            Width = 121
+            Height = 20
+            TabOrder = 3
+          end
+          object edtMSN: TcxTextEdit
+            Left = 371
+            Top = 53
+            Width = 121
+            Height = 20
+            TabOrder = 5
+          end
+          object edtHOMEPAGE: TcxTextEdit
+            Left = 371
+            Top = 113
+            Width = 121
+            Height = 20
+            TabOrder = 7
+          end
+        end
+      end
+      object TabSheet3: TRzTabSheet
+        Color = clWhite
+        Caption = #25910#21457#20449#24687
+        object RzPanel4: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 514
+          Height = 157
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWhite
+          TabOrder = 0
+          object RzLabel25: TRzLabel
+            Left = -10
+            Top = 37
             Width = 100
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #32463#33829#35768#21487#35777
+            Caption = #25910#20214#20154
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -449,82 +445,336 @@ inherited frmClientInfo: TfrmClientInfo
             Font.Style = []
             ParentFont = False
           end
-          object edtLINKMAN: TcxTextEdit
+          object RzLabel26: TRzLabel
+            Left = -10
+            Top = 13
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #37038#23492#22320#22336
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel27: TRzLabel
+            Left = -11
+            Top = 134
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #30005#35805'/'#25163#26426
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel28: TRzLabel
+            Left = -10
+            Top = 60
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #30005#35805'/'#25163#26426
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel29: TRzLabel
+            Left = -11
+            Top = 111
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #25910#36135#20154
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel30: TRzLabel
+            Left = -11
+            Top = 86
+            Width = 99
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #25910#36135#22320#22336
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object labPOSTALCODE: TRzLabel
+            Left = 264
+            Top = 37
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #37038#23492#32534#30721
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object edtSEND_LINKMAN: TcxTextEdit
             Left = 97
-            Top = 15
+            Top = 33
             Width = 121
             Height = 20
             TabOrder = 0
           end
-          object edtTELEPHONE1: TcxTextEdit
+          object edtSEND_ADDR: TcxTextEdit
             Left = 97
-            Top = 66
+            Top = 9
+            Width = 395
+            Height = 20
+            TabOrder = 1
+          end
+          object edtRECV_TELE: TcxTextEdit
+            Left = 96
+            Top = 130
             Width = 121
             Height = 20
             TabOrder = 2
           end
-          object edtPOSTALCODE: TcxTextEdit
+          object edtSEND_TELE: TcxTextEdit
             Left = 97
-            Top = 116
-            Width = 121
-            Height = 20
-            TabOrder = 4
-          end
-          object edtFAXES: TcxTextEdit
-            Left = 97
-            Top = 41
-            Width = 121
-            Height = 20
-            TabOrder = 1
-          end
-          object edtEMAIL: TcxTextEdit
-            Left = 371
-            Top = 91
-            Width = 121
-            Height = 20
-            TabOrder = 8
-          end
-          object edtQQ: TcxTextEdit
-            Left = 371
-            Top = 41
-            Width = 121
-            Height = 20
-            TabOrder = 6
-          end
-          object edtTELEPHONE2: TcxTextEdit
-            Left = 97
-            Top = 91
+            Top = 56
             Width = 121
             Height = 20
             TabOrder = 3
           end
-          object edtADDRESS: TcxTextEdit
-            Left = 97
-            Top = 141
+          object edtRECV_LINKMAN: TcxTextEdit
+            Left = 96
+            Top = 107
+            Width = 121
+            Height = 20
+            TabOrder = 4
+          end
+          object edtRECV_ADDR: TcxTextEdit
+            Left = 96
+            Top = 83
             Width = 395
             Height = 20
-            TabOrder = 10
+            TabOrder = 5
           end
-          object edtMSN: TcxTextEdit
+          object edtPOSTALCODE: TcxTextEdit
             Left = 371
-            Top = 66
+            Top = 33
+            Width = 121
+            Height = 20
+            TabOrder = 6
+          end
+        end
+      end
+      object TabSheet4: TRzTabSheet
+        Color = clWhite
+        Caption = #27880#20876#20449#24687
+        object RzPanel5: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 514
+          Height = 157
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWhite
+          TabOrder = 0
+          object RzLabel3: TRzLabel
+            Left = 264
+            Top = 72
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #21457#31080#31867#22411
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel9: TRzLabel
+            Left = -9
+            Top = 71
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24320#25143#38134#34892
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel10: TRzLabel
+            Left = -9
+            Top = 98
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #36134#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object labADDRESS: TRzLabel
+            Left = -9
+            Top = 125
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #27880#20876#22320#22336
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel15: TRzLabel
+            Left = -9
+            Top = 45
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #27861#20154#20195#34920
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel17: TRzLabel
+            Left = -9
+            Top = 19
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #20844#21496#20840#31216
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel24: TRzLabel
+            Left = 264
+            Top = 98
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #22269#31246#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel31: TRzLabel
+            Left = 264
+            Top = 45
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #27880#20876#30005#35805
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object edtINVOICE_FLAG: TcxComboBox
+            Left = 369
+            Top = 68
+            Width = 121
+            Height = 20
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 0
+          end
+          object edtACCOUNT: TcxTextEdit
+            Left = 96
+            Top = 95
+            Width = 170
+            Height = 20
+            TabOrder = 1
+          end
+          object edtBANK_ID: TcxComboBox
+            Left = 96
+            Top = 68
+            Width = 121
+            Height = 20
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 2
+          end
+          object edtADDRESS: TcxTextEdit
+            Left = 96
+            Top = 122
+            Width = 289
+            Height = 20
+            TabOrder = 3
+          end
+          object edtLEGAL_REPR: TcxTextEdit
+            Left = 96
+            Top = 42
+            Width = 121
+            Height = 20
+            TabOrder = 4
+          end
+          object edtINVO_NAME: TcxTextEdit
+            Left = 96
+            Top = 16
+            Width = 241
+            Height = 20
+            TabOrder = 5
+          end
+          object edtTAX_NO: TcxTextEdit
+            Left = 369
+            Top = 95
+            Width = 121
+            Height = 20
+            TabOrder = 6
+          end
+          object edtTELEPHONE3: TcxTextEdit
+            Left = 369
+            Top = 42
             Width = 121
             Height = 20
             TabOrder = 7
-          end
-          object edtHOMEPAGE: TcxTextEdit
-            Left = 371
-            Top = 116
-            Width = 121
-            Height = 20
-            TabOrder = 9
-          end
-          object edtLICENSE_CODE: TcxTextEdit
-            Left = 371
-            Top = 17
-            Width = 121
-            Height = 20
-            TabOrder = 5
           end
         end
       end
@@ -593,7 +843,7 @@ inherited frmClientInfo: TfrmClientInfo
       Left = 5
       Top = 5
       Width = 518
-      Height = 108
+      Height = 130
       Align = alTop
       BorderOuter = fsNone
       BorderColor = clWhite
@@ -601,7 +851,7 @@ inherited frmClientInfo: TfrmClientInfo
       TabOrder = 2
       object labCLIENT_NAME: TRzLabel
         Left = -10
-        Top = 29
+        Top = 41
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -616,7 +866,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object labCLIENT_SPELL: TRzLabel
         Left = 265
-        Top = 29
+        Top = 41
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -631,7 +881,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel4: TRzLabel
         Left = 494
-        Top = 54
+        Top = 68
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -646,7 +896,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel6: TRzLabel
         Left = -9
-        Top = 78
+        Top = 94
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -661,7 +911,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel13: TRzLabel
         Left = 259
-        Top = 30
+        Top = 42
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -676,7 +926,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel7: TRzLabel
         Left = 265
-        Top = 78
+        Top = 94
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -691,7 +941,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel2: TRzLabel
         Left = 494
-        Top = 78
+        Top = 94
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -706,7 +956,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel14: TRzLabel
         Left = 221
-        Top = 79
+        Top = 95
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -721,7 +971,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel1: TRzLabel
         Left = -10
-        Top = 5
+        Top = 15
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -736,7 +986,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel11: TRzLabel
         Left = 220
-        Top = 5
+        Top = 15
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -751,7 +1001,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel8: TRzLabel
         Left = 265
-        Top = 54
+        Top = 68
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -766,7 +1016,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel16: TRzLabel
         Left = -9
-        Top = 54
+        Top = 68
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -781,7 +1031,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object RzLabel22: TRzLabel
         Left = 220
-        Top = 54
+        Top = 68
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -796,7 +1046,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_NAME: TcxTextEdit
         Left = 97
-        Top = 26
+        Top = 38
         Width = 160
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -804,7 +1054,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_SPELL: TcxTextEdit
         Left = 371
-        Top = 26
+        Top = 38
         Width = 121
         Height = 20
         TabStop = False
@@ -812,7 +1062,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtSORT_ID: TzrComboBoxList
         Left = 98
-        Top = 75
+        Top = 91
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -854,7 +1104,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtREGION_ID: TzrComboBoxList
         Left = 371
-        Top = 75
+        Top = 91
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -896,7 +1146,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtCLIENT_CODE: TcxTextEdit
         Left = 97
-        Top = 2
+        Top = 12
         Width = 121
         Height = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
@@ -904,7 +1154,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtPRICE_ID: TzrComboBoxList
         Left = 97
-        Top = 50
+        Top = 64
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -940,7 +1190,7 @@ inherited frmClientInfo: TfrmClientInfo
       end
       object edtSETTLE_CODE: TzrComboBoxList
         Left = 371
-        Top = 50
+        Top = 64
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -977,18 +1227,18 @@ inherited frmClientInfo: TfrmClientInfo
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 267
-    Top = 107
+    Left = 323
+    Top = 131
   end
   inherited actList: TActionList
-    Left = 307
-    Top = 107
+    Left = 363
+    Top = 131
   end
   object cdsTable: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 226
-    Top = 107
+    Left = 282
+    Top = 131
   end
 end

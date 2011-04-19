@@ -618,7 +618,6 @@ inherited frmCustomer: TfrmCustomer
           Left = 175
           Top = 0
           Action = actfrmIntegral
-          Visible = False
         end
         object ToolButton3: TToolButton
           Left = 218

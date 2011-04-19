@@ -128,9 +128,8 @@ type
   end;
 
 implementation
-uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,uFnUtil,
-   ufrmBasic;
-//  ufrmIntegralGlide,ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
+uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,uFnUtil,ufrmIntegralGlide,ufrmBasic;
+//  ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
 
 {$R *.dfm}
 
@@ -489,23 +488,23 @@ begin
 end;
 
 procedure TfrmCustomer.actfrmIntegralExecute(Sender: TObject);
-//var rs:TRecord_;
+var Aobj_Integral:TRecord_;
 begin
   inherited;
-  {if Cds_Customer.IsEmpty then Exit;
-  rs := TRecord_.Create;
+  if Cds_Customer.IsEmpty then Exit;
+  Aobj_Integral := TRecord_.Create;
   try
-    if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,rs) then
+    if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
        begin
          Cds_Customer.Edit;
-         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat - rs.FieldbyName('INTEGRAL').AsFloat;
-         Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat := Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat+rs.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat - Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat := Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
          Cds_Customer.Post;
          MessageBox(Handle,'积分兑换成功!',pchar(Application.Title),MB_OK); 
        end;
   finally
-    rs.Free;
-  end;}
+    Aobj_Integral.Free;
+  end;
 end;
 
 procedure TfrmCustomer.N2Click(Sender: TObject);

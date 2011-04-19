@@ -13,7 +13,7 @@ update CA_DEPT_INFO set SHOP_ID=cast(TENANT_ID as varchar)||'0001';
 --{idbType=4}
 update CA_DEPT_INFO set SHOP_ID=trim(char(TENANT_ID))||'0001';
 --{idbType=0}
-update CA_DEPT_INFO set SHOP_ID=convert(varchar,TENANT_ID)||'0001';
+update CA_DEPT_INFO set SHOP_ID=convert(varchar,TENANT_ID)+'0001';
 
 --添加营销部门
 alter table STK_STOCKORDER add DEPT_ID varchar(12);
@@ -46,13 +46,13 @@ update SAL_SALESORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
 update SAL_INDENTORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
 
 --{idbType=0}
-update STK_STOCKORDER set DEPT_ID=convert(varchar,TENANT_ID)||'001';
+update STK_STOCKORDER set DEPT_ID=convert(varchar,TENANT_ID)+'001';
 --{idbType=0}
-update STK_INDENTORDER set DEPT_ID=convert(varchar,TENANT_ID)||'001';
+update STK_INDENTORDER set DEPT_ID=convert(varchar,TENANT_ID)+'001';
 --{idbType=0}
-update SAL_SALESORDER set DEPT_ID=convert(varchar,TENANT_ID)||'001';
+update SAL_SALESORDER set DEPT_ID=convert(varchar,TENANT_ID)+'001';
 --{idbType=0}
-update SAL_INDENTORDER set DEPT_ID=convert(varchar,TENANT_ID)||'001';
+update SAL_INDENTORDER set DEPT_ID=convert(varchar,TENANT_ID)+'001';
 
 --{idbType=5}
 drop view VIW_USERS;
@@ -90,6 +90,20 @@ VALUE as PASS_WRD,trim(char(TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS
 union all
 select B.TENANT_ID,trim(char(B.TENANT_ID))||'0001' as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
 VALUE as PASS_WRD,trim(char(B.TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
+
+--企业客户
+--送货资料
+alter table PUB_CLIENTINFO add SEND_ADDR varchar(100);
+alter table PUB_CLIENTINFO add SEND_TELE varchar(50);
+alter table PUB_CLIENTINFO add SEND_LINKMAN varchar(20);
+
+alter table PUB_CLIENTINFO add RECV_ADDR varchar(100);
+alter table PUB_CLIENTINFO add RECV_LINKMAN varchar(20);
+alter table PUB_CLIENTINFO add RECV_TELE varchar(50);
+--开票全称
+alter table PUB_CLIENTINFO add LEGAL_REPR varchar(20);
+alter table PUB_CLIENTINFO add INVO_NAME varchar(60);
+alter table PUB_CLIENTINFO add TAX_NO varchar(30);
 
 --扫码出库
 CREATE TABLE SAL_LOCUS_FORSALE(

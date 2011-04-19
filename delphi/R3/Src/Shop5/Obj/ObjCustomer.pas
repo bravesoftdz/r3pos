@@ -248,12 +248,14 @@ function TIntegralGlide.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
   n:integer;
+  Str:String;
 begin
   rs := TZQuery.Create(nil);
   try
-    AGlobal.ExecSQL('update PUB_IC_INFO set INTEGRAL=INTEGRAL-:INTEGRAL,RULE_INTEGRAL=RULE_INTEGRAL+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO',self);
+    Str := 'update PUB_IC_INFO set INTEGRAL=INTEGRAL-ifnull(:INTEGRAL,0),RULE_INTEGRAL=RULE_INTEGRAL+ifnull(:INTEGRAL,0) where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO';
+    AGlobal.ExecSQL(ParseSQL(iDbType,Str),self);
     rs.Close;
-    rs.SQL.Text := 'select INTEGRAL from VIW_CUSTOMER where CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';
+    rs.SQL.Text := 'select INTEGRAL from PUB_IC_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger<0 then Raise Exception.Create('可用积分不足，不能完成对换。');
   finally

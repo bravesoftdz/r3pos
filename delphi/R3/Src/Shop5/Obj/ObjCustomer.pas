@@ -12,6 +12,14 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  TPubIcInfo=class(TZFactory)
+  private
+    procedure InitClass; override;
+  end;
+  TCustomerExt=class(TZFactory)
+  private
+    procedure InitClass; override;
+  end;
   TIntegralGlide=class(TZFactory)
   private
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -51,7 +59,7 @@ type
   public
     //function AfterUpdateBatch(AGlobal:IdbHelp):Boolean;override;
   end;
-  TSelectRenew=class(TZFactory)
+  TUnionIndex=class(TZFactory)
   private
     procedure InitClass; override;
   end;
@@ -243,12 +251,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    if length(FieldbyName('CUST_ID').AsString)>3 then
-       AGlobal.ExecSQL('update BAS_CUSTOMER set INTEGRAL=INTEGRAL-:INTEGRAL,RULE_INTEGRAL=RULE_INTEGRAL+:INTEGRAL where CUST_ID=:CUST_ID',self)
-    else
-       AGlobal.ExecSQL('update CA_COMPANY set INTEGRAL=INTEGRAL-:INTEGRAL,RULE_INTEGRAL=RULE_INTEGRAL+:INTEGRAL where CUST_ID=:CUST_ID',self);
+    AGlobal.ExecSQL('update PUB_IC_INFO set INTEGRAL=INTEGRAL-:INTEGRAL,RULE_INTEGRAL=RULE_INTEGRAL+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO',self);
     rs.Close;
-    rs.SQL.Text := 'select INTEGRAL from VIW_CUSTOMER where CUST_ID='''+FieldbyName('CUST_ID').AsString+'''';
+    rs.SQL.Text := 'select INTEGRAL from VIW_CUSTOMER where CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger<0 then Raise Exception.Create('可用积分不足，不能完成对换。');
   finally
@@ -261,13 +266,13 @@ procedure TIntegralGlide.InitClass;
 var SQL:string;
 begin
   inherited;
-  //SelectSQL.Text := 'select GLIDE_ID,OPER_USER,COMP_ID,CUST_ID,CREA_DATE,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,FLAG_AMT,SALES_ID,COMM,TIME_STAMP from RCK_INTEGRAL_GLIDE where GLIDE_ID=:GLIDE_ID';
-  SelectSQL.Text := 'select GLIDE_ID,TENANT_ID,SHOP_ID,CUST_ID,CREA_DATE,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,GLIDE_AMT from RCK_INTEGRAL_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID';
+  SelectSQL.Text := 'select GLIDE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,IC_CARDNO,CREA_DATE,CREA_USER,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,GLIDE_AMT from SAL_INTEGRAL_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID';
   IsSQLUpdate := true;
-  SQL := 'insert into RCK_INTEGRAL_GLIDE(GLIDE_ID,OPER_USER,COMP_ID,CUST_ID,CREA_DATE,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,FLAG_AMT,SALES_ID,COMM,TIME_STAMP) '+
-     'values(newid(),:OPER_USER,:COMP_ID,:CUST_ID,convert(varchar(10),getdate(),120),:INTEGRAL_FLAG,:GLIDE_INFO,:INTEGRAL,:FLAG_AMT,:SALES_ID,''00'','+GetTimeStamp(iDbType)+')';
+  SQL :=
+  ' insert into SAL_INTEGRAL_GLIDE(GLIDE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,IC_CARDNO,CREA_DATE,CREA_USER,INTEGRAL_FLAG,GLIDE_INFO,INTEGRAL,GLIDE_AMT,COMM,TIME_STAMP)'+
+  ' values (:GLIDE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,:INTEGRAL_FLAG,:GLIDE_INFO,:INTEGRAL,:GLIDE_AMT,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := SQL;
-
+  
 end;
 
 { TSelectIntegralGlide }
@@ -447,16 +452,77 @@ begin
   InsertSQL.Text := SQL;
 end;
 
-{ TSelectRenew }
+{ TUnionIndex }
 
-procedure TSelectRenew.InitClass;
+procedure TUnionIndex.InitClass;
+var Str:String;
 begin
   inherited;
-  SelectSQL.Text := 'select A.*,B.USER_NAME OPER_USER_TEXT from (select CUST_ID,CREA_DATE,GLIDE_INFO,OPER_USER   '+
-  '   ,AMONEY,PAY_A,ACCU_INTEGRAL,INTEGRAL1,INTEGRAL2,END_DATE1  '+
-  '   ,END_DATE2 from RCK_RENEW_GLIDE where CUST_ID=:CUST_ID)A  '+
-  '   left outer join VIW_USERS B on A.OPER_USER=B.USER_ID order by CREA_DATE DESC';
+  SelectSQL.Text := 'select TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX '+
+  ' where TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID and INDEX_ID=:INDEX_ID ';
   IsSQLUpdate := true;
+
+  Str :=
+  'insert into [PUB_CUSTOMER_EXT] (TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL,COMM,STAMP_TIME) '+
+  'values(:TENANT_ID,:UNION_ID,:INDEX_ID,:INDEX_NAME,:INDEX_SPELL,:INDEX_TYPE,:INDEX_OPTION,:INDEX_ISNULL,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := Str;
+  Str :=
+  'update PUB_UNION_INDEX set TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,INDEX_ID=:INDEX_ID,INDEX_NAME=:INDEX_NAME,INDEX_SPELL=:INDEX_SPELL,INDEX_TYPE=:,INDEX_OPTION=:,INDEX_ISNULL=:,COMM=:,STAMP_TIME=: where ';
+  UpdateSQL.Text := Str;
+end;
+
+{ TPubIcInfo }
+
+procedure TPubIcInfo.InitClass;
+var Str:String;
+begin
+  inherited;
+  SelectSQL.Text :=
+  'select j.UNION_NAME,j.UNION_ID,ic.CLIENT_ID,ic.TENANT_ID,ic.UNION_ID,ic.IC_CARDNO,ic.IC_CARDNO,ic.CREA_DATE,ic.CREA_USER,ic.IC_INFO,ic.IC_STATUS,ic.IC_TYPE,'+
+  'ic.ACCU_INTEGRAL,ic.RULE_INTEGRAL,ic.INTEGRAL,ic.BALANCE,''详情'' as UNION_INFO from ('+
+  'select  '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,'+Params.ParambyName('TENANT_ID').asString+' as TENANT_ID,''#'' as UNION_ID,''企业会员'' as UNION_NAME from CA_TENANT where TENANT_ID=:TENANT_ID '+
+  'union all '+
+  'select '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,TENANT_ID,PRICE_ID as UNION_ID,PRICE_NAME as UNION_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_TYPE=''2'' '+
+  ') j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.UNION_ID=ic.UNION_ID and j.CLIENT_ID=ic.CLIENT_ID';
+  IsSQLUpdate := true;
+
+  Str :=
+  'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,RULE_INTEGRAL,INTEGRAL,'+
+  'BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,:UNION_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,'+
+  ':IC_INFO,:IC_STATUS,:IC_TYPE,0,0,0,0,null,null,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := Str;
+  Str :=
+  'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,'+
+  'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+
+  GetTimeStamp(iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID' ;
+  UpdateSQL.Text := Str;
+end;
+
+{ TCustomerExt }
+
+procedure TCustomerExt.InitClass;
+var Str:String;
+begin
+  inherited;
+  SelectSQL.Text :=
+  'select ROWS_ID,TENANT_ID,UNION_ID,CUST_ID,INDEX_ID,INDEX_NAME,INDEX_TYPE,INDEX_VALUE from PUB_CUSTOMER_EXT where TENANT_ID=:TENANT_ID and'+
+  ' UNION_ID=:UNION_ID and CUST_ID=:CUST_ID';
+  IsSQLUpdate := true;
+
+  Str :=
+  ' insert into PUB_CUSTOMER_EXT(ROWS_ID,TENANT_ID,UNION_ID,CUST_ID,INDEX_ID,INDEX_NAME,INDEX_TYPE,INDEX_VALUE,COMM,TIME_STAMP) '+
+  ' values(:ROWS_ID,:TENANT_ID,:UNION_ID,:CUST_ID,:INDEX_ID,:INDEX_NAME,:INDEX_TYPE,:INDEX_VALUE,''00'','+GetTimeStamp(iDbType)+') ';
+  InsertSQL.Text := Str;
+
+  Str :=
+  'update PUB_CUSTOMER_EXT set UNION_ID=:UNION_ID,CUST_ID=:CUST_ID,INDEX_ID=:INDEX_ID,INDEX_NAME=:INDEX_NAME,INDEX_TYPE=:INDEX_TYPE,'+
+  'INDEX_VALUE=:INDEX_VALUE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+
+  GetTimeStamp(iDbType)+' where ROWS_ID=:OLD_ROWS_ID and TENANT_ID=:OLD_TENANT_ID ';
+  UpdateSQL.Text := Str;
+
+  Str :=
+  'update PUB_CUSTOMER_EXT set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where ROWS_ID=:OLD_ROWS_ID and TENANT_ID=:OLD_TENANT_ID ';
+  DeleteSQL.Text := Str;
 end;
 
 initialization
@@ -468,9 +534,10 @@ initialization
   RegisterClass(TDeposit);
   RegisterClass(TSelectDeposit);
   RegisterClass(TRenew);
-  RegisterClass(TSelectRenew);
   RegisterClass(TCustomerSalesData);
   RegisterClass(TNewCardUpdate);
+  RegisterClass(TPubIcInfo);
+  RegisterClass(TCustomerExt);
 finalization
   UnRegisterClass(TCustomer);
   UnRegisterClass(TIntegralGlide);
@@ -480,7 +547,8 @@ finalization
   UnRegisterClass(TDeposit);
   UnRegisterClass(TSelectDeposit);
   UnRegisterClass(TRenew);
-  UnRegisterClass(TSelectRenew);
   UnRegisterClass(TCustomerSalesData);
   UnRegisterClass(TNewCardUpdate);
+  UnRegisterClass(TPubIcInfo);
+  UnRegisterClass(TCustomerExt);
 end.

@@ -16,12 +16,14 @@ inherited frmIntegralGlide: TfrmIntegralGlide
     Color = clWhite
     inherited RzPage: TRzPageControl
       Width = 512
+      Height = 326
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #31215#20998#20817#25442
         inherited RzPanel2: TRzPanel
           Width = 508
+          Height = 299
           BorderColor = clWhite
           Color = clWhite
           object Label1: TLabel
@@ -150,7 +152,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Width = 466
             Height = 78
             TabOrder = 8
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIC_CARDNO: TcxTextEdit
             Tag = 1
@@ -160,7 +161,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             TabStop = False
             TabOrder = 0
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCLIENT_NAME: TcxTextEdit
             Tag = 1
@@ -170,7 +170,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             TabStop = False
             TabOrder = 1
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtINTEGRAL: TcxTextEdit
             Tag = 1
@@ -180,7 +179,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             TabStop = False
             TabOrder = 3
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtACCU_INTEGRAL: TcxTextEdit
             Tag = 1
@@ -190,7 +188,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             TabStop = False
             TabOrder = 4
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPRICE_NAME: TcxTextEdit
             Tag = 1
@@ -200,14 +197,12 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             TabStop = False
             TabOrder = 2
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtINTEGRAL_FLAG: TcxComboBox
             Left = 76
             Top = 110
             Width = 121
             Height = 20
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtINTEGRAL_FLAGPropertiesChange
             TabOrder = 5
@@ -219,7 +214,6 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Height = 20
             Properties.OnChange = edtUSING_INTEGRALPropertiesChange
             TabOrder = 7
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtFLAG_AMT: TcxSpinEdit
             Left = 76
@@ -229,19 +223,29 @@ inherited frmIntegralGlide: TfrmIntegralGlide
             Properties.ValueType = vtFloat
             Properties.OnChange = edtFLAG_AMTPropertiesChange
             TabOrder = 6
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object IsIc: TRzCheckBox
+            Left = 228
+            Top = 135
+            Width = 115
+            Height = 17
+            Caption = #26159#21542#29616#37329#36716#20805#20540
+            Checked = True
+            State = cbChecked
+            TabOrder = 9
           end
         end
       end
     end
     inherited btPanel: TRzPanel
+      Top = 331
       Width = 512
       Height = 47
       BorderColor = clWhite
       Color = clWhite
       object btnOK: TRzBitBtn
         Left = 302
-        Top = 10
+        Top = 13
         Caption = #20817#25442'(&O)'
         Color = 15791348
         HighlightColor = 16026986
@@ -252,7 +256,7 @@ inherited frmIntegralGlide: TfrmIntegralGlide
       end
       object btnCancel: TRzBitBtn
         Left = 395
-        Top = 10
+        Top = 13
         Cancel = True
         ModalResult = 2
         Caption = #20851#38381'(&C)'

@@ -7,7 +7,7 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMemo, StdCtrls, RzButton,
   cxMaskEdit, cxDropDownEdit, DB, cxSpinEdit, ZAbstractRODataset, ZBase,
-  ZAbstractDataset, ZDataset;
+  ZAbstractDataset, ZDataset, RzRadChk;
 
 type
   TfrmIntegralGlide = class(TframeDialogForm)
@@ -37,6 +37,7 @@ type
     cdsTable: TZQuery;
     labUnit: TLabel;
     Label11: TLabel;
+    IsIc: TRzCheckBox;
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -53,6 +54,7 @@ type
     AObj:TRecord_;
     procedure InitCmb;
     procedure Open(CUST_ID:string);
+    procedure MoneyToDeposit;
     class function IntegralGlide(AOwner:TForm;CUST_ID:string;_AObj:TRecord_):boolean;
   end;
 
@@ -150,7 +152,8 @@ begin
     cdsTable.FieldByName('GLIDE_AMT').AsFloat := StrtoFloatDef(edtFLAG_AMT.Text,0);
     cdsTable.Post;
     Factor.UpdateBatch(cdsTable,'TIntegralGlide',Params);
-//    Factor.ExecSQL('UPDATE BAS_CUSTOMER set INTEGRAL=ISNULL(INTEGRAL,0)-'+FloatToStr(StrtoFloatDef(edtUSING_INTEGRAL.Text,0))+' WHERE CUST_ID='+QuotedStr(AObj.FieldbyName('CUST_ID').AsString));
+    if (IsIc.Checked) and (IsIc.Visible) then
+      MoneyToDeposit;
     self.ModalResult := MROK;
   finally
     Params.Free;
@@ -216,13 +219,52 @@ begin
     begin
       labUnit.Caption := '张';
       Label9.Caption := '兑换礼券';
+      IsIc.Visible := False;
     end
   else
     begin
       labUnit.Caption := '元';
       Label9.Caption := '兑换金额';
+      IsIc.Visible := True;
     end;
   edtUSING_INTEGRALPropertiesChange(Sender);
+end;
+
+procedure TfrmIntegralGlide.MoneyToDeposit;
+var rs:TZQuery;
+    params:TftParamList;
+begin
+  rs := TZQuery.Create(nil);
+  params := TftParamList.Create(nil);
+  try
+    params.ParamByName('GLIDE_ID').AsString := '';
+    params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs,'TDeposit',params);
+
+    rs.Append;
+    rs.FieldByName('GLIDE_ID').AsString :=TSequence.NewId;
+    rs.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('IC_CARDNO').AsString;
+    rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.FieldByName('SHOP_ID').AsString :=Global.SHOP_ID;
+    rs.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CLIENT_ID').AsString;
+    rs.FieldByName('SALES_ID').AsString :='';
+    rs.FieldByName('CREA_USER').AsString :=Global.UserID;
+    rs.FieldByName('CREA_DATE').AsInteger :=StrToInt(FormatDateTime('YYYYMMDD',Date));
+    rs.FieldByName('GLIDE_INFO').AsString := '现金转充值：'+edtFLAG_AMT.Text+'元';
+    rs.FieldByName('IC_GLIDE_TYPE').AsString := '1';
+    rs.FieldByName('GLIDE_MNY').AsFloat := StrtoFloatDef(edtFLAG_AMT.Text,0);
+    rs.FieldByName('PAY_A').AsFloat := StrToFloatDef(edtFLAG_AMT.Text,0);
+    rs.Post;
+
+    if Factor.UpdateBatch(rs,'TDeposit',nil) then
+    begin
+      MessageBox(Handle,pchar('现金转充值成功!'),pchar(Application.Title),MB_OK);
+    end;
+    
+  finally
+    rs.Free;
+    params.Free;
+  end;
 end;
 
 end.

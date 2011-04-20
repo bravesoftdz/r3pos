@@ -63,6 +63,7 @@ type
     { Public declarations }
     function FindColumn(FieldName:String):TColumnEh;
     procedure InitGrid;
+    procedure InitShopType;
     procedure AddRecord(AObj:TRecord_);
     function  PrintSQL:string;
   end;
@@ -75,6 +76,7 @@ uses ufrmShopInfo, uGlobal,uTreeUtil,uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmS
 procedure TfrmShopInfoList.AddRecord(AObj: TRecord_);
 begin
   if not cdsBrowser.Active  then exit;
+  InitShopType;
   if cdsBrowser.Locate('SHOP_ID',AObj.FieldByName('SHOP_ID').AsString,[]) then
   begin
      cdsBrowser.Edit;
@@ -155,10 +157,9 @@ begin
      IsHeadShop := ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;
   cdsBrowser.SQL.Text :=
-  'Select SHOP_ID,SHOP_NAME,SHOP_SPELL,LICENSE_CODE,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,'+
-  'REGION_ID,SHOP_TYPE,SEQ_NO From CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+IsHeadShop;
+  'Select SHOP_ID,SHOP_NAME,SHOP_SPELL,LICENSE_CODE,TENANT_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,REGION_ID,'+
+  'SHOP_TYPE,SEQ_NO from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+IsHeadShop;
 
-  cdsBrowser.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Factor.Open(cdsBrowser);
 end;
 
@@ -178,20 +179,7 @@ begin
           rs.Next;
         end;
     end;
-
-  rs := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  Column := FindColumn('SHOP_TYPE');
-  if Column <> nil then
-    begin
-      rs.First;
-      while not rs.Eof do
-        begin
-          Column.KeyList.Add(rs.Fields[0].AsString);
-          Column.PickList.Add(rs.Fields[1].AsString );
-          rs.Next;
-        end;
-    end;
-
+  InitShopType;
 end;
 
 procedure TfrmShopInfoList.FormShow(Sender: TObject);
@@ -375,6 +363,26 @@ begin
   PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
   DBGridEh1.DataSource.DataSet.Filtered := False;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
+end;
+
+procedure TfrmShopInfoList.InitShopType;
+var rs:TZQuery;
+  Column:TColumnEh;
+begin
+  rs := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  Column := FindColumn('SHOP_TYPE');
+  Column.KeyList.Clear;
+  Column.PickList.Clear;
+  if Column <> nil then
+    begin
+      rs.First;
+      while not rs.Eof do
+        begin
+          Column.KeyList.Add(rs.Fields[0].AsString);
+          Column.PickList.Add(rs.Fields[1].AsString );
+          rs.Next;
+        end;
+    end;
 end;
 
 end.

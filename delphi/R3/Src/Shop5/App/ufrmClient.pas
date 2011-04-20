@@ -38,6 +38,17 @@ type
     N4: TMenuItem;
     Cds_Client: TZQuery;
     PrintDBGridEh1: TPrintDBGridEh;
+    PopupMenu3: TPopupMenu;
+    N14: TMenuItem;
+    N15: TMenuItem;
+    actfrmIntegral: TAction;
+    actNewCard: TAction;
+    ToolButton1: TToolButton;
+    ToolButton3: TToolButton;
+    PopupMenu2: TPopupMenu;
+    N10: TMenuItem;
+    actDeposit: TAction;
+    N5: TMenuItem;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -63,6 +74,11 @@ type
     procedure N4Click(Sender: TObject);
     procedure Cds_ClientFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
+    procedure N14Click(Sender: TObject);
+    procedure N15Click(Sender: TObject);
+    procedure actDepositExecute(Sender: TObject);
+    procedure actNewCardExecute(Sender: TObject);
+    procedure actfrmIntegralExecute(Sender: TObject);
   private
     sqlstring:string;
     function CheckCanExport:boolean;
@@ -75,7 +91,8 @@ type
   end;
 
 implementation
-uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmBasic;//,ufrmSendGsm
+uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmIntegralGlide,
+     ufrmIntegralGlide_Add, ufrmDeposit, ufrmBasic;//,ufrmSendGsm
 {$R *.dfm}
 
 procedure TfrmClient.actNewExecute(Sender: TObject);
@@ -530,6 +547,73 @@ begin
   PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
   DBGridEh1.DataSource.DataSet.Filtered := False;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
+end;
+
+procedure TfrmClient.N14Click(Sender: TObject);
+var Aobj_Integral:TRecord_;
+begin
+  inherited;
+  if Cds_Client.IsEmpty then Exit;
+  Aobj_Integral := TRecord_.Create;
+  try
+    if TfrmIntegralGlide_Add.IntegralGlide(self,Cds_Client.FieldbyName('CLIENT_ID').AsString,Aobj_Integral) then
+       begin
+         {Cds_Customer.Edit;
+         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat + Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('ACCU_INTEGRAL').AsFloat := Cds_Customer.FieldByName('ACCU_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.Post;}
+         MessageBox(Handle,'积分赠送成功!',pchar(Application.Title),MB_OK);
+       end;
+  finally
+    Aobj_Integral.Free;
+  end;
+end;
+
+procedure TfrmClient.N15Click(Sender: TObject);
+var Aobj_Integral:TRecord_;
+begin
+  inherited;
+  if Cds_Client.IsEmpty then Exit;
+  Aobj_Integral := TRecord_.Create;
+  try
+    if TfrmIntegralGlide.IntegralGlide(self,Cds_Client.FieldbyName('CLIENT_ID').AsString,Aobj_Integral) then
+       begin
+         {Cds_Customer.Edit;
+         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat - Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat := Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.Post; }
+         MessageBox(Handle,'积分兑换成功!',pchar(Application.Title),MB_OK);
+       end;
+  finally
+    Aobj_Integral.Free;
+  end;
+end;
+
+procedure TfrmClient.actDepositExecute(Sender: TObject);
+var BALANCE:string;
+begin
+  inherited;
+  if not Cds_Client.Active then exit;
+  if Cds_Client.IsEmpty then exit;
+  if Cds_Client.FieldByName('CLIENT_CODE').AsString='' then  Raise Exception.Create('此客户没有会员卡！');
+  if TfrmDeposit.Open(Cds_Client.FieldByName('CLIENT_ID').AsString,BALANCE) then
+  begin
+    {Cds_Client.Edit;
+    Cds_Client.FieldByName('BALANCE').AsString:=BALANCE;
+    Cds_Client.Post; }
+  end;
+end;
+
+procedure TfrmClient.actNewCardExecute(Sender: TObject);
+begin
+  inherited;
+//
+end;
+
+procedure TfrmClient.actfrmIntegralExecute(Sender: TObject);
+begin
+  inherited;
+  N15Click(Sender);
 end;
 
 end.

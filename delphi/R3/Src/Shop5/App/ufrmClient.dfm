@@ -1,6 +1,6 @@
 inherited frmClient: TfrmClient
-  Left = 353
-  Top = 149
+  Left = 317
+  Top = 169
   Width = 742
   Height = 490
   Caption = #23458#25143#31649#29702
@@ -353,36 +353,36 @@ inherited frmClient: TfrmClient
   inherited RzPanel4: TRzPanel
     Width = 734
     inherited Image1: TImage
-      Left = 328
-      Width = 386
+      Left = 440
+      Width = 274
     end
     inherited Image3: TImage
-      Left = 328
-      Width = 386
+      Left = 440
+      Width = 274
     end
     inherited Image14: TImage
       Left = 714
     end
     inherited rzPanel5: TPanel
-      Left = 328
+      Left = 440
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #23458#25143#31649#29702
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 308
+      Width = 420
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 308
+          MinHeight = 420
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 308
+        Width = 420
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0
@@ -414,18 +414,32 @@ inherited frmClient: TfrmClient
           ImageIndex = 3
           Style = tbsDivider
         end
-        object But_Print: TToolButton
+        object ToolButton1: TToolButton
           Left = 179
+          Top = 0
+          Action = actfrmIntegral
+          DropdownMenu = PopupMenu3
+          Style = tbsDropDown
+        end
+        object ToolButton3: TToolButton
+          Left = 235
+          Top = 0
+          Action = actNewCard
+          DropdownMenu = PopupMenu2
+          Style = tbsDropDown
+        end
+        object But_Print: TToolButton
+          Left = 291
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 222
+          Left = 334
           Top = 0
           Action = actPreview
         end
         object But_Exit: TToolButton
-          Left = 265
+          Left = 377
           Top = 0
           Action = actExit
         end
@@ -460,6 +474,18 @@ inherited frmClient: TfrmClient
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end
+    object actfrmIntegral: TAction
+      Caption = #20817#25442
+      OnExecute = actfrmIntegralExecute
+    end
+    object actNewCard: TAction
+      Caption = #21457#21345
+      OnExecute = actNewCardExecute
+    end
+    object actDeposit: TAction
+      Caption = #20805#20540
+      OnExecute = actDepositExecute
+    end
   end
   object Ds_Client: TDataSource
     DataSet = Cds_Client
@@ -467,8 +493,8 @@ inherited frmClient: TfrmClient
     Top = 201
   end
   object PopupMenu1: TPopupMenu
-    Left = 414
-    Top = 236
+    Left = 606
+    Top = 60
     object N4: TMenuItem
       Caption = #21457#36865#30701#20449
       OnClick = N4Click
@@ -538,5 +564,27 @@ inherited frmClient: TfrmClient
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
+  end
+  object PopupMenu3: TPopupMenu
+    Left = 670
+    Top = 59
+    object N14: TMenuItem
+      Caption = #36192#36865#31215#20998
+      OnClick = N14Click
+    end
+    object N15: TMenuItem
+      Caption = #31215#20998#20817#25442
+      OnClick = N15Click
+    end
+  end
+  object PopupMenu2: TPopupMenu
+    Left = 638
+    Top = 59
+    object N10: TMenuItem
+      Action = actNewCard
+    end
+    object N5: TMenuItem
+      Action = actDeposit
+    end
   end
 end

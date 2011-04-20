@@ -1,5 +1,5 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 338
+  Left = 355
   Top = 159
   Width = 805
   Height = 534
@@ -375,7 +375,7 @@ inherited frmCustomer: TfrmCustomer
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = actEditExecute
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 OnKeyPress = DBGridEh1KeyPress
@@ -553,36 +553,36 @@ inherited frmCustomer: TfrmCustomer
   inherited RzPanel4: TRzPanel
     Width = 797
     inherited Image1: TImage
-      Left = 466
-      Width = 311
+      Left = 479
+      Width = 298
     end
     inherited Image3: TImage
-      Left = 466
-      Width = 311
+      Left = 479
+      Width = 298
     end
     inherited Image14: TImage
       Left = 777
     end
     inherited rzPanel5: TPanel
-      Left = 466
+      Left = 479
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #20250#21592#26723#26696
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 446
+      Width = 459
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 446
+          MinHeight = 459
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 446
+        Width = 459
         ButtonWidth = 43
         object But_Add: TToolButton
           Left = 0
@@ -618,35 +618,35 @@ inherited frmCustomer: TfrmCustomer
           Left = 175
           Top = 0
           Action = actfrmIntegral
+          DropdownMenu = PopupMenu3
+          Style = tbsDropDown
+          OnClick = N15Click
         end
         object ToolButton3: TToolButton
-          Left = 218
+          Left = 231
           Top = 0
-          Caption = #20648#20540#21345
+          Action = actNewCard
           DropdownMenu = PopupMenu2
-          ImageIndex = 24
           Style = tbsDropDown
-          Visible = False
-          OnClick = ToolButton3Click
         end
         object ToolButton5: TToolButton
-          Left = 274
+          Left = 287
           Top = 0
           Action = actRenew
           Visible = False
         end
         object But_Print: TToolButton
-          Left = 317
+          Left = 330
           Top = 0
           Action = actPrint
         end
         object But_Preview: TToolButton
-          Left = 360
+          Left = 373
           Top = 0
           Action = actPreview
         end
         object But_Exit: TToolButton
-          Left = 403
+          Left = 416
           Top = 0
           Action = actExit
         end
@@ -684,7 +684,6 @@ inherited frmCustomer: TfrmCustomer
     object actfrmIntegral: TAction
       Caption = #20817#25442
       ImageIndex = 41
-      OnExecute = actfrmIntegralExecute
     end
     object actNewCard: TAction
       Caption = #21457#26032#21345
@@ -822,5 +821,17 @@ inherited frmCustomer: TfrmCustomer
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
+  end
+  object PopupMenu3: TPopupMenu
+    Left = 654
+    Top = 67
+    object N14: TMenuItem
+      Caption = #36192#36865#31215#20998
+      OnClick = N14Click
+    end
+    object N15: TMenuItem
+      Caption = #31215#20998#20817#25442
+      OnClick = N15Click
+    end
   end
 end

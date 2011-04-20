@@ -74,6 +74,9 @@ type
     Cds_Customer: TZQuery;
     N13: TMenuItem;
     PrintDBGridEh1: TPrintDBGridEh;
+    PopupMenu3: TPopupMenu;
+    N14: TMenuItem;
+    N15: TMenuItem;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -89,7 +92,6 @@ type
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure Cds_CustomerAfterScroll(DataSet: TDataSet);
-    procedure actfrmIntegralExecute(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -109,6 +111,8 @@ type
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure N14Click(Sender: TObject);
+    procedure N15Click(Sender: TObject);
   private
     function CheckCanExport:boolean;
     procedure PrintView;
@@ -128,8 +132,9 @@ type
   end;
 
 implementation
-uses ufrmCustomerInfo, DateUtils, uShopGlobal,uCtrlUtil,ufrmEhLibReport,uFnUtil,ufrmIntegralGlide,ufrmBasic;
-//  ufrmSendGsm,ufrmDeposit,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
+uses ufrmCustomerInfo, DateUtils, uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
+     ufrmIntegralGlide_Add, ufrmDeposit, ufrmBasic;
+//  ufrmSendGsm,ufrmReturn,ufrmCancelCard,ufrmReNew,ufrmNewCard,ufrmPassWord,
 
 {$R *.dfm}
 
@@ -487,26 +492,6 @@ begin
   stbPanel.Caption:='第'+str+'条/共'+inttostr(rcAmt)+'条';
 end;
 
-procedure TfrmCustomer.actfrmIntegralExecute(Sender: TObject);
-var Aobj_Integral:TRecord_;
-begin
-  inherited;
-  if Cds_Customer.IsEmpty then Exit;
-  Aobj_Integral := TRecord_.Create;
-  try
-    if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
-       begin
-         Cds_Customer.Edit;
-         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat - Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
-         Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat := Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
-         Cds_Customer.Post;
-         MessageBox(Handle,'积分兑换成功!',pchar(Application.Title),MB_OK); 
-       end;
-  finally
-    Aobj_Integral.Free;
-  end;
-end;
-
 procedure TfrmCustomer.N2Click(Sender: TObject);
 begin
   inherited;
@@ -671,15 +656,15 @@ procedure TfrmCustomer.actDepositExecute(Sender: TObject);
 var BALANCE:string;
 begin
   inherited;
-  {if not Cds_Customer.Active then exit;
+  if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-  if Cds_Customer.FieldByName('IC_CARDNO').AsString='' then  Raise Exception.Create('此会员没有储值卡！');
+  if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
   if TfrmDeposit.Open(Cds_Customer.FieldByName('CUST_ID').AsString,BALANCE) then
   begin
     Cds_Customer.Edit;
     Cds_Customer.FieldByName('BALANCE').AsString:=BALANCE;
     Cds_Customer.Post;
-  end;}
+  end;
 end;
 
 procedure TfrmCustomer.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -901,6 +886,46 @@ begin
       else
         result:=result+spaceStr+trim(TitleList.Strings[i]);
     end;
+  end;
+end;
+
+procedure TfrmCustomer.N14Click(Sender: TObject);
+var Aobj_Integral:TRecord_;
+begin
+  inherited;
+  if Cds_Customer.IsEmpty then Exit;
+  Aobj_Integral := TRecord_.Create;
+  try
+    if TfrmIntegralGlide_Add.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
+       begin
+         Cds_Customer.Edit;
+         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat + Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('ACCU_INTEGRAL').AsFloat := Cds_Customer.FieldByName('ACCU_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.Post;
+         MessageBox(Handle,'积分增送成功!',pchar(Application.Title),MB_OK);
+       end;
+  finally
+    Aobj_Integral.Free;
+  end;
+end;
+
+procedure TfrmCustomer.N15Click(Sender: TObject);
+var Aobj_Integral:TRecord_;
+begin
+  inherited;
+  if Cds_Customer.IsEmpty then Exit;
+  Aobj_Integral := TRecord_.Create;
+  try
+    if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
+       begin
+         Cds_Customer.Edit;
+         Cds_Customer.FieldByName('INTEGRAL').AsFloat := Cds_Customer.FieldByName('INTEGRAL').AsFloat - Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat := Cds_Customer.FieldByName('RULE_INTEGRAL').AsFloat+Aobj_Integral.FieldbyName('INTEGRAL').AsFloat;
+         Cds_Customer.Post;
+         MessageBox(Handle,'积分兑换成功!',pchar(Application.Title),MB_OK);
+       end;
+  finally
+    Aobj_Integral.Free;
   end;
 end;
 

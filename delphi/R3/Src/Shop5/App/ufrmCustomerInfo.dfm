@@ -1,6 +1,6 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 669
-  Top = 194
+  Left = 406
+  Top = 177
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
   ClientWidth = 535
@@ -803,19 +803,6 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               Footers = <>
               Title.Caption = #21487#29992#20313#39069
               Width = 60
-            end
-            item
-              Alignment = taCenter
-              EditButtons = <>
-              FieldName = 'UNION_INFO'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlue
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsUnderline]
-              Footers = <>
-              Title.Caption = #35814#24773
-              Width = 50
             end>
         end
       end

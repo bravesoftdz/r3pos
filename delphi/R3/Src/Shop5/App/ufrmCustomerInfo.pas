@@ -754,10 +754,6 @@ begin
 
     end;
 
-  if Column.FieldName = 'UNION_INFO' then
-    begin
-
-    end;
 end;
 
 procedure TfrmCustomerInfo.ReadFrom(AObj: TRecord_);
@@ -767,6 +763,7 @@ var
   frame:TfrmCustomerExt;
 begin
   ReadFromObject(Aobj,Self);
+  Exit;
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
     begin

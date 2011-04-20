@@ -214,11 +214,9 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 127
       Width = 519
       Height = 187
-      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
-      TabIndex = 1
       TabOrder = 7
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

@@ -156,6 +156,7 @@ procedure TfrmUsersInfo.FormDestroy(Sender: TObject);
 begin
   inherited;
   Aobj.Free;
+  Freeform(Self);
 end;
 
 procedure TfrmUsersInfo.Open(code: string);

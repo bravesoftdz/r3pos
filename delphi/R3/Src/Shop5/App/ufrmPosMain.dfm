@@ -874,6 +874,7 @@ inherited frmPosMain: TfrmPosMain
       DigitalNumber = 12
       OnDrawColumnCell = DBGridEh1DrawColumnCell
       OnDrawFooterCell = DBGridEh1DrawFooterCell
+      OnGetCellParams = DBGridEh1GetCellParams
       Columns = <
         item
           EditButtons = <>

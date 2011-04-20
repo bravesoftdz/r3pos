@@ -35,7 +35,7 @@ type
 
    end;
 TRimCaTenant=record
-  OrgId:string;
+  CustId:string;
   ComId:string;
   P_TENANT_NAME:string;
   P_TENANT_ID:string;
@@ -43,6 +43,7 @@ end;
 
 function decodeZipBase64(inXml:string):string;
 function EncodeZipBase64(inXml:string):string;
+function NewId(id:string): string;
 
 //通过许可证号取公司代码
 function GetRimInfo(tid,lsCode:string):TRimCaTenant;
@@ -52,6 +53,17 @@ var
   url:string;
 implementation
 uses ZipUtils;
+function NewId(id:string): string;
+var
+  g:TGuid;
+begin
+  if CreateGUID(g)=S_OK then
+  begin
+     result :=trim(GuidToString(g));
+     result :=Copy(result,2,length(result)-2);  //去掉"{}"
+  end else
+     result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
+end;
 function EncodeZipBase64(inXml:string):string;
 var
   ism:TStringStream;

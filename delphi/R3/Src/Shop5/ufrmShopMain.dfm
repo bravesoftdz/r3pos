@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 181
-  Top = 292
+  Left = 3
+  Top = 3
   Width = 958
   Height = 558
   Caption = ''
@@ -7321,320 +7321,387 @@ inherited frmShopMain: TfrmShopMain
     object actfrmMeaUnits: TAction
       Tag = 32200001
       Caption = #21830#21697#21333#20301
+      Enabled = False
       OnExecute = actfrmMeaUnitsExecute
     end
     object actfrmDutyInfoList: TAction
       Tag = 31300001
       Caption = #32844#21153#26723#26696
+      Enabled = False
       OnExecute = actfrmDutyInfoListExecute
     end
     object actfrmRoleInfoList: TAction
       Tag = 31400001
       Caption = #35282#33394#26723#26696
+      Enabled = False
       OnExecute = actfrmRoleInfoListExecute
     end
     object actfrmDeptInfoList: TAction
       Tag = 31200001
       Caption = #37096#38376#26723#26696
+      Enabled = False
       OnExecute = actfrmDeptInfoListExecute
     end
     object actfrmUsers: TAction
       Tag = 31500001
       Caption = #21592#24037#26723#26696
+      Enabled = False
       OnExecute = actfrmUsersExecute
     end
     object actfrmBrandInfo: TAction
       Caption = #21697#29260#26723#26696
+      Enabled = False
       OnExecute = actfrmBrandInfoExecute
     end
     object actfrmFactoryInfo: TAction
       Caption = #29983#20135#21378#23478
+      Enabled = False
     end
     object actfrmStockOrderList: TAction
       Tag = 11200001
       Caption = #36827#36135#20837#24211
+      Enabled = False
       OnExecute = actfrmStockOrderListExecute
     end
     object actfrmSalesOrderList: TAction
       Tag = 12400001
       Caption = #38144#21806#20986#36135
+      Enabled = False
       OnExecute = actfrmSalesOrderListExecute
     end
     object actfrmChangeOrderList1: TAction
       Tag = 14300001
       Caption = #25439#30410#21333
+      Enabled = False
       OnExecute = actfrmChangeOrderList1Execute
     end
     object actfrmChangeOrderList2: TAction
       Tag = 14200001
       Caption = #39046#29992#21333
+      Enabled = False
       OnExecute = actfrmChangeOrderList2Execute
     end
     object actfrmGoodsSort: TAction
       Tag = 32100001
       Caption = #36135#21697#20998#31867
+      Enabled = False
       OnExecute = actfrmGoodsSortExecute
     end
     object actfrmGoodsInfoList: TAction
       Tag = 32600001
       Caption = #21830#21697#26723#26696
+      Enabled = False
       OnExecute = actfrmGoodsInfoListExecute
     end
     object actfrmCodeInfo3: TAction
       Tag = 21200001
       Caption = #25910#25903#31185#30446
+      Enabled = False
       OnExecute = actfrmCodeInfo3Execute
     end
     object actfrmSortInfo: TAction
       Caption = #21830#21697#31867#21035
+      Enabled = False
       OnExecute = actfrmSortInfoExecute
     end
     object actfrmImplInfo: TAction
       Caption = #37325#28857#21697#29260
+      Enabled = False
       OnExecute = actfrmImplInfoExecute
     end
     object actfrmAreaInfo: TAction
       Caption = #30465#20869#22806
+      Enabled = False
       OnExecute = actfrmAreaInfoExecute
     end
     object actfrmSaleStyle: TAction
       Caption = #38144#21806#26041#24335
+      Enabled = False
       OnExecute = actfrmSaleStyleExecute
     end
     object actfrmSettleCode: TAction
       Caption = #32467#31639#26041#24335
+      Enabled = False
       OnExecute = actfrmSettleCodeExecute
     end
     object actfrmShopGroup: TAction
       Caption = #31649#29702#32676#32452
+      Enabled = False
       OnExecute = actfrmShopGroupExecute
     end
     object actfrmRecvOrderList: TAction
       Tag = 21300001
       Caption = #25910#27454#21333
+      Enabled = False
       OnExecute = actfrmRecvOrderListExecute
     end
     object actfrmPayOrderList: TAction
       Tag = 21400001
       Caption = #20184#27454#21333
+      Enabled = False
       OnExecute = actfrmPayOrderListExecute
     end
     object actfrmClient: TAction
       Tag = 33300001
       Caption = #23458#25143#26723#26696
+      Enabled = False
       OnExecute = actfrmClientExecute
     end
     object actfrmSupplier: TAction
       Tag = 33100001
       Caption = #20379#24212#21830#26723#26696
+      Enabled = False
       OnExecute = actfrmSupplierExecute
     end
     object actfrmSalRetuOrderList: TAction
       Tag = 12500001
       Caption = #38144#21806#36864#36135
+      Enabled = False
       OnExecute = actfrmSalRetuOrderListExecute
     end
     object actfrmStkRetuOrderList: TAction
       Tag = 11300001
       Caption = #37319#36141#36864#36135
+      Enabled = False
       OnExecute = actfrmStkRetuOrderListExecute
     end
     object actfrmPosMain: TAction
       Tag = 13100001
       Caption = #25910#27454#26426
+      Enabled = False
       OnExecute = actfrmPosMainExecute
     end
     object actfrmPriceGradeInfo: TAction
       Tag = 33200001
       Caption = #23458#25143#31561#32423
+      Enabled = False
       OnExecute = actfrmPriceGradeInfoExecute
     end
     object actfrmSalIndentOrderList: TAction
       Tag = 12300001
       Caption = #38144#21806#35746#21333
+      Enabled = False
       OnExecute = actfrmSalIndentOrderListExecute
     end
     object actfrmStkIndentOrderList: TAction
       Tag = 11100001
       Caption = #36827#36135#35746#21333
+      Enabled = False
       OnExecute = actfrmStkIndentOrderListExecute
     end
     object actfrmInvoice: TAction
       Caption = #21457#31080#31649#29702
+      Enabled = False
       OnExecute = actfrmInvoiceExecute
     end
     object actfrmCustomer: TAction
       Tag = 33400001
       Caption = #20250#21592#31649#29702
+      Enabled = False
       OnExecute = actfrmCustomerExecute
     end
     object actfrmCostCalc: TAction
       Caption = #25104#26412#26680#31639
+      Enabled = False
       OnExecute = actfrmCostCalcExecute
     end
     object actfrmSysDefine: TAction
       Tag = 92100001
       Caption = #31995#32479#35774#32622
+      Enabled = False
       OnExecute = actfrmSysDefineExecute
     end
     object actfrmDaysClose: TAction
       Tag = 22100001
       Caption = #26085#32467#36134
+      Enabled = False
       OnExecute = actfrmDaysCloseExecute
     end
     object actfrmMonthClose: TAction
       Tag = 22200001
       Caption = #26376#32467#36134
+      Enabled = False
       OnExecute = actfrmMonthCloseExecute
     end
     object actfrmCloseForDay: TAction
       Tag = 13200001
       Caption = #20132#29677#32467#36134
+      Enabled = False
       OnExecute = actfrmCloseForDayExecute
     end
     object actfrmPriceOrderList: TAction
       Tag = 12200001
       Caption = #21830#21697#20419#38144
+      Enabled = False
       OnExecute = actfrmPriceOrderListExecute
     end
     object actfrmCheckOrderList: TAction
       Tag = 14400001
       Caption = #30424#28857#21333
+      Enabled = False
       OnExecute = actfrmCheckOrderListExecute
     end
     object actfrmTransOrderList: TAction
       Tag = 21700001
       Caption = #23384#21462#27454#21333
+      Enabled = False
       OnExecute = actfrmTransOrderListExecute
     end
     object actfrmDbOrderList: TAction
       Tag = 14100001
       Caption = #35843#25320#21333
+      Enabled = False
       OnExecute = actfrmDbOrderListExecute
     end
     object actfrmShopInfoList: TAction
       Tag = 31100001
       Caption = #38376#24215#26723#26696
+      Enabled = False
       OnExecute = actfrmShopInfoListExecute
     end
     object actfrmXsmBrowser: TAction
       Caption = #26032#21830#30431
+      Enabled = False
       OnExecute = actfrmXsmBrowserExecute
     end
     object actfrmAccount: TAction
       Tag = 21100001
       Caption = #38134#34892#36134#25143
+      Enabled = False
       OnExecute = actfrmAccountExecute
     end
     object actfrmIoroOrderList1: TAction
       Tag = 21500001
       Caption = #20854#20182#25910#20837
+      Enabled = False
       OnExecute = actfrmIoroOrderList1Execute
     end
     object actfrmIoroOrderList2: TAction
       Tag = 21600001
       Caption = #20854#20182#25903#20986
+      Enabled = False
       OnExecute = actfrmIoroOrderList2Execute
     end
     object actfrmDevFactory: TAction
       Tag = 92200001
       Caption = #35774#22791#21442#25968
+      Enabled = False
       OnExecute = actfrmDevFactoryExecute
     end
     object actfrmIntfSetup: TAction
       Tag = 92300001
       Caption = #25509#21475#35774#32622
+      Enabled = False
     end
     object actfrmStorageTracking: TAction
       Tag = 14500001
       Caption = #24211#23384#26597#35810
+      Enabled = False
       OnExecute = actfrmStorageTrackingExecute
     end
     object actfrmRckMng: TAction
       Caption = #32467#36134#31649#29702
+      Enabled = False
       OnExecute = actfrmRckMngExecute
     end
     object actfrmCheckTablePrint: TAction
       Caption = #25171#21360#30424#28857
+      Enabled = False
       OnExecute = actfrmCheckTablePrintExecute
     end
     object actfrmJxcTotalReport: TAction
       Tag = 42300001
       Caption = #36827#38144#23384#32479#35745#34920
+      Enabled = False
       OnExecute = actfrmJxcTotalReportExecute
     end
     object actfrmStockDayReport: TAction
       Tag = 41100001
       Caption = #21830#21697#36827#36135#25253#34920
+      Enabled = False
       OnExecute = actfrmStockDayReportExecute
     end
     object actfrmSaleDayReport: TAction
       Tag = 41200001
       Caption = #21830#21697#38144#21806#25253#34920
+      Enabled = False
       OnExecute = actfrmSaleDayReportExecute
     end
     object actfrmChange1DayReport: TAction
       Tag = 41800001
       Caption = #21830#21697#25439#30410#25253#34920
+      Enabled = False
       OnExecute = actfrmChange1DayReportExecute
     end
     object actfrmChange2DayReport: TAction
       Tag = 41700001
       Caption = #21830#21697#39046#29992#25253#34920
+      Enabled = False
       OnExecute = actfrmChange2DayReportExecute
     end
     object actfrmLockScreen: TAction
       Caption = #38145#23631
+      Enabled = False
       OnExecute = actfrmLockScreenExecute
     end
     object actfrmStorageDayReport: TAction
       Tag = 41900001
       Caption = #21830#21697#24211#23384#25253#34920
+      Enabled = False
       OnExecute = actfrmStorageDayReportExecute
     end
     object actfrmRecvDayReport: TAction
       Tag = 41400001
       Caption = #25910#27454#26085#25253#34920
+      Enabled = False
       OnExecute = actfrmRecvDayReportExecute
     end
     object actfrmRckDayReport: TAction
       Tag = 41300001
       Caption = #25910#38134#32467#36134#25253#34920
+      Enabled = False
       OnExecute = actfrmRckDayReportExecute
     end
     object actfrmRelation: TAction
       Tag = 32700001
       Caption = #20379#24212#38142#31649#29702
+      Enabled = False
       OnExecute = actfrmRelationExecute
     end
     object actfrmPayDayReport: TAction
       Tag = 41500001
       Caption = #20184#27454#26085#25253#34920
+      Enabled = False
       OnExecute = actfrmPayDayReportExecute
     end
     object actfrmPayAbleReport: TAction
       Tag = 41020001
       Caption = #24212#20184#36134#27454#25253#34920
+      Enabled = False
       OnExecute = actfrmPayAbleReportExecute
     end
     object actfrmRecvAbleReport: TAction
       Tag = 41010001
       Caption = #24212#25910#36134#27454#25253#34920
+      Enabled = False
       OnExecute = actfrmRecvAbleReportExecute
     end
     object actfrmDbDayReport: TAction
       Tag = 41600001
       Caption = #21830#21697#35843#25320#25253#34920
+      Enabled = False
       OnExecute = actfrmDbDayReportExecute
     end
     object actfrmGodsRunningReport: TAction
       Tag = 42200001
       Caption = #21830#21697#27969#27700#25253#34920
+      Enabled = False
       OnExecute = actfrmGodsRunningReportExecute
     end
     object actfrmIoroDayReport: TAction
       Tag = 41030001
       Caption = #20854#20182#25910#25903#25253#34920
+      Enabled = False
       OnExecute = actfrmIoroDayReportExecute
     end
     object actfrmMessage: TAction
@@ -7650,11 +7717,15 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmQuestionnaireExecute
     end
     object actfrmInLocusOrderList: TAction
+      Tag = 14600001
       Caption = #25195#30721#20837#24211
+      Enabled = False
       OnExecute = actfrmInLocusOrderListExecute
     end
     object actfrmOutLocusOrderList: TAction
+      Tag = 14700001
       Caption = #25195#30721#20986#24211
+      Enabled = False
       OnExecute = actfrmOutLocusOrderListExecute
     end
   end

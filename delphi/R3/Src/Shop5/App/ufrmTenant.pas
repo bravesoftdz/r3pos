@@ -83,6 +83,7 @@ type
     function Check:boolean;
     procedure SaveParams;
     class function coRegister(Owner:TForm):boolean;
+    class function coNewRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
     procedure Save;
     procedure Open(id:integer);
@@ -181,12 +182,12 @@ begin
   //
   Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
   //以上语句在与远程服务器连接后，从服务器端获取企业ID值
-
-  CdsTable.edit;
+  if cdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
+     CdsTable.Edit else CdsTable.append;
   Obj.WriteToDataSet(CdsTable);
 
   CdsTable.Post;
-  Factor.UpdateBatch(CdsTable,'TTenant',nil);
+  Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Obj.FieldByName('TENANT_NAME').AsString;
   TENANT_ID := Tenant.TENANT_ID;
@@ -213,14 +214,15 @@ begin
   Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-  if (TENANT_ID>0) and (TENANT_ID <> Tenant.TENANT_ID) then
-     begin
-       MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
-       Exit;
-     end;
+// 改成允许注册多个企业  
+//  if (TENANT_ID>0) and (TENANT_ID <> Tenant.TENANT_ID) then
+//     begin
+//       MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
+//       Exit;
+//     end;
   Open(Tenant.TENANT_ID);
 //兄弟不能有这句，晕呼  zhangsenrong 修改
-//  IF CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
+//  if CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
     begin
       CdsTable.Edit;
       CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
@@ -245,7 +247,7 @@ begin
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
       CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
-      Factor.UpdateBatch(CdsTable,'TTenant',nil);
+      Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
@@ -328,7 +330,7 @@ begin
   Params := TftParamList.Create;
   try
      Params.ParamByName('TENANT_ID').AsInteger := id;
-     Factor.Open(CdsTable,'TTenant',Params);
+     Global.LocalFactory.Open(CdsTable,'TTenant',Params);
   finally
     Params.Free;
   end;
@@ -385,7 +387,7 @@ begin
   try
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_ID,TENANT_NAME,SHORT_TENANT_NAME from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
-    Factor.Open(Temp);
+    Global.LocalFactory.Open(Temp);
     if NetWork then
        begin
          try
@@ -396,6 +398,8 @@ begin
                 if StrtoIntDef(login.RET,0) in [2,3] then
                    begin
                      MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                     Global.LocalFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''');
+                     Global.LocalFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE=''TENANT_ID''');
                      result := false;
                      Exit;
                    end
@@ -436,10 +440,31 @@ begin
      except
         Raise Exception.Create('软件没有正确安装，请联系客服人员');
      end;
-     dbFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+inttostr(TENANT_ID)+''',0,''00'',strftime(''%s'',''now'',''localtime'')-1293840000)'); 
+     if dbFactory.ExecSQL('update SYS_DEFINE set VALUE='''+inttostr(TENANT_ID)+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''')=0 then
+        dbFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,''TENANT_ID'','''+inttostr(TENANT_ID)+''',0,''00'',5497000)');
+     if dbFactory.ExecSQL('update SYS_DEFINE set VALUE='''+inttostr(TENANT_ID)+''' where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE=''TENANT_ID''')=0 then
+        dbFactory.ExecSQL('insert into SYS_DEFINE (TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+inttostr(TENANT_ID)+',''TENANT_ID'','''+inttostr(TENANT_ID)+''',0,''00'',5497000)');
    finally
      dbFactory.Free;
    end;
+end;
+
+class function TfrmTenant.coNewRegister(Owner: TForm): boolean;
+begin
+  if not CAFactory.CheckNetwork then Raise Exception.Create('对不起请检查网络是否正常连接...'); 
+  with TfrmTenant.Create(Owner) do
+    begin
+      try
+        frmLogo.Label1.Caption := '正在获取企业证书...';
+        frmLogo.Label1.Update;
+        rzPage.ActivePageIndex := 0;
+        TENANT_ID := 0;
+        Global.TENANT_ID := 0;
+        result := (ShowModal=MROK);
+       finally
+        free;
+      end;
+    end;
 end;
 
 end.

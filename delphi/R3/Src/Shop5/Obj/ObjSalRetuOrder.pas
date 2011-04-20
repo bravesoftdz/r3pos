@@ -50,6 +50,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TSalRetuForLocusNo=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
 
 implementation
 
@@ -547,6 +552,30 @@ begin
   end;
 end;
 
+{ TSalRetuForLocusNo }
+
+procedure TSalRetuForLocusNo.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,- AMOUNT as AMOUNT,- CALC_AMOUNT as CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
+               'from SAL_LOCUS_FORSALE j where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
+  IsSQLUpdate := True;
+  Str := 'insert into SAL_LOCUS_FORSALE(TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:SALES_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,- :AMOUNT,- :CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := str;
+  Str := 'update SAL_LOCUS_FORSALE set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SALES_ID=:SALES_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=- :AMOUNT,CALC_AMOUNT=- :CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+  UpdateSQL.Text := str;
+  Str := 'delete from SAL_LOCUS_FORSALE where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+  DeleteSQL.Text := str;
+end;
+
 initialization
   RegisterClass(TSalRetuOrder);
   RegisterClass(TSalRetuData);
@@ -554,6 +583,7 @@ initialization
   RegisterClass(TSalRetuOrderUnAudit);
   RegisterClass(TSalRetuOrderGetPrior);
   RegisterClass(TSalRetuOrderGetNext);
+  RegisterClass(TSalRetuForLocusNo);
 finalization
   UnRegisterClass(TSalRetuOrder);
   UnRegisterClass(TSalRetuData);
@@ -561,4 +591,5 @@ finalization
   UnRegisterClass(TSalRetuOrderUnAudit);
   UnRegisterClass(TSalRetuOrderGetPrior);
   UnRegisterClass(TSalRetuOrderGetNext);
+  UnRegisterClass(TSalRetuForLocusNo);
 end.

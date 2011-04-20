@@ -18,27 +18,28 @@ type
     ImageList1: TImageList;
     procedure cxbtnCancelClick(Sender: TObject);
     procedure btnInstallClick(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     procedure ReadHost;
-    class function HostDialog(Owner:TForm):boolean;
+    class function HostDialog(Owner:TForm):TModalResult;
   end;
 
 implementation
-uses IniFiles;
+uses IniFiles,ufrmTenant;
 {$R *.dfm}
 
 { TfrmHostDialog }
 
-class function TfrmHostDialog.HostDialog(Owner: TForm): boolean;
+class function TfrmHostDialog.HostDialog(Owner: TForm): TModalResult;
 begin
   with TfrmHostDialog.Create(Owner) do
     begin
       try
         ReadHost;
-        result := (ShowModal=MROK);
+        result := (ShowModal);
       finally
         free;
       end;
@@ -95,6 +96,15 @@ begin
     f.Free;
   end;
   self.ModalResult := MROK;
+end;
+
+procedure TfrmHostDialog.RzBitBtn1Click(Sender: TObject);
+begin
+  if TfrmTenant.coNewRegister(self) then
+     begin
+       ModalResult := mrRetry;
+     end;
+
 end;
 
 end.

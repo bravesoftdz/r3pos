@@ -52,7 +52,11 @@ uses
   ufrmTimer in 'ufrmTimer.pas' {frmTimer},
   TrayDesktop in 'TrayDesktop.pas',
   objMessage in '..\Shop5\Obj\objMessage.pas',
-  objSyncRelation in '..\PlugIn\obj\objSyncRelation.pas';
+  objSyncRelation in '..\PlugIn\obj\objSyncRelation.pas',
+  ObjImpeach in '..\Shop5\Obj\ObjImpeach.pas',
+  ObjQuestionnaire in '..\Shop5\Obj\ObjQuestionnaire.pas',
+  objDownOrder in '..\PlugIn\obj\objDownOrder.pas',
+  uPlugInUtil in '..\PlugIn\obj\uPlugInUtil.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}
@@ -115,8 +119,8 @@ begin
   if Installing or StartService then
   begin
     SvcMgr.Application.Initialize;
-    SvcMgr.Application.Title := '数据访问服务组件(DAS)';
-    SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
+    SvcMgr.Application.Title := '通讯服务器';
+  SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
   SvcMgr.Application.Run;
   end else

@@ -1,5 +1,5 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 349
+  Left = 351
   Top = 124
   Width = 647
   Height = 467
@@ -348,6 +348,7 @@ inherited frameOrderForm: TframeOrderForm
       OnDblClick = DBGridEh1DblClick
       OnDrawColumnCell = DBGridEh1DrawColumnCell
       OnDrawFooterCell = DBGridEh1DrawFooterCell
+      OnGetCellParams = DBGridEh1GetCellParams
       OnKeyDown = DBGridEh1KeyDown
       OnKeyPress = DBGridEh1KeyPress
       OnMouseDown = DBGridEh1MouseDown

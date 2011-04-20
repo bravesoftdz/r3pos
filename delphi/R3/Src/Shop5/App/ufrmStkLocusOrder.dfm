@@ -1,6 +1,6 @@
 inherited frmStkLocusOrder: TfrmStkLocusOrder
-  Left = 194
-  Top = 196
+  Left = 195
+  Top = 49
   Width = 786
   Height = 523
   Caption = #36827#36135#21333
@@ -352,7 +352,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36827#36135#25968#37327
+        Caption = #24320#21333#25968#37327
       end
       object Label5: TLabel
         Left = 348
@@ -376,7 +376,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #36827#36135#21697#31181
+        Caption = #24320#21333#21697#31181
       end
       object Label10: TLabel
         Left = 348
@@ -500,7 +500,9 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
       Color = clWhite
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
-      OnGetCellParams = DBGridEh1GetCellParams
+      OnKeyDown = nil
+      OnKeyPress = nil
+      OnMouseDown = nil
       Columns = <
         item
           EditButtons = <>

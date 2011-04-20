@@ -64,7 +64,7 @@ var
 begin
   // zhangsenrong 20110-01-26 COMM 传为公共涵数
   Str := 'update CA_SHOP_INFO set LICENSE_CODE=:LICENSE_CODE,SHOP_NAME=:SHORT_TENANT_NAME,SHOP_SPELL=:TENANT_SPELL,TENANT_ID=:TENANT_ID,'+
-         'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where SHOP_ID=:OLD_TENANT_ID * 10000+1';
+         'COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:OLD_TENANT_ID and SHOP_ID='''+FieldbyName('TENANT_ID').AsString+'0001''';
   AGlobal.ExecSQL(Str,self);
   //
   Result := True;

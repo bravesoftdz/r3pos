@@ -456,6 +456,7 @@ initialization
   RegisterClass(TChangeOrderGetNext);
   RegisterClass(TChangeOrderAudit);
   RegisterClass(TChangeOrderUnAudit);
+  RegisterClass(TChangeForLocusNo);
 finalization
   UnRegisterClass(TChangeOrder);
   UnRegisterClass(TChangeData);
@@ -463,4 +464,5 @@ finalization
   UnRegisterClass(TChangeOrderGetNext);
   UnRegisterClass(TChangeOrderAudit);
   UnRegisterClass(TChangeOrderUnAudit);
+  UnRegisterClass(TChangeForLocusNo);
 end.

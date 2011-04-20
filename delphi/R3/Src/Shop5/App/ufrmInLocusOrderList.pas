@@ -34,6 +34,27 @@ type
     fndSHOP_ID: TzrComboBoxList;
     Label3: TLabel;
     fndDEPT_ID: TzrComboBoxList;
+    TabSheet2: TRzTabSheet;
+    RzPanel6: TRzPanel;
+    RzPanel7: TRzPanel;
+    RzLabel1: TRzLabel;
+    RzLabel6: TRzLabel;
+    RzLabel7: TRzLabel;
+    RzLabel8: TRzLabel;
+    Label2: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    RzBitBtn1: TRzBitBtn;
+    fndP2_STATUS: TcxRadioGroup;
+    fndP2_D1: TcxDateEdit;
+    fndP2_D2: TcxDateEdit;
+    fndP2_SALES_ID: TcxTextEdit;
+    fndP2_CLIENT_ID: TzrComboBoxList;
+    fndP2_SHOP_ID: TzrComboBoxList;
+    fndP2_DEPT_ID: TzrComboBoxList;
+    DBGridEh2: TDBGridEh;
+    cdsP2List: TZQuery;
+    dsP2List: TDataSource;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -42,7 +63,6 @@ type
     procedure actNextExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
-    procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
     procedure frfStockOrderUserFunction(const Name: String; p1, p2,
@@ -56,6 +76,9 @@ type
     procedure frfStockOrderGetValue(const ParName: String;
       var ParValue: Variant);
     procedure RzPageChange(Sender: TObject);
+    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure cdsP2ListAfterScroll(DataSet: TDataSet);
   private
     oid:string;
     function  CheckCanExport: boolean; override;
@@ -63,14 +86,18 @@ type
     { Public declarations }
     IsEnd: boolean;
     MaxId:string;
+    IsEnd2: boolean;
+    MaxId2:string;
     function PrintSQL(tenantid,id:string):string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
+    function EncodeSQL2(id:string):string;
+    procedure Open2(Id:string);
   end;
 
 implementation
-uses ufrmStkLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal;
+uses ufrmStkLocusOrder, ufrmSalRetuLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -115,7 +142,10 @@ end;
 
 function TfrmInLocusOrderList.GetFormClass: TFormClass;
 begin
-  result := TfrmStkLocusOrder;
+  case rzPage.ActivePageIndex of
+  0:result := TfrmStkLocusOrder;
+  1:result := TfrmSalRetuLocusOrder;
+  end;
 end;
 
 procedure TfrmInLocusOrderList.Open(Id: string);
@@ -170,6 +200,9 @@ end;
 procedure TfrmInLocusOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
+  InitGridPickList(DBGridEh1);
+  InitGridPickList(DBGridEh2);
+
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -181,14 +214,30 @@ begin
   D1.Date := date();
   D2.Date := date();
 
+  fndP2_SHOP_ID.KeyValue := Global.SHOP_ID;
+  fndP2_SHOP_ID.Text := Global.SHOP_NAME;
+  fndP2_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP2_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndP2_DEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndP2_DEPT_ID.RangeField := 'DEPT_TYPE';
+  fndP2_DEPT_ID.RangeValue := '1';
+  fndP2_D1.Date := date();
+  fndP2_D2.Date := date();
+
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
-    fndSHOP_ID.Properties.ReadOnly := False;
     fndSHOP_ID.KeyValue := Global.SHOP_ID;
     fndSHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
-  end;  
+
+    fndP2_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP2_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP2_SHOP_ID.Style);
+    fndP2_SHOP_ID.Properties.ReadOnly := True;
+  end;
+
+  RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmInLocusOrderList.FormShow(Sender: TObject);
@@ -200,8 +249,12 @@ end;
 
 procedure TfrmInLocusOrderList.actFindExecute(Sender: TObject);
 begin
-  inherited;
-  Open('');
+  if rzPage.ActivePageIndex > 1 then
+     inherited;
+  case rzPage.ActivePageIndex of
+  0:Open('');
+  1:Open2('');
+  end;
 
 end;
 
@@ -279,76 +332,44 @@ end;
 
 procedure TfrmInLocusOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11200001',3) then Raise Exception.Create('你没有修改进货单的权限,请和管理员联系.');
-  if (CurOrder=nil) then
-     begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
-     end;
+  if not ShopGlobal.GetChkRight('14600001',3) then Raise Exception.Create('你没有重扫的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmInLocusOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11200001',4) then Raise Exception.Create('你没有删除进货单的权限,请和管理员联系.');
-  if (CurOrder=nil) then
-     begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
-     end;
+  if not ShopGlobal.GetChkRight('14600001',3) then Raise Exception.Create('你没有重扫的权限,请和管理员联系.');
   inherited;
-  if (CurOrder<>nil) then
-     begin
-       if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('11200001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
-          CurOrder.NewOrder
-       else
-          if rzPage.PageCount>2 then CurOrder.Close;
-     end;
-end;
-
-procedure TfrmInLocusOrderList.actSaveExecute(Sender: TObject);
-begin
-  inherited;
-  if (CurOrder<>nil) then
-     begin
-       if not CurOrder.saved then Exit;
-       if (ShopGlobal.GetParameter('SAVE_STOCK_PRINT')='1')
-          and
-          ShopGlobal.GetChkRight('11200001',6)
-       then
-          begin
-            actPrint.OnExecute(nil);
-          end;
-       if ShopGlobal.GetChkRight('11200001',2) and (MessageBox(Handle,'是否继续新增进货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
-          CurOrder.NewOrder
-       else
-          if rzPage.PageCount>2 then CurOrder.Close;
-     end;
 end;
 
 procedure TfrmInLocusOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11200001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
-  if (CurOrder=nil) then
-     begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
-     end;
+  if not ShopGlobal.GetChkRight('14600001',4) then Raise Exception.Create('你没有审核的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmInLocusOrderList.actInfoExecute(Sender: TObject);
+var
+  idx:integer;
 begin
-  inherited;
   if (CurOrder=nil) then
      begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       idx := RzPage.ActivePageIndex;
+       Clear;
+       RzPage.ActivePageIndex := idx;
+       case idx of
+       0:begin
+           if cdsList.IsEmpty then Exit;
+           OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+         end;
+       1:begin
+           if cdsP2List.IsEmpty then Exit;
+           OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+         end;
+       end;
      end;
-
 end;
 
 procedure TfrmInLocusOrderList.frfStockOrderUserFunction(const Name: String;
@@ -405,7 +426,7 @@ end;
 procedure TfrmInLocusOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14600001',5) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -429,7 +450,7 @@ end;
 procedure TfrmInLocusOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14600001',5) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -451,15 +472,27 @@ begin
 end;
 
 procedure TfrmInLocusOrderList.actNewExecute(Sender: TObject);
+var
+  idx:integer;
 begin
-  if not ShopGlobal.GetChkRight('11200001',3) then Raise Exception.Create('你没有修改进货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14600001',2) then Raise Exception.Create('你没有扫码的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
-       if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       idx := RzPage.ActivePageIndex;
+       Clear;
+       RzPage.ActivePageIndex := idx;
+       case idx of
+       0:begin
+           if cdsList.IsEmpty then Exit;
+           OpenForm(cdsList.FieldbyName('STOCK_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+         end;
+       1:begin
+           if cdsP2List.IsEmpty then Exit;
+           OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+         end;
+       end;
      end;
-  inherited;
-
+  if CurOrder<>nil then CurOrder.NewOrder;
 end;
 
 procedure TfrmInLocusOrderList.DBGridEh1DblClick(Sender: TObject);
@@ -497,7 +530,7 @@ end;
 
 function TfrmInLocusOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('11200001',7);
+  result:=ShopGlobal.GetChkRight('14600001',6);
 end;
 
 procedure TfrmInLocusOrderList.RzPageChange(Sender: TObject);
@@ -510,6 +543,115 @@ begin
      end
   else
      actAudit.Enabled := false;
+
+end;
+
+function TfrmInLocusOrderList.EncodeSQL2(id: string): string;
+var w,w1:string;
+begin
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=3 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  if fndP2_CLIENT_ID.AsString <> '' then
+     w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndP2_DEPT_ID.AsString <> '' then
+     w := w +' and A.DEPT_ID=:DEPT_ID';
+  if trim(fndP2_SALES_ID.Text) <> '' then
+     w := w +' and A.GLIDE_NO like ''%'+trim(fndP2_SALES_ID.Text)+'''';
+  if fndP2_STATUS.ItemIndex > 0 then
+     begin
+       case fndP2_STATUS.ItemIndex of
+       1:w1 := ' where LOCUS_USER is null';
+       2:w1 := ' where LOCUS_USER is not null';
+       end;
+     end;
+  if id<>'' then
+     w := w +' and A.SALES_ID>'''+id+'''';
+  result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
+            'max(-A.SALE_AMT) as AMOUNT,max(B.LOCUS_DATE) as LOCUS_DATE,max(B.CREA_USER) as LOCUS_USER,sum(-B.AMOUNT) as LOCUS_AMT '+
+            'from SAL_SALESORDER A left outer join SAL_LOCUS_FORSALE B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+w+' group by A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,'+
+            'A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE';
+  result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
+  result := 'select jc.*,c.RECV_MNY,c.RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SALES_ID=c.SALES_ID';
+  result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
+  result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID';
+  result := 'select jf.*,f.USER_NAME as LOCUS_USER_TEXT from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.LOCUS_USER=f.USER_ID '+w1;
+  case Factor.iDbType of
+  0:result := 'select top 600 * from ('+result+') j order by SALES_ID';
+  4:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by SALES_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by SALES_ID limit 600';
+  else
+    result := 'select * from ('+result+') j order by SALES_ID';
+  end;
+end;
+
+procedure TfrmInLocusOrderList.Open2(Id: string);
+var
+  rs:TZQuery;
+  sm:TMemoryStream;
+begin
+  if not Visible then Exit;
+  if Id='' then cdsList.close;
+  rs := TZQuery.Create(nil);
+  sm := TMemoryStream.Create;
+  cdsP2List.DisableControls;
+  try
+    rs.SQL.Text := EncodeSQL2(Id);
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('SHOP_ID').AsString := fndP2_SHOP_ID.AsString;
+    rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D2.Date));
+    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP2_CLIENT_ID.AsString;
+    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndP2_DEPT_ID.AsString;
+    Factor.Open(rs);
+    rs.Last;
+    MaxId2 := rs.FieldbyName('SALES_ID').AsString;
+    if Id='' then
+    begin
+       rs.SaveToStream(sm);
+       cdsP2List.LoadFromStream(sm);
+       cdsP2List.IndexFieldNames := 'GLIDE_NO';
+    end
+    else
+    begin
+       rs.SaveToStream(sm);
+       cdsP2List.AddFromStream(sm);
+    end;
+    if rs.RecordCount <600 then IsEnd2 := True else IsEnd2 := false;
+  finally
+    cdsP2List.EnableControls;
+    sm.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmInLocusOrderList.DBGridEh2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh2.Focused) then
+  begin
+    //DBGridEh1.Canvas.Font.Color := clWhite;
+    DBGridEh2.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh2.canvas.Brush.Color := $0000F2F2;
+      DBGridEh2.canvas.FillRect(ARect);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsP2List.RecNo)),length(Inttostr(cdsP2List.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+end;
+
+procedure TfrmInLocusOrderList.cdsP2ListAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if IsEnd2 or not DataSet.Eof then Exit;
+  if cdsP2List.ControlsDisabled then Exit;
+  Open(MaxId2);
 
 end;
 

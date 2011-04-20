@@ -1,5 +1,5 @@
 object frmBasic: TfrmBasic
-  Left = 461
+  Left = 464
   Top = 195
   Width = 557
   Height = 414

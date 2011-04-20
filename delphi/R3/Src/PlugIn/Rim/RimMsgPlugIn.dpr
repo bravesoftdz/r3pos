@@ -13,7 +13,7 @@ library RimMsgPlugIn;
 uses
   SysUtils,
   Classes,
-  ZBase,
+  ZBase,ZDataSet,
   WsdlComm in 'Wsdl\WsdlComm.pas',
   SoapCheckCustCo in 'Wsdl\SoapCheckCustCo.pas',
   SoapConsumerScoreService in 'Wsdl\SoapConsumerScoreService.pas',
@@ -56,26 +56,47 @@ begin
   result := 802;
 end;
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar):Integer; stdcall;
+function DoExecute(Params:Pchar;var Data:OleVariant):Integer; stdcall;
 var
   ParamList:TftParamList;
+  rs:TZQuery;
+  V:OleVariant;
+  F:TIniFile;
 begin
   try
     //开始执行插件该做的工作.
     ParamList := TftParamList.Create(nil);
+    F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
     try
+      url := F.ReadString('rim','url','');
+      if url='' then Raise Exception.Create('没有配置rim的服务地址...'); 
       ParamList.Decode(ParamList,Params);
+      if ParamList.ParamByName('flag').AsInteger <0 then
+         begin
+           rs := TZQuery.Create(nil);
+           try
+             if GPlugIn.Open(pchar('select TENANT_ID,LICENSE_CODE from CA_TENANT where TENANT_ID in (select RELATI_ID from CA_RELATIONS where TENANT_ID='+ParamList.ParamByName('TENANT_ID').AsString+' and RELATION_ID=1000006)'),V)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+             rs.Data := V;
+             rs.First;
+             while not rs.Eof do
+               begin
+                 DoSyncMessage(rs.Fields[0].asString,rs.Fields[1].asString);
+                 DoSyncQuestion(rs.Fields[0].asString,rs.Fields[1].asString);
+                 rs.Next;
+               end;
+           finally
+             rs.Free;
+           end;
+         end
+      else
       case ParamList.ParamByName('flag').AsInteger of
-      0:begin //同步调查
+      0:begin //提交问卷
         end;
       1:begin //同步投诉
         end;
-      2:begin //同步表扬
-        end;
-      3:begin //同步信息
-        end;
       end;
     finally
+      F.free;
       ParamList.Free;
     end;
     result := 0;

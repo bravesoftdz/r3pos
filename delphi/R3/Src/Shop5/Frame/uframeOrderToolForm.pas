@@ -66,9 +66,9 @@ type
     idx:integer;
     function CheckNewOrder:integer;
     function CheckNoSaveOrder:integer;
-    procedure Clear;
     function GetCurOrder: TframeOrderForm;
   protected
+    procedure Clear;
     procedure BtnStatus;virtual;
     function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
   public

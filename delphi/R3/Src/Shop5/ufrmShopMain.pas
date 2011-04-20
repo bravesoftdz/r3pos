@@ -779,7 +779,13 @@ begin
      begin
        Logined := false;
        result := Logined;
-       Application.Terminate;
+       if Global.TENANT_ID = 0 then
+          begin
+            PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,1,1);
+            Exit;
+          end
+       else
+          Application.Terminate;
      end;
   LoadFrame;
 end;
@@ -842,11 +848,12 @@ var
 begin
   for i:=0 to actList.ActionCount -1 do
     begin
+      TAction(actList.Actions[i]).Enabled := (TAction(actList.Actions[i]).Tag=0);
       if TAction(actList.Actions[i]).Tag > 0 then
          TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
     end;
-  actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (SFVersion='.NET');
-  actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (SFVersion='.NET');
+  actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
+  actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
   rs := Global.GetZQueryFromName('CA_TENANT');
   if rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
      actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3)
@@ -862,7 +869,7 @@ begin
 end;
 begin
   inherited;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and Global.RemoteFactory.Connected and CheckUpdateStatus then
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus then
      begin
        if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
@@ -2092,6 +2099,7 @@ begin
     else
        begin
          MessageBox(Handle,'你没有新商盟账号无法完成登录','友情提示..',MB_OK+MB_ICONINFORMATION);
+         Form.Free;
          Exit;
          TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
        end;

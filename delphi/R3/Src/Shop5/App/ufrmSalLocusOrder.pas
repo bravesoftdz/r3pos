@@ -87,7 +87,8 @@ type
     { Public declarations }
     function  Calc:real;
     procedure ReadFrom(DataSet:TDataSet);override;
-    function NextLocusNo:boolean;
+    function PriorLocusNo:boolean;
+    function NextLocusNo(flag:integer=0):boolean;
     //输入跟踪号
     function GodsToLocusNo(id:string):boolean;
     procedure NewOrder;override;
@@ -143,11 +144,11 @@ procedure TfrmSalLocusOrder.NewOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经批码的单据不能重复操作');
+  if IsAudit then Raise Exception.Create('已经审核的单据不能再扫码了');
   edtInput.Properties.ReadOnly := false;
   edtInput.Style.Color := clWhite;
   if Visible and edtInput.CanFocus then edtInput.SetFocus;
-  if not NextLocusNo then MessageBox(Handle,'当前选中的单据没有需要扫码的商品','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if not NextLocusNo(-1) then MessageBox(Handle,'当前选中的单据没有需要扫码的商品','友情提示...',MB_OK+MB_ICONINFORMATION);
   dbState := dsEdit;
 end;
 
@@ -189,6 +190,7 @@ end;
 procedure TfrmSalLocusOrder.SaveOrder;
 var
   r:integer;
+  Params:TftParamList;
 begin
   edtTable.DisableControls;
   try
@@ -217,7 +219,13 @@ begin
       cdsLocusNo.FieldByName('SEQNO').AsInteger := r;
       cdsLocusNo.Next;
     end;
-  Factor.UpdateBatch(cdsLocusNo,'TSalesForLocusNo');
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParambyName('SALES_TYPE').asInteger := cdsHeader.FieldbyName('SALES_TYPE').asInteger;
+    Factor.UpdateBatch(cdsLocusNo,'TSalesForLocusNo',Params);
+  finally
+    Params.free;
+  end;
   dbState := dsBrowse;
 end;
 
@@ -413,10 +421,10 @@ begin
         AObj.WriteToDataSet(cdsLocusNo,false);
         cdsLocusNo.FieldByName('AMOUNT').AsFloat := 1;
         if cdsLocusNo.FieldByName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').asString then
-           sr := bs.FieldbyName('SMALL_TOCALC').AsFloat
+           sr := bs.FieldbyName('SMALLTO_CALC').AsFloat
         else
         if cdsLocusNo.FieldByName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').asString then
-           sr := bs.FieldbyName('BIG_TOCALC').AsFloat
+           sr := bs.FieldbyName('BIGTO_CALC').AsFloat
         else
            sr := 1;
         cdsLocusNo.FieldByName('CALC_AMOUNT').AsFloat := 1*sr;
@@ -550,12 +558,14 @@ end;
 
 procedure TfrmSalLocusOrder.DBGridEh1CellClick(Column: TColumnEh);
 begin
-  inherited;
+//  inherited;
   if Column.FieldName='LOCUS_AMT' then
      begin
        with TfrmLocusNoProperty.Create(self) do
          begin
            try
+             cdsLocusNo.Filtered := false;
+             cdsLocusNo.Filtered := true;
              dbState := self.dbState;
              DataSet := cdsLocusNo;
              ShowModal;
@@ -568,13 +578,13 @@ begin
      end;
 end;
 
-function TfrmSalLocusOrder.NextLocusNo:boolean;
+function TfrmSalLocusOrder.NextLocusNo(flag:integer=0):boolean;
 var
   bs:TZQuery;
 begin
   result := false;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
-  edtTable.First;
+  if flag=0 then edtTable.Next;
   while not edtTable.Eof do
     begin
       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
@@ -598,7 +608,15 @@ procedure TfrmSalLocusOrder.edtInputKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
 //  inherited;
-  if Key = VK_DOWN then
+  if Key = VK_UP then
+     begin
+       if PriorLocusNo then
+          begin
+            edtTable.Last;
+            PriorLocusNo;
+          end;
+     end;
+  if Key=VK_DOWN then
      begin
        if NextLocusNo then
           begin
@@ -625,6 +643,21 @@ procedure TfrmSalLocusOrder.DBGridEh1DblClick(Sender: TObject);
 begin
 //  inherited;
 
+end;
+
+function TfrmSalLocusOrder.PriorLocusNo: boolean;
+var
+  bs:TZQuery;
+begin
+  result := false;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtTable.Prior;
+  while not edtTable.Eof do
+    begin
+      if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
+      if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then
+         edtTable.Prior else begin result := true;break;end;
+    end;
 end;
 
 end.

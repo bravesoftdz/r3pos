@@ -16,7 +16,7 @@ uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,Variants,
   Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,ZConst,
   ActnList, DB,OleServer,ImgList,ActiveX,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile,
-  RzTray;
+  RzTray,ZIntf,ZdbHelp,ZDataSet,ZBase;
 
 const
   WM_MIDASICON    = WM_USER + 1;
@@ -199,6 +199,7 @@ type
     procedure AddLogFile;
 
     procedure ApplicationException(Sender: TObject; E: Exception);
+    procedure LoadInfo;
 
     //数据库连接管理
     procedure ReadDbList;
@@ -408,6 +409,7 @@ begin
 //  if IE4Installed then
 //    FTaskMessage := RegisterWindowMessage('TaskbarCreated');
   UpdateTimer.Enabled := True;
+  LoadInfo;
 end;
 
 procedure TSocketForm.FormCloseQuery(Sender: TObject;
@@ -886,6 +888,29 @@ begin
     end;
 end;
 
+procedure TSocketForm.LoadInfo;
+var
+  dbHelp:IdbHelp;
+  rs:TZQuery;
+begin
+{
+  dbHelp := TdbHelp.Create;
+  rs := TZQuery.Create(nil);
+  try
+    dbHelp.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(ParamStr(0)))+'data\r3.db');
+    dbHelp.Connect;
+    rs.SQL.Text := 'select TENANT_ID,TENANT_NAME from CA_TENANT where TENANT_ID in (select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID'')';
+    dbHelp.Open(rs);
+    TaskThread.TenantId := rs.Fields[0].AsString;
+    TaskThread.TenantName := rs.Fields[1].AsString;
+    Caption := Caption +'<'+rs.Fields[1].AsString+'>';
+  finally
+    dbHelp := nil;
+    rs.free;
+  end;
+  }
+end;
+
 { TSocketService }
 
 procedure ServiceController(CtrlCode: DWord); stdcall;
@@ -997,12 +1022,20 @@ var
   PlugIn:TPlugIn;
   F:TIniFile;
   V:OleVariant;
+  Params:TftParamList;
 begin
   if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
   PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
   if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
   try
-    PlugIn.DLLDoExecute('',V);
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsString := TaskThread.TenantId;
+      Params.ParamByName('flag').AsInteger := -1;
+      PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
+    finally
+      Params.free;
+    end;
     F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
     try
       F.WriteString('PlugIn'+TaskList.Selected.Caption,'NearTime',formatdatetime('YYYYMMDDHHNNSS',now()));

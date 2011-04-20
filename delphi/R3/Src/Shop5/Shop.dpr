@@ -98,7 +98,7 @@ uses
   ufrmDbOrder in 'App\ufrmDbOrder.pas' {frmDbOrder},
   ufrmDbOrderList in 'App\ufrmDbOrderList.pas' {frmDbOrderList},
   ObjSalIndentOrder in 'Obj\ObjSalIndentOrder.pas',
-  ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
+  ufrmChangeLocusOrder in 'App\ufrmChangeLocusOrder.pas' {frmChangeLocusOrder},
   ufrmOutLocusOrderList in 'App\ufrmOutLocusOrderList.pas' {frmOutLocusOrderList},
   ObjStkIndentOrder in 'Obj\ObjStkIndentOrder.pas',
   ufrmInvoice in 'App\ufrmInvoice.pas' {frmInvoice},
@@ -192,8 +192,16 @@ uses
   ufrmStockOrderList in 'App\ufrmStockOrderList.pas' {frmStockOrderList},
   ufrmStockOrder in 'App\ufrmStockOrder.pas' {frmStockOrder},
   ufrmInLocusOrderList in 'App\ufrmInLocusOrderList.pas' {frmInLocusOrderList},
+  ufrmStkRetuLocusOrder in 'App\ufrmStkRetuLocusOrder.pas' {frmStkRetuLocusOrder},
+  ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide},
+  ufrmSalRetuLocusOrder in 'App\ufrmSalRetuLocusOrder.pas' {frmSalRetuLocusOrder},
+  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
   ufrmStkLocusOrder in 'App\ufrmStkLocusOrder.pas' {frmStkLocusOrder},
-  ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide};
+  ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
+  ufrmIntegralGlide_Add in 'App\ufrmIntegralGlide_Add.pas' {frmIntegralGlide_Add},
+  ufrmDeposit in 'App\ufrmDeposit.pas' {frmDeposit},
+  ufrmCustomerExt in 'App\ufrmCustomerExt.pas' {frmCustomerExt: TFrame},
+  ObjImpeach in 'Obj\ObjImpeach.pas';
 
 {$R *.res}
 var

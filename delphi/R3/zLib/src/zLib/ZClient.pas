@@ -616,7 +616,10 @@ begin
     ZClassName := AClassName;
     TVarData(DispParams.rgvarg[0]).VOleStr := PWideChar(ZClassName);
     DispParams.rgvarg[1].vt := varOleStr;
-    ParamStr := TftParamList.Encode(Params);
+    if Params<>nil then
+    ParamStr := TftParamList.Encode(Params)
+    else
+    ParamStr := '';
     TVarData(DispParams.rgvarg[1]).VOleStr := PWideChar(ParamStr);
     V := null;
     R := FInterpreter.CallInvoke(Ord(SKTExecProc),0,0,DispParams,@V, @ExcepInfo,nil);

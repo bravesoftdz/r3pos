@@ -159,7 +159,7 @@ begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改');
-  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
+//  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   if cdsHeader.FieldByName('FROM_ID').AsString<>'' then Raise Exception.Create('盘点任务生成的单据不能在此操作,请到盘点模块使用此功能...');
   dbState := dsEdit;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
@@ -231,11 +231,11 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
+  edtSHOP_ID.Properties.ReadOnly := False;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
-      edtSHOP_ID.Properties.ReadOnly := False;
-      edtSHOP_ID.KeyValue := Global.SHOP_ID;
-      edtSHOP_ID.Text := Global.SHOP_NAME;
       SetEditStyle(dsBrowse,edtSHOP_ID.Style);
       edtSHOP_ID.Properties.ReadOnly := True;
     end;

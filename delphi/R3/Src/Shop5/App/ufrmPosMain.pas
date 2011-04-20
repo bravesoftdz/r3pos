@@ -163,6 +163,8 @@ type
       var Accept: Boolean);
     procedure RzStatusPane5Click(Sender: TObject);
     procedure RzStatusPane7Click(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -336,13 +338,13 @@ begin
   Height := 600;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+ F.ReadString('soft','name','云盟软件R3')+'系列产品"';
-    if F.ReadString('home','url','')<>'' then
-       s := s+'  网址：'+F.ReadString('home','url','');
-    if F.ReadString('soft','copyright','')<>'' then
-       s := s+'  版权：'+F.ReadString('soft','copyright','');
-    if F.ReadString('soft','telephone','')<>'' then
-       s := s+'  客服：'+F.ReadString('soft','telephone','');
+    s := '〖'+Global.SHOP_NAME+'〗欢迎使用"'+ F.ReadString('soft','name','云盟软件R3')+'"';
+//    if F.ReadString('home','url','')<>'' then
+//       s := s+'  网址：'+F.ReadString('home','url','');
+//    if F.ReadString('soft','copyright','')<>'' then
+//       s := s+'  版权：'+F.ReadString('soft','copyright','');
+//    if F.ReadString('soft','telephone','')<>'' then
+//       s := s+'  客服：'+F.ReadString('soft','telephone','');
     RzStatusPane2.Caption := s;
   finally
     F.Free;
@@ -3494,6 +3496,16 @@ procedure TfrmPosMain.GodsInfoFilterRecord(DataSet: TDataSet;
 begin
   Accept :=
     (pos(fndStr,DataSet.FieldbyName('GODS_CODE').AsString)>0)
+
+end;
+
+procedure TfrmPosMain.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if cdsTable.FieldbyName('IS_PRESENT').AsInteger<>0 then
+     AFont.Color := clRed;
 
 end;
 

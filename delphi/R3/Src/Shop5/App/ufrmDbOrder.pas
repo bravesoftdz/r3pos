@@ -302,6 +302,11 @@ begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('调入门店不能为空');
   if edtCLIENT_ID.AsString = edtSHOP_ID.AsString then Raise Exception.Create('调入门店和调出门店不能相同');
   if (edtPLAN_DATE.EditValue <> null) and (edtSALES_DATE.Date>edtPLAN_DATE.Date) then Raise Exception.Create('到货日期不能小于调出日期');
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      if (edtSHOP_ID.AsString <> Global.SHOP_ID) or (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
+         Raise Exception.Create('只能操作本门店的调拨单...'); 
+    end;
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;

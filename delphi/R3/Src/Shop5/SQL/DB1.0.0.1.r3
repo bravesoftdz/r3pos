@@ -440,6 +440,10 @@ CREATE TABLE [SAL_SALESORDER] (
 	[TELEPHONE] [varchar] (30) NULL ,
         --送货地址
 	[SEND_ADDR] [varchar] (255) NULL ,
+  --刷卡银行
+  BANK_ID varchar(36),
+  --刷卡卡号
+  BANK_CODE varchar(36),
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
         --通讯标志
@@ -465,7 +469,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','付款方式','CODE_TYPE','00',5497000);
 
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'A','现金','XJ','1',1,'00',5497000);
-insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'B','银联','YL','1',2,'00',5497000);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'B','刷卡','YL','1',2,'00',5497000);
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'C','储值卡','CZK','1',3,'00',5497000);
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'D','记账','JZ','1',4,'00',5497000);
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp) values(0,'E','转账','LQ','1',5,'00',5497000);
@@ -678,7 +682,7 @@ CREATE TABLE [STO_CHANGEORDER] (
         --类型代码
 	[CHANGE_CODE] [varchar] (10) NOT NULL ,
         --所属部门
-	[DEPT_ID] [varchar] (11) NULL ,
+	[DEPT_ID] [varchar] (12) NULL ,
         --负责人
 	[DUTY_USER] [varchar] (36) NULL ,
         --调整数量
@@ -1472,7 +1476,7 @@ CREATE TABLE [ACC_IOROORDER] (
         --收支项目
 	[ITEM_ID] [varchar] (36) NOT NULL ,
         --收支部门
-	[DEPT_ID] [varchar] (10) NULL ,
+	[DEPT_ID] [varchar] (12) NULL ,
         --收支日期
 	[IORO_TYPE] [varchar] (1) NOT NULL ,
         --收支日期

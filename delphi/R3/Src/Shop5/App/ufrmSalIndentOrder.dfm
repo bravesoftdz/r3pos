@@ -800,15 +800,15 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     object N1: TMenuItem [5]
       Action = actCustomer
     end
-    object N2: TMenuItem [11]
+    object N2: TMenuItem
       Caption = #25972#21333#20986#24211
       OnClick = N2Click
     end
-    object N3: TMenuItem [12]
+    object N3: TMenuItem
       Caption = #21333#31508#20986#24211
       OnClick = N3Click
     end
-    object N4: TMenuItem [13]
+    object N4: TMenuItem
       Caption = '-'
     end
   end

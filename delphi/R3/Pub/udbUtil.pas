@@ -187,6 +187,7 @@ var
   F:TextFile;
   SQL:TStringList;
   rs,fs:TZQuery;
+  srDbType:integer;
 begin
   HasError := false;
   tmpPath := GetWindowTmp;
@@ -227,6 +228,11 @@ begin
                CurSize := CurSize + length(s);
                s := trim(s);
                if s='' then Continue;
+               if copy(s,1,10)='--{idbType' then
+                  begin
+                    srDbType := StrtoInt(copy(s,12,1));
+                    Continue;
+                  end;
                if copy(s,1,2)='--' then Continue;
                if (uppercase(s)='GO') or (s[length(s)]=';') then
                   begin
@@ -236,8 +242,9 @@ begin
                            delete(s,length(s),1);
                            SQL.Add(s);
                          end;
-                      if (SQL.Count>0) then
+                      if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
                         Factor.ExecSQL(SQL.Text);
+                      srDbType := -1;
                       if Assigned(onCreateDbCallBack) then
                         onCreateDbCallBack('执行脚本',SQL.Text,CurSize*100 div TotalSize);
                     except
@@ -259,8 +266,9 @@ begin
                   end;
              end;
                try
-                 if (SQL.Count>0) then
+                 if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
                     Factor.ExecSQL(SQL.Text);
+                 srDbType := -1;
                  if Assigned(onCreateDbCallBack) then
                     onCreateDbCallBack('执行脚本',SQL.Text,100);
                except

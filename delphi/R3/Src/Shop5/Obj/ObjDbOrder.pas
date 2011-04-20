@@ -34,6 +34,17 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
   end;
+  TDbForLocusNo=class(TZFactory)
+  private
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  public
+    procedure InitClass;override;
+  end;
   TDbOrderGetPrior=class(TZFactory)
   public
     procedure InitClass;override;
@@ -515,6 +526,54 @@ begin
   end;
 end;
 
+{ TDbForLocusNo }
+
+function TDbForLocusNo.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from STK_LOCUS_FORSTCK where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO',self);
+end;
+
+function TDbForLocusNo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var Str:string;
+begin
+  Str := 'insert into STK_LOCUS_FORSTCK(TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:SALES_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  AGlobal.ExecSQL(Str,self); 
+end;
+
+function TDbForLocusNo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var Str:string;
+begin
+  Str := 'update STK_LOCUS_FORSTCK set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SALES_ID=:SALES_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+  AGlobal.ExecSQL(Str,self); 
+end;
+
+procedure TDbForLocusNo.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
+               'from SAL_LOCUS_FORSALE j where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
+  IsSQLUpdate := True;
+  Str := 'insert into SAL_LOCUS_FORSALE(TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:SALES_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := str;
+  Str := 'update SAL_LOCUS_FORSALE set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SALES_ID=:SALES_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+  UpdateSQL.Text := str;
+  Str := 'delete from SAL_LOCUS_FORSALE where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
+  DeleteSQL.Text := str;
+end;
+
 initialization
   RegisterClass(TDbOrder);
   RegisterClass(TDbData);
@@ -522,6 +581,7 @@ initialization
   RegisterClass(TDbOrderUnAudit);
   RegisterClass(TDbOrderGetPrior);
   RegisterClass(TDbOrderGetNext);
+  RegisterClass(TDbForLocusNo);
 finalization
   UnRegisterClass(TDbOrder);
   UnRegisterClass(TDbData);
@@ -529,4 +589,5 @@ finalization
   UnRegisterClass(TDbOrderUnAudit);
   UnRegisterClass(TDbOrderGetPrior);
   UnRegisterClass(TDbOrderGetNext);
+  UnRegisterClass(TDbForLocusNo);
 end.

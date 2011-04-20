@@ -117,6 +117,8 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure actIntegralExecute(Sender: TObject);
     procedure edtInputEnter(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -3348,6 +3350,15 @@ begin
   Accept :=
     (pos(fndStr,DataSet.FieldbyName('GODS_CODE').AsString)>0)
 
+end;
+
+procedure TframeOrderForm.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (Column.FieldName = 'IS_PRESENT') and (Column.Field.AsInteger<>0) then
+     Background := clRed;
 end;
 
 end.

@@ -33,7 +33,7 @@ type
     function iDbType(var dbType:integer):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
     //提交数据集
     function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
     //返回执行影响记录数
@@ -71,7 +71,7 @@ begin
   result := 1001;
 end;
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar):Integer; stdcall;
+function DoExecute(Params:Pchar;var Data:OleVariant):Integer; stdcall;
 begin
   try
     //开始执行插件该做的工作.

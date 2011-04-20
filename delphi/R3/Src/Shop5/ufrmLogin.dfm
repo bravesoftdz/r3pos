@@ -486,7 +486,7 @@ inherited frmLogin: TfrmLogin
     Caption = #25805#20316#21475#20196#65306
   end
   object Label3: TLabel [3]
-    Left = 299
+    Left = 302
     Top = 149
     Width = 52
     Height = 12
@@ -496,7 +496,7 @@ inherited frmLogin: TfrmLogin
     Font.Color = clNavy
     Font.Height = -12
     Font.Name = #23435#20307
-    Font.Style = [fsBold, fsUnderline]
+    Font.Style = [fsBold]
     ParentFont = False
     OnClick = Label3Click
   end
@@ -520,21 +520,7 @@ inherited frmLogin: TfrmLogin
     Height = 12
     Caption = #19994#21153#26085#26399#65306
   end
-  object lblTenantName: TLabel [6]
-    Left = 51
-    Top = 76
-    Width = 60
-    Height = 12
-    Caption = #24403#21069#20225#19994#65306
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clRed
-    Font.Height = -12
-    Font.Name = #23435#20307
-    Font.Style = []
-    ParentFont = False
-    Transparent = True
-  end
-  object RzLabel1: TRzLabel [7]
+  object RzLabel1: TRzLabel [6]
     Left = 27
     Top = 230
     Width = 26
@@ -545,9 +531,16 @@ inherited frmLogin: TfrmLogin
     Font.Color = clBlack
     Font.Height = -12
     Font.Name = #23435#20307
-    Font.Style = [fsBold, fsUnderline]
+    Font.Style = [fsBold]
     ParentFont = False
     OnClick = RzLabel1Click
+  end
+  object Label1: TLabel [7]
+    Left = 51
+    Top = 77
+    Width = 60
+    Height = 12
+    Caption = #20225#19994#21517#31216#65306
   end
   object cxBtnOk: TRzBitBtn [8]
     Left = 174
@@ -557,7 +550,7 @@ inherited frmLogin: TfrmLogin
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
-    TabOrder = 1
+    TabOrder = 4
     OnClick = cxBtnOkClick
     Glyph.Data = {
       36060000424D3606000000000000360400002800000020000000100000000100
@@ -622,7 +615,7 @@ inherited frmLogin: TfrmLogin
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
-    TabOrder = 3
+    TabOrder = 6
     Glyph.Data = {
       36060000424D3606000000000000360400002800000020000000100000000100
       0800000000000002000000000000000000000001000000000000000000003300
@@ -684,7 +677,7 @@ inherited frmLogin: TfrmLogin
     Properties.DisplayUnchecked = 'False'
     Properties.Caption = #20445#23384#30331#24405#20449#24687
     State = cbsChecked
-    TabOrder = 2
+    TabOrder = 5
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
   object cxedtPasswrd: TcxTextEdit [11]
@@ -693,7 +686,7 @@ inherited frmLogin: TfrmLogin
     Width = 184
     Height = 20
     Properties.EchoMode = eemPassword
-    TabOrder = 0
+    TabOrder = 3
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
   end
   object edtOPER_DATE: TcxDateEdit [12]
@@ -703,15 +696,24 @@ inherited frmLogin: TfrmLogin
     Height = 20
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     Properties.DateOnError = deToday
-    TabOrder = 4
+    TabOrder = 1
   end
   object cxedtUsers: TcxTextEdit [13]
     Left = 111
     Top = 123
     Width = 184
     Height = 20
-    TabOrder = 5
+    TabOrder = 2
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+  end
+  object cbxTenant: TcxComboBox [14]
+    Left = 111
+    Top = 73
+    Width = 184
+    Height = 20
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+    Properties.OnChange = cbxTenantPropertiesChange
+    TabOrder = 0
   end
   inherited mmMenu: TMainMenu
     Left = 65528

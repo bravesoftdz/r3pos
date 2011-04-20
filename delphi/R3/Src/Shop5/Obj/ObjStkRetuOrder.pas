@@ -49,6 +49,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TStkRetuForLocusNo=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
 implementation
 
 { TStkRetuData }
@@ -435,6 +440,30 @@ begin
   end;
 end;
 
+{ TStkRetuForLocusNo }
+
+procedure TStkRetuForLocusNo.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+      'select TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,- AMOUNT as AMOUNT,-CALC_AMOUNT as CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP '+
+      'from STK_LOCUS_FORSTCK j where j.TENANT_ID=:TENANT_ID and j.STOCK_ID=:STOCK_ID order by SEQNO';
+  IsSQLUpdate := True;
+  Str := 'insert into STK_LOCUS_FORSTCK(TENANT_ID,SHOP_ID,STOCK_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_DATE,LOCUS_NO,UNIT_ID,AMOUNT,CALC_AMOUNT,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:STOCK_ID,:SEQNO,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:BATCH_NO,:LOCUS_DATE,:LOCUS_NO,:UNIT_ID,- :AMOUNT,- :CALC_AMOUNT,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := str;
+  Str := 'update STK_LOCUS_FORSTCK set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,STOCK_ID=:STOCK_ID,SEQNO=:SEQNO,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BATCH_NO=:BATCH_NO,'+
+      'LOCUS_DATE=:LOCUS_DATE,LOCUS_NO=:LOCUS_NO,UNIT_ID=:UNIT_ID,AMOUNT=- :AMOUNT,CALC_AMOUNT=- :CALC_AMOUNT,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER, '
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID and SEQNO=:OLD_SEQNO';
+  UpdateSQL.Text := str;
+  Str := 'delete from STK_LOCUS_FORSTCK where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID and SEQNO=:OLD_SEQNO';
+  DeleteSQL.Text := str;
+end;
+
 initialization
   RegisterClass(TStkRetuOrder);
   RegisterClass(TStkRetuData);
@@ -442,6 +471,7 @@ initialization
   RegisterClass(TStkRetuOrderGetNext);
   RegisterClass(TStkRetuOrderAudit);
   RegisterClass(TStkRetuOrderUnAudit);
+  RegisterClass(TStkRetuForLocusNo);
 finalization
   UnRegisterClass(TStkRetuOrder);
   UnRegisterClass(TStkRetuData);
@@ -449,4 +479,5 @@ finalization
   UnRegisterClass(TStkRetuOrderGetNext);
   UnRegisterClass(TStkRetuOrderAudit);
   UnRegisterClass(TStkRetuOrderUnAudit);
+  UnRegisterClass(TStkRetuForLocusNo);
 end.

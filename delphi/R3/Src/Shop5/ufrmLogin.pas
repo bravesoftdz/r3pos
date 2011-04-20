@@ -33,8 +33,9 @@ type
     Label4: TLabel;
     edtOPER_DATE: TcxDateEdit;
     cxedtUsers: TcxTextEdit;
-    lblTenantName: TLabel;
     RzLabel1: TRzLabel;
+    Label1: TLabel;
+    cbxTenant: TcxComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxcbxLoginParamPropertiesChange(Sender: TObject);
@@ -42,6 +43,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzLabel1Click(Sender: TObject);
+    procedure cbxTenantPropertiesChange(Sender: TObject);
   private
     FLoginParam:TLoginParam;
     FSysID: TGuid;
@@ -49,6 +51,7 @@ type
     procedure SetSysID(const Value: TGuid);
     { Private declarations }
   public
+    procedure LoadTenant;
     function Connect:boolean;
     class function doLogin(pSysID:TGuid;Locked:boolean;Var LoginParam:TLoginParam;var lDate:TDate):Boolean;overload;
     class function doLogin(Var LoginParam:TLoginParam):Boolean;overload;
@@ -57,7 +60,7 @@ type
   end;
 
 implementation
-uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog;
+uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -170,6 +173,7 @@ begin
         begin
            if not Connect then Exit;
         end;
+        LoadTenant;
         cxbtnCancel.Enabled := not Locked;
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
@@ -179,14 +183,21 @@ begin
              cxedtUsers.Text := Global.UserID;
              cxedtUsers.Text := Global.UserName;
            end;
-        if ShowModal=MROK then
+        case ShowModal of
+        MROK:
           begin
             LoginParam := FLoginParam;
             lDate := edtOPER_DATE.Date;
             Result := True;
-          end
+          end;
+        mrRetry:
+          begin
+            Global.TENANT_ID := 0;
+            Result := False;
+          end;
         else
            Result := False;
+        end;
       finally
         Free;
       end;
@@ -226,7 +237,6 @@ begin
   edtOPER_DATE.Date := Date();
   if FileExists(ExtractFilePath(ParamStr(0))+'login.jpg') then
      imgLogin.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'login.jpg');
-  lblTenantName.Caption := '当前企业:'+Global.TENANT_NAME;
 end;
 
 function WinExecAndWait32V2(FileName: string; Visibility: integer): DWORD;
@@ -330,6 +340,7 @@ begin
   with TfrmLogin.Create(Application) do
     begin
       try
+        LoadTenant;
         Label6.Visible := _ok;
         cxBtnOk.Caption := '确认(&O)';
         Caption := '用户认证';
@@ -354,8 +365,36 @@ end;
 procedure TfrmLogin.RzLabel1Click(Sender: TObject);
 begin
   inherited;
-  if TfrmHostDialog.HostDialog(self) then
-     MessageBox(Handle,'设置连接主机成功，请退出软件重新登录后生效.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  case TfrmHostDialog.HostDialog(self) of
+  MROK:MessageBox(Handle,'设置连接主机成功，请退出软件重新登录后生效.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  mrRetry:self.ModalResult := mrRetry;
+  end;
+end;
+
+procedure TfrmLogin.LoadTenant;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :='select TENANT_ID,TENANT_NAME from CA_TENANT where TENANT_ID in (select VALUE from SYS_DEFINE where DEFINE=''TENANT_ID'')';
+    Global.LocalFactory.Open(rs);
+    TdsItems.AddDataSetToItems(rs,cbxTenant.Properties.Items,'TENANT_NAME');
+    cbxTenant.ItemIndex := TdsItems.FindItems(cbxTenant.Properties.Items,'TENANT_ID',inttostr(Global.TENANT_ID));
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmLogin.cbxTenantPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if cbxTenant.ItemIndex <0 then Exit;
+  if TRecord_(cbxTenant.Properties.Items.Objects[cbxTenant.ItemIndex]).FieldByName('TENANT_ID').AsInteger<>Global.TENANT_ID then
+     begin
+       Global.LocalFactory.ExecSQL('update SYS_DEFINE set VALUE='''+TRecord_(cbxTenant.Properties.Items.Objects[cbxTenant.ItemIndex]).FieldByName('TENANT_ID').AsString+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''');
+       self.ModalResult := mrRetry;
+     end;
 end;
 
 end.

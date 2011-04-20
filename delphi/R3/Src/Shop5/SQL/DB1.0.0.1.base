@@ -4667,6 +4667,27 @@ CREATE TABLE [PUB_CLIENTINFO] (
 	[PRICE_ID] [varchar] (36) NULL ,
         --所属门店
 	[SHOP_ID] [varchar] (13) NOT NULL ,
+	
+--送货地址
+  SEND_ADDR varchar(100),
+--送货联系人电话/手机
+  SEND_TELE varchar(50),
+--送货联系人
+  SEND_LINKMAN varchar(20),
+
+--收件人
+  RECV_ADDR varchar(100),
+--收件联系人
+  RECV_LINKMAN varchar(20),
+--收件联系人电话/手机
+  RECV_TELE varchar(50),
+--法人代表
+  LEGAL_REPR varchar(20),
+--开票全称
+  INVO_NAME varchar(60),
+--税务登记证号
+  TAX_NO varchar(30),
+	
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数

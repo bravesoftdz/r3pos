@@ -71,7 +71,8 @@ inherited frmHostDialog: TfrmHostDialog
   object cxbtnCancel: TRzBitBtn [3]
     Left = 290
     Top = 204
-    Caption = #20851#38381
+    Height = 27
+    Caption = #20851#38381'(&C)'
     Color = 15791348
     HighlightColor = 16026986
     HotTrack = True
@@ -83,7 +84,8 @@ inherited frmHostDialog: TfrmHostDialog
   object btnInstall: TRzBitBtn [4]
     Left = 207
     Top = 204
-    Caption = #36873#25321
+    Height = 27
+    Caption = #36873#25321'(&O)'
     Color = 15791348
     HighlightColor = 16026986
     HotTrack = True
@@ -95,13 +97,14 @@ inherited frmHostDialog: TfrmHostDialog
   object RzBitBtn1: TRzBitBtn [5]
     Left = 15
     Top = 204
-    Caption = #27979#35797#32593#32476
+    Height = 27
+    Caption = #27880#20876'(&R)'
     Color = 15791348
-    Enabled = False
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
     TabOrder = 3
+    OnClick = RzBitBtn1Click
     NumGlyphs = 2
   end
   object ImageList1: TImageList

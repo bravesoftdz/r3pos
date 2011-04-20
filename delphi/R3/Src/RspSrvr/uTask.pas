@@ -2,7 +2,7 @@ unit uTask;
 
 interface
 uses
-  Windows, Messages, SysUtils, Classes, DateUtils, ActiveX, Forms, Registry,EncDec,ZLogFile,ZPlugIn;
+  Windows, Messages, SysUtils, Classes, DateUtils, ActiveX, Forms, Registry,EncDec,ZLogFile,ZPlugIn,ZBase;
 type
 
   TTimerType=(ttNone,ttDay,ttWeek,ttMonth);
@@ -67,9 +67,13 @@ type
     FWorking: boolean;
     FStartTime: Int64;
     FStoped: boolean;
+    FTenantName: string;
+    FTenantId: string;
     procedure SetWorking(const Value: boolean);
     procedure SetStartTime(const Value: Int64);
     procedure SetStoped(const Value: boolean);
+    procedure SetTenantId(const Value: string);
+    procedure SetTenantName(const Value: string);
   public
     procedure WriteLogFile(s:string);
     procedure TaskSetEvent;
@@ -82,6 +86,8 @@ type
     property Working:boolean read FWorking write SetWorking;
     property StartTime:Int64 read FStartTime write SetStartTime;
     property Stoped:boolean read FStoped write SetStoped;
+    property TenantId:string read FTenantId write SetTenantId;
+    property TenantName:string read FTenantName write SetTenantName;
   end;
 var
   TaskThread:TTaskThread;
@@ -305,10 +311,12 @@ var
   PlugIn:TPlugIn;
   StartTime:Int64;
   V:OleVariant;
+  Params:TftParamList;
 begin
   inherited;
   PlugIn := nil;
   CoInitializeEx(nil,COINIT_MULTITHREADED);
+  Params := TftParamList.Create(nil);
   try
   ResetEvent(FhEvent);
   n := 0;
@@ -333,7 +341,9 @@ begin
       try
         StartTime := GetTickCount;
         try
-          PlugIn.DLLDoExecute('',V);
+          Params.ParamByName('TENANT_ID').AsString := TenantId; 
+          Params.ParamByName('flag').AsInteger := -1; 
+          PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
           WriteLogFile('<'+PlugIn.PlugInDisplayName+'>执行完毕,总用时:'+inttostr((GetTickCount-StartTime) div 1000)+'秒');
           GetTimer(PlugIn).NearTime := formatdatetime('YYYYMMDDHHNNSS',now());
           WriteTimer(PlugIn);
@@ -347,6 +357,7 @@ begin
       end;
     end;
   finally
+    Params.Free;
     CoUninitialize;
   end;
 end;
@@ -406,6 +417,16 @@ begin
   finally
     F.Free;
   end;
+end;
+
+procedure TTaskThread.SetTenantId(const Value: string);
+begin
+  FTenantId := Value;
+end;
+
+procedure TTaskThread.SetTenantName(const Value: string);
+begin
+  FTenantName := Value;
 end;
 
 initialization

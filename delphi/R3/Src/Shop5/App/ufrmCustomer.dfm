@@ -620,7 +620,6 @@ inherited frmCustomer: TfrmCustomer
           Action = actfrmIntegral
           DropdownMenu = PopupMenu3
           Style = tbsDropDown
-          OnClick = N15Click
         end
         object ToolButton3: TToolButton
           Left = 231
@@ -687,6 +686,7 @@ inherited frmCustomer: TfrmCustomer
     end
     object actNewCard: TAction
       Caption = #21457#26032#21345
+      ImageIndex = 24
       OnExecute = actNewCardExecute
     end
     object actCancelCard: TAction

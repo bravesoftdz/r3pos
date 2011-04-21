@@ -476,10 +476,12 @@ inherited frmClient: TfrmClient
     end
     object actfrmIntegral: TAction
       Caption = #20817#25442
+      ImageIndex = 41
       OnExecute = actfrmIntegralExecute
     end
     object actNewCard: TAction
       Caption = #21457#21345
+      ImageIndex = 24
       OnExecute = actNewCardExecute
     end
     object actDeposit: TAction

@@ -113,6 +113,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure N14Click(Sender: TObject);
     procedure N15Click(Sender: TObject);
+    procedure actfrmIntegralExecute(Sender: TObject);
   private
     function CheckCanExport:boolean;
     procedure PrintView;
@@ -927,6 +928,12 @@ begin
   finally
     Aobj_Integral.Free;
   end;
+end;
+
+procedure TfrmCustomer.actfrmIntegralExecute(Sender: TObject);
+begin
+  inherited;
+  N15Click(Sender);  
 end;
 
 end.

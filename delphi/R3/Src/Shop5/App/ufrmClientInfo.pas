@@ -146,7 +146,6 @@ begin
   edtCLIENT_CODE.SelectAll;
   
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',inttostr(DefInvFlag));
-  edtBANK_ID.ItemIndex := 0;
   edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',Global.GetZQueryFromName('PUB_PRICEGRADE').fieldbyname('PRICE_ID').AsString);

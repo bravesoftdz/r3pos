@@ -427,6 +427,7 @@ inherited frmClient: TfrmClient
           Action = actNewCard
           DropdownMenu = PopupMenu2
           Style = tbsDropDown
+          Visible = False
         end
         object But_Print: TToolButton
           Left = 291

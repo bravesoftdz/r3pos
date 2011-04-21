@@ -19,7 +19,7 @@ inherited frmDeptInfoList: TfrmDeptInfoList
         Height = 442
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #32844#21153#26723#26696#26597#35810
+          Caption = #37096#38376#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 709
             Height = 415

@@ -58,9 +58,9 @@ function GetRegionId(id:string):string;
 begin
   result := id;
   if copy(result,length(result)-1,2)='00' then
-     delete(length(result)-1,2);
+     delete(result,length(result)-1,2);
   if copy(result,length(result)-1,2)='00' then
-     delete(length(result)-1,2);
+     delete(result,length(result)-1,2);
 end;
 function GetBarCodeID(BarCode:string):string;
 begin

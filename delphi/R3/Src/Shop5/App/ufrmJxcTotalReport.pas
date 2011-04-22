@@ -995,91 +995,105 @@ procedure TfrmJxcTotalReport.actPriorExecute(Sender: TObject);
 begin
   if not HasChild and (rzPage.ActivePageIndex = 2) then Exit;
   inherited;
-
+  
 end;
 
 procedure TfrmJxcTotalReport.CreateGrid;
 var
-  Column:TColumnEh;
-  rs:TZQuery;
+  rs: TZQuery;
+  Column: TColumnEh;
+  CostPriceRight: Boolean;  //查看成本价权限
 begin
-    rs := Global.GetZQueryFromName('STO_CHANGECODE'); 
-    rs.First;
-    while not rs.Eof do
-      begin
-        Column := DBGridEh1.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-        Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-        Column.Width := 61;
-        Column.Index := DBGridEh1.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';
+  CostPriceRight:=ShopGlobal.GetChkRight('14500001',2);
+  rs := Global.GetZQueryFromName('STO_CHANGECODE');
+  rs.First;
+  while not rs.Eof do
+  begin
+    Column := DBGridEh1.Columns.Add;
+    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+    Column.Width := 61;
+    Column.Index := DBGridEh1.Columns.Count -4;
+    Column.DisplayFormat:='#0.00';
+    Column.Footer.ValueType:=fvtSum;
+    Column.Footer.DisplayFormat:='#0.00';
 
-        Column := DBGridEh1.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-        Column.Width := 74;
-        Column.Index := DBGridEh1.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';        
+    if CostPriceRight then  //判断只有查看成本才可以创建列
+    begin
+      Column := DBGridEh1.Columns.Add;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+      Column.Width := 74;
+      Column.Index := DBGridEh1.Columns.Count -4;
+      Column.DisplayFormat:='#0.00';
+      Column.Footer.ValueType:=fvtSum;
+      Column.Footer.DisplayFormat:='#0.00';
+    end;
 
-        Column := DBGridEh2.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-        Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-        Column.Width := 61;
-        Column.Index := DBGridEh2.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';        
+    Column := DBGridEh2.Columns.Add;
+    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+    Column.Width := 61;
+    Column.Index := DBGridEh2.Columns.Count -4;
+    Column.DisplayFormat:='#0.00';
+    Column.Footer.ValueType:=fvtSum;
+    Column.Footer.DisplayFormat:='#0.00';        
 
-        Column := DBGridEh2.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-        Column.Width := 74;
-        Column.Index := DBGridEh2.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';        
+    if CostPriceRight then  //判断只有查看成本才可以创建列
+    begin        
+      Column := DBGridEh2.Columns.Add;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+      Column.Width := 74;
+      Column.Index := DBGridEh2.Columns.Count -4;
+      Column.DisplayFormat:='#0.00';
+      Column.Footer.ValueType:=fvtSum;
+      Column.Footer.DisplayFormat:='#0.00';
+    end;
 
-        Column := DBGridEh3.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-        Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-        Column.Width := 61;
-        Column.Index := DBGridEh3.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';
+    Column := DBGridEh3.Columns.Add;
+    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+    Column.Width := 61;
+    Column.Index := DBGridEh3.Columns.Count -4;
+    Column.DisplayFormat:='#0.00';
+    Column.Footer.ValueType:=fvtSum;
+    Column.Footer.DisplayFormat:='#0.00';
 
-        Column := DBGridEh3.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-        Column.Width := 74;
-        Column.Index := DBGridEh3.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';
+    if CostPriceRight then  //判断只有查看成本才可以创建列
+    begin
+      Column := DBGridEh3.Columns.Add;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+      Column.Width := 74;
+      Column.Index := DBGridEh3.Columns.Count -4;
+      Column.DisplayFormat:='#0.00';
+      Column.Footer.ValueType:=fvtSum;
+      Column.Footer.DisplayFormat:='#0.00';
+    end;
         
-        Column := DBGridEh4.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-        Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-        Column.Width := 61;
-        Column.Index := DBGridEh4.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';
+    Column := DBGridEh4.Columns.Add;
+    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+    Column.Width := 61;
+    Column.Index := DBGridEh4.Columns.Count -4;
+    Column.DisplayFormat:='#0.00';
+    Column.Footer.ValueType:=fvtSum;
+    Column.Footer.DisplayFormat:='#0.00';
 
-        Column := DBGridEh4.Columns.Add;
-        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-        Column.Width := 74;
-        Column.Index := DBGridEh4.Columns.Count -4;
-        Column.DisplayFormat:='#0.00';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Footer.DisplayFormat:='#0.00';   
-        rs.Next;
-      end;
+    if CostPriceRight then  //判断只有查看成本才可以创建列
+    begin
+      Column := DBGridEh4.Columns.Add;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+      Column.Width := 74;
+      Column.Index := DBGridEh4.Columns.Count -4;
+      Column.DisplayFormat:='#0.00';
+      Column.Footer.ValueType:=fvtSum;
+      Column.Footer.DisplayFormat:='#0.00';
+    end;
+    rs.Next;
+  end;     
 end;
 
 procedure TfrmJxcTotalReport.CheckCalc(b, e: integer);

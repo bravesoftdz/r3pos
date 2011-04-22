@@ -189,7 +189,7 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function GetUnitIDIdx: integer;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
-  public                                  
+  public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
@@ -222,6 +222,7 @@ begin
 
   RefreshColumn;
 
+  //设置门店查看数据所属门店权限
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP3_SHOP_ID.Properties.ReadOnly := False;
@@ -241,6 +242,15 @@ begin
     fndP5_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
     fndP5_SHOP_ID.Properties.ReadOnly := True;
+  end;
+  //2011.04.22 Add 设置查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh1, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);         
   end;
 end;
 

@@ -235,6 +235,16 @@ begin
       SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
       fndP5_SHOP_ID.Properties.ReadOnly := True;
     end;
+    
+  //2011.04.22 Add 设置查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh1, ['DBIN_PRC','DBIN_CST','DBOUT_PRC','DBOUT_CST']);
+    SetNotShowCostPrice(DBGridEh2, ['DBIN_PRC','DBIN_CST','DBOUT_PRC','DBOUT_CST']);
+    SetNotShowCostPrice(DBGridEh3, ['DBIN_PRC','DBIN_CST','DBOUT_PRC','DBOUT_CST']);
+    SetNotShowCostPrice(DBGridEh4, ['DBIN_PRC','DBIN_CST','DBOUT_PRC','DBOUT_CST']);
+    SetNotShowCostPrice(DBGridEh5, ['DB_PRC','DB_CST']);      
+  end;    
 end;
 
 function TfrmDbDayReport.GetGroupSQL(chk:boolean=true): string;

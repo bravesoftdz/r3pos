@@ -186,7 +186,7 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     //5、按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title    
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
     procedure PrintBefore;override;
     function  DoBeforeExport:boolean;override;
@@ -223,7 +223,7 @@ begin
   SetRzPageActivePage; //设置活动RzPage.Acitve
 
   RefreshColumn;
-
+  //不是总店只能查看本门店的数据:
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP3_SHOP_ID.Properties.ReadOnly := False;
@@ -243,6 +243,15 @@ begin
     fndP5_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
     fndP5_SHOP_ID.Properties.ReadOnly := True;
+  end;
+  //2011.04.22 Add 判断成本价权限:
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh1, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh2, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh3, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh4, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh5, ['APRICE','CALC_MONEY','TAX_MONEY','NOTAX_MONEY','AGIO_MONEY']);
   end;
 end;
 

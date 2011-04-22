@@ -152,7 +152,7 @@ begin
   if Global.SHOP_ID = IntToStr(Global.TENANT_ID)+'0001' then
     IsHeadShop := ' '
   else
-    IsHeadShop := ' and SHOP_ID='+Global.SHOP_ID;
+    IsHeadShop := ' and SHOP_ID='''+Global.SHOP_ID+''' ';
   if edtKey.Text<>'' then
      IsHeadShop := ' and (SHOP_ID like ''%'+trim(edtKEY.Text)+'%'' or SHOP_NAME like ''%'+trim(edtKEY.Text)+'%'' or SHOP_SPELL like ''%'+trim(edtKEY.Text)+'%'' )';
   cdsBrowser.Close;

@@ -193,6 +193,14 @@ begin
     SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
     fndP4_SHOP_ID.Properties.ReadOnly := True;
   end;
+  //2011.04.22 Add 设置查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh1, ['BAL_PRC','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh2, ['BAL_PRC','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh3, ['BAL_PRC','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh4, ['BAL_PRC','BAL_CST']);
+  end;   
 end;
 
 function TfrmStorageDayReport.GetGroupSQL(chk:boolean=true): string;

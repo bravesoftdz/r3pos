@@ -182,7 +182,7 @@ begin
   AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);
   InitGrid;
-  if ShopGlobal.GetVersionFlag = 1 then
+  if ShopGlobal.GetVersionFlag <> 1 then
     begin
       Grid.Columns.Items[7].free;
       Grid.Columns.Items[6].free;

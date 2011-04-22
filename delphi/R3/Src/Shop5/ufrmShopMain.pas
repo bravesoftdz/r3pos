@@ -331,6 +331,7 @@ type
     RzLabel1: TRzLabel;
     actfrmInLocusOrderList: TAction;
     actfrmOutLocusOrderList: TAction;
+    actfrmDownIndeOrder: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -436,6 +437,7 @@ type
     procedure actfrmInLocusOrderListExecute(Sender: TObject);
     procedure actfrmOutLocusOrderListExecute(Sender: TObject);
     procedure lblUserInfoClick(Sender: TObject);
+    procedure actfrmDownIndeOrderExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -491,7 +493,8 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList;
+  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
+  ufrmDownStockOrder;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2718,10 +2721,18 @@ begin
   Global.LoadBasic;
 end;
 
+procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject); 
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('14100001',5) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
+  actfrmDownIndeOrder.Execute;
+end;
+
 procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
-  MessageBox(Handle,'没有找到可下载订单.','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if not ShopGlobal.GetChkRight('14100001',5) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
+  actfrmDownIndeOrder.Execute;
 end;
 
 procedure TfrmShopMain.tlbCloseClick(Sender: TObject);
@@ -3066,14 +3077,6 @@ begin
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
   SyncFactory.SyncAll;
   Global.LoadBasic;
-
-end;
-
-procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject);
-begin
-  inherited;
-  MessageBox(Handle,'没有找到可下载订单.','友情提示...',MB_OK+MB_ICONINFORMATION);
-
 end;
 
 procedure TfrmShopMain.RzBmpButton14Click(Sender: TObject);
@@ -3161,6 +3164,42 @@ procedure TfrmShopMain.lblUserInfoClick(Sender: TObject);
 begin
   inherited;
   actfrmNewPaperReader.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.actfrmDownIndeOrderExecute(Sender: TObject);
+var
+  Aobj: TRecord_;
+  Form: TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+
+  try
+    Aobj:=TRecord_.Create;
+    if TfrmDownStockOrder.DownStockOrder(AObj) then
+    begin
+      if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
+      begin
+        Application.Restore;
+        frmShopDesk.SaveToFront;
+        Form := FindChildForm(TfrmStockOrderList);
+        if not Assigned(Form) then
+        begin
+          Form := TfrmStockOrderList.Create(self);
+          AddFrom(Form);
+        end;
+        TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj);
+        Form.WindowState := wsMaximized;
+        Form.BringToFront;
+      end;
+    end;
+  finally
+    Aobj.Free;
+  end;
 end;
 
 end.

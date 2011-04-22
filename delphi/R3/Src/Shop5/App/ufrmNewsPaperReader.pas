@@ -79,7 +79,7 @@ type
 
 
 implementation
-uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uPrainpowerJudge, ufrmHintMsg;
+uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire;
 {$R *.dfm}
 
 { TfrmNewPaperReader }
@@ -135,7 +135,17 @@ begin
   else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7] then
     begin
       if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString) then
+         Close;
+    end
+  else if CdsNewsPaper.FieldByName('sFlag').AsInteger = 8 then
+    begin
+      try
+        Self.Visible := False;
+        TfrmQuestionnaire.AnswerQustion(nil,CdsNewsPaper.FieldByName('MSG_ID').AsString);
+
+      finally
         Close;
+      end;
     end;
 end;
 
@@ -162,7 +172,8 @@ begin
   CdsNewsPaper.Close;
   CdsNewsPaper.SQL.Text := EncodeSql;
   Factor.Open(CdsNewsPaper);
-  if not PrainpowerJudge.List.Active then PrainpowerJudge.Load;
+  if not PrainpowerJudge.List.Active then
+    PrainpowerJudge.Load;
   PrainpowerJudge.List.first;
   while not PrainpowerJudge.List.eof do
      begin
@@ -317,7 +328,7 @@ begin
         DBGridEh1.canvas.FillRect(ARect);
         DBGridEh1.Canvas.Font.Color := clBlue;
         DBGridEh1.Canvas.Font.Style := [fsUnderline];
-        DrawText(DBGridEh1.Canvas.Handle,pchar('详情'),length('详情'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+        DrawText(DBGridEh1.Canvas.Handle,pchar('详情'),length('详情'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER);
       finally
         DBGridEh1.Canvas.Font.Assign(AFont);
         AFont.Free;

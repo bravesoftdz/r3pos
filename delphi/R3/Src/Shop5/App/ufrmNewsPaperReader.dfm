@@ -1,6 +1,6 @@
 inherited frmNewPaperReader: TfrmNewPaperReader
-  Left = 291
-  Top = 107
+  Left = 504
+  Top = 140
   BorderStyle = bsDialog
   Caption = #20449#24687#20114#21160
   ClientHeight = 555
@@ -70,6 +70,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               Width = 623
               Height = 441
               Align = alClient
+              AllowedOperations = []
               AutoFitColWidths = True
               BorderStyle = bsNone
               DataSource = DsNewsPaper
@@ -82,9 +83,10 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Options = [dgEditing, dgColumnResize, dgTabs, dgConfirmDelete, dgCancelOnExit]
+              Options = [dgColumnResize, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-              RowHeight = 20
+              ReadOnly = True
+              RowHeight = 23
               TabOrder = 0
               TitleFont.Charset = GB2312_CHARSET
               TitleFont.Color = clWindowText
@@ -92,6 +94,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               TitleFont.Name = #23435#20307
               TitleFont.Style = []
               TitleLines = 1
+              VertScrollBar.VisibleMode = sbNeverShowEh
               IsDrawNullRow = False
               CurrencySymbol = #65509
               DecimalNumber = 2
@@ -103,9 +106,14 @@ inherited frmNewPaperReader: TfrmNewPaperReader
               Columns = <
                 item
                   EditButtons = <>
+                  FieldName = 'B'
+                  Footers = <>
+                  Width = 8
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'MSG_TITLE'
                   Footers = <>
-                  ReadOnly = True
                   Title.Alignment = taCenter
                   Width = 395
                 end
@@ -123,6 +131,18 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                   Footers = <>
                   Title.Alignment = taCenter
                   Width = 80
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'MSG_INFO'
+                  Footers = <>
+                  Width = 40
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'A'
+                  Footers = <>
+                  Width = 8
                 end>
             end
           end
@@ -463,9 +483,9 @@ inherited frmNewPaperReader: TfrmNewPaperReader
                 Color = clWhite
                 TabOrder = 2
                 object labPublishDate: TLabel
-                  Left = 614
+                  Left = 3
                   Top = 332
-                  Width = 6
+                  Width = 617
                   Height = 12
                   Align = alBottom
                   Alignment = taRightJustify

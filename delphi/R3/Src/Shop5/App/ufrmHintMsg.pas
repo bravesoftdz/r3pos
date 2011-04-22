@@ -186,7 +186,7 @@ function TMsgFactory.ReadMsg: PMsgInfo;
 var i:integer;
 begin
   result := nil;
-  if ShowIng then Exi;
+  if ShowIng then Exit;
   for i:=count - 1 downto 0 do
     begin
       if not MsgInfo[i]^.Rdd then

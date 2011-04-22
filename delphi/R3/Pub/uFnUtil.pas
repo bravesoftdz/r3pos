@@ -55,6 +55,7 @@ FnString=Class
     Class function GetCodeFlag(data:string):string;
     Class function GetBarProCode(ID:string;Size,Color:string):string;
     Class function IsCustBarCode(BarCode:string):Boolean;
+    Class function CheckBankCode(Str:string):Boolean;
     //≈–∂œ «∑Ò «Ãı¬Î
     Class function IsBarCode(BarCode:string):Boolean;
     Class function GetBarCodeID(BarCode:string):string;
@@ -766,6 +767,35 @@ begin
            Exit;
          end;
     end;
+end;
+
+class function FnString.CheckBankCode(Str: string): Boolean;
+function GetCodeFlag(data: string): string;
+var i,fak,sum : Integer;
+begin
+  sum := 0;
+  fak := 1;
+  for i:=Length(data) downto 1 do
+  begin
+          if (fak mod 2) = 0 then
+                  sum := sum + (StrToInt(data[i])*1)
+          else
+                  sum := sum + ((StrToInt(data[i])*2) div 10) + ((StrToInt(data[i])*2) mod 10);
+          inc(fak);
+  end;
+  if (sum mod 10) = 0 then
+          result := data+'0'
+  else
+          result := data+IntToStr(10-(sum mod 10));
+end;
+
+begin
+  result := false;
+  if length(Str) in [16,19,20] then
+     begin
+       result := GetCodeFlag(copy(Str,1,length(Str)-1))=Str;
+     end;
+
 end;
 
 class function FnString.IsBarCode(BarCode: string): Boolean;

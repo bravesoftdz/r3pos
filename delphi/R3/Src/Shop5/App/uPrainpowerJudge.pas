@@ -10,6 +10,7 @@ type
   private
   public
     function EncodeSql:String;
+    function GetOrderNum:Integer;
     function GetQustionList:String;
     function GetQustionNum:Integer;
   end;
@@ -78,6 +79,74 @@ begin
   else
     Result := '';
 
+end;
+
+function TPrainpowerJudge.GetOrderNum: Integer;
+var Sql,Str_Sql:String;
+    rs:TZQuery;
+begin
+  if ShopGlobal.GetChkRight('11100001',5) then                //进货订单的审核权限     actfrmStkIndentOrderList  表  STK_INDENTORDER
+    Sql := ' select count(SHOP_ID) as SUM_ORDER'+
+    ' from STK_INDENTORDER where CHK_USER is null and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+
+  if ShopGlobal.GetChkRight('11200001',5) then                //进货单的审核权限       actfrmStockOrderList    表   STK_STOCKORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + ' select count(STOCK_TYPE) as SUM_ORDER '+
+      'from STK_STOCKORDER where CHK_USER is null and STOCK_TYPE=1 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'')';
+    end;
+
+  if ShopGlobal.GetChkRight('11300001',5) then                //采购退货单的审核权限   actfrmStkRetuOrderList   表   STK_STOCKORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + 'select count(STOCK_TYPE) as SUM_ORDER '+
+      'from STK_STOCKORDER where CHK_USER is null and STOCK_TYPE=3 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+    end;
+
+  if ShopGlobal.GetChkRight('12300001',7) then                //销售订单的审核权限     actfrmSalIndentOrderList   表   SAL_INDENTORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + ' select count(SHOP_ID) as SUM_ORDER '+
+      'from SAL_INDENTORDER where CHK_USER is null and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+    end;
+
+  if ShopGlobal.GetChkRight('12400001',7) then                //销售单的审核权限       actfrmSalesOrderList    表   SAL_SALESORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + 'select count(SALES_TYPE) as SUM_ORDER '+
+      'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=1 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+    end;
+
+  if ShopGlobal.GetChkRight('12500001',7) then                //销售退货单的审核权限   actfrmSalRetuOrderList    表   SAL_SALESORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + 'select count(SALES_TYPE) as SUM_ORDER '+
+      'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=3 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+    end;
+
+  if ShopGlobal.GetChkRight('14100001',6) then                //出库调拔单的审核权限   actfrmDbOrderList   表   SAL_SALESORDER
+    begin
+      if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+      Sql := Sql + 'select count(SALES_TYPE) as SUM_ORDER '+
+      'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=2 and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and COMM not in (''02'',''12'')';
+    end;
+
+  Str_Sql := 'select count(SUM_ORDER) as SUM_ORDER from( '+Sql+' ) as j ';
+
+  if Trim(Sql) <> '' then
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.Close;
+        rs.SQL.Text := Str_Sql;
+        Factor.Open(rs);
+        Result := rs.FieldByName('SUM_ORDER').AsInteger;
+      finally
+        rs.Free;
+      end;
+    end
+  else
+    Result := 0;
 end;
 
 function TPrainpowerJudge.GetQustionList: String;

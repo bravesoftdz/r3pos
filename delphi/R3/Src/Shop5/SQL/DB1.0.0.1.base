@@ -4690,7 +4690,6 @@ CREATE TABLE [PUB_CLIENTINFO] (
   INVO_NAME varchar(60),
 --税务登记证号
   TAX_NO varchar(30),
-	
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_CLIENTINFO_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数

@@ -1381,6 +1381,10 @@ CREATE INDEX IX_ACC_PAYDATA_TENANT_ID ON ACC_PAYDATA(TENANT_ID);
 CREATE INDEX IX_ACC_PAYDATA_PAY_ID ON ACC_PAYDATA(TENANT_ID,PAY_ID);
 CREATE INDEX IX_ACC_PAYDATA_ABLE_ID ON ACC_PAYDATA(TENANT_ID,ABLE_ID);
 
+--收款单类型
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','收款单','RECV_FLAG','00',5497000);
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','缴款单','RECV_FLAG','00',5497000);
+
 --收款单
 CREATE TABLE [ACC_RECVORDER] (
         --企业代码
@@ -1410,9 +1414,11 @@ CREATE TABLE [ACC_RECVORDER] (
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
         --刷卡银行
-  BANK_ID varchar(36),
+  BANK_ID varchar(36) NULL,
         --刷卡卡号
-  BANK_CODE varchar(36),
+  BANK_CODE varchar(36) NULL,
+        --收款单类型
+  RECV_FLAG varchar(1) NOT NULL,
         --票据编号
 	[BILL_NO] [varchar] (50) NULL ,
         --说明

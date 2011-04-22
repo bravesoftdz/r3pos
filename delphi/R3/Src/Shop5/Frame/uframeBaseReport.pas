@@ -131,12 +131,14 @@ type
     procedure LoadFormat;override;
     procedure PrintBefore;virtual;
     function  GetRowType:integer;virtual;
+    //2011.04.22 Add 控制是否有查看成本价权限
+    procedure SetNotShowCostPrice(SetGrid: TDBGridEh; AryFields: Array of String);
     procedure RefreshColumn;
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
-    property  HasChild: Boolean read GetHasChild;  //判断是否多门店
-    property  DBGridEh: TDBGridEh read GetDBGridEh;
+    property  HasChild: Boolean read GetHasChild;    //判断是否多门店
+    property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
   end;
 
 implementation
@@ -1136,5 +1138,19 @@ begin
   end;
 end;
 
+procedure TframeBaseReport.SetNotShowCostPrice(SetGrid: TDBGridEh; AryFields: array of String);
+var
+  i: integer;
+  ColName: string;
+  SetCol: TColumnEh;
+begin
+  for i:=Low(AryFields) to High(AryFields) do
+  begin
+    ColName:=trim(AryFields[i]);
+    SetCol:=FindColumn(SetGrid, ColName);
+    if SetCol<>nil then
+      SetCol.Free;
+  end;
+end;
 
 end.

@@ -48,10 +48,20 @@ function GetBarCodeSize(BarCode:string):string;
 //判断控件值不是否为空，并聚焦
 procedure CheckEdtValueIsEmpty(CmpCtrl: TWinControl; MsgStr: string);
 
+//截地区后缀
+function GetRegionId(id:string):string;
 
 
 implementation
 uses uGlobal,uShopGlobal,uFnUtil,uDsUtil,uXDictFactory;
+function GetRegionId(id:string):string;
+begin
+  result := id;
+  if copy(result,length(result)-1,2)='00' then
+     delete(length(result)-1,2);
+  if copy(result,length(result)-1,2)='00' then
+     delete(length(result)-1,2);
+end;
 function GetBarCodeID(BarCode:string):string;
 begin
   Result := copy(BarCode,2,6);

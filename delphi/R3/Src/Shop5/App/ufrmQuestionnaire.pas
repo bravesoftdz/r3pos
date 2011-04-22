@@ -123,6 +123,7 @@ type
     procedure btnRetrun_MainClick(Sender: TObject);
   private
     { Private declarations }
+    QID:String;
     Already_Num,Sum_Num:Integer;
     BeginDateTime:TDateTime;
     IsEnable:Boolean;
@@ -144,6 +145,7 @@ type
     procedure SetListAnswer;
     procedure SaveAnswer;
     class function ShowForm(AOwner:TForm):boolean;
+    class function AnswerQustion(AOwner: TForm;ID:String):Boolean;
   end;
 
 implementation
@@ -187,8 +189,8 @@ begin
   cdsQuestion.SQL.Text :=
   'select ja.*,a.CODE_NAME as QUESTION_ITEM_TYPE_TEXT from('+
   'select SEQ_NO,QUESTION_ITEM_ID,QUESTION_ID,QUESTION_ITEM_TYPE,QUESTION_INFO,QUESTION_OPTIONS from MSC_QUESTION_ITEM '+
-  'where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and QUESTION_ID='''+cdsQuestionList.FieldByName('QUESTION_ID').AsString+''' order by SEQ_NO ) ja ' +
-  'left join (select CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP from PUB_PARAMS where TYPE_CODE=''QUESTION_ITEM_TYPE'') a on ja.QUESTION_ITEM_TYPE=a.CODE_ID';
+  'where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and QUESTION_ID='''+cdsQuestionList.FieldByName('QUESTION_ID').AsString+''' ) ja ' +
+  'left join (select CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP from PUB_PARAMS where TYPE_CODE=''QUESTION_ITEM_TYPE'') a on ja.QUESTION_ITEM_TYPE=a.CODE_ID order by ja.SEQ_NO';
   Factor.Open(cdsQuestion);
 end;
 
@@ -216,6 +218,13 @@ begin
   edtANSWER_USER.Caption := '';
   edtANSWER_DATE.Caption := '';  
   GetQuestionList;
+  if QID <> '' then
+    begin
+      if cdsQuestionList.Locate('QUESTION_ID',QID,[]) then
+        begin
+          DBGridEh1DblClick(Sender);
+        end;
+    end;
   //InitAnswerInfo;
   //GetParams;
 end;
@@ -229,7 +238,6 @@ begin
   btnRetrun_Main.Visible := False;
   btnCommit.Visible := True;
   labSUM.Caption := IntToStr(Sum_Num);
-  RzPage.ActivePageIndex := 2;
   RzPanel35.Visible := False;
   RzPanel12.Visible := True;
   InitAnswerInfo;
@@ -241,6 +249,7 @@ begin
   //
   BeginDateTime := Now();
   Timer1.Enabled := True;
+  RzPage.ActivePageIndex := 2;
 end;
 
 procedure TfrmQuestionnaire.Timer1Timer(Sender: TObject);
@@ -637,7 +646,7 @@ begin
   inherited;
   if cdsQuestionList.IsEmpty then Exit;
 
-  if Column.FieldName = 'QUESTION_TITLE' then
+  if Column.FieldName = 'ANSWER' then
     begin
       RzPage.ActivePageIndex := 1;
       if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
@@ -691,6 +700,8 @@ procedure TfrmQuestionnaire.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var  ARect: TRect;
+  AFont:TFont;
+  Str_Answer:String;
 begin
   inherited;
   if not (gdSelected in State ) then
@@ -700,6 +711,26 @@ begin
     end;
 
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString <> '1' then
+    Str_Answer := '´ðÌâ'
+  else
+    Str_Answer := '²é¿´';
+  if Column.FieldName = 'ANSWER' then
+    begin
+      ARect := Rect;
+      AFont := TFont.Create;
+      AFont.Assign(DBGridEh1.Canvas.Font);
+      try
+        DBGridEh1.canvas.FillRect(ARect);
+        DBGridEh1.Canvas.Font.Color := clBlue;
+        DBGridEh1.Canvas.Font.Style := [fsUnderline];
+        DrawText(DBGridEh1.Canvas.Handle,pchar(Str_Answer),length(Str_Answer),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER);
+      finally
+        DBGridEh1.Canvas.Font.Assign(AFont);
+        AFont.Free;
+      end;
+    end;
 end;
 
 procedure TfrmQuestionnaire.DBGridEh1GetCellParams(Sender: TObject;
@@ -802,6 +833,19 @@ begin
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
+        result := (ShowModal=MROK);
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmQuestionnaire.AnswerQustion(AOwner: TForm;ID: String):Boolean;
+begin
+  with TfrmQuestionnaire.Create(AOwner) do
+    begin
+      try
+        QID := ID;
         result := (ShowModal=MROK);
       finally
         free;

@@ -1136,12 +1136,12 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           Top = 5
           Width = 554
           Height = 403
-          ActivePage = TabTittle
+          ActivePage = TabSheet1
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1212,7 +1212,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                     Title.Alignment = taCenter
                     Title.Caption = #38382#21367#26631#39064
                     Title.Color = clWhite
-                    Width = 350
+                    Width = 290
                   end
                   item
                     EditButtons = <>
@@ -1232,6 +1232,15 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                     Title.Caption = #21457#24067#26085#26399
                     Title.Color = clWhite
                     Width = 80
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ANSWER'
+                    Footers = <>
+                    Title.Alignment = taCenter
+                    Title.Caption = #35814#24773
+                    Title.Color = clWhite
+                    Width = 60
                   end>
               end
             end

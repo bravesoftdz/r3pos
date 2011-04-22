@@ -23,9 +23,11 @@ type
     FList:TList;
     FMsgInfo:PMsgInfo;
     FLoaded: Boolean;
+    FShowing: Boolean;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
     procedure SetLoaded(const Value: Boolean);
+    procedure SetShowing(const Value: Boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -41,6 +43,7 @@ type
     property Count:integer read GetCount;
     property Info:PMsgInfo read FMsgInfo;
     property Loaded:Boolean read FLoaded write SetLoaded;
+    property Showing:Boolean read FShowing write SetShowing;
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
@@ -183,6 +186,7 @@ function TMsgFactory.ReadMsg: PMsgInfo;
 var i:integer;
 begin
   result := nil;
+  if ShowIng then Exi;
   for i:=count - 1 downto 0 do
     begin
       if not MsgInfo[i]^.Rdd then
@@ -196,6 +200,12 @@ end;
 procedure TMsgFactory.SetLoaded(const Value: Boolean);
 begin
   FLoaded := Value;
+end;
+
+procedure TMsgFactory.SetShowing(const Value: Boolean);
+begin
+  FShowing := Value;
+  if frmMsg<>nil then frmMsg.Close;
 end;
 
 procedure TMsgFactory.ShowMsg(MsgInfo: PMsgInfo);

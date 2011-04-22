@@ -7,6 +7,7 @@ inherited frmNewPaperReader: TfrmNewPaperReader
   ClientWidth = 789
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12

@@ -59,6 +59,7 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure FormShow(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     ID:String;
@@ -113,6 +114,7 @@ begin
   InitMSGArr;
   SetRecordNum;
   ID := '';
+  MsgFactory.Showing := true;
 end;
 
 procedure TfrmNewPaperReader.DBGridEh1DblClick(Sender: TObject);
@@ -181,6 +183,8 @@ begin
 end;
 
 procedure TfrmNewPaperReader.btn_Message3Click(Sender: TObject);
+var rs:TZQuery;
+    Str_Sql:String;
 begin
   inherited;
   MSG_Tpye := '3';
@@ -191,6 +195,29 @@ begin
   btn_Message4.Font.Color := clWindowText;
   if RzPage.ActivePageIndex = 1 then RzPage.ActivePageIndex := 0;
   Open;
+
+  Str_Sql := PrainpowerJudge.GetQustionList;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := Str_Sql;
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        CdsNewsPaper.Append;       a.,b.,b.QUESTION_CLASS,b.,b.ISSUE_DATE
+        CdsNewsPaper.FieldByName('MSG_ID').AsString := rs.FieldByName('QUESTION_ID').AsString;
+        CdsNewsPaper.FieldByName('MSG_TITLE').AsString := rs.FieldByName('QUESTION_TITLE').AsString+' ('+rs.FieldByName('QUESTION_ITEM_AMT').AsString+')';
+        CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := rs.FieldByName('QUESTION_CLASS').AsString;
+        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
+        CdsNewsPaper.FieldByName('FIELD').AsInteger := 1;
+        CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+        CdsNewsPaper.Post;
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmNewPaperReader.btn_Message4Click(Sender: TObject);
@@ -455,6 +482,13 @@ begin
            Exit;
          end;
     end;
+end;
+
+procedure TfrmNewPaperReader.FormDestroy(Sender: TObject);
+begin
+  MsgFactory.Showing := false;
+  inherited;
+
 end;
 
 end.

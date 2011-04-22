@@ -192,6 +192,7 @@ begin
   HasError := false;
   tmpPath := GetWindowTmp;
   SQL := TStringList.Create;
+  srDbType := -1;
   try
   FList.Sort;
   for i:= 0 to FList.Count - 1 do

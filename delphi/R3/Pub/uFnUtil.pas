@@ -64,6 +64,7 @@ FnString=Class
     Class function IsNull(s:string):string;
     Class function CopyWideString(s:WideString;Start,wLen:Integer):string;
     Class function GetDight(s:integer):string;
+    Class function TrimRight(s:string;len:integer):string;
   end;
 FnSystem=Class
   public
@@ -821,6 +822,12 @@ class function FnString.IsBarCode(BarCode: string): Boolean;
   Result := (Length(BarCode)>=5)
       and (GetCodeFlag(copy(BarCode,1,length(BarCode)-1))=BarCode)
       ;
+end;
+
+class function FnString.TrimRight(s: string; len: integer): string;
+begin
+  result := trim(s);
+  result := copy(s,length(s)-len+1,len);
 end;
 
 end.

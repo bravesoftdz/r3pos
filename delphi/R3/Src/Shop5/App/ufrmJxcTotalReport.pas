@@ -290,7 +290,7 @@ begin
     ',-sum(CHANGE4_CST) as CHANGE4_CST '+
     ',-sum(CHANGE5_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+') as CHANGE5_AMT '+
     ',-sum(CHANGE5_CST) as CHANGE5_CST '+
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
+    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+' else 0 end) as BAL_AMT '+
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+

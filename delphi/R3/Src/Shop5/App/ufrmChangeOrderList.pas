@@ -177,6 +177,9 @@ begin
       SetEditStyle(dsBrowse,fndSHOP_ID.Style);
       fndSHOP_ID.Properties.ReadOnly := True;
     end;
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     DBGridEh1.Columns[6].Free;
+
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1CellClick(Column: TColumnEh);

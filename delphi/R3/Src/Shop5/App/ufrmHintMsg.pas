@@ -73,7 +73,8 @@ type
     class procedure ShowInfo(Msg:PMsgInfo);
   end;
 
-var MsgFactory:TMsgFactory;
+var
+  MsgFactory:TMsgFactory;
 implementation
 uses uGlobal,uShopGlobal,ufrmNewsPaperReader;  //ufrmShowMsg
 {$R *.dfm}

@@ -1409,6 +1409,10 @@ CREATE TABLE [ACC_RECVORDER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+        --刷卡银行
+  BANK_ID varchar(36),
+        --刷卡卡号
+  BANK_CODE varchar(36),
         --票据编号
 	[BILL_NO] [varchar] (50) NULL ,
         --说明

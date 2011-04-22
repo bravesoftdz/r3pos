@@ -1,17 +1,17 @@
 inherited frmHostDialog: TfrmHostDialog
   Left = 380
-  Top = 250
+  Top = 239
   BorderStyle = bsDialog
   Caption = #36873#25321#26381#21153#20027#26426
-  ClientHeight = 248
-  ClientWidth = 381
+  ClientHeight = 259
+  ClientWidth = 384
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
   object RzBackground1: TRzBackground [0]
     Left = 0
     Top = 0
-    Width = 381
+    Width = 384
     Height = 41
     Active = True
     Align = alTop
@@ -39,7 +39,7 @@ inherited frmHostDialog: TfrmHostDialog
   object rzDbList: TRzListView [2]
     Left = 0
     Top = 41
-    Width = 381
+    Width = 384
     Height = 150
     Align = alTop
     Columns = <
@@ -55,7 +55,7 @@ inherited frmHostDialog: TfrmHostDialog
       item
         Alignment = taCenter
         Caption = #29366#24577
-        Width = 80
+        Width = 100
       end>
     FrameStyle = fsLowered
     FrameVisible = True

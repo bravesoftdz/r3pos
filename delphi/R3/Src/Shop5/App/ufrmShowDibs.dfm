@@ -26,7 +26,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_G: TLabel
       Left = 28
       Top = 409
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -39,7 +39,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_F: TLabel
       Left = 28
       Top = 360
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -52,7 +52,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_E: TLabel
       Left = 28
       Top = 313
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -65,7 +65,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_D: TLabel
       Left = 28
       Top = 264
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -78,7 +78,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_C: TLabel
       Left = 28
       Top = 216
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -91,7 +91,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_B: TLabel
       Left = 28
       Top = 168
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -104,7 +104,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_A: TLabel
       Left = 28
       Top = 120
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -117,7 +117,7 @@ inherited frmShowDibs: TfrmShowDibs
     object Label1: TLabel
       Left = 28
       Top = 24
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #24212#25910#37329#39069#65306
       Font.Charset = GB2312_CHARSET
@@ -130,7 +130,7 @@ inherited frmShowDibs: TfrmShowDibs
     object Label2: TLabel
       Left = 28
       Top = 72
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #24453#25910#37329#39069#65306
       Font.Charset = GB2312_CHARSET
@@ -143,7 +143,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_H: TLabel
       Left = 28
       Top = 465
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -156,7 +156,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_I: TLabel
       Left = 28
       Top = 513
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -169,7 +169,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_J: TLabel
       Left = 28
       Top = 561
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -197,6 +197,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 9
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_F: TcxTextEdit
@@ -217,6 +218,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 10
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_E: TcxTextEdit
@@ -237,6 +239,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 7
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_D: TcxTextEdit
@@ -257,6 +260,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 6
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_C: TcxTextEdit
@@ -277,6 +281,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 5
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_B: TcxTextEdit
@@ -297,6 +302,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 3
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_A: TcxTextEdit
@@ -317,6 +323,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 1
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtTotalFee: TcxTextEdit
@@ -337,6 +344,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 0
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object GroupBox1: TGroupBox
@@ -417,7 +425,7 @@ inherited frmShowDibs: TfrmShowDibs
       object Label3: TLabel
         Left = 21
         Top = 2
-        Width = 150
+        Width = 155
         Height = 29
         Caption = #25214#38646#37329#39069#65306
         Font.Charset = GB2312_CHARSET
@@ -441,6 +449,7 @@ inherited frmShowDibs: TfrmShowDibs
         Style.Font.Name = #40657#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
+        ImeMode = imClose
         OnKeyDown = edtTakeFeeKeyDown
         OnKeyPress = edtTakeFeeKeyPress
       end
@@ -462,6 +471,7 @@ inherited frmShowDibs: TfrmShowDibs
         Style.Font.Name = #40657#20307
         Style.Font.Style = [fsBold]
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnEnter = edtTotalFeeEnter
       end
       object edtPrintTicket: TCheckBox
@@ -497,6 +507,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 8
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_H: TcxTextEdit
@@ -517,6 +528,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 11
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_I: TcxTextEdit
@@ -537,6 +549,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 12
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
     object edtPAY_J: TcxTextEdit
@@ -557,6 +570,7 @@ inherited frmShowDibs: TfrmShowDibs
       Style.Font.Name = #40657#20307
       Style.Font.Style = [fsBold]
       TabOrder = 13
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       OnEnter = edtTotalFeeEnter
     end
   end

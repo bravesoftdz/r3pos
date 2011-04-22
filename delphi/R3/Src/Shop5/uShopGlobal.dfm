@@ -691,7 +691,7 @@ inherited ShopGlobal: TShopGlobal
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
         'E_TYPE='#39'7'#39' and TENANT_ID in (0,:TENANT_ID ) and COMM not in ('#39'02' +
-        #39','#39'12'#39')')
+        #39','#39'12'#39') order by SEQ_NO')
     Params = <
       item
         DataType = ftUnknown

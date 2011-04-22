@@ -15,9 +15,9 @@ inherited frmRecvOrder: TfrmRecvOrder
     Height = 465
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Top = 154
+      Top = 177
       Width = 646
-      Height = 263
+      Height = 240
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -28,14 +28,14 @@ inherited frmRecvOrder: TfrmRecvOrder
         Caption = #25910#27454#26126#32454
         inherited RzPanel2: TRzPanel
           Width = 642
-          Height = 236
+          Height = 213
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 632
-            Height = 226
+            Height = 203
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -232,14 +232,14 @@ inherited frmRecvOrder: TfrmRecvOrder
       Left = 5
       Top = 5
       Width = 646
-      Height = 149
+      Height = 172
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 2
       object Label1: TLabel
         Left = 182
-        Top = 60
+        Top = 84
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -247,14 +247,14 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label2: TLabel
         Left = 182
-        Top = 81
+        Top = 106
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #25910#25903#31185#30446
       end
       object Label6: TLabel
-        Left = 438
+        Left = 446
         Top = 17
         Width = 48
         Height = 12
@@ -263,7 +263,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label7: TLabel
         Left = 206
-        Top = 103
+        Top = 151
         Width = 24
         Height = 12
         Alignment = taRightJustify
@@ -271,37 +271,46 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label17: TLabel
         Left = 182
-        Top = 17
+        Top = 40
         Width = 48
         Height = 12
         Caption = #23458#25143#21517#31216
       end
       object Label3: TLabel
         Left = 182
-        Top = 38
+        Top = 62
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #25910#27454#26041#24335
       end
       object Label40: TLabel
-        Left = 438
-        Top = 38
+        Left = 182
+        Top = 17
         Width = 48
         Height = 12
         Caption = #25910#27454#38376#24215
       end
       object Label4: TLabel
-        Left = 439
-        Top = 60
+        Left = 183
+        Top = 129
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #31080#25454#32534#21495
       end
+      object Label8: TLabel
+        Left = 446
+        Top = 65
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21047#21345#36134#21495
+        Visible = False
+      end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
-        Top = 56
+        Top = 80
         Width = 120
         Height = 20
         Properties.AutoSelect = False
@@ -345,7 +354,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtITEM_ID: TzrComboBoxList
         Left = 236
-        Top = 77
+        Top = 102
         Width = 120
         Height = 20
         Properties.AutoSelect = False
@@ -381,7 +390,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         MultiSelect = False
       end
       object edtRECV_DATE: TcxDateEdit
-        Left = 492
+        Left = 500
         Top = 13
         Width = 131
         Height = 20
@@ -390,8 +399,8 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtREMARK: TcxTextEdit
         Left = 236
-        Top = 98
-        Width = 277
+        Top = 146
+        Width = 301
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 2
@@ -668,8 +677,8 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 236
-        Top = 13
-        Width = 181
+        Top = 36
+        Width = 205
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -739,16 +748,17 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object edtPAYM_ID: TcxComboBox
         Left = 236
-        Top = 34
+        Top = 58
         Width = 120
         Height = 20
         Properties.DropDownListStyle = lsFixedList
+        Properties.OnChange = edtPAYM_IDPropertiesChange
         TabOrder = 6
       end
       object edtSHOP_ID: TzrComboBoxList
-        Left = 492
-        Top = 34
-        Width = 131
+        Left = 236
+        Top = 14
+        Width = 120
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -787,22 +797,30 @@ inherited frmRecvOrder: TfrmRecvOrder
         MultiSelect = False
       end
       object edtBILL_NO: TcxTextEdit
-        Left = 492
-        Top = 55
-        Width = 131
+        Left = 236
+        Top = 124
+        Width = 180
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 8
       end
+      object edtBANK_CODE: TcxTextEdit
+        Left = 500
+        Top = 61
+        Width = 131
+        Height = 20
+        Properties.OnChange = edtREMARKPropertiesChange
+        TabOrder = 9
+        Visible = False
+        OnExit = edtBANK_CODEExit
+      end
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 168
-    Top = 120
+    Left = 96
   end
   inherited actList: TActionList
-    Left = 224
-    Top = 112
+    Left = 112
     object actAddRecvAbleInfo: TAction
       Caption = #28155#21152#24212#25910#27454
     end

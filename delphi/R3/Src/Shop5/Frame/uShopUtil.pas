@@ -583,15 +583,15 @@ begin
     begin
       if (_tag<>'') and (copy(Components[i].Name,1,3) <> _tag) then Continue;
       fldname := copy(Components[i].Name,4,50);
-      if AObj.FindField(fldname)=nil then continue; 
+      if AObj.FindField(fldname)=nil then continue;
       if Components[i] is TcxCheckBox then
          begin
-           if TcxCheckBox(Components[i]).Properties.ReadOnly then continue;
+           //if TcxCheckBox(Components[i]).Properties.ReadOnly then continue;
            AObj.FieldbyName(fldname).AsBoolean := TcxCheckBox(Components[i]).Checked;
          end;
       if Components[i] is TcxComboBox then
          begin
-           if TcxComboBox(Components[i]).Properties.ReadOnly then continue;
+           //if TcxComboBox(Components[i]).Properties.ReadOnly then continue;
            if TcxComboBox(Components[i]).ItemIndex=-1 then
               AObj.FieldbyName(fldname).AsString := ''
            else
@@ -599,7 +599,7 @@ begin
          end;
       if Components[i] is TcxDateEdit then
          begin
-           if TcxDateEdit(Components[i]).Properties.ReadOnly then continue;
+           //if TcxDateEdit(Components[i]).Properties.ReadOnly then continue;
            if TcxDateEdit(Components[i]).EditValue = null then
               AObj.FieldbyName(fldname).AsString := ''
            else
@@ -612,12 +612,12 @@ begin
          end;
       if Components[i] is TcxMemo then
          begin
-           if TcxMemo(Components[i]).Properties.ReadOnly then continue;
+           //if TcxMemo(Components[i]).Properties.ReadOnly then continue;
            AObj.FieldbyName(fldname).AsString := TcxMemo(Components[i]).Text;
          end;
       if Components[i] is TzrComboBoxList then
          begin
-           if TzrComboBoxList(Components[i]).Properties.ReadOnly then continue;
+           //if TzrComboBoxList(Components[i]).Properties.ReadOnly then continue;
            AObj.FieldbyName(fldname).AsString := TzrComboBoxList(Components[i]).AsString;
            if AObj.FindField(fldname+'_TEXT')<>nil then AObj.FieldbyName(fldname+'_TEXT').asString := TzrComboBoxList(Components[i]).Text;
 
@@ -628,7 +628,7 @@ begin
          end;
       if Components[i] is TcxMaskEdit then
          begin
-           if TcxMaskEdit(Components[i]).Properties.ReadOnly then continue;
+           //if TcxMaskEdit(Components[i]).Properties.ReadOnly then continue;
            if (AObj.FieldbyName(fldname).DataType in [ftSmallint, ftInteger, ftWord,ftFloat, ftCurrency, ftBCD]) and (trim(TcxMaskEdit(Components[i]).Text)='') then
               AObj.FieldbyName(fldname).NewValue := null
            else
@@ -658,7 +658,7 @@ begin
          end;
       if Components[i] is TcxTextEdit then
          begin
-           if TcxTextEdit(Components[i]).Properties.ReadOnly then continue;
+           //if TcxTextEdit(Components[i]).Properties.ReadOnly then continue;
            if (AObj.FieldbyName(fldname).DataType in [ftSmallint, ftInteger, ftWord,ftFloat, ftCurrency, ftBCD]) and (trim(TcxTextEdit(Components[i]).Text)='') then
               AObj.FieldbyName(fldname).NewValue := null
            else

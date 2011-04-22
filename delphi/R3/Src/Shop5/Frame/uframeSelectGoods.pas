@@ -384,11 +384,12 @@ end;
 procedure TframeSelectGoods.FormCreate(Sender: TObject);
 begin
   inherited;
-  // 判断是否有查询库存权限
-  //DBGridEh1.Columns[3].Visible := ShopGlobal.GetChkRight('600041');
   N2.Enabled:=False;
   N3.Enabled:=False;
   N4.Enabled:=False;
+  // 判断是否有查询库存权限
+  if not ShopGlobal.GetChkRight('14500001',1) then
+     DBGridEh1.Columns[3].Free;
 end;
 
 procedure TframeSelectGoods.chkMultSelectClick(Sender: TObject);

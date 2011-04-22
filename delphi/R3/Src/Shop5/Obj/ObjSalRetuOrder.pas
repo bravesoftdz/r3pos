@@ -504,9 +504,22 @@ end;
 
 function TSalRetuOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
-var Str:string;
-    n:Integer;
+var
+  Str:string;
+  n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select count(*) from SAL_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
+      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and A.USING_LOCUS_NO=1 and '+
+      'not Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.GODS_ID)';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
+  finally
+    rs.Free;
+  end;
   try
     Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);

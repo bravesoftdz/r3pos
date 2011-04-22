@@ -1615,6 +1615,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           Caption = 'ToolButton17'
           ImageIndex = 14
           Style = tbsDivider
+          Visible = False
         end
         object ToolButton11: TToolButton
           Left = 530
@@ -1646,6 +1647,9 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     end
     inherited actInfo: TAction
       OnExecute = actInfoExecute
+    end
+    inherited actAudit: TAction
+      Visible = False
     end
   end
   inherited cdsList: TZQuery

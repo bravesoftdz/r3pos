@@ -1,9 +1,9 @@
 inherited frmShopDesk: TfrmShopDesk
-  Left = 193
-  Top = 57
+  Left = 1
+  Top = 1
   Caption = 'frmShopDesk'
-  ClientHeight = 600
-  ClientWidth = 1064
+  ClientHeight = 520
+  ClientWidth = 942
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -11,8 +11,8 @@ inherited frmShopDesk: TfrmShopDesk
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 1064
-    Height = 600
+    Width = 942
+    Height = 520
     Align = alClient
     BorderOuter = fsNone
     BorderColor = 14588523
@@ -21,10 +21,10 @@ inherited frmShopDesk: TfrmShopDesk
     FlatColor = 14588523
     TabOrder = 0
     object rzTaskBar: TRzGroupBar
-      Left = 877
+      Left = 755
       Top = 0
       Width = 187
-      Height = 600
+      Height = 520
       BorderOuter = fsFlat
       BorderSides = [sdLeft, sdRight]
       BorderColor = 13871254
@@ -38,6 +38,7 @@ inherited frmShopDesk: TfrmShopDesk
       Color = 16381681
       ParentColor = False
       TabOrder = 0
+      Visible = False
       object RzGroup1: TRzGroup
         BorderColor = 13871254
         CaptionColor = 16109714
@@ -148,8 +149,8 @@ inherited frmShopDesk: TfrmShopDesk
     object rsDesk: TRzPageControl
       Left = 0
       Top = 0
-      Width = 877
-      Height = 600
+      Width = 755
+      Height = 520
       ActivePage = TabSheet2
       Align = alClient
       ShowCardFrame = False

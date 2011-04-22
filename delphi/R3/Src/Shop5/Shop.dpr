@@ -201,7 +201,8 @@ uses
   ufrmIntegralGlide_Add in 'App\ufrmIntegralGlide_Add.pas' {frmIntegralGlide_Add},
   ufrmDeposit in 'App\ufrmDeposit.pas' {frmDeposit},
   ufrmCustomerExt in 'App\ufrmCustomerExt.pas' {frmCustomerExt: TFrame},
-  ObjImpeach in 'Obj\ObjImpeach.pas';
+  ObjImpeach in 'Obj\ObjImpeach.pas',
+  uPrainpowerJudge in 'App\uPrainpowerJudge.pas';
 
 {$R *.res}
 var
@@ -210,7 +211,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.4';
+  DBVersion := '1.0.0.5';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

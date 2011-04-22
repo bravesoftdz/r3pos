@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 426
-    Height = 253
-    ActivePage = tabBasic
+    Width = 418
+    Height = 242
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -40,6 +40,7 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 9
         Width = 121
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 0
       end
       object GroupBox2: TGroupBox
@@ -61,6 +62,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 28
           Width = 114
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             #31227#21160#21152#26435#24179#22343
@@ -103,6 +105,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.MinValue = 26.000000000000000000
           TabOrder = 2
           Value = 28
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
       object GroupBox6: TGroupBox
@@ -124,6 +127,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 21
           Width = 82
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             #26465#30721#36755#20837
@@ -140,6 +144,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ReadOnly = False
           Properties.Caption = #20801#35768#36755#20837#23567#25968#30340#25968#37327
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object chkLOCUS_NO_MT: TcxCheckBox
           Left = 8
@@ -150,6 +155,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ReadOnly = False
           Properties.Caption = #21551#29992#29289#27969#36319#36394#30721#24378#21046#20986#24211
           TabOrder = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
     end
@@ -221,6 +227,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.MaxValue = 100.000000000000000000
         TabOrder = 0
         Value = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object ContinuDays: TcxSpinEdit
         Left = 186
@@ -230,6 +237,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.MaxValue = 100.000000000000000000
         TabOrder = 1
         Value = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object IsBirthDay: TcxCheckBox
         Left = 8
@@ -241,6 +249,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.Caption = ''
         State = cbsChecked
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object IsContinu: TcxCheckBox
         Left = 8
@@ -252,6 +261,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.Caption = ''
         State = cbsChecked
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object IsStorage: TcxCheckBox
         Left = 8
@@ -262,6 +272,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.Caption = ''
         State = cbsChecked
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtAUDIT_HINT: TcxCheckBox
         Left = 8
@@ -271,6 +282,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #24453#23457#26680#21333#25454#25552#37266
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPLANDATE_HINT: TcxCheckBox
         Left = 8
@@ -280,6 +292,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #21040#36135#21457#36135#25552#37266
         TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtACCOUNT_HINT: TcxCheckBox
         Left = 8
@@ -289,6 +302,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #25910#20184#24080#27454#25552#37266
         TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet1: TTabSheet
@@ -357,6 +371,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 82
           Height = 20
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtDEC1: TcxTextEdit
           Left = 195
@@ -364,6 +379,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 25
           Height = 20
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtDEC2: TcxTextEdit
           Left = 195
@@ -371,6 +387,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 25
           Height = 20
           TabOrder = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object RzBitBtn1: TRzBitBtn
           Left = 185
@@ -390,6 +407,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 51
           Width = 82
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             '1'#20301#25968
@@ -405,6 +423,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 76
           Width = 58
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             #26080
@@ -418,6 +437,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 100
           Width = 58
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             #26080
@@ -431,6 +451,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 76
           Width = 65
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             '1'#20301#25968
@@ -446,6 +467,7 @@ inherited frmSysDefine: TfrmSysDefine
           Top = 100
           Width = 65
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             '1'#20301#25968
@@ -465,6 +487,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26159#21542#20801#35768#26465#30721#37325#22797#20351#29992#65288#21363#19968#30721#22810#21697#65289
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet2: TTabSheet
@@ -514,12 +537,14 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.MaxValue = 3.000000000000000000
         TabOrder = 0
         Value = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCARRYRULE: TcxComboBox
         Left = 204
         Top = 125
         Width = 119
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #22235#33293#20116#20837
@@ -559,6 +584,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ValueType = vtFloat
           TabOrder = 0
           Value = 0.050000000000000000
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtRTL_RATE3: TcxSpinEdit
           Left = 75
@@ -570,6 +596,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ValueType = vtFloat
           TabOrder = 1
           Value = 0.170000000000000000
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
       object edtRTL_INV_FLAG: TcxComboBox
@@ -577,6 +604,7 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 12
         Width = 104
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #25910#27454#25910#31080
@@ -592,12 +620,14 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #20445#23384#26102#26159#21542#31435#21363#25171#21360#21333#25454
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPOSCALCDIGHT: TcxComboBox
         Left = 100
         Top = 157
         Width = 53
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #20998
@@ -609,13 +639,14 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object edtGUIDE_USER: TcxCheckBox
         Left = 230
-        Top = 12
-        Width = 147
+        Top = 11
+        Width = 171
         Height = 21
         Properties.DisplayUnchecked = 'False'
         Properties.ReadOnly = False
-        Properties.Caption = #27809#26377#36755#20837#23548#36141#21592#33021#32467#36134
+        Properties.Caption = #27809#26377#36755#20837#23548#36141#21592#20801#35768#32467#36134
         TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object GroupBox7: TGroupBox
         Left = 232
@@ -649,6 +680,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26159#21542#33258#21160#23457#26680#38144#21806#31867#30456#20851#21333#25454
         TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet3: TTabSheet
@@ -700,6 +732,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ValueType = vtFloat
           TabOrder = 0
           Value = 0.050000000000000000
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtIN_RATE3: TcxSpinEdit
           Left = 75
@@ -711,6 +744,7 @@ inherited frmSysDefine: TfrmSysDefine
           Properties.ValueType = vtFloat
           TabOrder = 1
           Value = 0.170000000000000000
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
       object edtIN_INV_FLAG: TcxComboBox
@@ -718,6 +752,7 @@ inherited frmSysDefine: TfrmSysDefine
         Top = 20
         Width = 104
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #25910#27454#25910#31080
@@ -733,6 +768,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #20445#23384#26102#26159#21542#31435#21363#25171#21360#21333#25454
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object GroupBox8: TGroupBox
         Left = 216
@@ -766,6 +802,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26159#21542#33258#21160#23457#26680#20837#24211#31867#30456#20851#21333#25454
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet4: TTabSheet
@@ -787,6 +824,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #20801#35768#38646#24211#23384#20986#24211
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtDB_AUTO_OK: TcxCheckBox
         Left = 14
@@ -796,6 +834,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #35843#25320#26102#26159#21542#31435#21363#21040#36135#30830#35748
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object chkCheckAudit: TcxCheckBox
         Left = 14
@@ -805,6 +844,7 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26376#26410#26159#21542#24378#21046#30424#28857
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSTO_AUTO_CHK: TcxCheckBox
         Left = 14
@@ -814,13 +854,14 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26159#21542#33258#21160#23457#26680#24211#23384#31649#29702#30456#20851#21333#25454
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 426
+    Top = 242
+    Width = 418
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

@@ -2351,6 +2351,7 @@ begin
 end;
 
 procedure TfrmPosMain.actSaveExecute(Sender: TObject);
+var c:integer;
 begin
   inherited;
   SaveOrder;
@@ -2358,7 +2359,10 @@ begin
   begin
     try
       if DevFactory.SavePrint and Printed then
-         DoPrintTicket(inttostr(Global.TENANT_ID),oid,0,Cash,Dibs);
+       begin
+         for c:=1 to DevFactory.copys do
+           DoPrintTicket(inttostr(Global.TENANT_ID),oid,0,Cash,Dibs);
+       end;
     except
       MessageBox(Handle,'打印小票出错，请确定纸张是否安装，小票打印电源是否打开？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
     end;

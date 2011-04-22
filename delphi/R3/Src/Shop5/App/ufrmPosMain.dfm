@@ -749,7 +749,6 @@ inherited frmPosMain: TfrmPosMain
             Style.Font.Style = [fsBold]
             TabOrder = 0
             ImeMode = imClose
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyDown = edtInputKeyDown
             OnKeyPress = edtInputKeyPress
           end

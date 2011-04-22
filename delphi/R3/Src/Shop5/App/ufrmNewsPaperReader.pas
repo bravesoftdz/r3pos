@@ -64,6 +64,7 @@ type
     { Private declarations }
     ID:String;
     MSG_Tpye:String;
+    MSGArr:array[0..4] of Integer;
     procedure InitMSGArr;
     procedure SetRecordNum;
   public
@@ -75,7 +76,6 @@ type
     class function ShowNewsPaper(Title_ID:String):Boolean;
   end;
 
-var MSGArr:array[0..4] of Integer = (0,0,0,0,0);
 
 implementation
 uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uPrainpowerJudge, ufrmHintMsg;

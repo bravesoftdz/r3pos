@@ -41,6 +41,8 @@ type
     edtSHOP_ID: TzrComboBoxList;
     Label4: TLabel;
     edtBILL_NO: TcxTextEdit;
+    Label8: TLabel;
+    edtBANK_CODE: TcxTextEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -65,6 +67,8 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsDetailBeforeEdit(DataSet: TDataSet);
     procedure edtRECV_USERPropertiesChange(Sender: TObject);
+    procedure edtPAYM_IDPropertiesChange(Sender: TObject);
+    procedure edtBANK_CODEExit(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -141,6 +145,7 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),edtPAYM_ID.Properties.Items,'CODE_NAME');
+//  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_BANK_INFO'),edtBANK_ID.Properties.Items,'CODE_NAME');
 end;
 
 procedure TfrmRecvOrder.FormDestroy(Sender: TObject);
@@ -204,6 +209,11 @@ begin
   if edtPAYM_ID.ItemIndex<0 then Raise Exception.Create('请选择收款方式名称');
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择收支科目名称');
   if edtRECV_DATE.EditValue = null then Raise Exception.Create('请选择收款日期');
+//  if edtBANK_ID.Visible then
+//     begin
+//       if edtBANK_ID.ItemIndex < 0 then Raise Exception.Create('请选择刷卡银行');
+//       if trim(edtBANK_CODE.Text) = '' then Raise Exception.Create('请选择输入银行卡号');
+//     end;
   WriteToObject(AObj,self);
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
@@ -558,6 +568,36 @@ begin
      begin
        if Value then Label14.Caption := '状态:审核' else Label14.Caption := '状态:待审';
      end;
+end;
+
+procedure TfrmRecvOrder.edtPAYM_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtPAYM_ID.ItemIndex<0 then Exit;
+//  edtBANK_ID.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
+  edtBANK_CODE.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
+//  Label5.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
+  Label8.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
+end;
+
+procedure TfrmRecvOrder.edtBANK_CODEExit(Sender: TObject);
+function GetCheckNo: string;
+begin
+  result := trim(edtBANK_CODE.Text);
+       if pos('=',result)>0 then
+          begin
+            result := copy(result,1,pos('=',result)-1);
+          end;
+       if not FnString.CheckBankCode(result) then
+          begin
+            edtBANK_CODE.SetFocus;
+            Raise Exception.Create('请输入银行卡号无效，请重新刷卡...');
+          end;
+end;
+begin
+  inherited;
+  if trim(edtBANK_CODE.Text)='' then Exit;
+  edtBANK_CODE.Text := GetCheckNo;
 end;
 
 end.

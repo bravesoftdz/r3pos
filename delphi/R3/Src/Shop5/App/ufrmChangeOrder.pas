@@ -199,6 +199,11 @@ begin
   finally
     rs.Free;
   end;
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[7].Free;
+       DBGridEh1.Columns[6].Free;
+     end;
 end;
 
 procedure TfrmChangeOrder.InitPrice(GODS_ID, UNIT_ID: string);

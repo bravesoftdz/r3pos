@@ -1,9 +1,9 @@
 inherited frameSelectGoods: TframeSelectGoods
   Left = 203
-  Top = 112
+  Top = 111
   ActiveControl = DBGridEh1
   Caption = #21830#21697#36873#25321#26694
-  ClientHeight = 401
+  ClientHeight = 402
   ClientWidth = 605
   OnCreate = FormCreate
   OnShow = FormShow
@@ -11,10 +11,10 @@ inherited frameSelectGoods: TframeSelectGoods
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 605
-    Height = 401
+    Height = 402
     inherited RzPage: TRzPageControl
       Width = 595
-      Height = 355
+      Height = 356
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -22,17 +22,17 @@ inherited frameSelectGoods: TframeSelectGoods
         Caption = #21830#21697#36873#25321#26694
         inherited RzPanel2: TRzPanel
           Width = 591
-          Height = 351
+          Height = 352
           object Splitter1: TSplitter
             Left = 161
             Top = 5
-            Height = 341
+            Height = 342
           end
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
             Width = 156
-            Height = 341
+            Height = 342
             Align = alLeft
             BorderOuter = fsFlatRounded
             TabOrder = 0
@@ -40,7 +40,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 38
               Width = 152
-              Height = 301
+              Height = 302
               SelectionPen.Color = clBtnShadow
               Align = alClient
               Ctl3D = True
@@ -84,7 +84,7 @@ inherited frameSelectGoods: TframeSelectGoods
             Left = 164
             Top = 5
             Width = 422
-            Height = 341
+            Height = 342
             Align = alClient
             BorderOuter = fsFlatRounded
             TabOrder = 1
@@ -92,7 +92,7 @@ inherited frameSelectGoods: TframeSelectGoods
               Left = 2
               Top = 38
               Width = 418
-              Height = 301
+              Height = 302
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               AutoFitColWidths = True
@@ -265,7 +265,7 @@ inherited frameSelectGoods: TframeSelectGoods
       end
     end
     inherited btPanel: TRzPanel
-      Top = 360
+      Top = 361
       Width = 595
       Height = 36
       object btnOk: TRzBitBtn

@@ -24,6 +24,7 @@ TDevFactory=class
     FPrintNull: integer;
     FCloseDayPrinted: boolean;
     FCloseDayPrintFlag: integer;
+    FCopys: integer;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -46,6 +47,7 @@ TDevFactory=class
     function GetTitle: string;
     procedure SetCloseDayPrinted(const Value: boolean);
     procedure SetCloseDayPrintFlag(const Value: integer);
+    procedure SetCopys(const Value: integer);
   protected
     
   public
@@ -103,6 +105,8 @@ TDevFactory=class
     property CloseDayPrinted:boolean read FCloseDayPrinted write SetCloseDayPrinted;
     //关账时打印类型 0只打金额 1打商品明细
     property CloseDayPrintFlag:integer read FCloseDayPrintFlag write SetCloseDayPrintFlag;
+    //复制
+    property Copys:integer read FCopys write SetCopys;
 end;
 var
   DevFactory:TDevFactory;
@@ -194,6 +198,8 @@ begin
 
      CloseDayPrinted :=  F.ReadBool('SYS_DEFINE','CLOSEDAYPRINTED',false);
      CloseDayPrintFlag :=  F.ReadInteger('SYS_DEFINE','CLOSEDAYPRINTFLAG',0);
+
+     Copys := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
   finally
      F.Free;
   end;
@@ -275,6 +281,11 @@ end;
 procedure TDevFactory.SetCloseDayPrintFlag(const Value: integer);
 begin
   FCloseDayPrintFlag := Value;
+end;
+
+procedure TDevFactory.SetCopys(const Value: integer);
+begin
+  FCopys := Value;
 end;
 
 procedure TDevFactory.SetDisplayBaudRate(const Value: Integer);

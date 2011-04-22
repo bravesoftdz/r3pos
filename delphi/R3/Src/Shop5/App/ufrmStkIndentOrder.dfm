@@ -532,6 +532,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       Top = 135
       Width = 820
       Height = 239
+      ImeName = ''
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <

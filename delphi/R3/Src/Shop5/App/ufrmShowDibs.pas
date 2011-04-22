@@ -63,6 +63,7 @@ type
     procedure ShowFee;
     function Calc:Currency;
     procedure InitForm;
+    function DoPayB(mny:Currency):boolean;
     procedure DoPayC(mny:Currency);
   public
     { Public declarations }
@@ -193,7 +194,7 @@ begin
   if Key in ['B','b'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
+       if not DoPayB(GetFee(edtTakeFee.Text)) then Exit;
        MainRecord.FieldByName('PAY_B').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_B').AsFloat<0 then
           begin
@@ -662,7 +663,7 @@ var
   rs:TZQuery;
 begin
   Raise Exception.Create('对不起，您没有开通储值卡支付功能...');
-  if ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
+{  if ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
   if MainRecord.FieldByName('CLIENT_ID').AsString = '' then
      begin
        s := TfrmCardNoInput.GetCardNo(self);
@@ -688,7 +689,7 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE from VIW_CUSTOMER where CLIENT_ID='''+MainRecord.FieldByName('CLIENT_ID').AsString+'''';
+         rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE from VIW_CUSTOMER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+MainRecord.FieldByName('CLIENT_ID').AsString+'''';
          Factor.Open(rs);
          cardno := rs.FieldbyName('IC_CARDNO').AsString;
          pwd := rs.FieldbyName('PASSWRD').AsString;
@@ -703,6 +704,21 @@ begin
        if EncStr(s,ENC_KEY)<>pwd then Raise Exception.Create('你输入的密码无效...');
        if bal<mny then Raise Exception.Create('储值卡余额为'+formatFloat('#0.0##',rs.Fields[1].AsFloat)+',余额不足不能完成支付');
      end;
+}     
+end;
+
+function TfrmShowDibs.DoPayB(mny: Currency):boolean;
+var
+  CardNoReset:TCardNoReset;
+begin
+  if mny=0 then Raise Exception.Create('请输入刷卡金额后再按B健..');
+  CardNoReset := TfrmCardNoInput.GetBank(self);
+  if CardNoReset.ret then
+     begin
+       MainRecord.FieldbyName('BANK_CODE').AsString := CardNoReset.CardNo;
+       MainRecord.FieldByName('BANK_ID').AsString := CardNoReset.BankId;
+     end;
+  result := CardNoReset.ret;
 end;
 
 end.

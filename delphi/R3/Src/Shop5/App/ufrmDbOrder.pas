@@ -182,6 +182,11 @@ begin
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[7].Free;
+       DBGridEh1.Columns[6].Free;
+     end;
 
 end;
 

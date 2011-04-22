@@ -435,6 +435,7 @@ type
     procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmInLocusOrderListExecute(Sender: TObject);
     procedure actfrmOutLocusOrderListExecute(Sender: TObject);
+    procedure lblUserInfoClick(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -448,6 +449,7 @@ type
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
     procedure SortToolButton;
+    procedure SortPageButton;
     procedure WMQUERYENDSESSION(var msg:Tmessage);Message  WM_QUERYENDSESSION;
     procedure wm_Login(var Message: TMessage); message WM_LOGIN_REQUEST;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
@@ -931,14 +933,40 @@ begin
 end;
 
 procedure TfrmShopMain.Timer1Timer(Sender: TObject);
-var P:PMsgInfo;
+var
+  P:PMsgInfo;
 begin
   inherited;
   if SystemShutdown then Exit;
   if not Logined then Exit;
   if not Visible then Exit;
-  if not MsgFactory.Loaded then MsgFactory.Load;
-  actfrmNewPaperReader.Caption := '最新消息('+inttostr(MsgFactory.Count)+'条)';
+  if not Factor.Connected then Exit;
+  if not MsgFactory.Loaded or ((MsgFactory.Count=0) and ((Timer1.Tag mod 120)=0)) then MsgFactory.Load;
+  if MsgFactory.Count > 0 then
+     begin
+       lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.Count)+')条消息';
+       rzUserInfo.Caption := lblUserInfo.Caption;
+       if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
+       case Timer1.Tag mod 2 of
+       0:begin
+           lblUserInfo.Font.Color := clRed;
+           lblUserInfo.Font.Style := [fsBold];
+           rzUserInfo.Font.Color := clRed;
+           rzUserInfo.Font.Style := [fsBold];
+         end;
+       1:begin
+           lblUserInfo.Font.Color := clWhite;
+           lblUserInfo.Font.Style := [];
+           rzUserInfo.Font.Color := clWhite;
+           rzUserInfo.Font.Style := [];
+         end;
+       end;
+     end
+  else
+     begin
+       lblUserInfo.Caption := ShopGlobal.UserName + ' 您没有消息';
+       rzUserInfo.Caption := lblUserInfo.Caption;
+     end;
   P := MsgFactory.ReadMsg;
   if P<>nil then MsgFactory.HintMsg(P);  
 end;
@@ -3121,6 +3149,18 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.SortPageButton;
+var
+  i:integer;
+begin
+end;
+
+procedure TfrmShopMain.lblUserInfoClick(Sender: TObject);
+begin
+  inherited;
+  actfrmNewPaperReader.OnExecute(nil);
 end;
 
 end.

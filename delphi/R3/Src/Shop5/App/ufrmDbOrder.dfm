@@ -279,7 +279,7 @@ inherited frmDbOrder: TfrmDbOrder
         MultiSelect = False
       end
       object btnOk: TRzBitBtn
-        Left = 602
+        Left = 610
         Top = 26
         Width = 67
         Height = 42
@@ -502,14 +502,6 @@ inherited frmDbOrder: TfrmDbOrder
           ReadOnly = True
           Title.Caption = #36192#21697
           Width = 33
-        end
-        item
-          EditButtons = <>
-          FieldName = 'LOCUS_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #29289#27969#36319#36394#21495
-          Width = 94
         end
         item
           EditButtons = <>

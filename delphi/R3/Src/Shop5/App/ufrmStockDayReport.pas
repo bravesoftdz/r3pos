@@ -176,6 +176,7 @@ type
     SortName: string;
     sid1,sid2,sid4,sid5: string;
     srid1,srid2,srid4,srid5: string;
+
     //1、按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //2、按门店销售汇总表
@@ -285,7 +286,13 @@ begin
   if (fndP1_SHOP_VALUE.AsString<>'') then
     begin
       case fndP1_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+       end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
       end;
     end;

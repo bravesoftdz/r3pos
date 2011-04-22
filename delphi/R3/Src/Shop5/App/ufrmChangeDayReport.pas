@@ -298,7 +298,13 @@ begin
   if (fndP1_SHOP_VALUE.AsString<>'') then
     begin
       case fndP1_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //·ÇÄ©¼¶ÇøÓò
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+       end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
       end;
     end;

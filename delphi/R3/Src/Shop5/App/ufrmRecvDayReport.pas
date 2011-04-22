@@ -610,7 +610,13 @@ begin
   if TYPE_VALUE.AsString<>'' then
   begin
     case SHOP_TYPE.ItemIndex of
-      0: result:=' and '+AName+'REGION_ID='''+TYPE_VALUE.AsString+''' ';
+      0:
+       begin
+        if FnString.TrimRight(trim(TYPE_VALUE.AsString),2)='00' then //·ÇÄ©¼¶ÇøÓò
+           result:=' and '+AName+'REGION_ID like '''+GetRegionId(TYPE_VALUE.AsString)+'%'' '
+         else
+           result:=' and '+AName+'REGION_ID='''+TYPE_VALUE.AsString+''' ';
+       end;
       1: result:=' and '+AName+'SHOP_TYPE='''+TYPE_VALUE.AsString+''' ';
     end;
   end;

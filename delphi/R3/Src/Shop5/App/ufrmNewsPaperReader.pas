@@ -120,12 +120,20 @@ end;
 procedure TfrmNewPaperReader.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
-  RzPage.ActivePageIndex := 1;
-  if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
-    btnRead.Visible := False
-  else
-    btnRead.Visible := True;
-  GetInfomation(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
+  if CdsNewsPaper.FieldByName('FIELD').AsInteger = 0 then
+    begin
+      RzPage.ActivePageIndex := 1;
+      if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
+        btnRead.Visible := False
+      else
+        btnRead.Visible := True;
+      GetInfomation(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
+    end
+  else if CdsNewsPaper.FieldByName('FIELD').AsInteger = 1 then
+    begin
+      if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString) then
+        Close;
+    end;
 end;
 
 function TfrmNewPaperReader.EncodeSql: String;
@@ -205,11 +213,11 @@ begin
     rs.First;
     while not rs.Eof do
       begin
-        CdsNewsPaper.Append;       a.,b.,b.QUESTION_CLASS,b.,b.ISSUE_DATE
+        CdsNewsPaper.Append;     
         CdsNewsPaper.FieldByName('MSG_ID').AsString := rs.FieldByName('QUESTION_ID').AsString;
         CdsNewsPaper.FieldByName('MSG_TITLE').AsString := rs.FieldByName('QUESTION_TITLE').AsString+' ('+rs.FieldByName('QUESTION_ITEM_AMT').AsString+')';
         CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := rs.FieldByName('QUESTION_CLASS').AsString;
-        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
+        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := rs.FieldByName('ISSUE_DATE').AsString;
         CdsNewsPaper.FieldByName('FIELD').AsInteger := 1;
         CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 1;
         CdsNewsPaper.Post;
@@ -424,6 +432,8 @@ begin
             rs.Next;
           end;
       end;
+    MSGArr[3] := MSGArr[3]+PrainpowerJudge.GetQustionNum;
+    MSGArr[4] := MSGArr[4]+PrainpowerJudge.GetOrderNum;
   finally
     rs.Free;
   end;
@@ -434,23 +444,17 @@ begin
   inherited;
   if CdsNewsPaper.IsEmpty then Exit;
 
-  if CdsNewsPaper.FieldByName('FIELD').AsInteger = 0 then
+  if Column.FieldName = 'MSG_TITLE' then
     begin
-      if Column.FieldName = 'MSG_TITLE' then
-        begin
-          RzPage.ActivePageIndex := 1;
-          if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
-            btnRead.Visible := False
-          else
-            btnRead.Visible := True;
-          ID := CdsNewsPaper.FieldbyName('MSG_ID').AsString;
-          GetInfomation(ID);
-        end;
-    end
-  else if CdsNewsPaper.FieldByName('FIELD').AsInteger = 1 then
-    begin
-      DoActionExecute();
+      RzPage.ActivePageIndex := 1;
+      if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
+        btnRead.Visible := False
+      else
+        btnRead.Visible := True;
+      ID := CdsNewsPaper.FieldbyName('MSG_ID').AsString;
+      GetInfomation(ID);
     end;
+
 end;
 
 procedure TfrmNewPaperReader.FormShow(Sender: TObject);

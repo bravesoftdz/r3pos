@@ -67,6 +67,7 @@ type
     procedure SetRecordNum;
   public
     { Public declarations }
+    function DoActionExecute(s:string):boolean;
     procedure Open;
     function EncodeSql:String;
     procedure GetInfomation(MSG_ID:String);
@@ -76,7 +77,7 @@ type
 var MSGArr:array[0..4] of Integer = (0,0,0,0,0);
 
 implementation
-uses uShopUtil, uShopGlobal, uGlobal, uDsUtil, ufrmHintMsg;
+uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uPrainpowerJudge, ufrmHintMsg;
 {$R *.dfm}
 
 { TfrmNewPaperReader }
@@ -139,7 +140,7 @@ begin
     Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID);
 
   Str :=
-  'select a.TENANT_ID,a.MSG_ID,''°§'''+StrJoin+'a.MSG_TITLE as MSG_TITLE,a.MSG_SOURCE,a.ISSUE_DATE,a.MSG_CLASS,b.READ_DATE,b.READ_USER,b.MSG_FEEDBACK_STATUS,b.MSG_READ_STATUS '+
+  'select a.MSG_ID,''°§'''+StrJoin+'a.MSG_TITLE as MSG_TITLE,a.MSG_SOURCE,a.ISSUE_DATE,b.MSG_READ_STATUS,0 as FIELD '+
   ' from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' order by a.ISSUE_DATE desc,b.MSG_READ_STATUS ';
 
@@ -193,6 +194,8 @@ begin
 end;
 
 procedure TfrmNewPaperReader.btn_Message4Click(Sender: TObject);
+var rs:TZQuery;
+    Str_Sql:String;
 begin
   inherited;
   MSG_Tpye := '4';
@@ -203,6 +206,36 @@ begin
   btn_Message4.Font.Color := clRed;
   if RzPage.ActivePageIndex = 1 then RzPage.ActivePageIndex := 0;
   Open;
+  
+  Str_Sql := PrainpowerJudge.EncodeSql;;
+  if Str_Sql = '' then Exit;
+
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := Str_Sql;
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if rs.FieldByName('SUM_ORDER').AsInteger = 0 then
+          begin
+            rs.Next;
+            Continue;
+          end;
+        CdsNewsPaper.Append;
+        CdsNewsPaper.FieldByName('MSG_ID').AsString := rs.FieldByName('MSG_ID').AsString;
+        CdsNewsPaper.FieldByName('MSG_TITLE').AsString := rs.FieldByName('MSG_TITLE').AsString+' ('+rs.FieldByName('SUM_ORDER').AsString+')';
+        CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := '÷«ƒ‹Ã·–—';
+        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := FormatDateTime('YYYYMMDD',Date());
+        CdsNewsPaper.FieldByName('FIELD').AsInteger := 1;
+        CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+        CdsNewsPaper.Post;
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmNewPaperReader.GetInfomation(MSG_ID: String);
@@ -374,15 +407,22 @@ begin
   inherited;
   if CdsNewsPaper.IsEmpty then Exit;
 
-  if Column.FieldName = 'MSG_TITLE' then
+  if CdsNewsPaper.FieldByName('FIELD').AsInteger = 0 then
     begin
-      RzPage.ActivePageIndex := 1;
-      if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
-        btnRead.Visible := False
-      else
-        btnRead.Visible := True;
-      ID := CdsNewsPaper.FieldbyName('MSG_ID').AsString;
-      GetInfomation(ID);
+      if Column.FieldName = 'MSG_TITLE' then
+        begin
+          RzPage.ActivePageIndex := 1;
+          if CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger = 2 then
+            btnRead.Visible := False
+          else
+            btnRead.Visible := True;
+          ID := CdsNewsPaper.FieldbyName('MSG_ID').AsString;
+          GetInfomation(ID);
+        end;
+    end
+  else if CdsNewsPaper.FieldByName('FIELD').AsInteger = 1 then
+    begin
+      DoActionExecute();
     end;
 end;
 
@@ -397,6 +437,23 @@ begin
   else
     begin
       RzPage.ActivePageIndex := 0;
+    end;
+end;
+
+function TfrmNewPaperReader.DoActionExecute(s: string): boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=0 to frmMain.actList.ActionCount-1 do
+    begin
+      if lowercase(frmMain.actList.Actions[i].Name) = lowercase(s) then
+         begin
+           if not TAction(frmMain.actList.Actions[i]).Enabled then Raise Exception.Create('fdd'); 
+           TAction(frmMain.actList.Actions[i]).OnExecute(nil);
+           result := true;
+           Exit;
+         end;
     end;
 end;
 

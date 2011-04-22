@@ -1,10 +1,10 @@
 object frmDesk: TfrmDesk
-  Left = 79
-  Top = 14
+  Left = 80
+  Top = 0
   Cursor = crArrow
   BorderStyle = bsNone
   Caption = 'frmDesk'
-  ClientHeight = 541
+  ClientHeight = 522
   ClientWidth = 790
   Color = clBtnFace
   DragMode = dmAutomatic

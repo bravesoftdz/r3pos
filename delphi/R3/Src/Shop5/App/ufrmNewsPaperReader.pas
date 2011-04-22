@@ -110,8 +110,8 @@ begin
   for i := 0 to RzPage.PageCount - 1 do
     RzPage.Pages[i].TabVisible := False;
   RzPage.ActivePageIndex := 0;
+  Open;
   MSG_Tpye := '';
-  InitMSGArr;
   SetRecordNum;
   ID := '';
   MsgFactory.Showing := true;
@@ -162,6 +162,27 @@ begin
   CdsNewsPaper.Close;
   CdsNewsPaper.SQL.Text := EncodeSql;
   Factor.Open(CdsNewsPaper);
+  if not PrainpowerJudge.List.Active then PrainpowerJudge.Load;
+  PrainpowerJudge.List.first;
+  while not PrainpowerJudge.List.eof do
+     begin
+        CdsNewsPaper.Append;     
+        CdsNewsPaper.FieldByName('MSG_ID').AsString := PrainpowerJudge.List.FieldByName('ID').AsString;
+        if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '<待答>'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString
+        else
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张"'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'"没有审核';
+        if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
+           CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := '问卷调查'
+        else
+           CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := '智能提醒';
+        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := formatDatetime('YYYYMMDD',date());
+        CdsNewsPaper.FieldByName('FIELD').AsInteger := 1;
+        CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 1;
+        CdsNewsPaper.Post;
+        PrainpowerJudge.List.Next;
+     end;
+  InitMSGArr;
 end;
 
 procedure TfrmNewPaperReader.btn_Message1Click(Sender: TObject);
@@ -203,29 +224,6 @@ begin
   btn_Message4.Font.Color := clWindowText;
   if RzPage.ActivePageIndex = 1 then RzPage.ActivePageIndex := 0;
   Open;
-
-  Str_Sql := PrainpowerJudge.GetQustionList;
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text := Str_Sql;
-    Factor.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        CdsNewsPaper.Append;     
-        CdsNewsPaper.FieldByName('MSG_ID').AsString := rs.FieldByName('QUESTION_ID').AsString;
-        CdsNewsPaper.FieldByName('MSG_TITLE').AsString := rs.FieldByName('QUESTION_TITLE').AsString+' ('+rs.FieldByName('QUESTION_ITEM_AMT').AsString+')';
-        CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := rs.FieldByName('QUESTION_CLASS').AsString;
-        CdsNewsPaper.FieldByName('ISSUE_DATE').AsString := rs.FieldByName('ISSUE_DATE').AsString;
-        CdsNewsPaper.FieldByName('FIELD').AsInteger := 1;
-        CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 1;
-        CdsNewsPaper.Post;
-        rs.Next;
-      end;
-  finally
-    rs.Free;
-  end;
 end;
 
 procedure TfrmNewPaperReader.btn_Message4Click(Sender: TObject);
@@ -306,7 +304,7 @@ begin
   btn_Message3.Font.Color := clWindowText;
   btn_Message4.Font.Color := clWindowText;
   if RzPage.ActivePageIndex = 1 then RzPage.ActivePageIndex := 0;
-  Open;
+//  Open;
 end;
 
 procedure TfrmNewPaperReader.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -393,7 +391,7 @@ end;
 procedure TfrmNewPaperReader.InitMSGArr;
 var rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.Close;
     rs.SQL.Text := ' select a.MSG_CLASS,count(a.MSG_ID) as Sum_Type '+
@@ -432,11 +430,9 @@ begin
             rs.Next;
           end;
       end;
-    MSGArr[3] := MSGArr[3]+PrainpowerJudge.GetQustionNum;
-    MSGArr[4] := MSGArr[4]+PrainpowerJudge.GetOrderNum;
   finally
     rs.Free;
-  end;
+  end;    }
 end;
 
 procedure TfrmNewPaperReader.DBGridEh1CellClick(Column: TColumnEh);

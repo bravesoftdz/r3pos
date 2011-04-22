@@ -76,7 +76,7 @@ type
 var
   MsgFactory:TMsgFactory;
 implementation
-uses uGlobal,uShopGlobal,ufrmNewsPaperReader;  //ufrmShowMsg
+uses uGlobal,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge;  //ufrmShowMsg
 {$R *.dfm}
 var
   frmMsg: TfrmHintMsg;
@@ -181,6 +181,7 @@ begin
   finally
     rs.free;
   end;
+  PrainpowerJudge.Load;
 end;
 
 function TMsgFactory.ReadMsg: PMsgInfo;

@@ -15,6 +15,7 @@ type
     SndDate:string;
     Rdd:boolean;
     //0公告 1系统提示
+    Msg_Class:Integer;
     sFlag:integer;
   end;
   PMsgInfo=^TMsgInfo;
@@ -115,7 +116,7 @@ end;
 function TMsgFactory.EncodeSQL: String;
 var Str_Sql,Str_where:String;
 begin
-  Str_where := Str_where + ' and a.END_DATE >= '+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
+  Str_where := ' and a.END_DATE >= '+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
   Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=1 ';
 
   Str_Sql :=
@@ -174,7 +175,8 @@ begin
         MsgInfo^.Contents := rs.Fields[2].AsString;
         MsgInfo^.SndDate := rs.Fields[3].AsString;
         MsgInfo^.Rdd := false;
-        MsgInfo^.sFlag := rs.Fields[4].AsInteger;
+        MsgInfo^.Msg_Class := rs.Fields[4].AsInteger;
+        MsgInfo^.sFlag := 0;
         FList.Add(MsgInfo);
         rs.Next;
       end;
@@ -212,7 +214,7 @@ end;
 
 procedure TMsgFactory.ShowMsg(MsgInfo: PMsgInfo);
 begin
-  TfrmNewPaperReader.ShowNewsPaper(MsgInfo^.ID);
+  TfrmNewPaperReader.ShowNewsPaper(MsgInfo^.ID,MsgInfo^.Msg_Class,MsgInfo^.sFlag);
 end;
 
 { TfrmMsg }
@@ -247,7 +249,7 @@ begin
     begin
       frmMsg.edtContents.Caption := Contents_M;
     end;
-  case Msg^.sFlag of                                            
+  case Msg^.Msg_Class of
     0:frmMsg.labType.Caption := '最新消息';
     1:frmMsg.labType.Caption := '最新公告';
     2:frmMsg.labType.Caption := '最新政策';

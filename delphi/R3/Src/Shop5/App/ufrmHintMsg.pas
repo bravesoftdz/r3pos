@@ -112,7 +112,7 @@ function TMsgFactory.EncodeSQL: String;
 var Str_Sql,Str_where:String;
 begin
   Str_where := Str_where + ' and a.END_DATE >= '+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
-  Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=''1''';
+  Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=1 ';
 
   Str_Sql :=
   'select a.MSG_ID,a.MSG_TITLE,a.MSG_CONTENT,a.ISSUE_DATE,a.MSG_CLASS from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+

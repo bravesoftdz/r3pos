@@ -1,1776 +1,1312 @@
+{-------------------------------------------------------------------------------
+ RIM数据同步:
+ (1)本单元上报同步使用时间戳，在新旧系统切换时需要对RIM_R3_NUM做相应的初始TIME_STAMP的值;
+ (2)R3系统计量单位: Calc_UNIT，RIM的计量单位就是R3的管理单位;
+
+ ------------------------------------------------------------------------------}
+
 unit uReportedFactory;
 
 interface
 
 uses
-  SysUtils,uIdFactor,ADODB,ufnUtil,ComObj,uSyncComm;
+  SysUtils,zDataSet,ufnUtil,uPlugInUtil;
 
-procedure CallSync(LocalFactor,RemoteFactor:TIdFactor);
+procedure CallSync(PlugIntf:IPlugIn; TenantID: string);
 
 implementation
 
-function CheckReckonine(CompId,custid,cid:string;LocalFactor,RemoteFactor:TIdFactor;var ID:string;var m:string):boolean;
- function GetMxId:string;
- var rs:TADODataSet;
- begin
-   rs := TADODataSet.Create(nil);
-   try
-     rs.CommandText := 'select BAL_TIME from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''00'' and TERM_ID='''+compid+'''';
-     RemoteFactor.Open(rs);
-     result := rs.Fields[0].AsString;
-     if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM,BAL_TIME) values('''+cid+''','''+custid+''',''00'','''+compid+''',''000000000000000'',null)');
-   finally
-     rs.Free;
-   end;
-end;
+//2011.04.14 获取上报最大编号(MaxTime)[采用时间戳，暂没使用]
+function GetMaxTIME(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string;
 var
-  rs:TADODataSet;
-  mx:string;
+  iRet: integer;
+  Str: string;
+  Rs: TZQuery;
+begin
+  result:='';
+  try
+    Rs:=TZQuery.Create(nil);
+    Str:='select BAL_TIME from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
+    OpenData(PlugIntf, Rs, Str);
+    if Rs.Active then
+      result:=trim(Rs.Fields[0].AsString);
+    if Rs.IsEmpty then
+    begin
+      str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM,BAL_TIME) values ('''+ORGAN_ID+''','''+CustID+''','''+BillType+''','''+SHOP_ID+''',''000000000000000'',null)';
+      if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then
+        Raise Exception.Create('执行插入错误！');
+    end;
+  finally
+    Rs.Free;
+  end;
+end;
+
+//2011.04.14 获取上报最大编号(MaxNum)
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string; 
+var
+  iRet: integer;
+  Str: string;
+  Rs: TZQuery;
+begin
+  result:='';
+  try
+    Rs:=TZQuery.Create(nil);  
+    Str:='select MAX_NUM from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
+    OpenData(PlugIntf, Rs, Str);
+    if Rs.Active then
+      result:=trim(Rs.Fields[0].AsString);
+    if result='' then result:='0'; 
+    if Rs.IsEmpty then
+    begin
+      str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values ('''+ORGAN_ID+''','''+CustID+''','''+BillType+''','''+SHOP_ID+''',''0'')';
+      if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then
+        Raise Exception.Create('执行插入错误！');
+    end;
+  finally
+    Rs.Free;
+  end;
+end;
+
+//2011.04.15 写入上报执行日志
+function WriteToRIM_BAL_LOG(PlugIntf:IPlugIn; LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean; //返回插入语句执行返回值;
+var
+  str: string;
+  iRet: integer;
+begin
+  Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
+       '('''+LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogNote+''',''auto'','''+LogStatus+''')' ;
+  if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then
+   Raise Exception.Create('写日志执行失败！(SQL='+Str+')');
+end;
+
+//返回商品表管理单位与计量单位换算SQl:
+function GetDefaultUnitCalc(AliasTable: string=''): string;
+var
+  AliasTab: string;
+begin
+  if trim(AliasTable)<>'' then
+    AliasTab:=trim(AliasTable)+'.';
+  result:=
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+             //默认单位为 计量单位
+         ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
+         ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+      //默认单位为 大单位
+         ' else 1.0 end ';                                                        //都不是则默认为换算为1;
+end;
+
+//重新上报删除历史单据
+function DeleteExistsReportedBill(PlugIntf:IPlugIn; MainTable,DetailTable,KeyFieldName,BillNum: string): Boolean;
+var
+  iRet: integer;
+  MsgStr: string;
+  MainSQL,DetailSQL: Pchar;
+begin
+  result:=False;
+  try
+    MainSQL:=Pchar('delete from '+MainTable+' where '+KeyFieldName+'='''+BillNum+''' ');
+    if PlugIntf.ExecSQL(MainSQL,iRet)<>0 then Raise Exception.Create(Pchar('删除〖'+MainTable+'，单号：'+BillNum+'〗执行出错！ '));   
+    DetailSQL:=Pchar('delete from '+DetailTable+' where '+KeyFieldName+'='''+BillNum+''' ');
+    if PlugIntf.ExecSQL(MainSQL,iRet)<>0 then Raise Exception.Create(Pchar('删除〖'+DetailTable+'，单号：'+BillNum+'〗执行出错！ '));   
+    result:=true;
+  except
+    on E:Exception do
+    begin
+      MsgStr:=E.Message;
+      if Pos('删除〖',MsgStr)>0 then
+        Raise Exception.Create(E.Message) 
+      else
+        Raise Exception.Create(Pchar('删除历史单据〖表名：'+MainTable+'、'+DetailTable+'，单据号：'+BillNum+'〗执行出错：'+E.Message));
+    end;
+  end;
+end;
+
+
+{============================ 下面为上报RIM业务单据 ==============================}
+
+//////2011.04.14 AM上报月台账  (type='00')
+function SendMonthReck(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE:string):boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  Str: string;
 begin
   result := false;
-  rs := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    rs.CommandText := 'select PRINT_ID from STO_PRINTORDER where COMP_ID='''+CompId+''' and UPD_TIME>'''+mx+''' and STATUS=3 order by UPD_TIME';
-    LocalFactor.Open(rs);
-    if rs.IsEmpty then Exit;
-//    if (formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[0].asString)+1)
-//       =
-//       formatDatetime('YYYYMM',IncMonth(date(),1))+'01') then //今天是否月底
-//       begin
-         m := copy(rs.Fields[0].asString,1,6);
-//       end
-//    else
-//       begin
-//         m := formatDatetime('YYYYMM',IncMonth(fnTime.fnStrtoDate(rs.Fields[0].asString),-1))
-//       end;
-    ID := rs.Fields[0].asString;
-    result := true;
-  finally
-    rs.Free;
-  end;
-end;
-                                                            //门店ID,企业ID，许可证号
-procedure SendSalesDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string; DefUnit: Integer);
-  function GetMxId:string;
-  var rs:TADODataSet;
+  MaxStamp:=GetMaxNUM(PlugIntf,'00',SHOP_ID,ORGAN_ID,CustID); //返回月台帐最大时间戳
+
+  //第一步: 创建台帐临时[INF_RECKMONTH]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_RECKMONTH ('+
+         'TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+   //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+    //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+   //RIM零售户ID
+         'ITEM_ID VARCHAR(30) NOT NULL,'+   //RIM商品ID
+         'GODS_ID CHAR(36) NOT NULL,'+      //R3商品ID
+         'UNIT_CALC DECIMAL (18,6),'+        //商品计量单位换算管理单位换算值
+         'RECK_MONTH VARCHAR(8) NOT NULL '+ //台账月份
+         ') ON COMMIT PRESERVE ROWS WITH REPLACE NOT LOGGED';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建月台帐临时表（session.INF_RECKMONTH）错误！');
+
+  //第二步: 大于时间戳的台帐插入临时表:
+  Str:='insert into session.INF_RECKMONTH(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_CALC,RECK_MONTH) '+
+       'select A.TENANT_ID,A.SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,1.0,trim(char(A.MONTH)) as RECK_MONTH  '+
+       ' from RCK_GOODS_MONTH A,PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+
+       ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  and A.TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入月台帐临时表数据出错！');
+
+  //第三步、更新商品计量单位换算管理单位换算值
+  Str:='update session.INF_RECKMONTH A set A.UNIT_CALC=(select ('+GetDefaultUnitCalc+') as UNIT_CALC from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID) where exists(select 1 from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID)';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新商品计量单位换算管理单位换算值出错！');
+
+  //第四步、获取更新上报最大时间戳：
+  Str:='select max(A.TIME_STAMP) as TIME_STAMP from RCK_GOODS_MONTH A,session.INF_RECKMONTH B '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+
+       ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and A.TIME_STAMP>'+MaxStamp;
+  UpMaxStamp:=GetValue(PlugIntf, Str);
+
+  //第五步: 先删除插入:
+  if iRet>0 then  //有记录才执行
   begin
-    rs := TADODataSet.Create(nil);
     try
-     rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''01'' and TERM_ID='''+compid+'''';
-     RemoteFactor.Open(rs);
-      result := rs.Fields[0].AsString;
-      if rs.IsEmpty then
-        RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''01'','''+compid+''',''000000000000000'')');
-    finally
-      rs.Free;
-    end;
-  end;
-  //根据传入的字符判断是是否使用|禁用
-  function GetIsUse(ReMark: string): string;
-  begin
-    if trim(ReMark)='00' then result:='0'
-    else result:='1';
-  end;
-  //2010.01.19 Add 零
-  function GetSaleDateList(li: TADODataSet): Boolean;
-  begin
-    result:=false;
-    li.Close;
-    li.CommandText :=
-      'select distinct SALES_DATE from ('+
-      'select distinct SALES_DATE from POS_SALESORDER A,POS_SALESDATA B,PUB_GOODSINFO C where B.GODS_ID=C.GODS_ID and C.SYS_FLAG=1 and A.COMP_ID='''+compid+''' and A.COMM<>''11'' and A.COMP_ID=B.COMP_ID and A.SALES_ID=B.SALES_ID '+
-      'union all '+
-      'select distinct SALES_DATE from SAL_SALESORDER A,SAL_SALESDATA B,PUB_GOODSINFO C where B.GODS_ID=C.GODS_ID and C.SYS_FLAG=1 and A.COMP_ID='''+compid+''' and A.COMM<>''11'' and A.COMP_ID=B.COMP_ID and A.SALES_ID=B.SALES_ID '+
-      ') J ';
-     LocalFactor.Open(li);
-     result:=li.Active;
-  end;
-  //2010.01.19 Add 
-  function GetSALEList(rs: TADODataSet; SaleDate: string): Boolean;
-  begin
-    result:=false;
-    rs.Close;
-    rs.CommandText := 'select '''+custid+''' as CUST_ID,'''+SaleDate+''' as SALE_DATE,B.GODS_ISN as ITEM_ID,'+
-      'AMOUNT/case '+inttostr(DefUnit)+' when 0 then 1.0 when 1 then B.SMALLTO_CALC when 2 then B.BIGTO_CALC else 1.0 end as QTY_ORD,'+
-      'convert(varchar(8),getdate(),112) as UPD_DATE,convert(varchar(8),getdate(),108) as UPD_TIME,AMONEY AMT from ('+
-      'select GODS_ID,sum(AMOUNT) AMOUNT,sum(AMONEY) AMONEY from ('+
-      'select GODS_ID,sum(CALC_AMOUNT) AMOUNT,sum(CALC_MONEY) AMONEY from POS_SALESORDER A,POS_SALESDATA B where A.COMP_ID='''+compid+''' and A.SALES_DATE='''+SaleDate+''' and A.COMP_ID=B.COMP_ID and A.SALES_ID=B.SALES_ID group by GODS_ID '+
-      'union all '+
-      'select GODS_ID,sum(CALC_AMOUNT) AMOUNT,sum(CALC_MONEY) AMONEY from SAL_SALESORDER A,SAL_SALESDATA B where A.COMP_ID='''+compid+''' and A.SALES_DATE='''+SaleDate+''' and A.COMP_ID=B.COMP_ID and A.SALES_ID=B.SALES_ID group by GODS_ID '+
-      ') S group by GODS_ID) P,PUB_GOODSINFO B where P.GODS_ID=B.GODS_ID and B.SYS_FLAG=1';
-    LocalFactor.Open(rs);
-    result:=rs.Active;
-  end;
-var
-  IsRun:Boolean;  //判断一天执行一次。
-  li,rs:TADODataSet;  //数据循环使用
-  sv,SvMain:TADODataSet;
-  SumQTY_ORD,SumAMT: Real; //合计数量
-  SaleNo,SaleDate,CurDate,mx,w,Str:string;
-begin
-  IsRun:=true;  //判断是否执行过
-  rs := TADODataSet.Create(nil);
-  li :=TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  SvMain := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      WriteDebug('报单号'+mx);
-      rs.Close;
-      rs.CommandText := 'select J.*,B.CARD_CODE from (select top 100 * from POS_SALESORDER where COMP_ID='''+CompId+''' and SALES_ID>'''+mx+''' order by SALES_ID ) J left outer join BAS_CUSTOMER B on J.CUST_ID=B.CUST_ID order by J.SALES_ID';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      WriteDebug('记录数'+inttostr(rs.RecordCount));
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME from RIM_RETAIL_INFO where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_0_'+rs.FieldbyName('sales_id').AsString;
-            WriteDebug('写单号'+sv.Fields[0].AsString);
-            //CONSUMER_CARD_ID
-            sv.Fields[1].AsString := rs.FieldbyName('card_code').AsString;
-            //CONSUMER_ID
-            sv.Fields[2].AsString := rs.FieldbyName('cust_id').AsString;
-            //CUST_ID
-            sv.Fields[3].AsString := custid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('sales_id').AsString;
-            //COM_ID
-            sv.Fields[6].AsString := cid;
-            //SCORE
-            sv.Fields[7].AsFloat := rs.FieldbyName('add_integral').AsFloat;
-            //SCORE_DATE
-            sv.Fields[8].AsString := rs.FieldbyName('sales_date').AsString;
-            //VIP_RTL_CARD_ID
-            sv.Fields[9].AsString := rs.FieldbyName('card_code').AsString;
-            //PUH_DATE
-            sv.Fields[10].AsString := rs.FieldbyName('sales_date').AsString;
-            //PUH_TIME         
-            sv.Fields[11].AsString := rs.FieldbyName('sales_time').AsString;
-            if sv.Fields[11].AsString='' then sv.Fields[11].AsString := '00:00:00';
-            //CRT_USER_ID
-            sv.Fields[12].AsString := rs.FieldbyName('shroff').AsString;
-            //TYPE
-            sv.Fields[13].AsString := '01';
-            //UPDATE_TIME
-            sv.Fields[14].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('SALES_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME,D.SALES_DATE from POS_SALESDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C,POS_SALESORDER D where A.COMP_ID=D.COMP_ID and A.SALES_ID=D.SALES_ID and A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.SALES_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;                                                                                        { 2011.04.03 Add 零售单明细增加: TREND_ID  }
-        sv.CommandText := 'select RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE,TREND_ID from RIM_RETAIL_DETAIL where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_0_'+rs.FieldbyName('sales_id').AsString;
-            //LINE_NUM
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[4].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[4].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[4].AsString := '04'
-            else
-               sv.Fields[4].AsString := '02';
-            //UNIT_COST
-            sv.Fields[5].AsFloat := rs.FieldbyName('cost_price').AsFloat;
-            //RETAIL_PRICE
-            sv.Fields[6].AsFloat := rs.FieldbyName('aprice').AsFloat;
-            //QTY_SALE
-            sv.Fields[7].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[8].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT
-            sv.Fields[9].AsFloat := rs.FieldbyName('calc_money').AsFloat;
-            //Note
-            sv.Fields[10].AsString := rs.FieldbyName('remark').AsString;
-            //PUH_DATE
-            sv.Fields[11].AsString := rs.FieldbyName('sales_date').AsString;
-            //TREND_ID (流向)  2011.04.03 Add 零售单明细增加: TREND_ID 
-            sv.Fields[12].AsString := rs.FieldbyName('TREND_ID').AsString;
-            sv.Post;
-            rs.Next;
-          end;
-          RemoteFactor.UpdateBatch(sv);
+      PlugIntf.BeginTrans;
+      //1、先删除RIM月台账表掉需要重新上报记录:
+      Str:='delete from RIM_CUST_MONTH A where A.COM_ID='''+ORGAN_ID+''' and A.CUST_ID='''+CustID+''' and '+
+           ' exists(select 1 from session.INF_RECKMONTH B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.ITEM_ID=B.ITEM_ID and A.MONTH=B.RECK_MONTH)';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除月台账〖RIM_CUST_MONTH〗需要重新上报历史数据出错！');
 
-        //2010.01.19 Add 零售户商品日帐数据 上报 RIM_CUST_DAY （每天每一种商品的汇总数量插入）;
-        if GetSaleDateList(li) and (IsRun) then // 返回当前有多少天的销售数据没有上报[以天为单位上报]
-        begin
-          SaleDate:=trim(li.fieldbyName('SALES_DATE').AsString); //销售日期
-          li.First;
-          while not li.Eof do  //循环新零售单没上报则需要重新汇总
-          begin
-            {====重新汇总插入前先删除====}
-            //2010.02.24 AM Add 删除当天时候已生成过汇总数据[先删明细表在删主表]
-            //第一步: 先删除当天的零售单数据：
-            RemoteFactor.ExecSQL('delete from RIM_RETAIL_CO_LINE '+
-                                 ' where  exists(select A.CO_NUM from RIM_RETAIL_CO A where A.COM_ID='''+cid+''' and A.TERM_ID='''+compid+''' and A.CUST_ID='''+custid+''' and A.PUH_DATE='''+SaleDate+''' and A.CO_NUM=RIM_RETAIL_CO_LINE.CO_NUM) ');
-            RemoteFactor.ExecSQL('delete from RIM_RETAIL_CO where COM_ID='''+cid+''' and TERM_ID='''+compid+''' and CUST_ID='''+custid+''' and  PUH_DATE='''+SaleDate+'''  ');
+      //2、插入上报记录:
+      Str:=
+        'insert into RIM_CUST_MONTH('+
+            'COM_ID,CUST_ID,TERM_ID,ITEM_ID,MONTH,PRI3,PRI4,PRI_SOLD,AMT_GROSS_PROFIT_THEO,'+ //1:
+            'QTY_IOM,AMT_IOM,'+              //2:期初数量、金额
+            'QTY_PURCH,AMT_PURCH,'+          //3:入库数量、金额
+            'QTY_SOLD,AMT_SOLD_WITH_TAX,'+   //4:销售数量、含税金额
+            'QTY_PROFIT,AMT_PROFIT,'+        //5: 溢余数量、金额
+            'QTY_LOSS,AMT_LOSS,'+            //6: 溢损数量、金额
+            'QTY_TAKE,AMT_TAKE,'+            //7: 调整数量、金额
+            'QTY_TRN_IN,AMT_TRN_IN,'+        //8: 调入数量、金额
+            'QTY_TRN_OUT,AMT_TRN_OUT,'+      //9: 调出数量、金额
+            'QTY_EOM,AMT_EOM,'+              //10: 期末数量、金额
+            'UNIT_COST,SUMCOST_SOLD,'+       //11: 单位成本、销售成本
+            'AMT_GROSS_PROFIT,AMT_PROFIT_COM)'+  //12:毛利额、贡献毛利
+        'select B.COM_ID,B.CUST_ID,A.SHOP_ID,B.ITEM_ID,trim(char(A.MONTH)) as RECK_MONTH,0,0,0,0,'+ //1:
+            '(case when B.UNIT_CALC>0 then ORG_AMT/B.UNIT_CALC else ORG_AMT end)as ORG_AMT,ORG_MNY,'+          //2:期初数量、金额
+            '(case when B.UNIT_CALC>0 then STOCK_AMT/B.UNIT_CALC else STOCK_AMT end)as STOCK_AMT,STOCK_MNY,'+  //3:入库数量、金额
+            'SALE_AMT,SALE_MNY+SALE_TAX,'+  //4:销售数量、含税金额
+            '(case when CHANGE1_AMT>0 then (case when B.UNIT_CALC>0 then CHANGE1_AMT/B.UNIT_CALC else CHANGE1_AMT end) else 0 end) as CHANGE1_AMT,(case when CHANGE1_AMT>0 then CHANGE1_MNY else 0 end) as CHANGE1_MNY,'+    //5: 溢余数量、金额
+            '(case when CHANGE1_AMT<0 then (case when B.UNIT_CALC>0 then -CHANGE1_AMT/B.UNIT_CALC else -CHANGE1_AMT end) else 0 end) as CHANGE1_AMT,(case when CHANGE1_AMT<0 then -CHANGE1_MNY else 0 end) as CHANGE1_MNY,'+  //6: 溢损数量、金额
+            '(case when B.UNIT_CALC>0 then (CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)/B.UNIT_CALC else CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)as CHANGE_AMT,(CHANGE2_MNY+CHANGE3_MNY+CHANGE3_MNY+CHANGE4_MNY+CHANGE5_MNY) as CHANGE_MNY,'+      //7: 调整数量、金额
+            '(case when B.UNIT_CALC>0 then DBIN_AMT/B.UNIT_CALC else DBIN_AMT end)as DBIN_AMT,DBIN_MNY,'+      //8: 调入数量、金额
+            '(case when B.UNIT_CALC>0 then DBOUT_AMT/B.UNIT_CALC else DBOUT_AMT end)as DBOUT_AMT,DBOUT_MNY,'+  //9: 调出数量、金额
+            '(case when B.UNIT_CALC>0 then BAL_AMT/B.UNIT_CALC else BAL_AMT end)as BAL_AMT,BAL_MNY,'+          //10: 期末数量、金额
+            'ADJ_CST,BAL_CST,'+             //11: 单位成本、销售成本
+            'SALE_PRF,0 '+                  //12: 毛利额、贡献毛利
+        'from RCK_GOODS_MONTH A,session.INF_RECKMONTH B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and trim(char(A.MONTH))=B.RECK_MONTH and A.TIME_STAMP>'+MaxStamp;
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('上报RIM_CUST_MONTH数据出错！');
 
-            //第二步: 插入当天的零售单数据：
-            //字段: CUST_ID,SALE_DATE,ITEM_ID,QTY_SALE,UPD_DATE,UPD_TIME,AMONEY
-            if GetSALEList(rs, SaleDate) then  //返回XX天[日期:20110102]的零售数据汇总[按每门店、商品汇总数量和金额]
-            begin
-              SaleNo:=SaleDate+'_'+custid+'_'+compid;  //销售单号: 日期+'_'+公司ID+'_'+门店ID
-              SumQTY_ORD:=0;
-              SumAMT:=0;
-              SvMain.Close; //每个门店每天虚拟一条主表记录
-              SvMain.CommandText:='Select CO_NUM,CUST_ID,COM_ID,QTY_SUM,AMT_SUM,TERM_ID,PUH_DATE,STATUS,UPD_DATE,UPD_TIME From RIM_RETAIL_CO Where 0=1 ';
-              RemoteFactor.Open(SvMain);               
-              sv.Close;
-              sv.CommandText:='Select CO_NUM,ITEM_ID,QTY_ORD,AMT From RIM_RETAIL_CO_LINE where 0=1 ';  //备注： COM_ID,PUH_DATE, [没有对应字段]
-              RemoteFactor.Open(sv);
-              rs.First;
-              while not rs.Eof do //零售汇总的记录循环
-              begin
-                sv.Append;
-                //单据号     [CO_NUM]
-                sv.FieldByName('CO_NUM').AsString:=SaleNo;  
-                //sv.Fields[1].AsString:=cid;       //公司内码   [COM_ID]
-                //sv.Fields[2].AsString:=SaleDate;  //购买日期 [PUH_DATE]
-                //商品内码   [ITEM_ID]
-                sv.FieldByName('ITEM_ID').AsString:=rs.fieldbyName('ITEM_ID').AsString;
-                //销售数量:  [QTY_ORD]                
-                sv.FieldByName('QTY_ORD').AsFloat:=rs.FieldByName('QTY_ORD').AsFloat;
-                //销售金额:  [AMT]
-                sv.FieldByName('AMT').AsFloat:=rs.FieldByName('AMT').AsFloat;
-                sv.Post;  
-                SumQTY_ORD:=SumQTY_ORD+rs.FieldByName('QTY_ORD').AsFloat;  //循环累计数量
-                SumAMT:=SumAMT+rs.FieldByName('AMT').AsFloat;    //循环累计金额
-                rs.Next;
-              end;
-              //虚拟生成主表
-              SvMain.Edit;       
-              SvMain.FieldByName('CO_NUM').AsString:=SaleNo;
-              SvMain.FieldByName('CUST_ID').AsString:=custid;
-              SvMain.FieldByName('COM_ID').AsString:=cid;
-              SvMain.FieldByName('QTY_SUM').AsFloat:=SumQTY_ORD;  //主表数量累计
-              SvMain.FieldByName('AMT_SUM').AsFloat:=SumAMT;      //主表数量累计
-              SvMain.FieldByName('TERM_ID').AsString:=compid;
-              SvMain.FieldByName('PUH_DATE').AsString:=SaleDate;
-              SvMain.FieldByName('STATUS').AsString:='01';
-              SvMain.FieldByName('UPD_DATE').AsString:=FormatDatetime('YYYYMMDD',Date());
-              SvMain.FieldByName('UPD_TIME').AsString:=TimetoStr(time());
-              SvMain.Post;  
-              RemoteFactor.UpdateBatch(SvMain);  //提交数据
-              RemoteFactor.UpdateBatch(sv);      //提交数据
-            end;
-            li.Next;  //循环每天销售的数据
-          end;
-          IsRun:=False;  //循环过一次后，将标记位置False;
-        end;
+      //3、更新上报时间戳:[]
+      Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''00'' and TERM_ID='''+SHOP_ID+''' ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错！');
+      PlugIntf.CommitTrans; //提交事务
 
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''01'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update POS_SALESORDER set COMM=''11'' where COMP_ID='''+CompId+''' and SALES_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-        begin
-          RemoteFactor.RollbackTrans;
-          LocalFactor.RollbackTrans;
-          sleep(1);
-          RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-          Exit;
-        end;
-      end;
-    end;
-    sleep(1);
-
-    {=========== 2010.01.19 Add 零售户库存 上报 [RIM_CUST_ITEM_SWHSE]、RIM_CUST_ITEM_WHSE 表 ============}
-    CurDate:=FormatDatetime('YYYYMMDD',Date());  //取系统当前日期
-    RemoteFactor.BeginTrans;
-    try
-      //第一步: 先删除已上报的数据:
-      RemoteFactor.ExecSQL('delete from RIM_CUST_ITEM_SWHSE where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TERM_ID='''+compid+''' ');
-      //第二步: 汇总库存插入 [RIM_CUST_ITEM_SWHSE] 
-      rs.Close;
-      rs.CommandText:='select ITEM_ID,Convert(varchar(8),getdate(),112) as UPD_DATE,Convert(varchar(8),getdate(),108) as UPD_TIME,sum(QTY) as QTY from '+
-        ' (Select B.GODS_ISN as ITEM_ID,AMOUNT/case '+inttostr(DefUnit)+' when 0 then 1.0 when 1 then B.SMALLTO_CALC when 2 then B.BIGTO_CALC else 1.0 end as QTY '+
-        ' From (Select GODS_ID,sum(AMOUNT) AMOUNT from STO_STORAGE where COMP_ID='''+CompId+''' group by GODS_ID) P,'+
-        ' PUB_GOODSINFO B where P.GODS_ID=B.GODS_ID and B.SYS_FLAG=1) as tmp  '+
-        ' group by ITEM_ID ';
-      LocalFactor.Open(rs);
-      sv.Close;                                                                  // NOTE: 备注
-      sv.CommandText:='select CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB from RIM_CUST_ITEM_SWHSE where 1=0 ';
-      RemoteFactor.Open(sv);
-      rs.First;
-      while not rs.Eof do  //对应字段值: custid --> CUST_ID
-      begin
-        //2010.02.24 AM 先删除存在记录[]
-        sv.Append;
-        //零售户内码:[CUST_ID]
-        sv.Fields[0].AsString:=custid;
-        //商品内码:  [ITEM_ID]
-        sv.Fields[1].AsString:=rs.fieldbyName('ITEM_ID').AsString;
-        //公司内码:  [COM_ID]
-        sv.Fields[2].AsString:=cid;
-        //门店内码:  [TERM_ID]
-        sv.Fields[3].AsString:=compid;
-        //库存量:    [QTY]
-        sv.Fields[4].AsString:=rs.fieldbyName('QTY').AsString;
-        //更新日期: [DATE1]
-        sv.Fields[5].AsString:=rs.fieldbyName('UPD_DATE').AsString;
-        //更新时间: [UPD_TIME]
-        sv.Fields[6].AsString:=rs.fieldbyName('UPD_TIME').AsString;
-        //是否使用: [IS_MRB]  [00:表示在使用  表示禁用]
-         sv.Fields[7].AsString:='0';
-        sv.Post; 
-        rs.Next;
-      end;
-      RemoteFactor.UpdateBatch(sv);  //提交数据   
-
-      //第三步: 先更新当前当天的中间库存中间表：[RIM_CUST_ITEM_SWHSE]:
-      str:=' update RIM_CUST_ITEM_WHSE '+
-           '  set QTY=nvl((select sum(QTY) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),0) '+
-           ' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' ';
-      RemoteFactor.ExecSQL(Str);
-      //第四步: 没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
-      str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY) '+
-           ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY) from RIM_CUST_ITEM_SWHSE  A '+
-           ' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and '+
-           ' not Exists(select * from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
-           ' group by COM_ID,CUST_ID,ITEM_ID ';
-      RemoteFactor.ExecSQL(Str);
-      RemoteFactor.CommitTrans;
+      //执行成功写日志:
+      WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'00','上报月台帐成功','01');
+      result:=true;
     except
       on E:Exception do
       begin
-        RemoteFactor.RollbackTrans;
+        PlugIntf.RollbackTrans;
         sleep(1);
-        RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-        Exit;
+        WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'00','上报月台帐错误：'+E.Message,'02'); //写日志
+        Raise Exception.Create(E.Message);
       end;
     end;
-
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报销售流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    li.Free;
-    rs.Free;
-    SvMain.Free;
   end;
-  {
-  RemoteFactor.ExecSQL('delete from RIM_CUST_ITEM_WHSE where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and DATE1='''+CurDate+''' ');
-  Str:=' insert into RIM_CUST_ITEM_WHSE (COM_ID,CUST_ID,ITEM_ID,DATE1,IS_MRB,QTY) '+  // 6个字段
-       ' select COM_ID,CUST_ID,ITEM_ID,DATE1,IS_MRB,sum(QTY) as QTY from RIM_CUST_ITEM_SWHSE '+
-       ' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and DATE1='''+CurDate+''' '+
-       ' group by COM_ID,CUST_ID,ITEM_ID,DATE1,IS_MRB  ';
-  }
+end;  
 
-end;
-procedure SendSaleBatchDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''02'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''02'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
+//////2011.04.14 PM上报日台账  (type='10')
+function SendDayReck(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE:string):boolean;
 var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select top 100 * from SAL_SALESORDER where COMP_ID='''+CompId+''' and SALES_ID>'''+mx+''' order by SALES_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME from RIM_RETAIL_INFO where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('sales_id').AsString;
-            //CONSUMER_CARD_ID
-            sv.Fields[1].AsString := '';
-            //CONSUMER_ID
-            sv.Fields[2].AsString := '';
-            //CUST_ID
-            sv.Fields[3].AsString := custid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('sales_id').AsString;
-            //COM_ID
-            sv.Fields[6].AsString := cid;
-            //SCORE
-            sv.Fields[7].AsString := '0';
-            //SCORE_DATE
-            sv.Fields[8].AsString := rs.FieldbyName('sales_date').AsString;
-            //VIP_RTL_CARD_ID
-            sv.Fields[9].AsString := '';
-            //PUH_DATE
-            sv.Fields[10].AsString := rs.FieldbyName('sales_date').AsString;
-            //PUH_TIME         
-            sv.Fields[11].AsString := '';
-            //CRT_USER_ID
-            sv.Fields[12].AsString := rs.FieldbyName('oper_user').AsString;
-            //TYPE
-            sv.Fields[13].AsString := '01';
-            //UPDATE_TIME
-            sv.Fields[14].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('SALES_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME,D.SALES_DATE from SAL_SALESDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C,SAL_SALESORDER D where A.COMP_ID=D.COMP_ID and A.SALES_ID=D.SALES_ID and A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.SALES_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE from RIM_RETAIL_DETAIL where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('sales_id').AsString;
-            //LINE_NUM
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[4].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[4].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[4].AsString := '04'
-            else
-               sv.Fields[4].AsString := '02';
-            //UNIT_COST
-            sv.Fields[5].AsFloat := rs.FieldbyName('cost_price').AsFloat;
-            //RETAIL_PRICE
-            sv.Fields[6].AsFloat := rs.FieldbyName('aprice').AsFloat;
-            //QTY_SALE
-            sv.Fields[7].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[8].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT
-            sv.Fields[9].AsFloat := rs.FieldbyName('calc_money').AsFloat;
-            //Note
-            sv.Fields[10].AsString := rs.FieldbyName('remark').AsString;
-            //PUH_DATE
-            sv.Fields[11].AsString := rs.FieldbyName('sales_date').AsString;
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''02'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update SAL_SALESORDER set COMM=''11'' where COMP_ID='''+CompId+''' and SALES_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报批发流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-
-procedure SendSaleRetDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''03'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''03'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select top 100 * from SAL_RETUORDER where COMP_ID='''+CompId+''' and RETU_ID>'''+mx+''' order by RETU_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME from RIM_RETAIL_INFO where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_2_'+rs.FieldbyName('retu_id').AsString;
-            //CONSUMER_CARD_ID
-            sv.Fields[1].AsString := '';
-            //CONSUMER_ID
-            sv.Fields[2].AsString := '';
-            //CUST_ID
-            sv.Fields[3].AsString := custid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('retu_id').AsString;
-            //COM_ID
-            sv.Fields[6].AsString := cid;
-            //SCORE
-            sv.Fields[7].AsString := '0';
-            //SCORE_DATE
-            sv.Fields[8].AsString := rs.FieldbyName('retu_date').AsString;
-            //VIP_RTL_CARD_ID
-            sv.Fields[9].AsString := '';
-            //PUH_DATE
-            sv.Fields[10].AsString := rs.FieldbyName('retu_date').AsString;
-            //PUH_TIME         
-            sv.Fields[11].AsString := '';
-            //CRT_USER_ID
-            sv.Fields[12].AsString := rs.FieldbyName('oper_user').AsString;
-            //TYPE
-            sv.Fields[13].AsString := '02';
-            //UPDATE_TIME
-            sv.Fields[14].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('RETU_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME,D.RETU_DATE from SAL_RETUDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C,SAL_RETUORDER D where A.COMP_ID=D.COMP_ID and A.RETU_ID=D.RETU_ID and A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.RETU_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE from RIM_RETAIL_DETAIL where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //RETAIL_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_2_'+rs.FieldbyName('retu_id').AsString;
-            //LINE_NUM
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[4].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[4].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[4].AsString := '04'
-            else
-               sv.Fields[4].AsString := '02';
-            //UNIT_COST
-            sv.Fields[5].AsFloat := rs.FieldbyName('cost_price').AsFloat;
-            //RETAIL_PRICE
-            sv.Fields[6].AsFloat := rs.FieldbyName('aprice').AsFloat;
-            //QTY_SALE
-            sv.Fields[7].AsFloat := - rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[8].AsFloat := - rs.FieldbyName('calc_amount').AsFloat;
-            //AMT
-            sv.Fields[9].AsFloat := - rs.FieldbyName('calc_money').AsFloat;
-            //Note
-            sv.Fields[10].AsString := rs.FieldbyName('remark').AsString;
-            //PUH_DATE
-            sv.Fields[11].AsString := rs.FieldbyName('retu_date').AsString;
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''03'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update SAL_RETUORDER set COMM=''11'' where COMP_ID='''+CompId+''' and RETU_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报销售退货流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-procedure SenddbDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select BAL_TIME from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''04'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM,BAL_TIME) values('''+cid+''','''+custid+''',''04'','''+compid+''',''000000000000000'',null)');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select * from SAL_WITHINORDER where COMP_ID='''+CompId+''' and STOR_ID is NOT NULL and UPD_TIME>'''+mx+''' order by UPD_TIME';
-      //rs.CommandText := 'select * from SAL_WITHINORDER where COMP_ID='''+CompId+''' and STOR_ID is NOT NULL and not (CHK_DATE=''00000000'' or CHK_DATE is null) and COMM<>''11'' order by UPD_TIME';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select TRN_NUM,CUST_ID,TYPE,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME from RIM_CUST_TRN where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //TRN_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_'+rs.FieldbyName('sales_id').AsString;
-            //CUST_ID
-            sv.Fields[1].AsString := custid;
-            //TYPE
-            sv.Fields[2].AsString := formatfloat('00',rs.FieldbyName('sales_type').AsInteger+1);
-            //COM_ID
-            sv.Fields[3].AsString := cid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('sales_id').AsString;
-            //STATUS
-            sv.Fields[6].AsString := cid;
-            //CRT_DATE
-            sv.Fields[7].AsString := rs.FieldbyName('sales_date').AsString;
-            //CRT_USER_ID
-            sv.Fields[8].AsString := rs.FieldbyName('oper_user').AsString;
-            //POST_DATE
-            sv.Fields[9].AsString := rs.FieldbyName('sales_date').AsString;
-            //UPDATE_TIME
-            sv.Fields[10].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('SALES_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.ExecSQL('delete from RIM_CUST_TRN_LINE where TRN_NUM in (select TRN_NUM from RIM_CUST_TRN where CUST_ID='''+custid+''' and TERM_ID='''+compid+''' and R3_NUM in ('+w+'))');
-        RemoteFactor.ExecSQL('delete from RIM_CUST_TRN where CUST_ID='''+custid+''' and TERM_ID='''+compid+''' and R3_NUM in ('+w+')');
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME from SAL_WITHINDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C where A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.SALES_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,UM_ID,NOTE from RIM_CUST_TRN_LINE where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //TRN_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_'+rs.FieldbyName('sales_id').AsString;
-            //LINE_NUM
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //QTY_TRN
-            sv.Fields[4].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[5].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT_TRN
-            sv.Fields[6].AsFloat := rs.FieldbyName('calc_money').AsFloat;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[7].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[7].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[7].AsString := '04'
-            else
-               sv.Fields[7].AsString := '02';
-            //Note
-            sv.Fields[8].AsString := rs.FieldbyName('remark').AsString;
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set BAL_TIME='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''04'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update SAL_WITHINORDER set COMM=''11'' where COMP_ID='''+CompId+''' and SALES_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报调拨流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-function SendMonthReck(LocalFactor,RemoteFactor:TIdFactor;id,m,compid,cid,custid,custcode:string):boolean;
-var d1,d2,MaxDate:string;
-  rs,sv:TADODataSet;
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  Str: string;
 begin
   result := false;
-  d1 := m+'01';
-  d2 := formatDatetime('YYYYMMDD',incMonth(fnTime.fnStrtoDate(m+'01'),1)-1);
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select max(PRINT_DATE) from STO_PRINTORDER where COMP_ID='''+compid+''' and PRINT_DATE<='''+d1+'''';
-    LocalFactor.Open(rs);
-    MaxDate := rs.Fields[0].AsString;
-    if MaxDate='' then MaxDate := '00000000'; 
-  finally
-    rs.Free;
-  end;
-  WriteDebug('台帐月份'+m);
-  RemoteFactor.BeginTrans;
-  LocalFactor.BeginTrans;
-  try
-    rs := TADODataSet.Create(nil);
-    sv := TADODataSet.Create(nil);
+  MaxStamp:=GetMaxNUM(PlugIntf,'10',SHOP_ID,ORGAN_ID,CustID); //返回日台账最大时间戳
+
+  //创建日台帐临时[INF_RECKDAY]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_RECKDAY( '+
+         ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
+         ' SHOP_ID VARCHAR(20) NOT NULL,'+   //R3门店ID
+         ' COM_ID VARCHAR(30) NOT NULL,'+    //RIM烟草公司ID
+         ' CUST_ID VARCHAR(30) NOT NULL,'+   //RIM零售户ID
+         ' ITEM_ID VARCHAR(30) NOT NULL,'+   //RIM商品ID
+         ' GODS_ID CHAR(36) NOT NULL,'+      //R3商品ID
+         ' UNIT_CALC DECIMAL (18,6),'+       //商品计量单位换算管理单位换算值
+         ' RECK_DAY VARCHAR(8) NOT NULL,'+   //台账日期
+         ' QTY_ORD DECIMAL (18,6),'+         //台账销售数量
+         ' AMT DECIMAL (18,6),'+             //台账销售金额
+         ' TIME_STAMP bigint NOT NULL'+      //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日销售临时表（session.INF_RECKDAY）错误！');
+
+  {==循环处理: 每次循环只处理[20天日销售数据] ==}
+  while True do
+  begin
+    iRet:=0;
+    //第一步: 大于时间戳的台帐插入临时表:
+    Str:='insert into session.INF_RECKDAY(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_CALC,RECK_DAY,QTY_ORD,AMT,TIME_STAMP) '+
+       'select tp.* from ('+
+       'select A.TENANT_ID,A.SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,1.0,trim(char(A.CREA_DATE)) as RECK_DAY,A.SALE_AMT,A.SALE_RTL,A.TIME_STAMP '+
+       ' from RCK_GOODS_DAYS A,PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+
+       ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and A.TIME_STAMP>'+MaxStamp+' order by A.TIME_STAMP) tp '+
+       ' fetch first 20 rows only ';
+    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表数据出错！');
+    if iRet=0 then Break; //若插入没有记录，退出循环
+
+    //第二步、更新商品计量单位换算管理单位换算值
+    Str:='update session.INF_RECKDAY A set A.UNIT_CALC=(select ('+GetDefaultUnitCalc+') as UNIT_CALC from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID) where exists(select 1 from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID)';
+    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新商品计量单位换算管理单位换算值出错！');
+    //更新换算后数量值:
+    if PlugIntf.ExecSQL(PChar('update session.INF_RECKDAY set QTY_ORD=(QTY_ORD*1.0)/UNIT_CALC '),iRet)<>0 then Raise Exception.Create('更新商品计量关系出错了！');
+ 
+    //第三步: 每一次执行作为一个事务提交
+    UpMaxStamp:=GetValue(PlugIntf, 'select max(TIME_STAMP) as TIME_STAMP from session.INF_RECKDAY ');
     try
-      case RemoteFactor.iDbType of
-      1: RemoteFactor.ExecSQL('delete RIM_CUST_MONTH where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and MONTH='''+m+''' and TERM_ID='''+compid+'''');
-      4: RemoteFactor.ExecSQL('delete from RIM_CUST_MONTH where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and MONTH='''+m+''' and TERM_ID='''+compid+'''');
+      PlugIntf.BeginTrans;
+      //1、删除已上报历史记录表头:
+      Str:='delete from RIM_RETAIL_CO_LINE A where exists(select B.CO_NUM from RIM_RETAIL_CO B,session.INF_RECKDAY C '+
+             ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.RECK_DAY and B.COM_ID='''+ORGAN_ID+'''and B.TERM_ID='''+SHOP_ID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除已上报日销售历史记录表头出错！');
+
+      //2、删除已上报历史记录表体:
+      Str:='delete from RIM_RETAIL_CO A where exists(select 1 from session.INF_RECKDAY B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.RECK_DAY) and A.COM_ID='''+ORGAN_ID+''' and A.TERM_ID='''+SHOP_ID+''' and A.CUST_ID='''+CustID+''' ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除已上报日销售历史记录表体出错！');
+
+      //3、插入日销售主表数据[RIM_RETAIL_CO]:
+      Str:='select COM_ID,CUST_ID,SHOP_ID,RECK_DAY,(RECK_DAY || ''_'' || CUST_ID ||''_'' || SHOP_ID) as CO_NUM,sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM from session.INF_RECKDAY group by COM_ID,CUST_ID,SHOP_ID,RECK_DAY';
+      Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,QTY_SUM,AMT_SUM,TERM_ID,PUH_DATE,STATUS,UPD_DATE,UPD_TIME) '+
+           'select CO_NUM,CUST_ID,COM_ID,QTY_SUM,AMT_SUM,SHOP_ID,RECK_DAY,''01'' as STATUS,'''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''' from ('+Str+') as tp order by RECK_DAY ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错(SQL:'+Str+')！');
+
+      //4、插入日销售明细表数据[RIM_RETAIL_CO_LINE]:
+      Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT) select (RECK_DAY || ''_'' || CUST_ID ||''_'' || SHOP_ID) as CO_NUM,ITEM_ID,QTY_ORD,AMT from session.INF_RECKDAY order by RECK_DAY ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表体[RIM_RETAIL_CO_LINE]出错(SQL:'+Str+')！');
+
+      //5、更新上报时间戳:[]
+      Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''10'' and TERM_ID='''+SHOP_ID+''' ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错！');
+      //提交事务
+      PlugIntf.CommitTrans;
+      //执行成功写日志:
+      WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'10','上报日销售成功','01');
+    except
+      on E:Exception do
+      begin
+        PlugIntf.RollbackTrans;
+        sleep(1);
+        WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'10','上报日销售错误：'+E.Message,'02'); //写日志
+        Raise Exception.Create(E.Message);
       end;
-      sv.CommandText := 'select COM_ID,CUST_ID,ITEM_ID,MONTH,PRI3,PRI4,PRI_SOLD,AMT_GROSS_PROFIT_THEO,QTY_IOM,AMT_IOM,QTY_PURCH,'+
-                        'AMT_PURCH,QTY_SOLD,AMT_SOLD_WITH_TAX,QTY_PROFIT,AMT_PROFIT,QTY_LOSS,AMT_LOSS,QTY_TAKE,AMT_TAKE,QTY_TRN_IN,'+
-                        'AMT_TRN_IN,QTY_TRN_OUT,AMT_TRN_OUT,QTY_EOM,AMT_EOM,UNIT_COST,SUMCOST_SOLD,AMT_GROSS_PROFIT,AMT_PROFIT_COM,TERM_ID '+
-                        'from RIM_CUST_MONTH where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and MONTH='''+m+'''';
-      RemoteFactor.Open(sv);
-      rs.CommandText := 'exec dt_rep1 '''+compid+''','''+d1+''','''+d2+''','''',2,'''','''+compid+''',1,''%'',1';
-      WriteDebug('台帐SQL：'+rs.CommandText);
-      LocalFactor.Open(rs);
-      rs.First;
-      while not rs.Eof do
-        begin
-          //WriteDebug('写行：'+inttostr(rs.recno));
-          if not ((rs.FieldbyName('grp0').AsInteger = 0) and (rs.FieldbyName('grp2').AsInteger = 0)) then
-             begin
-               rs.Next;
-               continue;
-             end;
-          sv.Append;
-          //COM_ID
-          sv.Fields[0].AsString := cid;
-          //CUST_ID
-          sv.Fields[1].AsString := custid;
-          //ITEM_ID
-          sv.Fields[2].AsString := rs.Fieldbyname('gods_isn').AsString;
-          //MONTH
-          sv.Fields[3].AsString := m;
-          //PRI3
-          sv.Fields[4].AsString := '0';
-          //PRI4
-          sv.Fields[5].AsString := '0';
-          //PRI_SOLD
-          sv.Fields[6].AsString := '0';
-          //AMT_GROSS_PROFIT_THEO
-          sv.Fields[7].AsString := '0';
-          //QTY_IOM
-          sv.Fields[8].asFloat := rs.Fieldbyname('org_amt').asFloat;
-          //AMT_IOM
-          sv.Fields[9].asFloat := rs.Fieldbyname('org_money').asFloat;
-          //QTY_PURCH
-          sv.Fields[10].asFloat := rs.Fieldbyname('stock_amt').asFloat;
-          //AMT_PURCH
-          sv.Fields[11].asFloat := rs.Fieldbyname('stock_money').asFloat;
-          //QTY_SOLD
-          sv.Fields[12].asFloat := rs.Fieldbyname('sales_amt').asFloat;
-          //AMT_SOLD_WITH_TAX
-          sv.Fields[13].asFloat := rs.Fieldbyname('rtl_money').asFloat;
-          if rs.Fieldbyname('param01_amt').AsFloat > 0 then
-          begin
-          //QTY_PROFIT
-          sv.Fields[14].asFloat := rs.Fieldbyname('param01_amt').asFloat;
-          //AMT_PROFIT
-          sv.Fields[15].asFloat := rs.Fieldbyname('param01_mny').asFloat;
-          end
-          else
-          begin
-          //QTY_LOSS
-          sv.Fields[16].asFloat := -rs.Fieldbyname('param01_amt').AsFloat;
-          //AMT_LOSS
-          sv.Fields[17].asFloat := -rs.Fieldbyname('param01_mny').AsFloat;
-          end;
-          //QTY_TAKE
-          sv.Fields[18].asFloat := rs.Fieldbyname('param02_amt').AsFloat+rs.Fieldbyname('param03_amt').AsFloat+rs.Fieldbyname('param04_amt').AsFloat+rs.Fieldbyname('param05_amt').AsFloat+rs.Fieldbyname('param06_amt').AsFloat;
-          //AMT_TAKE
-          sv.Fields[19].asFloat := rs.Fieldbyname('param02_mny').AsFloat+rs.Fieldbyname('param03_mny').AsFloat+rs.Fieldbyname('param04_mny').AsFloat+rs.Fieldbyname('param05_mny').AsFloat+rs.Fieldbyname('param06_mny').AsFloat;
-          //QTY_TRN_IN
-          sv.Fields[20].asFloat := rs.Fieldbyname('within_amt').asFloat;
-          //AMT_TRN_IN
-          sv.Fields[21].asFloat := rs.Fieldbyname('within_money').asFloat;
-          //QTY_TRN_OUT
-          sv.Fields[22].asFloat := rs.Fieldbyname('without_amt').asFloat;
-          //AMT_TRN_OUT
-          sv.Fields[23].asFloat := rs.Fieldbyname('without_money').asFloat;
-          //QTY_EOM
-          sv.Fields[24].asFloat := rs.Fieldbyname('bal_amt').asFloat;
-          //AMT_EOM
-          sv.Fields[25].asFloat := rs.Fieldbyname('bal_money').asFloat;
-          //UNIT_COST
-          if rs.Fieldbyname('sales_amt').AsFloat <> 0 then
-             sv.Fields[26].AsString := formatfloat('#0.000000', rs.Fieldbyname('sales_money').AsFloat / rs.Fieldbyname('sales_amt').AsFloat)
-          else
-             sv.Fields[26].asFloat := 0;
-          //SUMCOST_SOLD
-          sv.Fields[27].asFloat := rs.Fieldbyname('sales_money').asFloat;
-          //AMT_GROSS_PROFIT
-          sv.Fields[28].asFloat := rs.Fieldbyname('ptf_money').asFloat;
-          //AMT_PROFIT_COM 不用
-          sv.Fields[29].AsString := '0';
-          //TERM_ID
-          sv.Fields[30].AsString := compid;
-          sv.Post;
-          rs.Next;
-        end;
-      WriteDebug('写完：'+inttostr(rs.recno));
-      rs.Close;
-      rs.CommandText := 'select UPD_TIME from STO_PRINTORDER where COMP_ID='''+compid+''' and PRINT_ID='''+id+'''';
-      LocalFactor.Open(rs);
-      WriteDebug('台帐时间标识：'+rs.Fields[0].AsString);
-      RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+id+''',BAL_TIME='''+rs.Fields[0].AsString+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''00'' and TERM_ID='''+compid+'''');
-      WriteDebug('写成功标识：'+'update RIM_R3_NUM set MAX_NUM='''+id+''',BAL_TIME='''+rs.Fields[0].AsString+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''00'' and TERM_ID='''+compid+'''');
-      RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+maxDate+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''09'' and TERM_ID='''+compid+''' and MAX_NUM>'''+maxDate+'''');
-      WriteDebug('写成功标识：'+'update RIM_R3_NUM set MAX_NUM='''+maxDate+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''09'' and TERM_ID='''+compid+''' and MAX_NUM>'''+maxDate+'''');
-      RemoteFactor.UpdateBatch(sv);
-    finally
-      sv.Free;
-      rs.Free;
-    end;
-    LocalFactor.ExecSQL('update STO_PRINTORDER set COMM=''11'' where COMP_ID='''+compid+''' and PRINT_ID='''+id+'''');
-    RemoteFactor.CommitTrans;
-    LocalFactor.CommitTrans;
-    sleep(1);
-    WriteDebug('写成功日志：'+'insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''02'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报'+m+'月台帐成功'',''auto'',''01'')');
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''02'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报'+m+'月台帐成功'',''auto'',''01'')');
-    result := true;
+    end; //try .. except end;
+  end;  //循环: while True do
+end;
+       
+//////2011.04.15 AM上报零售户库  (type='11') 每天上报一次:
+function SendCustStorage(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE:string):boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  Str: string;
+begin
+  result := false;
+  MaxStamp:=GetMaxNUM(PlugIntf,'11',SHOP_ID,ORGAN_ID,CustID); //返回月台帐最大时间戳
+
+  //创建零售户库存帐临时[INF_CUST_STORAGE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_CUST_STORAGE('+
+         ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
+         ' SHOP_ID VARCHAR(20) NOT NULL,'+   //R3门店ID
+         ' COM_ID VARCHAR(30) NOT NULL,'+    //RIM烟草公司ID
+         ' CUST_ID VARCHAR(30) NOT NULL,'+   //RIM零售户ID
+         ' ITEM_ID VARCHAR(30) NOT NULL,'+   //RIM商品ID
+         ' GODS_ID CHAR(36) NOT NULL,'+      //R3商品ID
+         ' QTY DECIMAL (18,6),'+              //库存数量
+         ' UPD_DATE VARCHAR(8) NOT NULL,'+   //上报日期
+         ' UPD_TIME VARCHAR(8) NOT NULL,'+   //更新日期
+         ' TIME_STAMP bigint NOT NULL'+      //时间戳
+         ')ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日零售户库存帐临时[INF_CUST_STORAGE]错误！');
+  iRet:=0;
+
+  //第一步: 插入临时表:
+  Str:='Select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT)as AMOUNT from STO_STORAGE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp+' group by TENANT_ID,SHOP_ID,GODS_ID'; //库存表
+  Str:='insert into session.INF_CUST_STORAGE(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,QTY,UPD_DATE,UPD_TIME) '+
+       ' select A.TENANT_ID,A.SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CustID,C.SECOND_ID,A.GODS_ID,(A.AMOUNT/('+GetDefaultUnitCalc+'))as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME  '+
+       ' from ('+Str+')A,PUB_GOODSINFO B,PUB_GOODS_RELATION C '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and A.TENANT_ID='+TENANT_ID+' and C.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('库存插入临时表出错！（SQL='+Str+'）');
+
+  //第二步、处理中间表[事务处理]
+  try
+    PlugIntf.BeginTrans;  
+    //1、先删除已上报数据:
+    Str:='delete from RIM_CUST_ITEM_SWHSE where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+SHOP_ID+''' ';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('删除表（RIM_CUST_ITEM_SWHSE）历史数表出错！(SQl='+Str+')');
+
+    //2、从中间表插入插入 [RIM_CUST_ITEM_SWHSE]
+    Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
+         'select CUST_ID,ITEM_ID,COM_ID,SHOP_ID,QTY,UPD_DATE,UPD_TIME,''0'' from session.INF_CUST_STORAGE ';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('插入（RIM_CUST_ITEM_SWHSE）记录出错！（SQL='+Str+'）');
+
+    //3、先更新当前当天的中间库存中间表：[RIM_CUST_ITEM_SWHSE]:
+    str:=' update RIM_CUST_ITEM_WHSE '+
+         '  set QTY=nvl((select sum(QTY) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),0) '+
+         ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' ';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('更新（RIM_CUST_ITEM_SWHSE）出错！（SQL='+Str+'）');
+
+    //4、没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
+    str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY) '+
+         ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY) from RIM_CUST_ITEM_SWHSE A where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and '+
+         ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
+         ' group by COM_ID,CUST_ID,ITEM_ID ';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('插入（RIM_CUST_ITEM_SWHSE）新记录出错！（SQL='+Str+'）');
+
+    PlugIntf.CommitTrans;
   except
     on E:Exception do
-       begin
-         RemoteFactor.RollbackTrans;
-         LocalFactor.RollbackTrans;
-         sleep(1);
-         WriteDebug('写错误：'+'insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''02'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-         RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''02'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','+ QuotedStr(E.Message)+',''auto'',''02'')');
-       end;
-  end;
-end;
-
-
-procedure SendStockDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''05'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''05'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
     begin
-      rs.Close;
-      rs.CommandText := 'select top 100 * from STK_STOCKORDER where COMP_ID='''+CompId+''' and STOCK_ID>'''+mx+''' order by STOCK_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
+      PlugIntf.RollbackTrans;
+      sleep(1);
+      WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'11','上报零售户库错误：'+E.Message,'02');  //写日志
+      Raise Exception.Create(E.Message);
+    end;
+  end;
+end;
+
+//////上报POS零售单 (type='01')
+function SendSalesDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  SaleID,        //销售单ID
+  CUST_CODE,     //会员号
+  Str: string;
+  DetailTab, GoodTab: string; //销售明细表、商品表
+  RsINF: TZQuery;     //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'01',SHOP_ID,ORGAN_ID,CustID); //返回月台帐最大时间戳
+
+  //第一步: 创建零售单（POS）临时[INF_POS_SALE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_POS_SALE( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'SALES_ID CHAR(36) NOT NULL,'+        //RIM零售销售单ID
+         'SALE_DATE CHAR (8) NOT NULL,'+      //RIM零售销售单日期
+         'CUST_CODE varchar (20) NOT NULL,'+  //会员号
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建零售单（POS）临时表[INF_POS_SALE]错误！');
+ 
+  //第二步、插入中间表
+  Str:='select SALES_ID,SALES_DATE,TIME_STAMP,IC_CARDNO from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=4 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  str:='insert into session.INF_POS_SALE(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,CUST_CODE,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,A.SALES_ID,trim(char(A.SALES_DATE)),B.CUST_CODE,A.TIME_STAMP from '+
+       ' ('+str+') as A left outer join PUB_CUSTOMER B on A.IC_CARDNO=B.CUST_ID ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入零售单临时[INF_POS_SALE]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select SALES_ID,CUST_CODE,TIME_STAMP from session.INF_POS_SALE order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出 
+
+    //第三步: 循环分批处理：每次执行1单POS销售单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      SaleID:=trim(RsINF.fieldbyName('SALES_ID').AsString);      //销售单据号
+      CUST_CODE:=trim(RsINF.fieldbyname('CUST_CODE').AsString);  //会员号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
       try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select VOUCHER_NUM,RETAIL_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,TYPE,UPDATE_TIME from RIM_VOUCHER where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //VOUCHER_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_'+rs.FieldbyName('stock_id').AsString;
-            //RETAIL_NUM
-            sv.Fields[1].AsString := '';
-            //CUST_ID
-            sv.Fields[2].AsString := custid;
-            //COM_ID
-            sv.Fields[3].AsString := cid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('stock_id').AsString;
-            //STATUS
-            sv.Fields[6].AsString := '02';
-            //CRT_DATE
-            sv.Fields[7].AsString := copy(rs.FieldbyName('comm_id').AsString,4,8);
-            //CRT_USER_ID
-            sv.Fields[8].AsString := '';
-            //POST_DATE
-            sv.Fields[9].AsString := rs.FieldbyName('stock_date').AsString;
-            //TYPE
-            sv.Fields[10].AsString := '01';
-            //UPDATE_TIME
-            sv.Fields[11].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('STOCK_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME from STK_STOCKDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C where A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.STOCK_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT,UM_ID from RIM_VOUCHER_LINE where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //VOUCHER_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_'+rs.FieldbyName('stock_id').AsString;
-            //VOUCHER_LINE
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //QTY_INCEPT
-            sv.Fields[4].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[5].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT_INCEPT
-            sv.Fields[6].AsFloat :=  rs.FieldbyName('calc_money').AsFloat;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[7].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[7].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[7].AsString := '04'
-            else
-               sv.Fields[7].AsString := '02';
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''05'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update STK_STOCKORDER set COMM=''11'' where COMP_ID='''+CompId+''' and STOCK_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
+        //0、零售单不能修改，不需重报：
+        //1、插入零售表头:
+        Str:='insert into RIM_RETAIL_INFO(RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME)'+
+           ' select SALES_ID,'''','''','''+CustID+''' as CUST_ID,'''+SHOP_ID+''' as TERM_ID,SALES_ID,'''+ORGAN_ID+''' as COM_ID,INTEGRAL,trim(char(SALES_DATE)),'''+CUST_CODE+''' as CUST_CODE,trim(char(SALES_DATE)) as SALES_DATE,'+
+           '(case when length(CREA_DATE)>12 then substr(CREA_DATE,12,length(CREA_DATE)-12) else ''00:00:00'' end) as PUH_TIME,CREA_USER,''01'','''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' '+
+           ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_ID='''+SaleID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入POS零售单表头[RIM_RETAIL_INFO]错误！（SQL='+str+'）');
+        //2、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from SAL_SALESDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.SALES_ID='''+SaleID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+        Str:='insert into RIM_RETAIL_DETAIL(RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE,TREND_ID)'+
+             ' select A.SALES_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID, '+
+             ' A.COST_PRICE,A.APRICE,(case when B.UNIT_CALC>0 then A.AMOUNT/B.UNIT_CALC else A.AMOUNT end)as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,'''+FormatDatetime('YYYYMMDD',Date())+''','''+SHOP_ID+''' as TREND_ID '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入POS零售单表体[RIM_RETAIL_DETAIL]错误！（SQL='+str+'）');
+
+        //3、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''01'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
       except
         on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报入库流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-procedure SendStkRetuDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''06'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''06'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select top 100 * from STK_RETUORDER where COMP_ID='''+CompId+''' and RETU_ID>'''+mx+''' order by RETU_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select VOUCHER_NUM,RETAIL_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,TYPE,UPDATE_TIME from RIM_VOUCHER where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //VOUCHER_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_2_'+rs.FieldbyName('retu_id').AsString;
-            //RETAIL_NUM
-            sv.Fields[1].AsString := '';
-            //CUST_ID
-            sv.Fields[2].AsString := custid;
-            //COM_ID
-            sv.Fields[3].AsString := cid;
-            //TERM_ID
-            sv.Fields[4].AsString := compid;
-            //R3_NUM
-            sv.Fields[5].AsString := rs.FieldbyName('retu_id').AsString;
-            //STATUS
-            sv.Fields[6].AsString := '02';
-            //CRT_DATE
-            sv.Fields[7].AsString := '';
-            //CRT_USER_ID
-            sv.Fields[8].AsString := '';
-            //POST_DATE
-            sv.Fields[9].AsString := rs.FieldbyName('retu_date').AsString;
-            //TYPE
-            sv.Fields[10].AsString := '02';
-            //UPDATE_TIME
-            sv.Fields[11].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('RETU_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.*,B.GODS_ISN,C.UNIT_NAME from STK_RETUDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C where A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.RETU_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT,UM_ID from RIM_VOUCHER_LINE where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //VOUCHER_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_2_'+rs.FieldbyName('retu_id').AsString;
-            //VOUCHER_LINE
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //QTY_INCEPT
-            sv.Fields[4].AsFloat := - rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[5].AsFloat := - rs.FieldbyName('calc_amount').AsFloat;
-            //AMT_INCEPT
-            sv.Fields[6].AsFloat := - rs.FieldbyName('calc_money').AsFloat;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[7].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[7].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[7].AsString := '04'
-            else
-               sv.Fields[7].AsString := '02';
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''06'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update STK_RETUORDER set COMM=''11'' where COMP_ID='''+CompId+''' and RETU_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报进货退货流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-
-procedure SendChangeDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''07'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''07'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select top 100 * from STO_CHANGEORDER where COMP_ID='''+CompId+''' and CHANGE_ID>'''+mx+''' order by CHANGE_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select ADJUST_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,TYPE,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME from RIM_ADJUST_INFO where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //ADJUST_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('change_id').AsString;
-            //CUST_ID
-            sv.Fields[1].AsString := custid;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //TERM_ID
-            sv.Fields[3].AsString := compid;
-            //R3_NUM
-            sv.Fields[4].AsString := rs.FieldbyName('change_id').AsString;
-            //TYPE
-            if rs.FieldByName('CHANGE_CODE').AsString = '01' then
-               sv.Fields[5].AsString := '02'
-            else
-               sv.Fields[5].AsString := '03';
-            //STATUS
-            sv.Fields[6].AsString := '02';
-            //CRT_DATE
-            sv.Fields[7].AsString := rs.FieldbyName('change_date').AsString;
-            //CRT_USER_ID
-            sv.Fields[8].AsString := '';
-            //POST_DATE
-            sv.Fields[9].AsString := rs.FieldbyName('change_date').AsString;
-            //UPDATE_TIME
-            sv.Fields[10].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('CHANGE_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        rs.Close;
-        rs.CommandText := 'select A.CHANGE_ID,A.SEQNO,case when D.CHANGE_TYPE=1 then 1 else -1 end *A.AMOUNT AMOUNT,case when D.CHANGE_TYPE=1 then 1 else -1 end *A.CALC_AMOUNT CALC_AMOUNT,case when D.CHANGE_TYPE=1 then 1 else -1 end *A.AMONEY AMONEY,B.GODS_ISN,C.UNIT_NAME '+
-                          'from STO_CHANGEDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C,STO_CHANGEORDER D '+
-                          'where A.COMP_ID=D.COMP_ID and A.CHANGE_ID=D.CHANGE_ID and A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.CHANGE_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        sv.Close;
-        sv.CommandText := 'select ADJUST_NUM,ADJUST_LINE,COM_ID,ITEM_ID,QTY_ADJUST,QTY_MINI_UM,AMT_ADJUST,UM_ID from RIM_ADJUST_DETAIL where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //ADJUST_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('change_id').AsString;
-            //ADJUST_LINE
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //QTY_ADJUST
-            sv.Fields[4].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            sv.Fields[5].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT_ADJUST
-            sv.Fields[6].AsFloat :=  rs.FieldbyName('amoney').AsFloat;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[7].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[7].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[7].AsString := '04'
-            else
-               sv.Fields[7].AsString := '02';
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''07'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update STO_CHANGEORDER set COMM=''11'' where COMP_ID='''+CompId+''' and CHANGE_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报库存调整流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-procedure SendCombDetail(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''08'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''08'','''+compid+''',''000000000000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx,w:string;
-  n:integer;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    while true do
-    begin
-      rs.Close;
-      rs.CommandText := 'select top 100 A.*,B.GODS_ISN,B.SYS_FLAG,C.UNIT_NAME from STO_COMBORDER A,PUB_GOODSINFO B,PUB_MEAUNITS C where A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and A.COMP_ID='''+CompId+''' and A.COMB_ID>'''+mx+''' order by A.COMB_ID ';
-      LocalFactor.Open(rs);
-      if rs.IsEmpty then break;
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        w := '';
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select ADJUST_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,TYPE,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME from RIM_ADJUST_INFO where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //ADJUST_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_2_'+rs.FieldbyName('comb_id').AsString;
-            //CUST_ID
-            sv.Fields[1].AsString := custid;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //TERM_ID
-            sv.Fields[3].AsString := compid;
-            //R3_NUM
-            sv.Fields[4].AsString := rs.FieldbyName('comb_id').AsString;
-            //TYPE
-            sv.Fields[5].AsString := '03';
-            //STATUS
-            sv.Fields[6].AsString := '02';
-            //CRT_DATE
-            sv.Fields[7].AsString := rs.FieldbyName('comb_date').AsString;
-            //CRT_USER_ID
-            sv.Fields[8].AsString := '';
-            //POST_DATE
-            sv.Fields[9].AsString := rs.FieldbyName('comb_date').AsString;
-            //UPDATE_TIME
-            sv.Fields[10].AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-            sv.Post;
-            mx := rs.FieldbyName('COMB_ID').AsString;
-            if w<>'' then w := w + ',';
-            w := w + ''''+mx+'''';
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //报表体
-        sv.Close;
-        sv.CommandText := 'select ADJUST_NUM,ADJUST_LINE,COM_ID,ITEM_ID,QTY_ADJUST,QTY_MINI_UM,AMT_ADJUST,UM_ID from RIM_ADJUST_DETAIL where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.First;
-        while not rs.Eof do
-          begin
-            if rs.FieldbyName('sys_flag').AsInteger = 1 then
-               begin
-                  sv.Append;
-                  //ADJUST_NUM
-                  sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('change_id').AsString;
-                  //ADJUST_LINE
-                  sv.Fields[1].AsInteger := rs.recno;
-                  //COM_ID
-                  sv.Fields[2].AsString := cid;
-                  //ITEM_ID
-                  sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-                  //QTY_ADJUST
-                  if rs.FieldByName('comb_type').AsInteger = 0 then
-                     sv.Fields[4].AsFloat := rs.FieldbyName('amount').AsFloat
-                  else
-                     sv.Fields[4].AsFloat := -rs.FieldbyName('amount').AsFloat;
-                  //QTY_MINI_UM
-                  if rs.FieldByName('comb_type').AsInteger = 0 then
-                     sv.Fields[5].AsFloat := rs.FieldbyName('calc_amount').AsFloat
-                  else
-                     sv.Fields[5].AsFloat := -rs.FieldbyName('calc_amount').AsFloat;
-                  //AMT_ADJUST
-                  if rs.FieldByName('comb_type').AsInteger = 0 then
-                     sv.Fields[6].AsFloat :=  rs.FieldbyName('amoney').AsFloat
-                  else
-                     sv.Fields[6].AsFloat :=  -rs.FieldbyName('amoney').AsFloat;
-                  //UM_ID
-                  if rs.FieldbyName('unit_name').AsString='支' then
-                     sv.Fields[7].AsString := '01'
-                  else
-                  if rs.FieldbyName('unit_name').AsString='条' then
-                     sv.Fields[7].AsString := '03'
-                  else
-                  if rs.FieldbyName('unit_name').AsString='箱' then
-                     sv.Fields[7].AsString := '04'
-                  else
-                     sv.Fields[7].AsString := '02';
-                  sv.Post;
-               end;
-            rs.Next;
-          end;
-
-        rs.Close;
-        rs.CommandText := 'select A.CHANGE_ID,A.SEQNO,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,B.GODS_ISN,C.UNIT_NAME,D.SYS_FLAG '+
-                          'from STO_COMBDATA A,PUB_GOODSINFO B,PUB_MEAUNITS C,STO_COMBORDER D '+
-                          'where A.COMP_ID=D.COMP_ID and A.COMB_ID=D.COMB_ID and A.GODS_ID=B.GODS_ID and A.UNIT_ID=C.UNIT_ID and B.SYS_FLAG=1 and A.COMP_ID='''+CompId+''' and A.COMB_ID in ('+w+')';
-        LocalFactor.Open(rs);
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //ADJUST_NUM
-            sv.Fields[0].AsString := custid+'_'+compid+'_1_'+rs.FieldbyName('change_id').AsString;
-            //ADJUST_LINE
-            sv.Fields[1].AsInteger := rs.recno;
-            //COM_ID
-            sv.Fields[2].AsString := cid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //QTY_ADJUST
-            if rs.FieldByName('comb_type').AsInteger = 0 then
-               sv.Fields[4].AsFloat := -rs.FieldbyName('amount').AsFloat
-            else
-               sv.Fields[4].AsFloat := rs.FieldbyName('amount').AsFloat;
-            //QTY_MINI_UM
-            if rs.FieldByName('comb_type').AsInteger = 0 then
-               sv.Fields[5].AsFloat := -rs.FieldbyName('calc_amount').AsFloat
-            else
-               sv.Fields[5].AsFloat := rs.FieldbyName('calc_amount').AsFloat;
-            //AMT_ADJUST
-            if rs.FieldByName('comb_type').AsInteger = 0 then
-               sv.Fields[6].AsFloat :=  - rs.FieldbyName('amoney').AsFloat
-            else
-               sv.Fields[6].AsFloat :=  rs.FieldbyName('amoney').AsFloat;
-            //UM_ID
-            if rs.FieldbyName('unit_name').AsString='支' then
-               sv.Fields[7].AsString := '01'
-            else
-            if rs.FieldbyName('unit_name').AsString='条' then
-               sv.Fields[7].AsString := '03'
-            else
-            if rs.FieldbyName('unit_name').AsString='箱' then
-               sv.Fields[7].AsString := '04'
-            else
-               sv.Fields[7].AsString := '02';
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''08'' and TERM_ID='''+compid+'''');
-        LocalFactor.ExecSQL('update STO_COMBORDER set COMM=''11'' where COMP_ID='''+CompId+''' and COMB_ID in ('+w+')');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报拆卸组装流水成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-
-procedure SendCostPrice(LocalFactor,RemoteFactor:TIdFactor;compid,cid,custid,custcode:string);
-function GetMxId:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select MAX_NUM from RIM_R3_NUM where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''09'' and TERM_ID='''+compid+'''';
-    RemoteFactor.Open(rs);
-    result := rs.Fields[0].AsString;
-    if rs.IsEmpty then
-       RemoteFactor.ExecSQL('insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values('''+cid+''','''+custid+''',''09'','''+compid+''',''00000000'')');
-  finally
-    rs.Free;
-  end;
-
-end;
-var
-  rs:TADODataSet;
-  sv:TADODataSet;
-  mx:string;
-  MinDate,MaxDate:TDatetime;
-begin
-  rs := TADODataSet.Create(nil);
-  sv := TADODataSet.Create(nil);
-  try
-    mx := GetMxId;
-    rs.Close;
-    rs.CommandText := 'select A.SALES_DATE,C.GODS_ISN, '+
-       'sum(CALC_AMOUNT*COST_PRICE) as AMONEY,'+
-       'sum(CALC_AMOUNT) AMOUNT '+
-       'from ALL_SALESORDER A,ALL_SALESDATA B,PUB_GOODSINFO C  '+
-       'where A.COMP_ID=B.COMP_ID and A.SALES_ID=B.SALES_ID and B.GODS_ID=C.GODS_ID and C.SYS_FLAG=1 and A.COMP_ID='''+compid+''' and A.SALES_DATE>'''+mx+''' '+
-       'group by A.SALES_DATE,C.GODS_ISN order by A.SALES_DATE';
-    LocalFactor.Open(rs);
-    if rs.IsEmpty then Exit;
-    rs.First;
-    MinDate := EncodeDate(StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,1,4)),StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,5,2)),StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,7,2)));
-    rs.Last;
-    MaxDate := EncodeDate(StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,1,4)),StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,5,2)),StrtoInt(Copy(rs.FieldbyName('sales_date').AsString,7,2)));
-    while MinDate<=MaxDate do
-    begin
-      RemoteFactor.BeginTrans;
-      LocalFactor.BeginTrans;
-      try
-        RemoteFactor.ExecSQL('delete from RIM_CUST_ITEM_COST where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TERM_ID='''+compid+''' and DATE1='''+formatDatetime('YYYYMMDD',MinDate)+'''');
-        //报表头
-        sv.Close;
-        sv.CommandText := 'select COM_ID,CUST_ID,TERM_ID,ITEM_ID,DATE1,UNIT_COST from RIM_CUST_ITEM_COST where 1<>1';
-        RemoteFactor.Open(sv);
-        rs.Filtered := false;
-        rs.Filter := 'SALES_DATE='''+formatDatetime('YYYYMMDD',MinDate)+'''';
-        rs.Filtered := true;
-        rs.First;
-        while not rs.Eof do
-          begin
-            sv.Append;
-            //COM_ID
-            sv.Fields[0].AsString := cid;
-            //CUST_ID
-            sv.Fields[1].AsString := custid;
-            //TERM_ID
-            sv.Fields[2].AsString := compid;
-            //ITEM_ID
-            sv.Fields[3].AsString := rs.FieldbyName('gods_isn').AsString;
-            //DATE1
-            sv.Fields[4].AsString := rs.FieldbyName('sales_date').AsString;
-            //UNIT_COST
-            if rs.FieldbyName('amount').AsFloat <> 0 then
-               sv.Fields[5].AsFloat := rs.FieldbyName('amoney').AsFloat / rs.FieldbyName('amount').AsFloat
-            else
-               sv.Fields[5].AsFloat := 0;
-            sv.Post;
-            rs.Next;
-          end;
-        RemoteFactor.UpdateBatch(sv);
-        mx := formatDatetime('YYYYMMDD',MinDate);
-        MinDate := MinDate + 1;
-        //写标志单号
-        RemoteFactor.ExecSQL('update RIM_R3_NUM set MAX_NUM='''+mx+''' where COM_ID='''+cid+''' and CUST_ID='''+custid+''' and TYPE=''09'' and TERM_ID='''+compid+'''');
-        RemoteFactor.CommitTrans;
-        LocalFactor.CommitTrans;
-      except
-        on E:Exception do
-           begin
-             RemoteFactor.RollbackTrans;
-             LocalFactor.RollbackTrans;
-             sleep(1);
-             RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','+ QuotedStr(E.Message)+',''auto'',''02'')');
-             Exit;
-           end;
-      end;
-    end;
-    sleep(1);
-    RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''01'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''',''上报销售成本单价成功'',''auto'',''01'')');
-  finally
-    sv.Free;
-    rs.Free;
-  end;
-end;
-
-procedure CallSync(LocalFactor,RemoteFactor:TIdFactor);
-var
-  DefUnit: integer;
-  rs,ls:TADODataSet;
-  id,m,cid,custid,compid,custcode,compname:string;
-begin
-  rs := TADODataSet.Create(nil);
-  ls := TADODataSet.Create(nil);
-  try
-    rs.Close;
-    rs.CommandText := 'select COMP_ID,INTF_SELF,INTF_CODE,COMP_NAME,INTF_UNIT from CA_COMPANY where INTF_SELF is not null order by COMP_ID';
-    LocalFactor.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        try
-          WriteDebug('开始上报:'+rs.Fields[3].asString+'('+rs.Fields[1].asString+')');
-          cid := rs.Fields[2].AsString;
-          compid := rs.Fields[0].AsString;
-          custcode := rs.Fields[1].AsString;
-          compname := rs.Fields[3].AsString;
-          DefUnit:= rs.Fields[4].AsInteger;
-          ls.Close;
-          ls.CommandText := 'select ORGAN_ID from PUB_ORGAN where ORGAN_ID='''+cid+'''';
-          RemoteFactor.Open(ls);
-          cid := ls.Fields[0].AsString;
-          WriteDebug('rimcid:'+cid);
-          if cid='' then Raise Exception.Create(compname+'->请正确设置接口参数');
-          ls.Close;
-          ls.CommandText := 'select CUST_ID from RM_CUST where COM_ID='''+cid+''' and CUST_CODE='''+custcode+'''';
-          RemoteFactor.Open(ls);
-          custid := ls.Fields[0].AsString;
-          WriteDebug('custid:'+custid);
-          if custid='' then Raise Exception.Create(compname+'->'+cid+'在RIM中没找到对应的CUST_ID值...');
-          WriteDebug('报月台帐:'+custid);
-          while true do
-          begin
-            if CheckReckonine(compid,custid,cid,LocalFactor,RemoteFactor,id,m) then //上报月台帐
-            begin
-              WriteDebug('报月台帐:'+custid);
-              if not SendMonthReck(LocalFactor,RemoteFactor,id,m,compid,cid,custid,custcode) then Break;
-            end else
-              break;
-          end;
-          WriteDebug('报销售:'+custid);
-          SendSalesDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode,DefUnit);
-          WriteDebug('报批发:'+custid);
-          SendSaleBatchDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报销售退货:'+custid);
-          SendSaleRetDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报调拨:'+custid);
-          SenddbDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报入库:'+custid);
-          SendStockDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报采购退货:'+custid);
-          SendStkRetuDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报调整:'+custid);
-          SendChangeDetail(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-          WriteDebug('报成本:'+custid);
-          SendCostPrice(LocalFactor,RemoteFactor,compid,cid,custid,custcode);
-        except
-          on E:Exception do
-             begin
-               sleep(1);
-               WriteDebug(E.Message);
-               RemoteFactor.ExecSQL('insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values('''+custcode+formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''',''00'','''+custid+''','''+formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''' ,'+ QuotedStr(E.Message)+',''auto'',''02'')');
-             end;
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'01','上报POS零售单：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message);
         end;
-        rs.Next;
       end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'01','上报POS零售单成功！','01');
   finally
-    ls.Free;
-    rs.Free;
+    RsINF.Free; 
   end;
 end;
+
+////上报销售单（批发单）数据 (type='02')
+function SendSaleBatchDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  SaleID,        //销售单ID
+  Str: string;
+  DetailTab, GoodTab: string; //销售明细表、商品表
+  RsINF: TZQuery;     //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'02',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_SALE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALE( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'SALES_ID CHAR(36) NOT NULL,'+        //RIM销售单ID
+         'SALE_DATE CHAR (8) NOT NULL,'+      //RIM销售单日期
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单临时[INF_SALE]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_SALE(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID,trim(char(SALES_DATE)),TIME_STAMP from '+
+       ' SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=1 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发单）[INF_SALE]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select SALES_ID,TIME_STAMP from session.INF_SALE order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单销售单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      SaleID:=trim(RsINF.fieldbyName('SALES_ID').AsString);     //销售单据号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_RETAIL_INFO','RIM_RETAIL_DETAIL','RETAIL_NUM',SaleID);
+        
+        //2、插入销售表头:
+        Str:='insert into RIM_RETAIL_INFO(RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME)'+
+           ' select SALES_ID,'' '','' '','''+CustID+''' as CUST_ID,'''+SHOP_ID+''' as TERM_ID,SALES_ID,'''+ORGAN_ID+''' as COM_ID,0,trim(char(SALES_DATE)),'' '',trim(char(SALES_DATE)),'' '' as PUH_TIME,CREA_USER,''01'','''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' '+
+           ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_ID='''+SaleID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单批发表头[RIM_RETAIL_INFO]错误！（SQL='+str+'）');
+
+        //3、插入销售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from SAL_SALESDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.SALES_ID='''+SaleID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+        Str:='insert into RIM_RETAIL_DETAIL(RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE)'+
+             ' select A.SALES_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID, '+
+             ' A.COST_PRICE,A.APRICE,(case when B.UNIT_CALC>0 then A.AMOUNT/B.UNIT_CALC else A.AMOUNT end)as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,'''+FormatDatetime('YYYYMMDD',Date())+''' '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单批发表体[RIM_RETAIL_DETAIL]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''02'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新销售单上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'02','上报销售单（批发）：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message);
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'02','上报批发销售单成功！','01');
+  finally
+    RsINF.Free; 
+  end;
+end;
+
+//销售退货单  (type='03')
+function SendSaleRetDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  SaleID,        //销售单ID
+  Str: string;
+  DetailTab, GoodTab: string; //销售明细表、商品表
+  RsINF: TZQuery;     //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'02',SHOP_ID,ORGAN_ID,CustID);  
+
+  //第一步: 创建销售退货单（）临时[INF_SALE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALE( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'SALES_ID CHAR(36) NOT NULL,'+        //RIM销售单ID
+         'SALE_DATE CHAR (8) NOT NULL,'+      //RIM销售单日期
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售退货单临时表[INF_SALE]错误！');
+
+  //第二步、插入中间(临时)表     
+  str:='insert into session.INF_SALE(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID,trim(char(SALES_DATE)),TIME_STAMP from '+
+       ' SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=3 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售退货单临时表[INF_SALE]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select SALES_ID,TIME_STAMP from session.INF_SALE order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单POS销售单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      SaleID:=trim(RsINF.fieldbyName('SALES_ID').AsString);       //销售单据号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_RETAIL_INFO','RIM_RETAIL_DETAIL','RETAIL_NUM',SaleID);
+      
+        //2、插入零售表头:
+        Str:='insert into RIM_RETAIL_INFO(RETAIL_NUM,CONSUMER_CARD_ID,CONSUMER_ID,CUST_ID,TERM_ID,R3_NUM,COM_ID,SCORE,SCORE_DATE,VIP_RTL_CARD_ID,PUH_DATE,PUH_TIME,CRT_USER_ID,TYPE,UPDATE_TIME)'+
+           ' select SALES_ID,'' '','' '','''+CustID+''' as CUST_ID,'''+SHOP_ID+''' as TERM_ID,SALES_ID,'''+ORGAN_ID+''' as COM_ID,0,trim(char(SALES_DATE)),'' '',trim(char(SALES_DATE)),'' '' as PUH_TIME,CREA_USER,''01'','''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' '+
+           ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_ID='''+SaleID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售退货单表头[RIM_RETAIL_INFO]错误！（SQL='+str+'）');
+
+        //3、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from SAL_SALESDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.SALES_ID='''+SaleID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+        Str:='insert into RIM_RETAIL_DETAIL(RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE)'+
+             ' select A.SALES_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID, '+
+             ' A.COST_PRICE,A.APRICE,(case when B.UNIT_CALC>0 then A.AMOUNT/B.UNIT_CALC else A.AMOUNT end)as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,'''+FormatDatetime('YYYYMMDD',Date())+''' '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售退货单表体[RIM_RETAIL_DETAIL]错误！（SQL='+str+'）');
+
+        //3、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''03'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新销售退货单上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'03','上报销售退货单：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message); 
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'03','上报销售退货单成功！','01');
+  finally
+    RsINF.Free; 
+  end;
+end;
+
+//上报调拨单 (type='04')
+{说明: 新R3设计时把调入当作为入库单，存储在入库表，调出单作为出库单，存储在销售单;同步时分两步处理 }
+function SenddbInDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  DBID,          //RIM调拨(入)单ID(在R3调拨单 + _1)
+  R3_DBID,       //R3调拨(入)单ID
+  Str: string;
+  DetailTab, GoodTab: string; //调拨明细表、商品表
+  RsINF: TZQuery;             //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'04',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_SALE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_DB( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'DB_ID CHAR(36) NOT NULL,'+          //RIM调拨ID
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单临时[INF_SALE]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_DB(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,DB_ID,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID || ''_1'' as STOCK_ID,TIME_STAMP from '+
+       ' STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=2 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨(入)单[INF_DB]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select DB_ID,TIME_STAMP from session.INF_DB order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单POS销售单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      DBID:=trim(RsINF.fieldbyName('DB_ID').AsString);     //销售单据号
+      R3_DBID:=Copy(DBID,1,36); //GUIID
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_CUST_TRN','RIM_CUST_TRN_LINE','TRN_NUM',DBID);
+
+        //2、插入调拨（入）单表头:
+        Str:='insert into RIM_CUST_TRN(TRN_NUM,CUST_ID,TYPE,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME)'+
+           ' select STOCK_ID || ''_1'' as STOCK_ID,'''+CustID+''' as CUST_ID,''2'' as vTYPE,'''+ORGAN_ID+''' as COM_ID,'''+SHOP_ID+''' as TERM_ID,STOCK_ID || ''_1'' as STOCK_ID,''02'',trim(char(STOCK_DATE)),CREA_USER,trim(char(STOCK_DATE)),'''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' as PUH_TIME '+
+           ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_ID='''+R3_DBID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调播单批发表头[RIM_CUST_TRN]错误！（SQL='+str+'）');
+
+        //3、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from STK_STOCKDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.STOCK_ID='''+R3_DBID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+
+        Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
+             ' select A.STOCK_ID || ''_1'' as STOCK_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨（入）单批发表体[RIM_CUST_TRN_LINE]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''04'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新销售单上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'04','上报调拨（入）单（批发）：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message); 
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'04','上报调拨（出）单成功！','01');
+  finally
+    RsINF.Free;
+  end;
+end;
+
+//上报调拨单 (type='12')  单据号码=SALES_ID + _2
+{说明: 新R3设计时把调入当作为入库单，存储在入库表，调出单作为出库单，存储在销售单;同步时分两步处理 }
+function SenddbOutDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer; //返回ExeSQL影响多少行记录
+  MaxStamp,      //已上报最大时间戳
+  UpMaxStamp,    //本次上报最大时间戳
+  DBID,          //RIM调拨(入)单ID(在R3调拨单 + _1)
+  R3_DBID,       //R3调拨(入)单ID
+  Str: string;
+  DetailTab, GoodTab: string; //调拨明细表、商品表
+  RsINF: TZQuery;             //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'12',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_SALE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_DB( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'DB_ID CHAR(36) NOT NULL,'+          //RIM调拨ID
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单临时[INF_SALE]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_DB(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,DB_ID,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID || ''_2'' as SALES_ID,TIME_STAMP '+
+       ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=2 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨(出)单[INF_DB]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select DB_ID,TIME_STAMP from session.INF_DB order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单POS销售单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      DBID:=trim(RsINF.fieldbyName('DB_ID').AsString);     //销售单据号
+      R3_DBID:=Copy(DBID,1,36); //GUIID
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_CUST_TRN','RIM_CUST_TRN_LINE','TRN_NUM',DBID);
+
+        //2、插入调拨（入）单表头:
+        Str:='insert into RIM_CUST_TRN(TRN_NUM,CUST_ID,TYPE,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME)'+
+           ' select SALES_ID || ''_2'' as SALES_ID,'''+CustID+''' as CUST_ID,''02'' as vTYPE,'''+ORGAN_ID+''' as COM_ID,'''+SHOP_ID+''' as TERM_ID,SALES_ID || ''_2'' as SALES_ID,''2'',trim(char(SALES_DATE)),CREA_USER,trim(char(SALES_DATE)),'''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' as PUH_TIME '+
+           ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_ID='''+R3_DBID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调播单批发表头[RIM_CUST_TRN]错误！（SQL='+str+'）');
+
+        //3、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from SAL_SALESDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.SALES_ID='''+R3_DBID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+
+        Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
+             ' select A.SALES_ID || ''_2'' as SALES_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨（入）单批发表体[RIM_CUST_TRN_LINE]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''12'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新销售单上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'12','上报调拨（出）单（批发）：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message); 
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'12','上报调拨（出）单成功！','01');
+  finally
+    RsINF.Free;
+  end;
+end; 
+
+//上报入库单 [type='05']
+function SendStockDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer;  //返回ExeSQL影响多少行记录
+  MaxStamp,       //已上报最大时间戳
+  UpMaxStamp,     //本次上报最大时间戳
+  StockID,        //出库单号
+  Str: string;
+  DetailTab, GoodTab: string; //入库单细表、商品表
+  RsINF: TZQuery;             //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'05',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_STOCK]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_STOCK( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'STOCK_ID CHAR(36) NOT NULL,'+       //RIM入库单ID
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建进货入库单临时表[INF_SALE]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_STOCK(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,STOCK_ID,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID,TIME_STAMP '+
+       ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=1 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库单中间表[INF_STOCK]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select STOCK_ID,TIME_STAMP from session.INF_STOCK order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单入库单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      StockID:=trim(RsINF.fieldbyName('STOCK_ID').AsString);      //单据号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_VOUCHER','RIM_VOUCHER_LINE','VOUCHER_NUM',StockID);
+
+        //2、插入调拨（入）单表头:
+        Str:='insert into RIM_VOUCHER(VOUCHER_NUM,RETAIL_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,TYPE,UPDATE_TIME)'+
+           ' select STOCK_ID,'' '' as RETAIL_NUM,'''+CustID+''' as CUST_ID,'''+ORGAN_ID+''' as COM_ID,'''+SHOP_ID+''' as TERM_ID,STOCK_ID,''02'',trim(char(STOCK_DATE)),CREA_USER,trim(char(STOCK_DATE)),''01'','''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' as PUH_TIME '+
+           ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_ID='''+StockID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库表头[RIM_VOUCHER]错误！（SQL='+str+'）');
+
+        //3、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from STK_STOCKDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.STOCK_ID='''+StockID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+
+        Str:='insert into RIM_VOUCHER_LINE(VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,UM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT)'+
+             ' select A.STOCK_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库表体[RIM_VOUCHER_LINE]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''05'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新进货入库单上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'05','上报进货入库单：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message);
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'05','上报进货入库单成功！','01');
+  finally
+    RsINF.Free;
+  end;
+end;
+
+//上报入库退货 (type='06')
+function SendStkRetuDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer;  //返回ExeSQL影响多少行记录
+  MaxStamp,       //已上报最大时间戳
+  UpMaxStamp,     //本次上报最大时间戳
+  StockID,        //出库单号
+  Str: string;
+  DetailTab, GoodTab: string; //入库单细表、商品表
+  RsINF: TZQuery;             //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'05',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_STOCK]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_STOCK( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'STOCK_ID CHAR(36) NOT NULL,'+       //RIM调拨ID
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单（批发）临时[INF_STOCK]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_STOCK(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,STOCK_ID,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID,TIME_STAMP '+
+       ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=3 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发）中间表[INF_STOCK]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select STOCK_ID,TIME_STAMP from session.INF_STOCK order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单入库单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      StockID:=trim(RsINF.fieldbyName('STOCK_ID').AsString);     //销售单据号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_VOUCHER','RIM_VOUCHER_LINE','VOUCHER_NUM',StockID);
+
+        //2、插入调拨（入）单表头:
+        Str:='insert into RIM_VOUCHER(VOUCHER_NUM,RETAIL_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,TYPE,UPDATE_TIME)'+
+           ' select STOCK_ID,'' '' as RETAIL_NUM,'''+CustID+''' as CUST_ID,'''+ORGAN_ID+''' as COM_ID,'''+SHOP_ID+''' as TERM_ID,STOCK_ID,''02'',trim(char(STOCK_DATE)),CREA_USER,trim(char(STOCK_DATE)),''02'','''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' as PUH_TIME '+
+           ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_ID='''+StockID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发）表头[RIM_VOUCHER]错误！（SQL='+str+'）');
+
+        //3、插入零售表体:
+        DetailTab:='select S.*,M.UNIT_NAME from STK_STOCKDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.STOCK_ID='''+StockID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+
+        Str:='insert into RIM_VOUCHER_LINE(VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,UM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT)'+
+             ' select A.STOCK_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发）表体[RIM_VOUCHER_LINE]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''05'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新销售单（批发）上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'06','上报采购退货单：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message);   
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'06','上报采购退货单成功！','01');
+  finally
+    RsINF.Free;
+  end;
+end;
+
+//上报调整单  (type='07')
+function SendChangeDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer;  //返回ExeSQL影响多少行记录
+  MaxStamp,       //已上报最大时间戳
+  UpMaxStamp,     //本次上报最大时间戳
+  ChangeID,       //调整单ID
+  Str: string;
+  DetailTab, GoodTab: string; //入库单细表、商品表
+  RsINF: TZQuery;             //中间表循环使用
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'07',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_CHANGE]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_CHANGE( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'CHANGE_ID CHAR(36) NOT NULL,'+      //RIM调整单ID
+         'TIME_STAMP bigint NOT NULL'+        //时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建〖调整单〗临时[INF_CHANGE]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_CHANGE(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,CHANGE_ID,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,CHANGE_ID,TIME_STAMP '+
+       ' from STO_CHANGEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入〖调整单〗中间表[INF_CHANGE]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  try
+    RsINF:=TZQuery.Create(nil);
+    OpenData(PlugIntf, RsINF, 'select CHANGE_ID,TIME_STAMP from session.INF_CHANGE order by TIME_STAMP');
+    if (not RsINF.Active) or (RsINF.IsEmpty) then Exit; //若为空数据退出
+
+    //第三步: 循环分批处理：每次执行1单入库单]
+    RsINF.First;
+    while not RsINF.Eof do
+    begin
+      ChangeID:=trim(RsINF.fieldbyName('CHANGE_ID').AsString);     //销售单据号
+      UpMaxStamp:=trim(RsINF.fieldbyName('TIME_STAMP').AsString); //当前最大时间戳
+
+      //开始插入处理:
+      PlugIntf.BeginTrans;
+      try
+        //1、上报前删除历史单据：
+        DeleteExistsReportedBill(PlugIntf,'RIM_ADJUST_INFO','RIM_ADJUST_DETAIL','ADJUST_NUM',ChangeID);
+
+        //2、插入调整单表头:
+        Str:='insert into RIM_ADJUST_INFO(ADJUST_NUM,CUST_ID,COM_ID,TERM_ID,R3_NUM,TYPE,STATUS,CRT_DATE,CRT_USER_ID,POST_DATE,UPDATE_TIME)'+
+           ' select CHANGE_ID,'''+CustID+''' as CUST_ID,'''+ORGAN_ID+''' as COM_ID,'''+SHOP_ID+''' as TERM_ID,CHANGE_ID,'+
+           ' (case when CHANGE_CODE=''01'' then ''02'' else ''03'' end) as CHANGE_CODE,''02'',trim(char(CHANGE_DATE)),CREA_USER,trim(char(CHANGE_DATE)),'''+Formatdatetime('YYYY-MM-DD HH:NN:SS',now())+''' as PUH_TIME '+
+           ' from STO_CHANGEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and CHANGE_ID='''+ChangeID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入〖调整单〗表头[RIM_VOUCHER]错误！（SQL='+str+'）');
+
+        //3、插入调整单表体:
+        DetailTab:='select S.*,M.UNIT_NAME from STO_CHANGEDATA S,VIW_MEAUNITS M where S.TENANT_ID=M.TENANT_ID and S.UNIT_ID=M.UNIT_ID and S.TENANT_ID='+TENANT_ID+' and S.CHANGE_ID='''+ChangeID+''' ';
+        GoodTab:='select G.GODS_ID,G.GODS_CODE,'+GetDefaultUnitCalc('G')+' as UNIT_CALC,R.SECOND_ID from PUB_GOODSINFO G,PUB_GOODS_RELATION R where G.TENANT_ID=R.TENANT_ID and G.GODS_ID=R.GODS_ID and G.TENANT_ID='+TENANT_ID+' and R.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
+
+        Str:='insert into RIM_ADJUST_DETAIL(ADJUST_NUM,ADJUST_LINE,COM_ID,ITEM_ID,UM_ID,QTY_ADJUST,QTY_MINI_UM,AMT_ADJUST)'+
+             ' select A.CHANGE_ID,row_number()over() as LINE_NUM,'''+ORGAN_ID+''' as COM_ID,B.SECOND_ID,(case when A.UNIT_NAME=''支'' then ''01'' when A.UNIT_NAME=''条'' then ''03'' when A.UNIT_NAME=''箱'' then ''04'' else ''02'' end) as UN_ID,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+             ' from ('+DetailTab+')A,('+GoodTab+')B '+
+             ' where A.GODS_ID=B.GODS_ID order by B.GODS_CODE ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入〖调整单〗表体[RIM_ADJUST_DETAIL]错误！（SQL='+str+'）');
+
+        //4、更新上报时间戳:[]
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''07'' and TERM_ID='''+SHOP_ID+''' ';
+        if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新〖调整单〗上报时间戳出错！');
+        //提交事务
+        PlugIntf.CommitTrans;
+      except
+        on E:Exception do
+        begin
+          PlugIntf.RollbackTrans;
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'07','上报〖调整单〗错误：'+E.Message,'02');  //写日志
+          Raise Exception.Create(E.Message);   
+        end;
+      end;
+      RsINF.Next;
+    end;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'07','上报〖调整单〗成功！','01');
+  finally
+    RsINF.Free;
+  end;
+end;
+
+
+//组合（捆绑）单 (type='08')
+function SendCombDetail(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+const BillName='组合（捆绑）单';
+begin
+
+end;
+
+//销售成本(type='09')
+function SendCostPrice(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE: string): boolean;
+var
+  iRet: integer;  //返回ExeSQL影响多少行记录
+  MaxStamp,       //已上报最大时间戳
+  UpMaxStamp,     //本次上报最大时间戳
+  Str: string;
+begin
+  result:=False;
+  MaxStamp:=GetMaxNUM(PlugIntf,'09',SHOP_ID,ORGAN_ID,CustID); 
+
+  //第一步: 创建销售单（批发）临时[INF_STOCK]:
+  Str:=
+    'DECLARE GLOBAL TEMPORARY TABLE session.INF_COST( '+
+         'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
+         'SHOP_ID VARCHAR(20) NOT NULL,'+     //R3门店ID
+         'COM_ID VARCHAR(30) NOT NULL,'+      //RIM烟草公司ID
+         'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
+         'ITEM_ID VARCHAR(30) NOT NULL,'+     //RIM商品ID
+         'GODS_ID CHAR(36) NOT NULL,'+        //R3商品ID
+         'COST_PRICE DECIMAL (18,6),'+         //销售成本价
+         'UNIT_CALC DECIMAL (18,6),'+          //商品计量单位换算管理单位换算值         
+         'RECK_DATE CHAR(8) NOT NULL,'+       //台账表日期
+         'TIME_STAMP bigint NOT NULL'+        //台账表时间戳
+         ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售成本价临时表[INF_STOCK]错误！');
+
+  //第二步、插入中间(临时)表
+  str:='insert into session.INF_COST(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,RECK_DATE,ITEM_ID,GODS_ID,COST_PRICE,UNIT_CALC,TIME_STAMP)'+
+       'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,trim(char(A.CREA_DATE)) as RECK_DAY,B.SECOND_ID,A.GODS_ID,A.COST_PRICE,1.0,A.TIME_STAMP '+
+       ' from RCK_GOODS_DAYS A,PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+
+       ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and A.TIME_STAMP>'+MaxStamp+
+       ' order by A.TIME_STAMP ';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库单中间表[INF_STOCK]错误！（SQL='+str+'）');
+  if iRet=0 then Exit; //若插入没有记录，退出
+
+  //第二步、处理RIM的计量单位成本价
+  Str:='update session.INF_COST A set A.UNIT_CALC=(select ('+GetDefaultUnitCalc+') as UNIT_CALC from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID) where exists(select 1 from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID)';
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新计量单位换算管理单位出错！');
+  //更新换算后数量值:
+  if PlugIntf.ExecSQL(PChar('update session.INF_COST set COST_PRICE=(COST_PRICE*1.0)/UNIT_CALC '),iRet)<>0 then Raise Exception.Create('更新商品成本价计算出错了！');
+
+  //第三步、更新商品计量单位换算管理单位换算值
+  UpMaxStamp:=GetValue(PlugIntf, 'select max(TIME_STAMP) as TIME_STAMP from session.INF_COST '); //更新最大时间戳
+
+  //第四步: 批量处理（事务内处理）
+  PlugIntf.BeginTrans; //开始事务:
+  try
+    //1、更新历史单据：
+    Str:='update RIM_CUST_ITEM_COST A '+
+         ' set UNIT_COST=(select B.COST_PRICE from session.INF_COST B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.TERM_ID=B.SHOP_ID and A.ITEM_ID=B.ITEM_ID and A.DATE1=B.RECK_DATE) '+
+         ' where exists(select 1 from session.INF_COST B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.TERM_ID=B.SHOP_ID and A.ITEM_ID=B.ITEM_ID and A.DATE1=B.RECK_DATE) ';
+    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新商品成本价出错了！');
+
+    //2、插入新记录:
+    Str:='insert into RIM_CUST_ITEM_COST(COM_ID,CUST_ID,TERM_ID,ITEM_ID,DATE1,UNIT_COST)'+
+       ' select COM_ID,CUST_ID,SHOP_ID,ITEM_ID,RECK_DATE,COST_PRICE from session.INF_COST A '+
+       ' where not exists(select 1 from RIM_CUST_ITEM_COST B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.SHOP_ID=B.TERM_ID and A.RECK_DATE=B.DATE1 and A.ITEM_ID=B.ITEM_ID ) ';
+    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售成本价错误！（SQL='+str+'）');
+
+    //3、更新上报时间戳:[]
+    Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStamp+''' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE=''05'' and TERM_ID='''+SHOP_ID+''' ';
+    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新进货入库单上报时间戳出错！');
+    //提交事务
+    PlugIntf.CommitTrans;
+    //执行成功写日志:
+    WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'09','上报进货入库单成功！','01');    
+  except
+    on E:Exception do
+    begin
+      PlugIntf.RollbackTrans;
+      sleep(1);
+      WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'09','上报销售成本价：'+E.Message,'02');  //写日志
+      Raise Exception.Create(E.Message);
+    end;
+  end;
+end;
+
+{
+ 原来参数分析:
+ (1)INTF_SELF:零售户编号（也就是许可证号）（通过许可证取零售户ID）
+ (2)INTF_CODE:烟草公司ID
+ (3)COMP_ID:R3老系统门店ID
+
+ R3上报:
+ (1)单位换算:将单据计量单位换算成管理单位上报;
+ (2)企业档案: R3: CA_TENANT     --->   RIM: RIM_ORGAN  (烟草专门局|公司)
+ (3)门店档案: R3: CA_SHOP_INFO  --->   RIM: RM_CUST    (零售户)     
+}
+
+procedure CallSync(PlugIntf: IPlugIn; TenantID: string);
+var
+  Rs: TZQuery;
+  Str,TenView: string; //企业表视图
+  OrganID,   //RIM烟草公司ID
+  LICENSE_CODE, //RIM零售户许可证号
+  CustID,    //RIM零售户ID
+  TenName,ShopID,ShopName: string; //R3上报企业ID,名称，上报门店ID、名称;
+begin
+  Rs := TZQuery.Create(nil);
+  try
+    //供应链关系表[返回当前企业及所有下级企业]:
+    TenView:=
+      'select T.TENANT_ID,T.TENANT_NAME,B.ORGAN_ID from CA_TENANT T,RIM_PUB_ORGAN B,'+
+      '(select '+TenantID+' as TENANT_ID from sysibm.sysdummy1 union all select A.RELATI_ID as TENANT_ID from CA_RELATIONS A,(select LEVEL_ID from CA_RELATIONS where TENANT_ID='+TenantID+')B where left(A.LEVEL_ID,length(B.LEVEL_ID))=B.LEVEL_ID)R '+
+      'where T.LOGIN_NAME=B.ORGAN_CODE and T.TENANT_ID=R.TENANT_ID and T.COMM not in (''02'',''12'') ';
+
+    //返回门店与企业关联: (企业ID,企业名称,门店ID,门店名称,门店许可证号)  原SQL:'select COMP_ID,INTF_SELF,INTF_CODE,COMP_NAME,INTF_UNIT from CA_COMPANY where INTF_SELF is not null order by COMP_ID';
+    Str:='select TE.TENANT_ID,TE.TENANT_NAME,SH.SHOP_ID,SH.SHOP_NAME,TE.ORGAN_ID,SH.LICENSE_CODE from CA_SHOP_INFO SH,('+TenView+') TE '+
+         'where SH.TENANT_ID=TE.TENANT_ID order by TE.TENANT_ID,SH.SHOP_ID ';
+    OpenData(PlugIntf, Rs, Str);
+    if (not Rs.Active) or (Rs.IsEmpty) then Raise Exception.Create(' 企业表没有对应到数据，无法上报！ ');
+
+    //按企业ID、门店ID排序循环
+    try
+      PlugIntf.DbLock(true); //缩定连接
+    except
+      on E:Exception do
+      begin
+        Raise Exception.Create('锁定数据连接错误：'+E.Message);
+      end;
+    end;
+    
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      try
+        //TenantID:=InttoStr(Rs.Fields[0].AsInteger);  //R3企业ID (Field: TENANT_ID) [函数参数传入]
+        TenName:=trim(Rs.Fields[1].AsString);    //R3企业名称 (Field: TENANT_NAME)
+        ShopID:=trim(Rs.Fields[2].AsString);     //R3门店ID (Field: SHOP_ID)
+        ShopName:=trim(Rs.Fields[3].AsString);   //R3门店名称 (Field: SHOP_NAME)
+        OrganID:=trim(Rs.Fields[4].AsString);    //RIM企业ID (Field: ORGAN_ID)
+        LICENSE_CODE:=trim(Rs.Fields[5].AsString);  //RIM企业ID (Field: LICENSE_CODE)
+        CustID:=''; 
+        if OrganID='' then Raise Exception.Create(TenName+'->在RIM_ORGAN没有找对应的ORGAN_ID');
+
+        //根据R3许可证号读取RIM的零售户ID:
+        CustID:=GetValue(PlugIntf,'select CUST_ID from RM_CUST where COM_ID='''+OrganID+''' and LICENSE_CODE='''+LICENSE_CODE+'''');
+        if CustID='' then Raise Exception.Create(ShopName+'->'+OrganID+'在RIM中没找到对应的CUST_ID值...');
+
+        //1、开始上报日台账 (type='00')
+        SendDayReck(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //2、开始上报月台账 (type='10')
+        SendMonthReck(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //3、开始上报销售   (type='01')
+        SendSalesDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //4、开始上报销售批发 (type='02')
+        SendSaleBatchDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //5、开始上报销售退货 (type='03')
+        SendSaleRetDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //6、开始上报调拨（调入）: (type='04')
+        SenddbInDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //7、开始上报调拨（调出）: (type='12')
+        SenddbOutDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //8、开始上报入库:  (type='05')
+        SendStockDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //9、开始上报采购退货: (type='06')
+        SendStkRetuDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //10、开始上报调整:    (type='07')
+        SendChangeDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //11、开始上报组合:   (type='08')  暂无使用
+        //SendCombDetail(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //12、开始上报成本:   (type='09')
+        SendCostPrice(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+        //13、开始上零售户库存: (type='11')
+        SendCustStorage(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
+      except
+        on E:Exception do
+        begin
+          sleep(1);
+          WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'12','CallSync循环执行上报出错误了！','02'); //写日志
+          Raise Exception.Create(E.Message); 
+        end;
+      end;
+      Rs.Next;
+    end;
+  finally
+    PlugIntf.DbLock(False); //缩定连接 
+    Rs.Free;
+  end;
+end;
+
 end.

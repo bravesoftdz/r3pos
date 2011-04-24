@@ -129,7 +129,7 @@ begin
             else
               RsInf.FieldByName('ROWS_ID').AsString:=NewId();
             RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
-            RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
+            RsInf.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;  //国家卷烟供应链1000006
             RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString; //国家卷烟供应链
             RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
             RsInf.FieldByName('UPDATE_FLAG').AsInteger:=RsBarPub.fieldbyName('IsFlag').AsInteger; //状态[1表示新对上，2表示原已对上]
@@ -140,7 +140,7 @@ begin
             AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
             RsInf.FieldByName('ROWS_ID').AsString:=NewId();
             RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
-            RsInf.FieldByName('RELATION_ID').AsInteger:=1000006;  //国家卷烟供应链
+            RsInf.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;  //国家卷烟供应链:1000006
             RsInf.FieldByName('GODS_ID').AsString:='#';  //对应不上默认为：#
             RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
             RsInf.FieldByName('UPDATE_FLAG').AsInteger:=0; //状态[1对不上]
@@ -238,7 +238,7 @@ end.
   StrSQL:=PChar(
     'insert into INF_GOODS_RELATION '+
     ' (TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME,SORT_ID2,SORT_ID6,NEW_INPRICE,NEW_OUTPRICE,UPDATE_FLAG) '+
-    ' select '+TENANT_ID+' as TENANT_ID,1000006 as RELATION_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',(case when coalesce(B.GODS_ID,'''')<>'''' then 1 else 0 end) as UPDATE_FLAG '+
+    ' select '+TENANT_ID+' as TENANT_ID,'+InttoStr(NT_RELATION_ID)+' as RELATION_ID,A.GODS_ID,A.GODS_CODE,A.GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',(case when coalesce(B.GODS_ID,'''')<>'''' then 1 else 0 end) as UPDATE_FLAG '+
     ' from RIM_GOODS_RELATION A '+
     ' left join VIW_BARCODE B on A.BOX_BARCODE=B.BARCODE '+
     ' where A.TENANT_ID='''+ORGAN_ID+''' ');

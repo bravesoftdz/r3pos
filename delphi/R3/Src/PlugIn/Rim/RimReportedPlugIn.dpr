@@ -44,7 +44,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := 'RSP平台（卷烟供应链:1000006）上报数据到RIM系统';
+  result := 'RSP平台进销存经营数据上报到RIM系统';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999
@@ -58,7 +58,8 @@ function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 begin
   try
     //执行操作
-    
+    //2011.04.22连接249服务器测试: CallSync(GPlugIn,Pchar('450000001'));
+    CallSync(GPlugIn,StrPas(Params));
     result := 0;
   except
     on E:Exception do

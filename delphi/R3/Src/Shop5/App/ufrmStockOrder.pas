@@ -1261,8 +1261,7 @@ begin
         edtTable.CreateDataSet;
         edtCLIENT_ID.KeyValue := null;
         edtCLIENT_ID.Text := '';
-        MessageBox(Handle,'检测到没下载的经营品牌,点确定系统将自动下载资料','友情提示...',MB_OK+MB_ICONINFORMATION);
-        Raise Exception.Create('资料下载完毕，请重新选择供应商进行入库操作');
+        Raise Exception.Create('系统检测到没有对照到的商品！');
       end;
       //单位换算:
       edtTable.FieldbyName('UNIT_ID').AsString := Rs.FieldbyName('UNIT_ID').AsString;

@@ -77,6 +77,8 @@ type
     function GetDeptInfo:TZQuery;
     //刷新最近同步时间
     procedure SyncTimeStamp;
+    //读取产品标识符
+    function GetProdFlag:Char;
     function GetParameter(ParamName:string):string;
     procedure SetParameter(ParamName:string;Value:string);
     property Limit:integer read FLimit write SetLimit;
@@ -338,6 +340,11 @@ end;
 function TShopGlobal.GetONLVersion: boolean;
 begin
   result := (SFVersion='.ONL');
+end;
+
+function TShopGlobal.GetProdFlag: Char;
+begin
+  result := ProductId[1];
 end;
 
 initialization

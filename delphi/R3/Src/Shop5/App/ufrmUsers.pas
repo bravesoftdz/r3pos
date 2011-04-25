@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
-  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase,
+  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase, EncDec,
   FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh;
 
 type
@@ -36,6 +36,8 @@ type
     N1: TMenuItem;
     Cds_Users: TZQuery;
     PrintDBGridEh1: TPrintDBGridEh;
+    N2: TMenuItem;
+    actPasswordReset: TAction;
     procedure actFindExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -56,6 +58,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure actPasswordResetExecute(Sender: TObject);
   private
     //IsCompany:Boolean;
     //ccid:string;
@@ -378,6 +381,24 @@ begin
   PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
   DBGridEh1.DataSource.DataSet.Filtered := False;
   PrintDBGridEh1.DBGridEh := DBGridEh1;
+end;
+
+procedure TfrmUsers.actPasswordResetExecute(Sender: TObject);
+var Str_Sql:String;
+begin
+  inherited;
+  if not Cds_Users.Active then exit;
+  if Cds_Users.IsEmpty then exit;  
+  if not ShopGlobal.GetChkRight('31500001',8) then
+    Raise Exception.Create('你没有密码重置的权限,请和管理员联系.');
+
+  Str_Sql :=
+  'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where USER_ID='''+Cds_Users.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+
+  if Factor.ExecSQL(Str_Sql) = 0 then
+    MessageBox(handle,Pchar('提示:密码重置失败!'),Pchar(Caption),MB_OK)
+  else if Factor.ExecSQL(Str_Sql) > 0 then
+    MessageBox(handle,Pchar('提示:密码重置成功!'),Pchar(Caption),MB_OK);
 end;
 
 end.

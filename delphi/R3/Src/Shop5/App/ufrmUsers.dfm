@@ -418,6 +418,10 @@ inherited frmUsers: TfrmUsers
       ShortCut = 16466
       OnExecute = actRightsExecute
     end
+    object actPasswordReset: TAction
+      Caption = #23494#30721#37325#32622
+      OnExecute = actPasswordResetExecute
+    end
   end
   object Ds_Users: TDataSource
     DataSet = Cds_Users
@@ -430,6 +434,9 @@ inherited frmUsers: TfrmUsers
     object N1: TMenuItem
       Caption = #25480#26435
       OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Action = actPasswordReset
     end
   end
   object Cds_Users: TZQuery

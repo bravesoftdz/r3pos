@@ -11,6 +11,7 @@ uses
 type
   TfrmCustomerExt = class(TFrame)
     bg: TRzPanel;
+    RzLabel6: TRzLabel;
   private
     { Private declarations }
     FList:TList;

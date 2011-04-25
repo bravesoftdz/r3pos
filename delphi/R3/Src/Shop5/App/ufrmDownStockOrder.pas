@@ -136,13 +136,28 @@ end;
 
 procedure TfrmDownStockOrder.OpenIndeOrderList;
 var
+  UseDate: string; //启用日期
+  Rs: TZQuery;
   vParam: TftParamList;
 begin
   try
+    //启用日期  
+    Rs:=Global.GetZQueryFromName('SYS_DEFINE');
+    if (Rs<>nil) and (Rs.Active) then
+    begin
+      if Rs.Locate('DEFINE','USING_DATE', []) then
+      begin
+        UseDate:=trim(Rs.fieldbyName('VALUE').AsString);
+        UseDate:=FormatDateTime('YYYYMMDD', StrtoDate(UseDate));
+      end else
+        UseDate:='';
+    end;
+
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=1;
     vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     vParam.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
+    vParam.ParamByName('USING_DATE').AsString:=UseDate;
     Global.RemoteFactory.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
   finally
     vParam.Free;

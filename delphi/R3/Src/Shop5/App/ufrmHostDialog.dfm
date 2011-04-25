@@ -55,7 +55,7 @@ inherited frmHostDialog: TfrmHostDialog
       item
         Alignment = taCenter
         Caption = #29366#24577
-        Width = 100
+        Width = 83
       end>
     FrameStyle = fsLowered
     FrameVisible = True

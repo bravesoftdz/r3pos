@@ -193,7 +193,15 @@ begin
     fndSHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
-  end;  
+  end;
+
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[9].Free;
+       DBGridEh1.Columns[8].Free;
+       DBGridEh1.Columns[7].Free;
+     end;
+
 end;
 
 procedure TfrmStockOrderList.FormShow(Sender: TObject);

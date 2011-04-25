@@ -205,7 +205,7 @@ begin
       'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE,CREA_USER) jc ';
 
       result :=
-      'select je.*,case when flag=1 then '''' else e.USER_NAME end as CREA_USER_TEXT from ('+
+      'select je.*,case when flag=1 then ''-Ð¡¼Æ-'' else e.USER_NAME end as CREA_USER_TEXT from ('+
       'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+StrSql+') jd '+
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
       'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag';

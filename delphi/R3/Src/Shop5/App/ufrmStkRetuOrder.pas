@@ -190,6 +190,13 @@ begin
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[12].Free;
+       DBGridEh1.Columns[11].Free;
+       DBGridEh1.Columns[7].Free;
+       DBGridEh1.Columns[6].Free;
+     end;
 end;
 
 procedure TfrmStkRetuOrder.InitPrice(GODS_ID, UNIT_ID: string);

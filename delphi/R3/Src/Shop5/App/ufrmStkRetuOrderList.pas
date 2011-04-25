@@ -187,6 +187,13 @@ begin
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
   end;
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[9].Free;
+       DBGridEh1.Columns[8].Free;
+       DBGridEh1.Columns[7].Free;
+     end;
+
 end;
 
 procedure TfrmStkRetuOrderList.FormShow(Sender: TObject);

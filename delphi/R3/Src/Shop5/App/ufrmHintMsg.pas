@@ -160,30 +160,33 @@ var Str_where:String;
     rs:TZQuery;
     MsgInfo:PMsgInfo;
 begin
-  Clear;
-  rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := EncodeSQL;
-    Factor.Open(rs);
-    Loaded := True;
-    rs.First;
-    while not rs.Eof do
-      begin
-        new(MsgInfo);
-        MsgInfo^.ID := rs.Fields[0].AsString;
-        MsgInfo^.Title := rs.Fields[1].AsString;
-        MsgInfo^.Contents := rs.Fields[2].AsString;
-        MsgInfo^.SndDate := rs.Fields[3].AsString;
-        MsgInfo^.Rdd := false;
-        MsgInfo^.Msg_Class := rs.Fields[4].AsInteger;
-        MsgInfo^.sFlag := 0;
-        FList.Add(MsgInfo);
-        rs.Next;
-      end;
+    Clear;
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := EncodeSQL;
+      Factor.Open(rs);
+      rs.First;
+      while not rs.Eof do
+        begin
+          new(MsgInfo);
+          MsgInfo^.ID := rs.Fields[0].AsString;
+          MsgInfo^.Title := rs.Fields[1].AsString;
+          MsgInfo^.Contents := rs.Fields[2].AsString;
+          MsgInfo^.SndDate := rs.Fields[3].AsString;
+          MsgInfo^.Rdd := false;
+          MsgInfo^.Msg_Class := rs.Fields[4].AsInteger;
+          MsgInfo^.sFlag := 0;
+          FList.Add(MsgInfo);
+          rs.Next;
+        end;
+    finally
+      rs.free;
+    end;
+    PrainpowerJudge.Load;
   finally
-    rs.free;
+    Loaded := true;
   end;
-  PrainpowerJudge.Load;
 end;
 
 function TMsgFactory.ReadMsg: PMsgInfo;

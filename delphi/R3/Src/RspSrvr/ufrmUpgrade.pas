@@ -231,6 +231,7 @@ var
   filename:string;
 begin
   inherited;
+  CaFactory.RspFlag := 1;
   btnInstall.Enabled := false;
   try
     stp1.Font.Style := [];

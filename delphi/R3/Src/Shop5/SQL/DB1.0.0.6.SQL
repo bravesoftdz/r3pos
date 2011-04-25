@@ -4,8 +4,19 @@
 --单据类型
 alter table ACC_RECVORDER add RECV_FLAG varchar(1);
 --更新以前的数据
+--{idbType=5}
 update ACC_RECVORDER set RECV_FLAG='0' where CLIENT_ID<>cast(TENANT_ID as varchar(9));
+--{idbType=5}
 update ACC_RECVORDER set RECV_FLAG='1' where CLIENT_ID=cast(TENANT_ID as varchar(9));
+--{idbType=0}
+update ACC_RECVORDER set RECV_FLAG='0' where CLIENT_ID<>cast(TENANT_ID as varchar(9));
+--{idbType=0}
+update ACC_RECVORDER set RECV_FLAG='1' where CLIENT_ID=cast(TENANT_ID as varchar(9));
+--更新以前的数据
+--{idbType=4}
+update ACC_RECVORDER set RECV_FLAG='0' where CLIENT_ID<>rtrim(char(TENANT_ID));
+--{idbType=4}
+update ACC_RECVORDER set RECV_FLAG='1' where CLIENT_ID=rtrim(char(TENANT_ID));
 
 --为视图添加RECV_FLAG ,DEPT_ID
 drop VIEW VIW_RECVDATA; 

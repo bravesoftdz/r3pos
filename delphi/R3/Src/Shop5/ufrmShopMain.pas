@@ -440,6 +440,7 @@ type
     procedure lblUserInfoClick(Sender: TObject);
     procedure actfrmDownIndeOrderExecute(Sender: TObject);
     procedure actfrmRecvForDayExecute(Sender: TObject);
+    procedure rzUserInfoClick(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -496,7 +497,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -946,7 +947,11 @@ begin
   if not Logined then Exit;
   if not Visible then Exit;
   if not Factor.Connected then Exit;
-  if not MsgFactory.Loaded or ((MsgFactory.Count=0) and ((Timer1.Tag mod 120)=0)) then MsgFactory.Load;
+  if not MsgFactory.Loaded or (
+     (MsgFactory.Count=0) and ((Timer1.Tag mod 120)=0)
+     )
+  then
+     MsgFactory.Load;
   if MsgFactory.Count > 0 then
      begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.Count)+')条消息';
@@ -1296,6 +1301,7 @@ begin
        Exit;
      end;
   result := TfrmTenant.coRegister(self);
+  if result then LoadFrame;
   if result and CaFactory.Audited then result := CheckVersion;
   if result then
      begin
@@ -1331,7 +1337,8 @@ begin
              except
                if ShopGlobal.ONLVersion then
                   begin
-                    MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                    if MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+                       TfrmHostDialog.HostDialog(self);
                     result := false;
                     Exit;
                   end;
@@ -1374,7 +1381,11 @@ begin
                InitTenant;
              end;
         end
-     else InitTenant;
+     else
+        begin
+          SyncFactory.SyncBasic(true);
+          InitTenant;
+        end;
     finally
       frmLogo.Close;
     end;
@@ -3296,6 +3307,12 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.rzUserInfoClick(Sender: TObject);
+begin
+  inherited;
+  actfrmNewPaperReader.OnExecute(nil);
 end;
 
 end.

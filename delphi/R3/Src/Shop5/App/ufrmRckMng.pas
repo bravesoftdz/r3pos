@@ -345,6 +345,11 @@ begin
     SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
     fndP1_SHOP_ID.Properties.ReadOnly := True;
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label6.Caption := 'À˘ Ù≤÷ø‚';
+    end;
 end;
 
 procedure TfrmRckMng.actFindExecute(Sender: TObject);

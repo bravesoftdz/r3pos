@@ -252,6 +252,21 @@ begin
     SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);         
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label5.Caption := '仓库群组';
+      Label10.Caption := '仓库群组';
+
+      Label11.Caption := '仓库群组';
+      Label9.Caption := '仓库名称';
+
+      Label12.Caption := '仓库群组';
+      Label21.Caption := '仓库名称';
+
+      Label28.Caption := '仓库群组';
+      Label17.Caption := '仓库名称';
+    end;  
 end;
 
 function TfrmSaleDayReport.GetGroupSQL(chk:boolean=true): string;

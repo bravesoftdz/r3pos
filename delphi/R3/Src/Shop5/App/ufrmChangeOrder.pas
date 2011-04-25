@@ -204,6 +204,11 @@ begin
        DBGridEh1.Columns[7].Free;
        DBGridEh1.Columns[6].Free;
      end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmChangeOrder.InitPrice(GODS_ID, UNIT_ID: string);

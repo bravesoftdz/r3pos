@@ -449,6 +449,12 @@ begin
   inherited;
   InputFlag := 7;
   Shape2.Brush.Color := RowSelectColor;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      lblCLIENT_ID.Caption := '调入仓库';
+      Label40.Caption := '仓库调出';
+    end;
 end;
 
 procedure TfrmDbLocusOrder.ReadFrom(DataSet: TDataSet);

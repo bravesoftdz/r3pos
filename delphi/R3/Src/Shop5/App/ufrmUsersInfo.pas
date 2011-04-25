@@ -150,6 +150,11 @@ begin
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   IniDegrees;
   Aobj := TRecord_.Create;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      lab_SHOP_ID.Caption := 'д╛хо╡ж©Б';
+    end;
 end;
 
 procedure TfrmUsersInfo.FormDestroy(Sender: TObject);

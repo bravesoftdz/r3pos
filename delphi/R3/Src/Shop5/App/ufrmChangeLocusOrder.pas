@@ -455,6 +455,11 @@ begin
   finally
     rs.Free;
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmChangeLocusOrder.ReadFrom(DataSet: TDataSet);

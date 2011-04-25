@@ -254,6 +254,21 @@ begin
     SetNotShowCostPrice(DBGridEh4, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
     SetNotShowCostPrice(DBGridEh5, ['APRICE','CALC_MONEY','TAX_MONEY','NOTAX_MONEY','AGIO_MONEY']);
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label5.Caption := '仓库群组';
+      Label10.Caption := '仓库群组';
+
+      Label11.Caption := '仓库群组';
+      Label9.Caption := '仓库名称';
+
+      Label12.Caption := '仓库群组';
+      Label21.Caption := '仓库名称';
+
+      Label28.Caption := '仓库群组';
+      Label17.Caption := '仓库名称';
+    end;  
 end;
 
 function TfrmStockDayReport.GetGroupSQL(chk:boolean=true): string;

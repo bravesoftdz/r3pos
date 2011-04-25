@@ -124,6 +124,11 @@ begin
   RefreshColumn;
   //TDbGridEhSort.InitForm(self);
   TDbGridEhSort.InitForm(self);
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label3.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 function TfrmCheckTablePrint.GetRowType: integer;

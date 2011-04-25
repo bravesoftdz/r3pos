@@ -314,7 +314,17 @@ begin
     fndP4_SHOP_ID.Properties.ReadOnly := True;
   end;
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '仓库名称';
 
+      Label2.Caption := '调出仓库';
+      RzLabel7.Caption := '调入仓库';
+
+      Label6.Caption := '仓库名称';
+
+      Label8.Caption := '仓库名称';
+    end;
 end;
 
 procedure TfrmOutLocusOrderList.FormShow(Sender: TObject);

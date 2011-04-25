@@ -180,6 +180,10 @@ begin
   if not ShopGlobal.GetChkRight('14500001',2) then
      DBGridEh1.Columns[6].Free;
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1CellClick(Column: TColumnEh);

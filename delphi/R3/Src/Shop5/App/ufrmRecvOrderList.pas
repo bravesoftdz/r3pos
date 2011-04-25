@@ -162,6 +162,12 @@ begin
   end;
   fndP1_CUST_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   RzPage.ActivePageIndex := 0;
+  
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label3.Caption := '²Ö¿âÃû³Æ';
+      Label40.Caption := 'ÊÕ¿î²Ö¿â';
+    end;
 end;
 
 procedure TfrmRecvOrderList.actFindExecute(Sender: TObject);

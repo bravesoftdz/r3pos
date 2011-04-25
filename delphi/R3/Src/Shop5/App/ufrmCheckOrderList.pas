@@ -172,6 +172,11 @@ begin
   fndCHECK_EMPL.DataSet := Global.GetZQueryFromName('CA_USERS');
   D1.Date := date();
   D2.Date := date();
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmCheckOrderList.FormShow(Sender: TObject);

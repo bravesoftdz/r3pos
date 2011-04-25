@@ -202,6 +202,10 @@ begin
        DBGridEh1.Columns[7].Free;
      end;
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '½ø»õ²Ö¿â';
+    end;
 end;
 
 procedure TfrmStockOrderList.FormShow(Sender: TObject);

@@ -195,6 +195,12 @@ begin
     SetEditStyle(dsBrowse,edtSHOP_ID.Style);
     edtSHOP_ID.Properties.ReadOnly := True;
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label12.Caption := '²Ö¿âÈº×é';
+      Label21.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);

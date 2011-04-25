@@ -188,6 +188,11 @@ begin
        DBGridEh1.Columns[6].Free;
      end;
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      lblCLIENT_ID.Caption := '调入仓库';
+      Label40.Caption := '调出仓库';
+    end;
 end;
 
 procedure TfrmDbOrder.InitPrice(GODS_ID, UNIT_ID: string);

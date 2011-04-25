@@ -7,14 +7,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1067
-    Height = 548
+    Width = 1075
+    Height = 559
     inherited RzPanel2: TRzPanel
-      Width = 1057
-      Height = 538
+      Width = 1065
+      Height = 549
       inherited RzPage: TRzPageControl
-        Width = 852
-        Height = 532
+        Width = 860
+        Height = 543
         ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
@@ -24,14 +24,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
           Color = clCream
           Caption = #22320#21306#24211#23384#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 850
-            Height = 505
+            Width = 858
+            Height = 516
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 840
-              Height = 495
+              Width = 848
+              Height = 506
               inherited w1: TRzPanel
-                Width = 840
+                Width = 848
                 Height = 87
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -256,11 +256,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 87
-                Width = 840
-                Height = 408
+                Width = 848
+                Height = 419
                 inherited DBGridEh1: TDBGridEh
-                  Width = 836
-                  Height = 404
+                  Width = 844
+                  Height = 415
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -1090,8 +1090,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 850
-            Height = 505
+            Width = 858
+            Height = 516
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1099,8 +1099,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 840
-              Height = 495
+              Width = 848
+              Height = 506
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1108,7 +1108,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 840
+                Width = 848
                 Height = 108
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1385,8 +1385,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 108
-                Width = 840
-                Height = 387
+                Width = 848
+                Height = 398
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1394,8 +1394,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 836
-                  Height = 383
+                  Width = 844
+                  Height = 394
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1529,8 +1529,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 855
-        Height = 532
+        Left = 863
+        Height = 543
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -1546,15 +1546,15 @@ inherited frmStorageDayReport: TfrmStorageDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1067
+    Width = 1075
     inherited Image1: TImage
-      Width = 693
+      Width = 705
     end
     inherited Image3: TImage
-      Width = 693
+      Width = 705
     end
     inherited Image14: TImage
-      Left = 1047
+      Left = 1055
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

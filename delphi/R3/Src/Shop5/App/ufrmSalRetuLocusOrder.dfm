@@ -7,10 +7,10 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 770
-    Height = 485
+    Width = 778
+    Height = 496
     inherited RzPanel2: TRzPanel
-      Width = 760
+      Width = 768
       Height = 139
       Enabled = False
       TabStop = True
@@ -457,8 +457,8 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 376
-      Width = 760
+      Top = 387
+      Width = 768
       Height = 61
       TabOrder = 2
       object Label4: TLabel
@@ -610,8 +610,8 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 760
-      Height = 198
+      Width = 768
+      Height = 209
       Color = clWhite
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
@@ -718,16 +718,16 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 144
-      Width = 760
+      Width = 768
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 437
-      Width = 760
+      Top = 448
+      Width = 768
     end
     inherited rzHelp: TRzPanel
-      Top = 461
-      Width = 760
+      Top = 472
+      Width = 768
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

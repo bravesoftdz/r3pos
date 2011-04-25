@@ -213,6 +213,10 @@ begin
   edtIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := 'À˘ Ù≤÷ø‚';
+    end;
 end;
 
 procedure TfrmIoroOrder.FormDestroy(Sender: TObject);

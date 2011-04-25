@@ -71,6 +71,11 @@ begin
       SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
       fndP1_SHOP_ID.Properties.ReadOnly := True;
     end;
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label5.Caption := '²Ö¿âÈº×é';
+      Label4.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;

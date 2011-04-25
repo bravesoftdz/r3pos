@@ -193,6 +193,11 @@ begin
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '¶©»õ²Ö¿â';
+    end;
 end;
 
 procedure TfrmStkIndentOrder.InitPrice(GODS_ID, UNIT_ID: string);

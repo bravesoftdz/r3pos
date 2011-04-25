@@ -190,6 +190,11 @@ begin
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
   end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '¶©»õ²Ö¿â';
+    end;
 end;
 
 procedure TfrmStkIndentOrderList.FormShow(Sender: TObject);

@@ -202,7 +202,22 @@ begin
     fndP5_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
     fndP5_SHOP_ID.Properties.ReadOnly := True;
-  end;  
+  end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label5.Caption := '仓库群组';
+      Label10.Caption := '仓库群组';
+
+      Label11.Caption := '仓库群组';
+      Label9.Caption := '仓库名称';
+
+      Label12.Caption := '仓库群组';
+      Label3.Caption := '仓库名称';
+
+      Label4.Caption := '仓库群组';
+      Label6.Caption := '仓库名称';
+    end;
 end;
 
 function TfrmRecvDayReport.GetGroupSQL(chk:boolean=true): string;

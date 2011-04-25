@@ -188,6 +188,11 @@ begin
   fndDEPT_ID.RangeValue := '1';
   D1.Date := date();
   D2.Date := date();
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 end;
 
 procedure TfrmSalRetuOrderList.FormShow(Sender: TObject);

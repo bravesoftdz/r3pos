@@ -179,6 +179,12 @@ begin
 //      SetEditStyle(dsBrowse,fndSHOP_ID.Style);
 //      fndSHOP_ID.Properties.ReadOnly := True;
 //    end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '调出仓库';
+      RzLabel4.Caption := '调入仓库';
+    end;
 end;
 
 procedure TfrmDbOrderList.FormShow(Sender: TObject);

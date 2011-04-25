@@ -238,6 +238,10 @@ begin
   //保留小数位
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '订货仓库';
+    end;
 end;
 
 procedure TfrmSalIndentOrder.InitPrice(GODS_ID, UNIT_ID: string);

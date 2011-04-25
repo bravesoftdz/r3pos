@@ -264,6 +264,10 @@ begin
     fndSHOP_ID.Properties.ReadOnly := True;
   end;
 
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := 'À˘ Ù≤÷ø‚';
+    end;
 end;
 
 procedure TfrmIoroOrderList.actFindExecute(Sender: TObject);

@@ -142,6 +142,11 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),edtPAYM_ID.Properties.Items,'CODE_NAME');
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '¸¶¿î²Ö¿â';
+    end;
 end;
 
 procedure TfrmPayOrder.FormDestroy(Sender: TObject);

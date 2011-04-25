@@ -283,6 +283,11 @@ begin
   edtSETTLE_CODE.DataSet := Global.GetZQueryFromName('PUB_SETTLE_CODE');
 
   AddCbxPickList(edtBANK_ID,'',Global.GetZQueryFromName('PUB_BANK_INFO'));
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      labSHOP_ID.Caption := 'д╛хо╡ж©Б';
+    end;
 end;
 
 procedure TfrmSupplierInfo.FormDestroy(Sender: TObject);

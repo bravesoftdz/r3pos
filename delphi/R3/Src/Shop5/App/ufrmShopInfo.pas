@@ -100,13 +100,7 @@ begin
   edtSHOP_TYPE.DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   AObj := TRecord_.Create;
-  if ShopGlobal.GetProdFlag = 'R' then
-    begin
-      Self.Caption := '门店档案';
-      Label1.Caption := '门店代码';
-      Label3.Caption := '门店名称';
-    end
-  else if ShopGlobal.GetProdFlag = 'E' then
+  if ShopGlobal.GetProdFlag = 'E' then
     begin
       Self.Caption := '仓库档案';
       Label1.Caption := '仓库代码';

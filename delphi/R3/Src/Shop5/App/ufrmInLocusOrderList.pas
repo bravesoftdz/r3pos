@@ -237,6 +237,12 @@ begin
     fndP2_SHOP_ID.Properties.ReadOnly := True;
   end;
 
+    if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '½ø»õ²Ö¿â';
+      Label2.Caption := '²Ö¿âÃû³Æ';
+    end;
+
   RzPage.ActivePageIndex := 0;
 end;
 

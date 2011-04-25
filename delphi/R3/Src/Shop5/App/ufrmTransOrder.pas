@@ -128,6 +128,11 @@ begin
   edtOUT_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   edtTRANS_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '¥Ê»°≤÷ø‚';
+    end;
 end;
 
 procedure TfrmTransOrder.FormDestroy(Sender: TObject);

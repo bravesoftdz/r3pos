@@ -174,6 +174,11 @@ begin
   edtCHK_USER_TEXT.Enabled:=false;
   PrintQry:=TZQuery.Create(self); //启用盘点时创建的库存明细且没有录入盘点数量
   IsCalcRecordCount:=False;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '仓库名称';
+    end;
 end;
 
 procedure TfrmCheckOrder.NewOrder;

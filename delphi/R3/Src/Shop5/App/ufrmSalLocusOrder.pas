@@ -459,6 +459,11 @@ begin
   inherited;
   InputFlag := 7;
   Shape2.Brush.Color := RowSelectColor;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := 'œ˙ €≤÷ø‚';
+    end;
 end;
 
 procedure TfrmSalLocusOrder.ReadFrom(DataSet: TDataSet);

@@ -54,7 +54,7 @@ type
 
 implementation
 
-uses uGlobal,uShopUtil;
+uses uGlobal,uShopUtil, uShopGlobal;
 
 {$R *.dfm}
 

@@ -14,6 +14,10 @@ uses
   Variants,
   Classes,
   zBase;
+
+const
+  //国家烟草供应链ID:1000006
+  NT_RELATION_ID=1000006;
   
 type
   IPlugIn = Interface(IUnknown)
@@ -55,10 +59,11 @@ var
 
 //插件常用函数
 function NewId(id:string=''): string; //获取GUID
-function OpenData(PlugIntf: IPlugIn; Qry: TZQuery; SQL: string): Boolean; //查询数据（加日志）
+function OpenData(GPlugIn: IPlugIn; Qry: TZQuery; SQL: string): Boolean;    //查询数据
+function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string; //返回某个字段值
+
 
 implementation
-
 
 function NewId(id:string=''): string;
 var
@@ -72,30 +77,51 @@ begin
      result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
-function OpenData(PlugIntf: IPlugIn; Qry: TZQuery; SQL: string): Boolean;
+function OpenData(GPlugIn: IPlugIn; Qry: TZQuery; SQL: string): Boolean;
 var
   ReRun: integer;
   vData: OleVariant;
 begin
   result:=False;
   try
-    ReRun:=PlugIntf.Open(Pchar(SQL),vData);
+    ReRun:=GPlugIn.Open(Pchar(SQL),vData);
     if (ReRun=0) and (VarIsArray(vData)) then
     begin
       Qry.Close;
       Qry.Data:=vData;
       Result:=Qry.Active;
-    end;
+    end else
     if ReRun<>0 then
-      Exception.Create(StrPas(GPlugIn.GetLastError));
+      Exception.Create(SQL+'执行异常！');
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
-      PlugIntf.WriteLogFile(Pchar('PlugIntf.Open:('+Qry.Name+') 出错：'+E.Message));
+      Raise Exception.Create(Pchar('PlugIntf.Open:('+Qry.Name+') 出错：'+E.Message));
     end;
   end;
-end;  
+end;
 
+//返回某个字段值
+function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string;
+var
+  FName: string;
+  Rs: TZQuery;
+begin
+  result:='';
+  try
+    FName:=trim(FieldName);
+    Rs:=TZQuery.Create(nil);
+    OpenData(GPlugIn, Rs, SQL);
+    if Rs.Active then
+    begin
+      if FName<>'' then
+        result:=trim(Rs.FieldByName(FName).AsString)
+      else
+        result:=trim(Rs.Fields[0].AsString);
+    end;
+  finally
+    Rs.Free;
+  end;
+end;
 
 end.

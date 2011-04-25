@@ -143,7 +143,7 @@ begin
              'select '+InFields+',''00'','+TimeStp+' from INF_GOODS_RELATION A where A.TENANT_ID='+TENANT_ID+' and UPDATE_FLAG=2';
       AGlobal.ExecSQL(UpSQL);
     end;
-   3://刷新价格: 
+   3://刷新价格:
     begin
       //将符合插入新品标记位修改为3;
       UpSQL:='update INF_GOODS_RELATION A set UPDATE_FLAG=3 where UPDATE_FLAG=1 and TENANT_ID='+TENANT_ID+' and '+
@@ -189,19 +189,19 @@ begin
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
           'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' else ''未知状态'' end) as UpdateCase '+
-          ' from INF_GOODS_RELATION Order by GODS_CODE';
+          ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
           'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照'' else ''未知状态'' end) as UpdateCase '+
-          ' from INF_GOODS_RELATION where UPDATE_FLAG in (0,2) Order by GODS_CODE';
+          ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG in (0,2) Order by GODS_CODE';
       end;
      3:
       begin
         Str:=
           'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=1 then ''已对照'' else ''未知状态'' end) as UpdateCase '+
-          ' from INF_GOODS_RELATION where UPDATE_FLAG in (0,1) Order by GODS_CODE';
+          ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG in (0,1) Order by GODS_CODE';
       end;
     end;
     SelectSQL.Text:=Str;

@@ -30,6 +30,7 @@ type
     btnOK: TRzBitBtn;
     RzBitBtn1: TRzBitBtn;
     DBGridEh1: TDBGridEh;
+    MsgQry: TZQuery;
     procedure RzBitBtn1Click(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -142,22 +143,51 @@ begin
     vParam.ParamByName('ExeType').AsInteger:=1;
     vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     vParam.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
-    Factor.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
+    Global.RemoteFactory.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
   finally
     vParam.Free;
   end;
 end;
 
 procedure TfrmDownStockOrder.DoCopyIndeOrderData;
+ function GetNum(Idx: integer): string;
+ begin
+   if Idx<10 then
+     result:='    '+inttoStr(Idx)+' '
+   else
+     result:='    '+inttoStr(Idx);
+ end;
 var
+  i: integer;
+  Msg,Str: String;
   vParam: TftParamList;
 begin
   try
+    MsgQry.Close;
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=2;
     vParam.ParamByName('INDE_ID').AsString:=GetINDE_ID;
     vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    Factor.ExecProc('TDownIndeData',vParam);  //==RspServer连接模式时执行
+    Global.RemoteFactory.Open(MsgQry,'TDownIndeData',vParam);  //==RspServer连接模式时执行
+    if (MsgQry.Active) and (MsgQry.RecordCount>0) then
+    begin
+      i:=MsgQry.fieldbyName('resum').AsInteger;
+      Msg:='';
+      MsgQry.First;
+      while not MsgQry.Eof do
+      begin
+        if trim(Msg)='' then
+          Msg:=GetNum(i)+'编码：'+MsgQry.fieldbyName('GODS_CODE').AsString+'，名称：'+MsgQry.fieldbyName('GODS_NAME').AsString
+        else
+          Msg:=Msg+#13+GetNum(i)+'编码：'+MsgQry.fieldbyName('GODS_CODE').AsString+'，名称：'+MsgQry.fieldbyName('GODS_NAME').AsString;
+        MsgQry.Next;
+      end;
+      Str:='系统检测到'+inttoStr(i)+'个商品没有对照关系！';
+      if i>30 then
+         Str:=Str+#13+'  其中前30个如下：'+#13+Msg
+      else
+         Str:=Str+#13+'  如下：'+#13+Msg;
+    end;
   finally
     vParam.Free;
   end;

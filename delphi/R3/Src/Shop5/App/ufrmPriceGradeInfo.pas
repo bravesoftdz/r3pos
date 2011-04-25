@@ -81,7 +81,7 @@ type
     procedure btnAddClick(Sender: TObject);
     procedure btnDeteleClick(Sender: TObject);
   private
-    //IsCompany:Boolean;
+    CurrentValue: String;
     FInFlag: integer;
     procedure SetInFlag(const Value: integer);
     { Private declarations }
@@ -169,11 +169,7 @@ begin
   finally
     locked := false;
   end;
-  if not ShopGlobal.GetChkRight('300004') then
-  begin
-    dbState:=dsBrowse;
-    DBGridEh1.ReadOnly:=True;
-  end;  
+
 end;
 
 procedure TfrmPriceGradeInfo.ReadFrom(AObj: TRecord_);
@@ -214,6 +210,19 @@ begin
   //if AObj.FieldByName('AGIO_SORTS').AsString<>'' then
   Decode(AObj.FieldByName('AGIO_SORTS').AsString);
   cds_GoodsPercent.First;
+  if ShopGlobal.GetChkRight('33200001',2) then
+  begin
+    if AObj.FieldByName('PRICE_ID').AsString = CurrentValue then
+      begin
+      dbState := dsEdit;
+      DBGridEh1.ReadOnly:=False;
+      end
+    else
+      begin
+      dbState:=dsBrowse;
+      DBGridEh1.ReadOnly:=True;
+      end;
+  end;
 end;
 
 procedure TfrmPriceGradeInfo.WriteTo(AObj: TRecord_);
@@ -329,9 +338,9 @@ begin
   Global.RefreshTable('PUB_PRICEGRADE');
   if InFlag=1 then
   begin
-     edtSave.Enabled:=False;
-     ModalResult:=MROK;
-     exit;
+    edtSave.Enabled:=False;
+    ModalResult:=MROK;
+    exit;
   end;
 
   //begin
@@ -350,10 +359,16 @@ begin
     end;
   //从begin开始，这段代码有无的必要性
 
-  edtSave.Enabled:=False;
-  edtCancel.Enabled:=False;
-  edtPRICEGRADE.Enabled:=True;  //******
-  edtDelete.Enabled:=True;
+  if ShopGlobal.GetChkRight('33200001',2) then
+    begin
+      edtSave.Enabled:=False;
+      edtCancel.Enabled:=False;
+      edtPRICEGRADE.Enabled:=True;  //******
+    end;
+
+  if ShopGlobal.GetChkRight('33200001',4) then
+    edtDelete.Enabled:=True;
+
   if rzTree.Items.Count=0 then
     begin
       edtDelete.Enabled:=False;
@@ -371,6 +386,7 @@ begin
   AObj.ReadField(cdsPRICEGRADE);
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldByName('PRICE_ID').AsString := TSequence.NewId;
+  CurrentValue := AObj.FieldByName('PRICE_ID').AsString;
   AObj.FieldByName('PRICE_NAME').AsString := '等级名';
   AObj.FieldByName('INTEGRAL').AsString := '0';
   AObj.FieldByName('INTE_AMOUNT').AsString := '1';
@@ -394,6 +410,10 @@ begin
     locked := false;
   end;
   dbState := dsInsert;
+
+  if ShopGlobal.GetChkRight('33200001',4) then
+    edtDelete.Enabled:=True;
+
   if InFlag = 1 then
     begin
       edtPriceGrade.Enabled := False;
@@ -403,7 +423,7 @@ begin
     end
   else
     begin
-      edtDelete.Enabled:=True;
+      //edtDelete.Enabled:=True;
       edtSave.Enabled:=True;
       edtCancel.Enabled:=True;
     end;
@@ -471,7 +491,7 @@ begin
   inherited;
   Open;
   InitButton;
-  if (not ShopGlobal.GetChkRight('33200001',2)) or ((ShopGlobal.NetVersion) and (ShopGlobal.offline)) then
+  {if (not ShopGlobal.GetChkRight('33200001',2)) or ((ShopGlobal.NetVersion) and (ShopGlobal.offline)) then
   begin
     dbState:=dsBrowse;
     DBGridEh1.ReadOnly:=True;
@@ -479,7 +499,46 @@ begin
     edtSave.Enabled:=False;
     edtCancel.Enabled:=False;
     edtDelete.Enabled:=False;
-  end;
+  end; }
+  if ((ShopGlobal.NetVersion) and (ShopGlobal.offline)) then
+    begin
+      dbState:=dsBrowse;
+      DBGridEh1.ReadOnly:=True;
+      edtPriceGrade.Enabled:=False;
+      edtSave.Enabled:=False;
+      edtCancel.Enabled:=False;
+      edtDelete.Enabled:=False;
+    end
+  else
+    begin
+      if ShopGlobal.GetChkRight('33200001',2) then
+        begin
+          dbState:=dsBrowse;
+          //DBGridEh1.ReadOnly:=True;
+          //edtPriceGrade.Enabled:=False;
+          //edtSave.Enabled:=False;
+          //edtCancel.Enabled:=False;
+          edtDelete.Enabled:=False;
+        end
+      else if ShopGlobal.GetChkRight('33200001',3) then
+        begin
+          dbState:=dsEdit;
+          //DBGridEh1.ReadOnly:=True;
+          edtPriceGrade.Enabled:=False;
+          edtSave.Enabled:=True;
+          edtCancel.Enabled:=False;
+          edtDelete.Enabled:=False;
+        end
+      else if ShopGlobal.GetChkRight('33200001',4) then
+        begin
+          dbState:=dsBrowse;
+          //DBGridEh1.ReadOnly:=True;
+          edtPriceGrade.Enabled:=False;
+          //edtSave.Enabled:=False;
+          edtCancel.Enabled:=False;
+          //edtDelete.Enabled:=False;
+        end;
+    end;
   if InFlag=1 then
      Append;
 end;
@@ -741,10 +800,12 @@ begin
           rzNode.Selected:=True;
       end;
     end;
+    if ShopGlobal.GetChkRight('33200001',2) then
+      edtPRICEGRADE.Enabled:=True;
     edtSave.Enabled:=False;
     edtCancel.Enabled:=False;
-    edtPRICEGRADE.Enabled:=True;
-    edtDelete.Enabled:=True;
+    if ShopGlobal.GetChkRight('33200001',4) then
+      edtDelete.Enabled:=True;
     if rzTree.Items.Count=0 then
     begin
       edtDelete.Enabled:=False;
@@ -801,7 +862,7 @@ procedure TfrmPriceGradeInfo.btnAddClick(Sender: TObject);
 var Aobj_1:TRecord_;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('33200001',2) then Raise Exception.Create('你没有添加的权限,请和管理员联系.');
+  if (not ShopGlobal.GetChkRight('33200001',2)) and (not ShopGlobal.GetChkRight('33200001',3)) then Raise Exception.Create('你没有添加的权限,请和管理员联系.');
   try
     Aobj_1 := TRecord_.Create;
     If TfrmSelectGoodSort.FindDialog(Self,Aobj_1) then

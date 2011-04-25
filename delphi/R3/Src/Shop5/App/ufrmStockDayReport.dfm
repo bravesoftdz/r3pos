@@ -6,14 +6,14 @@ inherited frmStockDayReport: TfrmStockDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1075
-    Height = 559
+    Width = 1067
+    Height = 548
     inherited RzPanel2: TRzPanel
-      Width = 1065
-      Height = 549
+      Width = 1057
+      Height = 538
       inherited RzPage: TRzPageControl
-        Width = 860
-        Height = 543
+        Width = 852
+        Height = 532
         ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
@@ -23,14 +23,14 @@ inherited frmStockDayReport: TfrmStockDayReport
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               inherited w1: TRzPanel
-                Width = 848
+                Width = 840
                 Height = 82
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -254,11 +254,11 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 848
-                Height = 424
+                Width = 840
+                Height = 413
                 inherited DBGridEh1: TDBGridEh
-                  Width = 844
-                  Height = 420
+                  Width = 836
+                  Height = 409
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -1675,8 +1675,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1684,8 +1684,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1693,7 +1693,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 102
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2005,8 +2005,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 102
-                Width = 848
-                Height = 404
+                Width = 840
+                Height = 393
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2014,8 +2014,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 400
+                  Width = 836
+                  Height = 389
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2256,8 +2256,8 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 863
-        Height = 543
+        Left = 855
+        Height = 532
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -2273,15 +2273,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1075
+    Width = 1067
     inherited Image1: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image3: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image14: TImage
-      Left = 1055
+      Left = 1047
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

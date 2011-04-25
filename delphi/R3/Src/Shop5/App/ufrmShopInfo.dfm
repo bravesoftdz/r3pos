@@ -89,6 +89,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             TabOrder = 0
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtFAXES: TcxTextEdit
             Left = 356
@@ -96,6 +97,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             TabOrder = 3
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtTELEPHONE: TcxTextEdit
             Left = 356
@@ -103,6 +105,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtADDRESS: TcxTextEdit
             Left = 106
@@ -110,6 +113,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 370
             Height = 20
             TabOrder = 4
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtREMARK: TcxMemo
             Left = 106
@@ -117,6 +121,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 370
             Height = 68
             TabOrder = 5
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPOSTALCODE: TcxTextEdit
             Left = 106
@@ -124,6 +129,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
       end
@@ -363,6 +369,7 @@ inherited frmShopInfo: TfrmShopInfo
         Height = 20
         Enabled = False
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSHOP_NAME: TcxTextEdit
         Left = 106
@@ -371,6 +378,7 @@ inherited frmShopInfo: TfrmShopInfo
         Height = 20
         Properties.OnChange = edtSHOP_NAMEPropertiesChange
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSHOP_SPELL: TcxTextEdit
         Left = 356
@@ -379,6 +387,7 @@ inherited frmShopInfo: TfrmShopInfo
         Height = 20
         TabStop = False
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLICENSE_CODE: TcxTextEdit
         Left = 356
@@ -386,6 +395,7 @@ inherited frmShopInfo: TfrmShopInfo
         Width = 120
         Height = 20
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSHOP_TYPE: TzrComboBoxList
         Left = 106

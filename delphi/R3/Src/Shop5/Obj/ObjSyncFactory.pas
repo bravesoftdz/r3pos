@@ -454,6 +454,59 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
+  //23 synFlag
+  TSyncLocusForStck=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncLocusForStckData=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  //24 synFlag
+  TSyncLocusForSale=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncLocusForSaleData=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  //25 synFlag
+  TSyncLocusForChag=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncLocusForChagData=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3099,6 +3152,160 @@ begin
   SelectSQL.Text := Str;
 end;
 
+{ TSyncLocusForStck }
+
+function TSyncLocusForStck.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select distinct A.TENANT_ID,A.SHOP_ID,A.STOCK_ID from STK_STOCKORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
+  ' B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncLocusForStckData }
+
+function TSyncLocusForStckData.BeforeDeleteRecord(
+  AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update STK_LOCUS_FORSTCK set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID'),self);
+end;
+
+function TSyncLocusForStckData.BeforeInsertRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STK_LOCUS_FORSTCK';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncLocusForStckData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select * from STK_LOCUS_FORSTCK where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
+end;
+
+function TSyncLocusForStckData.BeforeUpdateRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from STK_LOCUS_FORSTCK where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
+end;
+
+{ TSyncLocusForSale }
+
+function TSyncLocusForSale.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select distinct A.TENANT_ID,A.SHOP_ID,A.SALES_ID from SAL_SALESORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
+  ' B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncLocusForSaleData }
+
+function TSyncLocusForSaleData.BeforeDeleteRecord(
+  AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update SAL_LOCUS_FORSALE set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID'),self);
+end;
+
+function TSyncLocusForSaleData.BeforeInsertRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_LOCUS_FORSALE';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncLocusForSaleData.BeforeOpenRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select * from SAL_LOCUS_FORSALE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+end;
+
+function TSyncLocusForSaleData.BeforeUpdateRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from SAL_LOCUS_FORSALE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);
+end;
+
+{ TSyncLocusForChagData }
+
+function TSyncLocusForChagData.BeforeDeleteRecord(
+  AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update STO_LOCUS_FORCHAG set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID'),self);
+end;
+
+function TSyncLocusForChagData.BeforeInsertRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'STO_LOCUS_FORCHAG';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncLocusForChagData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select * from STO_LOCUS_FORCHAG where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID';
+end;
+
+function TSyncLocusForChagData.BeforeUpdateRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from STO_LOCUS_FORCHAG where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
+end;
+
+{ TSyncLocusForChag }
+
+function TSyncLocusForChag.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select distinct A.TENANT_ID,A.SHOP_ID,A.CHANGE_ID from STO_CHANGEORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
+  ' B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
+
+  SelectSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3155,6 +3362,15 @@ initialization
   RegisterClass(TSyncCloseForDayList);
   RegisterClass(TSyncCloseForDay);
   RegisterClass(TSyncCloseForDayAble);
+
+  RegisterClass(TSyncLocusForStck);
+  RegisterClass(TSyncLocusForStckData);
+
+  RegisterClass(TSyncLocusForSale);
+  RegisterClass(TSyncLocusForSaleData);
+
+  RegisterClass(TSyncLocusForChag);
+  RegisterClass(TSyncLocusForChagData);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
@@ -3212,4 +3428,12 @@ finalization
   UnRegisterClass(TSyncCloseForDay);
   UnRegisterClass(TSyncCloseForDayAble);
 
+  UnRegisterClass(TSyncLocusForStck);
+  UnRegisterClass(TSyncLocusForStckData);
+
+  UnRegisterClass(TSyncLocusForSale);
+  UnRegisterClass(TSyncLocusForSaleData);
+
+  UnRegisterClass(TSyncLocusForChag);
+  UnRegisterClass(TSyncLocusForChagData);
 end.

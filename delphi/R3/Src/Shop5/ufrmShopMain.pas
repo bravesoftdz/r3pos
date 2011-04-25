@@ -299,7 +299,7 @@ type
     s2_Page1: TRzBmpButton;
     s2_Page2: TRzBmpButton;
     s2_Page4: TRzBmpButton;
-    RzBmpButton16: TRzBmpButton;
+    sDeskPage: TRzBmpButton;
     s2_Page3: TRzBmpButton;
     Panel34: TPanel;
     Image36: TImage;
@@ -332,6 +332,7 @@ type
     actfrmInLocusOrderList: TAction;
     actfrmOutLocusOrderList: TAction;
     actfrmDownIndeOrder: TAction;
+    actfrmRecvForDay: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -432,12 +433,13 @@ type
     procedure RzBmpButton14Click(Sender: TObject);
     procedure RzBmpButton15Click(Sender: TObject);
     procedure s2_Page1Click(Sender: TObject);
-    procedure RzBmpButton16Click(Sender: TObject);
+    procedure sDeskPageClick(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmInLocusOrderListExecute(Sender: TObject);
     procedure actfrmOutLocusOrderListExecute(Sender: TObject);
     procedure lblUserInfoClick(Sender: TObject);
     procedure actfrmDownIndeOrderExecute(Sender: TObject);
+    procedure actfrmRecvForDayExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -494,7 +496,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder;
+  ufrmDownStockOrder,ufrmRecvPosList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -1051,13 +1053,41 @@ begin
          end;
     end;
 end;
+function CheckRight:boolean;
+var
+  rs:TZQuery;
+begin
+  result := false;
+  rs := CA_MODULE;
+  rs.Filtered := false;
+  rs.Filtered := true;
+  rs.First;
+  while not rs.Eof do
+    begin
+      if rs.FieldbyName('LEVEL').AsInteger =3 then
+         begin
+           if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
+           begin
+             result := true;
+             Exit;
+           end;
+         end;
+      rs.Next;
+    end;
+end;
 procedure CreatePageMenu;
+var i:integer;
 begin
   Page1.Visible := false;
   Page2.Visible := false;
   Page3.Visible := false;
   Page4.Visible := false;
   Page5.Visible := false;
+  s2_Page1.Visible := false;
+  s2_Page2.Visible := false;
+  s2_Page3.Visible := false;
+  s2_Page4.Visible := false;
+  s2_Page5.Visible := false;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
@@ -1065,30 +1095,54 @@ begin
       begin
         case strtoint(copy(CA_MODULE.Fields[0].asString,1,1)) of
         1:begin
-            PageList.Add(Page1);
-            Page1.Visible := true;
+            if sflag='s1_' then
+               PageList.Add(Page1)
+            else
+               PageList.Add(s2_Page1);
           end;
         2:begin
-            PageList.Add(Page2);
-            Page2.Visible := true;
+            if sflag='s1_' then
+               PageList.Add(Page2)
+            else
+               PageList.Add(s2_Page2);
           end;
         3:begin
-            PageList.Add(Page3);
-            Page3.Visible := true;
+            if sflag='s1_' then
+               PageList.Add(Page3)
+            else
+               PageList.Add(s2_Page3);
           end;
         4:begin
-            PageList.Add(Page4);
-            Page4.Visible := true;
+            if sflag='s1_' then
+               PageList.Add(Page4)
+            else
+               PageList.Add(s2_Page4);
           end;
         9:begin
-            PageList.Add(Page5);
-            Page5.Visible := true;
+            if sflag='s1_' then
+               PageList.Add(Page5)
+            else
+               PageList.Add(s2_Page5);
           end;
         end;
       end;
       CA_MODULE.Next;
     end;
+  for i:=0 to PageList.Count -1 do
+     begin
+       TrzBmpButton(PageList[i]).OnClick := nil;
+       try
+         TrzBmpButton(PageList[i]).Down := true;
+         TrzBmpButton(PageList[i]).Visible := CheckRight;
+       finally
+         if sflag='s1_' then
+            TrzBmpButton(PageList[i]).OnClick := Page1Click
+         else
+            TrzBmpButton(PageList[i]).OnClick := s2_Page1Click;
+       end;
+     end;
   if PageList.Count >0 then TrzBmpButton(PageList[0]).down := true;
+  SortPageButton;
 end;
 var
   rs:TZQuery;
@@ -3001,10 +3055,10 @@ begin
     Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
 
 
-    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
+    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton');
     toolButton.Bitmaps.Hot := GetBitmap(sflag+'toolbutton_hot');
-    RzBmpButton16.Bitmaps.Up := GetBitmap(sflag+'desktop');
-    RzBmpButton16.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
+    sDeskPage.Bitmaps.Up := GetBitmap(sflag+'desktop');
+    sDeskPage.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
 
     RzBmpButton11.Bitmaps.Up := GetBitmap(sflag+'password');
     RzBmpButton11.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
@@ -3098,7 +3152,7 @@ begin
 
 end;
 
-procedure TfrmShopMain.RzBmpButton16Click(Sender: TObject);
+procedure TfrmShopMain.sDeskPageClick(Sender: TObject);
 begin
   inherited;
   RzBmpButton3Click(nil);
@@ -3156,8 +3210,28 @@ end;
 
 procedure TfrmShopMain.SortPageButton;
 var
-  i:integer;
+  i,n:integer;
 begin
+  n := 0;
+  if sflag='s2_' then PageList.Insert(0,sDeskPage); 
+  for i:=PageList.Count -1 downto 0 do
+    begin
+      if not TRzBmpButton(PageList[i]).Visible then
+         PageList.Delete(i); 
+    end;
+  for i:=0 to PageList.Count -1 do
+    begin
+      if sflag='s1_' then
+         begin
+           if n=0 then
+              TRzBmpButton(PageList[i]).Top := 1
+           else
+              TRzBmpButton(PageList[i]).Top := TRzBmpButton(PageList[i-1]).top + TRzBmpButton(PageList[i-1]).height + 1;
+         end
+      else
+         TRzBmpButton(PageList[i]).Left := Panel30.Width -((PageList.Count-n)*TRzBmpButton(PageList[i]).Width + 1)-10;
+      inc(n);
+    end;
 end;
 
 procedure TfrmShopMain.lblUserInfoClick(Sender: TObject);
@@ -3200,6 +3274,28 @@ begin
   finally
     Aobj.Free;
   end;
+end;
+
+procedure TfrmShopMain.actfrmRecvForDayExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmRecvPosList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvPosList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

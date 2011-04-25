@@ -60,12 +60,12 @@ type
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     btnOk: TRzBitBtn;
-    fndP1_CUST_ID: TzrComboBoxList;
     fndSTATUS: TcxRadioGroup;
     Panel1: TPanel;
     DBGridEh1: TDBGridEh;
     CdsRecvList: TZQuery;
     RecvListDs: TDataSource;
+    fndP1_CUST_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -324,7 +324,7 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('收款查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' ';
+  strWhere := strWhere + ' and A.RECV_TYPE<>''4'' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
   //分批取数据的条件:
   if trim(id)<>'' then
     strWhere:=strWhere+' A.ABLE_ID > '+QuotedStr(id);
@@ -381,7 +381,7 @@ var
 begin
   if D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
-  strWhere := strWhere + ' A.SHOP_ID=:SHOP_ID and A.TENANT_ID=:TENANT_ID';
+  strWhere := strWhere + ' RECV_FLAG=''0'' and A.TENANT_ID=:TENANT_ID';
   //帐款日期
   strWhere := strWhere + ' and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2';
   if fndPAYM_ID.ItemIndex > 0 then
@@ -475,7 +475,7 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id,Str);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
+//    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     Factor.Open(rs);

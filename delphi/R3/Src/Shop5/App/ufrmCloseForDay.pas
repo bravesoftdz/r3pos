@@ -139,9 +139,10 @@ begin
        begin
          edtPAY_MNY.Text := formatfloat('#0.00',0);
        end;
+       
     //获得批发金额
     rs.Close;
-    rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and RECV_FLAG=''0'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
     ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
     Factor.Open(rs);
     if rs.Fields[0].AsString<>'' then

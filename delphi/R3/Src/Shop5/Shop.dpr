@@ -74,8 +74,8 @@ uses
   uframeListDialog in 'Frame\uframeListDialog.pas' {frameListDialog},
   ufrmPayOrder in 'App\ufrmPayOrder.pas' {frmPayOrder},
   ufrmPayOrderList in 'App\ufrmPayOrderList.pas' {frmPayOrderList},
-  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
-  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
+  ufrmRecvPosOrder in 'App\ufrmRecvPosOrder.pas' {frmRecvPosOrder},
+  ufrmRecvPosList in 'App\ufrmRecvPosList.pas' {frmRecvPosList},
   ufrmSelectGoodSort in 'App\ufrmSelectGoodSort.pas' {frmSelectGoodSort},
   Des in '..\..\Pub\des.pas',
   ufrmSalIndentOrder in 'App\ufrmSalIndentOrder.pas' {frmSalIndentOrder},
@@ -202,7 +202,10 @@ uses
   ufrmDeposit in 'App\ufrmDeposit.pas' {frmDeposit},
   ufrmCustomerExt in 'App\ufrmCustomerExt.pas' {frmCustomerExt: TFrame},
   ObjImpeach in 'Obj\ObjImpeach.pas',
-  uPrainpowerJudge in 'App\uPrainpowerJudge.pas';
+  uPrainpowerJudge in 'App\uPrainpowerJudge.pas',
+  ufrmDownStockOrder in 'App\ufrmDownStockOrder.pas' {frmDownStockOrder},
+  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
+  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder};
 
 {$R *.res}
 var
@@ -211,7 +214,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.5';
+  DBVersion := '1.0.0.6';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

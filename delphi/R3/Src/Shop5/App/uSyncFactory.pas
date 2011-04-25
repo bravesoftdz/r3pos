@@ -66,6 +66,12 @@ type
     procedure SyncPriceOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //盘点单
     procedure SyncCheckOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //扫码入库
+    procedure SyncLocusForStck(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //扫码出库
+    procedure SyncLocusForSale(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //扫码盘点
+    procedure SyncLocusForChag(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -142,6 +148,9 @@ begin
   20:result := 'TSyncCaTenant';
   21:result := 'TSyncGodsRelation';
   22:result := 'TSyncGodsInfo';
+  23:result := 'TSyncLocusForStck';
+  24:result := 'TSyncLocusForSale';
+  25:result := 'TSyncLocusForChag';
   else
     result := 'TSyncSingleTable';
   end;
@@ -393,7 +402,15 @@ begin
   n^.tbtitle := '入库单据';
   n^.KeyFlag := 0;
   FList.Add(n);
-  
+
+  new(n);
+  n^.tbname := 'STK_LOCUS_FORSTCK';
+  n^.keyFields := 'TENANT_ID;STOCK_ID;SEQNO';
+  n^.synFlag := 23;
+  n^.tbtitle := '扫码入库';
+  n^.KeyFlag := 0;
+  FList.Add(n);
+
   new(n);
   n^.tbname := 'SAL_SALESORDER';
   n^.keyFields := 'TENANT_ID;SALES_ID';
@@ -401,7 +418,15 @@ begin
   n^.KeyFlag := 0;
   n^.tbtitle := '出库单据';
   FList.Add(n);
-  
+
+  new(n);
+  n^.tbname := 'SAL_LOCUS_FORSALE';
+  n^.keyFields := 'TENANT_ID;SALES_ID;SEQNO';
+  n^.synFlag := 24;
+  n^.tbtitle := '扫码出库';
+  n^.KeyFlag := 0;
+  FList.Add(n);
+
   new(n);
   n^.tbname := 'STO_CHANGEORDER';
   n^.keyFields := 'TENANT_ID;CHANGE_ID';
@@ -410,6 +435,14 @@ begin
   n^.tbtitle := '存货单据';
   FList.Add(n);
 
+  new(n);
+  n^.tbname := 'STO_LOCUS_FORCHAG';
+  n^.keyFields := 'TENANT_ID;CHANGE_ID;SEQNO';
+  n^.synFlag := 25;
+  n^.tbtitle := '扫码库存';
+  n^.KeyFlag := 0;
+  FList.Add(n);
+  
   new(n);
   n^.tbname := 'STK_INDENTORDER';
   n^.keyFields := 'TENANT_ID;INDE_ID';
@@ -491,6 +524,7 @@ begin
   n^.tbtitle := '月台账';
   n^.KeyFlag := 0;
   FList.Add(n);
+
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -559,6 +593,9 @@ begin
       17:SyncCloseForDay(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      23:SyncLocusForStck(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      24:SyncLocusForSale(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      25:SyncLocusForChag(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -1185,6 +1222,297 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncLocusForChag(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer);
+var
+  ls,cs_h,rs_h:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForChagData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForChagData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForChagData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForChagData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncLocusForSale(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer);
+var
+  ls,cs_h,rs_h:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForSaleData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForSaleData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForSaleData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForSaleData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncLocusForStck(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer);
+var
+  ls,cs_h,rs_h:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForStckData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForStckData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         rs_h.Close;
+
+         Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForStckData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForStckData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
   end;
 end;
 

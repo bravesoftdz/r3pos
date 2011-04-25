@@ -9,28 +9,26 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 537
+    Width = 892
+    Height = 526
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 527
+      Width = 882
+      Height = 516
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 521
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Width = 876
+        Height = 510
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#25910#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 494
+            Width = 874
+            Height = 483
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -110,62 +108,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndP1_CUST_ID: TzrComboBoxList
-                Left = 80
-                Top = 52
-                Width = 223
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 3
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'CUST_ID;CUST_NAME;CUST_SPELL;CUST_CODE'
-                KeyField = 'CUST_ID'
-                ListField = 'CUST_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'CUST_CODE'
-                    Footers = <>
-                    Title.Caption = #20195#30721
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CUST_NAME'
-                    Footers = <>
-                    Title.Caption = #23458#25143#21517#31216
-                    Width = 150
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SEX'
-                    Footers = <>
-                    Title.Caption = #24615#21035
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'FAMI_ADDR'
-                    Footers = <>
-                    Title.Caption = #22320#22336
-                    Width = 150
-                  end>
-                DropWidth = 236
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = False
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = [zbClear]
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
               object fndP1_SHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
@@ -178,7 +120,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -224,23 +166,93 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   item
                     Caption = #24050#32467#28165
                   end>
-                TabOrder = 5
+                TabOrder = 4
                 Caption = #29366#24577
+              end
+              object fndP1_CUST_ID: TzrComboBoxList
+                Left = 80
+                Top = 51
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 5
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
+                KeyField = 'CLIENT_ID'
+                ListField = 'CLIENT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_CODE'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 60
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_NAME'
+                    Footers = <>
+                    Title.Caption = #23458#25143#21517#31216
+                    Width = 150
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'LINKMAN'
+                    Footers = <>
+                    Title.Caption = #32852#31995#20154
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'TELEPHONE2'
+                    Footers = <>
+                    Title.Caption = #32852#31995#30005#35805
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'LICENSE_CODE'
+                    Footers = <>
+                    Title.Caption = #35777#20214#21495
+                    Width = 70
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'ADDRESS'
+                    Footers = <>
+                    Title.Caption = #22320#22336
+                    Width = 150
+                  end>
+                DropWidth = 296
+                DropHeight = 220
+                ShowTitle = True
+                AutoFitColWidth = False
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
               end
             end
             object Panel1: TPanel
               Left = 6
               Top = 90
-              Width = 870
-              Height = 398
+              Width = 862
+              Height = 387
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 396
+                Width = 860
+                Height = 385
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -387,8 +399,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 494
+            Width = 874
+            Height = 483
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -397,7 +409,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -770,16 +782,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 870
-              Height = 359
+              Width = 862
+              Height = 348
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 357
+                Width = 860
+                Height = 346
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -926,17 +938,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image1: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image3: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited rzPanel5: TPanel
       Left = 374

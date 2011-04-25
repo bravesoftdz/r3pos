@@ -204,7 +204,7 @@ var
   rs:TZQuery;
   r:real;
 begin
-  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择客户名称');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择缴款门店');
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
   if edtPAYM_ID.ItemIndex<0 then Raise Exception.Create('请选择收款方式名称');
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择收支科目名称');
@@ -218,6 +218,7 @@ begin
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   AObj.FieldByName('RECV_USER').AsString := Global.UserID;
+  AObj.FieldByName('RECV_FLAG').AsString := '0';
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
@@ -482,7 +483,7 @@ begin
     rs.Close;
     rs.SQL.Text :=
        'select A.ABLE_ID,A.TENANT_ID,A.SHOP_ID,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.ACCT_INFO,A.RECV_TYPE,A.ACCT_MNY,A.RECV_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
-       'from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+edtCLIENT_ID.asString+''' and A.RECK_MNY<>0 order by ABLE_ID';
+       'from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+edtCLIENT_ID.asString+''' and A.RECK_MNY<>0 and A.RECV_TYPE<>''4'' order by ABLE_ID';
     Factor.Open(rs);
     cdsDetail.First;
     while not cdsDetail.Eof do cdsDetail.Delete;

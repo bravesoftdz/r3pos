@@ -216,12 +216,17 @@ begin
     StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
   if edtSHOP_TYPE.ItemIndex = 0 then
     begin
-      if edtSHOP_VALUE.Text <> '' then
-        StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(edtSHOP_VALUE.AsString+'%');
+      if edtSHOP_VALUE.asString <> '' then
+         begin
+           if FnString.TrimRight(edtSHOP_VALUE.asString,2)='00' then
+              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
+           else
+              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
+         end;
     end
   else
     begin
-      if edtSHOP_VALUE.Text <> '' then
+      if edtSHOP_VALUE.asString <> '' then
         StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);    
     end;
 

@@ -30,15 +30,15 @@ uses
 {$R *.res}
 
 
-procedure SetRimCom_CustID(PlugIn: IPlugIn; vParam: TftParamList; var TenantID: string; var ShopID: string; var ComID: string; var CustID: string);
+procedure SetRimCom_CustID(PlugIn: IPlugIn; vParam: TftParamList; var ComID: string; var CustID: string);
 var
-  str: string;
+  str,TenantID,ShopID: string;
   rs: TZQuery;
 begin
   try
     rs:=TZQuery.Create(nil);
     try
-      TenantID:=InttoStr(vParam.ParamByName('TENANT_ID').AsInteger);
+      TenantID:=vParam.ParamByName('TENANT_ID').AsString;
       ShopID:=vParam.ParamByName('SHOP_ID').AsString;
       str:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenantID+' and B.SHOP_ID='''+ShopID+''' ';
       if OpenData(PlugIn, rs, str) then
@@ -61,11 +61,18 @@ end;
 function DownOrderToINF_StockOrder(GPlugIn: IPlugIn; vParam: TftParamList): Boolean;
 var
   iRet: integer;
-  Str,NearDate,TenantID,ShopID,ComID,CustID: string;
+  Str,NearDate,UseDate: string;
+  TenantID,ShopID,ComID,CustID: string;
 begin
   result:=False;
   NearDate:=FormatDatetime('YYYYMMDD',Date()-30); //获取最近30天的订单日期
-  SetRimCom_CustID(GPlugIn,vParam,TenantID,ShopID,ComID,CustID); //读取Rim系统的供应商（烟草公司Com_ID）和零售户的Cust_Id
+  TenantID:=vParam.ParamByName('TENANT_ID').AsString;
+  ShopID:=vParam.ParamByName('SHOP_ID').AsString;
+  UseDate:=vParam.ParamByName('USING_DATE').AsString;
+  SetRimCom_CustID(GPlugIn,vParam,ComID,CustID); //读取Rim系统的供应商（烟草公司Com_ID）和零售户的Cust_Id
+  //判断启用日期与最近30天关系
+  if NearDate < UseDate then NearDate:=UseDate;
+
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}
     if (ComID<>'') and (CustID<>'')  then
@@ -74,16 +81,12 @@ begin
       if GPlugIn.ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TenantID+' and SHOP_ID='''+ShopID+''' '),iRet)<>0 then Raise Exception.Create('1、删除订单中间表(INF_INDEORDER)失败！〖条件：企业ID='+TenantID+',门店ID='+ShopID+'〗');
 
       //2、插入最近30天且已确认的订单表头:
-      Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,STATUS) '+
-         ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,CO_NUM,CRT_DATE,QTY_SUM,AMT_SUM,STATUS from RIM_SD_CO '+
-         ' where STATUS>=''04'' and CRT_DATE>='''+NearDate+''' and COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' ';
+      Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS) '+
+         ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS '+
+         ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
+         ' where A.CO_NUM=B.CO_NUM and A.STATUS>=''04'' and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+ComID+''' and A.CUST_ID='''+CustID+''' '+
+         ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
       if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
-
-
-      //3、汇总订单表头需求量:
-      str:='update INF_INDEORDER A set NEED_AMT=(select sum(QTY_NEED) from RIM_SD_CO_LINE B where A.INDE_ID=B.CO_NUM) '+
-           ' where exists(select 1 from RIM_SD_CO_LINE B where A.INDE_ID=B.CO_NUM) ';
-      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('3、汇总订单表头需求量出错！');
     end;
   except
     on E:Exception do
@@ -197,3 +200,19 @@ exports
 begin
 
 end.
+
+
+
+     {//2、插入最近30天且已确认的订单表头:
+      Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,STATUS) '+
+         ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,CO_NUM,CRT_DATE,QTY_SUM,AMT_SUM,STATUS from RIM_SD_CO '+
+         ' where STATUS>=''04'' and CRT_DATE>='''+NearDate+''' and COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' ';
+      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
+
+
+      //3、汇总订单表头需求量:
+      str:='update INF_INDEORDER A set NEED_AMT=(select sum(QTY_NEED) from RIM_SD_CO_LINE B where A.INDE_ID=B.CO_NUM) '+
+           ' where exists(select 1 from RIM_SD_CO_LINE B where A.INDE_ID=B.CO_NUM) ';
+      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('3、汇总订单表头需求量出错！');
+      }
+

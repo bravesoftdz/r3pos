@@ -385,6 +385,7 @@ end;
 
 procedure TfrmUsers.actPasswordResetExecute(Sender: TObject);
 var Str_Sql:String;
+    i:Integer;
 begin
   inherited;
   if not Cds_Users.Active then exit;
@@ -394,10 +395,10 @@ begin
 
   Str_Sql :=
   'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where USER_ID='''+Cds_Users.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
-
-  if Factor.ExecSQL(Str_Sql) = 0 then
+  i := Factor.ExecSQL(Str_Sql);
+  if i = 0 then
     MessageBox(handle,Pchar('提示:密码重置失败!'),Pchar(Caption),MB_OK)
-  else if Factor.ExecSQL(Str_Sql) > 0 then
+  else if i > 0 then
     MessageBox(handle,Pchar('提示:密码重置成功!'),Pchar(Caption),MB_OK);
 end;
 

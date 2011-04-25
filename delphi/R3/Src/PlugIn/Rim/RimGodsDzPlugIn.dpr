@@ -148,7 +148,7 @@ begin
           end;
           RsRim.Next;
         end; //end (循环: while not RsRim.Eof do)
-        result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;  
+        result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;
         if result<>0 then
           Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
       end //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
@@ -199,6 +199,7 @@ begin
   try
     //2011.04.08 Pm  Add 执行从[RIM_GOODSINFO] ==> [INF_GOODS_RELATION]导入
     //调试使用: DoUpdateINF_GOODSINFO(GPlugIn, '100011'); //StrPas(Params)
+    //GPlugIn.WriteLogFile(PChar('传入Tenant_ID:'+Params));
     result:=DoUpdateINF_GOODSINFO(GPlugIn, StrPas(Params));  //StrPas(Params)
   except
     on E:Exception do

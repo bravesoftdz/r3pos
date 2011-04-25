@@ -77,7 +77,7 @@ begin
       Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,STATUS) '+
          ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,CO_NUM,CRT_DATE,QTY_SUM,AMT_SUM,STATUS from RIM_SD_CO '+
          ' where STATUS>=''04'' and CRT_DATE>='''+NearDate+''' and COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' ';
-      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！');
+      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
 
 
       //3、汇总订单表头需求量:
@@ -100,7 +100,7 @@ var
 begin
   result:=False;
   INDE_ID:=trim(vParam.ParamByName('INDE_ID').AsString);
-  TenantID:=trim(vParam.ParamByName('TENANT_ID').AsString);
+  TenantID:=inttostr(vParam.ParamByName('TENANT_ID').AsInteger);
   try
     //1、删除订单表体历史数据：
     if PlugIn.ExecSQL(Pchar('delete from INF_INDEDATA where INDE_ID='''+INDE_ID+''' '),iRet)<>0 then Raise Exception.Create('1、删除订单表体历史数据出错！'); 
@@ -113,9 +113,9 @@ begin
 
     //3、供应链[GODS_ID]与 [SECOND_ID] 更新中间订单表体 [GODS_ID]
     str:='update INF_INDEDATA A set A.GODS_ID='+
-         '(select GODS_ID from PUB_GOODS_RELATION B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) '+
-         ' where A.INDE_ID='''+INDE_ID+''' and exists(select 1 from PUB_GOODS_RELATION B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) ';
-    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('3、供应链[GODS_ID]与 [SECOND_ID] 更新中间订单表体 [GODS_ID]'); 
+         '(select GODS_ID from VIW_GOODSINFO B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) '+
+         ' where A.INDE_ID='''+INDE_ID+''' and exists(select 1 from VIW_GOODSINFO B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) ';
+    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('3、供应链[GODS_ID]与 [SECOND_ID] 更新中间订单表体 [GODS_ID]');
   except
     on E:Exception do
     begin

@@ -9,7 +9,7 @@ unit uReportedFactory;
 
 interface
 
-uses
+uses                 
   SysUtils,zDataSet,ufnUtil,uPlugInUtil;
 
 procedure CallSync(PlugIntf:IPlugIn; TenantID: string);

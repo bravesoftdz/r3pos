@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
+      ActivePage = tabProperty
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -741,7 +743,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Width = 48
           Height = 12
           Alignment = taRightJustify
-          Caption = #21830#21697#31867#21035
+          Caption = #21830#21697#20215#31867
           Font.Charset = GB2312_CHARSET
           Font.Color = clBlack
           Font.Height = -12

@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 497
-  Top = 58
+  Left = 220
+  Top = 104
   Height = 616
   Width = 819
   object SYS_DEFINE: TZQuery
@@ -1017,6 +1017,37 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 368
     Top = 478
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_STAT_Lable: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      'select CODE_ID,CODE_NAME,USEFLAG from ('
+      
+        'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME ' +
+        'else b.CODE_NAME end as CODE_NAME,'
+      
+        '       case when b.CODE_NAME is null then 0 else 1 end as USEFLA' +
+        'G from PUB_PARAMS j left outer join '
+      
+        '(select CODE_ID,CODE_NAME from PUB_CODE_INFO where TENANT_ID=:TE' +
+        'NANT_ID and CODE_TYPE='#39'16'#39' ) b on j.CODE_ID=b.CODE_ID '
+      'where j.TYPE_CODE='#39'SORT_TYPE'#39')'
+      'g order by  cast(CODE_ID as int)')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 526
     ParamData = <
       item
         DataType = ftUnknown

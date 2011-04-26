@@ -547,8 +547,8 @@ begin
   try
     rs.SQL.Text :=
       'select count(*) from SAL_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
-      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and A.USING_LOCUS_NO=1 and '+
-      'not Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.GODS_ID)';
+      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and B.USING_LOCUS_NO=1 and '+
+      'not Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.SALES_ID)';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
   finally

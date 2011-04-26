@@ -75,6 +75,7 @@ inherited frameSelectGoods: TframeSelectGoods
                 Top = 7
                 Width = 77
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.OnChange = fndGODS_FLAGPropertiesChange
                 TabOrder = 0
               end
@@ -105,6 +106,7 @@ inherited frameSelectGoods: TframeSelectGoods
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               FrozenCols = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               PopupMenu = PopupMenu1

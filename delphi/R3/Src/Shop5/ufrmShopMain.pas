@@ -1383,7 +1383,17 @@ begin
         end
      else
         begin
-          SyncFactory.SyncBasic(true);
+          if CaFactory.Audited and Global.RemoteFactory.Connected then
+             begin
+               if ShopGlobal.ONLVersion then
+                  begin
+                    SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
+                  end
+               else
+               SyncFactory.SyncBasic(true);
+             end;
           InitTenant;
         end;
     finally

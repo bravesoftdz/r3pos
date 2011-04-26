@@ -888,9 +888,8 @@ begin
       if not assigned(rs) or ((InputMode=0) and rs.IsEmpty) then
          begin
             //看看货号是否存在
-            rs.Filtered := false;
-            rs.OnFilterRecord := nil;
             rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+            rs.Filtered := false;
             rs.OnFilterRecord := GodsInfoFilterRecord;
             rs.Filtered := true;
             //rs.Close;

@@ -500,14 +500,14 @@ begin
                    end;
                    f.WriteString('db'+inttostr(result.DB_ID),'connstr',EncStr(cstr,ENC_KEY));
                  end;
-                 //r.WriteString('soft','SFVersion','.'+GetNodeValue(caTenantLoginResp,'prodFlag'));
-                 //r.WriteString('soft','CLVersion','.'+GetNodeValue(caTenantLoginResp,'industry'));
-                 //r.WriteString('soft','ProductID',GetNodeValue(caTenantLoginResp,'prodId'));
-                 //r.WriteString('soft','name',GetNodeValue(caTenantLoginResp,'prodName'));
                  Audited := true;
                  finded := false;
                  if not FindCmdLineSwitch('DEBUG',['-','+'],false) and (RspFlag=0) then
                    begin
+                     r.WriteString('soft','SFVersion','.'+GetNodeValue(caTenantLoginResp,'prodFlag'));
+                     r.WriteString('soft','CLVersion','.'+GetNodeValue(caTenantLoginResp,'industry'));
+                     r.WriteString('soft','ProductID',GetNodeValue(caTenantLoginResp,'prodId'));
+                     r.WriteString('soft','name',GetNodeValue(caTenantLoginResp,'prodName'));
                      ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
                      ServerInfo := ServerInfo.firstChild;
                      while ServerInfo<>nil do
@@ -874,6 +874,7 @@ var
   code:string;
   h,r:rsp;
   OutXml:WideString;
+  RioImpl:CaProductWebServiceImpl;
 begin
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -902,7 +903,8 @@ begin
     h := SendHeader(rio,1);
     try
       try
-        OutXml := GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio).checkUpgrade(Encode(inxml,pubpwd));
+        RioImpl := GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio);
+        OutXml := RioImpl.checkUpgrade(Encode(inxml,pubpwd));
         r := GetHeader(rio);
         try
           case r.encryptType of
@@ -933,7 +935,8 @@ begin
     result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
     result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
   finally
-    rio.Free;
+    RioImpl := nil;
+   // rio.Free;
   end;
 end;
 

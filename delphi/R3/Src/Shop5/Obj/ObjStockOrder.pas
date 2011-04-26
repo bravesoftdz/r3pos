@@ -434,7 +434,7 @@ begin
   try
     rs.SQL.Text :=
       'select count(*) from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
-      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and A.USING_LOCUS_NO=1 and '+
+      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and B.USING_LOCUS_NO=1 and '+
       'not Exists(select * from STK_LOCUS_FORSTCK where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and STOCK_ID=A.STOCK_ID)';
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  

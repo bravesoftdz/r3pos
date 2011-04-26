@@ -108,7 +108,7 @@ CREATE TABLE MSC_QUESTION(
 	REMARK varchar(100) NOT NULL,
     --结束日期
 	END_DATE varchar(10),
-	      --通讯ID号
+	      --通讯ID号，问卷内码
 	COMM_ID varchar(50),
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
@@ -146,9 +146,9 @@ CREATE TABLE MSC_QUESTION_ITEM(
 	QUESTION_IS_MUST varchar(1) NOT NULL,
     --题目内容
 	QUESTION_INFO varchar (200) NOT NULL,
-    --题目选项 如:"A=满意";"B=不满意";"C=很不满意"
+    --题目选项 如:"A=满意","B=不满意","C=很不满意"
 	QUESTION_OPTIONS varchar (400) NOT NULL,
-	      --通讯ID号
+	      --通讯ID号，题目内码
 	COMM_ID varchar(50),
   CONSTRAINT PK_MSC_QST_ITEM PRIMARY KEY(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID)
 );
@@ -181,6 +181,8 @@ CREATE TABLE MSC_INVEST_LIST(
 	QUESTION_ANSWER_STATUS int,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
+	      --通讯ID号，调查内码
+	COMM_ID varchar(50),
     --更新时间 从2011-01-01开始的秒数  
 	TIME_STAMP bigint NOT NULL,
     CONSTRAINT PK_MSC_INVEST_LIST PRIMARY KEY(TENANT_ID,QUESTION_ID,SHOP_ID)
@@ -201,6 +203,8 @@ CREATE TABLE MSC_INVEST_ANSWER(
 	QUESTION_ITEM_ID char(36) NOT NULL,
 	  --答案
 	ANSWER_VALUE varchar(300) NOT NULL,
+	  --答案显示名
+	ANSWER_DISPLAY varchar(300) NOT NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步
 	COMM varchar(2) NOT NULL  DEFAULT '00',
     --更新时间 从2011-01-01开始的秒数  

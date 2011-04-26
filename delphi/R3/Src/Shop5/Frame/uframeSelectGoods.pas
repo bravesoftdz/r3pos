@@ -62,7 +62,7 @@ type
     procedure DBGridEh1TitleClick(Column: TColumnEh);
   private
     { Private declarations }
-    IsEnd: boolean;
+    IsEnd,Lock: boolean;
     MaxId:string;
     FMultiSelect: boolean;
     procedure InitGrid;
@@ -111,10 +111,7 @@ begin
       DBGridEh1.Columns[5].PickList.add(rs.Fieldbyname('UNIT_NAME').asstring);
       rs.Next;
     end;
-  rs := Global.GetZQueryFromName('PUB_PARAMS');
-  rs.Filtered := false;
-  rs.Filter := 'TYPE_CODE=''SORT_TYPE''';
-  rs.Filtered := true;
+  rs := Global.GetZQueryFromName('PUB_STAT_INFO');
   TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
   fndGODS_FLAG1.ItemIndex := 0;
   LoadTree;
@@ -172,7 +169,7 @@ begin
       if w<>'' then w := w + ' and ';
       w := w + 'j.GODS_ID>:MAXID';
      end;
-  if (rzTree.Selected<>nil) then //and (rzTree.Selected.Level>0) 
+  if (rzTree.Selected<>nil) and (rzTree.Selected.Data<>nil) then //and (rzTree.Selected.Level>0) 
      begin
       if w<>'' then w := w + ' and ';
       case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -228,6 +225,7 @@ end;
 procedure TframeSelectGoods.RzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
+  if Lock then Exit;
   Open('');
 end;
 
@@ -384,6 +382,7 @@ end;
 procedure TframeSelectGoods.FormCreate(Sender: TObject);
 begin
   inherited;
+  Lock := false;
   N2.Enabled:=False;
   N3.Enabled:=False;
   N4.Enabled:=False;
@@ -471,10 +470,15 @@ procedure TframeSelectGoods.fndGODS_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
   if not Visible then Exit;
-  case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-  1:LoadTree;
-  3:LoadProv;
-  else LoadList;
+  Lock := true;
+  try
+    case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+    1:LoadTree;
+    3:LoadProv;
+    else LoadList;
+    end;
+  finally
+    Lock := false;
   end;
 end;
 
@@ -525,7 +529,7 @@ begin
     begin
       AObj := TRecord_.Create(rs);
       AObj.ReadFromDataSet(rs);
-      rzTree.Items.AddObject(nil,rs.FieldbyName('CODE_NAME').AsString,AObj); 
+      rzTree.Items.AddObject(nil,rs.FieldbyName('CLIENT_NAME').AsString,AObj); 
       rs.Next;
     end;
   AddRoot(rzTree,'全部商品');

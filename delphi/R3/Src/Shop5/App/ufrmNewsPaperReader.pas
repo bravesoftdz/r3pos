@@ -63,7 +63,7 @@ type
   private
     { Private declarations }
     ID:String;
-    //MSG_Tpye:Integer;
+    MSG_Tpye:Integer;
     sFlag:Integer;
     MSGArr:array[0..4] of Integer;
     procedure InitMSGArr;
@@ -90,9 +90,8 @@ begin
     begin
       try
         ID := Title_ID;
-        //MSG_Tpye := Msg_Class;
+        MSG_Tpye := Msg_Class;
         sFlag := Flag;
-        Open;
         ShowModal;
       finally
         Free;
@@ -142,7 +141,7 @@ begin
       try
         Self.Visible := False;
         TfrmQuestionnaire.AnswerQustion(nil,CdsNewsPaper.FieldByName('MSG_ID').AsString);
-
+        MsgFactory.MsgRead[MsgFactory.FindMsg(CdsNewsPaper.FieldByName('MSG_ID').AsString)] := True;
       finally
         Close;
       end;
@@ -272,12 +271,14 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
+    ID := MSG_ID;
     rs.Close;
     rs.SQL.Text :=
-       'select MSG_TITLE,MSG_CONTENT,ISSUE_DATE from MSC_MESSAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MSG_ID='+QuotedStr(MSG_ID);
+    'select MSG_TITLE,MSG_CONTENT,ISSUE_DATE,MSG_CLASS from MSC_MESSAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MSG_ID='+QuotedStr(ID);
     Factor.Open(rs);
     labTitle.Caption := rs.FieldbyName('MSG_TITLE').AsString;
     edtContents.Lines.Text := rs.FieldbyName('MSG_CONTENT').AsString;
+    MSG_Tpye := rs.FieldbyName('MSG_CLASS').AsInteger;
     Date_Str := rs.FieldbyName('ISSUE_DATE').AsString;
     if trim(Date_Str) <> '' then
       begin
@@ -340,6 +341,13 @@ end;
 procedure TfrmNewPaperReader.btnReturnClick(Sender: TObject);
 begin
   inherited;
+  case MSG_Tpye of
+    0:btn_Message0Click(Sender);
+    1:btn_Message1Click(Sender);
+    2:btn_Message2Click(Sender);
+    3:btn_Message3Click(Sender);
+    4:btn_Message4Click(Sender);
+  end;
   if RzPage.ActivePageIndex = 1 then RzPage.ActivePageIndex := 0;
 end;
 
@@ -349,16 +357,16 @@ begin
   inherited;
   ExcSql :=
   'update MSC_MESSAGE_LIST set READ_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD HH:MM:SS',Now))+',READ_USER='+QuotedStr(Global.UserID)+',MSG_READ_STATUS=2,MSG_FEEDBACK_STATUS=1,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' '+
-  ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and MSG_ID='+QuotedStr(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
+  ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and MSG_ID='+QuotedStr(ID);
   if Factor.ExecSQL(ExcSql) = 0 then
     Raise Exception.Create('操作失败!');
   CdsNewsPaper.Edit;
   CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 2;
   CdsNewsPaper.Post;
   MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger] := MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger]-1;
+  MsgFactory.MsgRead[MsgFactory.FindMsg(ID)] := True;
   RzPage.ActivePageIndex := 0;
   SetRecordNum;
-  MsgFactory.FindMsg(ID).Rdd := True;
 end;
 
 procedure TfrmNewPaperReader.SetRecordNum;
@@ -458,6 +466,7 @@ begin
            if not TAction(frmMain.actList.Actions[i]).Enabled then Raise Exception.Create('没有此单据!'); 
            TAction(frmMain.actList.Actions[i]).OnExecute(nil);
            result := true;
+           MsgFactory.MsgRead[MsgFactory.FindMsg(s)] := True;
            Exit;
          end;
     end;

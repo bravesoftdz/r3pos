@@ -154,8 +154,8 @@ uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrms
 procedure TfrmCustomerInfo.Append;
 var rs:TZQuery;
 begin
-  Open('');
   dbState := dsInsert;
+  Open('');
   cmbCUST_CODE.Text := '×Ô¶¯±àºÅ..';
   cmbBIRTHDAY.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
   cmbSND_DATE.Date := Date;
@@ -178,6 +178,7 @@ end;
 
 procedure TfrmCustomerInfo.Edit(code: string);
 begin
+  dbState := dsEdit;
   Open(code);
   dbState := dsEdit;
 end;
@@ -703,10 +704,10 @@ end;
 procedure TfrmCustomerInfo.GetUnionCard;
 var Str_Sql:String;
 begin
-  Str_Sql :=
+  {Str_Sql :=
   '';
   cdsUnionCard.SQL.Text := Str_Sql;
-  Factor.Open(cdsUnionCard);
+  Factor.Open(cdsUnionCard);}
 
 end;
 
@@ -764,7 +765,7 @@ var
   frame:TfrmCustomerExt;
 begin
   ReadFromObject(Aobj,Self);
-  Exit;
+  //Exit;
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
     begin
@@ -781,20 +782,11 @@ begin
              frame.Parent:=tab;
              frame.DataSet := cdsCustomerExt;
              frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+             frame.DataState := dbState;
+             frame.ReadFrom;
            except
 
            end;
-          {
-           TfrmCustomerExt.NewInstance
-           Instance := TWinControl(InstanceClass.NewInstance);
-           TWinControl(Reference) := Instance;
-            try
-              Instance.Create(Sheet);
-            except
-              TWinControl(Reference) := nil;
-              TWinControl(Reference).Parent := nil;
-              raise;
-            end;}
          end;
       cdsUnionCard.Next;
     end;

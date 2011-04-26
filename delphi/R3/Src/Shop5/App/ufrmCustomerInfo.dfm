@@ -711,6 +711,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Width = 121
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            Properties.DropDownListStyle = lsFixedList
             TabOrder = 2
           end
           object edtJOBUNIT: TcxTextEdit

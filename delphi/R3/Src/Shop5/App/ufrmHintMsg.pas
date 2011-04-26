@@ -14,7 +14,7 @@ type
     Contents:String;
     SndDate:string;
     Rdd:boolean;
-    //0公告 1系统提示
+    
     Msg_Class:Integer;
     sFlag:integer;
   end;
@@ -25,10 +25,14 @@ type
     FMsgInfo:PMsgInfo;
     FLoaded: Boolean;
     FShowing: Boolean;
+    FUnRead: Integer;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
     procedure SetLoaded(const Value: Boolean);
     procedure SetShowing(const Value: Boolean);
+    procedure SetUnRead(const Value: Integer);
+    function GetMsgRead(Msg: PMsgInfo): boolean;
+    procedure SetMsgRead(Msg: PMsgInfo; const Value: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -40,11 +44,14 @@ type
     procedure Clear;
     function ReadMsg:PMsgInfo;
     function FindMsg(ID:string):PMsgInfo;
+    procedure GetUnRead;
     property MsgInfo[itemindex:integer]:PMsgInfo read GetMsgInfo;
     property Count:integer read GetCount;
     property Info:PMsgInfo read FMsgInfo;
     property Loaded:Boolean read FLoaded write SetLoaded;
     property Showing:Boolean read FShowing write SetShowing;
+    property UnRead:Integer read FUnRead write SetUnRead;
+    property MsgRead[Msg:PMsgInfo]:boolean read GetMsgRead write SetMsgRead;
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
@@ -152,7 +159,7 @@ end;
 
 procedure TMsgFactory.HintMsg(MsgInfo: PMsgInfo);
 begin
-  TfrmHintMsg.ShowInfo(MsgInfo); 
+  TfrmHintMsg.ShowInfo(MsgInfo);
 end;
 
 function TMsgFactory.Load:Boolean;
@@ -175,11 +182,12 @@ begin
           MsgInfo^.Contents := rs.Fields[2].AsString;
           MsgInfo^.SndDate := rs.Fields[3].AsString;
           MsgInfo^.Rdd := false;
-          MsgInfo^.Msg_Class := rs.Fields[4].AsInteger;
+          MsgInfo^.Msg_Class := StrToIntDef(rs.Fields[4].AsString,0);
           MsgInfo^.sFlag := 0;
           FList.Add(MsgInfo);
           rs.Next;
         end;
+      GetUnRead;
     finally
       rs.free;
     end;
@@ -202,6 +210,11 @@ begin
            Exit;
          end;
     end;
+end;
+
+procedure TMsgFactory.SetUnRead(const Value: Integer);
+begin
+  FUnRead := Value;
 end;
 
 procedure TMsgFactory.SetLoaded(const Value: Boolean);
@@ -293,6 +306,27 @@ end;
 procedure TfrmHintMsg.edtContentsMouseLeave(Sender: TObject);
 begin
   edtContents.Font.Color := $007C4E0C;
+end;
+
+procedure TMsgFactory.GetUnRead;
+var i:Integer;
+begin
+  for i := 0 to FList.Count - 1 do
+    begin
+      if PMsgInfo(FList[i]).Rdd = False then
+        UnRead := UnRead + 1;
+    end;
+end;
+
+function TMsgFactory.GetMsgRead(Msg: PMsgInfo): boolean;
+begin
+  result := Msg.Rdd;
+end;
+
+procedure TMsgFactory.SetMsgRead(Msg: PMsgInfo; const Value: boolean);
+begin
+  Msg.Rdd := Value;
+  GetUnRead;
 end;
 
 initialization

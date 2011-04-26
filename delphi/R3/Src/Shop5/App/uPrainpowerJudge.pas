@@ -113,10 +113,12 @@ begin
       msg^.Title := List.FieldbyName('MSG_TITLE').AsString;
       Msg^.Contents := ' 你有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
       Msg^.sFlag := List.FieldbyName('sFlag').AsInteger;
+      Msg^.Rdd := false;
       Msg^.Msg_Class := List.FieldbyName('MSG_CLASS').AsInteger;
       MsgFactory.Add(Msg);
       List.Next;
     end;
+  MsgFactory.GetUnRead;
 end;
 
 initialization

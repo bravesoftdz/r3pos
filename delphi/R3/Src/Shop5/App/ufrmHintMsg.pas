@@ -42,6 +42,7 @@ type
     procedure ShowMsg(MsgInfo:PMsgInfo);
     procedure HintMsg(MsgInfo:PMsgInfo);
     procedure Clear;
+    procedure ClearType(C_Type:Integer);
     function ReadMsg:PMsgInfo;
     function FindMsg(ID:string):PMsgInfo;
     procedure GetUnRead;
@@ -327,6 +328,20 @@ end;
 procedure TMsgFactory.SetMsgRead(Msg: PMsgInfo; const Value: boolean);
 begin
   Msg.Rdd := Value;
+  GetUnRead;
+end;
+
+procedure TMsgFactory.ClearType(C_Type: Integer);
+var i:integer;
+begin
+  for i:=FList.Count -1 downto 0 do
+    begin
+      if PMsgInfo(FList[i]).Msg_Class = C_Type then
+         begin
+           Dispose(FList[i]);
+           FList.Delete(i);
+         end;
+    end;
   GetUnRead;
 end;
 

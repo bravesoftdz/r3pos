@@ -13,7 +13,7 @@ type
     constructor Create;
     destructor  Destroy;override;
     function EncodeSql:String;
-    procedure Load;
+    procedure Load(flag:Integer=0);
   end;
 
 var PrainpowerJudge:TPrainpowerJudge;
@@ -94,9 +94,12 @@ begin
   Result := Str_Sql
 end;
 
-procedure TPrainpowerJudge.Load;
+procedure TPrainpowerJudge.Load(flag:Integer=0);
 var Msg:PMsgInfo;
 begin
+  MsgFactory.ClearType(4);
+  if flag<>0 then Exit;
+
   List.Close;
   List.SQL.Text := EncodeSQL;
   uGlobal.Factor.Open(List);

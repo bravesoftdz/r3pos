@@ -171,8 +171,8 @@ begin
   CdsNewsPaper.Close;
   CdsNewsPaper.SQL.Text := EncodeSql;
   Factor.Open(CdsNewsPaper);
-  if not PrainpowerJudge.List.Active then
-    PrainpowerJudge.Load;
+ // if not PrainpowerJudge.List.Active then
+  PrainpowerJudge.Load(1);
   PrainpowerJudge.List.first;
   while not PrainpowerJudge.List.eof do
      begin
@@ -263,6 +263,7 @@ begin
   CdsNewsPaper.Filtered := False;
   CdsNewsPaper.Filter := ' MSG_CLASS=''4'' ';
   CdsNewsPaper.Filtered := True;
+  MsgFactory.ClearType(4);
 end;
 
 procedure TfrmNewPaperReader.GetInfomation(MSG_ID: String);
@@ -466,7 +467,6 @@ begin
            if not TAction(frmMain.actList.Actions[i]).Enabled then Raise Exception.Create('没有此单据!'); 
            TAction(frmMain.actList.Actions[i]).OnExecute(nil);
            result := true;
-           MsgFactory.MsgRead[MsgFactory.FindMsg(s)] := True;
            Exit;
          end;
     end;

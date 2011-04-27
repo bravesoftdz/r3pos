@@ -311,9 +311,10 @@ end;
 procedure TMsgFactory.GetUnRead;
 var i:Integer;
 begin
+  UnRead := 0;
   for i := 0 to FList.Count - 1 do
     begin
-      if PMsgInfo(FList[i]).Rdd = False then
+      if not PMsgInfo(FList[i]).Rdd then
         UnRead := UnRead + 1;
     end;
 end;

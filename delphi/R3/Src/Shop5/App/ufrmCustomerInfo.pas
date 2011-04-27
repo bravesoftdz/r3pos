@@ -130,6 +130,7 @@ type
     { Public declarations }
     Aobj:TRecord_;
     Saved:Boolean;
+    FList:TList;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure ReadFrom(AObj:TRecord_);
     procedure WriteTo(AObj:TRecord_);
@@ -376,6 +377,10 @@ begin
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='×Ô¶¯±àºÅ..') then
      AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+  cdsCustomerExt.Edit;
+  cdsCustomerExt.FieldByName('CUST_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+  cdsCustomerExt.Post;
+  
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
@@ -398,10 +403,14 @@ begin
   AddCbxPickList(edtMONTH_PAY,'',Global.GetZQueryFromName('PUB_MONTH_PAY_INFO'));
   AddCbxPickList(edtOCCUPATION,'',Global.GetZQueryFromName('PUB_OCCUPATION_INFO'));
   Aobj := TRecord_.Create;
+  FList := TList.Create;
 end;
 
 procedure TfrmCustomerInfo.FormDestroy(Sender: TObject);
+var i:integer;
 begin
+  for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
+  FList.Free;
   inherited;
   Aobj.Free;
 end;
@@ -518,8 +527,14 @@ begin
 end;
 
 procedure TfrmCustomerInfo.WriteTo(AObj: TRecord_);
+var
+  i:integer;
 begin
   WriteToObject(Aobj,self);
+  for i:=0 to FList.Count -1 do
+    begin
+      TfrmCustomerExt(FList[i]).WriteTo;
+    end;
   if Trim(cmbINTEGRAL.Text)='' then AObj.FieldByName('INTEGRAL').AsString:='0';
   if Trim(edtACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
   if Trim(cmbRULE_INTEGRAL.Text)='' then AObj.FieldByName('RULE_INTEGRAL').AsString:='0';
@@ -763,9 +778,12 @@ var
   tab:TrzTabSheet;
   Instance: TWinControl;
   frame:TfrmCustomerExt;
+  i:integer;
 begin
+  for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
+  FList.Clear;
   ReadFromObject(Aobj,Self);
-  //Exit;
+  Exit;
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
     begin
@@ -777,16 +795,13 @@ begin
            tab := TrzTabSheet.Create(RzPage);
            tab.PageControl := RzPage;
            tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
-           try
-             frame := TfrmCustomerExt.Create(tab);
-             frame.Parent:=tab;
-             frame.DataSet := cdsCustomerExt;
-             frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
-             frame.DataState := dbState;
-             frame.ReadFrom;
-           except
-
-           end;
+           frame := TfrmCustomerExt.Create(tab);
+           FList.Add(frame); 
+           frame.Parent:=tab;
+           frame.DataSet := cdsCustomerExt;
+           frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+           frame.DataState := dbState;
+           frame.ReadFrom;
          end;
       cdsUnionCard.Next;
     end;

@@ -148,7 +148,7 @@ begin
       if Rs.Locate('DEFINE','USING_DATE', []) then
       begin
         UseDate:=trim(Rs.fieldbyName('VALUE').AsString);
-        UseDate:=FormatDateTime('YYYYMMDD', StrtoDate(UseDate));
+        UseDate:=FormatDateTime('YYYYMMDD', fnTime.fnStrtoDate(UseDate));
       end else
         UseDate:='';
     end;

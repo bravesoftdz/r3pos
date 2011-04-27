@@ -415,6 +415,11 @@ begin
   AObj.FieldByName('INDE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('INDE_MNY').AsFloat := TotalFee;
   AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
+  if ShopGlobal.GetParameter('SAL_AUTO_CHK')<>'0' then
+     begin
+       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+     end;
   Factor.BeginBatch;
   try
     cdsHeader.Edit;

@@ -90,7 +90,7 @@ begin
   if trim(fndP1_GODS_ID.AsString)='' then Raise Exception.Create('  请选择要查询商品！  '); 
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
   //门店条件:
   if fndP1_SHOP_ID.AsString <>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
@@ -102,11 +102,15 @@ begin
   if trim(fndP1_BarCode.Text)<>'' then
   begin
     case fndP1_BarType_ID.ItemIndex of
-     0: strWhere:=strWhere+' and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''' ';
+     0: begin
+          strWhere:=strWhere+' and (Exists(select * from STK_LOCUS_FORSTCK where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and STOCK_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''') ';
+          strWhere:=strWhere+' or Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''') ';
+          strWhere:=strWhere+' or Exists(select * from STO_LOCUS_FORCHAG where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and CHANGE_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''')) ';
+        end;
      1: strWhere:=strWhere+' and BATCH_NO='''+trim(fndP1_BarCode.Text)+''' '
     end;
   end;
-  
+
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
   begin
@@ -135,6 +139,7 @@ begin
   strSql :=
     'select A.TENANT_ID'+
      ',A.SHOP_ID'+
+     ',A.ORDER_ID'+
      ',B.SHOP_NAME'+
      ',A.CREA_DATE'+
      ',GLIDE_NO'+

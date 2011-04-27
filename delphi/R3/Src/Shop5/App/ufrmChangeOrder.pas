@@ -320,6 +320,11 @@ begin
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  if ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0' then
+     begin
+       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+     end;
   Factor.BeginBatch;
   try
     cdsHeader.Edit;

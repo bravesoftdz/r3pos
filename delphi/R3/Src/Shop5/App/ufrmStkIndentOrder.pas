@@ -313,6 +313,11 @@ begin
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   AObj.FieldbyName('TAX_RATE').AsFloat := edtTAX_RATE.Value / 100;
+  if ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0' then
+     begin
+       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
+     end;
   Calc;
   Factor.BeginBatch;
   try

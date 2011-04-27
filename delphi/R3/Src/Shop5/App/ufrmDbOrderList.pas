@@ -358,8 +358,7 @@ begin
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT '+
    'from ('+
-   'select jo.*,o.USER_NAME as STOCK_USER_TEXT from ( '+
-   'select jn.*,n.GUIDE_USER as STOCK_USER,n.STOCK_MNY from ( '+
+   'select jn.*,n.STOCK_USER_TEXT as STOCK_USER_TEXT from ( '+
    'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
    'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
    'select jk.*,k.UNIT_NAME from ('+
@@ -390,8 +389,8 @@ begin
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
-   'left outer join STK_STOCKORDER n on jn.TENANT_ID=n.TENANT_ID and jn.SALES_ID=n.STOCK_ID and jn.SALES_TYPE=n.STOCK_TYPE ) jo '+
-   'left outer join VIW_USERS o on jo.TENANT_ID=o.TENANT_ID and jo.CREA_USER=o.USER_ID ) j order by SEQNO ';
+   'left outer join (select n1.TENANT_ID,n1.STOCK_ID,n2.USER_NAME as STOCK_USER_TEXT from STK_STOCKORDER n1,VIW_USERS n2 where n1.TENANT_ID=n2.TENANT_ID and n1.GUIDE_USER=n2.USER_ID and n1.TENANT_ID='+tenantid+' and n1.STOCK_ID='''+id+''' and STOCK_TYPE=2 ) n on jn.TENANT_ID=n.TENANT_ID and jn.SALES_ID=n.STOCK_ID '+
+   ') j order by SEQNO ';
 end;
 
 procedure TfrmDbOrderList.frfSalesOrderUserFunction(const Name: String;

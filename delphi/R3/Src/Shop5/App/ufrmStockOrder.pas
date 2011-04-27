@@ -1238,7 +1238,7 @@ begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where INDE_ID='''+FDownOrderID+''' ';
-    Factor.Open(Rs);
+    Global.RemoteFactory.Open(Rs);
 
     RsGods := Global.GetZQueryFromName('PUB_GOODSINFO');
     RsUnit := Global.GetZQueryFromName('PUB_MEAUNITS');

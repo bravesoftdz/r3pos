@@ -70,26 +70,25 @@ var
   PlugIn: TPlugIn;
   vData: OleVariant;
   vParamStr: string;
-  Str,SumTab,TENANT_ID,IndeID: string;
+  Str,TENANT_ID,IndeID: string;
 begin
   result:=False;
-  LogFile.AddLogFile(0, '1111'); 
   IndeID:=Params.ParamByName('INDE_ID').AsString;
   TENANT_ID:=Params.ParamByName('TENANT_ID').AsString;
-  LogFile.AddLogFile(0, '2222'); 
+
   //下载Rim订单ID: 1002
   PlugIn := PlugInList.Find(1002);
   try
     vParamStr:=Params.Encode(Params);  //格式化字符串参数列表;
 
-    //执行插件将RIM_SD_CO 对接到 中间表[INF_INDEORDER]:
+    //执行插件将RIM_SD_CO对接到 中间表[INF_INDEORDER]:
     PlugIn.DLLDoExecute(vParamStr,vData);
 
+    //返回订单明细表Data
+    Str:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA '+
+         ' where TENANT_ID='+TENANT_ID+' and INDE_ID='''+IndeID+''' ';
+
     //返回查询结果集:
-    SumTab:='select SECOND_ID,count(*) as resum from INF_INDEDATA where INDE_ID='''+IndeID+''' and coalesce(GODS_ID,'''')='''' group by SECOND_ID';
-    Str:=' select * from (select B.item_id as SECOND_ID,B.item_code as GODS_CODE,B.item_name as GODS_NAME from SD_ITEM B,INF_INDEDATA A '+
-         ' where A.SECOND_ID=B.item_id and A.INDE_ID='''+IndeID+''' and coalesce(GODS_ID,'''')='''')tp fetch first 30 rows only  ';
-    Str:='select AA.*,BB.resum from ('+Str+') AA,('+SumTab+')BB where AA.SECOND_ID=BB.SECOND_ID ';
     SelectSQL.Text:=Str;
     result:=true;
   except

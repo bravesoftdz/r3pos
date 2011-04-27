@@ -51,6 +51,13 @@ type
     function WriteLogFile(s:Pchar):integer;stdcall;
    end;
 
+type
+  TLogRunInfo=class
+  public
+    class procedure LogWrite(LogText: string; LogType: string='');
+  end;
+
+
 //共用变量定义
 var
   GPlugIn:IPlugIn;
@@ -61,7 +68,8 @@ var
 function NewId(id:string=''): string; //获取GUID
 function OpenData(GPlugIn: IPlugIn; Qry: TZQuery; SQL: string): Boolean;    //查询数据
 function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string; //返回某个字段值
-
+procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);  //锁定数据连接
+function GetTickTime: string;  //取当前精确时间
 
 implementation
 
@@ -121,6 +129,67 @@ begin
     end;
   finally
     Rs.Free;
+  end;
+end;
+
+//锁定（解锁）数据库连接
+procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);
+begin
+  try
+    GPlugIn.DbLock(Locked); //缩定连接
+  except
+    on E:Exception do
+    begin
+      if Locked then
+        Raise Exception.Create('锁定数据连接错误：'+E.Message)
+      else
+        Raise Exception.Create('解锁数据连接错误：'+E.Message);
+    end;
+  end;
+end;
+
+//取当前精确时间
+function GetTickTime: string;
+var
+  Hour, Min, Sec, MSec: Word;
+begin
+  DecodeTime(Now(), Hour, Min, Sec, MSec);
+  result:=InttoStr(Hour)+':'+InttoStr(Min)+':'+InttoStr(Sec)+' '+inttoStr(MSec);
+end;
+
+{ TLogRunInfo }
+
+{ 根据文件名[判断是写日志情况，日志文件存放在: C:\Rsp\Log或 E:盘的Rsp\Log  }
+class procedure TLogRunInfo.LogWrite(LogText: string; LogType: string='');
+const {==三处按顺序搜索，若找不到则不日志==}
+  FilePathC='C:\Rsp\Log\debug.log';
+  FilePathD='D:\Rsp\Log\debug.log';
+  FilePathE='E:\Rsp\Log\debug.log';
+var
+  i: integer;
+  FilePath, LogStr: string;
+  StrList: TStringList;
+begin
+  FilePath:='';
+  if FileExists(FilePathC) then FilePath:=FilePathC;
+  if (FilePath='') and (FileExists(FilePathD)) then FilePath:=FilePathD;
+  if (FilePath='') and (FileExists(FilePathE)) then FilePath:=FilePathE;
+  if FilePath<>'' then
+  begin
+    try
+      StrList:=TStringList.Create;
+      StrList.LoadFromFile(FilePath);
+      if StrList.Count>1000 then  //超过1000行则进行批量删除
+      begin
+        for i:=400 to 1 do
+          StrList.Delete(i);  
+      end;
+      LogStr:='类别：'+LogType+'  运行时间：'+GetTickTime+'  '+LogText;
+      StrList.Add(LogStr);
+      StrList.SaveToFile(FilePath);
+    finally
+      StrList.Free;
+    end;
   end;
 end;
 

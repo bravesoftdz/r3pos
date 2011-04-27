@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes,DB, Graphics, Controls, Forms,
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
   cxContainer, cxEdit, cxTextEdit, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
-  ComCtrls,RzTreeVw, StdCtrls, RzButton, ShellApi, cxCalendar,DBGrids;
+  ComCtrls,RzTreeVw, StdCtrls, RzButton, ShellApi, cxCalendar,DBGrids,cxCheckBox,
+  cxMaskEdit,cxButtonEdit,zrComboBoxList;
 const
   RowSelectColor=clAqua;
 type
@@ -134,15 +135,45 @@ begin
       if Components[i] is TcxDateEdit then
          begin
            TcxDateEdit(Components[i]).Properties.OnValidate := DoDatePropertiesValidate;
+           TcxDateEdit(Components[i]).ImeName := '';
            //TcxDateEdit(Components[i]).Properties.DateButtons := [btnToday];
            //TcxDateEdit(Components[i]).Properties.DateOnError := deToday;
          end;
       if Components[i] is TDBGridEh then
          begin
+           TDBGridEh(Components[i]).ImeName := '';
            TDBGridEh(Components[i]).OptionsEh := TDBGridEh(Components[i]).OptionsEh + [dghDialogFind];
            TDBGridEh(Components[i]).Options := TDBGridEh(Components[i]).Options - [dgRowSelect];
            if TDBGridEh(Components[i]).AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh, alopAppendEh] then
               TDBGridEh(Components[i]).AllowedOperations := [alopUpdateEh, alopAppendEh];
+         end;
+      if Components[i] is TcxTextEdit then
+         begin
+           TcxTextEdit(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TcxMemo then
+         begin
+           TcxMemo(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TcxSpinEdit then
+         begin
+           TcxSpinEdit(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TcxComboBox then
+         begin
+           TcxComboBox(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TcxCheckBox then
+         begin
+           TcxCheckBox(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TcxMaskEdit then
+         begin
+           TcxMaskEdit(Components[i]).ImeName := '';
+         end;
+      if Components[i] is TzrComboBoxList then
+         begin
+           TzrComboBoxList(Components[i]).ImeName := '';
          end;
     end;
 

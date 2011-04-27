@@ -893,7 +893,7 @@ var
   dbHelp:IdbHelp;
   rs:TZQuery;
 begin
-{
+
   dbHelp := TdbHelp.Create;
   rs := TZQuery.Create(nil);
   try
@@ -908,7 +908,7 @@ begin
     dbHelp := nil;
     rs.free;
   end;
-  }
+  
 end;
 
 { TSocketService }

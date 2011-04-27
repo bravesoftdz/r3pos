@@ -437,7 +437,7 @@ begin
       SetIniParams('db'+IntToStr(DBID),'provider',Pro);
       SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));
 
-      SetIniParams('db'+IntToStr(DBID),'connstr',GetConnStr);
+      SetIniParams('db'+IntToStr(DBID),'connstr',EncStr(GetConnStr,ENC_KEY));
     end;
     1:Begin
       SetIniParams('db','hostname',Trim(edtRSPHost.Text));

@@ -214,11 +214,10 @@ begin
   if edtPAYM_ID.ItemIndex<0 then Raise Exception.Create('请选择收款方式名称');
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择收支科目名称');
   if edtRECV_DATE.EditValue = null then Raise Exception.Create('请选择收款日期');
-//  if edtBANK_ID.Visible then
-//     begin
-//       if edtBANK_ID.ItemIndex < 0 then Raise Exception.Create('请选择刷卡银行');
-//       if trim(edtBANK_CODE.Text) = '' then Raise Exception.Create('请选择输入银行卡号');
-//     end;
+  if edtBANK_CODE.Visible and (ShopGlobal.GetParameter('BANK_CODE')='1') then
+     begin
+       if trim(edtBANK_CODE.Text) = '' then Raise Exception.Create('请选择输入银行卡号');
+     end;
   WriteToObject(AObj,self);
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;

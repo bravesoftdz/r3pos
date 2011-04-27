@@ -145,6 +145,7 @@ type
     FCanAppend: boolean;
     FInputMode: integer;
     FisZero: boolean;
+    FIsDefault: boolean;
     //end;
     procedure InitGrid;
     procedure IsPresentUpdateData(Sender: TObject;
@@ -171,6 +172,7 @@ type
     procedure SetCanAppend(const Value: boolean);
     procedure SetInputMode(const Value: integer);
     procedure SetisZero(const Value: boolean);
+    procedure SetIsDefault(const Value: boolean);
     { Private declarations }
   protected
     // 最近输的货品
@@ -179,6 +181,8 @@ type
     procedure GodsInfoFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
     procedure BarcodeFilterRecord(DataSet: TDataSet;
+      var Accept: Boolean);
+    procedure GodsDropFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
     procedure SetdbState(const Value: TDataSetState); virtual;
     procedure SetIsAudit(const Value: boolean);virtual;
@@ -195,6 +199,7 @@ type
     AObj:TRecord_;
     //重复条码控制
     fndStr:string;
+    BarCodeInfo:TZQuery;
     function EnCodeBarcode:string;
     function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):real;
     //判断当前记录是否有颜色尺管制
@@ -282,6 +287,7 @@ type
     property HasPrice:boolean read GetHasPrice;
     property CanAppend:boolean read FCanAppend write SetCanAppend;
     property isZero:boolean read FisZero write SetisZero;
+    property IsDefault:boolean read FIsDefault write SetIsDefault;
   end;
 
 implementation
@@ -326,6 +332,7 @@ begin
   gRepeat := false;
   CanAppend := false;
   isZero := false;
+  IsDefault := true;
   inherited;
   Fcid := '';
   Initform(self);
@@ -364,6 +371,8 @@ begin
      end
   else
      InputFlag := 0;
+  fndGODS_ID.OnFilterRecord := GodsDropFilterRecord;
+  BarCodeInfo := Global.GetZQueryFromName('PUB_BARCODE'); 
 end;
 
 destructor TframeOrderForm.Destroy;
@@ -758,7 +767,7 @@ begin
     finally
       AObj.Free;
     end;
-    if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
+    if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) and IsDefault then
        begin
          if not PropertyEnabled then
             begin
@@ -3358,6 +3367,32 @@ begin
   inherited;
   if (Column.FieldName = 'IS_PRESENT') and (Column.Field.AsInteger<>0) then
      Background := clRed;
+end;
+
+procedure TframeOrderForm.SetIsDefault(const Value: boolean);
+begin
+  FIsDefault := Value;
+end;
+
+procedure TframeOrderForm.GodsDropFilterRecord(DataSet: TDataSet;
+  var Accept: Boolean);
+begin
+  Accept :=
+    (pos(fndGODS_ID.Text,DataSet.FieldbyName('GODS_CODE').AsString)>0);
+  if not Accept then
+  Accept := (pos(lowercase(fndGODS_ID.Text),lowercase(DataSet.FieldbyName('GODS_SPELL').AsString))>0);
+  if not Accept then
+  Accept := (pos(fndGODS_ID.Text,DataSet.FieldbyName('BARCODE').AsString)>0);
+{  if not Accept then
+    begin
+      BarcodeInfo.Filtered := false;
+      BarcodeInfo.OnFilterRecord := BarcodeFilterRecord;
+      fndStr := fndGODS_ID.Text;
+      BarcodeInfo.Filtered := true;
+      Accept := BarcodeInfo.IsEmpty;
+    end; }
+  if not Accept then
+  Accept := (pos(fndGODS_ID.Text,DataSet.FieldbyName('GODS_NAME').AsString)>0);
 end;
 
 end.

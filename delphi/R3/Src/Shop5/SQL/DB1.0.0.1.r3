@@ -2631,3 +2631,64 @@ CREATE TABLE STK_LOCUS_FORSTCK(
 );
 
 
+--客户商品销售账
+CREATE TABLE RCK_C_GOODS_DAYS (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店
+	SHOP_ID varchar (13) NOT NULL ,
+        --部门
+	DEPT_ID varchar (12) NOT NULL ,
+        --客户
+	CLIENT_ID varchar (36) NOT NULL ,
+        --销售日期
+	CREA_DATE int NOT NULL ,
+        --客户编码
+	GODS_ID char (36)  NOT NULL ,
+        --批号
+	BATCH_NO varchar (36) NOT NULL ,
+
+--销售类台账	
+        --销售数量<含退货>
+	SALE_AMT decimal(18, 3) ,
+        --可销售额<按零售价>
+	SALE_RTL decimal(18, 3) ,
+        --让利金额<销售让利>
+	SALE_AGO decimal(18, 3) ,
+        --销售金额<末税>
+	SALE_MNY decimal(18, 3) ,
+        --销项税额
+	SALE_TAX decimal(18, 3) ,
+        --销售成本
+	SALE_CST decimal(18, 3) ,
+        --成本单价<移动加权成本>
+	COST_PRICE decimal(18, 6) ,
+        --销售毛利
+	SALE_PRF decimal(18, 3) ,
+	
+	
+        --其中退货数量
+	SALRT_AMT decimal(18, 3) ,
+        --销售金额<末税>
+	SALRT_MNY decimal(18, 3) ,
+        --销项税额
+	SALRT_TAX decimal(18, 3) ,
+        --退货成本
+	SALRT_CST decimal(18, 3) ,
+	
+	
+        --通讯标志
+	COMM varchar (2) NOT NULL DEFAULT '00',
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_RCK_C_G_DAYS PRIMARY KEY   
+	(
+		TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,CREA_DATE,GODS_ID,BATCH_NO
+	) 
+);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_TENANT_ID ON RCK_C_GOODS_DAYS(TENANT_ID);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_TIME_STAMP ON RCK_C_GOODS_DAYS(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_CREA_DATE ON RCK_C_GOODS_DAYS(TENANT_ID,CREA_DATE);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_GODS_ID ON RCK_C_GOODS_DAYS(TENANT_ID,GODS_ID);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_CLIENT_ID ON RCK_C_GOODS_DAYS(TENANT_ID,CLIENT_ID);
+CREATE INDEX IX_RCK_C_GOODS_DAYS_DEPT_ID ON RCK_C_GOODS_DAYS(TENANT_ID,DEPT_ID);

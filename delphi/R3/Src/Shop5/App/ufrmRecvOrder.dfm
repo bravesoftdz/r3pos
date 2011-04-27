@@ -48,6 +48,7 @@ inherited frmRecvOrder: TfrmRecvOrder
             FooterFont.Style = []
             FooterRowCount = 1
             FrozenCols = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -394,6 +395,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         Top = 13
         Width = 131
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
         TabOrder = 8
       end
@@ -404,6 +406,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
         Left = 8
@@ -751,6 +754,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         Top = 58
         Width = 120
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtPAYM_IDPropertiesChange
         TabOrder = 2
@@ -803,6 +807,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtBANK_CODE: TcxTextEdit
         Left = 405
@@ -812,6 +817,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 3
         Visible = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtBANK_CODEExit
       end
     end

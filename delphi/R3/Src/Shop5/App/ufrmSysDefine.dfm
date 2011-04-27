@@ -656,15 +656,15 @@ inherited frmSysDefine: TfrmSysDefine
         Caption = #25209#21457#26102#20215#26684#21462#21521
         TabOrder = 7
         object edtOutLevel1: TcxRadioButton
-          Left = 3
+          Left = 7
           Top = 18
           Width = 143
           Height = 17
-          Caption = #25209#21457#26102#21462#24403#21069#25209#21457#20215#26684
+          Caption = #25209#21457#26102#21462#24403#21069#38144#21806#20215#26684
           TabOrder = 0
         end
         object edtOutLevel2: TcxRadioButton
-          Left = 3
+          Left = 7
           Top = 43
           Width = 143
           Height = 17
@@ -680,6 +680,17 @@ inherited frmSysDefine: TfrmSysDefine
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #26159#21542#33258#21160#23457#26680#38144#21806#31867#30456#20851#21333#25454
         TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object chkBankCode: TcxCheckBox
+        Left = 230
+        Top = 155
+        Width = 171
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.ReadOnly = False
+        Properties.Caption = #21047#21345#26102#24517#39035#36755#20837#38134#34892#21345#21495
+        TabOrder = 9
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

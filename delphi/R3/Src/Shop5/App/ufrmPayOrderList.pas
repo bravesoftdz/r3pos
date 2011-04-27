@@ -268,13 +268,13 @@ begin
    if not ShopGlobal.GetChkRight('21400001',5) then Raise Exception.Create('你没有审核付款单的权限,请和管理员联系.');
     if cdsList.FieldByName('CHK_DATE').AsString<>'' then
        begin
-         if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
+         //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
          if cdsList.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前销售单执行弃审');
          if MessageBox(Handle,'确认弃审当前付款单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        end
     else
        begin
-         if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
+         //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
          if MessageBox(Handle,'确认审核当前付款单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        end;
     try

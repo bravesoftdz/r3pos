@@ -356,7 +356,7 @@ begin
     try
        Global.MoveToRemate;
        Factor.DisConnect;
-       Factor.Initialize(F.ReadString('db'+dbid,'connstr',''));
+       Factor.Initialize(DecStr(F.ReadString('db'+dbid,'connstr',''),ENC_KEY));
        Factor.Connect;
        if dbFactory.CheckVersion('9.9.9.9') then
           begin

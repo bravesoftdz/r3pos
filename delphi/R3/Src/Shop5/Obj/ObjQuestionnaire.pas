@@ -41,10 +41,38 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //所有记录处理完毕后,事务提交以前执行。
+    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
   
 implementation
+
+function TInvestData.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+var
+  Proc:TZProcFactory;
+  ProcClass:TPersistentClass;
+  Params:TftParamList;
+  rs:TZQuery;
+begin
+  //把问答卷结果直接上传到上级企业
+  ProcClass := GetClass('TSyncMessage');
+  if ProcClass=nil then Exit;
+  Proc := TZProcFactoryClass(ProcClass).Create(AGlobal,nil);
+  Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    Params.ParamByName('flag').AsInteger := 1;
+    Params.ParamByName('QUESTION_ID').AsString := FieldbyName('QUESTION_ID').AsString;
+    Params.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
+    if not Proc.Execute(AGlobal,Params) then Raise Exception.Create('同步接口没有正确返回值');
+  finally
+    rs.Free;
+    Params.Free;
+    Proc.Free;
+  end;
+end;
 
 { TQuestionItem }
 

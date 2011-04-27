@@ -111,6 +111,7 @@ type
     edtSTK_AUTO_CHK: TcxCheckBox;
     edtSAL_AUTO_CHK: TcxCheckBox;
     chkLOCUS_NO_MT: TcxCheckBox;
+    chkBankCode: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -243,6 +244,13 @@ begin
         IsStorage.Checked := False
       else if Value = '1' then
         IsStorage.Checked := True;
+    end;
+    if Define = 'BANK_CODE' then
+    begin
+      if Value = '0' then
+        chkBankCode.Checked := False
+      else if Value = '1' then
+        chkBankCode.Checked := True;
     end;
     if Define = 'LOCUS_NO_MT' then
     begin
@@ -435,6 +443,11 @@ begin
   else
     SetValue('CHECKAUDIT', '0');
 
+  if chkBankCode.Checked then
+    SetValue('BANK_CODE', '1')
+  else
+    SetValue('BANK_CODE', '0');
+    
   if chkLOCUS_NO_MT.Checked then
     SetValue('LOCUS_NO_MT', '1')
   else
@@ -671,6 +684,7 @@ begin
   edtSTO_AUTO_CHK.Checked := true;
   edtSTK_AUTO_CHK.Checked := true;
   edtSAL_AUTO_CHK.Checked := true;
+  chkBankCode.Checked := false;
 end;
 
 end.

@@ -1136,12 +1136,12 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           Top = 5
           Width = 554
           Height = 403
-          ActivePage = TabSheet1
+          ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1594,9 +1594,9 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               end
               object RzPanel30: TRzPanel
                 Left = 0
-                Top = 217
+                Top = 211
                 Width = 554
-                Height = 129
+                Height = 135
                 Align = alClient
                 AlignmentVertical = avTop
                 BorderOuter = fsNone
@@ -1609,7 +1609,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   Left = 137
                   Top = 20
                   Width = 294
-                  Height = 89
+                  Height = 95
                   Align = alClient
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1618,7 +1618,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                     Left = 0
                     Top = 0
                     Width = 294
-                    Height = 89
+                    Height = 95
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET
@@ -1634,7 +1634,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   Left = 431
                   Top = 20
                   Width = 103
-                  Height = 89
+                  Height = 95
                   Align = alRight
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1644,7 +1644,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   Left = 20
                   Top = 20
                   Width = 117
-                  Height = 89
+                  Height = 95
                   Align = alLeft
                   BorderOuter = fsNone
                   Color = clWhite
@@ -1655,7 +1655,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 Left = 0
                 Top = 201
                 Width = 554
-                Height = 16
+                Height = 10
                 Align = alTop
                 AlignmentVertical = avTop
                 BorderOuter = fsNone
@@ -1667,32 +1667,17 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   Left = 2
                   Top = 2
                   Width = 295
-                  Height = 12
+                  Height = 6
                   Align = alLeft
                   BorderOuter = fsNone
                   Color = clWhite
                   TabOrder = 0
-                  object Label11: TLabel
-                    Left = 230
-                    Top = 0
-                    Width = 65
-                    Height = 12
-                    Align = alRight
-                    Alignment = taRightJustify
-                    Caption = #38382#21367#35828#26126#65306
-                    Font.Charset = GB2312_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -12
-                    Font.Name = #23435#20307
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
                 end
                 object RzPanel14: TRzPanel
                   Left = 297
                   Top = 2
                   Width = 255
-                  Height = 12
+                  Height = 6
                   Align = alClient
                   BorderOuter = fsNone
                   Color = clWhite
@@ -2596,8 +2581,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
             object RzPanel4: TRzPanel
               Left = 0
               Top = 0
-              Width = 587
-              Height = 442
+              Width = 554
+              Height = 385
               Align = alClient
               BorderInner = fsGroove
               BorderOuter = fsNone
@@ -2607,13 +2592,13 @@ inherited frmQuestionnaire: TfrmQuestionnaire
               object WebBrowser1: TWebBrowser
                 Left = 2
                 Top = 2
-                Width = 583
-                Height = 438
+                Width = 550
+                Height = 381
                 Align = alClient
                 DragMode = dmAutomatic
                 TabOrder = 0
                 ControlData = {
-                  4C000000413C0000452D00000000000000000000000000000000000000000000
+                  4C000000D8380000612700000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000

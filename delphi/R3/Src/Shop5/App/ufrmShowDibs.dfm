@@ -1,9 +1,9 @@
 inherited frmShowDibs: TfrmShowDibs
-  Left = 318
+  Left = 319
   Top = 0
   BorderStyle = bsNone
   Caption = #32467#31639#23545#35805#26694
-  ClientHeight = 711
+  ClientHeight = 522
   ClientWidth = 571
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -14,7 +14,7 @@ inherited frmShowDibs: TfrmShowDibs
     Left = 0
     Top = 0
     Width = 571
-    Height = 711
+    Height = 522
     Align = alClient
     BorderInner = fsFlatBold
     BorderOuter = fsFlatRounded
@@ -402,7 +402,7 @@ inherited frmShowDibs: TfrmShowDibs
     end
     object Panel1: TPanel
       Left = 7
-      Top = 590
+      Top = 401
       Width = 557
       Height = 114
       Align = alBottom
@@ -450,6 +450,7 @@ inherited frmShowDibs: TfrmShowDibs
         Style.Font.Style = [fsBold]
         TabOrder = 0
         ImeMode = imClose
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyDown = edtTakeFeeKeyDown
         OnKeyPress = edtTakeFeeKeyPress
       end

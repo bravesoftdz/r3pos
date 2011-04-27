@@ -1,14 +1,15 @@
 unit uMsgFactory;
 
 interface
-uses windows,SysUtils,Classes,EncdDecd,ZLib,WsdlComm,ZDataSet,Forms,SoapInvestigate,SoapGetMessage,Variants,DB,uFnUtil,
+uses windows,SysUtils,Classes,EncdDecd,ZLib,WsdlComm,ZDataSet,Forms,SoapInvestigate,SoapGetMessage,SoapRimSuggestionService,SoapRimImpeachService,Variants,DB,uFnUtil,
   xmldom,
   XMLIntf,
   msxmldom,
   XMLDoc;
 procedure DoSyncMessage(tid,lscode:string);
 procedure DoSyncQuestion(tid,lscode:string);
-procedure DoSaveQuestion(tid,qid:string);
+procedure DoSaveQuestion(tid,lscode,qid:string);
+procedure DoSaveImpeach(tid,lscode,rid:string);
 implementation
 procedure DoSyncMessage(tid,lscode:string);
 var
@@ -21,6 +22,11 @@ var
  rs:TZQuery;
 begin
    RimCaTenant := GetRimInfo(tid,lscode);
+   if RimCaTenant.CustId='' then
+     begin
+       GPlugIn.WriteLogFile(Pchar('在RIM中没找到'+lscode));
+       Exit;
+     end;
    txt:=
    '<MESSAGE_INFO_IN> '+
 	 '<MESSAGE_INFO '+
@@ -159,7 +165,7 @@ begin
       h.FieldByName('QUESTION_TITLE').AsString := title;
       h.FieldByName('ANSWER_FLAG').AsInteger := strtoint(IS_REPEAT);
       h.FieldByName('REMARK').AsString := P1.Attributes['NOTE'];
-      h.FieldByName('COMM_ID').AsString := id;
+      h.FieldByName('COMM_ID').AsString := V.Attributes['VOLUME_ID'];
       for i:=0 to  P1.ChildNodes.Count-1 do
        begin
          V := P1.ChildNodes[i];
@@ -179,7 +185,7 @@ begin
          d.FieldByName('QUESTION_ITEM_TYPE').AsString := inttostr(StrtoIntDef(V.Attributes['SUBJECT_TYPE'],0)+1);
          d.FieldByName('QUESTION_INFO').AsString := V.Attributes['SUBJECT_TITLE'];
          d.FieldByName('QUESTION_OPTIONS').AsString := ops;
-         d.FieldByName('COMM_ID').AsString := V.Attributes['VOLUME_ID'];
+         d.FieldByName('COMM_ID').AsString := V.Attributes['SUBJECT_ID'];
          d.Post;
        end;
        h.FieldByName('QUESTION_ITEM_AMT').AsInteger := d.RecordCount;
@@ -187,7 +193,7 @@ begin
        if GPlugIn.UpdateBatch(h.Delta,'TQuestion')<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
        if GPlugIn.UpdateBatch(d.Delta,'TQuestionItem')<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
        if GPlugIn.ExecSQL(
-           pchar('insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM,TIME_STAMP) value('+tid+','''+gid+''','''+tid+'0001'',''1'',''2'',''00'','+inttostr(trunc((now()-40542.0)*86400))+')')
+           pchar('insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM_ID,COMM,TIME_STAMP) value('+tid+','''+gid+''','''+tid+'0001'',''1'',''2'','''+id+''',''00'','+inttostr(trunc((now()-40542.0)*86400))+')')
                ,iret)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
        if GPlugIn.CommitTrans<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
      except
@@ -214,8 +220,13 @@ var
   iRet:OleVariant;
 begin
   RimCaTenant := GetRimInfo(tid,lscode);
+  if RimCaTenant.CustId='' then
+     begin
+       GPlugIn.WriteLogFile(pchar('在RIM中没找到'+lscode));
+       Exit;
+     end;
   txt:='<INVESTIGATE_INFO_IN> '+
-       '   <INVESTIGATE_INFO '+
+       '   <INVESTIGATE_INFO  '+
        '    CUST_ID='+QuotedStr(RimCaTenant.CustId)+
        '    LOGIN_DATE ='+QuotedStr(FormatDateTime('YYYYMMDD',Now))+
        '    COM_ID ='+QuotedStr(RimCaTenant.ComId)+
@@ -267,7 +278,7 @@ begin
     xmlDoc.free;
   end;
 end;
-procedure DoSaveQuestion(tid,qid:string);
+procedure DoSaveQuestion(tid,lscode,qid:string);
 var
   txt:widestring;
   XMLDoc:TXMLDocument;
@@ -277,55 +288,65 @@ var
   IsHas:Boolean;
   sRet:OleVariant;
   rs:TZQuery;
+  v1,v2:TStringList;
+  RimCaTenant:TRimCaTenant;
 begin
+  RimCaTenant := GetRimInfo(tid,lscode);
+  if RimCaTenant.CustId='' then Exit;
   rs := TZQuery.Create(nil);
+  v1 := TStringList.Create;
+  v2 := TStringList.Create;
   try
-  if GPlugIn.Open(pchar(''),sRet)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+  if GPlugIn.Open(pchar(
+   'select D.COMM_ID as INVEST_ID,A.COMM_ID as VOLUME_ID,B.COMM_ID as SUBJECT_ID,C.ANSWER_VALUE,C.ANSWER_DISPLAY from MSC_QUESTION A,MSC_QUESTION_ITEM B,MSC_INVEST_ANSWER C,MSC_INVEST_LIST D where '+
+   ' A.TENANT_ID=B.TENANT_ID and A.QUESTION_ID=B.QUESTION_ID '+
+   ' and '+
+   ' A.TENANT_ID=C.TENANT_ID and A.QUESTION_ID=C.QUESTION_ID '+
+   ' and '+
+   ' A.TENANT_ID=D.TENANT_ID and A.QUESTION_ID=D.QUESTION_ID and C.SHOP_ID=D.SHOP_ID '+
+   ' and '+
+   ' C.SHOP_ID='''+tid+'0001'' and A.TENANT_ID='+tid+' and A.QUESTION_ID='''+qid+'''')
+   ,sRet)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
   rs.Data := sRet;
   txt:='<?xml version=''1.0''	encoding=''gb2312'' standalone=''no''?> '+
        '<VOLUME_INFO_IN> '+
        '   <VOLUME_INFO '+
-       '    INVEST_ID ='+QuotedStr(ID)+
-       '    VOLUME_ID ='+QuotedStr(VolumId)+
+       '    INVEST_ID ='+QuotedStr(rs.FieldbyName('INVEST_ID').AsString)+
+       '    VOLUME_ID ='+QuotedStr(rs.FieldbyName('VOLUME_ID').AsString)+
        '    INVEST_DATE ='+QuotedStr(FormatDateTime('YYYYMMDD',Now))+
        '    INVEST_TIME ='+QuotedStr(FormatDateTime('HHNNSS',Now))+
        '    NOTE ='+QuotedStr('')+
        '    IP ='+QuotedStr('')+
-       '    CUST_ID ='+QuotedStr(sys_CUST_ID)+
+       '    CUST_ID ='+QuotedStr(RimCaTenant.CustId)+
        '    > ';
   IsHas := false;
-  SUBJECT.First;
-  while not SUBJECT.Eof do
+  rs.First;
+  while not rs.Eof do
     begin
-      OPTIONS.Filtered := false;
-      OPTIONS.Filter := 'SUBJECT_ID='''+SUBJECT.FieldbyName('SUBJECT_ID').AsString+''' and IS_SEL=1';
-      OPTIONS.Filtered := true;
-      if not OPTIONS.IsEmpty then
-      begin
-        txt := txt +
-          '<SUBJECT_INFO SUBJECT_ID='+QuotedStr(SUBJECT.FieldbyName('SUBJECT_ID').AsString)+'>';
-        OPTIONS.First;
-        while not OPTIONS.Eof do
-          begin
-            IsHas := true;
-            txt := txt +
-              '<OPTION_INFO OPTION_ID='+QuotedStr(OPTIONS.FieldbyName('OPTION_ID').AsString)+' OPTION_TITLE='+QuotedStr(OPTIONS.FieldbyName('OPTION_TITLE').AsString)+'/>';
-            OPTIONS.Next;
-          end;
-        txt := txt +
-          '</SUBJECT_INFO>';
-      end;
-      SUBJECT.Next;
+      txt := txt +
+        '<SUBJECT_INFO SUBJECT_ID='+QuotedStr(rs.FieldbyName('SUBJECT_ID').AsString)+'>';
+      V1.CommaText := rs.FieldbyName('ANSWER_VALUE').AsString;
+      V2.CommaText := rs.FieldbyName('ANSWER_DISPLAY').AsString;
+      for i:=0 to V1.Count -1 do
+        begin
+         txt := txt +
+            '<OPTION_INFO OPTION_ID='+QuotedStr(V1[I])+' OPTION_TITLE='+QuotedStr(V2[I])+'/>';
+        end;
+      txt := txt +
+        '</SUBJECT_INFO>';
+      rs.Next;
     end;
   txt := txt +
        '  </VOLUME_INFO> '+
        ' </VOLUME_INFO_IN> ';
   finally
     rs.free;
+    v1.free;
+    v2.free;
   end;
   XMLDoc:=TXMLDocument.Create(Application);
   try
-     XMLDoc.XML.Text :=decodeZipBase64(GetInvestigateService(true,sys_IntfUrl+'/Investigate?wsdl',nil).saveVolume(txt));
+     XMLDoc.XML.Text :=decodeZipBase64(GetInvestigateService(true,url+'/Investigate?wsdl',nil).saveVolume(txt));
      XMLDoc.Active :=true;
      Node :=  XMLDoc.DocumentElement;
      P1 := Node.ChildNodes.First;
@@ -336,6 +357,65 @@ begin
         Raise Exception.Create(Msg);
   finally
     XMLDoc.free;
+  end;
+end;
+procedure DoSaveImpeach(tid,lscode,rid:string);
+var txt:widestring;
+  XMLDocument1:TXMLDocument;
+  Node,P1,V:IXMLNode;
+  ErrorInfo,msg:string;
+  i:integer;
+  rs:TZQuery;
+  sRet:OleVariant;
+  RimCaTenant:TRimCaTenant;
+begin
+  RimCaTenant := GetRimInfo(tid,lscode);
+  if RimCaTenant.CustId='' then Exit;
+  rs := TZQuery.Create(nil);
+  try
+  if GPlugIn.Open(pchar('select CONTENT,IMPEACH_CLASS,IS_REPEAT,IS_URGENCY,IS_REPLY from MSC_IMPEACH where TENANT_ID='+tid+' and ROWS_ID='''+rid+'''')
+   ,sRet)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+  rs.Data := sRet;
+  if rs.IsEmpty then Exit;
+  if rs.FieldbyName('IMPEACH_CLASS').AsString = '1' then
+  txt:='<?xml version=''1.0''	encoding=''gb2312'' standalone=''no''?> '+
+       '<IMPEACH_ADD_IN> '+
+       '   <IMPEACH '+
+       '    CUST_ID='+QuotedStr(RimCaTenant.CustId)+
+       '    IS_REPEAT ='+QuotedStr(rs.FieldbyName('IS_REPEAT').AsString)+
+       '    IS_URGENCY ='+QuotedStr(rs.FieldbyName('IS_URGENCY').AsString)+
+       '    IS_REPLY ='+QuotedStr(rs.FieldbyName('IS_REPLY').AsString)+
+       '     ><CONTENT>'+QuotedStr(rs.FieldbyName('CONTENT').AsString)+'</CONTENT>'+
+       '  </IMPEACH> '+
+       ' </IMPEACH_ADD_IN> '
+  else
+  txt:='<?xml version=''1.0''	encoding=''gb2312'' standalone=''no''?> '+
+       '<SUGGESTION_ADD_IN> '+
+       '   <SUGGESTION '+
+       '    CUST_ID='+QuotedStr(RimCaTenant.CustId)+
+       '     ><CONTENT>'+QuotedStr(rs.FieldbyName('CONTENT').AsString)+'</CONTENT>'+
+       '  </SUGGESTION> '+
+       ' </SUGGESTION_ADD_IN> ';
+  XMLDocument1:=TXMLDocument.Create(Application);
+  try
+     if rs.FieldbyName('IMPEACH_CLASS').AsString = '1' then
+        XMLDocument1.XML.Text :=decodeZipBase64(GetRimImpeachService(true,url+'/RimImpeachService?wsdl',nil).AddImpeach(txt))
+     else
+        XMLDocument1.XML.Text :=decodeZipBase64(GetRimSuggestionService(true,url+'/RimSuggestionService?wsdl',nil).AddSuggestion(txt));
+     XMLDocument1.Active :=true;
+
+     Node :=  XMLDocument1.DocumentElement;
+     P1 := Node.ChildNodes.First;
+     V := P1.ChildNodes.First;
+     ErrorInfo:= V.Attributes['MSG'];
+     msg:=pchar('保存建议表扬：'+ErrorInfo);
+     if V.Attributes['REC_ACK']<>'0000' then// 返回 0000 才是执行成功
+        Raise Exception.Create(Msg);
+  finally
+    XMLDocument1.free;
+  end;
+  finally
+    rs.free;
   end;
 end;
 end.

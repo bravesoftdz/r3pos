@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 232
-      ActivePage = tabProperty
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -291,6 +289,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Height = 20
               Properties.OnChange = edtSMALLTO_CALCPropertiesChange
               TabOrder = 2
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnKeyPress = edtNEW_OUTPRICEKeyPress
             end
             object edtBARCODE2: TcxTextEdit
@@ -299,6 +298,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 160
               Height = 20
               TabOrder = 3
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtMY_OUTPRICE1: TcxTextEdit
               Left = 341
@@ -306,6 +306,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 100
               Height = 20
               TabOrder = 4
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnExit = edtMY_OUTPRICE1Exit
               OnKeyPress = edtMY_OUTPRICE1KeyPress
             end
@@ -317,6 +318,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Properties.DisplayUnchecked = 'False'
               Properties.Caption = #35774#20026#31649#29702#21333#20301
               TabOrder = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnClick = edtDefault1Click
             end
           end
@@ -438,6 +440,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Height = 20
               Properties.OnChange = edtBIGTO_CALCPropertiesChange
               TabOrder = 2
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnKeyPress = edtNEW_OUTPRICEKeyPress
             end
             object edtBARCODE3: TcxTextEdit
@@ -446,6 +449,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 160
               Height = 20
               TabOrder = 3
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtMY_OUTPRICE2: TcxTextEdit
               Left = 342
@@ -453,6 +457,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Width = 100
               Height = 20
               TabOrder = 4
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnExit = edtMY_OUTPRICE2Exit
               OnKeyPress = edtMY_OUTPRICE2KeyPress
             end
@@ -464,6 +469,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Properties.DisplayUnchecked = 'False'
               Properties.Caption = #35774#20026#31649#29702#21333#20301
               TabOrder = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               OnClick = edtDefault2Click
             end
           end
@@ -497,6 +503,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
             FrozenCols = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -1079,6 +1086,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Width = 442
           Height = 101
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
     end
@@ -1415,6 +1423,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         TabStop = False
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_NAME: TcxTextEdit
         Left = 86
@@ -1423,6 +1432,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtGODS_NAMEPropertiesChange
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_CODE: TcxTextEdit
         Left = 86
@@ -1430,6 +1440,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtGODS_CODEKeyPress
       end
       object edtNEW_OUTPRICE: TcxTextEdit
@@ -1439,6 +1450,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtNEW_OUTPRICEPropertiesChange
         TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtNEW_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
@@ -1449,6 +1461,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtMY_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
@@ -1505,6 +1518,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtBARCODE1KeyPress
       end
       object edtNEW_INPRICE: TcxTextEdit
@@ -1514,6 +1528,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtNEW_INPRICEPropertiesChange
         TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
       object edtPROFIT_RATE: TcxMaskEdit
@@ -1523,6 +1538,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtPROFIT_RATEPropertiesChange
         TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtPROFIT_RATEKeyPress
       end
       object edtNEW_LOWPRICE: TcxTextEdit
@@ -1532,6 +1548,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
         TabOrder = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtNEW_LOWPRICEExit
         OnKeyPress = edtNEW_LOWPRICEKeyPress
       end

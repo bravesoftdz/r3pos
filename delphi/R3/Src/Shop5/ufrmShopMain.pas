@@ -948,7 +948,7 @@ begin
   if not Visible then Exit;
   if not Factor.Connected then Exit;
   if not MsgFactory.Loaded or (
-     (MsgFactory.Count=0) and ((Timer1.Tag mod 120)=0)
+     (MsgFactory.UnRead=0) and ((Timer1.Tag mod 120)=0)
      )
   then
      MsgFactory.Load;

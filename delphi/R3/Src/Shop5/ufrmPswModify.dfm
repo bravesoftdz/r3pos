@@ -167,6 +167,7 @@ object frmPswModify: TfrmPswModify
     Properties.ReadOnly = True
     TabOrder = 5
     Text = 'edtACOUNT'
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
   end
   object edtOLDPSW: TcxTextEdit
     Left = 193
@@ -177,6 +178,7 @@ object frmPswModify: TfrmPswModify
     Properties.MaxLength = 8
     TabOrder = 0
     Text = 'edtOLDPSW'
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
   end
   object edtNEWPSW: TcxTextEdit
     Left = 193
@@ -187,6 +189,7 @@ object frmPswModify: TfrmPswModify
     Properties.MaxLength = 8
     TabOrder = 1
     Text = 'edtNEWPSW'
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
   end
   object edtCOFPSW: TcxTextEdit
     Left = 193
@@ -197,6 +200,7 @@ object frmPswModify: TfrmPswModify
     Properties.MaxLength = 8
     TabOrder = 2
     Text = 'edtCOFPSW'
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
   end
   object cxBtnOk: TRzBitBtn
     Left = 156

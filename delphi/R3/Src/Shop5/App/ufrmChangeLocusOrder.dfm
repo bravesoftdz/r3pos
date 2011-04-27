@@ -7,10 +7,10 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 819
-    Height = 508
+    Width = 811
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 809
+      Width = 801
       Height = 97
       Enabled = False
       TabStop = True
@@ -254,8 +254,8 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 399
-      Width = 809
+      Top = 388
+      Width = 801
       Height = 61
       TabOrder = 2
       object Label4: TLabel
@@ -407,8 +407,8 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 136
-      Width = 809
-      Height = 263
+      Width = 801
+      Height = 252
       Color = clWhite
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
@@ -515,16 +515,16 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 102
-      Width = 809
+      Width = 801
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 460
-      Width = 809
+      Top = 449
+      Width = 801
     end
     inherited rzHelp: TRzPanel
-      Top = 484
-      Width = 809
+      Top = 473
+      Width = 801
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

@@ -369,6 +369,7 @@ object frmDBSetup: TfrmDBSetup
       Top = 23
       Width = 125
       Height = 20
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.DropDownListStyle = lsFixedList
       Properties.Items.Strings = (
         'CS'#27169#24335
@@ -461,6 +462,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 1
           Width = 125
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.DropDownListStyle = lsFixedList
           Properties.Items.Strings = (
             'Ms SQL Server'
@@ -476,6 +478,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 125
           Height = 20
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = edtDbNameChange
         end
         object edtDatabase: TcxTextEdit
@@ -484,6 +487,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 125
           Height = 20
           TabOrder = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = edtDbNameChange
         end
         object edtUser: TcxTextEdit
@@ -492,6 +496,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 125
           Height = 20
           TabOrder = 3
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = edtDbNameChange
         end
         object edtUserPw: TcxTextEdit
@@ -501,6 +506,7 @@ object frmDBSetup: TfrmDBSetup
           Height = 20
           Properties.EchoMode = eemPassword
           TabOrder = 4
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = edtDbNameChange
         end
         object edtDBID: TcxSpinEdit
@@ -509,6 +515,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 125
           Height = 20
           TabOrder = 6
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
       object TPage
@@ -542,6 +549,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 124
           Height = 20
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtRSPPort: TcxTextEdit
           Left = 151
@@ -549,6 +557,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 124
           Height = 20
           TabOrder = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnKeyPress = edtRSPPortKeyPress
         end
         object sedtRSPDBID: TcxSpinEdit
@@ -557,6 +566,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 124
           Height = 20
           TabOrder = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
     end

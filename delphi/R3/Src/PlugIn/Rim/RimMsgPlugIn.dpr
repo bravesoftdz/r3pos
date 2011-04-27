@@ -13,7 +13,9 @@ library RimMsgPlugIn;
 uses
   SysUtils,
   Classes,
-  ZBase,ZDataSet,
+  ZBase,
+  ZDataSet,
+  IniFiles,
   WsdlComm in 'Wsdl\WsdlComm.pas',
   SoapCheckCustCo in 'Wsdl\SoapCheckCustCo.pas',
   SoapConsumerScoreService in 'Wsdl\SoapConsumerScoreService.pas',
@@ -32,7 +34,9 @@ uses
   SoapRimImpeachService in 'Wsdl\SoapRimImpeachService.pas',
   SoapRimSuggestionService in 'Wsdl\SoapRimSuggestionService.pas',
   SoapUserRegister in 'Wsdl\SoapUserRegister.pas',
-  uMsgFactory in 'uMsgFactory.pas';
+  uMsgFactory in 'uMsgFactory.pas',
+  ObjSyncMessage in '..\obj\ObjSyncMessage.pas',
+  ufrmRimConfig in 'ufrmRimConfig.pas' {frmRimConfig};
 
 {$R *.res}
 //RSP装载插件时调用，传插件可访问的服务接口
@@ -89,12 +93,10 @@ begin
            end;
          end
       else
-      case ParamList.ParamByName('flag').AsInteger of
-      0:begin //提交问卷
+        case ParamList.ParamByName('flag').AsInteger of
+        0:DoSaveQuestion(ParamList.ParamByName('TENANT_ID').asString,ParamList.ParamByName('LICENSE_CODE').asString,ParamList.ParamByName('QUESTION_ID').asString);
+        1:DoSaveImpeach(ParamList.ParamByName('TENANT_ID').asString,ParamList.ParamByName('LICENSE_CODE').asString,ParamList.ParamByName('ROWS_ID').asString);
         end;
-      1:begin //同步投诉
-        end;
-      end;
     finally
       F.free;
       ParamList.Free;
@@ -113,6 +115,14 @@ function ShowPlugin:Integer; stdcall;
 begin
   try
     //开始显示主界面窗体
+    with TfrmRimConfig.Create(nil) do
+      begin
+        try
+          ShowModal;
+        finally
+          free;
+        end;
+      end;
     result := 0;
   except
     on E:Exception do

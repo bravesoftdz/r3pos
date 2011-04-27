@@ -1183,7 +1183,7 @@ begin
   result := TdbResolver.Create;
   try
     result.dbid := dbid;
-    result.Initialize(F.ReadString('db'+inttostr(dbid),'connstr',''));
+    result.Initialize(DecStr(F.ReadString('db'+inttostr(dbid),'connstr',''),ENC_KEY));
     result.Connect;
   except
     result.Free;

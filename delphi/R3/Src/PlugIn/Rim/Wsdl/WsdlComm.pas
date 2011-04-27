@@ -119,6 +119,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
+    rs.SQL.Text := 'select ORIGN_ID';
   finally
     rs.free;
   end;

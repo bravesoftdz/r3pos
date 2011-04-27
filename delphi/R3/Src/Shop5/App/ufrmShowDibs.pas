@@ -712,6 +712,7 @@ var
   CardNoReset:TCardNoReset;
 begin
   if mny=0 then Raise Exception.Create('请输入刷卡金额后再按B健..');
+  if ShopGlobal.GetParameter('BANK_CODE')<>'1' then Exit; 
   CardNoReset := TfrmCardNoInput.GetBank(self);
   if CardNoReset.ret then
      begin

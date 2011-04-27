@@ -65,12 +65,14 @@ inherited frmPriceOrder: TfrmPriceOrder
         Width = 191
         Height = 20
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtBEGIN_DATE: TcxDateEdit
         Left = 250
         Top = 6
         Width = 107
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 0
       end
       object edtEND_DATE: TcxDateEdit
@@ -78,6 +80,7 @@ inherited frmPriceOrder: TfrmPriceOrder
         Top = 28
         Width = 107
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 2
       end
       object edtBEGIN_TIME: TcxTimeEdit
@@ -87,6 +90,7 @@ inherited frmPriceOrder: TfrmPriceOrder
         Height = 20
         EditValue = 0.000000000000000000
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtEND_TIME: TcxTimeEdit
         Left = 360
@@ -95,12 +99,14 @@ inherited frmPriceOrder: TfrmPriceOrder
         Height = 20
         EditValue = 0.999988425925926d
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPRICE_ID: TcxComboBox
         Left = 514
         Top = 6
         Width = 119
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 5
       end
@@ -212,6 +218,7 @@ inherited frmPriceOrder: TfrmPriceOrder
         Width = 105
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
         Tag = 1
@@ -220,6 +227,7 @@ inherited frmPriceOrder: TfrmPriceOrder
         Width = 105
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited DBGridEh1: TDBGridEh

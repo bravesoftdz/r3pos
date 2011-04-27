@@ -1024,6 +1024,14 @@ item: Install File
   EXE Type=32
 end
 item: Install File
+  Source=s1_32.dll
+  Destination=%MAINDIR%\Pic32.dll
+  Flags=0000000010000010
+  File Size=161280
+  File Date=20040816 162508
+  EXE Type=32
+end
+item: Install File
   Source=Icon16.dll
   Destination=%MAINDIR%\Icon16.dll
   Flags=0000000010000010

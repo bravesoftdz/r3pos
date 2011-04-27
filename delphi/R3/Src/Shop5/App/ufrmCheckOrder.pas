@@ -47,6 +47,8 @@ type
     procedure edtTableAfterDelete(DataSet: TDataSet);
     procedure DBGridEh1Columns6UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure Lbl_LinkCheckGoodClick(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     { Private declarations }
     w:integer;
@@ -163,6 +165,7 @@ end;
 procedure TfrmCheckOrder.FormCreate(Sender: TObject);
 begin
   inherited;
+  IsDefault := false;
   isZero := true;
   gRepeat := false;  //≈–∂œ‘ –Ì÷ÿ∏¥
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -1075,6 +1078,22 @@ begin
   inherited GodsToBatchNo(id);
   //2011.04.02 Add À¢–¬’À√Êø‚¥Ê
   RefreshRckAMount;
+end;
+
+procedure TfrmCheckOrder.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if ((Column.FieldName='RCK_AMOUNT')
+     or
+     (Column.FieldName='AMOUNT'))
+     and
+     (edtTable.FieldbyName('RCK_AMOUNT').asFloat<>edtTable.FieldbyName('AMOUNT').asFloat)
+  then
+     begin
+       AFont.Color := clRed;
+     end;
 end;
 
 end.

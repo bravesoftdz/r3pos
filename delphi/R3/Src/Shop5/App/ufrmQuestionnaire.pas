@@ -66,7 +66,6 @@ type
     RzPanel32: TRzPanel;
     RzPanel11: TRzPanel;
     RzPanel13: TRzPanel;
-    Label11: TLabel;
     RzPanel14: TRzPanel;
     labREMARK: TLabel;
     RzPanel33: TRzPanel;

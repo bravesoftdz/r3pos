@@ -20,10 +20,10 @@ implementation
 
 function TSysDefine.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-  if FieldbyName('DEFINE').AsString <> 'USING_DATE' then
-  begin
-  AGlobal.ExecSQL('delete from SYS_DEFINE where DEFINE=:OLD_DEFINE and COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:OLD_COMP_ID and COMP_TYPE=2)',self);
-  end;
+//  if FieldbyName('DEFINE').AsString <> 'USING_DATE' then
+//  begin
+//  AGlobal.ExecSQL('delete from SYS_DEFINE where DEFINE=:OLD_DEFINE and COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:OLD_COMP_ID and COMP_TYPE=2)',self);
+//  end;
   Result := True;
 end;
 

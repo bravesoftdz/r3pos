@@ -120,7 +120,7 @@ begin
   end;
 
   ANEWPSW := UpperCase(edtNEWPSW.Text);
-  if lowercase(userid)<>'admin' then
+  if (lowercase(userid)<>'admin') and (lowercase(userid)<>'system') then
     sSqlTxt := 'update CA_USERS set PASS_WRD=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'USER_ID=''' + USERID + ''''

@@ -577,13 +577,13 @@ begin
   if dbState <> dsBrowse then SaveOrder;
   if IsAudit then
      begin
-       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
+//       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
        if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前进货单执行弃审');
        if MessageBox(Handle,'确认弃审当前进货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
   else
      begin
-       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
+//       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
        if MessageBox(Handle,'确认审核当前进货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
@@ -1237,7 +1237,7 @@ begin
 
   try
     Rs:=TZQuery.Create(nil);
-    Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where INDE_ID='''+FDownOrderID+''' ';
+    Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and INDE_ID='''+FDownOrderID+''' ';
     Global.RemoteFactory.Open(Rs);
 
     RsGods := Global.GetZQueryFromName('PUB_GOODSINFO');

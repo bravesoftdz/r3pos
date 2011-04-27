@@ -326,7 +326,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,2);
     try
@@ -417,7 +417,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,1);
     try
@@ -658,7 +658,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,1);
     try
@@ -898,7 +898,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,1);
     try
@@ -983,7 +983,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,2);
     try
@@ -1056,7 +1056,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,2);
     try
@@ -1146,7 +1146,7 @@ begin
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(10000);
+  rio := CreateRio(20000);
   try
     h := SendHeader(rio,2);
     try
@@ -1283,7 +1283,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -1448,7 +1448,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -1572,7 +1572,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -1731,7 +1731,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -1859,7 +1859,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -2057,7 +2057,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -2181,7 +2181,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try
@@ -2418,7 +2418,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(60000);
+  rio := CreateRio(120000);
   try
     h := SendHeader(rio,2);
     try

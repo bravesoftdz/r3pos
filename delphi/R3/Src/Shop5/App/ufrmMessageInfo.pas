@@ -90,7 +90,7 @@ procedure TfrmMessageInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  edtMSG_CLASS.ItemIndex := TdsItems.FindItems(edtMSG_CLASS.Properties.Items,'CODE_ID',MSG_CLASS_TYPE);
+  edtMSG_CLASS.ItemIndex := TdsItems.FindItems(edtMSG_CLASS.Properties.Items,'CODE_ID',IntToStr(MSG_CLASS_TYPE));
   edtISSUE_DATE.Date := Global.SysDate;
   edtEND_DATE.Date := Global.SysDate;
   edtMSG_SOURCE.Text := Global.SHOP_NAME;

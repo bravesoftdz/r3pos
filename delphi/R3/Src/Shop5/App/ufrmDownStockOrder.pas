@@ -14,7 +14,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzButton, cxControls, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, StdCtrls, DB, 
   ExtCtrls, RzPanel, DBClient, Grids, DBGridEh, cxButtonEdit, zrComboBoxList,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, zBase, DBGrids;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, zBase, DBGrids, Buttons;
 
 type
   TfrmDownStockOrder = class(TfrmBasic)

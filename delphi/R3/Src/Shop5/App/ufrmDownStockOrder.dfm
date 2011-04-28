@@ -1,10 +1,10 @@
 inherited frmDownStockOrder: TfrmDownStockOrder
-  Left = 385
-  Top = 145
+  Left = 198
+  Top = 115
   BorderStyle = bsDialog
   Caption = #21040#36135#30830#35748
-  ClientHeight = 329
-  ClientWidth = 472
+  ClientHeight = 330
+  ClientWidth = 506
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -12,8 +12,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 33
-    Width = 472
-    Height = 254
+    Width = 506
+    Height = 250
     Align = alClient
     BorderInner = fsFlat
     BorderOuter = fsLowered
@@ -26,8 +26,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object DBGridEh1: TDBGridEh
       Left = 3
       Top = 3
-      Width = 466
-      Height = 248
+      Width = 500
+      Height = 244
       Align = alClient
       AutoFitColWidths = True
       DataSource = Ds
@@ -75,7 +75,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           FieldName = 'TENANT_ID'
           Footers = <>
           Title.Caption = #20379#24212#21830
-          Width = 150
+          Width = 165
         end
         item
           EditButtons = <>
@@ -96,14 +96,14 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           FieldName = 'NEED_AMT'
           Footers = <>
           Title.Caption = #38656#27714#25968#37327
-          Width = 63
+          Width = 62
         end>
     end
   end
   object TitlePanel: TPanel [1]
     Left = 0
     Top = 0
-    Width = 472
+    Width = 506
     Height = 33
     Align = alTop
     BevelOuter = bvNone
@@ -124,7 +124,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel2: TBevel
       Left = 0
       Top = 31
-      Width = 472
+      Width = 506
       Height = 2
       Align = alBottom
     end
@@ -144,9 +144,9 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   end
   object BottonPanel: TPanel [2]
     Left = 0
-    Top = 287
-    Width = 472
-    Height = 42
+    Top = 283
+    Width = 506
+    Height = 47
     Align = alBottom
     BevelOuter = bvNone
     BorderWidth = 1
@@ -154,13 +154,13 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel1: TBevel
       Left = 1
       Top = 1
-      Width = 470
+      Width = 504
       Height = 2
       Align = alTop
     end
     object btnOK: TRzBitBtn
       Left = 293
-      Top = 9
+      Top = 12
       Width = 79
       Caption = #21040#36135#30830#35748'(&O)'
       Color = 15791348
@@ -172,7 +172,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     end
     object RzBitBtn1: TRzBitBtn
       Left = 376
-      Top = 9
+      Top = 12
       Width = 64
       Caption = #21462#28040'(&C)'
       Color = 15791348

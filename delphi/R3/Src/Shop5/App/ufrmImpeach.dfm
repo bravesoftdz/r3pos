@@ -190,7 +190,6 @@ inherited frmImpeach: TfrmImpeach
             AutoFitColWidth = True
             ShowButton = True
             LocateStyle = lsDark
-            Filter = 'CLIENT_ID;CLIENT_SPELL;CLIENT_NAME'
             Buttons = []
             DropListStyle = lsFixed
             MultiSelect = False

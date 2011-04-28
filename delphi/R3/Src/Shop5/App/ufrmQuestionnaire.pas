@@ -231,6 +231,7 @@ end;
 procedure TfrmQuestionnaire.btnAnswerClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('91600004',3) then Raise Exception.Create('你没有答题的权限,请和管理员联系.');  
   GetAnswer;
   IsEnable := True;
   RzPanel3.Visible := True;
@@ -600,6 +601,7 @@ end;
 procedure TfrmQuestionnaire.GetQuestionList;
 var C1,C2,C3,C4:Integer;
 begin
+  if not ShopGlobal.GetChkRight('91600004',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   cdsQuestionList.Close;
   cdsQuestionList.SQL.Text :=
   'select a.QUESTION_ID,a.QUESTION_CLASS,a.ISSUE_DATE,a.QUESTION_SOURCE,a.QUESTION_TITLE,a.ANSWER_FLAG,a.END_DATE,b.QUESTION_ANSWER_STATUS '+
@@ -829,6 +831,7 @@ end;
 
 class function TfrmQuestionnaire.ShowForm(AOwner: TForm): boolean;
 begin
+  if not ShopGlobal.GetChkRight('91600004',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
@@ -841,6 +844,7 @@ end;
 
 class function TfrmQuestionnaire.AnswerQustion(AOwner: TForm;ID: String):Boolean;
 begin
+  if not ShopGlobal.GetChkRight('91600004',3) then Raise Exception.Create('你没有答题的权限,请和管理员联系.');
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try

@@ -333,6 +333,7 @@ type
     actfrmOutLocusOrderList: TAction;
     actfrmDownIndeOrder: TAction;
     actfrmRecvForDay: TAction;
+    actfrmImpeach: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -441,6 +442,7 @@ type
     procedure actfrmDownIndeOrderExecute(Sender: TObject);
     procedure actfrmRecvForDayExecute(Sender: TObject);
     procedure rzUserInfoClick(Sender: TObject);
+    procedure actfrmImpeachExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -497,7 +499,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -954,7 +956,7 @@ begin
      MsgFactory.Load;
   if MsgFactory.Count > 0 then
      begin
-       lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.Count)+')条消息';
+       lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.UnRead)+')条消息';
        rzUserInfo.Caption := lblUserInfo.Caption;
        if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
        case Timer1.Tag mod 2 of
@@ -1392,7 +1394,7 @@ begin
                     SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
                   end
                else
-               SyncFactory.SyncBasic(true);
+                  SyncFactory.SyncBasic(true);
              end;
           InitTenant;
         end;
@@ -3296,6 +3298,7 @@ begin
   finally
     Aobj.Free;
   end;
+  
 end;
 
 procedure TfrmShopMain.actfrmRecvForDayExecute(Sender: TObject);
@@ -3324,6 +3327,12 @@ procedure TfrmShopMain.rzUserInfoClick(Sender: TObject);
 begin
   inherited;
   actfrmNewPaperReader.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.actfrmImpeachExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmImpeach.ShowImpeach(self); 
 end;
 
 end.

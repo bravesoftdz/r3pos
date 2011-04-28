@@ -443,7 +443,7 @@ begin
   inherited;
   if Btn_Save.Tag = 0 then
     begin
-      if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+      if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
       if (ShopGlobal.NetVersion) then SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
       CheckOffData;
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');

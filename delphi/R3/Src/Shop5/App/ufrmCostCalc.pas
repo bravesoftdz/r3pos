@@ -348,7 +348,7 @@ begin
       end;
       Label11.Caption := '正在计算客户商品台账...';
       Label11.Update;
-      //if flag in [1,2,4,6] then CalcSpz;
+      if flag in [1,2,4,6] then CalcSpz;
       Label11.Caption := '正在计算商品月台账...';
       Label11.Update;
       if flag in [1,2,6] then CalcMth;

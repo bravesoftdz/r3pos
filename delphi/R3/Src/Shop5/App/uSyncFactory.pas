@@ -18,8 +18,10 @@ type
     FList:TList;
     _Start:Int64;
     FSyncTimeStamp: int64;
+    FSyncComm: boolean;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
+    procedure SetSyncComm(const Value: boolean);
   protected
     procedure SetTicket;
     function GetTicket:Int64;
@@ -79,6 +81,7 @@ type
 
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
+    property SyncComm:boolean read FSyncComm write SetSyncComm;
   end;
 var
   SyncFactory:TSyncFactory;
@@ -111,6 +114,7 @@ constructor TSyncFactory.Create;
 begin
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
+  SyncComm := true;
 end;
 
 destructor TSyncFactory.Destroy;
@@ -525,11 +529,32 @@ begin
   n^.KeyFlag := 0;
   FList.Add(n);
 
+  new(n);
+  n^.tbname := 'MSC_MESSAGE';
+  n^.keyFields := 'TENANT_ID;MSG_ID';
+  n^.synFlag := 0;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '消息公告';
+  FList.Add(n);
+
+  new(n);
+  n^.tbname := 'MSC_MESSAGE_LIST';
+  n^.keyFields := 'TENANT_ID;MSG_ID;SHOP_ID';
+  n^.synFlag := 0;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '消息公告';
+  FList.Add(n);
+
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
 begin
   FParams := Value;
+end;
+
+procedure TSyncFactory.SetSyncComm(const Value: boolean);
+begin
+  FSyncComm := Value;
 end;
 
 procedure TSyncFactory.SetSyncTimeStamp(const Value: int64);
@@ -702,7 +727,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -817,7 +842,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -933,7 +958,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1060,7 +1085,7 @@ begin
   cs_s := TZQuery.Create(nil);
   rs_s := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1182,7 +1207,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1286,7 +1311,7 @@ begin
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1383,7 +1408,7 @@ begin
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1480,7 +1505,7 @@ begin
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1720,7 +1745,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1846,7 +1871,7 @@ begin
   cs_s := TZQuery.Create(nil);
   rs_s := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -1968,7 +1993,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -2083,7 +2108,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -2198,7 +2223,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -2247,6 +2272,7 @@ end;
 procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0);
 var
   cs,rs:TZQuery;
+  Downed:boolean;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -2268,6 +2294,7 @@ begin
     SetTicket;
     cs.SyncDelta := rs.SyncDelta;
     Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+    Downed := (rs.RecordCount>0); 
     LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     rs.Free;
@@ -2276,7 +2303,7 @@ begin
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm and Downed;
     //上传本机数据
     cs.Close;
     rs.Close;
@@ -2376,7 +2403,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do
@@ -2490,7 +2517,7 @@ begin
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := true;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
     ls.First;
     while not ls.Eof do

@@ -205,7 +205,9 @@ uses
   uPrainpowerJudge in 'App\uPrainpowerJudge.pas',
   ufrmDownStockOrder in 'App\ufrmDownStockOrder.pas' {frmDownStockOrder},
   ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
-  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder};
+  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
+  ufrmImpeach in 'App\ufrmImpeach.pas' {frmImpeach},
+  PubMemberService in 'App\PubMemberService.pas';
 
 {$R *.res}
 var
@@ -214,7 +216,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.6';
+  DBVersion := '1.0.0.7';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

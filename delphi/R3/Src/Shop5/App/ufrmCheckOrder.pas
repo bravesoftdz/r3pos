@@ -178,6 +178,12 @@ begin
   PrintQry:=TZQuery.Create(self); //启用盘点时创建的库存明细且没有录入盘点数量
   IsCalcRecordCount:=False;
 
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[10].Free;
+       DBGridEh1.Columns[8].Free;
+     end;
+
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '仓库名称';

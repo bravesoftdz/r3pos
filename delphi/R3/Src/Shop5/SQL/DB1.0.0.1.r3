@@ -124,6 +124,14 @@ CREATE TABLE [STO_STORAGE] (
 	[AMOUNT] [decimal](18, 3) NULL ,
         --成本单价
 	[COST_PRICE] [decimal](18, 6) NULL ,
+        --安全库存
+	[LOWER_AMOUNT] [decimal](18, 3) NULL ,
+        --上限库存
+	[UPPER_AMOUNT] [decimal](18, 3) NULL ,
+        --最低存销比
+	[LOWER_RATE] [decimal](18, 3) NULL ,
+        --最高存销比
+	[UPPER_RATE] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_STORAGE_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -2524,6 +2532,10 @@ CREATE TABLE SAL_LOCUS_FORSALE(
 	CREA_DATE varchar (30) ,
         --操作人员
 	CREA_USER varchar (36) ,
+        --审核时间
+	CHK_DATE varchar (30) ,
+        --审核人员
+	CHK_USER varchar (36) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
@@ -2570,6 +2582,10 @@ CREATE TABLE STO_LOCUS_FORCHAG(
 	CREA_DATE varchar (30) ,
         --操作人员
 	CREA_USER varchar (36) ,
+        --审核时间
+	CHK_DATE varchar (30) ,
+        --审核人员
+	CHK_USER varchar (36) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
@@ -2617,6 +2633,10 @@ CREATE TABLE STK_LOCUS_FORSTCK(
 	CREA_DATE varchar (30) ,
         --操作人员
 	CREA_USER varchar (36) ,
+        --审核时间
+	CHK_DATE varchar (30) ,
+        --审核人员
+	CHK_USER varchar (36) ,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000

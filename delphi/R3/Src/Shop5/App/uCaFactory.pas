@@ -151,7 +151,8 @@ type
     function CreateServiceLine(var ServiceLine:TServiceLine):boolean;
     function queryServiceLines(tid:integer;List:TList):boolean;
     function applyRelation(supTenantId,serviceLineId,subTenantId,relationType:integer):TRelationInfo;
-
+    //商盟服务
+    function queryUnion(tid:integer):boolean;
     //数据同步
     function downloadTenants(TenantId,flag:integer):boolean;
     function downloadServiceLines(TenantId,flag:integer):boolean;
@@ -188,7 +189,8 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,IniFiles;
+uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
+     IniFiles;
 { TCaFactory }
 
 procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
@@ -382,7 +384,7 @@ begin
     result.DB_ID := GetNodeValue(caTenant,'dbId');
     result.AUDIT_STATUS := GetNodeValue(caTenant,'auditStatus');
   finally
-    rio.Free;
+   // rio.Free;
   end;    
 end;
 
@@ -558,7 +560,7 @@ begin
        Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
 
   finally
-    rio.Free;
+    //rio.Free;
   end;
 end;
 
@@ -695,7 +697,7 @@ begin
        Raise Exception.Create(GetNodeValue(caTenantRegisterResp,'desc'));
 
   finally
-    rio.Free;
+    //rio.Free;
   end;
 end;
 
@@ -936,7 +938,7 @@ begin
     result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
   finally
     RioImpl := nil;
-   // rio.Free;
+//    rio.Free;
   end;
 end;
 
@@ -1025,7 +1027,7 @@ begin
     else
        Raise Exception.Create(GetNodeValue(caServiceLineCreateResp,'desc'));
   finally
-    rio.Free;
+    //rio.Free;
   end;
 end;
 
@@ -1101,7 +1103,7 @@ begin
          caServiceLineQueryResp := caServiceLineQueryResp.nextSibling;
        end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 end;
 
@@ -1198,7 +1200,7 @@ begin
        Raise Exception.Create(GetNodeValue(caRelationApplyResp,'desc'));
 
   finally
-    rio.Free;
+    //rio.Free;
   end;
 end;
 
@@ -1207,7 +1209,7 @@ begin
   AutoCoLogo;
   frmLogo.Show;
   try
-    frmLogo.ProgressBar1.Max := 8;
+    frmLogo.ProgressBar1.Max := 9;
     frmLogo.Label1.Caption := '下载企业关系...';
     frmLogo.Label1.Update;
     downloadRelations(Global.TENANT_ID,flag);
@@ -1243,6 +1245,10 @@ begin
     downloadBarcode(Global.TENANT_ID,flag);
     end;
     frmLogo.ProgressBar1.Position := 8;
+    frmLogo.Label1.Caption := '下载商盟信息...';
+    frmLogo.Label1.Update;
+    queryUnion(Global.TENANT_ID);
+    frmLogo.ProgressBar1.Position := 9;
   finally
     frmLogo.Close;
   end;
@@ -1347,7 +1353,7 @@ try
            rs.FieldByName('CREA_DATE').AsString := GetNodeValue(caRelationDownloadResp,'creaDate');
            rs.FieldByName('CHK_DATE').AsString := GetNodeValue(caRelationDownloadResp,'chkDate');
            rs.FieldByName('COMM').AsString := GetNodeValue(caRelationDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(caRelationDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(caRelationDownloadResp,'timeStamp'));
            rs.Post;
            caRelationDownloadResp := caRelationDownloadResp.nextSibling;
          end;
@@ -1368,7 +1374,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -1506,7 +1512,7 @@ try
            rs.FieldByName('REMARK').AsString := GetNodeValue(caServiceLineDownloadResp,'remark');
            rs.FieldByName('CREA_DATE').AsString := GetNodeValue(caServiceLineDownloadResp,'creaDate');
            rs.FieldByName('COMM').AsString := GetNodeValue(caServiceLineDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(caServiceLineDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(caServiceLineDownloadResp,'timeStamp'));
            rs.Post;
            caServiceLineDownloadResp := caServiceLineDownloadResp.nextSibling;
          end;
@@ -1526,7 +1532,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -1665,7 +1671,7 @@ try
            rs.FieldByName('DB_ID').AsString := GetNodeValue(caTenantDownloadResp,'dbId');
            rs.FieldByName('CREA_DATE').AsString := GetNodeValue(caTenantDownloadResp,'creaDate');
            rs.FieldByName('COMM').AsString := GetNodeValue(caTenantDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(caTenantDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(caTenantDownloadResp,'timeStamp'));
            rs.Post;
            caTenantDownloadResp := caTenantDownloadResp.nextSibling;
          end;
@@ -1685,7 +1691,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -1793,7 +1799,7 @@ try
            rs.FieldByName('SEQ_NO').AsInteger := 0 else
            rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(pubGoodsSortDownloadResp,'seqNo'));
            rs.FieldByName('COMM').AsString := GetNodeValue(pubGoodsSortDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(pubGoodsSortDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubGoodsSortDownloadResp,'timeStamp'));
            rs.Post;
            pubGoodsSortDownloadResp := pubGoodsSortDownloadResp.nextSibling;
          end;
@@ -1813,7 +1819,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -1991,7 +1997,7 @@ try
            rs.FieldByName('BARTER_INTEGRAL').AsInteger := StrtoInt(GetNodeValue(pubGoodsDownloadResp,'barterIntegral'));
            rs.FieldByName('REMARK').AsString := GetNodeValue(pubGoodsDownloadResp,'remark');
            rs.FieldByName('COMM').AsString := GetNodeValue(pubGoodsDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(pubGoodsDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubGoodsDownloadResp,'timeStamp'));
            rs.Post;
            pubGoodsDownloadResp := pubGoodsDownloadResp.nextSibling;
          end;
@@ -2011,7 +2017,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -2115,7 +2121,7 @@ try
            rs.FieldByName('SEQ_NO').AsInteger := 0 else
            rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(pubGoodsUnitDownloadResp,'seqNo'));
            rs.FieldByName('COMM').AsString := GetNodeValue(pubGoodsUnitDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(pubGoodsUnitDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubGoodsUnitDownloadResp,'timeStamp'));
            rs.Post;
            pubGoodsUnitDownloadResp := pubGoodsUnitDownloadResp.nextSibling;
          end;
@@ -2135,7 +2141,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -2351,7 +2357,7 @@ try
            else
               rs.FieldByName('BARTER_INTEGRAL').AsInteger := StrtoInt(GetNodeValue(pubDeployGoodsDownloadResp,'barterIntegral'));
            rs.FieldByName('COMM').AsString := GetNodeValue(pubDeployGoodsDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(pubDeployGoodsDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubDeployGoodsDownloadResp,'timeStamp'));
            rs.Post;
            pubDeployGoodsDownloadResp := pubDeployGoodsDownloadResp.nextSibling;
          end;
@@ -2372,7 +2378,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -2482,7 +2488,7 @@ try
            rs.FieldByName('BATCH_NO').AsString := GetNodeValue(pubBarcodeDownloadResp,'batchNo');
            rs.FieldByName('BARCODE').AsString := GetNodeValue(pubBarcodeDownloadResp,'barcode');
            rs.FieldByName('COMM').AsString := GetNodeValue(pubBarcodeDownloadResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).AsLargeInt := StrtoInt64(GetNodeValue(pubBarcodeDownloadResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubBarcodeDownloadResp,'timeStamp'));
            rs.Post;
            pubBarcodeDownloadResp := pubBarcodeDownloadResp.nextSibling;
          end;
@@ -2503,7 +2509,7 @@ try
       rs.Free;
     end;
   finally
-    rio.Free;
+    //rio.Free;
   end;
 except
   if doc<>nil then
@@ -2552,6 +2558,233 @@ end;
 procedure TCaFactory.SetRspFlag(const Value: integer);
 begin
   FRspFlag := Value;
+end;
+
+function TCaFactory.queryUnion(tid: integer): boolean;
+function GetParant:string;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID='+inttostr(tid);
+    Factor.Open(rs);
+    result := rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
+end;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  pubUnionQueryResp,IndexResp,UnionIndex:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  line:PServiceLine;
+  h,r:rsp;
+  i:integer;
+  rs,idx,prc:TZQuery;
+  Params:TftParamList;
+  OutXml:WideString;
+begin
+try
+  SetTicket;
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(1);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  LogFile.AddLogFile(0,'开始下载<商盟资料>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
+
+  Node := doc.createElement('pubUnionQueryReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(tid);
+  FindNode(doc,'body\pubUnionQueryReq').appendChild(Node);
+
+  Node := doc.createElement('supTenantId');
+  Node.text := GetParant;
+  FindNode(doc,'body\pubUnionQueryReq').appendChild(Node);
+  
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio(120000);
+  try
+    h := SendHeader(rio,2);
+    try
+      try
+        OutXml := GetPubMemberWebServiceImpl(true,URL+'PubMemberService?wsdl',rio).queryUnion(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+    CheckRecAck(doc);
+    Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<商盟资料>打开时长:'+inttostr(GetTicket));
+    SetTicket;
+    rs := TZQuery.Create(nil);
+    idx := TZQuery.Create(nil);
+    prc := TZQuery.Create(nil);
+    try
+      rs.Close;
+      rs.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
+      rs.FieldDefs.Add('UNION_ID',ftstring,36,true);
+      rs.FieldDefs.Add('UNION_NAME',ftstring,50,true);
+      rs.FieldDefs.Add('UNION_SPELL',ftstring,50,true);
+      rs.FieldDefs.Add('INDEX_FLAG',ftstring,1,true);
+      rs.FieldDefs.Add('COMM',ftstring,2,true);
+      rs.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
+      rs.CreateDataSet;
+      idx.Close;
+      idx.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
+      idx.FieldDefs.Add('UNION_ID',ftstring,36,true);
+      idx.FieldDefs.Add('INDEX_ID',ftstring,36,true);
+      idx.FieldDefs.Add('INDEX_NAME',ftstring,50,true);
+      idx.FieldDefs.Add('INDEX_SPELL',ftstring,50,true);
+      idx.FieldDefs.Add('INDEX_TYPE',ftstring,1,true);
+      idx.FieldDefs.Add('INDEX_OPTION',ftstring,255,true);
+      idx.FieldDefs.Add('INDEX_ISNULL',ftstring,1,true);
+      idx.FieldDefs.Add('COMM',ftstring,2,true);
+      idx.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
+      idx.CreateDataSet;
+      prc.Close;
+      prc.FieldDefs.Add('TENANT_ID',ftInteger,0,true);
+      prc.FieldDefs.Add('PRICE_ID',ftstring,36,true);
+      prc.FieldDefs.Add('PRICE_NAME',ftstring,30,true);
+      prc.FieldDefs.Add('PRICE_SPELL',ftstring,30,true);
+      prc.FieldDefs.Add('PRICE_TYPE',ftstring,1,true);
+      prc.FieldDefs.Add('INTEGRAL',ftfloat,0,true);
+      prc.FieldDefs.Add('INTE_TYPE',ftInteger,0,true);
+      prc.FieldDefs.Add('INTE_AMOUNT',ftfloat,0,true);
+      prc.FieldDefs.Add('MINIMUM_PERCENT',ftfloat,0,true);
+      prc.FieldDefs.Add('AGIO_TYPE',ftInteger,0,true);
+      prc.FieldDefs.Add('AGIO_PERCENT',ftfloat,0,true);
+      prc.FieldDefs.Add('AGIO_SORTS',ftstring,255,true);
+      prc.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
+      prc.FieldDefs.Add('COMM',ftstring,2,true);
+      prc.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
+      prc.CreateDataSet;
+      pubUnionQueryResp := Node.firstChild;
+      while pubUnionQueryResp<>nil do
+         begin
+           rs.Append;
+           rs.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(pubUnionQueryResp,'tenantId'));
+           rs.FieldByName('UNION_ID').AsString := GetNodeValue(pubUnionQueryResp,'unionId');
+           rs.FieldByName('UNION_NAME').AsString := GetNodeValue(pubUnionQueryResp,'unionName');
+           rs.FieldByName('UNION_SPELL').AsString := GetNodeValue(pubUnionQueryResp,'unionSpell');
+           rs.FieldByName('INDEX_FLAG').AsString := GetNodeValue(pubUnionQueryResp,'indexFlag');
+           rs.FieldByName('COMM').AsString := GetNodeValue(pubUnionQueryResp,'comm');
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(pubUnionQueryResp,'timeStamp'));
+           rs.Post;
+           IndexResp :=  pubUnionQueryResp.firstChild;
+           while IndexResp<>nil do
+             begin
+               if indexResp.nodeName='indexs' then
+                  begin
+                     UnionIndex := indexResp.firstChild;
+                     while UnionIndex<>nil do
+                     begin
+                       idx.Append;
+                       idx.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(UnionIndex,'tenantId'));
+                       idx.FieldByName('UNION_ID').AsString := GetNodeValue(UnionIndex,'unionId');
+                       idx.FieldByName('INDEX_ID').AsString := GetNodeValue(UnionIndex,'indexId');
+                       idx.FieldByName('INDEX_NAME').AsString := GetNodeValue(UnionIndex,'indexName');
+                       idx.FieldByName('INDEX_SPELL').AsString := GetNodeValue(UnionIndex,'indexSpell');
+                       idx.FieldByName('INDEX_TYPE').AsString := GetNodeValue(UnionIndex,'indexType');
+                       idx.FieldByName('INDEX_OPTION').AsString := GetNodeValue(UnionIndex,'indexOption');
+                       idx.FieldByName('INDEX_ISNULL').AsString := GetNodeValue(UnionIndex,'indexIsnull');
+                       idx.FieldByName('COMM').AsString := GetNodeValue(UnionIndex,'comm');
+                       TLargeintField(idx.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(UnionIndex,'timeStamp'));
+                       UnionIndex := UnionIndex.nextSibling;
+                     end;
+                  end
+               else
+               if indexResp.nodeName='pubPricegrade' then
+                  begin
+                     prc.Append;
+                     prc.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(indexResp,'tenantId'));
+                     prc.FieldByName('PRICE_ID').AsString := GetNodeValue(indexResp,'priceId');
+                     prc.FieldByName('PRICE_NAME').AsString := GetNodeValue(indexResp,'priceName');
+                     prc.FieldByName('PRICE_SPELL').AsString := GetNodeValue(indexResp,'priceSpell');
+                     prc.FieldByName('PRICE_TYPE').AsString := '2';
+                     prc.FieldByName('INTEGRAL').AsFloat := StrtoFloatDef(GetNodeValue(indexResp,'integral'),0);
+                     prc.FieldByName('INTE_TYPE').AsInteger := StrtoIntDef(GetNodeValue(indexResp,'inteType'),0);
+                     prc.FieldByName('INTE_AMOUNT').AsFloat := StrtoFloatDef(GetNodeValue(indexResp,'inteAmount'),0);
+                     prc.FieldByName('MINIMUM_PERCENT').AsFloat := StrtoFloatDef(GetNodeValue(indexResp,'minimumPercent'),0);
+                     prc.FieldByName('AGIO_TYPE').AsInteger := StrtoIntDef(GetNodeValue(indexResp,'agioType'),0);
+                     prc.FieldByName('AGIO_PERCENT').AsFloat := StrtoIntDef(GetNodeValue(indexResp,'agioPercent'),100);
+                     prc.FieldByName('AGIO_SORTS').AsString := GetNodeValue(indexResp,'agioSorts');
+                     prc.FieldByName('SEQ_NO').AsInteger := 0;
+                     prc.FieldByName('COMM').AsString := GetNodeValue(indexResp,'comm');
+                     TLargeintField(prc.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(indexResp,'timeStamp'));
+                  end;
+               IndexResp := IndexResp.nextSibling;
+             end;
+           pubUnionQueryResp := pubUnionQueryResp.nextSibling;
+         end;
+      Params := TftParamList.Create(nil);
+      try
+        Factor.BeginBatch;
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INFO';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('KEY_FLAG').AsString := '1';
+          Factor.AddBatch(rs,'TSyncSingleTable',Params);
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INDEX';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID;INDEX_ID';
+          Factor.AddBatch(idx,'TSyncSingleTable',Params);
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_PRICEGRADE';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;PRICE_ID';
+          Params.ParamByName('KEY_FLAG').AsString := '2';
+          Factor.AddBatch(prc,'TSyncSingleTable',Params);
+          SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
+          Factor.CommitBatch;
+        except
+          Factor.CancelBatch;
+          Raise;
+        end;
+      finally
+        Params.free;
+      end;
+      LogFile.AddLogFile(0,'保存<商盟资料>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+    finally
+      prc.Free;
+      idx.Free;
+      rs.Free;
+    end;
+  finally
+    //rio.Free;
+  end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'下载<商盟资料>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'下载<商盟资料>xml=无');
+  Raise;
+end;
 end;
 
 { rsp }

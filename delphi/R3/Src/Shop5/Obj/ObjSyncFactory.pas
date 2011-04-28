@@ -591,7 +591,7 @@ var
 begin
   InitSQL(AGlobal);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
-  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
+  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger in [0,2]) then
      begin
        FillParams(InsertQuery);
        try
@@ -601,6 +601,7 @@ begin
             begin
               if CheckUnique(E.Message) then
                  begin
+                   if Params.ParamByName('KEY_FLAG').AsInteger=2 then Exit;
                    FillParams(UpdateQuery);
                    AGlobal.ExecQuery(UpdateQuery);
                  end
@@ -611,8 +612,11 @@ begin
      end
   else
      begin
-       FillParams(UpdateQuery);
-       r := AGlobal.ExecQuery(UpdateQuery);
+       if (Params.ParamByName('KEY_FLAG').AsInteger in [0,1]) then
+       begin
+         FillParams(UpdateQuery);
+         r := AGlobal.ExecQuery(UpdateQuery);
+       end else r := 0;
        if r=0 then
           begin
             FillParams(InsertQuery);
@@ -709,7 +713,7 @@ begin
   InsertQuery := TZQuery.Create(nil);
   InsertQuery.SQL.Text := 'insert into '+Params.ParambyName('TABLE_NAME').AsString+'('+InsertFld+') values('+ValueFld+')';
   UpdateQuery := TZQuery.Create(nil);
-  if TimeStamp then
+  if TimeStamp and (Params.ParambyName('KEY_FLAG').AsInteger=0) then
      begin
        if WhereStr<>'' then WhereStr :=WhereStr+' and ';
        WhereStr :=WhereStr+'TIME_STAMP<=:TIME_STAMP';

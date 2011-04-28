@@ -8607,7 +8607,6 @@ inherited frmNewPaperReader: TfrmNewPaperReader
         Top = 6
         Width = 69
         Height = 21
-        GroupIndex = 1
         Bitmaps.Hot.Data = {
           46110000424D4611000000000000360000002800000045000000150000000100
           18000000000010110000120B0000120B00000000000000000000FEDBACE6C79E

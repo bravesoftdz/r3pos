@@ -3263,6 +3263,7 @@ end;
 
 procedure TfrmShopMain.actfrmDownIndeOrderExecute(Sender: TObject);
 var
+  vData: OleVariant;
   Aobj: TRecord_;
   Form: TfrmBasic;
 begin
@@ -3275,7 +3276,7 @@ begin
 
   try
     Aobj:=TRecord_.Create;
-    if TfrmDownStockOrder.DownStockOrder(AObj) then
+    if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
     begin
       if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
       begin
@@ -3287,7 +3288,7 @@ begin
           Form := TfrmStockOrderList.Create(self);
           AddFrom(Form);
         end;
-        TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj);
+        TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj,vData);
         Form.WindowState := wsMaximized;
         Form.BringToFront;
       end;

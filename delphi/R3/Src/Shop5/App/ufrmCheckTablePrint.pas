@@ -126,9 +126,13 @@ begin
   TDbGridEhSort.InitForm(self);
 
   if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label3.Caption := '仓库名称';
-    end;
+  begin
+    Label3.Caption := '仓库名称';
+  end;
+
+  //2011.04.22 Add 设置查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+    SetNotShowCostPrice(DBGridEh1, ['NEW_INPRICE','PAL_INAMONEY']);
 end;
 
 function TfrmCheckTablePrint.GetRowType: integer;

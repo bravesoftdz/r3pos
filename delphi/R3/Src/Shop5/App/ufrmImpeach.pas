@@ -94,7 +94,7 @@ begin
 
 
   cdsTENANT.Close;
-  cdsTENANT.SQL.Text := 'select CLIENT_ID,CLIENT_NAME from VIW_CLIENTINFO where FLAG in (1,3) and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsTENANT.SQL.Text := 'select CLIENT_ID,CLIENT_SPELL,CLIENT_NAME from VIW_CLIENTINFO where FLAG in (1,3) and TENANT_ID='+IntToStr(Global.TENANT_ID)+' order by FLAG';
   Factor.Open(cdsTENANT);
   edtIMPH_TENANT_ID.DataSet := cdsTENANT;
 

@@ -149,6 +149,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 11
             Width = 118
             Height = 20
+            Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtIMPEACH_CLASSPropertiesChange
             TabOrder = 0
           end
@@ -189,7 +190,7 @@ inherited frmImpeach: TfrmImpeach
             AutoFitColWidth = True
             ShowButton = True
             LocateStyle = lsDark
-            Filter = 'CLIENT_ID,CLIENT_NAME'
+            Filter = 'CLIENT_ID;CLIENT_SPELL;CLIENT_NAME'
             Buttons = []
             DropListStyle = lsFixed
             MultiSelect = False
@@ -206,6 +207,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 89
             Width = 74
             Height = 20
+            Properties.DropDownListStyle = lsFixedList
             TabOrder = 4
             OnKeyDown = edtIS_REPEATKeyDown
           end
@@ -214,6 +216,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 89
             Width = 74
             Height = 20
+            Properties.DropDownListStyle = lsFixedList
             TabOrder = 3
           end
           object edtCONTENT: TcxMemo

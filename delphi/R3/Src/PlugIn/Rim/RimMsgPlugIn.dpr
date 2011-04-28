@@ -73,10 +73,10 @@ begin
     F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
     try
       url := F.ReadString('rim','url','');
-      if url='' then Raise Exception.Create('没有配置rim的服务地址...'); 
       ParamList.Decode(ParamList,Params);
       if ParamList.ParamByName('flag').AsInteger <0 then
          begin
+           if url='' then Raise Exception.Create('没有配置rim的服务地址...'); 
            rs := TZQuery.Create(nil);
            try
              if GPlugIn.Open(pchar('select TENANT_ID,LICENSE_CODE from CA_TENANT where TENANT_ID in (select RELATI_ID from CA_RELATIONS where TENANT_ID='+ParamList.ParamByName('TENANT_ID').AsString+' and RELATION_ID=1000006)'),V)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));

@@ -294,6 +294,7 @@ var
 begin
   RimCaTenant := GetRimInfo(tid,lscode);
   if RimCaTenant.CustId='' then Exit;
+  if url='' then Raise Exception.Create('没有配置rim的服务地址...');
   rs := TZQuery.Create(nil);
   v1 := TStringList.Create;
   v2 := TStringList.Create;
@@ -372,6 +373,7 @@ var txt:widestring;
 begin
   RimCaTenant := GetRimInfo(tid,lscode);
   if RimCaTenant.CustId='' then Exit;
+  if url='' then Raise Exception.Create('没有配置rim的服务地址...');
   rs := TZQuery.Create(nil);
   try
   if GPlugIn.Open(pchar('select CONTENT,IMPEACH_CLASS,IS_REPEAT,IS_URGENCY,IS_REPLY from MSC_IMPEACH where TENANT_ID='+tid+' and ROWS_ID='''+rid+'''')

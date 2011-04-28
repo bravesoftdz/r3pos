@@ -122,7 +122,7 @@ type
     procedure Open(id:string);override;
     procedure PrintBarcode;
     //2011.04.12 晚 增加 到货确认填充 订单
-    function  IndeOrderWriteToStock(AObj: TRecord_): Boolean;    
+    function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;    
   end;
 
 implementation
@@ -1221,7 +1221,7 @@ begin
   result:=ShopGlobal.GetChkRight('11200001',7);
 end;
 
-function TfrmStockOrder.IndeOrderWriteToStock(AObj: TRecord_): Boolean;
+function TfrmStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
 var
   i: integer;
   Rs, RsGods, RsUnit: TZQuery;
@@ -1242,8 +1242,9 @@ begin
 
   try
     Rs:=TZQuery.Create(nil);
-    Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and INDE_ID='''+FDownOrderID+''' ';
-    Global.RemoteFactory.Open(Rs);
+    Rs.Data:=vData;
+    //Rs.SQL.Text:='select INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,PRI3,AGIO_MONEY,AMONEY,CALC_AMOUNT from INF_INDEDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and INDE_ID='''+FDownOrderID+''' ';
+    //Global.RemoteFactory.Open(Rs);
 
     RsGods := Global.GetZQueryFromName('PUB_GOODSINFO');
     RsUnit := Global.GetZQueryFromName('PUB_MEAUNITS');

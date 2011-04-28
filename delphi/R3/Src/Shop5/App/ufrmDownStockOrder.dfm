@@ -203,7 +203,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     Left = 32
     Top = 96
   end
-  object MsgQry: TZQuery
+  object CdsStockData: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>

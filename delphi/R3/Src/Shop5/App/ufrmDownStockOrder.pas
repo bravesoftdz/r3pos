@@ -30,7 +30,7 @@ type
     btnOK: TRzBitBtn;
     RzBitBtn1: TRzBitBtn;
     DBGridEh1: TDBGridEh;
-    MsgQry: TZQuery;
+    CdsStockData: TZQuery;
     procedure RzBitBtn1Click(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -42,9 +42,10 @@ type
     function GetINDE_ID: string;
   public
     FAobj: TRecord_;
+    FReData: OleVariant; //返回数据包
     procedure OpenIndeOrderList;  //查询订单主表数据
     procedure DoCopyIndeOrderData;    //将选中的订单明细处理到中间表
-    class function DownStockOrder(var Aobj: TRecord_):boolean;
+    class function DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
     property OrderDate: TDate read GetOrderDate;
   end;
 
@@ -58,7 +59,7 @@ uses
 
 { TfrmDownStockOrder }
 
-class function TfrmDownStockOrder.DownStockOrder(var Aobj: TRecord_):boolean;
+class function TfrmDownStockOrder.DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
 var
   FrmObj: TfrmDownStockOrder;
 begin
@@ -68,7 +69,10 @@ begin
     FrmObj.FAobj:=Aobj;
     FrmObj.OpenIndeOrderList;  //查询订单的主表数据
     if FrmObj.ShowModal=MROK then
+    begin
+      vData:=FrmObj.FReData;
       result:=true;
+    end;
   finally
     FrmObj.Free;
   end;
@@ -177,31 +181,30 @@ var
   Msg,Str: String;
   vParam: TftParamList;
 begin
+  i:=0;
   try
-    MsgQry.Close;
+    CdsStockData.Close;
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=2;
     vParam.ParamByName('INDE_ID').AsString:=GetINDE_ID;
     vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    Global.RemoteFactory.Open(MsgQry,'TDownIndeData',vParam);  //==RspServer连接模式时执行
-    if (MsgQry.Active) and (MsgQry.RecordCount>0) then
+    Global.RemoteFactory.Open(CdsStockData,'TDownIndeData',vParam);  //==RspServer连接模式时执行
+    if (CdsStockData.Active) and (CdsStockData.RecordCount>0) then
     begin
-      i:=MsgQry.fieldbyName('resum').AsInteger;
       Msg:='';
-      MsgQry.First;
-      while not MsgQry.Eof do
+      CdsStockData.First;
+      while not CdsStockData.Eof do
       begin
-        if trim(Msg)='' then
-          Msg:=GetNum(i)+'编码：'+MsgQry.fieldbyName('GODS_CODE').AsString+'，名称：'+MsgQry.fieldbyName('GODS_NAME').AsString
-        else
-          Msg:=Msg+#13+GetNum(i)+'编码：'+MsgQry.fieldbyName('GODS_CODE').AsString+'，名称：'+MsgQry.fieldbyName('GODS_NAME').AsString;
-        MsgQry.Next;
+        if trim(CdsStockData.FieldByName('GODS_ID').AsString)='' then
+          Inc(i);
+        CdsStockData.Next; 
       end;
-      Str:='系统检测到'+inttoStr(i)+'个商品没有对照关系！';
-      if i>30 then
-         Str:=Str+#13+'  其中前30个如下：'+#13+Msg
-      else
-         Str:=Str+#13+'  如下：'+#13+Msg;
+      if i>0 then
+      begin
+        Str:='系统检测到当前下载的订单,存在'+inttoStr(i)+'个商品没有对照关系！';
+        Raise Exception.Create(Str);
+      end;
+      FReData:=CdsStockData.Data;
     end;
   finally
     vParam.Free;

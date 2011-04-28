@@ -110,7 +110,7 @@ begin
     cdsImpeach.Close;
     Factor.Open(cdsImpeach,'TImpeach',Params);
     AObj.ReadFromDataSet(cdsImpeach);
-    //ReadFromObject(AObj,Self);
+    ReadFromObject(AObj,Self);
   finally
     Params.Free;
   end;
@@ -141,7 +141,7 @@ begin
 
   WriteToData;
   try
-    Factor.UpdateBatch(cdsImpeach,'TImpeach',nil);
+    Global.RemoteFactory.UpdateBatch(cdsImpeach,'TImpeach',nil);
   Except
     Raise;
   end;
@@ -194,7 +194,6 @@ end;
 procedure TfrmImpeach.FormShow(Sender: TObject);
 begin
   inherited;
-  edtIMPEACH_CLASS.ItemIndex := 0;
   Append;
   edtIMPEACH_CLASS.SetFocus;
 end;
@@ -224,6 +223,7 @@ begin
   Open;
   edtIS_REPEAT.ItemIndex := 0;
   edtIS_URGENCY.ItemIndex := 0;
+  edtIMPEACH_CLASS.ItemIndex := 0;  
   edtIMPEACH_USER.Text := '';
   edtCONTENT.Text := '';
   rs := TZQuery.Create(nil);
@@ -257,6 +257,7 @@ end;
 procedure TfrmImpeach.btn_SaveClick(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('91500003',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');  
   Save;
   if MessageBox(Handle,'是否继续新增投诉建议?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
     Append

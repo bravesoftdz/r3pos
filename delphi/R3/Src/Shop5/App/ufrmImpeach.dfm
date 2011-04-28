@@ -167,6 +167,7 @@ inherited frmImpeach: TfrmImpeach
             TabOrder = 1
             InGrid = False
             KeyValue = Null
+            FilterFields = 'CLIENT_ID;CLIENT_SPELL;CLIENT_NAME'
             KeyField = 'CLIENT_ID'
             ListField = 'CLIENT_NAME'
             Columns = <

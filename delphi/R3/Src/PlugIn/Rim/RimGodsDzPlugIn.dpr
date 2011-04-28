@@ -59,21 +59,20 @@ end;
 //2011.04.08 Pm  Add [RIM_GOODSINFO] === [INF_GOODS_RELATION]
 function DoUpdateINF_GOODSINFO(PlugIntf: IPlugIn; TENANT_ID: string): Integer;
 var
-  Sort_ID2,     //价格分类
-  Sort_ID6,     //是否是省内外
-  CALC_UNIT,    //计量单位
-  Box_InPrice,  //包的入库价
-  Box_OutPrice: string;  //包的零售价
-  StrSQL: Pchar;
-  ORGAN_ID,    //RIM公司ID
-  BarCode, RimSQL: string;   //条码
-  iRet: integer;
+  NotGods: string;     //日志调试使用
+  Sort_ID2, Sort_ID6,CALC_UNIT: string; //价格分类 、是否是省内外　、计量单位
+  Box_InPrice, Box_OutPrice: string;    //包的入库价、包的零售价
+  ORGAN_ID, BarCode: string;   //1、RIM公司ID 2、条码
+  StrSQL,RimSQL: Pchar;   
+  iRet: integer;   //返回更改记录数
   AObj: TRecord_;
   RsRim,RsInf,RsBarPub: TZQuery;
 begin
   result:=-1;
   iRet:=-1;
+  NotGods:='';
   ORGAN_ID:=GetORGAN_ID(PlugIntf,TENANT_ID); //根据R3企业ID返回Rim企业内码(comp_id)
+  TLogRunInfo.LogWrite('开始执行对照取参数:（R3企业ID：'+TENANT_ID+'，RIM烟草公司ID:'+ORGAN_ID+'）','RimGodsDzPlugIn.dll');
 
   Sort_ID2:=
     '(case when SORT_ID2=''1'' then ''85994503-9CBC-4346-BC86-24C7F5A92BC6'''+  //价类
@@ -104,14 +103,18 @@ begin
     RsInf:=TZQuery.Create(nil);  //R3中间表
     RsBarPub:=TZQuery.Create(nil);  //R3条码_供应链
     StrSQL:=Pchar(
-      'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
+      'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID and B.SECOND_ID is not null then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
       'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+') B on A.GODS_ID=B.GODS_ID '+
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ');
     OpenData(PlugIntf, RsBarPub, StrSQL);
-    RimSQL:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ';
-    OpenData(PlugIntf, RsRim, PChar(RimSQL));
+    RimSQL:=Pchar('select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ');
+    OpenData(PlugIntf, RsRim, RimSQL);
     OpenData(PlugIntf, RsInf, Pchar('select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID));
 
+    //写调试日志:
+    TLogRunInfo.LogWrite('对照Open数据：1、RsBarPub.SQL='+StrSQL+'  返回记录数:'+InttoStr(RsBarPub.RecordCount)+' 2、RsRim.SQL='+RimSQL+'  返回记录数:'+InttoStr(RsRim.RecordCount),'RimGodsDzPlugIn.dll');
+
+    //开始循环对照
     try
       if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then
       begin
@@ -119,7 +122,7 @@ begin
         while not RsRim.Eof do
         begin
           AObj.ReadFromDataSet(RsRim);
-          BarCode:=trim(AObj.fieldbyName('PACK_BARCODE').AsString);
+          BarCode:=trim(RsRim.fieldbyName('PACK_BARCODE').AsString);
           if RsBarPub.Locate('BARCODE',BarCode,[]) then  //条码能关联上
           begin
             if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
@@ -136,6 +139,7 @@ begin
             RsInf.Post;
           end else  {==对不上，作为返回显示结果查看==}
           begin
+            if NotGods='' then NotGods:=BarCode else NotGods:=NotGods+';'+BarCode; //本行调试记录对不上条码
             if RsInf.IsEmpty then RsInf.Edit else RsInf.Append;
             AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
             RsInf.FieldByName('ROWS_ID').AsString:=NewId();
@@ -148,6 +152,7 @@ begin
           end;
           RsRim.Next;
         end; //end (循环: while not RsRim.Eof do)
+        TLogRunInfo.LogWrite('循环对照结果：对不上Rim条单位条码：'+NotGods,'RimGodsDzPlugIn.dll');
         result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;
         if result<>0 then
           Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
@@ -159,7 +164,8 @@ begin
       begin
         Raise Exception.Create('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message);
       end;
-    end
+    end;
+    TLogRunInfo.LogWrite('对照执行完毕！','RimGodsDzPlugIn.dll');
   finally
     AObj.Free;
     RsRim.Free;
@@ -167,7 +173,6 @@ begin
     RsBarPub.Free;
   end;
 end;
-
 
 //RSP装载插件时调用，传插件可访问的服务接口
 function SetParams(PlugIn: IPlugIn):integer; stdcall;
@@ -200,6 +205,7 @@ begin
     //2011.04.08 Pm  Add 执行从[RIM_GOODSINFO] ==> [INF_GOODS_RELATION]导入
     //调试使用: DoUpdateINF_GOODSINFO(GPlugIn, '100011'); //StrPas(Params)
     //GPlugIn.WriteLogFile(PChar('传入Tenant_ID:'+Params));
+    
     result:=DoUpdateINF_GOODSINFO(GPlugIn, StrPas(Params));  //StrPas(Params)
   except
     on E:Exception do

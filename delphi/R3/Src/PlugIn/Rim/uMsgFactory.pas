@@ -87,6 +87,7 @@ begin
      rs.Free;
    end;
 end;
+
 procedure DoSyncQuestion(tid,lscode:string);
 var
   RimCaTenant:TRimCaTenant;

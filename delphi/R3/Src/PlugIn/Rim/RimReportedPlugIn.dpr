@@ -55,11 +55,22 @@ end;
 
 //RSP调用插件时执行此方法
 function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+var
+  TENANT_ID: string;
+  vParam: TftParamList;
 begin
+  try
+    vParam:=TftParamList.Create(nil);
+    vParam.Decode(vParam,StrPas(Params));
+    TENANT_ID:=trim(vParam.ParamByName('TENANT_ID').AsString);
+  finally
+    vParam.Free;
+  end;
+
   try
     //执行操作
     //2011.04.22连接249服务器测试: CallSync(GPlugIn,Pchar('450000001'));
-    CallSync(GPlugIn,StrPas(Params));
+    CallSync(GPlugIn,TENANT_ID);
     result := 0;
   except
     on E:Exception do

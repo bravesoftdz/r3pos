@@ -70,8 +70,10 @@ begin
   ShopID:=vParam.ParamByName('SHOP_ID').AsString;
   UseDate:=vParam.ParamByName('USING_DATE').AsString;
   SetRimCom_CustID(GPlugIn,vParam,ComID,CustID); //读取Rim系统的供应商（烟草公司Com_ID）和零售户的Cust_Id
+  TLogRunInfo.LogWrite('下载订单表体取参数:（R3企业ID：'+TenantID+';门店ID：'+ShopID+'），（RIM烟草公司ID:'+ComID+';零售户ID:'+CustID+'）','RimOrderDownPlugIn.dll');
+
   //判断启用日期与最近30天关系
-  if NearDate < UseDate then NearDate:=UseDate;
+  //if NearDate < UseDate then NearDate:=UseDate;
 
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}
@@ -87,6 +89,7 @@ begin
          ' where A.CO_NUM=B.CO_NUM and A.STATUS>=''04'' and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+ComID+''' and A.CUST_ID='''+CustID+''' '+
          ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
       if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
+      TLogRunInfo.LogWrite('下载订单执行完毕:（下载:'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
     end;
   except
     on E:Exception do
@@ -99,26 +102,25 @@ end;
 function DownOrderToINF_StockData(PlugIn: IPlugIn; vParam: TftParamList): Boolean;
 var
   iRet: integer;
-  Str,INDE_ID,TenantID: string;
+  Str, INDE_ID, TenantID: string;
 begin
   result:=False;
   INDE_ID:=trim(vParam.ParamByName('INDE_ID').AsString);
   TenantID:=inttostr(vParam.ParamByName('TENANT_ID').AsInteger);
+  TLogRunInfo.LogWrite('下载订单表体前传入参数:（R3企业ID：'+TenantID+';订单ID：'+INDE_ID+'）','RimOrderDownPlugIn.dll');
   try
     //1、删除订单表体历史数据：
-    if PlugIn.ExecSQL(Pchar('delete from INF_INDEDATA where INDE_ID='''+INDE_ID+''' '),iRet)<>0 then Raise Exception.Create('1、删除订单表体历史数据出错！'); 
+    Str:='delete from INF_INDEDATA where TENANT_ID='+TenantID+' and INDE_ID='''+INDE_ID+''' ';
+    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('1、删除订单表体历史数据出错！（SQL='+Str+'）');
 
     //2、插入订单表体:
-    str:='insert into INF_INDEDATA(INDE_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
-         'select CO_NUM,ITEM_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,QTY_NEED,QTY_VFY,QTY_ORD,PRI,AMT,RET_AMT '+
-         ' from RIM_SD_CO_LINE where CO_NUM='''+INDE_ID+''' ';
-    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入订单表体出错！'); 
-
-    //3、供应链[GODS_ID]与 [SECOND_ID] 更新中间订单表体 [GODS_ID]
-    str:='update INF_INDEDATA A set A.GODS_ID='+
-         '(select GODS_ID from VIW_GOODSINFO B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) '+
-         ' where A.INDE_ID='''+INDE_ID+''' and exists(select 1 from VIW_GOODSINFO B where B.TENANT_ID='+TenantID+' and A.SECOND_ID=B.SECOND_ID) ';
-    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('3、供应链[GODS_ID]与 [SECOND_ID] 更新中间订单表体 [GODS_ID]');
+    Str:='insert into INF_INDEDATA(TENANT_ID,INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
+         'select '+TenantID+' as TENANT_ID,CO_NUM,B.GODS_ID,ITEM_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,QTY_NEED,QTY_VFY,QTY_ORD,PRI,AMT,RET_AMT '+
+         ' from RIM_SD_CO_LINE A '+
+         ' left outer join (select GODS_ID,SECOND_ID from VIW_GOODSINFO where TENANT_ID='+TenantID+')B on A.ITEM_ID=B.SECOND_ID '+
+         ' where A.CO_NUM='''+INDE_ID+''' ';
+    if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入订单表体出错！（SQL='+Str+'）');
+    TLogRunInfo.LogWrite('下载订单表体执行完毕:（下载：'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
   except
     on E:Exception do
     begin

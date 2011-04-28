@@ -1,7 +1,8 @@
 unit WsdlComm;
 
 interface
-uses windows,SysUtils,Classes,EncdDecd,ZLib,ZDataSet;
+uses
+  windows, SysUtils, Variants, Classes, EncdDecd,ZLib,ZDataSet;
 type
   IPlugIn = Interface(IUnknown)
     ['{34E06C0E-34E5-4BB8-A10F-3F1ECB983AD8}']
@@ -34,12 +35,13 @@ type
     function WriteLogFile(s:Pchar):integer;stdcall;
 
    end;
-TRimCaTenant=record
-  CustId:string;
-  ComId:string;
-  P_TENANT_NAME:string;
-  P_TENANT_ID:string;
-end;
+
+   TRimCaTenant=record
+     CustId:string;
+     ComId:string;
+     P_TENANT_NAME:string;
+     P_TENANT_ID:string;
+   end;
 
 function decodeZipBase64(inXml:string):string;
 function EncodeZipBase64(inXml:string):string;
@@ -47,12 +49,17 @@ function NewId(id:string): string;
 
 //通过许可证号取公司代码
 function GetRimInfo(tid,lsCode:string):TRimCaTenant;
+
 var
   GPlugIn:IPlugIn;
   GLastError:string;
   url:string;
+
 implementation
-uses ZipUtils;
+
+uses
+  ZipUtils;
+
 function NewId(id:string): string;
 var
   g:TGuid;
@@ -113,13 +120,60 @@ begin
   else
      result := inXml;
 end;
+
+
 function GetRimInfo(tid,lsCode:string):TRimCaTenant;
+  function OpenData(GPlugIn: IPlugIn; Qry: TZQuery; SQL: string): Boolean;
+  var
+    ReRun: integer;
+    vData: OleVariant;
+  begin
+    result:=False;
+    try
+      ReRun:=GPlugIn.Open(Pchar(SQL),vData);
+      if (ReRun=0) and (VarIsArray(vData)) then
+      begin
+        Qry.Close;
+        Qry.Data:=vData;
+        Result:=Qry.Active;
+      end else
+      if ReRun<>0 then
+        Exception.Create(SQL+'执行异常！');
+    except
+      on E:Exception do
+      begin
+        Raise Exception.Create(Pchar('PlugIntf.Open:('+Qry.Name+') 出错：'+E.Message));
+      end;
+    end;
+  end;   
 var
+  SQL: string;
   rs:TZQuery;
+  vData: OleVariant;
+  RimCaTen: TRimCaTenant;
 begin
+  RimCaTen.P_TENANT_ID:=tid;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select ORIGN_ID';
+    //取R3的企业名称:
+    SQL:='select TENANT_NAME from Ca_TENANT from TENANT_ID='+tid+' ';
+    if OpenData(GPlugIn,Rs, SQL) then
+      RimCaTen.P_TENANT_NAME:=Rs.Fields[0].AsString
+    else
+      Raise Exception.Create('取R3的企业名称出错！');
+
+    //取RIM烟草公司ID:
+    SQL:= 'select A.ORGAN_ID from PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+tid+' ';
+    if OpenData(GPlugIn,Rs, SQL) then
+      RimCaTen.ComId:=Rs.Fields[0].AsString
+    else
+      Raise Exception.Create('取Rim的企业ID出错！');
+
+     SQL:= 'select CUST_ID from RM_CUST where COM_ID='''+RimCaTen.ComId+''' and LICENSE_CODE='''+lsCode+'''';
+     if OpenData(GPlugIn,Rs, SQL) then
+       RimCaTen.ComId:=Rs.Fields[0].AsString
+     else
+       Raise Exception.Create('取Rim的零售户ID出错！');
   finally
     rs.free;
   end;

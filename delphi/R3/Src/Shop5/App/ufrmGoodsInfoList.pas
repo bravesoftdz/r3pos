@@ -252,7 +252,7 @@ begin
   if trim(edtKey.Text)<>'' then
   begin
     LikeCnd:=GetLikeCnd(Factor.iDbType,'bar.BARCODE',':KEYVALUE','');
-    LikeCnd:=' and ('+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','j.BARCODE'],':KEYVALUE','')+' or (exists(select BARCODE from PUB_BARCODE bar where j.GODS_ID=bar.GODS_ID and '+LikeCnd+'))'+
+    LikeCnd:=' and ('+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','j.BARCODE'],':KEYVALUE','')+' or (exists(select BARCODE from VIW_BARCODE bar where bar.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and j.GODS_ID=bar.GODS_ID and '+LikeCnd+'))'+
                    ')';
     w := w+LikeCnd;
     vCnd:=vCnd+LikeCnd;

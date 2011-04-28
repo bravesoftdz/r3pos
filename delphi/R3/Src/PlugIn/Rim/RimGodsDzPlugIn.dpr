@@ -73,6 +73,7 @@ begin
   NotGods:='';
   ORGAN_ID:=GetORGAN_ID(PlugIntf,TENANT_ID); //根据R3企业ID返回Rim企业内码(comp_id)
   TLogRunInfo.LogWrite('开始执行对照取参数:（R3企业ID：'+TENANT_ID+'，RIM烟草公司ID:'+ORGAN_ID+'）','RimGodsDzPlugIn.dll');
+  if ORGAN_ID='' then Raise Exception.Create('没有找到Rim系统烟草公司ID！'); 
 
   Sort_ID2:=
     '(case when SORT_ID2=''1'' then ''85994503-9CBC-4346-BC86-24C7F5A92BC6'''+  //价类

@@ -155,7 +155,7 @@ begin
        ' from RCK_GOODS_MONTH A,PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+
        ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  and A.TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入月台帐临时表数据出错！');
-  TLogRunInfo.LogWrite('月台帐（SendMonthReck）插入中间表记录数:'+inttoStr(iRet)+' InsertSQL='+Str,'RimOrderDownPlugIn.dll');  
+  TLogRunInfo.LogWrite(' '+#13+'月台帐（SendMonthReck）插入中间表记录数:'+inttoStr(iRet)+'笔   InsertSQL='+Str,'RimOrderDownPlugIn.dll');
 
   //第三步、更新商品计量单位换算管理单位换算值
   Str:='update session.INF_RECKMONTH A set A.UNIT_CALC=(select ('+GetDefaultUnitCalc+') as UNIT_CALC from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID) where exists(select 1 from PUB_GOODSINFO B where A.GODS_ID=B.GODS_ID)';
@@ -272,7 +272,7 @@ begin
        ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and A.TIME_STAMP>'+MaxStamp+' order by A.TIME_STAMP) tp '+
        ' fetch first 20 rows only ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表数据出错！');
-    TLogRunInfo.LogWrite('日台帐（SendDayReck）第'+InttoStr(RunTimes)+'次插入临时表记录数:'+inttoStr(iRet)+'InsertSQL='+Str,'RimOrderDownPlugIn.dll');
+    TLogRunInfo.LogWrite(' '+#13+'日台帐（SendDayReck）第'+InttoStr(RunTimes)+'次插入临时表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
     if iRet=0 then Break; //若插入没有记录，退出循环
 
     //第二步、更新商品计量单位换算管理单位换算值
@@ -360,7 +360,7 @@ begin
        ' from ('+Str+')A,PUB_GOODSINFO B,PUB_GOODS_RELATION C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and A.TENANT_ID='+TENANT_ID+' and C.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  ';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('库存插入临时表出错！（SQL='+Str+'）');
-  TLogRunInfo.LogWrite('零售户库存（SendCustStorage）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'零售户库存（SendCustStorage）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
 
   //第二步、处理中间表[事务处理]
   try
@@ -414,7 +414,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'01',SHOP_ID,ORGAN_ID,CustID); //返回月台帐最大时间戳
-  TLogRunInfo.LogWrite('POS零售单（SendSalesDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');  
+  TLogRunInfo.LogWrite(' '+#13+'POS零售单（SendSalesDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');  
 
   //第一步: 创建零售单（POS）临时[INF_POS_SALE]:
   Str:=
@@ -436,7 +436,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,A.SALES_ID,trim(char(A.SALES_DATE)),B.CUST_CODE,A.TIME_STAMP from '+
        ' ('+str+') as A left outer join PUB_CUSTOMER B on A.IC_CARDNO=B.CUST_ID ';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入零售单临时[INF_POS_SALE]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('POS零售单（SendSalesDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('POS零售单（SendSalesDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -509,7 +509,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'02',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('销售单（SendSaleBatchDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');  
+  TLogRunInfo.LogWrite(' '+#13+'销售单（SendSaleBatchDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');  
 
   //第一步: 创建销售单（批发）临时[INF_SALE]:
   Str:=
@@ -529,7 +529,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID,trim(char(SALES_DATE)),TIME_STAMP from '+
        ' SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=1 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发单）[INF_SALE]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('销售单（SendSaleBatchDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('销售单（SendSaleBatchDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -603,7 +603,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'02',SHOP_ID,ORGAN_ID,CustID);  
-  TLogRunInfo.LogWrite('销售退货单（SendSaleRetDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'销售退货单（SendSaleRetDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
   
   //第一步: 创建销售退货单（）临时[INF_SALE]:
   Str:=
@@ -623,7 +623,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID,trim(char(SALES_DATE)),TIME_STAMP from '+
        ' SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=3 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售退货单临时表[INF_SALE]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('销售退货单（SendSaleRetDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('销售退货单（SendSaleRetDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -699,7 +699,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'04',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('调入单（SenddbInDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'调入单（SenddbInDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_SALE]:
   Str:=
@@ -718,7 +718,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID || ''_1'' as STOCK_ID,TIME_STAMP from '+
        ' STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=2 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨(入)单[INF_DB]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('调入单（SenddbInDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('调入单（SenddbInDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -795,7 +795,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'12',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('调出单（SenddbOutDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'调出单（SenddbOutDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_SALE]:
   Str:=
@@ -814,7 +814,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,SALES_ID || ''_2'' as SALES_ID,TIME_STAMP '+
        ' from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and SALES_TYPE=2 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入调拨(出)单[INF_DB]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('调出单（SenddbOutDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('调出单（SenddbOutDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -889,7 +889,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'05',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('入库单（SendStockDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'入库单（SendStockDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_STOCK]:
   Str:=
@@ -908,7 +908,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID,TIME_STAMP '+
        ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=1 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库单中间表[INF_STOCK]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('入库单（SendStockDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('入库单（SendStockDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -982,7 +982,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'05',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('入库单（SendStkRetuDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'入库单（SendStkRetuDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_STOCK]:
   Str:=
@@ -1001,7 +1001,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,STOCK_ID,TIME_STAMP '+
        ' from STK_STOCKORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and STOCK_TYPE=3 and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单（批发）中间表[INF_STOCK]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('入库退出单（SendStkRetuDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('入库退出单（SendStkRetuDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -1075,7 +1075,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'07',SHOP_ID,ORGAN_ID,CustID); 
-  TLogRunInfo.LogWrite('调整单（SendChangeDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'调整单（SendChangeDetail）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_CHANGE]:
   Str:=
@@ -1094,7 +1094,7 @@ begin
        'select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,CHANGE_ID,TIME_STAMP '+
        ' from STO_CHANGEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and COMM not in (''02'',''12'') and TIME_STAMP>'+MaxStamp;
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入〖调整单〗中间表[INF_CHANGE]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('调整单（SendChangeDetail）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('调整单（SendChangeDetail）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   try
@@ -1174,7 +1174,7 @@ var
 begin
   result:=False;
   MaxStamp:=GetMaxNUM(PlugIntf,'09',SHOP_ID,ORGAN_ID,CustID);
-  TLogRunInfo.LogWrite('销售成本价（SendCostPrice）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite(' '+#13+'销售成本价（SendCostPrice）开始上报，上次上报时间戳:'+MaxStamp,'RimOrderDownPlugIn.dll');
 
   //第一步: 创建销售单（批发）临时[INF_STOCK]:
   Str:=
@@ -1199,7 +1199,7 @@ begin
        ' and A.SHOP_ID='''+SHOP_ID+''' and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and A.TIME_STAMP>'+MaxStamp+
        ' order by A.TIME_STAMP ';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入进货入库单中间表[INF_STOCK]错误！（SQL='+str+'）');
-  TLogRunInfo.LogWrite('销售成本价（SendCostPrice）插入中间表记录数:'+inttoStr(iRet),'RimOrderDownPlugIn.dll');
+  TLogRunInfo.LogWrite('销售成本价（SendCostPrice）插入中间表记录数:'+inttoStr(iRet)+'笔  InsertSQL='+Str,'RimOrderDownPlugIn.dll');
   if iRet=0 then Exit; //若插入没有记录，退出
 
   //第二步、处理RIM的计量单位成本价
@@ -1285,7 +1285,7 @@ begin
     //返回门店与企业关联: (企业名称,门店ID,门店名称,门店许可证号)
     Str:='select TE.TENANT_NAME,SH.SHOP_ID,SH.SHOP_NAME,SH.LICENSE_CODE from CA_SHOP_INFO SH,('+Str+') TE where SH.TENANT_ID=TE.TENANT_ID order by TE.TENANT_ID,SH.SHOP_ID ';
     OpenData(PlugIntf, Rs, Str);
-    TLogRunInfo.LogWrite('R3上报读取所有上报门店:'+InttoStr(Rs.RecordCount)+'个）（SQL='+Str+'）','RimReportedPlugIn.dll');
+    TLogRunInfo.LogWrite(' '+#13+'R3上报读取所有上报门店:'+InttoStr(Rs.RecordCount)+'个）（SQL='+Str+'）','RimReportedPlugIn.dll');
     if (not Rs.Active) or (Rs.IsEmpty) then Raise Exception.Create(' 企业表没有对应到数据，不需上报！ ');
 
     //锁定数据库连接:
@@ -1343,7 +1343,7 @@ begin
           SendCustStorage(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE);
 
           PlugIntf.WriteLogFile(Pchar('企业ID：'+TenantID+'在 '+GetTickTime+'完成第'+inttoStr(Rs.RecNo)+'次上报！'));
-          TLogRunInfo.LogWrite('R3门店ID:'+ShopID+'名称：'+ShopName+'许可证号：'+LICENSE_CODE+'完成第'+inttoStr(Rs.RecNo)+'次执行上报！','RimReportedPlugIn.dll');
+          TLogRunInfo.LogWrite('R3门店ID:'+ShopID+'名称：'+ShopName+'许可证号：'+LICENSE_CODE+'完成第'+inttoStr(Rs.RecNo)+'次执行上报！'+#13+#13+'  ','RimReportedPlugIn.dll');
         end else  // Raise Exception.Create(ShopName+'->'+OrganID+'在RIM中没找到对应的CUST_ID值...');
         begin
           TLogRunInfo.LogWrite('第'+inttoStr(Rs.RecNo)+'次执行上报，R3:（门店ID:'+ShopID+'名称：'+ShopName+'许可证号：'+LICENSE_CODE+'）没有找到（RIM的零售户ID），本门店无法上报，继续执行下一门店上报！','RimReportedPlugIn.dll');

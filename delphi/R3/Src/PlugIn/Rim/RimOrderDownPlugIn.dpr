@@ -36,6 +36,8 @@ var
   rs: TZQuery;
 begin
   try
+    ComID:='';
+    CustID:='';
     rs:=TZQuery.Create(nil);
     try
       TenantID:=vParam.ParamByName('TENANT_ID').AsString;
@@ -71,26 +73,25 @@ begin
   UseDate:=vParam.ParamByName('USING_DATE').AsString;
   SetRimCom_CustID(GPlugIn,vParam,ComID,CustID); //读取Rim系统的供应商（烟草公司Com_ID）和零售户的Cust_Id
   TLogRunInfo.LogWrite('下载订单表体取参数:（R3企业ID：'+TenantID+';门店ID：'+ShopID+'），（RIM烟草公司ID:'+ComID+';零售户ID:'+CustID+'）','RimOrderDownPlugIn.dll');
+  if ComID='' then Raise Exception.Create('没有找到RIM烟草公司ID！');
+  if CustID='' then Raise Exception.Create('没有找到RIM零售户ID！'); //写异常日志;
 
   //判断启用日期与最近30天关系
   //if NearDate < UseDate then NearDate:=UseDate;
 
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}
-    if (ComID<>'') and (CustID<>'')  then
-    begin
-      //1、先删除中间表历史数据:
-      if GPlugIn.ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TenantID+' and SHOP_ID='''+ShopID+''' '),iRet)<>0 then Raise Exception.Create('1、删除订单中间表(INF_INDEORDER)失败！〖条件：企业ID='+TenantID+',门店ID='+ShopID+'〗');
+    //1、先删除中间表历史数据:
+    if GPlugIn.ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TenantID+' and SHOP_ID='''+ShopID+''' '),iRet)<>0 then Raise Exception.Create('1、删除订单中间表(INF_INDEORDER)失败！〖条件：企业ID='+TenantID+',门店ID='+ShopID+'〗');
 
-      //2、插入最近30天且已确认的订单表头:
-      Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS) '+
-         ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS '+
-         ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
-         ' where A.CO_NUM=B.CO_NUM and A.STATUS>=''04'' and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+ComID+''' and A.CUST_ID='''+CustID+''' '+
-         ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
-      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
-      TLogRunInfo.LogWrite('下载订单执行完毕:（下载:'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
-    end;
+    //2、插入最近30天且已确认的订单表头:
+    Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS) '+
+      ' select '+TenantID+' as TenantID,'''+ShopID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS '+
+      ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
+      ' where A.CO_NUM=B.CO_NUM and A.STATUS>=''04'' and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+ComID+''' and A.CUST_ID='''+CustID+''' '+
+      ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
+     if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
+     TLogRunInfo.LogWrite('下载订单执行完毕:（下载:'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
   except
     on E:Exception do
     begin

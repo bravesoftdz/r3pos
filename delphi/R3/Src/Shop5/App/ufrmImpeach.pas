@@ -94,7 +94,7 @@ begin
 
 
   cdsTENANT.Close;
-  cdsTENANT.SQL.Text := 'select CLIENT_CODE,CLIENT_NAME from VIW_CLIENTINFO where FLAG in (1,3)';
+  cdsTENANT.SQL.Text := 'select CLIENT_ID,CLIENT_NAME from VIW_CLIENTINFO where FLAG in (1,3) and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsTENANT);
   edtIMPH_TENANT_ID.DataSet := cdsTENANT;
 
@@ -110,6 +110,7 @@ begin
     cdsImpeach.Close;
     Factor.Open(cdsImpeach,'TImpeach',Params);
     AObj.ReadFromDataSet(cdsImpeach);
+    //ReadFromObject(AObj,Self);
   finally
     Params.Free;
   end;
@@ -195,6 +196,7 @@ begin
   inherited;
   edtIMPEACH_CLASS.ItemIndex := 0;
   Append;
+  edtIMPEACH_CLASS.SetFocus;
 end;
 
 procedure TfrmImpeach.edtIMPEACH_CLASSPropertiesChange(Sender: TObject);
@@ -222,7 +224,8 @@ begin
   Open;
   edtIS_REPEAT.ItemIndex := 0;
   edtIS_URGENCY.ItemIndex := 0;
-  
+  edtIMPEACH_USER.Text := '';
+  edtCONTENT.Text := '';
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
@@ -255,6 +258,10 @@ procedure TfrmImpeach.btn_SaveClick(Sender: TObject);
 begin
   inherited;
   Save;
+  if MessageBox(Handle,'是否继续新增投诉建议?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+    Append
+  else
+    ModalResult := MROK;
 end;
 
 procedure TfrmImpeach.btn_CloseClick(Sender: TObject);

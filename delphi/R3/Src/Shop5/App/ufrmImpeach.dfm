@@ -166,12 +166,12 @@ inherited frmImpeach: TfrmImpeach
             TabOrder = 1
             InGrid = False
             KeyValue = Null
-            KeyField = 'CLIENT_CODE'
+            KeyField = 'CLIENT_ID'
             ListField = 'CLIENT_NAME'
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'CLIENT_CODE'
+                FieldName = 'CLIENT_ID'
                 Footers = <>
                 Title.Caption = #20225#19994#32534#30721
                 Width = 70
@@ -189,7 +189,7 @@ inherited frmImpeach: TfrmImpeach
             AutoFitColWidth = True
             ShowButton = True
             LocateStyle = lsDark
-            Filter = 'CLIENT_CODE,CLIENT_NAME'
+            Filter = 'CLIENT_ID,CLIENT_NAME'
             Buttons = []
             DropListStyle = lsFixed
             MultiSelect = False
@@ -522,7 +522,6 @@ inherited frmImpeach: TfrmImpeach
       Top = 10
       Width = 69
       Height = 21
-      GroupIndex = 1
       Bitmaps.Hot.Data = {
         46110000424D4611000000000000360000002800000045000000150000000100
         18000000000010110000120B0000120B00000000000000000000FEDBACE6C79E
@@ -814,7 +813,6 @@ inherited frmImpeach: TfrmImpeach
       Top = 10
       Width = 69
       Height = 21
-      GroupIndex = 1
       Bitmaps.Hot.Data = {
         46110000424D4611000000000000360000002800000045000000150000000100
         18000000000010110000120B0000120B00000000000000000000FEDBACE6C79E

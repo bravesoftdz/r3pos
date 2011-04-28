@@ -12,18 +12,25 @@ uses
 type
   TfrmCustomerExt = class(TFrame)
     bg: TRzPanel;
+    RzLabel18: TRzLabel;
+    RzLabel12: TRzLabel;
+    cmbID_NUMBER: TcxTextEdit;
+    edtACCU_INTEGRAL: TcxTextEdit;
+    RzLabel1: TRzLabel;
+    RzLabel2: TRzLabel;
   private
     { Private declarations }
-    Top_Value:Integer;
+    Top_Value,Row_Num:Integer;
     FList:TList;
     FUnionID: string;
     FDataSet: TDataSet;
     FDataState: TDataSetState;
     procedure CreateLabel(UNION_ID,LblName:string);
-    procedure CreateRaido(UNION_ID,OPTION,In_Value:String);
-    procedure CreateCmb(UNION_ID,OPTION,In_Value:String);
-    procedure CreateNum(UNION_ID,OPTION,In_Value:String);
-    procedure CreateDateTime(UNION_ID,OPTION,In_Value:String);
+    procedure CreateStarLabel(UNION_ID:String);
+    procedure CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
+    procedure CreateCmb(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
+    procedure CreateNum(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
+    procedure CreateDateTime(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
     procedure ControlFree;
     procedure SetUnionID(const Value: string);
     procedure SetDataSet(const Value: TDataSet);
@@ -41,7 +48,7 @@ type
   end;
 
 implementation
-uses ZBase, ufrmBasic, uFnUtil, uShopGlobal, uGlobal;
+uses ZBase, ufrmBasic, uFnUtil, uShopGlobal, uGlobal, uDsUtil;
 {$R *.dfm}
 
 { TfrmCustomerExt }
@@ -50,7 +57,7 @@ procedure TfrmCustomerExt.ControlFree;
 var i:integer;
 begin
   Freeframe(self);
-  for i:=0 to FList.Count -1 do
+  for i:=0 to FList.Count-1 do
     TObject(FList[i]).Free;
   FList.Clear;
 end;
@@ -62,21 +69,24 @@ begin
   inherited;
 end;
 
-procedure TfrmCustomerExt.CreateCmb(UNION_ID,OPTION,In_Value:String);
+procedure TfrmCustomerExt.CreateCmb(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
 var Cmb:TcxComboBox;
     Aobj:TRecord_;
     rs:TZQuery;
-    VList:TStringList;
 begin
   Cmb := TcxComboBox.Create(nil);
   Cmb.Parent := bg;
   Cmb.Name := 'cmd_'+AnsiReplaceText(UNION_ID,'-','_');
   Cmb.Properties.DropDownListStyle := lsFixedList;
   Cmb.Text := '';
-  Cmb.Left := 96;
+  if Row_Num mod 2 = 0 then
+    Cmb.Left := 332
+  else
+    Cmb.Left := 96;
   Cmb.Top := 8+Top_Value;
   Cmb.Height := 21;
   Cmb.Width := 121;
+  Cmb.Tag := Is_Null;
   Aobj := TRecord_.Create;
   rs := TZQuery.Create(nil);
   try
@@ -94,33 +104,42 @@ begin
     rs.Free;
   end;
   if In_Value <> '' then
-    Cmb.Text := In_Value;
+    Cmb.ItemIndex := TdsItems.FindItems(Cmb.Properties.Items,'CODE_ID',In_Value);
+
   if DataState in [dsBrowse,dsInactive] then
     begin
       Cmb.Properties.ReadOnly := True;
       Cmb.Style.Color := clBtnFace;
     end;
+  if Is_Null = 2 then CreateStarLabel(UNION_ID);    
   FList.Add(Cmb);
   Top_Value := Top_Value+29;
 end;
 
-procedure TfrmCustomerExt.CreateDateTime(UNION_ID,OPTION,In_Value: String);
+procedure TfrmCustomerExt.CreateDateTime(UNION_ID,OPTION,In_Value: String;Is_Null:Integer);
 var Date_Time:TcxDateEdit;
 begin
   Date_Time := TcxDateEdit.Create(Self);
   Date_Time.Parent := bg;
-  Date_Time.Left := 96;
+  Date_Time.Name := 'dte_'+AnsiReplaceText(UNION_ID,'-','_');
+  Date_Time.Tag := Is_Null;
+  if Row_Num mod 2 = 0 then
+    Date_Time.Left := 332
+  else
+    Date_Time.Left := 96;
   Date_Time.Top := 8+Top_Value;
   Date_Time.Height := 21;
   Date_Time.Width := 121;
-  Date_Time.Name := 'dte_'+AnsiReplaceText(UNION_ID,'-','_');
   if DataState in [dsBrowse,dsInactive] then
     begin
       Date_Time.Properties.ReadOnly := True;
       Date_Time.Style.Color := clBtnFace;
     end;
   if In_Value <> '' then
-    Date_Time.Text := In_Value; 
+    Date_Time.Date := FnTime.fnStrtoDate(In_Value)
+  else
+    Date_Time.EditValue := null;
+  if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Date_Time);
   Top_Value := Top_Value+29;
 end;
@@ -130,39 +149,47 @@ var Lab:TRzLabel;
 begin
   Lab := TRzLabel.Create(Self);
   Lab.Parent := bg;
-  Lab.Name := 'lbl_'+AnsiReplaceText(UNION_ID,'-','_');
+  Lab.Name := 'lab_'+AnsiReplaceText(UNION_ID,'-','_');
   Lab.Alignment := taRightJustify;
-  Lab.Left := 7;
+  if Row_Num mod 2 = 0 then
+    Lab.Left := 244
+  else
+    Lab.Left := 7;
   Lab.Top := 12+Top_Value;
   Lab.Height := 12;
   Lab.Width := 80;
 
   Lab.Caption := LblName;
-  FList.Add(Lab);
+  //FList.Add(Lab);
 end;
 
-procedure TfrmCustomerExt.CreateNum(UNION_ID,OPTION,In_Value:String);
+procedure TfrmCustomerExt.CreateNum(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
 var Num_Text:TcxSpinEdit;
 begin
   Num_Text := TcxSpinEdit.Create(Self);
   Num_Text.Parent := bg;
   Num_Text.Name := 'num_'+ AnsiReplaceText(UNION_ID,'-','_');
-  Num_Text.Left := 96;
+  if Row_Num mod 2 = 0 then
+    Num_Text.Left := 332
+  else
+    Num_Text.Left := 96;
   Num_Text.Top := 8+Top_Value;
   Num_Text.Height := 21;
   Num_Text.Width := 121;
+  Num_Text.Tag := Is_Null;
+  if In_Value <> '' then
+    Num_Text.Value := StrtoIntDef(In_Value,0);
   if DataState in [dsBrowse,dsInactive] then
     begin
       Num_Text.Properties.ReadOnly := True;
       Num_Text.Style.Color := clBtnFace;
     end;
-  if In_Value <> '' then
-    Num_Text.Text := In_Value;
+  if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Num_Text);
   Top_Value := Top_Value + 29;
 end;
 
-procedure TfrmCustomerExt.CreateRaido(UNION_ID,OPTION,In_Value:String);
+procedure TfrmCustomerExt.CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
 var Radio:TcxComboBox;
     vList:TStringList;
     i,Height_Value:Integer;
@@ -174,10 +201,14 @@ begin
   Radio.Name := 'rdo_'+AnsiReplaceText(UNION_ID,'-','_');
   Radio.Properties.DropDownListStyle := lsFixedList;
   Radio.Text := '';
-  Radio.Left := 96;
+  if Row_Num mod 2 = 0 then
+    Radio.Left := 332
+  else
+    Radio.Left := 96;
   Radio.Height := 21;
   Radio.Width := 121;
   Radio.Top := 8+Top_Value;
+  Radio.Tag := Is_Null;
   vList := TStringList.Create;
   try
     vList.Delimiter := ';';
@@ -193,12 +224,13 @@ begin
     vList.Free;
   end;
   if In_Value <> '' then
-    Radio.Text := In_Value;
+    Radio.ItemIndex := TdsItems.FindItems(Radio.Properties.Items,'CODE_ID',In_Value);
   if DataState in [dsBrowse,dsInactive] then
     begin
       Radio.Properties.ReadOnly := True;
       Radio.Style.Color := clBtnFace;
     end;
+  if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Radio);
   Top_Value := Top_Value+29;
 end;
@@ -216,8 +248,52 @@ begin
 end;
 
 procedure TfrmCustomerExt.WriteTo;
+var i:Integer;
+    Index_Id:String;
 begin
-
+  for i := 0 to FList.Count - 1 do
+    begin
+      if Tobject(FList[i]) is TcxComboBox then
+        begin
+          if (TcxComboBox(FList[i]).Tag = 2) and (Trim(TcxComboBox(FList[i]).Text) = '') then
+            raise Exception.Create('有必填项没有填写!');
+          Index_Id := copy(TcxComboBox(FList[i]).Name,4,50);
+          Index_Id := AnsiReplaceText(Index_Id,'_','-');
+          if DataSet.Locate('INDEX_ID',Index_Id,[]) then
+            begin
+              DataSet.Edit;
+              if TcxComboBox(FList[i]).ItemIndex = -1 then
+                DataSet.FieldByName('INDEX_VALUE').AsString := ''
+              else
+                DataSet.FieldByName('INDEX_VALUE').AsString := TRecord_(TcxComboBox(FList[i]).Properties.Items.Objects[TcxComboBox(FList[i]).ItemIndex]).FieldbyName('CODE_ID').AsString;
+              DataSet.Post;
+            end;
+        end
+      else if Tobject(FList[i]) is TcxSpinEdit then
+        begin
+          if (TcxSpinEdit(FList[i]).Tag = 2) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
+            raise Exception.Create('有必填项没有填写!');
+          Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,4,50),'_','-');
+          if DataSet.Locate('INDEX_ID',Index_Id,[]) then
+            begin
+              DataSet.Edit;
+              DataSet.FieldByName('INDEX_VALUE').AsString := TcxSpinEdit(FList[i]).Value;
+              DataSet.Post;
+            end;
+        end
+      else if Tobject(FList[i]) is TcxDateEdit then
+        begin
+          if (TcxDateEdit(FList[i]).Tag = 2) and (Trim(TcxDateEdit(FList[i]).Text) = '') then
+            raise Exception.Create('有必填项没有填写!');
+          Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,4,50),'_','-');
+          if DataSet.Locate('INDEX_ID',Index_Id,[]) then
+            begin
+              DataSet.Edit;
+              DataSet.FieldByName('INDEX_VALUE').AsString := FormatDateTime('YYYY-MM-DD',TcxDateEdit(FList[i]).Date);
+              DataSet.Post;
+            end;
+        end;
+    end;
 end;
 
 procedure TfrmCustomerExt.InitControl;
@@ -228,33 +304,45 @@ begin
   cdsUnionIndex := TZQuery.Create(nil);
   try
   cdsUnionIndex.SQL.Text :=
-  'select INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID and TENANT_ID=:TENANT_ID';
+  'select UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID and TENANT_ID=:TENANT_ID';
   cdsUnionIndex.Params.ParamByName('UNION_ID').AsString := UnionID;
   cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Factor.Open(cdsUnionIndex);
   cdsUnionIndex.First;
   while not cdsUnionIndex.Eof do
     begin
+      inc(Row_Num);
+      if DataSet.Locate('INDEX_ID',cdsUnionIndex.FieldbyName('INDEX_ID').AsString,[]) then
+        begin
+          DataSet.Append;
+          DataSet.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+          DataSet.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          DataSet.FieldByName('UNION_ID').AsString := cdsUnionIndex.FieldbyName('UNION_ID').AsString;
+          DataSet.FieldByName('INDEX_ID').AsString := cdsUnionIndex.FieldbyName('INDEX_ID').AsString;
+          DataSet.FieldByName('INDEX_NAME').AsString := cdsUnionIndex.FieldbyName('INDEX_NAME').AsString;
+          DataSet.FieldByName('INDEX_TYPE').AsString := cdsUnionIndex.FieldbyName('INDEX_TYPE').AsString;
+          DataSet.Post;
+        end;
       if DataSet.Locate('INDEX_ID',cdsUnionIndex.FieldbyName('INDEX_ID').AsString,[]) then
         Index_Id := DataSet.FieldByName('INDEX_VALUE').AsString
       else
-        Index_Id := DataSet.FieldByName('INDEX_VALUE').AsString;
+        Index_Id := '';
       CreateLabel(cdsUnionIndex.FieldbyName('INDEX_ID').asString,cdsUnionIndex.FieldbyName('INDEX_NAME').asString);
       if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '1' then
         begin
-          CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id);
+          CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
         end
       else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '2' then
         begin
-          CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id);
+          CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
         end
       else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '3' then
         begin
-          CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id);
+          CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
         end
       else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '4' then
         begin
-          CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id);
+          CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
         end;
       cdsUnionIndex.Next;
     end;
@@ -276,6 +364,25 @@ end;
 procedure TfrmCustomerExt.SetDataState(const Value: TDataSetState);
 begin
   FDataState := Value;
+end;
+
+procedure TfrmCustomerExt.CreateStarLabel(UNION_ID:String);
+var Lbl:TRzLabel;
+begin
+  Lbl := TRzLabel.Create(Self);
+  Lbl.Parent := bg;
+  Lbl.Name := 'lbl_'+AnsiReplaceText(UNION_ID,'-','_');
+  Lbl.Alignment := taRightJustify;
+  if Row_Num mod 2 = 0 then
+    Lbl.Left := 455
+  else
+    Lbl.Left := 220;
+  Lbl.Top := 12+Top_Value;
+  Lbl.Height := 12;
+  Lbl.Width := 6;
+  Lbl.Caption := '*';
+  Lbl.Font.Color := clMaroon;
+  //FList.Add(Lbl);
 end;
 
 end.

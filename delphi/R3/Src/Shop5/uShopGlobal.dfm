@@ -1024,30 +1024,23 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
-  object PUB_STAT_Lable: TZQuery
+  object PUB_GOODS_INDEXS: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
-      'select CODE_ID,CODE_NAME,USEFLAG from ('
       
-        'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME ' +
-        'else b.CODE_NAME end as CODE_NAME,'
-      
-        '       case when b.CODE_NAME is null then 0 else 1 end as USEFLA' +
-        'G from PUB_PARAMS j left outer join '
-      
-        '(select CODE_ID,CODE_NAME from PUB_CODE_INFO where TENANT_ID=:TE' +
-        'NANT_ID and CODE_TYPE='#39'16'#39' ) b on j.CODE_ID=b.CODE_ID '
-      'where j.TYPE_CODE='#39'SORT_TYPE'#39')'
-      'g order by  cast(CODE_ID as int)')
+        'select SORT_ID,SORT_NAME,SORT_SPELL,SEQ_NO,SORT_TYPE from VIW_GO' +
+        'ODSSORT '
+      'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
+      'order  by SORT_TYPE,SEQ_NO')
     Params = <
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
-    Top = 526
+    Left = 664
+    Top = 88
     ParamData = <
       item
         DataType = ftUnknown

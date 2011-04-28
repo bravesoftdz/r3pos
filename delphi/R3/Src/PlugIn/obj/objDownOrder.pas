@@ -92,7 +92,7 @@ begin
     SelectSQL.Text:=Str;
     result:=true;
   except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
+    Raise;
   end;
 end;
 

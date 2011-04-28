@@ -94,7 +94,7 @@ begin
 
 
   cdsTENANT.Close;
-  cdsTENANT.SQL.Text := 'select CLIENT_ID,CLIENT_SPELL,CLIENT_NAME from VIW_CLIENTINFO where FLAG in (1,3) and TENANT_ID='+IntToStr(Global.TENANT_ID)+' order by FLAG';
+  cdsTENANT.SQL.Text := 'select CLIENT_ID,CLIENT_SPELL,CLIENT_NAME,FLAG from VIW_CLIENTINFO where FLAG in (1,3) and TENANT_ID='+IntToStr(Global.TENANT_ID)+' order by FLAG';
   Factor.Open(cdsTENANT);
   edtIMPH_TENANT_ID.DataSet := cdsTENANT;
 
@@ -218,7 +218,6 @@ begin
 end;
 
 procedure TfrmImpeach.Append;
-var rs:TZQuery;
 begin
   Open;
   edtIS_REPEAT.ItemIndex := 0;
@@ -226,25 +225,9 @@ begin
   edtIMPEACH_CLASS.ItemIndex := 0;  
   edtIMPEACH_USER.Text := '';
   edtCONTENT.Text := '';
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text :=
-    'select b.TENANT_ID,b.CLIENT_NAME from CA_RELATIONS a left join VIW_CLIENTINFO b on a.TENANT_ID=b.TENANT_ID where a.RELATI_ID=:TENANT_ID';
-    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.Open(rs);
-    if not rs.IsEmpty then
-      begin
-        edtIMPH_TENANT_ID.KeyValue := rs.FieldbyName('TENANT_ID').AsString;
-        edtIMPH_TENANT_ID.Text := rs.FieldbyName('CLIENT_NAME').AsString;
-      end
-    else
-      begin
-        edtIMPH_TENANT_ID.KeyValue := IntToStr(Global.TENANT_ID);
-        edtIMPH_TENANT_ID.Text := Global.TENANT_NAME;
-      end;
-  finally
-    rs.Free;
-  end;
+  cdsTENANT.Locate('flag',1,[]);
+  edtIMPH_TENANT_ID.KeyValue := cdsTENANT.FieldbyName('CLIENT_ID').AsString;
+  edtIMPH_TENANT_ID.Text := cdsTENANT.FieldbyName('CLIENT_NAME').AsString;
 end;
 
 procedure TfrmImpeach.FormDestroy(Sender: TObject);

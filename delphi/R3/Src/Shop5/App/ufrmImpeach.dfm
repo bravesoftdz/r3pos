@@ -149,6 +149,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 11
             Width = 118
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtIMPEACH_CLASSPropertiesChange
             TabOrder = 0
@@ -201,12 +202,14 @@ inherited frmImpeach: TfrmImpeach
             Width = 232
             Height = 20
             TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIS_REPEAT: TcxComboBox
             Left = 267
             Top = 89
             Width = 74
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             TabOrder = 4
             OnKeyDown = edtIS_REPEATKeyDown
@@ -216,6 +219,7 @@ inherited frmImpeach: TfrmImpeach
             Top = 89
             Width = 74
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             TabOrder = 3
           end
@@ -225,6 +229,7 @@ inherited frmImpeach: TfrmImpeach
             Width = 398
             Height = 118
             TabOrder = 5
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
       end

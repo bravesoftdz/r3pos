@@ -1,9 +1,9 @@
 inherited frmShowDibs: TfrmShowDibs
   Left = 319
-  Top = 0
+  Top = 149
   BorderStyle = bsNone
   Caption = #32467#31639#23545#35805#26694
-  ClientHeight = 522
+  ClientHeight = 373
   ClientWidth = 571
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -14,7 +14,7 @@ inherited frmShowDibs: TfrmShowDibs
     Left = 0
     Top = 0
     Width = 571
-    Height = 522
+    Height = 373
     Align = alClient
     BorderInner = fsFlatBold
     BorderOuter = fsFlatRounded
@@ -402,7 +402,7 @@ inherited frmShowDibs: TfrmShowDibs
     end
     object Panel1: TPanel
       Left = 7
-      Top = 401
+      Top = 252
       Width = 557
       Height = 114
       Align = alBottom

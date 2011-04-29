@@ -543,7 +543,7 @@ var
   n:Integer;
   rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
       'select count(*) from SAL_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
@@ -554,7 +554,7 @@ begin
   finally
     rs.Free;
   end;
-
+}
   try
     Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);

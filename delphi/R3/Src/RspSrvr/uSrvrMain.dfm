@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = PropPage
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet

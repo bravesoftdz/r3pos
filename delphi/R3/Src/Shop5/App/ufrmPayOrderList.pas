@@ -169,6 +169,7 @@ begin
       Label3.Caption := '²Ö¿âÃû³Æ';
       Label40.Caption := '¸¶¿î²Ö¿â';
     end;
+  ChangeButton;
 end;
 
 procedure TfrmPayOrderList.actFindExecute(Sender: TObject);
@@ -257,6 +258,15 @@ end;
 procedure TfrmPayOrderList.ChangeButton;
 begin
   if cdsList.Active and (cdsList.FieldByName('CHK_DATE').AsString = '') then actAudit.Caption := 'ÉóºË' else actAudit.Caption := 'ÆúÉó';
+//  if rzPage.ActivePageIndex = 0 then
+     begin
+       actDelete.Enabled := rzPage.ActivePageIndex > 0;
+       actEdit.Enabled := rzPage.ActivePageIndex > 0;
+       actSave.Enabled := rzPage.ActivePageIndex > 0;
+       actCancel.Enabled := false;
+       actInfo.Enabled := rzPage.ActivePageIndex > 0;
+       actAudit.Enabled := rzPage.ActivePageIndex > 0;
+     end;
 end;
 procedure TfrmPayOrderList.actAuditExecute(Sender: TObject);
 var

@@ -1,6 +1,6 @@
 inherited frmPayOrderList: TfrmPayOrderList
-  Left = 218
-  Top = 123
+  Left = 249
+  Top = 174
   Width = 908
   Height = 600
   Caption = #20184#27454#21333

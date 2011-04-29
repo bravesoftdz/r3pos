@@ -162,6 +162,7 @@ begin
   end;
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   RzPage.ActivePageIndex := 0;
+  ChangeButton;
 end;
 
 procedure TfrmRecvPosList.actFindExecute(Sender: TObject);
@@ -251,6 +252,15 @@ end;
 procedure TfrmRecvPosList.ChangeButton;
 begin
   if cdsList.Active and (cdsList.FieldByName('CHK_DATE').AsString = '') then actAudit.Caption := 'ÉóºË' else actAudit.Caption := 'ÆúÉó';
+//  if rzPage.ActivePageIndex = 0 then
+     begin
+       actDelete.Enabled := rzPage.ActivePageIndex > 0;
+       actEdit.Enabled := rzPage.ActivePageIndex > 0;
+       actSave.Enabled := rzPage.ActivePageIndex > 0;
+       actCancel.Enabled := false;
+       actInfo.Enabled := rzPage.ActivePageIndex > 0;
+       actAudit.Enabled := rzPage.ActivePageIndex > 0;
+     end;
 end;
 procedure TfrmRecvPosList.actAuditExecute(Sender: TObject);
 var

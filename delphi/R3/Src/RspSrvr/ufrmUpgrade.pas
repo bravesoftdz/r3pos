@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmTenant, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   ActnList, Menus, cxMaskEdit, cxButtonEdit, zrComboBoxList, ExtCtrls,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, RzLabel, StdCtrls,
-  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp;
+  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp, TlHelp32;
 
 type
   TfrmUpgrade = class(TfrmTenant)
@@ -36,6 +36,8 @@ type
     Aborted:boolean;
     procedure CallBack(Title:string;SQL:string;Percent:Integer);
     function CheckLogin(NetWork:boolean=true): Boolean;
+    function WinExecAndWait32V2(FileName: string; Visibility: integer): DWORD;
+    function CheckExeFile(filename: string): boolean;
   public
     { Public declarations }
     url,path,dbid:string;
@@ -211,6 +213,38 @@ begin
     Temp.Free;
   end;
 end;
+function TfrmUpgrade.CheckExeFile(filename: string): boolean;
+var
+  ProcessSnapShotHandle: THandle;
+  ProcessEntry: TProcessEntry32;
+  Ret: BOOL;
+  s: string;
+  Position: Integer;
+begin
+  result := false;
+  ProcessSnapShotHandle:=CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if ProcessSnapShotHandle>0 then
+  begin
+    try
+      ProcessEntry.dwSize:=SizeOf(TProcessEntry32);
+      Ret:=Process32First(ProcessSnapShotHandle, ProcessEntry);
+      while Ret do
+      begin
+        s:=LowerCase(ExtractFileName(ProcessEntry.szExeFile));
+        if s=LowerCase(filename)
+        then
+          begin
+            result := true;
+            Break;
+          end;
+        //比较s的值就行了.
+        Ret:=Process32Next(ProcessSnapShotHandle, ProcessEntry)
+      end;
+    finally
+      CloseHandle(ProcessSnapShotHandle)
+    end;
+  end
+end;
 procedure TfrmUpgrade.btnInstallClick(Sender: TObject);
 function GetFileNameFromURL(url: string): string;
 var ts : TStrings;
@@ -231,6 +265,13 @@ var
   filename:string;
 begin
   inherited;
+
+  StopService('RSPScktSrvr');
+  isStop := false;
+  while not isStop and QueryService('RSPScktSrvr') do Application.ProcessMessages;
+
+  if CheckExeFile('RSPScktSrvr.exe') then Raise Exception.Create('服务程序正在运行,请先关闭应用后再升级..');
+
   CaFactory.RspFlag := 1;
   btnInstall.Enabled := false;
   try
@@ -268,11 +309,12 @@ begin
     end;
     stp3.Font.Style := [fsBold];
     if CaUpgrade.UpGrade in [1,2] then
-      Winexec(Pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),0);
+       WinExecAndWait32V2(Pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),0);
     Label27.Caption := '正在升级数据..';
     Label27.Update;
     stp4.Font.Style := [fsBold];
     dbUpgrade(dbid);
+    StartService('RSPScktSrvr');
     MessageBox(Handle,'安装升级执行完毕，点确认后退出','友情提示...',MB_OK+MB_ICONQUESTION);
     Close;
   finally
@@ -381,6 +423,64 @@ begin
  Label27.Update;
  PrsBar.Max := 100;
  PrsBar.Position := Percent;
+end;
+
+function TfrmUpgrade.WinExecAndWait32V2(FileName: string;
+  Visibility: integer): DWORD;
+  procedure WaitFor(processHandle: THandle);
+  var
+    msg: TMsg;
+    ret: DWORD;
+  begin
+    repeat
+      ret := MsgWaitForMultipleObjects(
+        1, { 1 handle to wait on }
+        processHandle, { the handle }
+        False, { wake on any event }
+        INFINITE, { wait without timeout }
+        QS_PAINT or { wake on paint messages }
+        QS_SENDMESSAGE { or messages from other threads }
+        );
+      if ret = WAIT_FAILED then
+        Exit; { can do little here }
+      if ret = (WAIT_OBJECT_0 + 1) then
+      begin
+        { Woke on a message, process paint messages only. Calling
+          PeekMessage gets messages send from other threads processed. }
+        while PeekMessage(msg, 0, WM_PAINT, WM_PAINT, PM_REMOVE) do
+          DispatchMessage(msg);
+      end;
+    until ret = WAIT_OBJECT_0;
+  end; { Waitfor }
+var { V1 by Pat Ritchey, V2 by P.Below }
+  zAppName: array[0..512] of char;
+  StartupInfo: TStartupInfo;
+  ProcessInfo: TProcessInformation;
+begin { WinExecAndWait32V2 }
+  StrPCopy(zAppName, FileName);
+  FillChar(StartupInfo, Sizeof(StartupInfo), #0);
+  StartupInfo.cb := Sizeof(StartupInfo);
+  StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+  StartupInfo.wShowWindow := Visibility;
+  if not CreateProcess(nil,
+    zAppName, { pointer to command line string }
+    nil, { pointer to process security attributes }
+    nil, { pointer to thread security attributes }
+    false, { handle inheritance flag }
+    CREATE_NEW_CONSOLE or { creation flags }
+    NORMAL_PRIORITY_CLASS,
+    nil, { pointer to new environment block }
+    nil, { pointer to current directory name }
+    StartupInfo, { pointer to STARTUPINFO }
+    ProcessInfo) { pointer to PROCESS_INF } then
+    Result := DWORD(-1) { failed, GetLastError has error code }
+  else
+  begin
+    Waitfor(ProcessInfo.hProcess);
+    GetExitCodeProcess(ProcessInfo.hProcess, Result);
+    CloseHandle(ProcessInfo.hProcess);
+    CloseHandle(ProcessInfo.hThread);
+  end; { Else }
 end;
 
 end.

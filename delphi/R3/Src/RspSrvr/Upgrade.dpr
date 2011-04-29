@@ -16,7 +16,8 @@ uses
   uShopUtil in '..\Shop5\Frame\uShopUtil.pas',
   uXDictFactory in '..\Shop5\Frame\uXDictFactory.pas',
   ObjCommon in '..\Shop5\Obj\ObjCommon.pas',
-  udbUtil in '..\..\Pub\udbUtil.pas';
+  udbUtil in '..\..\Pub\udbUtil.pas',
+  PubMemberService in '..\Shop5\App\PubMemberService.pas';
 
 {$R *.res}
 

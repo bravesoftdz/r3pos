@@ -444,7 +444,11 @@ begin
   if Btn_Save.Tag = 0 then
     begin
       if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
-      if (ShopGlobal.NetVersion) then SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
+      if (ShopGlobal.NetVersion) then
+         begin
+           if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+           SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
+         end;
       CheckOffData;
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');
       if not Is_Print and (MessageBox(Handle,'你今天没有营业数据是否继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;

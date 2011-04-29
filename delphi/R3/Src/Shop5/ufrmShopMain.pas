@@ -879,7 +879,7 @@ begin
 end;
 begin
   inherited;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus then
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
        if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
@@ -1385,9 +1385,9 @@ begin
         end
      else
         begin
-          if CaFactory.Audited and Global.RemoteFactory.Connected then
+          if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
              begin
-               if ShopGlobal.ONLVersion then
+               if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);

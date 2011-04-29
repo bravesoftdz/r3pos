@@ -381,7 +381,7 @@ var Str:string;
     Temp:TZQuery;
   rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
       'select count(*) from STO_CHANGEDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
@@ -391,7 +391,7 @@ begin
     if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
   finally
     rs.Free;
-  end;
+  end;  }
   try
     Str := 'update STO_CHANGEORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);

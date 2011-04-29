@@ -186,7 +186,7 @@ begin
   if trim(edtSearch.Text)<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or BARCODE like ''%'''+sc+':KEYVALUE )';
+      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or (Exists(select GODS_ID from VIW_BARCODE br where br.TENANT_ID=j.TENANT_ID and br.GODS_ID=j.GODS_ID and br.BARCODE like ''%'''+sc+':KEYVALUE )) )';
      end;
   case Factor.iDbType of
   0:

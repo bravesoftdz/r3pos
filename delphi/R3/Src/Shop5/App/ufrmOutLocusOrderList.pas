@@ -157,7 +157,7 @@ uses ufrmSalLocusOrder, ufrmDbLocusOrder, ufrmChangeLocusOrder, ufrmStkRetuLocus
 function TfrmOutLocusOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=1 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=1 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndDEPT_ID.AsString <> '' then
@@ -765,7 +765,7 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL3(id: string): string;
 var w,w1:string;
 begin
-  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
+  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHK_DATE is not null and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
   if fndP3_DUTY_USER.AsString <> '' then
      w := w +' and A.DUTY_USER=:DUTY_USER';
   if trim(fndP3_CHANGE_ID.Text) <> '' then
@@ -870,7 +870,7 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL4(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=3';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHK_DATE is not null and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=3';
   if fndP4_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndP4_DEPT_ID.AsString <> '' then

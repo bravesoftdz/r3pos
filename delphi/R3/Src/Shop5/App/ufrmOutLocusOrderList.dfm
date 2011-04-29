@@ -1,6 +1,6 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 286
-  Top = 90
+  Left = 125
+  Top = 152
   Width = 868
   Height = 575
   Caption = #25195#30721#20986#24211
@@ -8,24 +8,22 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 860
-    Height = 512
+    Width = 852
+    Height = 501
     inherited RzPanel2: TRzPanel
-      Width = 850
-      Height = 502
+      Width = 842
+      Height = 491
       inherited RzPage: TRzPageControl
-        Width = 844
-        Height = 496
-        ActivePage = TabSheet4
-        TabIndex = 3
+        Width = 836
+        Height = 485
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 842
-            Height = 469
+            Width = 834
+            Height = 458
             inherited RzPanel1: TRzPanel
-              Width = 832
+              Width = 824
               Height = 112
               object RzLabel2: TRzLabel
                 Left = 33
@@ -306,8 +304,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 117
-              Width = 832
-              Height = 347
+              Width = 824
+              Height = 336
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -409,8 +407,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
-            Height = 469
+            Width = 834
+            Height = 458
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -421,7 +419,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel7: TRzPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 824
               Height = 102
               Align = alTop
               BorderOuter = fsNone
@@ -639,8 +637,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh2: TDBGridEh
               Left = 5
               Top = 107
-              Width = 832
-              Height = 357
+              Width = 824
+              Height = 346
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -781,8 +779,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
-            Height = 469
+            Width = 834
+            Height = 458
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -793,7 +791,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 824
               Height = 92
               Align = alTop
               BorderOuter = fsNone
@@ -1009,8 +1007,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh3: TDBGridEh
               Left = 5
               Top = 97
-              Width = 832
-              Height = 367
+              Width = 824
+              Height = 356
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1150,8 +1148,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel10: TRzPanel
             Left = 0
             Top = 0
-            Width = 842
-            Height = 469
+            Width = 834
+            Height = 458
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -1162,7 +1160,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel11: TRzPanel
               Left = 5
               Top = 5
-              Width = 832
+              Width = 824
               Height = 110
               Align = alTop
               BorderOuter = fsNone
@@ -1448,8 +1446,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh4: TDBGridEh
               Left = 5
               Top = 115
-              Width = 832
-              Height = 349
+              Width = 824
+              Height = 338
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1577,39 +1575,39 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 860
+    Width = 852
     inherited Image1: TImage
-      Left = 589
-      Width = 251
+      Left = 593
+      Width = 239
     end
     inherited Image3: TImage
-      Left = 589
-      Width = 251
+      Left = 593
+      Width = 239
     end
     inherited Image14: TImage
-      Left = 840
+      Left = 832
     end
     inherited rzPanel5: TPanel
-      Left = 589
+      Left = 593
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 569
+      Width = 573
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 569
+          MinHeight = 573
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 569
+        Width = 573
         object ToolButton17: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -1618,7 +1616,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           Visible = False
         end
         object ToolButton11: TToolButton
-          Left = 526
+          Left = 530
           Top = 0
           Action = actExit
         end

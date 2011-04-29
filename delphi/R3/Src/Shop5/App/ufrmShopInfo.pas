@@ -102,7 +102,6 @@ begin
   AObj := TRecord_.Create;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
-      Self.Caption := '仓库档案';
       Label1.Caption := '仓库代码';
       Label3.Caption := '仓库名称';
     end;
@@ -259,14 +258,19 @@ begin
 end;
 
 procedure TfrmShopInfo.SetdbState(const Value: TDataSetState);
+var Name_S:String;
 begin
   inherited;
+  if ShopGlobal.GetProdFlag = 'E' then
+    Name_S := '仓库'
+  else
+    Name_S := '门店';
   btnOk.Visible := (Value<>dsBrowse);
   case Value of
-    dsInsert:Caption := '门店档案--(新增)';
-    dsEdit:Caption := '门店档案--(修改)';
+    dsInsert:Caption := Name_S+'档案--(新增)';
+    dsEdit:Caption := Name_S+'档案--(修改)';
   else
-    Caption := '门店档案';
+    Caption := Name_S+'档案';
   end;
 end;
 

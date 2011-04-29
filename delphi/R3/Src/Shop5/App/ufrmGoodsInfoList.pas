@@ -337,7 +337,7 @@ begin
   inherited;
   locked:=True;
   try
-    if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
+//    if (trim(edtKEY.Text)<>'') and (rzTree.Items.Count>0) then rzTree.TopItem.Selected := true;
     Open('');
   finally
     locked:=False;

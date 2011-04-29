@@ -10,36 +10,36 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 948
-    Height = 565
+    Width = 940
+    Height = 554
     inherited RzPanel2: TRzPanel
-      Width = 938
-      Height = 555
+      Width = 930
+      Height = 544
       inherited RzPage: TRzPageControl
-        Width = 932
-        Height = 549
+        Width = 924
+        Height = 538
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21830#21697#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 930
-            Height = 522
+            Width = 922
+            Height = 511
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 476
+              Height = 465
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 920
+              Width = 912
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                920
+                912
                 36)
               object Panel3: TPanel
                 Left = 0
@@ -93,6 +93,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                   Width = 196
                   Height = 20
                   TabOrder = 0
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   OnKeyDown = edtKeyKeyDown
                   OnKeyPress = edtKeyKeyPress
                 end
@@ -129,7 +130,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               Left = 5
               Top = 41
               Width = 176
-              Height = 476
+              Height = 465
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -145,16 +146,16 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
             object Panel1: TPanel
               Left = 184
               Top = 41
-              Width = 741
-              Height = 476
+              Width = 733
+              Height = 465
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 739
-                Height = 455
+                Width = 731
+                Height = 444
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -166,6 +167,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
                 FrozenCols = 2
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 PopupMenu = PopupMenu1
@@ -342,8 +344,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 456
-                Width = 739
+                Top = 445
+                Width = 731
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -369,17 +371,17 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 948
+    Width = 940
     inherited Image1: TImage
       Left = 331
-      Width = 597
+      Width = 589
     end
     inherited Image3: TImage
       Left = 331
-      Width = 597
+      Width = 589
     end
     inherited Image14: TImage
-      Left = 928
+      Left = 920
     end
     inherited rzPanel5: TPanel
       Left = 331

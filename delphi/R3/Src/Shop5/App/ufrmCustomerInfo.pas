@@ -132,9 +132,10 @@ type
     Saved:Boolean;
     FList:TList;
     procedure SetdbState(const Value: TDataSetState); override;
-    procedure ReadFrom(AObj:TRecord_);
+    procedure ReadFrom;
     procedure WriteTo(AObj:TRecord_);
     procedure Open(code:string);
+    procedure OpenCard;
     procedure Append;
     procedure Edit(code:string);
     procedure Save;
@@ -145,7 +146,7 @@ type
 
 
 implementation
-uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrmshopinfo,
+uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrmshopinfo,ufrmNewCard,
   Math, ufrmBasic;
 
 {$R *.dfm}
@@ -157,6 +158,7 @@ var rs:TZQuery;
 begin
   dbState := dsInsert;
   Open('');
+  dbState := dsInsert;
   cmbCUST_CODE.Text := '自动编号..';
   cmbBIRTHDAY.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
   cmbSND_DATE.Date := Date;
@@ -207,7 +209,8 @@ begin
     end;
     //Factor.Open(cdsTable,'TCustomer',Params);              
     Aobj.ReadFromDataSet(cdsTable);
-    ReadFrom(AObj);
+    ReadFromObject(Aobj,Self);
+    ReadFrom;
     cmbSHOP_ID.KeyValue := Aobj.FieldbyName('SHOP_ID').AsString;
     cmbSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldbyName('SHOP_ID').AsString);
     if Aobj.FieldByName('REGION_ID').AsString = '#' then
@@ -227,7 +230,7 @@ begin
     cmbSEX.ItemIndex:=AObj.FieldByName('SEX').AsInteger;
     dbState := dsBrowse;
   finally
-  Params.Free;
+    Params.Free;
   end;
 end;
 
@@ -473,7 +476,8 @@ begin
       RzLabel9.Visible:=False;
       RzLabel11.Visible:=False;
       cmbSEX.Enabled:=False;
-      RzLabel30.Visible:=False;      
+      RzLabel30.Visible:=False;
+      //cdsUnionCard.ReadOnly := True;   
     end;
   end;
 end;
@@ -510,7 +514,7 @@ begin
   try
    if not((dbState = dsInsert) and (trim(cmbCUST_NAME.Text)='')) then
    begin
-    WriteTo(AObj);
+    //WriteTo(AObj);
     if not IsEdit(Aobj,cdsTable) then Exit;
     i:=MessageBox(Handle,'会员档案有修改，是否保存修改信息？',pchar(Application.Title),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONINFORMATION);
     if i=6 then
@@ -744,6 +748,7 @@ begin
     begin
       if (cdsUnionCard.FieldByName('IC_CARDNO').AsString = '') then 
         begin
+          Column.Tag := 1;
           ARect := Rect;
           AFont := TFont.Create;
           AFont.Assign(DBGridEh1.Canvas.Font);
@@ -761,28 +766,48 @@ begin
 end;
 
 procedure TfrmCustomerInfo.DBGridEh1CellClick(Column: TColumnEh);
+var Params:TftParamList;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if cdsUnionCard.IsEmpty then Exit;
 
   if Column.FieldName = 'IC_CARDNO' then
     begin
-      if cdsUnionCard.FieldByName('IC_CARDNO').AsString <> '' then Exit;
+      if Column.Tag = 1 then
+        begin
+          if TfrmNewCard.SelectSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,cdsUnionCard.FieldbyName('UNION_ID').AsString,0) then
+            begin
+              Column.Tag := 0;
+              OpenCard;
+              ReadFrom;
+            end;
+        end;
 
     end;
 
 end;
 
-procedure TfrmCustomerInfo.ReadFrom(AObj: TRecord_);
+procedure TfrmCustomerInfo.ReadFrom;
 var
   tab:TrzTabSheet;
   Instance: TWinControl;
   frame:TfrmCustomerExt;
-  i:integer;
+  i,j:integer;
 begin
-  for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
+  for i:=0 to FList.Count -1 do
+    begin
+      for j:=0 to RzPage.PageCount-1 do
+        begin
+          if RzPage.Pages[j].Caption = TRzTabSheet(TfrmCustomerExt(FList[i]).Parent).Caption then
+            begin
+              TObject(FList[i]).Free;
+              RzPage.Pages[j].Free;
+              Break;
+            end;
+        end;
+    end;
   FList.Clear;
-  ReadFromObject(Aobj,Self);
   Exit;
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
@@ -794,7 +819,9 @@ begin
          begin
            tab := TrzTabSheet.Create(RzPage);
            tab.PageControl := RzPage;
+           //tab.Name := cdsUnionCard.FieldbyName('UNION_ID').AsString
            tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
+           //FList.Add(tab);
            frame := TfrmCustomerExt.Create(tab);
            FList.Add(frame); 
            frame.Parent:=tab;
@@ -805,6 +832,29 @@ begin
          end;
       cdsUnionCard.Next;
     end;
+end;
+
+procedure TfrmCustomerInfo.OpenCard;
+var Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('CUST_ID').asString := Aobj.FieldbyName('CUST_ID').AsString;
+    Params.ParamByName('UNION_ID').AsString := '#';
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsCustomerExt,'TCustomerExt',Params);
+      Factor.AddBatch(cdsUnionCard,'TPubIcInfo',Params);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      raise;
+    end;
+  finally
+    Params.Free;
+  end;
 end;
 
 end.

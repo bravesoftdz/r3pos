@@ -7,17 +7,11 @@ uses
   Dialogs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ExtCtrls, uShopUtil,
   RzPanel, RzRadGrp, RzEdit, StdCtrls, Mask, RzCmboBx, RzLabel, cxControls, strutils,
   cxContainer, cxEdit, cxTextEdit, cxSpinEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
-  cxRadioGroup;
+  ZBase, cxRadioGroup;
 
 type
   TfrmCustomerExt = class(TFrame)
     bg: TRzPanel;
-    RzLabel18: TRzLabel;
-    RzLabel12: TRzLabel;
-    cmbID_NUMBER: TcxTextEdit;
-    edtACCU_INTEGRAL: TcxTextEdit;
-    RzLabel1: TRzLabel;
-    RzLabel2: TRzLabel;
   private
     { Private declarations }
     Top_Value,Row_Num:Integer;
@@ -48,7 +42,7 @@ type
   end;
 
 implementation
-uses ZBase, ufrmBasic, uFnUtil, uShopGlobal, uGlobal, uDsUtil;
+uses ufrmBasic, uFnUtil, uShopGlobal, uGlobal, uDsUtil;
 {$R *.dfm}
 
 { TfrmCustomerExt }
@@ -113,7 +107,8 @@ begin
     end;
   if Is_Null = 2 then CreateStarLabel(UNION_ID);    
   FList.Add(Cmb);
-  Top_Value := Top_Value+29;
+  if Row_Num mod 2 = 0 then
+    Top_Value := Top_Value+29;
 end;
 
 procedure TfrmCustomerExt.CreateDateTime(UNION_ID,OPTION,In_Value: String;Is_Null:Integer);
@@ -141,7 +136,8 @@ begin
     Date_Time.EditValue := null;
   if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Date_Time);
-  Top_Value := Top_Value+29;
+  if Row_Num mod 2 = 0 then
+    Top_Value := Top_Value+29;
 end;
 
 procedure TfrmCustomerExt.CreateLabel(UNION_ID,LblName:string);
@@ -186,7 +182,8 @@ begin
     end;
   if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Num_Text);
-  Top_Value := Top_Value + 29;
+  if Row_Num mod 2 = 0 then
+    Top_Value := Top_Value + 29;
 end;
 
 procedure TfrmCustomerExt.CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
@@ -232,7 +229,8 @@ begin
     end;
   if Is_Null = 2 then CreateStarLabel(UNION_ID);
   FList.Add(Radio);
-  Top_Value := Top_Value+29;
+  if Row_Num mod 2 = 0 then
+    Top_Value := Top_Value+29;
 end;
 
 procedure TfrmCustomerExt.ReadFrom;
@@ -312,7 +310,7 @@ begin
   while not cdsUnionIndex.Eof do
     begin
       inc(Row_Num);
-      if DataSet.Locate('INDEX_ID',cdsUnionIndex.FieldbyName('INDEX_ID').AsString,[]) then
+      if not DataSet.Locate('INDEX_ID;UNION_ID',VarArrayOf([cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('UNION_ID').AsString]),[]) then
         begin
           DataSet.Append;
           DataSet.FieldByName('ROWS_ID').AsString := TSequence.NewId;
@@ -322,11 +320,11 @@ begin
           DataSet.FieldByName('INDEX_NAME').AsString := cdsUnionIndex.FieldbyName('INDEX_NAME').AsString;
           DataSet.FieldByName('INDEX_TYPE').AsString := cdsUnionIndex.FieldbyName('INDEX_TYPE').AsString;
           DataSet.Post;
-        end;
-      if DataSet.Locate('INDEX_ID',cdsUnionIndex.FieldbyName('INDEX_ID').AsString,[]) then
-        Index_Id := DataSet.FieldByName('INDEX_VALUE').AsString
+          Index_Id := '';
+        end
       else
-        Index_Id := '';
+        Index_Id := DataSet.FieldByName('INDEX_VALUE').AsString;
+        
       CreateLabel(cdsUnionIndex.FieldbyName('INDEX_ID').asString,cdsUnionIndex.FieldbyName('INDEX_NAME').asString);
       if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '1' then
         begin

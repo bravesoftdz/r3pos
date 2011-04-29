@@ -678,7 +678,7 @@ begin
        ',(case when (RECV_TYPE=''2'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
        ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
        ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate;
-  end else
+  end else     
   if fndBegDate.Date<fndEndDate.Date then
   begin
     vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);

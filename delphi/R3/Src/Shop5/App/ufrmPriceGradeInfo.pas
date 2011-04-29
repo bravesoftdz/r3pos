@@ -210,7 +210,7 @@ begin
   //if AObj.FieldByName('AGIO_SORTS').AsString<>'' then
   Decode(AObj.FieldByName('AGIO_SORTS').AsString);
   cds_GoodsPercent.First;
-  if ShopGlobal.GetChkRight('33200001',2) then
+  if (ShopGlobal.GetChkRight('33200001',2)) then
   begin
     if AObj.FieldByName('PRICE_ID').AsString = CurrentValue then
       begin
@@ -223,6 +223,11 @@ begin
       DBGridEh1.ReadOnly:=True;
       end;
   end;
+  if (ShopGlobal.GetChkRight('33200001',3)) then
+    begin
+      dbState := dsEdit;
+      DBGridEh1.ReadOnly:=False;    
+    end;
 end;
 
 procedure TfrmPriceGradeInfo.WriteTo(AObj: TRecord_);
@@ -513,7 +518,7 @@ begin
     begin
       if ShopGlobal.GetChkRight('33200001',2) then
         begin
-          dbState:=dsBrowse;
+          dbState:=dsEdit;
           //DBGridEh1.ReadOnly:=True;
           //edtPriceGrade.Enabled:=False;
           //edtSave.Enabled:=False;

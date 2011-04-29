@@ -320,13 +320,13 @@ inherited frmDeptInfo: TfrmDeptInfo
                 Footers = <>
                 Title.Caption = #37096#38376#31867#22411
               end>
-            DropWidth = 180
-            DropHeight = 200
+            DropWidth = 160
+            DropHeight = 180
             ShowTitle = True
             AutoFitColWidth = True
-            ShowButton = True
+            ShowButton = False
             LocateStyle = lsDark
-            Buttons = [zbClear]
+            Buttons = []
             DropListStyle = lsEditFixed
             OnBeforeDropList = edtUPDEPT_IDBeforeDropList
             MultiSelect = False

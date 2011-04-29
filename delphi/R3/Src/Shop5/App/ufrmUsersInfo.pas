@@ -108,6 +108,7 @@ procedure TfrmUsersInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
+  edtSEX.Enabled := True;
   edtWORK_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
@@ -138,6 +139,7 @@ procedure TfrmUsersInfo.Edit(code: string);
 begin
   Open(code);
   dbState := dsEdit;
+  edtSEX.Enabled := True;
   if AObj.FieldByName('SEX').AsString='' then edtSEX.ItemIndex:=-1;
 end;
 
@@ -182,6 +184,7 @@ begin
     edtDUTY_IDS.Text:=AObj.FieldByName('DUTY_IDS_TEXT').AsString;}
     edtSEX.ItemIndex:=AObj.FieldByName('SEX').AsInteger;
     dbState := dsBrowse;
+    edtSEX.Enabled := False;
   finally
   Params.Free;
   end;
@@ -347,6 +350,7 @@ begin
       RzLabel1.Visible:=False;
       RzLabel2.Visible:=False;
       RzLabel4.Visible:=False;
+      
       //RzLabel7.Visible:=False;
     end;
   end;

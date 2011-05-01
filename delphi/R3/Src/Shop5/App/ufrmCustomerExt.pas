@@ -255,7 +255,7 @@ begin
         begin
           if (TcxComboBox(FList[i]).Tag = 2) and (Trim(TcxComboBox(FList[i]).Text) = '') then
             raise Exception.Create('有必填项没有填写!');
-          Index_Id := copy(TcxComboBox(FList[i]).Name,4,50);
+          Index_Id := copy(TcxComboBox(FList[i]).Name,5,50);
           Index_Id := AnsiReplaceText(Index_Id,'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
@@ -271,7 +271,7 @@ begin
         begin
           if (TcxSpinEdit(FList[i]).Tag = 2) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
             raise Exception.Create('有必填项没有填写!');
-          Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,4,50),'_','-');
+          Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
               DataSet.Edit;
@@ -283,7 +283,7 @@ begin
         begin
           if (TcxDateEdit(FList[i]).Tag = 2) and (Trim(TcxDateEdit(FList[i]).Text) = '') then
             raise Exception.Create('有必填项没有填写!');
-          Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,4,50),'_','-');
+          Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
               DataSet.Edit;
@@ -295,58 +295,59 @@ begin
 end;
 
 procedure TfrmCustomerExt.InitControl;
-var cdsUnionIndex:TZQuery;
-    Index_Id:String;
+var Index_Id:String;
+    cdsUnionIndex:TZQuery;
 begin
   ControlFree;
   cdsUnionIndex := TZQuery.Create(nil);
   try
-  cdsUnionIndex.SQL.Text :=
-  'select UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID and TENANT_ID=:TENANT_ID';
-  cdsUnionIndex.Params.ParamByName('UNION_ID').AsString := UnionID;
-  cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Factor.Open(cdsUnionIndex);
-  cdsUnionIndex.First;
-  while not cdsUnionIndex.Eof do
-    begin
-      inc(Row_Num);
-      if not DataSet.Locate('INDEX_ID;UNION_ID',VarArrayOf([cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('UNION_ID').AsString]),[]) then
-        begin
-          DataSet.Append;
-          DataSet.FieldByName('ROWS_ID').AsString := TSequence.NewId;
-          DataSet.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-          DataSet.FieldByName('UNION_ID').AsString := cdsUnionIndex.FieldbyName('UNION_ID').AsString;
-          DataSet.FieldByName('INDEX_ID').AsString := cdsUnionIndex.FieldbyName('INDEX_ID').AsString;
-          DataSet.FieldByName('INDEX_NAME').AsString := cdsUnionIndex.FieldbyName('INDEX_NAME').AsString;
-          DataSet.FieldByName('INDEX_TYPE').AsString := cdsUnionIndex.FieldbyName('INDEX_TYPE').AsString;
-          DataSet.Post;
-          Index_Id := '';
-        end
-      else
-        Index_Id := DataSet.FieldByName('INDEX_VALUE').AsString;
+    cdsUnionIndex.SQL.Text :=
+    'select UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID and TENANT_ID=:TENANT_ID';
+    cdsUnionIndex.Params.ParamByName('UNION_ID').AsString := UnionID;
+    cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(cdsUnionIndex);
+
+    cdsUnionIndex.First;
+    while not cdsUnionIndex.Eof do
+      begin
+        inc(Row_Num);
+        if not DataSet.Locate('INDEX_ID;UNION_ID',VarArrayOf([cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('UNION_ID').AsString]),[]) then
+          begin
+            DataSet.Append;
+            DataSet.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+            DataSet.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            DataSet.FieldByName('UNION_ID').AsString := cdsUnionIndex.FieldbyName('UNION_ID').AsString;
+            DataSet.FieldByName('INDEX_ID').AsString := cdsUnionIndex.FieldbyName('INDEX_ID').AsString;
+            DataSet.FieldByName('INDEX_NAME').AsString := cdsUnionIndex.FieldbyName('INDEX_NAME').AsString;
+            DataSet.FieldByName('INDEX_TYPE').AsString := cdsUnionIndex.FieldbyName('INDEX_TYPE').AsString;
+            DataSet.Post;
+            Index_Id := '';
+          end
+        else
+          Index_Id := DataSet.FieldByName('INDEX_ID').AsString;
         
-      CreateLabel(cdsUnionIndex.FieldbyName('INDEX_ID').asString,cdsUnionIndex.FieldbyName('INDEX_NAME').asString);
-      if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '1' then
-        begin
-          CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
-        end
-      else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '2' then
-        begin
-          CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
-        end
-      else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '3' then
-        begin
-          CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
-        end
-      else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '4' then
-        begin
-          CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
-        end;
-      cdsUnionIndex.Next;
+        CreateLabel(cdsUnionIndex.FieldbyName('INDEX_ID').asString,cdsUnionIndex.FieldbyName('INDEX_NAME').asString);
+        if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '1' then
+          begin
+            CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+          end
+        else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '2' then
+          begin
+            CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+          end
+        else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '3' then
+          begin
+            CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+          end
+        else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '4' then
+          begin
+            CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+          end;
+        cdsUnionIndex.Next;
+      end;
+    finally
+      cdsUnionIndex.Free;
     end;
-  finally
-    cdsUnionIndex.Free;
-  end;
 end;
 
 procedure TfrmCustomerExt.SetDataSet(const Value: TDataSet);

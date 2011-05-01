@@ -518,7 +518,7 @@ begin
     begin
       if ShopGlobal.GetChkRight('33200001',2) then
         begin
-          dbState:=dsEdit;
+          dbState:=dsBrowse;
           //DBGridEh1.ReadOnly:=True;
           //edtPriceGrade.Enabled:=False;
           //edtSave.Enabled:=False;

@@ -136,17 +136,28 @@ begin
     Param.ParamByName('UNION_ID').AsString := UNION_ID;
     Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsTable,'TNewCard',Param);
-    Aobj.ReadFromDataSet(cdsTable);
-    ReadFromObject(Aobj,Self);
+    //Aobj.ReadFromDataSet(cdsTable);
+    //ReadFromObject(Aobj,Self);
     if cdsTable.IsEmpty then
       begin
         rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where CUST_ID='+QuotedStr(CUST_ID)+' and TENANT_ID='+IntToStr(Global.TENANT_ID);
         Factor.Open(rs);
         edtCLIENT_NAME.Text := rs.FieldbyName('CUST_NAME').AsString;
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+      end
+    else
+      begin
+        edtCLIENT_NAME.Text := cdsTable.FieldbyName('CLIENT_NAME').AsString;
+        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+        edtIC_CARDNO.Text := cdsTable.FieldbyName('IC_CARDNO').AsString;
+        edtPASSWRD.Text := DecStr(cdsTable.FieldbyName('PASSWRD').AsString,ENC_KEY);
+        edtPASSWRD1.Text := edtPASSWRD.Text;
       end;
-    if cdsTable.FieldByName('PASSWRD').AsString = '' then
-      edtPASSWRD.Text := '1234';
+    if Trim(edtPASSWRD.Text) = '' then
+      begin
+        edtPASSWRD.Text := '1234';
+        edtPASSWRD1.Text := '1234';
+      end;
     edtCLIENT_NAME.Enabled := False;
     if ShowModel = 0 then
       edtUNION_ID.Enabled := False;

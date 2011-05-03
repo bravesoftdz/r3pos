@@ -125,6 +125,7 @@ inherited frmNewCard: TfrmNewCard
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
+            Properties.OnChange = edtUNION_IDPropertiesChange
             TabOrder = 1
           end
           object edtPASSWRD: TcxTextEdit
@@ -220,13 +221,6 @@ inherited frmNewCard: TfrmNewCard
     CachedUpdates = True
     Params = <>
     Left = 170
-    Top = 65535
-  end
-  object cdsTable1: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 202
     Top = 65535
   end
 end

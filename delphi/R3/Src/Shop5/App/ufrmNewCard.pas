@@ -18,7 +18,6 @@ type
     edt: TRzLabel;
     edtCLIENT_NAME: TcxTextEdit;
     cdsTable: TZQuery;
-    cdsTable1: TZQuery;
     RzLabel2: TRzLabel;
     edtUNION_ID: TcxComboBox;
     RzLabel1: TRzLabel;
@@ -30,6 +29,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure edtUNION_IDPropertiesChange(Sender: TObject);
   private
     cid:string;
     bl:boolean;
@@ -140,9 +140,13 @@ begin
     //ReadFromObject(Aobj,Self);
     if cdsTable.IsEmpty then
       begin
-        rs.SQL.Text := 'select CUST_NAME from PUB_CUSTOMER where CUST_ID='+QuotedStr(CUST_ID)+' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+        rs.SQL.Text := 'select A.CUST_NAME,A.CUST_CODE,B.PASSWRD from PUB_CUSTOMER A left join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.CUST_CODE=B.IC_CARDNO '+
+        ' where A.CUST_ID='+QuotedStr(CUST_ID)+' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
         Factor.Open(rs);
         edtCLIENT_NAME.Text := rs.FieldbyName('CUST_NAME').AsString;
+        edtIC_CARDNO.Text := rs.FieldbyName('CUST_CODE').AsString;
+        edtPASSWRD.Text := DecStr(rs.FieldbyName('PASSWRD').AsString,ENC_KEY);
+        edtPASSWRD1.Text := edtPASSWRD.Text;
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
       end
     else
@@ -161,6 +165,9 @@ begin
     edtCLIENT_NAME.Enabled := False;
     if ShowModel = 0 then
       edtUNION_ID.Enabled := False;
+
+    if cdsTable.FieldByName('IC_STATUS').AsInteger = 1 then
+      btnOk.Enabled := False;
   finally
     Param.Free;
     rs.Free;
@@ -195,6 +202,7 @@ begin
     begin
       cdsTable.Edit;
       cdsTable.FieldByName('IC_CARDNO').AsString := edtIC_CARDNO.Text;
+      cdsTable.FieldByName('IC_STATUS').AsString := '1';
       cdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
       cdsTable.Post;
     end
@@ -247,6 +255,14 @@ end;
 procedure TfrmNewCard.SetShowModel(const Value: Integer);
 begin
   FShowModel := Value;
+end;
+
+procedure TfrmNewCard.edtUNION_IDPropertiesChange(Sender: TObject);
+var UnionId:String;
+begin
+  inherited;
+  UnionId := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString;
+  Open(Cust_Id,UnionId);
 end;
 
 end.

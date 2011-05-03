@@ -1,6 +1,6 @@
 inherited frmDeposit: TfrmDeposit
-  Left = 230
-  Top = 419
+  Left = 365
+  Top = 311
   Caption = #20805#20540#31649#29702
   ClientHeight = 292
   ClientWidth = 496

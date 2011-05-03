@@ -225,6 +225,7 @@ begin
             BirthDays.Value := StrToIntDef(Value, 0);
           end;
       end;
+      
     if Define = 'CUSTCONTINU' then
     begin
       if StrToInt(Value) < 0 then
@@ -437,6 +438,10 @@ begin
     SetValue('BIRTHDAY', BirthDays.Value)
   else
     SetValue('BIRTHDAY', '-1');
+  if IsContinu.Checked then
+    SetValue('CUSTCONTINU', ContinuDays.Value)
+  else
+    SetValue('CUSTCONTINU', '-1');
 
   if chkCheckAudit.Checked then
     SetValue('CHECKAUDIT', '1')

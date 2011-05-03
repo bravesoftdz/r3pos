@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
-    ActivePage = tabBasic
+    Width = 426
+    Height = 253
+    ActivePage = tabStock
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -165,8 +165,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -871,8 +871,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 426
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
@@ -903,12 +903,12 @@ inherited frmSysDefine: TfrmSysDefine
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 168
-    Top = 48
+    Left = 224
+    Top = 80
   end
   inherited actList: TActionList
-    Left = 136
-    Top = 48
+    Left = 192
+    Top = 80
     object acComfir: TAction
       Caption = #30830#23450'(&O)'
       OnExecute = acComfirExecute
@@ -922,7 +922,7 @@ inherited frmSysDefine: TfrmSysDefine
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 104
-    Top = 47
+    Left = 160
+    Top = 79
   end
 end

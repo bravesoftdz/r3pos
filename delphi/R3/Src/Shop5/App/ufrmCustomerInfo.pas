@@ -195,8 +195,7 @@ begin
     Params.ParamByName('CUST_ID').asString := code;
     Params.ParamByName('UNION_ID').AsString := '#';
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    {cdsTable.Close;
-    cdsUnionCard.Close;}
+
     Factor.BeginBatch;
     try
       Factor.AddBatch(cdsTable,'TCustomer',Params);
@@ -362,7 +361,7 @@ begin
   //ª·‘±ºÏ≤‚Ω· ¯
 
   WriteTo(Aobj);
-  if not IsEdit(Aobj,cdsTable) then exit;
+  //if not IsEdit(Aobj,cdsTable) then exit;
   if dbState = dsInsert then
      begin
        AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId;
@@ -387,8 +386,17 @@ begin
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
-  if Factor.UpdateBatch(cdsTable,'TCustomer') then
-    UpdateToGlobal(Aobj);
+  Factor.BeginBatch;
+  try
+    Factor.AddBatch(cdsTable,'TCustomer');
+    Factor.AddBatch(cdsCustomerExt,'TCustomerExt');
+    Factor.CommitBatch;
+  except
+    Factor.CancelBatch;
+    Raise;
+  end;
+  //if Factor.UpdateBatch(cdsTable,'TCustomer') then
+  UpdateToGlobal(Aobj);
   dbState := dsBrowse;
   Saved := true;
 end;
@@ -493,16 +501,15 @@ end;
 function TfrmCustomerInfo.IsEdit(Aobj: TRecord_;
   cdsTable:TZQuery): Boolean;
 var i:integer;
+    IsChang:Boolean;
 begin
   Result:=False;
   for i:=0 to cdsTable.FieldCount-1 do
   begin
     if AObj.Fields[i].AsString<>cdsTable.Fields[i].AsString then
-    begin
-      Result:=True;
-      break;
-    end;
+      IsChang := True;
   end;
+  Result := IsChang;
 end;
 procedure TfrmCustomerInfo.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
@@ -748,7 +755,6 @@ begin
     begin
       if (cdsUnionCard.FieldByName('IC_CARDNO').AsString = '') then 
         begin
-          Column.Tag := 1;
           ARect := Rect;
           AFont := TFont.Create;
           AFont.Assign(DBGridEh1.Canvas.Font);
@@ -774,18 +780,15 @@ begin
 
   if Column.FieldName = 'IC_CARDNO' then
     begin
-      if Column.Tag = 1 then
+      if cdsUnionCard.FieldbyName('IC_CARDNO').AsString = '' then
         begin
           if TfrmNewCard.SelectSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,cdsUnionCard.FieldbyName('UNION_ID').AsString,0) then
             begin
-              Column.Tag := 0;
               OpenCard;
               ReadFrom;
             end;
         end;
-
     end;
-
 end;
 
 procedure TfrmCustomerInfo.ReadFrom;
@@ -808,7 +811,7 @@ begin
         end;
     end;
   FList.Clear;
-  Exit;
+
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
     begin
@@ -819,14 +822,13 @@ begin
          begin
            tab := TrzTabSheet.Create(RzPage);
            tab.PageControl := RzPage;
-           //tab.Name := cdsUnionCard.FieldbyName('UNION_ID').AsString
            tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
-           //FList.Add(tab);
            frame := TfrmCustomerExt.Create(tab);
            FList.Add(frame); 
            frame.Parent:=tab;
            frame.DataSet := cdsCustomerExt;
            frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+           frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
            frame.DataState := dbState;
            frame.ReadFrom;
          end;

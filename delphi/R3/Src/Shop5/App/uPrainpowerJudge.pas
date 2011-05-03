@@ -44,6 +44,7 @@ begin
     rs.Close;
     rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE=''AUDIT_HINT'' and COMM not in (''12'',''02'') ';
     Factor.Open(rs);
+
     if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger = 1) then
       begin
         if ShopGlobal.GetChkRight('11100001',5) then                //进货订单的审核权限     actfrmStkIndentOrderList  表  STK_INDENTORDER
@@ -92,6 +93,45 @@ begin
             'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=2 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'')';
           end;
       end;
+
+    {rs.Close;
+    rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE=''BIRTHDAY'' and COMM not in (''12'',''02'') ';
+    Factor.Open(rs);
+    if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger > 1) then
+      begin
+        if ShopGlobal.GetChkRight('33400001',1) then                //会员生日提醒     actfrmCustomer  表  PUB_CUSTOMER
+          begin
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+            Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
+            ' from PUB_CUSTOMER where CHK_USER is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+
+
+          end;
+      end;
+
+    if ShopGlobal.GetChkRight('33400001',1) then                //会员生日提醒     actfrmCustomer  表  PUB_CUSTOMER
+      begin
+        rs.Filtered := False;
+        rs.Filter := ' DEFINE=''BIRTHDAY'' ';
+        rs.Filtered := True;
+        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger > 1) then
+          begin
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+            Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
+            ' from PUB_CUSTOMER where CHK_USER is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+          end;
+
+        rs.Filtered := False;
+        rs.Filter := ' DEFINE=''BIRTHDAY'' ';
+        rs.Filtered := True;
+        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger > 1) then
+          begin
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+            Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
+            ' from PUB_CUSTOMER where CHK_USER is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+          end;
+
+      end; }
 
     if Trim(Sql) <> '' then Sql := Sql + ' union all ';
     Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,1 SUM_ORDER,8 as sFlag '+

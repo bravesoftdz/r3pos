@@ -19,6 +19,7 @@ type
     FUnionID: string;
     FDataSet: TDataSet;
     FDataState: TDataSetState;
+    FCust_Id: String;
     procedure CreateLabel(UNION_ID,LblName:string);
     procedure CreateStarLabel(UNION_ID:String);
     procedure CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
@@ -29,6 +30,7 @@ type
     procedure SetUnionID(const Value: string);
     procedure SetDataSet(const Value: TDataSet);
     procedure SetDataState(const Value: TDataSetState);
+    procedure SetCust_Id(const Value: String);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -37,6 +39,7 @@ type
     procedure ReadFrom;
     procedure WriteTo;
     property UnionID:string read FUnionID write SetUnionID;
+    property Cust_Id:String read FCust_Id write SetCust_Id;
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property DataState:TDataSetState read FDataState write SetDataState;
   end;
@@ -295,7 +298,7 @@ begin
 end;
 
 procedure TfrmCustomerExt.InitControl;
-var Index_Id:String;
+var Select_Answer:String;
     cdsUnionIndex:TZQuery;
 begin
   ControlFree;
@@ -320,28 +323,29 @@ begin
             DataSet.FieldByName('INDEX_ID').AsString := cdsUnionIndex.FieldbyName('INDEX_ID').AsString;
             DataSet.FieldByName('INDEX_NAME').AsString := cdsUnionIndex.FieldbyName('INDEX_NAME').AsString;
             DataSet.FieldByName('INDEX_TYPE').AsString := cdsUnionIndex.FieldbyName('INDEX_TYPE').AsString;
+            DataSet.FieldByName('CUST_ID').AsString := Cust_Id;
             DataSet.Post;
-            Index_Id := '';
+            Select_Answer := '';
           end
         else
-          Index_Id := DataSet.FieldByName('INDEX_ID').AsString;
+          Select_Answer := DataSet.FieldByName('INDEX_VALUE').AsString;
         
         CreateLabel(cdsUnionIndex.FieldbyName('INDEX_ID').asString,cdsUnionIndex.FieldbyName('INDEX_NAME').asString);
         if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '1' then
           begin
-            CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+            CreateRaido(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Select_Answer,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
           end
         else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '2' then
           begin
-            CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+            CreateCmb(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Select_Answer,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
           end
         else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '3' then
           begin
-            CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+            CreateNum(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Select_Answer,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
           end
         else if cdsUnionIndex.FieldByName('INDEX_TYPE').AsString = '4' then
           begin
-            CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Index_Id,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
+            CreateDateTime(cdsUnionIndex.FieldbyName('INDEX_ID').AsString,cdsUnionIndex.FieldbyName('INDEX_OPTION').AsString,Select_Answer,cdsUnionIndex.FieldbyName('INDEX_ISNULL').AsInteger);
           end;
         cdsUnionIndex.Next;
       end;
@@ -382,6 +386,11 @@ begin
   Lbl.Caption := '*';
   Lbl.Font.Color := clMaroon;
   //FList.Add(Lbl);
+end;
+
+procedure TfrmCustomerExt.SetCust_Id(const Value: String);
+begin
+  FCust_Id := Value;
 end;
 
 end.

@@ -232,21 +232,35 @@ CREATE INDEX IX_INF_INDEORDER_STOCK_DATE ON INF_INDEORDER(INDE_DATE);
 
 --2011.04.11 PM：创建入库单中间表明细表：
  CREATE TABLE INF_INDEDATA (
-  INDE_ID varchar (50) NOT NULL ,  --订单编号
-  GODS_ID varchar (50) NULL ,      --商品编号(R3)
-  SECOND_ID varchar (50) NULL ,    --商品编号(第三方)
-  UNIT_ID char (36) ,              --计量单位
-  NEED_AMT decimal(18, 6) ,   --需求数量
-  CHK_AMT decimal(18, 6) ,    --审核数量
-  AMOUNT decimal(18, 6) ,     --订购数量
-  APRICE decimal(18, 6),      --折扣价格
-  PRI3 decimal(18, 6) ,       --三级批发价
-  AGIO_MONEY decimal(18, 6),  --折扣金额	
-  AMONEY decimal(18, 6),      --含税金额, 金额=订购数量*折扣价格					
-	CALC_AMOUNT decimal(18, 3)  --计量单位数据	
+     --企业ID(对应：Rim供应商:CLIENT_ID)
+ 	TENANT_ID int NOT NULL , 
+ 	   --订单编号
+  INDE_ID varchar (50) NOT NULL ,
+     --商品编号(R3)  
+  GODS_ID varchar (50) ,   
+     --商品编号(第三方)
+  SECOND_ID varchar (50) ,   
+     --计量单位
+  UNIT_ID char (36) ,         
+     --需求数量
+  NEED_AMT decimal(18, 6) ,    
+     --审核数量
+  CHK_AMT decimal(18, 6) ,   
+     --订购数量 
+  AMOUNT decimal(18, 6) ,    
+     --折扣价格
+  APRICE decimal(18, 6),     
+     --三级批发价  
+  PRI3 decimal(18, 6) ,      
+     --折扣金额	
+  AGIO_MONEY decimal(18, 6),  
+     --含税金额, 金额=订购数量*折扣价格
+  AMONEY decimal(18, 6),      
+     --计量单位数据						
+	CALC_AMOUNT decimal(18, 3)  
   );
 --创建索引 
-CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(INDE_ID,GODS_ID);
+CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(TENANT_ID,INDE_ID);
  
 
 --DB_R3上报RIMDB数据注意事项：
@@ -256,7 +270,9 @@ CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(INDE_ID,GODS_ID);
 
 --2011.04.14 PM添加同步单据最大时间戳:RIM_R3_NUM,月台账映射NICKNAME：
 CREATE NICKNAME RIM_R3_NUM FOR  RIMLINK.DB2ADMIN.RIM_R3_NUM;                   
+CREATE NICKNAME RIM_BAL_LOG FOR  RIMLINK.DB2ADMIN.RIM_BAL_LOG; 
 CREATE NICKNAME RIM_CUST_MONTH FOR  RIMLINK.DB2ADMIN.RIM_CUST_MONTH; 
+
         
 --2011.04.14 PM日台账:(RIM_CUST_MONTH、RIM_RETAIL_CO_LINE)映射NICKNAME：
 CREATE NICKNAME RIM_RETAIL_CO FOR  RIMLINK.DB2ADMIN.RIM_RETAIL_CO;   

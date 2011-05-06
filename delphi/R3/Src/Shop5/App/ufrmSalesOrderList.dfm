@@ -1,6 +1,6 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
   Left = 210
-  Top = 136
+  Top = 131
   Width = 836
   Height = 607
   Caption = #38144#21806#21333

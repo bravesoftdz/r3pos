@@ -47,7 +47,7 @@ type
     procedure Save;
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property ShowModel:Integer read FShowModel write SetShowModel;
-    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID:string;Model:integer):boolean;
+    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer):boolean;
     { Public declarations }
   end;
 
@@ -133,12 +133,15 @@ begin
   rs := TZQuery.Create(nil);
   try
     Param.ParamByName('CLIENT_ID').AsString := CUST_ID;
-    Param.ParamByName('UNION_ID').AsString := UNION_ID;
+    if Length(UNION_ID) > 20 then
+      Param.ParamByName('UNION_ID').AsString := UNION_ID
+    else
+      Param.ParamByName('UNION_ID').AsString := '#';
     Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsTable,'TNewCard',Param);
     //Aobj.ReadFromDataSet(cdsTable);
     //ReadFromObject(Aobj,Self);
-    if cdsTable.IsEmpty then
+   { if cdsTable.IsEmpty then
       begin
         rs.SQL.Text := 'select A.CUST_NAME,A.CUST_CODE,B.PASSWRD from PUB_CUSTOMER A left join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.CUST_CODE=B.IC_CARDNO '+
         ' where A.CUST_ID='+QuotedStr(CUST_ID)+' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
@@ -150,13 +153,13 @@ begin
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
       end
     else
-      begin
-        edtCLIENT_NAME.Text := cdsTable.FieldbyName('CLIENT_NAME').AsString;
+      begin }
+        //edtCLIENT_NAME.Text := cdsTable.FieldbyName('CLIENT_NAME').AsString;
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
         edtIC_CARDNO.Text := cdsTable.FieldbyName('IC_CARDNO').AsString;
         edtPASSWRD.Text := DecStr(cdsTable.FieldbyName('PASSWRD').AsString,ENC_KEY);
         edtPASSWRD1.Text := edtPASSWRD.Text;
-      end;
+      //end;
     if Trim(edtPASSWRD.Text) = '' then
       begin
         edtPASSWRD.Text := '1234';
@@ -167,7 +170,9 @@ begin
       edtUNION_ID.Enabled := False;
 
     if cdsTable.FieldByName('IC_STATUS').AsInteger = 1 then
-      btnOk.Enabled := False;
+      btnOk.Enabled := False
+    else
+      btnOk.Enabled := True;
   finally
     Param.Free;
     rs.Free;
@@ -180,7 +185,7 @@ begin
   FCust_Id := Value;
 end;
 
-class function TfrmNewCard.SelectSendCard(Owner:TForm;CUSTID, UNION_ID: string;
+class function TfrmNewCard.SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME: string;
   Model:integer): boolean;
 begin
   with TfrmNewCard.Create(Owner) do
@@ -188,7 +193,9 @@ begin
       try
         ShowModel := Model;
         Cust_Id := CUSTID;
-        Open(Cust_Id,UNION_ID);
+        edtCLIENT_NAME.Text := CUSTNAME;
+        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+        //Open(Cust_Id,UNION_ID);
         Result := ShowModal = mrOk;
       finally
         Free;
@@ -197,6 +204,7 @@ begin
 end;
 
 procedure TfrmNewCard.Save;
+var UNIONID:String;
 begin
   if cdsTable.Locate('CLIENT_ID',Cust_Id,[]) then
     begin
@@ -211,7 +219,13 @@ begin
       cdsTable.Append;
       cdsTable.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       cdsTable.FieldByName('CLIENT_ID').AsString := Cust_Id;
-      cdsTable.FieldByName('UNION_ID').AsString := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString;
+
+      UNIONID := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString;
+      if Length(UNIONID) > 20 then
+        cdsTable.FieldByName('UNION_ID').AsString := UNIONID
+      else
+        cdsTable.FieldByName('UNION_ID').AsString := '#';
+
       cdsTable.FieldByName('IC_CARDNO').AsString := edtIC_CARDNO.Text;
       cdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
       cdsTable.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());

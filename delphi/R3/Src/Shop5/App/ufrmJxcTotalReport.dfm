@@ -15,10 +15,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
       inherited RzPage: TRzPageControl
         Width = 736
         Height = 546
-        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -2237,8 +2235,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     Top = 354
   end
   inherited SaveDialog1: TSaveDialog
-    Left = 333
-    Top = 196
+    Left = 229
+    Top = 228
   end
   inherited adoReport1: TZQuery
     Left = 41

@@ -181,6 +181,14 @@ begin
   fndP4_SHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
 
   SetRzPageActivePage; //设置默认分页
+  //2011.04.22 Add 判断成本价权限:
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh1, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh2, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh3, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh4, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+  end;
   CreateGrid;
   RefreshColumn;
 

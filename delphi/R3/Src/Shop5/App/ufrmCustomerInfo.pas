@@ -782,7 +782,7 @@ begin
     begin
       if cdsUnionCard.FieldbyName('IC_CARDNO').AsString = '' then
         begin
-          if TfrmNewCard.SelectSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,cdsUnionCard.FieldbyName('UNION_ID').AsString,0) then
+          if TfrmNewCard.SelectSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,cdsUnionCard.FieldbyName('UNION_ID').AsString,cmbCUST_NAME.Text,0) then
             begin
               OpenCard;
               ReadFrom;

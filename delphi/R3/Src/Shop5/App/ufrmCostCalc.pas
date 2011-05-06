@@ -1354,7 +1354,7 @@ procedure TfrmCostCalc.CalcSpz;
 var
   i:integer;
 begin
-  for i:=0 to pt do
+  for i:=1 to pt do
   begin
    RzProgressBar1.Percent := (i*100 div pt) div 3+25;
    Factor.ExecSQL('delete from RCK_C_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+'');

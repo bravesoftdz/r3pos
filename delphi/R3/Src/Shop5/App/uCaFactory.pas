@@ -314,6 +314,7 @@ var
   h,r:rsp;
   OutXml:widestring;
 begin
+try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '3';
@@ -386,6 +387,13 @@ begin
   finally
    // rio.Free;
   end;    
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'读取<企业资料>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'读取<企业资料>xml=无');
+  Raise;
+end;
 end;
 
 function TCaFactory.coLogin(Account, PassWrd: string): TCaLogin;
@@ -400,6 +408,7 @@ var
   f,r:TIniFile;
   finded:boolean;
 begin
+try
   Audited := false;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -562,6 +571,13 @@ begin
   finally
     //rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'认证<企业登录>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'认证<企业登录>xml=无');
+  Raise;
+end;
 end;
 
 function TCaFactory.coRegister(Info: TCaTenant): TCaTenant;
@@ -574,6 +590,7 @@ var
   code:string;
   h:rsp;
 begin
+try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
@@ -699,6 +716,13 @@ begin
   finally
     //rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'认证<企业注册>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'认证<企业注册>xml=无');
+  Raise;
+end;
 end;
 
 constructor TCaFactory.Create;
@@ -878,11 +902,12 @@ var
   OutXml:WideString;
   RioImpl:CaProductWebServiceImpl;
 begin
+try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
   Node.text := '1';
   FindNode(doc,'header\pub').appendChild(Node);
-  
+
   Node := doc.createElement('caProductCheckUpgradeReq');
   FindNode(doc,'body').appendChild(Node);
 
@@ -940,6 +965,13 @@ begin
     RioImpl := nil;
 //    rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'升级<版本检测>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'升级<版本检测>xml=无');
+  Raise;
+end;
 end;
 
 procedure TCaFactory.SetAudited(const Value: boolean);
@@ -958,6 +990,7 @@ var
   h,r:rsp;
   OutXml:WideString;
 begin
+try
   AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -1029,6 +1062,13 @@ begin
   finally
     //rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'读取<供应链资料>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'读取<供应链资料>xml=无');
+  Raise;
+end;
 end;
 
 function TCaFactory.queryServiceLines(tid:integer;List: TList): boolean;
@@ -1043,6 +1083,7 @@ var
   i:integer;
   OutXml:WideString;
 begin
+try
   AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -1105,6 +1146,13 @@ begin
   finally
     //rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'读取<供应链列表>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'读取<供应链列表>xml=无');
+  Raise;
+end;
 end;
 
 function TCaFactory.applyRelation(supTenantId, serviceLineId, subTenantId,
@@ -1121,6 +1169,7 @@ var
   code:string;
   OutXml:WideString;
 begin
+try
   AutoCoLogo;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -1202,6 +1251,13 @@ begin
   finally
     //rio.Free;
   end;
+except
+  if doc<>nil then
+     LogFile.AddLogFile(0,'申请<供应链申请>xml='+doc.xml)
+  else
+     LogFile.AddLogFile(0,'申请<供应链申请>xml=无');
+  Raise;
+end;
 end;
 
 function TCaFactory.SyncAll(flag:integer): boolean;

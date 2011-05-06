@@ -198,6 +198,14 @@ begin
     begin
       Label40.Caption := '¶©»õ²Ö¿â';
     end;
+    
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[12].Free;
+       DBGridEh1.Columns[11].Free;
+       DBGridEh1.Columns[7].Free;
+       DBGridEh1.Columns[6].Free;
+     end;
 end;
 
 procedure TfrmStkIndentOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -722,7 +730,7 @@ begin
                 begin
                   edtTable.FieldbyName('AMOUNT').AsFloat := 1;
                   AMountToCalc(1);
-                  edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
+                  //edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
                 end
              else
                 PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);

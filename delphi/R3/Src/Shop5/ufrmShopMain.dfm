@@ -2066,7 +2066,7 @@ inherited frmShopMain: TfrmShopMain
             object Image6: TImage
               Left = 451
               Top = 0
-              Width = 60
+              Width = 398
               Height = 69
               Align = alClient
               AutoSize = True
@@ -3061,10 +3061,16 @@ inherited frmShopMain: TfrmShopMain
             end
             object rzChildTitle: TRzLabel
               Left = 30
-              Top = 16
+              Top = 15
               Width = 108
               Height = 12
               Caption = #24403#21069#20301#32622'->'#25105#30340#26700#38754
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
               Transparent = True
             end
             object RzBmpButton3: TRzBmpButton

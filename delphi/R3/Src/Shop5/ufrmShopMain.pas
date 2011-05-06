@@ -949,16 +949,16 @@ begin
   if not Logined then Exit;
   if not Visible then Exit;
   if not Factor.Connected then Exit;
-  if not MsgFactory.Loaded or (
+  if not MsgFactory.Loaded or (MsgFactory.Loaded and (Timer1.Tag>0) and
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod 120)=0)
      )
   then
      MsgFactory.Load;
+  if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
   if MsgFactory.Count > 0 then
      begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.UnRead)+')条消息';
        rzUserInfo.Caption := lblUserInfo.Caption;
-       if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
        case Timer1.Tag mod 2 of
        0:begin
            lblUserInfo.Font.Color := clRed;
@@ -3016,7 +3016,7 @@ begin
 
 
     toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
-    toolButton.Bitmaps.Hot := GetBitmap(sflag+'toolbutton_hot');
+    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton_hot');
     RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'desktop');
     RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
 
@@ -3078,8 +3078,8 @@ begin
     Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
 
 
-    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton');
-    toolButton.Bitmaps.Hot := GetBitmap(sflag+'toolbutton_hot');
+    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
+    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton_hot');
     sDeskPage.Bitmaps.Up := GetBitmap(sflag+'desktop');
     sDeskPage.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
 

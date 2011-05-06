@@ -298,7 +298,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   TabOrder = 1
                   object Label20: TLabel
                     Left = 472
-                    Top = 15
+                    Top = 42
                     Width = 48
                     Height = 12
                     Caption = #26174#31034#21333#20301
@@ -324,7 +324,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object Label25: TLabel
                     Left = 10
-                    Top = 40
+                    Top = 42
                     Width = 48
                     Height = 12
                     Caption = #21830#21697#25351#26631
@@ -350,7 +350,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object Label2: TLabel
                     Left = 263
-                    Top = 41
+                    Top = 42
                     Width = 48
                     Height = 12
                     Caption = #21830#21697#21517#31216
@@ -361,9 +361,22 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Font.Style = []
                     ParentFont = False
                   end
+                  object Label3: TLabel
+                    Left = 472
+                    Top = 13
+                    Width = 48
+                    Height = 12
+                    Caption = #24211#23384#25968#37327
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = []
+                    ParentFont = False
+                  end
                   object btnOk: TRzBitBtn
-                    Left = 558
-                    Top = 34
+                    Left = 638
+                    Top = 36
                     Width = 67
                     Height = 24
                     Action = actFind
@@ -390,7 +403,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object edtUNIT_ID: TcxComboBox
                     Left = 524
-                    Top = 10
+                    Top = 38
                     Width = 101
                     Height = 20
                     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -405,7 +418,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object edtGoods_Type: TcxComboBox
                     Left = 62
-                    Top = 36
+                    Top = 38
                     Width = 73
                     Height = 20
                     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -417,7 +430,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   object edtGoods_ID: TzrComboBoxList
                     Tag = -1
                     Left = 136
-                    Top = 36
+                    Top = 38
                     Width = 119
                     Height = 20
                     ParentFont = False
@@ -453,7 +466,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   object edtSHOP_ID: TzrComboBoxList
                     Tag = -1
                     Left = 315
-                    Top = 10
+                    Top = 9
                     Width = 149
                     Height = 20
                     ParentFont = False
@@ -540,7 +553,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   end
                   object edtGoodsName: TzrComboBoxList
                     Left = 315
-                    Top = 36
+                    Top = 38
                     Width = 149
                     Height = 20
                     TabStop = False
@@ -587,6 +600,22 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
+                  end
+                  object edtSTOR_AMT: TcxComboBox
+                    Left = 524
+                    Top = 9
+                    Width = 101
+                    Height = 20
+                    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                    ParentFont = False
+                    Properties.DropDownListStyle = lsEditFixedList
+                    Properties.Items.Strings = (
+                      #20840#37096
+                      #19981#20026#38646
+                      #22823#20110#38646
+                      #31561#20110#38646
+                      #23567#20110#38646)
+                    TabOrder = 8
                   end
                 end
               end

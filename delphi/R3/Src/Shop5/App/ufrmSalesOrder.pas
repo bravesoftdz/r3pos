@@ -334,7 +334,7 @@ begin
     rs.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     rs.Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Factor.Open(rs);
-    if rs.Fields[0].AsString >= formatDatetime('YYYY-MM-DD',edtSALES_DATE.Date) then
+    if rs.Fields[0].AsString >= formatDatetime('YYYYMMDD',edtSALES_DATE.Date) then
        edtSALES_DATE.Date := fnTime.fnStrtoDate(rs.Fields[0].AsString)+1;
   finally
     rs.Free;

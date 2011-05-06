@@ -542,10 +542,14 @@ begin
          end;
       if Components[i] is TcxTextEdit then
          begin
+           if (AObj.FieldbyName(fldname).DataType in [ftString,ftFixedChar,ftWideString]) and (TcxTextEdit(Components[i]).Properties.MaxLength=0) then
+              TcxTextEdit(Components[i]).Properties.MaxLength := AObj.FieldbyName(fldname).Width;
            TcxTextEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
       if Components[i] is TcxMaskEdit then
          begin
+           if (AObj.FieldbyName(fldname).DataType in [ftString,ftFixedChar,ftWideString]) and (TcxTextEdit(Components[i]).Properties.MaxLength=0) then
+              TcxMaskEdit(Components[i]).Properties.MaxLength := AObj.FieldbyName(fldname).Width;
            TcxMaskEdit(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
       if Components[i].ClassNameIs('TcxButtonEdit') then
@@ -568,6 +572,8 @@ begin
          end;
       if Components[i] is TcxMemo then
          begin
+           if (AObj.FieldbyName(fldname).DataType in [ftString,ftFixedChar,ftWideString]) and (TcxMemo(Components[i]).Properties.MaxLength=0) then
+              TcxMemo(Components[i]).Properties.MaxLength := AObj.FieldbyName(fldname).Width;
            TcxMemo(Components[i]).Text := AObj.FieldbyName(fldname).AsString;
          end;
       if Components[i] is TcxDateEdit then

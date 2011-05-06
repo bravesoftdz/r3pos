@@ -195,6 +195,14 @@ begin
     begin
       Label40.Caption := '¶©»õ²Ö¿â';
     end;
+
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[10].Free;
+       DBGridEh1.Columns[9].Free;
+       DBGridEh1.Columns[8].Free;
+       DBGridEh1.Columns[7].Free;
+     end;
 end;
 
 procedure TfrmStkIndentOrderList.FormShow(Sender: TObject);

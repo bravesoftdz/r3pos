@@ -175,7 +175,7 @@ object frmPswModify: TfrmPswModify
     Width = 121
     Height = 20
     Properties.EchoMode = eemPassword
-    Properties.MaxLength = 8
+    Properties.MaxLength = 15
     TabOrder = 0
     Text = 'edtOLDPSW'
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -186,7 +186,7 @@ object frmPswModify: TfrmPswModify
     Width = 121
     Height = 20
     Properties.EchoMode = eemPassword
-    Properties.MaxLength = 8
+    Properties.MaxLength = 15
     TabOrder = 1
     Text = 'edtNEWPSW'
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -197,7 +197,7 @@ object frmPswModify: TfrmPswModify
     Width = 121
     Height = 20
     Properties.EchoMode = eemPassword
-    Properties.MaxLength = 8
+    Properties.MaxLength = 15
     TabOrder = 2
     Text = 'edtCOFPSW'
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

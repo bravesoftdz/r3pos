@@ -207,7 +207,8 @@ uses
   ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
   ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
   ufrmImpeach in 'App\ufrmImpeach.pas' {frmImpeach},
-  PubMemberService in 'App\PubMemberService.pas';
+  PubMemberService in 'App\PubMemberService.pas',
+  ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard};
 
 {$R *.res}
 var

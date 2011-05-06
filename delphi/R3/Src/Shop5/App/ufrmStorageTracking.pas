@@ -46,6 +46,8 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
+    Label3: TLabel;
+    edtSTOR_AMT: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -179,6 +181,7 @@ end;
 procedure TfrmStorageTracking.FormCreate(Sender: TObject);
 begin
   inherited;
+  edtSTOR_AMT.ItemIndex := 0;
   AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);
   InitGrid;
@@ -270,7 +273,14 @@ begin
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
   if edtSHOP_ID.AsString<>'' then
     StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
-    
+
+  case edtSTOR_AMT.ItemIndex of
+  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
+  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
+  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
+  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+  end;
+
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+'*1.0) as AMOUNT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
   ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+

@@ -735,7 +735,7 @@ begin
                 begin
                   edtTable.FieldbyName('AMOUNT').AsFloat := 1;
                   AMountToCalc(1);
-                  edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
+                  //edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
                 end
              else
                 PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);

@@ -8,7 +8,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzStatus, RzPanel, Grids,
   DBGridEh, StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, DB,
-  ZDataSet, ZBase, Math, RzGrids, FR_Class, RzButton,
+  ZDataSet, ZBase, Math, RzGrids, FR_Class,DBGrids, RzButton,
   ZAbstractRODataset, ZAbstractDataset;
 
 const
@@ -429,6 +429,8 @@ begin
 
   NewOrder;
   LoadFile('H');
+
+  DBGridEh2.Options := DBGridEh2.Options + [dgRowSelect];
 end;
 
 procedure TfrmPosMain.AddRecord(AObj: TRecord_; UNIT_ID,P1,P2: string;IsPresent:boolean=false);

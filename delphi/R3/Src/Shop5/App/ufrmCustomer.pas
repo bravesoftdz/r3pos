@@ -133,9 +133,9 @@ type
   end;
 
 implementation
-uses ufrmCustomerInfo, DateUtils, uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
-     ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic ,ufrmPassWord;
-//  ufrmSendGsm,ufrmReturn,ufrmCancelCard,ufrmReNew,
+uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
+     ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord;
+//  ufrmSendGsm, ufrmReNew,
 
 {$R *.dfm}
 
@@ -613,7 +613,7 @@ begin
   if Cds_Customer.IsEmpty then Exit;
   //if Cds_Customer.FieldByName('IC_CARDNO').AsString<>'' then Raise Exception.Create('此会员已经有储值卡！');
 
-  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,IntToStr(Global.TENANT_ID),1) then
+  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,IntToStr(Global.TENANT_ID),Cds_Customer.FieldByName('CUST_NAME').AsString,1) then
     begin
       {Cds_Customer.Edit;
       Cds_Customer.FieldByName('IC_CARDNO').AsString:=card;
@@ -648,7 +648,7 @@ begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-  if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
+  //if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
   if TfrmDeposit.Open(Cds_Customer.FieldByName('CUST_ID').AsString,BALANCE) then
   begin
     Cds_Customer.Edit;
@@ -681,47 +681,31 @@ begin
 end;
 
 procedure TfrmCustomer.actCancelCardExecute(Sender: TObject);
- {procedure UpdateToGlobal(IC:string;ID:string);
-   var Temp:TZQuery;
-   begin
-      Temp := Global.GetZQueryFromName('BAS_CUSTOMER');
-      Temp.Filtered := false;
-      if not Temp.Locate('CUST_ID',ID,[]) then
-         Temp.Append
-      else
-         Temp.Edit;
-      Temp.FieldByName('IC_CARDNO').AsString:=IC;
-      Temp.Post;
-   end;}
+var CardNo,CardName:String;
 begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-  //if Cds_Customer.FieldByName('IC_CARDNO').AsString='' then  Raise Exception.Create('此会员没有储值卡！');
-  {if TfrmCancelCard.Open(Cds_Customer.FieldByName('CUST_ID').AsString) then
-  begin
-    Cds_Customer.Edit;
-    Cds_Customer.FieldByName('IC_CARDNO').AsString:='';
-    Cds_Customer.FieldByName('BALANCE').AsString:='';
-    Cds_Customer.Post;
-    UpdateToGlobal(Cds_Customer.FieldByName('IC_CARDNO').AsString,Cds_Customer.FieldByName('CUST_ID').AsString);
-    MessageBox(Handle,'注销卡成功！',pchar(Application.Title),MB_OK);
-  end;}
+
+  if TfrmCancelCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,IntToStr(Global.TENANT_ID),CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
+    end;
 end;
 
 procedure TfrmCustomer.actReturnExecute(Sender: TObject);
 var BALANCE:string;
 begin
   inherited;
-  {if not Cds_Customer.Active then exit;
+  if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-  if Cds_Customer.FieldByName('IC_CARDNO').AsString='' then  Raise Exception.Create('此会员没有储值卡！');
+  //if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
   if TfrmReturn.Open(Cds_Customer.FieldByName('CUST_ID').AsString,BALANCE) then
   begin
     Cds_Customer.Edit;
     Cds_Customer.FieldByName('BALANCE').AsString:=BALANCE;
     Cds_Customer.Post;
-  end;}
+  end;
 end;
 
 procedure TfrmCustomer.actRenewExecute(Sender: TObject);

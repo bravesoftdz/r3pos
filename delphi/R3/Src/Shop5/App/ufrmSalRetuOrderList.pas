@@ -365,7 +365,8 @@ begin
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT ,'+
    '(select -sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
-   '(select -sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY '+
+   '(select -sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY,'+
+   '(select GLIDE_NO from SAL_SALESORDER where SALES_ID=j.FROM_ID and TENANT_ID='+tenantid+') as GLIDE_NO_FROM '+
    'from ('+
    'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
    'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
@@ -384,7 +385,7 @@ begin
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,-A.SALE_AMT as SALE_AMT,-A.SALE_MNY as SALE_MNY,A.CASH_MNY,A.PAY_ZERO,-A.PAY_DIBS as PAY_DIBS,-A.PAY_A as PAY_A,-A.PAY_B as PAY_B,-A.PAY_C as PAY_C,-A.PAY_D as PAY_D,'+
    '-A.PAY_E as PAY_E,-A.PAY_F as PAY_F,-A.PAY_G as PAY_G,-A.PAY_H as PAY_H,-A.PAY_I as PAY_I,-A.PAY_J as PAY_J,-A.INTEGRAL as INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
    '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,-B.CALC_MONEY as CALC_MONEY,-A.BARTER_INTEGRAL as BARTER_INTEGRAL,'+
-   'B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
+   'B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from SAL_SALESORDER A,SAL_SALESDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' ) jb '+
    'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+

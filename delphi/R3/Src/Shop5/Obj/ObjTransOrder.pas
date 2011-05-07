@@ -51,7 +51,7 @@ begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
      begin
        if (FieldbyName('GLIDE_NO').AsString='') or (Pos('ÐÂ',FieldbyName('GLIDE_NO').AsString)>0) then
-         FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+         FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
      
   Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+

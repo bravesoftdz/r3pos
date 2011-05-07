@@ -285,7 +285,7 @@ begin
       User:=trim(Params.ParambyName('CHK_USER').asString);
       CurDate:=trim(FormatDatetime('YYYY-MM-DD',Date()));
       CurTime:=trim(FormatDatetime('YYYY-MM-DD HH:MM:SS',Now()));
-      gid := GetSequence(AGlobal,'GNO_3_'+Params.ParambyName('SHOP_ID').asString,Params.ParambyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+      gid := trimright(Params.ParambyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_3_'+Params.ParambyName('SHOP_ID').asString,Params.ParambyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
       if not rs.IsEmpty then
       begin
         AGlobal.ExecSQL('insert into STO_CHANGEORDER(CHANGE_ID,GLIDE_NO,TENANT_ID,SHOP_ID,CHANGE_DATE,CHANGE_TYPE,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+

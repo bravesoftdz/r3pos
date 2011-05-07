@@ -312,7 +312,7 @@ begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
   begin
      if (FieldbyName('GLIDE_NO').AsString='') or (Pos('ÐÂÔö',FieldbyName('GLIDE_NO').AsString)>0) then
-        FieldbyName('GLIDE_NO').AsString := GetSequence(AGlobal,'GNO_1_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
+        FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_1_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      if (FieldbyName('PAY_D').AsFloat <> 0) then
      begin
        if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;

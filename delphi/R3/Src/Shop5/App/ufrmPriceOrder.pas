@@ -233,7 +233,6 @@ begin
   dbState := dsInsert;
   edtPRICE_ID.ItemIndex:=0; //新单默认: 所有客户
   AObj.FieldbyName('PROM_ID').asString := TSequence.NewId();
-  //AObj.FieldbyName('GLIDE_NO').asString := TSequence.GetSequence('GNO_PROM_ID'+formatDatetime('YYYYMMDD',now()),Global.CompanyId,formatDatetime('YYYYMMDD',now()),6);
   oid := AObj.FieldbyName('PROM_ID').asString;
   gid := '..新增..';//AObj.FieldbyName('GLIDE_NO').asString;
   edtBEGIN_DATE.Date := date();

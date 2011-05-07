@@ -208,7 +208,10 @@ uses
   ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
   ufrmImpeach in 'App\ufrmImpeach.pas' {frmImpeach},
   PubMemberService in 'App\PubMemberService.pas',
-  ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard};
+  ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard},
+  ufrmPassWord in 'App\ufrmPassWord.pas' {frmPassWord},
+  ufrmReturn in 'App\ufrmReturn.pas' {frmReturn},
+  ufrmCancelCard in 'App\ufrmCancelCard.pas' {frmCancelCard};
 
 {$R *.res}
 var

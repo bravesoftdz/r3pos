@@ -34,6 +34,7 @@ procedure DecStorage(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID, PROPERTY_01, 
 function GetCostPrice(AGlobal: IdbHelp;TENANT_ID, SHOP_ID, GODS_ID,BATCH_NO:string): Real;
 
 function NewId(id:string): string;
+function TrimRight(s:string;w:integer):string;
 //写日志
 procedure WriteLogInfo(AGlobal: IdbHelp;userid:string;LogType:integer;ModId:string;LogName:string;LogInfo:string);
 //组合数据变动说明
@@ -67,6 +68,11 @@ begin
      result :=Copy(result,2,length(result)-2);  //去掉"{}"
   end else
      result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
+end;
+function TrimRight(s:string;w:integer):string;
+begin
+  result := trim(s);
+  result := copy(result,length(result)-w+1,w);
 end;
 function ParseSQL(iDbType:integer;SQL:string):string;
 begin

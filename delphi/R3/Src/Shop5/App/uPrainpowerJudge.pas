@@ -42,9 +42,11 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE=''AUDIT_HINT'' and COMM not in (''12'',''02'') ';
+    rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') ';
     Factor.Open(rs);
-
+    rs.Filtered := False;
+    rs.Filter := ' DEFINE=''AUDIT_HINT'' ';
+    rs.Filtered := True;
     if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger = 1) then
       begin
         if ShopGlobal.GetChkRight('11100001',5) then                //进货订单的审核权限     actfrmStkIndentOrderList  表  STK_INDENTORDER
@@ -110,42 +112,40 @@ begin
             Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
             ' from PUB_CUSTOMER where CHK_USER is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
           end;
-      end; 
+      end; }
 
     if ShopGlobal.GetChkRight('33400001',1) then                //会员生日提醒     actfrmCustomer  表  PUB_CUSTOMER
       begin
         rs.Filtered := False;
         rs.Filter := ' DEFINE=''BIRTHDAY'' ';
         rs.Filtered := True;
-        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger > 1) then
+        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger >= 0) then
           begin
             case Factor.iDbType of
-              0:Str_Bir := ' DateDiff(Day,DateAdd(year,DateDiff(year,Birthday,GetDate()),Birthday),GetDate()) between  -'+rs.FieldByName('VALUE').AsString+' and 0 ';
-              4:Str_Bir := ' julianday('''+copy(FormatDateTime('YYYY-MM-DD',Date),1,4)+'''||substr(BIRTHDAY,5,10))-julianday('''+FormatDateTime('YYYY-MM-DD',Date)+''') >= '+rs.FieldByName('VALUE').AsString;
-              5:Str_Bir := '';
+              0:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''+substring(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
+              4:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
+              5:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-            Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
-            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ' + Str_Bir;
+            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
+            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and ' + Str_Bir;
           end;
-          
+
         rs.Filtered := False;
         rs.Filter := ' DEFINE=''CUSTCONTINU'' ';
         rs.Filtered := True;
-        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger > 1) then
+        if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger >= 0) then
           begin
             case Factor.iDbType of
-              0:Str_Bir := ' DateDiff(Day,DateAdd(year,DateDiff(year,Birthday,GetDate()),Birthday),GetDate()) between  -'+rs.FieldByName('VALUE').AsString+' and 0 ';
-              4:Str_Bir := ' julianday('''+copy(FormatDateTime('YYYY-MM-DD',Date),1,4)+'''||substr(BIRTHDAY,5,10))-julianday('''+FormatDateTime('YYYY-MM-DD',Date)+''') >= '+rs.FieldByName('VALUE').AsString;
-              5:Str_Bir := '';
+              0:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''+substring(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
+              4:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
+              5:Str_Bir := ''''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-            Sql := ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,10 as sFlag '+
-            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') '+
-            ' and DateDiff(Day,DateAdd(year,DateDiff(year,Birthday,GetDate()),Birthday),GetDate()) between  -'+rs.FieldByName('VALUE').AsString+' and 0 ';
+            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,10 as sFlag '+
+            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and '+ Str_Bir;
           end;
-
-      end;  }
+      end;
 
     if Trim(Sql) <> '' then Sql := Sql + ' union all ';
     Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,1 SUM_ORDER,8 as sFlag '+

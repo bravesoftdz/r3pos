@@ -19,10 +19,8 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 135
       Width = 518
       Height = 184
-      ActivePage = TabSheet4
       Color = clWhite
       ParentColor = False
-      TabIndex = 3
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -453,7 +451,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #37038#23492#22320#22336
+            Caption = #37038#25919#22320#22336
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -528,7 +526,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #37038#23492#32534#30721
+            Caption = #37038#25919#32534#30721
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12

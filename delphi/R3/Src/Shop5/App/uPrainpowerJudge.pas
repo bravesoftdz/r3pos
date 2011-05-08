@@ -167,7 +167,12 @@ begin
       new(Msg);
       Msg^.ID := List.FieldbyName('ID').AsString;
       msg^.Title := List.FieldbyName('MSG_TITLE').AsString;
-      Msg^.Contents := ' 你有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
+      if List.FieldbyName('sFlag').AsInteger = 9 then
+        Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期过生日！'
+      else if List.FieldbyName('sFlag').AsInteger = 10 then
+        Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期要继会！'
+      else
+        Msg^.Contents := ' 你有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
       Msg^.sFlag := List.FieldbyName('sFlag').AsInteger;
       Msg^.Msg_Class := List.FieldbyName('MSG_CLASS').AsInteger;
       MsgFactory.Add(Msg);

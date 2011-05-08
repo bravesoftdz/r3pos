@@ -373,10 +373,6 @@ begin
   cmbPRICE_ID.DataSet := Global.GetZQueryFromName('PUB_PRICEGRADE');
   cmbSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   TDbGridEhSort.InitForm(self);
-  edtDate1.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
-  edtDate2.Date := Date;
-  edtDate3.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
-  edtDate4.Date := Date;
 end;
 
 procedure TfrmCustomer.Open(id: string);

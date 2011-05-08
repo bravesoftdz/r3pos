@@ -3,7 +3,7 @@ unit ObjGoodsInfo;
 interface
 
 uses
-  SysUtils, zBase, Classes, AdoDb, ZIntf, ObjCommon, ZDataset, DB;
+  SysUtils, zBase, Classes, ZIntf, ObjCommon, ZDataset, DB;
 
 type
   {== 商品资料 ==}
@@ -31,6 +31,17 @@ type
     procedure InitClass; override;
   end;
 
+  {== 附加条码 ==}
+  TEXT_BARCODE=class(TZFactory)
+  public
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass; override;
+  end;
+
   {== 商品单价 ==}
   TGoodsPrice=class(TZFactory)
   public
@@ -41,6 +52,7 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+
 
 implementation
 
@@ -96,10 +108,12 @@ var
 begin
   result := true;
   Str:='Insert Into PUB_GOODSINFO(GODS_ID,TENANT_ID,GODS_CODE,GODS_NAME,GODS_SPELL,GODS_TYPE,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,'+
-    'SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,BARCODE,CALC_UNITS,UNIT_ID,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,'+
+    'SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10,SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,'+
+    'SORT_ID18,SORT_ID19,SORT_ID20,BARCODE,CALC_UNITS,UNIT_ID,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_INPRICE,NEW_OUTPRICE,'+
     'NEW_LOWPRICE,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,USING_BARTER,BARTER_INTEGRAL,REMARK,COMM,TIME_STAMP)'+
     ' Values (:GODS_ID,:TENANT_ID,:GODS_CODE,:GODS_NAME,:GODS_SPELL,:GODS_TYPE,:SORT_ID1,:SORT_ID2,:SORT_ID3,:SORT_ID4,'+
-    ':SORT_ID5,:SORT_ID6,:SORT_ID7,:SORT_ID8,:BARCODE,:CALC_UNITS,:UNIT_ID,:SMALL_UNITS,:BIG_UNITS,:SMALLTO_CALC,:BIGTO_CALC,:NEW_INPRICE,'+
+    ':SORT_ID5,:SORT_ID6,:SORT_ID7,:SORT_ID8,:SORT_ID9,:SORT_ID10,:SORT_ID11,:SORT_ID12,:SORT_ID13,:SORT_ID14,:SORT_ID15,:SORT_ID16,:SORT_ID17,'+
+    ':SORT_ID18,:SORT_ID19,:SORT_ID20,:BARCODE,:CALC_UNITS,:UNIT_ID,:SMALL_UNITS,:BIG_UNITS,:SMALLTO_CALC,:BIGTO_CALC,:NEW_INPRICE,'+
     ':RTL_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_LOCUS_NO,:USING_BARTER,:BARTER_INTEGRAL,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
   AGlobal.ExecSQL(Str, self);
 
@@ -135,6 +149,8 @@ begin
     Str:=
       'Update PUB_GOODSINFO Set GODS_CODE=:GODS_CODE,GODS_NAME=:GODS_NAME,GODS_SPELL=:GODS_SPELL,GODS_TYPE=:GODS_TYPE,SORT_ID1=:SORT_ID1,'+
       'SORT_ID2=:SORT_ID2,SORT_ID3=:SORT_ID3,SORT_ID4=:SORT_ID4,SORT_ID5=:SORT_ID5,SORT_ID6=:SORT_ID6,SORT_ID7=:SORT_ID7,SORT_ID8=:SORT_ID8,'+
+      'SORT_ID9=:SORT_ID9,SORT_ID10=:SORT_ID10,SORT_ID11=:SORT_ID11,SORT_ID12=:SORT_ID12,SORT_ID13=:SORT_ID13,SORT_ID14=:SORT_ID14,'+
+      'SORT_ID15=:SORT_ID15,SORT_ID16=:SORT_ID16,SORT_ID17=:SORT_ID17,SORT_ID18=:SORT_ID18,SORT_ID19=:SORT_ID19,SORT_ID20=:SORT_ID20,'+
       'BARCODE=:BARCODE,USING_PRICE=:USING_PRICE,HAS_INTEGRAL=:HAS_INTEGRAL,USING_BATCH_NO=:USING_BATCH_NO,USING_BARTER=:USING_BARTER,'+
       'BARTER_INTEGRAL=:BARTER_INTEGRAL,REMARK=:REMARK,USING_LOCUS_NO=:USING_LOCUS_NO,'+
       'CALC_UNITS=:CALC_UNITS,UNIT_ID=:UNIT_ID,SMALL_UNITS=:SMALL_UNITS,BIG_UNITS=:BIG_UNITS,SMALLTO_CALC=:SMALLTO_CALC,BIGTO_CALC=:BIGTO_CALC,'+
@@ -243,7 +259,8 @@ begin
       ' NEW_OUTPRICE1, '+
       ' NEW_OUTPRICE2, '+
       ' NEW_LOWPRICE,'+
-      ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,GODS_TYPE,'+
+      ' SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10,'+
+      ' SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20,GODS_TYPE,'+
       ' USING_BARTER,BARTER_INTEGRAL,USING_PRICE,HAS_INTEGRAL,USING_BATCH_NO,USING_LOCUS_NO,REMARK,'+
       ' case when NEW_OUTPRICE<>0 then (case when C.NEW_INPRICE is null then J.NEW_INPRICE else C.NEW_INPRICE end)*100.0/(NEW_OUTPRICE*1.0) else null end as PROFIT_RATE '+
       'from VIW_GOODSPRICE J '+
@@ -298,14 +315,66 @@ begin
 end;
 
 procedure TPUB_BARCODE.InitClass;
-var Str: string;
 begin
   inherited;
-  //条码不是核心资料，可直接物理删除
-  SelectSQL.Text :='select RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
+  SelectSQL.Text :=
+    'select RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
     ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE in (''0'',''1'',''2'') and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and '+
     ' PROPERTY_02=''#'' order by BARCODE ';
 end;
+
+
+{ TEXT_BARCODE }
+
+
+function TEXT_BARCODE.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str: string;
+begin
+  if trim(FieldbyName('RELATION_FLAG').AsString)<>'1' then //只有是自主经营才能修改编辑
+  begin
+    Str :='update PUB_BARCODE set BATCH_NO=:BATCH_NO,PROPERTY_01=:PROPERTY_01,PROPERTY_02=:PROPERTY_02,BARCODE=:BARCODE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+      ' where TENANT_ID=:OLD_TENANT_ID and BARCODE_TYPE=:OLD_BARCODE_TYPE and UNIT_ID=:OLD_UNIT_ID and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+      ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE=:OLD_BARCODE ';
+    if AGlobal.ExecSQL(Str, self)=0 then
+    begin
+      Str:='Insert Into PUB_BARCODE (ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE,COMM,TIME_STAMP)'+
+           ' Values (:ROWS_ID,:TENANT_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,:UNIT_ID,:BARCODE_TYPE,:BATCH_NO,:BARCODE,''00'','+GetTimeStamp(iDbType)+')';
+      AGlobal.ExecSQL(Str,self);
+    end;
+  end;
+end;
+
+function TEXT_BARCODE.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str: string;
+begin
+  if trim(FieldbyName('RELATION_FLAG').AsString)<>'1' then //只有是自主经营才能修改编辑
+  begin
+    Str := 'update PUB_BARCODE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+      ' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and UNIT_ID=:OLD_UNIT_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
+      ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE_TYPE=:OLD_BARCODE_TYPE and BARCODE=:OLD_BARCODE ';
+    AGlobal.ExecSQL(Str,self);
+  end;
+end;
+
+function TEXT_BARCODE.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if trim(FieldbyName('RELATION_FLAG').AsString)<>'1' then //只有是自主经营才能修改编辑
+  begin
+    result := BeforeDeleteRecord(AGlobal);
+    result := BeforeInsertRecord(AGlobal);
+  end;
+end;
+
+procedure TEXT_BARCODE.InitClass;
+begin
+  inherited;
+  SelectSQL.Text :=
+    'select 0 as SEQNO,RELATION_FLAG,ROWS_ID,TENANT_ID,GODS_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from VIW_BARCODE '+
+    ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and BARCODE_TYPE=''3'' and GODS_ID=:GODS_ID and BATCH_NO=''#'' and PROPERTY_01=''#'' and '+
+    ' PROPERTY_02=''#'' order by BARCODE ';
+end;   
 
 { TGoodsPrice }
 
@@ -362,11 +431,15 @@ end;
 initialization
   RegisterClass(TGoodsInfo);
   RegisterClass(TPUB_BARCODE);
+  RegisterClass(TEXT_BARCODE);
   RegisterClass(TGoodsPrice);
+
 finalization
   UnRegisterClass(TGoodsInfo);
   UnRegisterClass(TPUB_BARCODE);
+  UnRegisterClass(TEXT_BARCODE);
   UnRegisterClass(TGoodsPrice);
+
 end.
 
 

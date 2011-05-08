@@ -771,6 +771,7 @@ begin
          Global.LoadBasic();
          ShopGlobal.LoadRight;
          CheckEnabled;
+         CA_MODULE.Close;
          LoadMenu;
        finally
          frmLogo.Close;
@@ -1095,6 +1096,7 @@ begin
   s2_Page3.Visible := false;
   s2_Page4.Visible := false;
   s2_Page5.Visible := false;
+  PageList.Clear;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
@@ -1159,6 +1161,7 @@ var
 begin
   if not CA_MODULE.Active then
      begin
+       CA_MODULE.Filtered := false;
        CA_MODULE.Close;
        CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
        Factor.Open(CA_MODULE);
@@ -3246,7 +3249,7 @@ begin
     begin
       if sflag='s1_' then
          begin
-           if n=0 then
+           if i=0 then
               TRzBmpButton(PageList[i]).Top := 1
            else
               TRzBmpButton(PageList[i]).Top := TRzBmpButton(PageList[i-1]).top + TRzBmpButton(PageList[i-1]).height + 1;

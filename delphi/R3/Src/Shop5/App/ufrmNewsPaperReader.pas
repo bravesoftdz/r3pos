@@ -185,6 +185,10 @@ begin
         CdsNewsPaper.FieldByName('MSG_ID').AsString := PrainpowerJudge.List.FieldByName('ID').AsString;
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·<待答>'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString
+        else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=9 then
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期过生日！'
+        else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=10 then
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期要继会！'
         else
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张"'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'"没有审核';
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then

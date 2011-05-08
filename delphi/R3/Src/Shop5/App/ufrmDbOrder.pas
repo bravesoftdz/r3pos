@@ -301,11 +301,11 @@ var
 begin
   inherited;
   if dbState = dsBrowse then Exit;
-  if ShopGlobal.GetParameter('GUIDE_USER')='0' then
-  begin
-     if edtGUIDE_USER.AsString='' then
-        Raise Exception.Create('请输入业务员再保存！');
-  end;
+//  if ShopGlobal.GetParameter('GUIDE_USER')='0' then
+//  begin
+//     if edtGUIDE_USER.AsString='' then
+//        Raise Exception.Create('请输入业务员再保存！');
+//  end;
 
   Saved := false;
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('调拨日期不能为空');
@@ -314,7 +314,7 @@ begin
   if (edtPLAN_DATE.EditValue <> null) and (edtSALES_DATE.Date>edtPLAN_DATE.Date) then Raise Exception.Create('到货日期不能小于调出日期');
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
-      if (edtSHOP_ID.AsString <> Global.SHOP_ID) or (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
+      if (edtSHOP_ID.AsString <> Global.SHOP_ID) and (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
          Raise Exception.Create('只能操作本门店的调拨单...'); 
     end;
   ClearInvaid;
@@ -700,6 +700,11 @@ var
 begin
   inherited;
   if edtTable.IsEmpty then Raise Exception.Create('不能对一张空单进行到货确认'); 
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      if (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
+         Raise Exception.Create('只能操作调入至本门店的调拨单...');
+    end;
   if TfrmDbOkDialog.DBOkDialog(self,OkDate,OkUser) then
      begin
        edtPLAN_DATE.Date := OkDate;

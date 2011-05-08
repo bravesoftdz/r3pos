@@ -1,9 +1,9 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 202
-  Top = 113
+  Left = 199
+  Top = 112
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
-  ClientHeight = 426
+  ClientHeight = 429
   ClientWidth = 528
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -43,17 +43,19 @@ inherited frmGoodsInfo: TfrmGoodsInfo
   end
   inherited bgPanel: TRzPanel
     Width = 528
-    Height = 426
+    Height = 429
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
       Top = 145
       Width = 518
-      Height = 232
+      Height = 235
+      ActivePage = TabSheet4
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 5
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -62,12 +64,12 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Caption = #21830#21697#21253#35013
         inherited RzPanel2: TRzPanel
           Width = 514
-          Height = 205
+          Height = 208
           BorderColor = clWhite
           BorderShadow = clWhite
           Color = clWhite
           FlatColor = clWhite
-          object LblColorGroup: TLabel
+          object lblSORT_ID7: TLabel
             Left = 36
             Top = 15
             Width = 36
@@ -82,7 +84,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             ParentFont = False
             Visible = False
           end
-          object lblSizeGroup: TLabel
+          object lblSORT_ID8: TLabel
             Left = 287
             Top = 15
             Width = 36
@@ -131,7 +133,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             LocateStyle = lsDark
             Buttons = [zbNew]
             DropListStyle = lsFixed
-            OnSaveValue = edtSORT_ID7SaveValue
             MultiSelect = False
           end
           object edtSORT_ID8: TzrComboBoxList
@@ -168,7 +169,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             LocateStyle = lsDark
             Buttons = [zbNew]
             DropListStyle = lsFixed
-            OnSaveValue = edtSORT_ID8SaveValue
             MultiSelect = False
           end
           object GB_Small: TGroupBox
@@ -744,37 +744,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object tabProperty: TRzTabSheet
         Color = clWhite
         Caption = #32479#35745#25351#26631
-        object Label17: TLabel
-          Left = 35
-          Top = 63
-          Width = 48
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #21830#21697#20215#31867
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label40: TLabel
-          Left = 47
-          Top = 85
-          Width = 36
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #30465#20869#22806
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label29: TLabel
-          Left = 35
-          Top = 20
+        object lblSORT_ID3: TLabel
+          Left = 17
+          Top = 10
           Width = 48
           Height = 12
           Alignment = taRightJustify
@@ -786,227 +758,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Font.Style = []
           ParentFont = False
         end
-        object Label13: TLabel
-          Left = 35
-          Top = 43
-          Width = 48
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #25152#23646#21697#29260
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label44: TLabel
-          Left = 35
-          Top = 108
-          Width = 48
-          Height = 12
-          Alignment = taRightJustify
-          Caption = #37325#28857#21697#29260
-          Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-        end
-        object edtSORT_ID6: TzrComboBoxList
-          Left = 87
-          Top = 83
-          Width = 162
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 4
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #20998#31867#21517#31216
-              Width = 50
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_ID'
-              Footers = <>
-              Title.Caption = #20195#30721
-              Visible = False
-              Width = 50
-            end>
-          DropWidth = 160
-          DropHeight = 120
-          ShowTitle = False
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID6AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew, zbClear]
-          DropListStyle = lsEditFixed
-          OnSaveValue = edtSORT_ID6SaveValue
-          MultiSelect = False
-        end
-        object edtSORT_ID2: TzrComboBoxList
-          Left = 87
-          Top = 61
-          Width = 162
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 2
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_SPELL;SORT_ID'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #20998#31867#21517#31216
-              Width = 50
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_ID'
-              Footers = <>
-              Title.Caption = #20195#30721
-              Visible = False
-              Width = 50
-            end>
-          DropWidth = 160
-          DropHeight = 120
-          ShowTitle = False
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID2AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew, zbClear]
-          DropListStyle = lsEditFixed
-          OnSaveValue = edtSORT_ID2SaveValue
-          MultiSelect = False
-        end
-        object edtSORT_ID5: TzrComboBoxList
-          Left = 87
-          Top = 105
-          Width = 162
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 3
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_ID;SORT_SPELL'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_ID'
-              Footers = <>
-              Title.Caption = #21697#29260#20195#30721
-              Visible = False
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #21697#29260#21517#31216
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_SPELL'
-              Footers = <>
-              Title.Caption = #25340#38899#30721
-              Visible = False
-            end>
-          DropWidth = 160
-          DropHeight = 200
-          ShowTitle = True
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID5AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew, zbClear]
-          DropListStyle = lsFixed
-          OnSaveValue = edtSORT_ID5SaveValue
-          MultiSelect = False
-        end
-        object edtSORT_ID4: TzrComboBoxList
-          Left = 87
-          Top = 39
-          Width = 162
-          Height = 20
-          Properties.AutoSelect = False
-          Properties.Buttons = <
-            item
-              Default = True
-            end>
-          Properties.ReadOnly = True
-          TabOrder = 1
-          InGrid = False
-          KeyValue = Null
-          FilterFields = 'SORT_NAME;SORT_ID;SORT_SPELL'
-          KeyField = 'SORT_ID'
-          ListField = 'SORT_NAME'
-          Columns = <
-            item
-              EditButtons = <>
-              FieldName = 'SORT_ID'
-              Footers = <>
-              Title.Caption = #21697#29260#20195#30721
-              Visible = False
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_NAME'
-              Footers = <>
-              Title.Caption = #21697#29260#21517#31216
-            end
-            item
-              EditButtons = <>
-              FieldName = 'SORT_SPELL'
-              Footers = <>
-              Title.Caption = #25340#38899#30721
-              Visible = False
-            end>
-          DropWidth = 160
-          DropHeight = 200
-          ShowTitle = True
-          AutoFitColWidth = True
-          OnAddClick = edtSORT_ID4AddClick
-          ShowButton = True
-          LocateStyle = lsDark
-          Buttons = [zbNew, zbClear]
-          DropListStyle = lsFixed
-          OnSaveValue = edtSORT_ID4SaveValue
-          MultiSelect = False
-        end
         object edtSORT_ID3: TzrComboBoxList
-          Left = 87
-          Top = 17
+          Left = 69
+          Top = 6
           Width = 162
           Height = 20
           Properties.AutoSelect = False
@@ -1059,7 +813,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           LocateStyle = lsDark
           Buttons = [zbNew, zbClear]
           DropListStyle = lsFixed
-          OnSaveValue = edtSORT_ID3SaveValue
           MultiSelect = False
         end
       end
@@ -1089,9 +842,132 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
+      object TabSheet4: TRzTabSheet
+        Color = clWhite
+        Caption = #38468#21152#26465#30721
+        object RzPnl_BarCode: TRzPanel
+          Left = 11
+          Top = 16
+          Width = 491
+          Height = 175
+          BorderOuter = fsFlat
+          BorderColor = clGray
+          TabOrder = 0
+          object ExtBarCodeGrid: TDBGridEh
+            Left = 1
+            Top = 1
+            Width = 489
+            Height = 173
+            Align = alClient
+            AutoFitColWidths = True
+            DataSource = ExtBarCodeDs
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FrozenCols = 1
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
+            PopupMenu = ExtPm
+            RowHeight = 17
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            UseMultiTitle = True
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            OnKeyPress = ExtBarCodeGridKeyPress
+            OnMouseDown = ExtBarCodeGridMouseDown
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #24207#21495
+                Width = 29
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_ID'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Width = 63
+                Control = fndUNIT_ID
+                OnBeforeShowControl = ExtBarCodeGridColumns1BeforeShowControl
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                Title.Caption = #26465#24418#30721
+                Width = 368
+              end>
+          end
+          object fndUNIT_ID: TzrComboBoxList
+            Left = 30
+            Top = 22
+            Width = 63
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            Properties.OnChange = edtCALC_UNITSPropertiesChange
+            TabOrder = 1
+            Visible = False
+            OnEnter = fndUNIT_IDEnter
+            OnExit = fndUNIT_IDExit
+            OnKeyDown = fndUNIT_IDKeyDown
+            OnKeyPress = fndUNIT_IDKeyPress
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
+            KeyField = 'UNIT_ID'
+            ListField = 'UNIT_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_NAME'
+                Footers = <>
+                Title.Caption = #21333#20301#21517#31216
+                Width = 50
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_ID'
+                Footers = <>
+                Title.Caption = #20195#30721
+                Visible = False
+                Width = 50
+              end>
+            DropWidth = 66
+            DropHeight = 140
+            ShowTitle = False
+            AutoFitColWidth = True
+            OnAddClick = edtCALC_UNITSAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew]
+            DropListStyle = lsFixed
+            OnSaveValue = fndUNIT_IDSaveValue
+            MultiSelect = False
+          end
+        end
+      end
     end
     inherited btPanel: TRzPanel
-      Top = 377
+      Top = 380
       Width = 518
       Height = 44
       Color = clWhite
@@ -1100,7 +976,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         518
         44)
       object btnOk: TRzBitBtn
-        Left = 342
+        Left = 358
         Top = 9
         Width = 67
         Height = 26
@@ -1150,6 +1026,33 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnCloseClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object BtnStateInfo: TRzBitBtn
+        Left = 2
+        Top = 9
+        Width = 96
+        Height = 26
+        Anchors = [akTop, akRight]
+        Caption = #33258#23450#20041#25351#26631'(&D)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 2
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = BtnStateInfoClick
         NumGlyphs = 2
         Spacing = 5
       end
@@ -1374,7 +1277,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Font.Style = []
         ParentFont = False
       end
-      object Label12: TLabel
+      object lblSORT_ID1: TLabel
         Left = 329
         Top = 73
         Width = 48
@@ -1615,8 +1518,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Name = 'COMP_ID'
         ParamType = ptUnknown
       end>
-    Left = 47
-    Top = 386
+    Left = 151
+    Top = 394
     ParamData = <
       item
         DataType = ftUnknown
@@ -1650,8 +1553,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Name = 'COMP_ID'
         ParamType = ptUnknown
       end>
-    Left = 7
-    Top = 386
+    Left = 119
+    Top = 394
     ParamData = <
       item
         DataType = ftUnknown
@@ -1685,8 +1588,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Name = 'COMP_ID'
         ParamType = ptUnknown
       end>
-    Left = 89
-    Top = 389
+    Left = 185
+    Top = 397
     ParamData = <
       item
         DataType = ftUnknown
@@ -1696,7 +1599,55 @@ inherited frmGoodsInfo: TfrmGoodsInfo
   end
   object PRICEPrice_DS: TDataSource
     DataSet = CdsMemberPrice
-    Left = 117
+    Left = 213
+    Top = 401
+  end
+  object ExtBarCode: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,COMP_ID fro' +
+        'm VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
+      
+        'and (COMP_ID=:COMP_ID or COMP_ID='#39'----'#39' or COMP_ID in (select UP' +
+        'COMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_TYPE=2)'
+      ' or'
+      
+        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:COMP' +
+        '_ID and COMP_TYPE=2 and COMM not in ('#39'02'#39','#39'12'#39'))'
+      ' or'
+      
+        'COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID in (s' +
+        'elect UPCOMP_ID from CA_COMPANY where COMP_ID=:COMP_ID and COMP_' +
+        'TYPE=2) and COMP_TYPE=2)'
+      ') order by ACCOUNT')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'COMP_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 287
     Top = 393
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'COMP_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object ExtBarCodeDs: TDataSource
+    DataSet = ExtBarCode
+    Left = 317
+    Top = 393
+  end
+  object ExtPm: TPopupMenu
+    Left = 241
+    Top = 273
+    object N1: TMenuItem
+      Caption = #21024#38500#34892
+      OnClick = N1Click
+    end
   end
 end

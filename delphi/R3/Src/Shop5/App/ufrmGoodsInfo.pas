@@ -79,23 +79,15 @@ type
     cdsGoods: TZQuery;
     CdsMemberPrice: TZQuery;
     Label45: TLabel;
-    Label17: TLabel;
-    Label40: TLabel;
-    edtSORT_ID6: TzrComboBoxList;
-    edtSORT_ID2: TzrComboBoxList;
-    Label29: TLabel;
-    Label13: TLabel;
-    Label44: TLabel;
-    edtSORT_ID5: TzrComboBoxList;
-    edtSORT_ID4: TzrComboBoxList;
+    lblSORT_ID3: TLabel;
     edtSORT_ID3: TzrComboBoxList;
-    Label12: TLabel;
+    lblSORT_ID1: TLabel;
     Lbl_1: TLabel;
     Label31: TLabel;
     edtNEW_LOWPRICE: TcxTextEdit;
-    LblColorGroup: TLabel;
+    lblSORT_ID7: TLabel;
     edtSORT_ID7: TzrComboBoxList;
-    lblSizeGroup: TLabel;
+    lblSORT_ID8: TLabel;
     edtSORT_ID8: TzrComboBoxList;
     edtUSING_BARTER: TGroupBox;
     RB_USING_BARTER: TRadioButton;
@@ -115,11 +107,19 @@ type
     TabSheet2: TRzTabSheet;
     Label22: TLabel;
     edtREMARK: TcxMemo;
+    TabSheet4: TRzTabSheet;
+    RzPnl_BarCode: TRzPanel;
+    BtnStateInfo: TRzBitBtn;
+    ExtBarCode: TZQuery;
+    ExtBarCodeDs: TDataSource;
+    ExtBarCodeGrid: TDBGridEh;
+    fndUNIT_ID: TzrComboBoxList;
+    ExtPm: TPopupMenu;
+    N1: TMenuItem;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure edtGODS_NAMEPropertiesChange(Sender: TObject);
-    procedure edtSORT_ID4AddClick(Sender: TObject);
     procedure edtSORT_ID3AddClick(Sender: TObject);
     procedure edtGODS_CODEKeyPress(Sender: TObject; var Key: Char);
     procedure btnOkClick(Sender: TObject);
@@ -136,9 +136,6 @@ type
     procedure edtCALC_UNITSSaveValue(Sender: TObject);
     procedure edtSMALL_UNITSSaveValue(Sender: TObject);
     procedure edtBIG_UNITSSaveValue(Sender: TObject);
-    procedure edtSORT_ID3SaveValue(Sender: TObject);
-    procedure edtSORT_ID4SaveValue(Sender: TObject);
-    procedure edtSORT_ID7SaveValue(Sender: TObject);
     procedure edtNEW_INPRICEPropertiesChange(Sender: TObject);
     procedure edtPROFIT_RATEPropertiesChange(Sender: TObject);
     procedure RzBitBtn4Click(Sender: TObject);
@@ -146,13 +143,9 @@ type
     procedure edtBIGTO_CALCPropertiesChange(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
     procedure edtMY_OUTPRICEPropertiesChange(Sender: TObject);
-    procedure edtSORT_ID2SaveValue(Sender: TObject);
     procedure edtSORT_ID2AddClick(Sender: TObject);
     procedure edtSORT_ID6AddClick(Sender: TObject);
     procedure edtSORT_ID5AddClick(Sender: TObject);
-    procedure edtSORT_ID5SaveValue(Sender: TObject);
-    procedure edtSORT_ID6SaveValue(Sender: TObject);
-    procedure edtSORT_ID8SaveValue(Sender: TObject);
     procedure edtNEW_OUTPRICEKeyPress(Sender: TObject; var Key: Char);
     procedure edtPROFIT_RATEKeyPress(Sender: TObject; var Key: Char);
     procedure edtNEW_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
@@ -172,10 +165,8 @@ type
     procedure edtMY_OUTPRICE1KeyPress(Sender: TObject; var Key: Char);
     procedure edtNEW_LOWPRICEKeyPress(Sender: TObject; var Key: Char);
     procedure edtMY_OUTPRICE2KeyPress(Sender: TObject; var Key: Char);
-    procedure PriceGridColumns2UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure PriceGridColumns3UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure PriceGridColumns2UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure PriceGridColumns3UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtDefault1Click(Sender: TObject);
     procedure edtDefault2Click(Sender: TObject);
     procedure edtNEW_LOWPRICEExit(Sender: TObject);
@@ -183,6 +174,22 @@ type
     procedure edtNEW_OUTPRICEExit(Sender: TObject);
     procedure edtMY_OUTPRICE2Exit(Sender: TObject);
     procedure edtMY_OUTPRICE1Exit(Sender: TObject);
+    procedure BtnStateInfoClick(Sender: TObject);
+    procedure ExtBarCodeGridDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+      State: TGridDrawState);
+    procedure ExtBarCodeGridColumns1BeforeShowControl(Sender: TObject);
+    procedure fndUNIT_IDEnter(Sender: TObject);
+    procedure fndUNIT_IDExit(Sender: TObject);
+    procedure fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndUNIT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndUNIT_IDPropertiesChange(Sender: TObject);
+    procedure fndUNIT_IDSaveValue(Sender: TObject);
+    procedure ExtBarCodeGridKeyPress(Sender: TObject; var Key: Char);
+    procedure ExtBarCodeGridMouseDown(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure N1Click(Sender: TObject);
   private
     DropUNITS_Ds: TZQuery;
     FPriceChange: Boolean;  //会员价是否编辑过
@@ -194,6 +201,14 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
+
+    //2011.04.26 PM 读取商品指标的属性;
+    function  GetLblCaption(LblName: string): string;  //返回标签Caption
+    procedure DoAddSORT_IDClick(Sender: TObject); //添加Add
+    procedure DoSaveValueSORT_IDClick(Sender: TObject); //添加Add
+    procedure CreateComponent(LblCaption: string; NameIdx,vLeft,vTop: integer; DataSet: TDataSet);
+    procedure CreateGodsSTAT_INFO(IsExists: Boolean=False);
+
     procedure UpdateUNITSData(IsEdit: Boolean=true); //更新当前选择单位
     function  IsChinese(str:string):Boolean;
     procedure OnGridKeyPress(Sender: TObject; var Key: Char);
@@ -206,14 +221,22 @@ type
     procedure CheckCLVersionSetParams;  //判断行业版本设置参数;
     function  GetColumnIdx(Gird:TDBGridEh; ColName: string): integer;  //返回Gird列Idx
     procedure CheckTabGoodPriceVisible; //判断会员价格是否显示
-    procedure CALC_MenberProfitPrice(CdsMemberPrice: TZQuery; CALCType: integer; IsAll: Boolean=False);  //计算会员价折扣单价
+    procedure CALC_MenberProfitPrice(CdsMemberPrice: TZQuery; CALCType: integer; IsAll: Boolean=False); //计算会员价折扣单价
+    procedure InitRecord;  //新记录
+    procedure ExtGridFocusNextColumn; //移行
+
+    procedure UpdateToGlobal(AObj:TRecord_); //更新Global
   public
+     //SEQNO控制号
+     RowID:integer;
+
      AObj:TRecord_;
      SORT_ID1,flag:string;
      Saved,IsCompany:Boolean;
      CarryRule,Deci:integer;
      locked:boolean;
      //截小数
+     function  FindColumn(DBGrid: TDBGridEh; FieldName:string):TColumnEh;
      function  ConvertToFight(value: Currency; deci: Integer): real;
      procedure Append(Sort_ID:string; Sort_Name:string; GODS_ID:string);
      procedure Edit(code: string);
@@ -227,6 +250,7 @@ type
      procedure SetdbState(const Value: TDataSetState); override;
      procedure EditPrice; //只能修改价格
      procedure WriteBarCode;  //写入条形码
+     procedure WriteExtBarCode;  //写入附加条形码
      procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
      procedure ReadGoodsBarCode(CdsBarCode: TZQuery);      //读取商品条码
      function  ReadBarCode_INFO(BarCode: string):boolean;  //传入条码读取
@@ -242,7 +266,7 @@ implementation
 uses
   DBGrids,uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
-  ufrmSupplierInfo;
+  ufrmSupplierInfo, ufrmDefineStateInfo;
 
 {$R *.dfm}
 
@@ -252,8 +276,8 @@ begin
   FSortName:=Sort_Name;
   Open('');
   if GODS_ID<>'' then
-    OpenCopyNew(GODS_ID);        
- 
+    OpenCopyNew(GODS_ID);
+
   dbState := dsInsert;
   //SortId := sid;
   if GODS_ID='' then
@@ -274,11 +298,11 @@ begin
     edtUSING_LOCUS_NO.ItemIndex:=1;
     RB_NotUSING_BARTER.Checked:=true;
     //统计指标默认值:
-    SetZrCbxDefaultValue(edtSORT_ID2);
-    //SetZrCbxDefaultValue(edtSORT_ID3);  主供应商 改为  允许为空
-    SetZrCbxDefaultValue(edtSORT_ID4);
-    SetZrCbxDefaultValue(edtSORT_ID5);
-    SetZrCbxDefaultValue(edtSORT_ID6);
+    // SetZrCbxDefaultValue(edtSORT_ID2);
+    // SetZrCbxDefaultValue(edtSORT_ID3);  主供应商 改为  允许为空
+    // SetZrCbxDefaultValue(edtSORT_ID4);
+    // SetZrCbxDefaultValue(edtSORT_ID5);
+    // SetZrCbxDefaultValue(edtSORT_ID6);
     if not edtCALC_UNITS.DataSet.IsEmpty then
     begin
       edtCALC_UNITS.KeyValue := edtCALC_UNITS.DataSet.FieldbyName('UNIT_ID').AsString;
@@ -294,12 +318,27 @@ begin
   edtBARCODE1.Text := '自编条码';
   edtBARCODE2.Text := '';
   edtBARCODE3.Text := '';
+  if ExtBarCode.Active then InitRecord;  
 end;
 
 procedure TfrmGoodsInfo.btnCloseClick(Sender: TObject);
 begin
   inherited;
   close;
+end;
+
+function TfrmGoodsInfo.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var i:integer;
+begin
+  Result := nil;
+  for i:=0 to DBGrid.Columns.Count -1 do
+  begin
+    if UpperCase(DBGrid.Columns[i].FieldName)=UpperCase(FieldName) then
+    begin
+      Result := DBGrid.Columns[i];
+      Exit;
+    end;
+  end;
 end;
 
 procedure TfrmGoodsInfo.Edit(code: string);
@@ -311,6 +350,7 @@ begin
   dbState := dsEdit;
   FPriceChange:=False;
   CheckTabGoodPriceVisible; //判断会员价格是否显示
+
   if (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0') and
      (Inttostr(Global.TENANT_ID)+'0001'<>trim(Global.SHOP_ID)) then //自主经营 且 不是总店  只能修改本店的售价
   begin
@@ -318,10 +358,14 @@ begin
   end else
   if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
     EditPrice;
+
+  if ExtBarCode.Active and ExtBarCode.IsEmpty then InitRecord;    
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
-var rs: TZQuery;
+//var rs: TZQuery;
+var
+  SetCol: TColumnEh;
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
@@ -334,13 +378,18 @@ begin
   // edtBIG_UNITS.DataSet := Global.GetZQueryFromName('PUB_MEAUNITS');
   //商品的的8个SORT_ID数据集:
   //edtSORT_ID1.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');     //分类
-  edtSORT_ID2.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');     //类别[烟草:一类烟、二类烟、三类烟]
+
   edtSORT_ID3.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');    //主供应商
+
+  //2011.05.02关闭下面
+ {
+  edtSORT_ID2.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');     //类别[烟草:一类烟、二类烟、三类烟]
   edtSORT_ID4.DataSet:=Global.GetZQueryFromName('PUB_BRAND_INFO');    //品牌
   edtSORT_ID5.DataSet:=Global.GetZQueryFromName('PUB_IMPT_INFO');     //重点品牌
   edtSORT_ID6.DataSet:=Global.GetZQueryFromName('PUB_AREA_INFO');     //省内外
   edtSORT_ID7.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');    //颜色
   edtSORT_ID8.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');     //尺码
+  }
 
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
   //进位法则
@@ -349,6 +398,14 @@ begin
   //rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   //CreateLevelTree(rs,rzTree,'333333','SORT_ID','SORT_NAME','LEVEL_ID');
   //lblSizeGroup.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码')+'组';
+
+  //创建动态控件
+  CreateGodsSTAT_INFO;
+
+  //选择单位下拉的宽度和高度设置:
+  SetCol:=FindColumn(self.ExtBarCodeGrid, 'UNIT_ID');
+  if SetCol<>nil then
+    fndUNIT_ID.DropWidth:=SetCol.Width+17;
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -380,9 +437,24 @@ begin
       Params.ParamByName('GODS_ID').asString := code;
       Factor.AddBatch(cdsGoods,'TGoodsInfo',Params);
       Factor.AddBatch(BarCode,'TPUB_BARCODE',Params);
+      Factor.AddBatch(ExtBarCode,'TEXT_BARCODE',Params);
       Factor.AddBatch(CdsMemberPrice,'TGoodsPrice',Params);
       Factor.OpenBatch;
       AObj.ReadFromDataSet(cdsGoods);
+
+      //附加条码SEQNO
+      if ExtBarCode.Active then
+      begin
+        ExtBarCode.First;
+        while not ExtBarCode.Eof do
+        begin
+          ExtBarCode.Edit;
+          ExtBarCode.FieldByName('SEQNO').AsInteger:=ExtBarCode.RecNo;
+          ExtBarCode.Post;
+          ExtBarCode.Next;
+        end;
+        RowID:=ExtBarCode.RecordCount;
+      end;
       //根据单位:数据集DataSet
       if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then //自主经营
         UpdateUNITSData 
@@ -414,44 +486,75 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.Save;
-   procedure UpdateToGlobal(AObj:TRecord_);
-   var IsExist: Boolean; GodsID: string; Temp:TZQuery; CurObj: TRecord_;
-   begin
-      Temp := Global.GetZQueryFromName('PUB_GOODSINFO');
-      Temp.Filtered :=false;
-      if not Temp.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
-        Temp.Append
-      else
-        Temp.Edit;
-      AObj.WriteToDataSet(Temp,False);
-      Temp.Post;
+procedure TfrmGoodsInfo.UpdateToGlobal(AObj: TRecord_);
+var
+  Temp:TZQuery;
+  CurObj: TRecord_;
+  IsExist,IsRun: Boolean; GodsID: string;
+begin
+  Temp := Global.GetZQueryFromName('PUB_GOODSINFO');
+  Temp.Filtered :=false;
+  if not Temp.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
+    Temp.Append
+  else
+    Temp.Edit;
+  AObj.WriteToDataSet(Temp,False);
+  Temp.Post;
 
-      //刷新条形码
-      try
-        CurObj:=TRecord_.Create;
-        Temp := Global.GetZQueryFromName('PUB_BARCODE');
-        if Temp.Filtered then Temp.Filtered :=false;
-        Temp.CommitUpdates; //清除Change
-        //先删除该商品条码:
-        GodsID:=trim(AObj.FieldbyName('GODS_ID').AsString);
-        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',0]),[]) then Temp.Delete;
-        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',1]),[]) then Temp.Delete;
-        if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',2]),[]) then Temp.Delete;
-        //循环添加:
-        BarCode.First;
-        while not BarCode.Eof do
-        begin
-          if Temp.IsEmpty then Temp.Edit else Temp.Append;
-          CurObj.ReadFromDataSet(BarCode);
-          CurObj.WriteToDataSet(Temp);
-          Temp.Post;
-          BarCode.Next;
-        end; 
-      finally
-        CurObj.Free;
-      end;
-   end;
+  //刷新条形码[3个]
+  try
+    CurObj:=TRecord_.Create;
+    Temp := Global.GetZQueryFromName('PUB_BARCODE');
+    if Temp.Filtered then Temp.Filtered :=false;
+    Temp.CommitUpdates; //清除Change
+    //先删除该商品条码:
+    GodsID:=trim(AObj.FieldbyName('GODS_ID').AsString);
+    if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',0]),[]) then Temp.Delete;
+    if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',1]),[]) then Temp.Delete;
+    if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',2]),[]) then Temp.Delete;
+    //循环添加:
+    BarCode.First;
+    while not BarCode.Eof do
+    begin
+      if Temp.IsEmpty then Temp.Edit else Temp.Append;
+      CurObj.ReadFromDataSet(BarCode);
+      CurObj.WriteToDataSet(Temp);
+      Temp.Post;
+      BarCode.Next;
+    end;
+  finally
+    CurObj.Free;
+  end;
+  //刷新附加条形码
+  try
+    IsRun:=true;
+    CurObj:=TRecord_.Create;
+    Temp := Global.GetZQueryFromName('PUB_BARCODE');
+    if Temp.Filtered then Temp.Filtered :=false;
+    Temp.CommitUpdates; //清除Change
+    //先删除该商品条码:
+    GodsID:=trim(AObj.FieldbyName('GODS_ID').AsString);
+    while IsRun do
+    begin
+      if Temp.Locate('GODS_ID;PROPERTY_01,PROPERTY_02,BATCH_NO;BARCODE_TYPE',VarArrayOf([GodsID,'#','#','#',3]),[]) then Temp.Delete
+      else IsRun:=False;
+    end;
+    //循环添加:
+    ExtBarCode.First;
+    while not ExtBarCode.Eof do
+    begin
+      if Temp.IsEmpty then Temp.Edit else Temp.Append;
+      CurObj.ReadFromDataSet(ExtBarCode);
+      CurObj.WriteToDataSet(Temp);
+      Temp.Post;
+      ExtBarCode.Next;
+    end; 
+  finally
+    CurObj.Free;
+  end; 
+end;
+
+procedure TfrmGoodsInfo.Save;
 var
   BARCODE_ID:string;
   Params:TftParamList;
@@ -498,7 +601,10 @@ begin
 
   //写入商品的条形码表 [自主创建才进行写条码]
   if trim(AObj.FieldByName('RELATION_ID').AsString)='0' then
-    WriteBarCode;
+  begin
+    WriteBarCode;     //写条形码[计量、大小单位]
+    WriteExtBarCode;  //写附加条码
+  end;
 
   //(3)写会员定价表[循环删除掉没有输入价格]
   WriteMemberPrice(AObj.FieldbyName('GODS_ID').AsString);   //写入会员价
@@ -517,6 +623,7 @@ begin
       end;
       Factor.AddBatch(cdsGoods,'TGoodsInfo',Params);
       Factor.AddBatch(BarCode,'TPUB_BARCODE',nil);
+      Factor.AddBatch(ExtBarCode,'TEXT_BARCODE',nil);
       Factor.AddBatch(CdsMemberPrice,'TGoodsPrice',nil);
       Factor.CommitBatch;
     except
@@ -541,11 +648,6 @@ begin
      edtGODS_SPELL.Text := fnString.GetWordSpell(edtGODS_NAME.Text,3);
 end;
 
-procedure TfrmGoodsInfo.edtSORT_ID4AddClick(Sender: TObject);
-begin
-  inherited;
-  AddSORT_IDClick(Sender, 4);
-end;
 
 procedure TfrmGoodsInfo.edtGODS_CODEKeyPress(Sender: TObject;
   var Key: Char);
@@ -668,6 +770,10 @@ begin
 end;
 
 procedure TfrmGoodsInfo.WriteToObject(AObj: TRecord_);
+var
+  i: integer;
+  SORT_NAME: string;
+  edtSORT_ID: TzrComboBoxList;
 begin
   edtPROFIT_RATE.Properties.ReadOnly:=true;
   uShopUtil.WriteToObject(AObj,self);
@@ -711,16 +817,23 @@ begin
   else AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=0;
   AObj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
 
+  //写入商品分类:
+  AObj.FieldByName('SORT_ID1').AsString:=SORT_ID1_KeyValue; 
   //写入商品类别[edtSORT_ID1.KeyValue ..  edtSORT_ID8.KeyValue]
-  AObj.FieldByName('SORT_ID1').AsString:=SORT_ID1_KeyValue;
-  AObj.FieldByName('SORT_ID2').AsString:=edtSORT_ID2.KeyValue;
-  AObj.FieldByName('SORT_ID3').AsString:=edtSORT_ID3.KeyValue;
-  AObj.FieldByName('SORT_ID4').AsString:=edtSORT_ID4.KeyValue;
-  AObj.FieldByName('SORT_ID5').AsString:=edtSORT_ID5.KeyValue;
-  AObj.FieldByName('SORT_ID6').AsString:=edtSORT_ID6.KeyValue;
-  AObj.FieldByName('SORT_ID7').AsString:=edtSORT_ID7.KeyValue;
-  AObj.FieldByName('SORT_ID8').AsString:=edtSORT_ID8.KeyValue;
-  //写入条形码:            
+  for i:=0 to ComponentCount-1 do
+  begin
+    if Components[i] is TzrComboBoxList then
+    begin
+      edtSORT_ID:=TzrComboBoxList(Components[i]);
+      SORT_NAME:=trim(LowerCase(EdtSORT_ID.Name));
+      if (pos('edtsort_id',SORT_NAME)>0) and (AObj.FindField(SORT_NAME)<>nil) then
+      begin
+        AObj.FieldByName('SORT_NAME').AsString:=edtSORT_ID.KeyValue;
+      end;
+    end;
+  end;
+
+  //写入条形码:
   AObj.FieldByName('BARCODE').AsString:=edtBARCODE1.Text;
 
   //默认单位写入:
@@ -735,8 +848,7 @@ begin
   if dbState=dsBrowse then
   begin
     if edtGODS_CODE.CanFocus then  edtGODS_CODE.SetFocus;
-  end
-  else
+  end else
   begin
     if CLVersion='OHR' then
     begin
@@ -1096,7 +1208,8 @@ begin
   edtUSING_LOCUS_NO.Enabled:=True;
   BtnOk.Visible := (value<>dsBrowse);
   edtPROFIT_RATE.Enabled:=True;
-  PriceGrid.ReadOnly:=(dbState=dsBrowse);
+  PriceGrid.ReadOnly:=(dbState=dsBrowse);       //价格等级
+  ExtBarCodeGrid.ReadOnly:=(dbState=dsBrowse);  //附加条形码
   edtDefault1.Enabled:=true;
   edtDefault2.Enabled:=true;
   if dbState=dsBrowse then
@@ -1295,18 +1408,18 @@ begin
     BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode1.Text);
     BarCode.Post;
   end;
-  
+
   //小单位条码 [单位和条码不为空，且没定位到]
   if trim(edtBarCode2.Text)<>'' then
   begin
     BarCode.Append;
-    BARCode.FieldByName('RELATION_FLAG').AsString:='2';    
+    BARCode.FieldByName('RELATION_FLAG').AsString:='2';
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     BARCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
     BARCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //行号[GUID编号]
     BARCode.FieldByName('PROPERTY_01').AsString:='#';
     BARCode.FieldByName('PROPERTY_02').AsString:='#';
-    BARCode.FieldByName('BARCODE_TYPE').AsString:='1';    
+    BARCode.FieldByName('BARCODE_TYPE').AsString:='1';
     BARCode.FieldByName('UNIT_ID').AsString:=edtSMALL_UNITS.AsString;
     BARCode.FieldByName('BATCH_NO').AsString:='#';
     BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode2.Text);
@@ -1316,7 +1429,7 @@ begin
   if trim(edtBarCode3.Text)<>'' then  //大单位条码
   begin
     BarCode.Append;
-    BARCode.FieldByName('RELATION_FLAG').AsString:='2';    
+    BARCode.FieldByName('RELATION_FLAG').AsString:='2';
     BARCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     BARCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
     BARCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;  //行号[GUID编号]
@@ -1327,6 +1440,49 @@ begin
     BARCode.FieldByName('BATCH_NO').AsString:='#';
     BARCode.FieldByName('BARCODE').AsString:=Trim(edtBarCode3.Text);
     BarCode.Post;
+  end;
+end;
+
+procedure TfrmGoodsInfo.WriteExtBarCode;
+var
+  Str: string;
+  EditQry: TZQuery;
+begin
+  //不是自主经营则退出
+  if cdsGoods.FieldByName('RELATION_ID').AsString<>'0' then Exit;
+
+  try
+    EditQry:=TZQuery.Create(nil);
+    EditQry.Data:=ExtBarCode.Data;
+    ExtBarCode.First;
+    while not ExtBarCode.Eof do
+    begin
+      ExtBarCode.Delete;
+    end;
+
+    //计量单位条码[不为空，且没定位到]
+    EditQry.First;
+    while not EditQry.Eof do
+    begin
+      if (trim(EditQry.FieldByName('UNIT_ID').AsString)<>'') and (trim(EditQry.FieldByName('BARCODE').AsString)<>'') then
+      begin
+        ExtBarCode.Append;
+        ExtBarCode.FieldByName('ROWS_ID').AsString:=TSequence.NewId;   //行号[GUID编号]
+        ExtBarCode.FieldByName('RELATION_FLAG').AsString:='2';
+        ExtBarCode.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
+        ExtBarCode.FieldByName('GODS_ID').AsString:=AObj.FieldbyName('GODS_ID').AsString;
+        ExtBarCode.FieldByName('UNIT_ID').AsString:=EditQry.FieldByName('UNIT_ID').AsString;
+        ExtBarCode.FieldByName('BARCODE').AsString:=EditQry.FieldByName('BARCODE').AsString;
+        ExtBarCode.FieldByName('PROPERTY_01').AsString:='#';
+        ExtBarCode.FieldByName('PROPERTY_02').AsString:='#';
+        ExtBarCode.FieldByName('BARCODE_TYPE').AsString:='3';
+        ExtBarCode.FieldByName('BATCH_NO').AsString:='#';
+        ExtBarCode.Post;
+      end;
+      EditQry.Next;
+    end;
+  finally
+    EditQry.Free;
   end;
 end;
 
@@ -1391,51 +1547,6 @@ begin
        edtMY_OUTPRICE2.Text:=FloatToStr(StrToFloatDef(edtMY_OUTPRICE.Text,0)*StrToFloatDef(edtBIGTO_CALC.Text,0));
   finally
     locked:=False;
-  end;
-end;
-
-procedure TfrmGoodsInfo.edtSORT_ID3SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID3.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“主供应商”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID3.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
-procedure TfrmGoodsInfo.edtSORT_ID4SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID4.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“所属品牌”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID4.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
-
-procedure TfrmGoodsInfo.edtSORT_ID5SaveValue(Sender: TObject);
-begin
-  inherited;
-  inherited;
-  if (edtSORT_ID5.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“是否重点品牌”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID5.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
-procedure TfrmGoodsInfo.edtSORT_ID7SaveValue(Sender: TObject);
-begin
-  if (edtSORT_ID7.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“颜色组”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID7.OnAddClick(nil);
-    Exit;
   end;
 end;
 
@@ -1605,10 +1716,11 @@ begin
 end;
 
 procedure TfrmGoodsInfo.RzPageChange(Sender: TObject);
-var
-  Params:TftParamList;
+//var Params:TftParamList;
 begin
   inherited;
+  BtnStateInfo.Visible:=(RzPage.ActivePage=tabProperty); 
+
   //暂时先关闭 
  {
   if RzPage.ActivePageIndex=4 then
@@ -2009,17 +2121,6 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.edtSORT_ID2SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID2.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的商品类别是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID2.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
 procedure TfrmGoodsInfo.edtSORT_ID2AddClick(Sender: TObject);
 begin
   inherited;
@@ -2053,29 +2154,6 @@ begin
   AddSORT_IDClick(Sender, 5);
 end;
 
-
-procedure TfrmGoodsInfo.edtSORT_ID6SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID6.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“省内外”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID6.OnAddClick(nil);
-    Exit;
-  end;
-end;
-
-procedure TfrmGoodsInfo.edtSORT_ID8SaveValue(Sender: TObject);
-begin
-  inherited;
-  if (edtSORT_ID8.AsString='') then
-  begin
-    if MessageBox(Handle,'没找到你想查找的“尺码组”，是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-    edtSORT_ID8.OnAddClick(nil);
-    Exit;
-  end;
-
-end;
 
 procedure TfrmGoodsInfo.SetZrCbxDefaultValue(SetCbx: TzrComboBoxList);
 begin
@@ -2173,12 +2251,12 @@ end;
 
 procedure TfrmGoodsInfo.CheckCLVersionSetParams;
 begin
-  LblColorGroup.Visible:=(trim(CLVersion)='FIG');
-  edtSORT_ID7.Visible:=LblColorGroup.Visible;
-  lblSizeGroup.Visible:=LblColorGroup.Visible;
-  edtSORT_ID8.Visible:=LblColorGroup.Visible;
+  lblSORT_ID7.Visible:=(trim(CLVersion)='FIG');
+  edtSORT_ID7.Visible:=lblSORT_ID7.Visible;
+  lblSORT_ID7.Visible:=lblSORT_ID7.Visible;
+  edtSORT_ID8.Visible:=lblSORT_ID7.Visible;
 
-  if not LblColorGroup.Visible then
+  if not lblSORT_ID7.Visible then
   begin
     GB_Small.Top:=22;
     GB_Big.Top:=103;
@@ -2655,14 +2733,14 @@ begin
         Raise Exception.Create('  请输入小单位的换算比例！ ');
       end;
     end;
-  end;
-  
+  end;   
 end;
 
 procedure tfrmGoodsInfo.UpdateUNITSData(IsEdit: Boolean=true);
 var
   i: integer;
   Rs: TZQuery;
+  SetCol: TColumnEh;  
 begin
   if DropUNITS_Ds=nil then
   begin
@@ -2670,6 +2748,7 @@ begin
     edtCALC_UNITS.DataSet:=DropUNITS_Ds;
     edtSMALL_UNITS.DataSet:=DropUNITS_Ds;
     edtBIG_UNITS.DataSet:=DropUNITS_Ds;
+    fndUNIT_ID.DataSet:=DropUNITS_Ds;
   end;
   
   Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
@@ -2690,6 +2769,397 @@ begin
       end;
     end;
   end;
+
+  //设置附加条码UINT_NAME
+  SetCol:=FindColumn(ExtBarCodeGrid,'UNIT_ID');
+  if (SetCol<>nil) and (DropUNITS_Ds.Active) and (DropUNITS_Ds.RecordCount>0) then
+  begin
+    SetCol.KeyList.Clear;
+    SetCol.PickList.Clear;
+    DropUNITS_Ds.First;
+    while not DropUNITS_Ds.Eof do
+    begin
+      SetCol.KeyList.Add(DropUNITS_Ds.FieldbyName('UNIT_ID').AsString);
+      SetCol.PickList.Add(DropUNITS_Ds.FieldbyName('UNIT_NAME').AsString);
+      DropUNITS_Ds.Next;
+    end;
+  end;
 end;
+
+procedure TfrmGoodsInfo.BtnStateInfoClick(Sender: TObject);
+var
+  i: integer;
+  fldname: string;
+  edtSortID: TzrComboBoxList;
+begin
+  inherited;
+  if TfrmDefineStateInfo.ShowDialog(self) then
+  begin
+    CreateGodsSTAT_INFO(True);
+    for i:=0 to ComponentCount-1 do
+    begin
+      if Components[i] is TzrComboBoxList then
+      begin
+        edtSortID:=TzrComboBoxList(Components[i]);
+        fldname:=UpperCase(Copy(trim(edtSortID.Name),4,50));
+        if Pos('SORT_ID',fldname)>0 then
+        begin
+          edtSortID.KeyValue := AObj.FieldbyName(fldname).AsString;
+          if AObj.FindField(fldname+'_TEXT') <> nil then
+            edtSortID.Text := AObj.FieldbyName(fldname+'_TEXT').AsString
+          else
+          begin
+           if (edtSortID.DataSet <> nil) and (edtSortID.DataSet.Active) then
+             edtSortID.Text := TdsFind.GetNameByID(edtSortID.DataSet,edtSortID.KeyField,edtSortID.ListField,AObj.FieldbyName(fldname).AsString);
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
+
+//创建统计指标属性:
+procedure TfrmGoodsInfo.CreateGodsSTAT_INFO(IsExists: Boolean);
+var
+  StrValue: String;
+  CurCmp: TComponent;
+  vHint,LblCaption: string;  
+  i,CodeID,vLeft,vRight,vTop,vCount: integer;
+  Rs, CdsList, DropDs: TZQuery;
+begin
+  vLeft:=69;
+  vRight:=297;
+  vTop:=28;
+  vCount:=1;
+  //1..8:为修改标签一定显示
+  Rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+  DropDs:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+  if (Rs=nil) or (not Rs.Active) or (Rs.IsEmpty) then Exit;
+
+  try
+    CdsList:=TZQuery.Create(nil);
+    CdsList.Data:=Rs.Data;
+    //计算控件个数
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      CodeID:=Rs.FieldByName('CODE_ID').AsInteger;
+      LblCaption:=trim(Rs.fieldByName('CODE_NAME').AsString);
+      if (CodeID=1) or (CodeID=3) or (CodeID=7) or (CodeID=8) then
+      begin
+        CurCmp:=FindComponent('lblSORT_ID'+InttoStr(CodeID));
+        if (CurCmp<>nil) and (CurCmp is TLabel) then
+          TLabel(CurCmp).Caption:=LblCaption;
+      end else
+      begin
+        if vCount mod 2=1 then
+          CreateComponent(LblCaption,CodeID,vLeft,vTop,DropDs)
+        else
+          CreateComponent(LblCaption,CodeID,vRight,vTop,DropDs);
+        if vCount mod 2=0 then vTop:=vTop+22;
+        inc(vCount);                         
+      end;
+      Rs.Next;
+    end;
+
+    //释放掉不显示控件；
+    if IsExists then
+    begin
+      for i:=1 to 20 do
+      begin
+        if (i=1) or (i=3) or (i=7) or (i=8) then Continue;
+        if not Rs.Locate('CODE_ID',inttoStr(i),[]) then  
+        begin
+          CurCmp:=FindComponent('edtSORT_ID'+InttoStr(i));
+          if (CurCmp<>nil) and (CurCmp is TzrComboBoxList) then
+            TzrComboBoxList(CurCmp).Free;
+          CurCmp:=FindComponent('lblSORT_ID'+InttoStr(i));
+          if (CurCmp<>nil) and (CurCmp is TLabel) then
+            TLabel(CurCmp).Free;
+        end;
+      end;
+    end;
+  finally
+    CdsList.Free;
+  end;
+end;
+
+procedure TfrmGoodsInfo.DoAddSORT_IDClick(Sender: TObject);
+var
+  CmpName: string;
+begin
+  if Sender is TzrComboBoxList then
+  begin
+    CmpName:=Copy(TzrComboBoxList(Sender).Name,11,4);   //edtSORT_ID3
+    AddSORT_IDClick(Sender, StrtoInt(CmpName));
+  end;
+end;
+
+function TfrmGoodsInfo.GetLblCaption(LblName: string): string;
+var
+  FindCmp: TComponent;
+begin
+  result:='';
+  FindCmp:=FindComponent(LblName);
+  if (FindCmp<>nil) and (FindCmp is TLabel) then
+    result:=TLabel(FindCmp).Caption;
+end;
+
+procedure TfrmGoodsInfo.DoSaveValueSORT_IDClick(Sender: TObject);
+var
+  LblCaption: string;
+  ZrCmp: TzrComboBoxList;
+begin
+  if Sender is TzrComboBoxList then
+  begin
+    ZrCmp:=TzrComboBoxList(Sender);
+    LblCaption:=Copy(ZrCmp.Name,11,4);
+    LblCaption:=GetLblCaption('lblSORT_ID'+LblCaption);
+    if (ZrCmp.AsString='') then
+    begin
+      if MessageBox(Handle,Pchar('没找到你想查找的“'+LblCaption+'”，是否新增一个？'),Pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+      ZrCmp.OnAddClick(Sender);
+      Exit;
+    end;
+  end;
+end;
+
+procedure TfrmGoodsInfo.CreateComponent(LblCaption: string; NameIdx, vLeft, vTop: integer; DataSet: TDataSet);
+var
+  LblSort: TLabel;
+  Columns: TColumnEh;
+  FindCmp: TComponent;
+  EdtSort: TzrComboBoxList;
+begin
+  FindCmp:=FindComponent('edtSORT_ID'+InttoStr(NameIdx));
+  if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
+    TzrComboBoxList(FindCmp).Free;
+  EdtSort:=TzrComboBoxList.Create(self);
+  EdtSort.Name:='edtSORT_ID'+InttoStr(NameIdx);
+  EdtSort.Parent:=tabProperty;
+  EdtSort.Left:=vLeft;
+  EdtSort.Top:=vTop;
+  EdtSort.Width:=162;
+  EdtSort.DataSet:=DataSet;
+  EdtSort.Buttons:=[zbNew,zbClear];
+  EdtSort.AutoFitColWidth:=true;
+  //创建下拉Grid的Column列:
+  Columns:=EdtSort.Columns.Add;
+  Columns.FieldName:='SEQ_NO';
+  Columns.Title.Caption:='序号';
+  Columns:=EdtSort.Columns.Add;
+  Columns.FieldName:='SORT_NAME';
+  Columns.Title.Caption:='名称';
+
+  EdtSort.DropWidth:=EdtSort.Width;
+  EdtSort.DropHeight:=200;
+  EdtSort.FilterFields:='SORT_NAME;SORT_SPELL;SORT_ID';
+  EdtSort.Height:=20;
+  EdtSort.KeyField:='SORT_ID';
+  EdtSort.ListField:='SORT_NAME';
+  EdtSort.LocateStyle:=lsDark;
+  EdtSort.MultiSelect:=False;
+  EdtSort.Properties.AutoSelect:=False;
+  EdtSort.Properties.ReadOnly:=true;
+  EdtSort.ShowButton:=true;
+  EdtSort.ShowTitle:=true;
+  EdtSort.KeyValue:='';  //清值
+  EdtSort.Text:='';      //清值
+  EdtSort.Properties.ReadOnly:=edtSORT_ID3.Properties.ReadOnly;
+  EdtSort.Style.Color:=edtSORT_ID3.Style.Color;
+
+  //过滤SORT_TYPE
+  EdtSort.RangeField:='SORT_TYPE';
+  EdtSort.RangeValue:=InttoStr(NameIdx);
+  //设置事件
+  EdtSort.OnAddClick:= DoAddSORT_IDClick;
+  EdtSort.OnSaveValue:=DoSaveValueSORT_IDClick;
+
+  //创建标签
+  FindCmp:=FindComponent('lblSORT_ID'+InttoStr(NameIdx));
+  if (FindCmp<>nil) and (FindCmp is TLabel) then
+    TLabel(FindCmp).Free;
+  LblSort:=TLabel.Create(self);
+  LblSort.Name:='lblSORT_ID'+InttoStr(NameIdx);
+  LblSort.Parent:=tabProperty;
+  LblSort.Alignment:=taRightJustify;
+  LblSort.Caption:=LblCaption;
+  LblSort.Top:=vTop+3;
+  LblSort.Left:=vLeft-4-LblSort.Width;
+end;
+
+procedure TfrmGoodsInfo.ExtBarCodeGridDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    ExtBarCodeGrid.canvas.FillRect(ARect);
+    DrawText(ExtBarCodeGrid.Canvas.Handle,pchar(Inttostr(ExtBarCode.RecNo)),length(Inttostr(ExtBarCode.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end; 
+end;
+
+procedure TfrmGoodsInfo.InitRecord;
+begin
+  if dbState = dsBrowse then Exit;
+  if ExtBarCode.State in [dsEdit,dsInsert] then ExtBarCode.Post;
+  fndUNIT_ID.Visible := false;
+  ExtBarCode.DisableControls;
+  try
+    ExtBarCode.Last;
+    if ExtBarCode.IsEmpty or (ExtBarCode.FieldbyName('UNIT_ID').AsString <>'') then
+    begin
+      inc(RowID);
+      ExtBarCode.Append;
+      ExtBarCode.FieldByName('UNIT_ID').Value := null;
+      if ExtBarCode.FindField('SEQNO')<> nil then
+        ExtBarCode.FindField('SEQNO').asInteger := RowID;
+      ExtBarCode.Post;
+    end;
+    ExtBarCodeGrid.Col := 1 ;
+  finally
+    ExtBarCode.EnableControls;
+    ExtBarCode.Edit;
+  end;
+end;
+procedure TfrmGoodsInfo.ExtGridFocusNextColumn;
+var
+  i:Integer;
+begin
+  i:=ExtBarCodeGrid.Col;
+  Inc(i);
+  while True do
+  begin
+    if i>=ExtBarCodeGrid.Columns.Count then
+      i:= 1;
+    if (ExtBarCodeGrid.Columns[i].ReadOnly or not ExtBarCodeGrid.Columns[i].Visible) and (i<>1) then
+      inc(i)
+    else
+    begin
+      if Trim(ExtBarCode.FieldbyName('UNIT_ID').asString)='' then i := 1;
+      if (i=1) and (Trim(ExtBarCode.FieldbyName('UNIT_ID').asString)<>'') then
+      begin
+        ExtBarCode.Next;
+        if ExtBarCode.Eof then
+        begin
+          ExtGridFocusNextColumn;
+        end;
+        ExtBarCodeGrid.SetFocus;
+        ExtBarCodeGrid.Col := 1 ;
+      end else
+        ExtBarCodeGrid.Col := i;
+      Exit;
+    end;
+  end;
+end;
+
+procedure TfrmGoodsInfo.ExtBarCodeGridColumns1BeforeShowControl(Sender: TObject);
+var
+  rs:TZQuery;
+begin
+  inherited;
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  if rs.Locate('UNIT_ID',ExtBarCode.FieldbyName('UNIT_ID').AsString,[]) then
+  begin
+    fndUNIT_ID.KeyValue := ExtBarCode.FieldbyName('UNIT_ID').AsString;
+    fndUNIT_ID.Text := rs.FieldbyName('UNIT_NAME').AsString
+  end else
+  begin
+    fndUNIT_ID.KeyValue :='';
+    fndUNIT_ID.Text := '';
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDEnter(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID.Properties.ReadOnly := ExtBarCodeGrid.ReadOnly;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDExit(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID.Visible := false;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndUNIT_ID.Visible := false;
+    ExtGridFocusNextColumn;
+  end;
+  if (Key=VK_LEFT) then
+  begin
+    ExtBarCodeGrid.SetFocus;
+    fndUNIT_ID.Visible := false;
+    ExtBarCodeGrid.Col := ExtBarCodeGrid.Col -1;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    Key := #0;
+    ExtBarCodeGrid.SetFocus;
+    ExtGridFocusNextColumn;
+  end;
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDPropertiesChange(Sender: TObject);
+var
+  w:integer;
+  rs:TZQuery;
+begin
+  inherited;
+  {
+  if fndUNIT_ID.Tag = 1 then Exit;
+  if fndUNIT_ID.ItemIndex < 0 then Exit;
+  if not fndUNIT_ID.Visible then Exit;
+  w := Integer(fndUNIT_ID.Properties.Items.Objects[fndUNIT_ID.ItemIndex]);
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  }
+end;
+
+procedure TfrmGoodsInfo.fndUNIT_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if ExtBarCode.State = dsBrowse then ExtBarCode.Edit;
+  ExtBarCode.FieldByName('UNIT_ID').AsString := fndUNIT_ID.AsString;
+end;
+
+procedure TfrmGoodsInfo.ExtBarCodeGridKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+    ExtGridFocusNextColumn;
+end;
+
+procedure TfrmGoodsInfo.ExtBarCodeGridMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  Cell: TGridCoord;
+begin
+  inherited;
+  Cell := ExtBarCodeGrid.MouseCoord(X,Y);
+  if Cell.Y > ExtBarCodeGrid.VisibleRowCount -1 then
+    InitRecord;
+end;
+
+procedure TfrmGoodsInfo.N1Click(Sender: TObject);
+begin
+  inherited;
+  if ExtBarCode.Active then
+    ExtBarCode.Delete;
+end;
+
+
 
 end.

@@ -1,5 +1,5 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 358
+  Left = 283
   Top = 109
   BorderIcons = []
   BorderStyle = bsNone
@@ -1339,7 +1339,7 @@ inherited frmPosMain: TfrmPosMain
       Left = 21
       Top = 48
       Width = 84
-      Height = 11
+      Height = 12
       Cursor = crHandPoint
       Caption = #23548' '#36141' '#21592'  [F9]'
       Font.Charset = GB2312_CHARSET

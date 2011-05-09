@@ -2859,6 +2859,7 @@ begin
   fndGUIDE_USER.Text := AObj.FieldbyName('GUIDE_USER_TEXT').AsString;
   fndCLIENT_CODE.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
   fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+  fndBALANCE.Text := AObj.FieldbyName('BALANCE').AsString;
   if AObj.FieldbyName('PRICE_ID').AsString='' then
      fndPRICE_ID.Text := ''
   else

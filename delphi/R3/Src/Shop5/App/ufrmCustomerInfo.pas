@@ -361,7 +361,7 @@ begin
   //ª·‘±ºÏ≤‚Ω· ¯
 
   WriteTo(Aobj);
-  if not IsEdit(Aobj,cdsTable) then exit;
+  //if not IsEdit(Aobj,cdsTable) then exit;
   if dbState = dsInsert then
      begin
        AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId;
@@ -509,8 +509,6 @@ begin
     if AObj.Fields[i].AsString<>cdsTable.Fields[i].AsString then
       IsChang := True;
   end;
-  if cdsCustomerExt.Changed then
-    IsChang := True;
   Result := IsChang;
 end;
 procedure TfrmCustomerInfo.FormCloseQuery(Sender: TObject;

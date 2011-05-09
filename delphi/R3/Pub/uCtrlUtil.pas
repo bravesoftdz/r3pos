@@ -232,7 +232,7 @@ begin
       end;
     smDownEh:begin
         if ADOSort='' then
-           TZQuery(DataSet).SortedFields  := Column.FieldName +' DESC'
+           TZQuery(DataSet).SortedFields  := Column.FieldName +' ASC'
         else
            TZQuery(DataSet).SortedFields  := ADOSort + ';' +Column.FieldName +' DESC';
       end;

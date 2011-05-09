@@ -221,6 +221,8 @@ begin
   if Key in ['D','d'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
+       if MainRecord.FieldByName('CLIENT_ID').AsString = '' then Raise Exception.Create('不是会员购买不能记账...');
+       if ShopGlobal.offline then Raise Exception.Create('脱机操作不能记账...');
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_D').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_D').AsFloat<0 then
@@ -234,8 +236,6 @@ begin
   if Key in ['E','e'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
-       if MainRecord.FieldByName('CLIENT_ID').AsString = '' then Raise Exception.Create('不是会员购买不能记账...');
-       if ShopGlobal.offline then Raise Exception.Create('脱机操作不能记账...'); 
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_E').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_E').AsFloat<0 then

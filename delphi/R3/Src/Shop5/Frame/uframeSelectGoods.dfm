@@ -1,6 +1,6 @@
 inherited frameSelectGoods: TframeSelectGoods
-  Left = 434
-  Top = 172
+  Left = 687
+  Top = 226
   ActiveControl = DBGridEh1
   Caption = #21830#21697#36873#25321#26694
   ClientHeight = 402

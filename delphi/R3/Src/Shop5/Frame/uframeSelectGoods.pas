@@ -310,6 +310,7 @@ procedure TframeSelectGoods.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
+  edtSearch.SetFocus;
 end;
 
 procedure TframeSelectGoods.edtSearchKeyDown(Sender: TObject;

@@ -129,7 +129,7 @@ type
   public
     { Public declarations }
     Aobj:TRecord_;
-    Saved:Boolean;
+    Saved,IsExtChange:Boolean;
     FList:TList;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure ReadFrom;
@@ -824,9 +824,10 @@ begin
            tab.PageControl := RzPage;
            tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
            frame := TfrmCustomerExt.Create(tab);
-           FList.Add(frame); 
+           FList.Add(frame);
            frame.Parent:=tab;
            frame.DataSet := cdsCustomerExt;
+           frame.IsRecordChange := IsExtChange;
            frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
            frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
            frame.DataState := dbState;

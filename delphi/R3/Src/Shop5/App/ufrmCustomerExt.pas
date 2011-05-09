@@ -20,6 +20,7 @@ type
     FDataSet: TDataSet;
     FDataState: TDataSetState;
     FCust_Id: String;
+    FIsRecordChange: Boolean;
     procedure CreateLabel(UNION_ID,LblName:string);
     procedure CreateStarLabel(UNION_ID:String);
     procedure CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
@@ -31,8 +32,10 @@ type
     procedure SetDataSet(const Value: TDataSet);
     procedure SetDataState(const Value: TDataSetState);
     procedure SetCust_Id(const Value: String);
+    procedure SetIsRecordChange(const Value: Boolean);
   public
     { Public declarations }
+    Aobj:TRecord_;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure InitControl;
@@ -42,6 +45,7 @@ type
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property DataState:TDataSetState read FDataState write SetDataState;
+    property IsRecordChange:Boolean read FIsRecordChange write SetIsRecordChange;
   end;
 
 implementation
@@ -62,6 +66,7 @@ end;
 constructor TfrmCustomerExt.Create(AOwner: TComponent);
 begin
   FList := TList.Create;
+  Aobj := TRecord_.Create;
   Top_Value := 0;
   inherited;
 end;
@@ -245,6 +250,7 @@ destructor TfrmCustomerExt.Destroy;
 begin
   ControlFree;
   FList.Free;
+  Aobj.Free;
   inherited;
 end;
 
@@ -309,6 +315,7 @@ begin
     cdsUnionIndex.Params.ParamByName('UNION_ID').AsString := UnionID;
     cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsUnionIndex);
+    Aobj.ReadFromDataSet(cdsUnionIndex);
 
     cdsUnionIndex.First;
     while not cdsUnionIndex.Eof do
@@ -391,6 +398,11 @@ end;
 procedure TfrmCustomerExt.SetCust_Id(const Value: String);
 begin
   FCust_Id := Value;
+end;
+
+procedure TfrmCustomerExt.SetIsRecordChange(const Value: Boolean);
+begin
+  FIsRecordChange := Value;
 end;
 
 end.

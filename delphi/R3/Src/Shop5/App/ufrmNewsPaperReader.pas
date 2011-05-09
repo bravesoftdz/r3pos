@@ -131,7 +131,7 @@ begin
         btnRead.Visible := True;
       GetInfomation(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
     end
-  else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7,9,10] then
+  else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7,9,10,11,12] then
     begin
       if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString) then
          Close;

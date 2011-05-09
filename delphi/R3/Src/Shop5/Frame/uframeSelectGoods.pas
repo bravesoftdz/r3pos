@@ -135,8 +135,16 @@ begin
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then
        rs.Params.ParamByName('KEYVALUE').AsString := trim(edtSearch.Text);
-    if rs.Params.FindParam('SORT_ID')<>nil then
-       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+    if TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger = 3 then
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('CLIENT_ID').AsString;
+      end
+    else
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+      end;
     if rs.Params.FindParam('LEVEL_ID')<>nil then
        rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
     if rs.Params.FindParam('RELATION_ID')<>nil then
@@ -523,6 +531,7 @@ var
   rs:TZQuery;
   AObj:TRecord_;
 begin
+  ClearTree(RzTree);
   rs := Global.GetZQueryFromName('PUB_CLIENTINFO'); 
   rs.First;
   while not rs.Eof do

@@ -104,16 +104,16 @@ begin
         if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger >= 0) then
           begin
             case Factor.iDbType of
-              0:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''+substring(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
-              4:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
-              5:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(BIRTHDAY,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(BIRTHDAY,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              0:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(isnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''+substring(isnull(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(isnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(isnull(BIRTHDAY,''          ''),5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              4:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(nvl(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''||substr(nvl(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(nvl(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(nvl(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              5:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(ifnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''||substr(ifnull(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,9 as sFlag '+
-            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and BIRTHDAY <> '''' and ' + Str_Bir;
+            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and BIRTHDAY is not null and ' + Str_Bir;
           end;
 
         rs.Filtered := False;
@@ -122,16 +122,16 @@ begin
         if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger >= 0) then
           begin
             case Factor.iDbType of
-              0:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''+substring(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(CON_DATE,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
-              4:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
-              5:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',Date())+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
-                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(CON_DATE,5,10) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(CON_DATE,5,10)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              0:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''+substring(isnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''+substring(isnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(isnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''+substring(isnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              4:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(nvl(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''||substr(nvl(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(nvl(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(nvl(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
+              5:Str_Bir := ' (('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',Date())+'''||substr(ifnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',Date())+'''||substr(ifnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+''') or '+
+                           ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,10 as sFlag '+
-            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and CON_DATE <> '''' and '+ Str_Bir;
+            ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and CON_DATE is not null and '+ Str_Bir;
           end;
       end;
 

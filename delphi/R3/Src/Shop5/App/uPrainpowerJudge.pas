@@ -135,6 +135,26 @@ begin
           end;
       end;
 
+    rs.Filtered := False;
+    rs.Filter := ' DEFINE=''PLANDATE_HINT'' ';
+    rs.Filtered := True;
+    if (not rs.IsEmpty) and (rs.FieldByName('VALUE').AsInteger = 1) then
+      begin
+        if ShopGlobal.GetChkRight('12300001',2) then                //销售订单未生成销售出货单   actfrmSalIndentOrderList    表   SAL_INDENTORDER
+          begin
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+            Sql := Sql + 'select ''actfrmSalIndentOrderList'' as ID,4 as MSG_CLASS,''销售订单'' as MSG_TITLE,sum(case when SALBILL_STATUS=0 then 100000 else 1 end) as SUM_ORDER,11 as sFlag '+
+            'from SAL_INDENTORDER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and SALBILL_STATUS in (0,1) ';
+          end;
+
+        if ShopGlobal.GetChkRight('11100001',2) then                //进货订单未生成进货入库单   actfrmDbOrderList   表   SAL_SALESORDER
+          begin
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';
+            Sql := Sql + 'select ''actfrmStkIndentOrderList'' as ID,4 as MSG_CLASS,''进货订单'' as MSG_TITLE,sum(case when STKBILL_STATUS=0 then 100000 else 1 end) as SUM_ORDER,12 as sFlag '+
+            'from STK_INDENTORDER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and STKBILL_STATUS in (0,1)';
+          end;
+      end;
+
     if Trim(Sql) <> '' then Sql := Sql + ' union all ';
     Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,1 SUM_ORDER,8 as sFlag '+
     ' from MSC_INVEST_LIST a left join MSC_QUESTION b on a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID '+

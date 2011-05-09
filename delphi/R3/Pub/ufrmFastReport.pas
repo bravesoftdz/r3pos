@@ -150,7 +150,7 @@ var
 begin
   s := TfrmSelectFormer.SelectFormer(self,frReport.Name);
   if s='' then Exit;
-  r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
+  r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,nil);
   sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s,fmOpenRead);
   try
      sm.Position := 0;
@@ -740,7 +740,7 @@ begin
          end;
        Exit;
      end;
-  r := TfrmSaveDesigner.SaveDialog(self,frReport.Name);
+  r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,frReport);
   if r<0 then Exit;
   if r=0 then s := '' else s := inttostr(r);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'frf\');

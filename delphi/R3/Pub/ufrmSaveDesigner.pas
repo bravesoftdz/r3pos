@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Grids, RzGrids, RzPanel,ZDataSet, RzButton;
+  Dialogs, StdCtrls, ExtCtrls, Grids, FR_Class, RzGrids, RzPanel,DB,ZDataSet, RzButton;
 
 type
   TfrmSaveDesigner = class(TForm)
@@ -18,25 +18,28 @@ type
     procedure RzBitBtn1Click(Sender: TObject);
   private
     FfrfFileName: string;
+    MyfrReport:TfrReport;
     procedure SetfrfFileName(const Value: string);
     { Private declarations }
   public
     { Public declarations }
     procedure Load;
     property frfFileName:string read FfrfFileName write SetfrfFileName;
-    class function SaveDialog(Owner:TForm;fname:string):integer;
+    class function SaveDialog(Owner:TForm;fname:string;frReport:TfrReport):integer;
   end;
 implementation
-uses uGlobal,IniFiles;
+uses uGlobal,IniFiles,uDsUtil;
 {$R *.dfm}
 
 class function TfrmSaveDesigner.SaveDialog(Owner: TForm;
-  fname: string): integer;
+  fname: string;frReport:TfrReport): integer;
 begin
   with TfrmSaveDesigner.Create(Owner) do
     begin
       try
         frfFileName := fname;
+        MyfrReport := frReport;
+        RzBitBtn1.Visible := (frReport<>nil);
         Load;
         if ShowModal=MROK then
            begin
@@ -120,15 +123,19 @@ begin
      begin
        rs.Close;
        rs.SQL.Text := 'select * from SYS_FASTFILE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and frfFileName like '''+frfFileName+'%'' and frfFileTitle='''+s+'''';
-       Factor.Open(rs);
+       Global.RemoteFactory.Open(rs);
        if rs.IsEmpty then
           begin
             rs.Append;
             rs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            rs.FieldByName('frfFileName').AsString :=
+            rs.FieldByName('frfFileName').AsString := TSequence.GetMaxID(frfFileName,Global.RemoteFactory,'SYS_FASTFILE','SYS_FASTFILE','0000','TENANT_ID='+inttostr(Global.TENANT_ID));
           end
        else
           rs.Edit;
+       rs.FieldByName('frfFileTitle').AsString := s;
+       MyfrReport.SaveToBlobField(TBlobField(rs.FieldByName('frfBlob')));
+       rs.Post;
+       Global.RemoteFactory.UpdateBatch(rs,'TSysFastFile');
      end;
   finally
     rs.Free;

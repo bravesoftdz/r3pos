@@ -277,7 +277,15 @@ procedure TfrmShopInfoList.FormCreate(Sender: TObject);
 begin
   inherited;
   InitGrid;
-  TDbGridEhSort.InitForm(self);    
+  TDbGridEhSort.InitForm(self);
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Self.Caption := '仓库档案管理';
+      Label1.Caption := '支持（店名、拼音码、仓库代码）查询';
+      DBGridEh1.Columns[1].Title.Caption := '仓库代码';
+      DBGridEh1.Columns[2].Title.Caption := '仓库名称';
+      RzPage.Pages[0].Caption := '仓库档案查询';
+    end;
 end;
 
 procedure TfrmShopInfoList.cdsBrowserAfterScroll(DataSet: TDataSet);

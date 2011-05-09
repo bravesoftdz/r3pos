@@ -191,6 +191,10 @@ begin
         Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期过生日！'
       else if List.FieldbyName('sFlag').AsInteger = 10 then
         Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期要继会！'
+      else if List.FieldbyName('sFlag').AsInteger = 11 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')单待发货、('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')单发货中'
+      else if List.FieldbyName('sFlag').AsInteger = 12 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')单待入库、('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')单入库中'
       else
         Msg^.Contents := ' 你有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
       Msg^.sFlag := List.FieldbyName('sFlag').AsInteger;

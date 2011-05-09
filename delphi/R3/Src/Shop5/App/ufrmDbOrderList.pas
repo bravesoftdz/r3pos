@@ -25,7 +25,7 @@ type
     fndSALES_ID: TcxTextEdit;
     fndSTATUS: TcxRadioGroup;
     actReport: TAction;
-    frfSalesOrder: TfrReport;
+    frfDBOrder: TfrReport;
     Label40: TLabel;
     ToolButton17: TToolButton;
     Label1: TLabel;
@@ -42,7 +42,7 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure frfSalesOrderUserFunction(const Name: String; p1, p2,
+    procedure frfDBOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -51,7 +51,7 @@ type
     procedure actfrmRecvOrderExecute(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure frfSalesOrderGetValue(const ParName: String;
+    procedure frfDBOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
     { Private declarations }
@@ -393,7 +393,7 @@ begin
    ') j order by SEQNO ';
 end;
 
-procedure TfrmDbOrderList.frfSalesOrderUserFunction(const Name: String;
+procedure TfrmDbOrderList.frfDBOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -424,12 +424,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalesOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfDbOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfSalesOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfDbOrder);
            end;
       finally
          free;
@@ -449,12 +449,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalesOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfDbOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfSalesOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfDbOrder,nil,true);
            end;
       finally
          free;
@@ -572,7 +572,7 @@ begin
 
 end;
 
-procedure TfrmDbOrderList.frfSalesOrderGetValue(const ParName: String;
+procedure TfrmDbOrderList.frfDBOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

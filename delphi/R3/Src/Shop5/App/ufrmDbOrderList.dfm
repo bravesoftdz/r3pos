@@ -427,12 +427,12 @@ inherited frmDbOrderList: TfrmDbOrderList
     AfterScroll = cdsListAfterScroll
     IndexFieldNames = 'GLIDE_NO Asc'
   end
-  object frfSalesOrder: TfrReport
+  object frfDBOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfSalesOrderGetValue
-    OnUserFunction = frfSalesOrderUserFunction
+    OnGetValue = frfDBOrderGetValue
+    OnUserFunction = frfDBOrderUserFunction
     Left = 488
     Top = 201
     ReportForm = {

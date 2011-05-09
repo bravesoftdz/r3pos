@@ -3524,11 +3524,11 @@ procedure TfrmPosMain.DBGridEh2DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
-    (gdFocused in State) or not DBGridEh2.Focused) then
+  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) then
   begin
-    DBGridEh2.Canvas.Brush.Color := clAqua;
+    DBGridEh2.Canvas.Brush.Color := clNavy;
   end;
+  DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
 end;
 

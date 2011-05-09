@@ -403,6 +403,7 @@ end;
 procedure TfrmTransOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  if cdsList.IsEmpty then Exit;
   if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
@@ -480,6 +481,7 @@ end;
 procedure TfrmTransOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if cdsList.IsEmpty then Exit;
   if not ShopGlobal.GetChkRight('21700001',6) then Raise Exception.Create('你没有删除收款单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin

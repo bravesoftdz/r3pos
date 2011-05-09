@@ -572,7 +572,7 @@ end;
 procedure TfrmRecvPosList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-    if cdsList.IsEmpty then Exit;
+   if cdsList.IsEmpty then Exit;
    if not ShopGlobal.GetChkRight('13300001',6) then Raise Exception.Create('你没有打印缴款单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin

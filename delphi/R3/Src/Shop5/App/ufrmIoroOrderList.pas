@@ -358,6 +358,7 @@ end;
 procedure TfrmIoroOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  if cdsBrowser.IsEmpty then Exit;
   if IoroType = 1 then
     if not ShopGlobal.GetChkRight('21500001',6) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
   else
@@ -376,6 +377,7 @@ end;
 procedure TfrmIoroOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if cdsBrowser.IsEmpty then Exit;
   if IoroType = 1 then
     if not ShopGlobal.GetChkRight('21500001',6) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
   else

@@ -568,7 +568,7 @@ begin
 end;
 
 procedure TframeOrderToolForm.ppmReportPopup(Sender: TObject);
-var rs:TADODataSet;
+var rs:TZQuery;
   frReport1:TfrReport;
   i:integer;
 begin
@@ -581,32 +581,32 @@ begin
          end;
     end;
   if frReport1=nil then Exit;
-  rs := TADODataSet.Create(nil);
+  rs := TZQuery.Create(nil);
   try
   rs.Close;
-  rs.CommandText := 'select * from REP_FASTFILE where frfFileName='''+frReport1.Name +'''';
+  rs.SQL.Text := 'select * from SYS_FASTFILE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and frfFileName='''+frReport1.Name +'''';
   Factor.Open(rs);
-  if rs.FieldByName('frfBlob').IsNull then
+  if rs.FieldByName('frfBlob').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'.frf') then
      mnmFormer0.Caption := '默认表样(空置)'
   else
      mnmFormer0.Caption := '默认表样';
-  if rs.FieldByName('frfBlob1').IsNull then
+  if rs.FieldByName('frfBlob1').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'1.frf') then
      mnmFormer1.Caption := '自定义一(空置)'
   else
      mnmFormer1.Caption := '自定义一';
-  if rs.FieldByName('frfBlob2').IsNull then
+  if rs.FieldByName('frfBlob2').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'2.frf') then
      mnmFormer2.Caption := '自定义二(空置)'
   else
      mnmFormer2.Caption := '自定义二';
-  if rs.FieldByName('frfBlob3').IsNull then
+  if rs.FieldByName('frfBlob3').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'3.frf') then
      mnmFormer3.Caption := '自定义三(空置)'
   else
      mnmFormer3.Caption := '自定义三';
-  if rs.FieldByName('frfBlob4').IsNull then
+  if rs.FieldByName('frfBlob4').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'4.frf') then
      mnmFormer4.Caption := '自定义四(空置)'
   else
      mnmFormer4.Caption := '自定义四';
-  if rs.FieldByName('frfBlob5').IsNull then
+  if rs.FieldByName('frfBlob5').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'5.frf') then
      mnmFormer5.Caption := '自定义五(空置)'
   else
      mnmFormer5.Caption := '自定义五';

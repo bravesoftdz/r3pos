@@ -223,27 +223,7 @@ end;
 { TStkRetuOrder }
 
 function TStkRetuOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-var SQL:string;
 begin
-  if FieldbyName('FROM_ID').AsString <> '' then
-     begin
-     SQL :=
-      'UPDATE STK_INDENTDATA '+
-      'SET '+
-      '  FNSH_AMOUNT = ( '+
-      '    SELECT '+
-      '      sum( b.CALC_AMOUNT ) '+
-      '    FROM  '+
-      '      STK_STOCKORDER a ,'+
-      '      STK_STOCKDATA b '+
-      '    WHERE '+
-      '      a.TENANT_ID = b.TENANT_ID AND a.STOCK_ID = b.STOCK_ID AND a.TENANT_ID = :TENANT_ID AND a.STOCK_ID = :STOCK_ID '+
-      '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.LOCUS_NO = STK_INDENTDATA.LOCUS_NO AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
-      '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
-      '  ) '+
-      'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
-       AGlobal.ExecSQL(SQL,self); 
-     end;
 end;
 
 function TStkRetuOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;

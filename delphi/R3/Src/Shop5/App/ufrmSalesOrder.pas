@@ -100,6 +100,7 @@ type
     //保留小数位
     Deci:integer;
     procedure ReadHeader;
+    procedure IndeFrom(id:string);
     procedure WMNextRecord(var Message: TMessage);
     function  CheckCanExport: boolean; override;      
   protected
@@ -749,6 +750,17 @@ begin
    edtSEND_ADDR.Text := rs.FieldbyName('ADDRESS').AsString;
    AObj.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
    AObj.FieldbyName('UNION_ID').asString := '#';
+   if rs.FieldbyName('FLAG').AsInteger = 0 then
+      begin
+        rs.Close;
+        rs.SQL.Text := 'select RECV_ADDR,RECV_LINKMAN,RECV_TELE from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+        Factor.Open(rs);
+        edtTELEPHONE.Text := rs.FieldbyName('RECV_TELE').AsString;
+        edtLINKMAN.Text := rs.FieldbyName('RECV_LINKMAN').AsString;
+        edtSEND_ADDR.Text := rs.FieldbyName('RECV_ADDR').AsString;
+      end;
    Locked := true;
    try
      edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.Fields[0].AsString);
@@ -1328,7 +1340,7 @@ begin
         self.Locked := false;
       end;
       case Message.LParam of
-      0:self.ReadFrom(cdsDetail);
+      0:IndeFrom(AObj.FieldbyName('INDE_ID').AsString);
       1:
         begin
           self.edtTable.DisableControls;
@@ -1408,52 +1420,57 @@ end;
 
 procedure TfrmSalesOrder.edtFROM_IDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
-var
-  s:string;
-  h,d:TZQuery;
-  Params:TftParamList;
-  HObj:TRecord_;
+var s:string;
 begin
   inherited;
   if not IsNull then Raise Exception.Create('已经输入商品了，不能导入订单.');
-  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入订单.');  
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入订单.');
   s := TfrmFindOrder.FindDialog(self,2,edtCLIENT_ID.asString,edtSHOP_ID.asString);
   if s<>'' then
      begin
-       h := TZQuery.Create(nil);
-       d := TZQuery.Create(nil);
-       Params := TftParamList.Create(nil);
-       HObj := TRecord_.Create;
-       try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('INDE_ID').asString := s;
-          Factor.BeginBatch;
-          try
-            Factor.AddBatch(h,'TSalIndentOrder',Params);
-            Factor.AddBatch(d,'TSalIndentData',Params);
-            Factor.OpenBatch;
-            HObj.ReadFromDataSet(h);
-            ReadFromObject(HObj,self);
-            AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
-            edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
-            edtSALES_DATE.Date := Global.SysDate;
-            ReadFrom(d);
-          except
-            Factor.CancelBatch;
-            Raise;
-          end;
-       finally
-         HObj.Free;
-         Params.Free;
-         h.Free;
-         d.Free;
-       end;
+       IndeFrom(s);
      end;
 end;
 
 function TfrmSalesOrder.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('12400001',10);  
+  result:=ShopGlobal.GetChkRight('12400001',10);
+end;
+
+procedure TfrmSalesOrder.IndeFrom(id: string);
+var
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+   h := TZQuery.Create(nil);
+   d := TZQuery.Create(nil);
+   Params := TftParamList.Create(nil);
+   HObj := TRecord_.Create;
+   try
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('INDE_ID').asString := id;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(h,'TSalIndentOrder',Params);
+        Factor.AddBatch(d,'TSalIndentDataForSales',Params);
+        Factor.OpenBatch;
+        HObj.ReadFromDataSet(h);
+        ReadFromObject(HObj,self);
+        AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
+        edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+        edtSALES_DATE.Date := Global.SysDate;
+        ReadFrom(d);
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
+   finally
+     HObj.Free;
+     Params.Free;
+     h.Free;
+     d.Free;
+   end;
 end;
 
 end.

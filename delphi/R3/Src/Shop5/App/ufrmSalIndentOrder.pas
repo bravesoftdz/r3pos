@@ -63,6 +63,7 @@ type
     Label3: TLabel;
     edtDEPT_ID: TzrComboBoxList;
     Label14: TLabel;
+    Label18: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -96,11 +97,15 @@ type
     //保留小数位
     Deci:integer;
     procedure ReadHeader;
-    function  CheckCanExport: boolean; override;    
+    function  CheckCanExport: boolean; override;
+    procedure SetdbState(const Value: TDataSetState); override;
   protected
     procedure SetInputFlag(const Value: integer);override;
     function IsKeyPress:boolean;override;
     function OpenDialogCustomer(KeyString: string): boolean;
+    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
+    function CheckInput:boolean;override;
   public
     { Public declarations }
     //结算金额
@@ -321,7 +326,7 @@ begin
     rs.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     rs.Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Factor.Open(rs);
-    if rs.Fields[0].AsString >= formatDatetime('YYYY-MM-DD',edtINDE_DATE.Date) then
+    if rs.Fields[0].AsString >= formatDatetime('YYYYMMDD',edtINDE_DATE.Date) then
        edtINDE_DATE.Date := fnTime.fnStrtoDate(rs.Fields[0].AsString)+1;
   finally
     rs.Free;
@@ -373,6 +378,11 @@ begin
     oid := id;
     gid := AObj.FieldbyName('GLIDE_NO').AsString;
     cid := AObj.FieldbyName('SHOP_ID').asString;
+    case AObj.FieldByName('SALBILL_STATUS').AsInteger of
+    0:Label18.Caption := '状态:待发货';
+    1:Label18.Caption := '状态:发货中';
+    2:Label18.Caption := '状态:已发货';
+    end;
     if id<>'' then
        begin
          if trim(edtCLIENT_ID.Text)='' then
@@ -674,6 +684,17 @@ begin
    edtLINKMAN.Text := rs.FieldbyName('LINKMAN').AsString;
    edtSEND_ADDR.Text := rs.FieldbyName('ADDRESS').AsString;
    AObj.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+   if rs.FieldbyName('FLAG').AsInteger = 0 then
+      begin
+        rs.Close;
+        rs.SQL.Text := 'select RECV_ADDR,RECV_LINKMAN,RECV_TELE from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+        Factor.Open(rs);
+        edtTELEPHONE.Text := rs.FieldbyName('RECV_TELE').AsString;
+        edtLINKMAN.Text := rs.FieldbyName('RECV_LINKMAN').AsString;
+        edtSEND_ADDR.Text := rs.FieldbyName('RECV_ADDR').AsString;
+      end;
    Locked := true;
    try
      edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.Fields[0].AsString);
@@ -1190,6 +1211,8 @@ var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
+  if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
@@ -1203,6 +1226,8 @@ var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
+  if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
@@ -1246,6 +1271,87 @@ end;
 function TfrmSalIndentOrder.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('12300001',10);
+end;
+
+procedure TfrmSalIndentOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+  FindColumn('FNSH_AMOUNT').Visible := (Value=dsBrowse);
+end;
+
+procedure TfrmSalIndentOrder.AddRecord(AObj: TRecord_; UNIT_ID: string;
+  Located, IsPresent: boolean);
+var
+  Pt:integer;
+  r:boolean;
+begin
+  if IsPresent then pt := 1 else pt := 0;
+  if Located then
+     begin
+        if not gRepeat then
+            begin
+              r := edtTable.Locate('GODS_ID;IS_PRESENT',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,pt]),[]);
+              if r then Exit;
+            end;
+        inc(RowID);
+        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+        edtTable.Edit else InitRecord;
+        edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
+        if UNIT_ID='' then
+           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
+        else
+           edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
+        edtTable.FieldbyName('BATCH_NO').AsString := '#';
+     end;
+  edtTable.Edit;
+  edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+  InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
+end;
+
+function TfrmSalIndentOrder.CheckRepeat(AObj: TRecord_;
+  var pt: boolean): boolean;
+var
+  r,c:integer;
+begin
+  result := false;
+  r := edtTable.FieldbyName('SEQNO').AsInteger;
+  edtTable.DisableControls;
+  try
+    c := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if
+           (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (edtTable.FieldbyName('IS_PRESENT').AsString = AObj.FieldbyName('IS_PRESENT').AsString)
+           and
+           (edtTable.FieldbyName('SEQNO').AsInteger <> r)
+        then
+           begin
+             inc(c);
+             break;
+           end;
+        edtTable.Next;
+      end;
+    pt := false;
+    if c>0 then
+      begin
+        if gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+           result := false else result := true;
+      end;
+  finally
+    edtTable.Locate('SEQNO',r,[]);
+    edtTable.EnableControls;
+  end;
+end;
+
+function TfrmSalIndentOrder.CheckInput: boolean;
+begin
+  result := not (pos(inttostr(InputFlag),'8')>0);
 end;
 
 end.

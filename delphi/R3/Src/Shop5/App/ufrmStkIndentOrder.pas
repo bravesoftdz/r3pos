@@ -52,6 +52,7 @@ type
     edtRECK_MNY: TcxTextEdit;
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
+    Label18: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -90,6 +91,9 @@ type
     procedure ReadHeader;
     function CheckInput:boolean;override;
     function  CheckCanExport: boolean; override;
+    procedure SetdbState(const Value: TDataSetState); override;
+    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -201,10 +205,10 @@ begin
     
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
+       DBGridEh1.Columns[13].Free;
        DBGridEh1.Columns[12].Free;
-       DBGridEh1.Columns[11].Free;
+       DBGridEh1.Columns[8].Free;
        DBGridEh1.Columns[7].Free;
-       DBGridEh1.Columns[6].Free;
      end;
 end;
 
@@ -297,6 +301,11 @@ begin
     oid := AObj.FieldbyName('INDE_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
+    case AObj.FieldByName('STKBILL_STATUS').AsInteger of
+    0:Label18.Caption := '状态:待入库';
+    1:Label18.Caption := '状态:入库中';
+    2:Label18.Caption := '状态:已入库';
+    end;
     ShowOweInfo;
   finally
     Params.Free;
@@ -995,12 +1004,89 @@ end;
 
 function TfrmStkIndentOrder.CheckInput: boolean;
 begin
-  result := not (pos(inttostr(InputFlag),'124')>0);
+  result := not (pos(inttostr(InputFlag),'1248')>0);
 end;
 
 function TfrmStkIndentOrder.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('11100001',7);
+end;
+
+procedure TfrmStkIndentOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+//  FindColumn('FNSH_AMOUNT').Visible := (Value=dsBrowse);
+
+end;
+
+procedure TfrmStkIndentOrder.AddRecord(AObj: TRecord_; UNIT_ID: string;
+  Located, IsPresent: boolean);
+var
+  Pt:integer;
+  r:boolean;
+begin
+  if IsPresent then pt := 1 else pt := 0;
+  if Located then
+     begin
+        if not gRepeat then
+            begin
+              r := edtTable.Locate('GODS_ID;IS_PRESENT',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,pt]),[]);
+              if r then Exit;
+            end;
+        inc(RowID);
+        if (edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>'') then
+        edtTable.Edit else InitRecord;
+        edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
+        if UNIT_ID='' then
+           edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString
+        else
+           edtTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
+        edtTable.FieldbyName('BATCH_NO').AsString := '#';
+     end;
+  edtTable.Edit;
+  edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
+  InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
+end;
+
+function TfrmStkIndentOrder.CheckRepeat(AObj: TRecord_;
+  var pt: boolean): boolean;
+var
+  r,c:integer;
+begin
+  result := false;
+  r := edtTable.FieldbyName('SEQNO').AsInteger;
+  edtTable.DisableControls;
+  try
+    c := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        if
+           (edtTable.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (edtTable.FieldbyName('IS_PRESENT').AsString = AObj.FieldbyName('IS_PRESENT').AsString)
+           and
+           (edtTable.FieldbyName('SEQNO').AsInteger <> r)
+        then
+           begin
+             inc(c);
+             break;
+           end;
+        edtTable.Next;
+      end;
+    pt := false;
+    if c>0 then
+      begin
+        if gRepeat and (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+           result := false else result := true;
+      end;
+  finally
+    edtTable.Locate('SEQNO',r,[]);
+    edtTable.EnableControls;
+  end;
 end;
 
 end.

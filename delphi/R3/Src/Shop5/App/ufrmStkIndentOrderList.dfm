@@ -224,7 +224,10 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                     Caption = #24050#23457#26680
                   end
                   item
-                    Caption = #26410#20837#24211
+                    Caption = #24453#20837#24211
+                  end
+                  item
+                    Caption = #20837#24211#20013
                   end
                   item
                     Caption = #24050#20837#24211
@@ -369,7 +372,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #25968#37327
+                  Title.Caption = #35746#36135#37327
                   Width = 57
                 end
                 item
@@ -383,7 +386,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   EditButtons = <>
                   FieldName = 'ADVA_MNY'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#39044#20184#27454
+                  Title.Caption = #39044#20184#27454'|'#23567#35745
                   Width = 60
                 end
                 item
@@ -399,6 +402,13 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
                   Footers = <>
                   Title.Caption = #39044#20184#27454'|'#26410#32467#31639
                   Width = 63
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'STKBILL_STATUS'
+                  Footers = <>
+                  Title.Caption = #20837#24211#29366#24577
+                  Width = 58
                 end
                 item
                   EditButtons = <>
@@ -496,14 +506,14 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
   inherited cdsList: TZQuery
     AfterScroll = cdsListAfterScroll
   end
-  object frfStockOrder: TfrReport
+  object frfStkIndentOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfStockOrderGetValue
-    OnUserFunction = frfStockOrderUserFunction
+    OnGetValue = frfStkIndentOrderGetValue
+    OnUserFunction = frfStkIndentOrderUserFunction
     Left = 416
-    Top = 193
+    Top = 241
     ReportForm = {
       18000000391F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
@@ -514,7 +524,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
       000000010000000000000001000000C800000014000000010000000000000200
       500100000700B7D6D7E9CDB7310002010000000019000000F60200006D000000
       3200100001000000000000000000FFFFFF1F000000001300696E7428285B5345
-      514E4F5D2D31292F31362900000000000000FFFF000000000002000000010000
+      514E4F5D2D31292F31352900000000000000FFFF000000000002000000010000
       000000000001000000C800000014000000010000000000000200370200000700
       B7D6D7E9BDC5310002010000000012010000F602000045000000300011000100
       0000000000000000FFFFFF1F0000000000000000000007000500626567696E0D

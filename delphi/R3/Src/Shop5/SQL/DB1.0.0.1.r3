@@ -819,14 +819,16 @@ CREATE TABLE [STK_INDENTORDER] (
 	[TAX_RATE] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
-        --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STK_INDENTORDER_COMM] DEFAULT ('00'),
         --操作时间
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
+	      --单据状态
+	STKBILL_STATUS int NULL,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STK_INDENTORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_STK_INDENTORDER] PRIMARY KEY 
@@ -953,6 +955,8 @@ CREATE TABLE [SAL_INDENTORDER] (
 	[CREA_USER] [varchar] (36) NULL ,
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
+	      --单据状态
+	SALBILL_STATUS int NULL,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INDENTORDER_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000

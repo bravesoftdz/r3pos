@@ -235,6 +235,35 @@ begin
   if (FieldbyName('CLIENT_ID').AsString<>'') or (FieldbyName('CLIENT_ID').AsOldString<>'') then DoUpgrade(AGlobal);
   if FieldbyName('FROM_ID').AsString <> '' then
      begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text :=
+           'select count(*) from '+
+           '(select GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02,sum(CALC_AMOUNT) as AMOUNT from SAL_INDENTDATA where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID group by GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02) A '+
+           'left outer join (select GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02,sum(CALC_AMOUNT) as AMOUNT from SAL_SALESDATA s1,SAL_SALESORDER s2 where s1.TENANT_ID=s2.TENANT_ID and s1.SALES_ID=s2.SALES_ID and '+
+           's2.TENANT_ID=:TENANT_ID and s2.FROM_ID=:FROM_ID group by GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02) B '+
+           'on A.GODS_ID=B.GODS_ID and A.IS_PRESENT=B.IS_PRESENT and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 where A.AMOUNT>B.AMOUNT or B.AMOUNT is null';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsInteger =0 then
+            AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self)
+         else
+            AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
+         if FieldbyName('FROM_ID').AsString<>FieldbyName('FROM_ID').AsOldString then
+            begin
+              rs.Close;
+              rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+              rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsOldString;
+              AGlobal.Open(rs);
+              if rs.Fields[0].AsInteger =0 then
+                 AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self)
+              else
+                 AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self);
+            end;
+       finally
+         rs.Free;
+       end;
         SQL :=
         'UPDATE SAL_INDENTDATA '+
         'SET '+
@@ -245,12 +274,12 @@ begin
         '      SAL_SALESORDER a ,'+
         '      SAL_SALESDATA b '+
         '    WHERE '+
-        '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = :TENANT_ID AND a.SALES_ID = :SALES_ID '+
-        '      AND b.GODS_ID = SAL_INDENTDATA.GODS_ID AND b.LOCUS_NO = SAL_INDENTDATA.LOCUS_NO AND b.BATCH_NO = SAL_INDENTDATA.BATCH_NO AND b.UNIT_ID = SAL_INDENTDATA.UNIT_ID '+
-        '      AND b.PROPERTY_01 = SAL_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = SAL_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = SAL_INDENTDATA.IS_PRESENT  '+
+        '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = SAL_INDENTDATA.TENANT_ID AND a.FROM_ID = SAL_INDENTDATA.INDE_ID '+
+        '      AND b.GODS_ID = SAL_INDENTDATA.GODS_ID AND b.PROPERTY_01 = SAL_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = SAL_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = SAL_INDENTDATA.IS_PRESENT  '+
         '  ) '+
-        'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
+        'WHERE (INDE_ID = :FROM_ID or INDE_ID = :OLD_FROM_ID) AND TENANT_ID = :TENANT_ID';
        AGlobal.ExecSQL(SQL,self);
+
      end;
 
 end;
@@ -430,6 +459,7 @@ begin
         Result := true;
       end;
   //检测订单是否重复入库
+  {
   if FieldbyName('FROM_ID').asString<>'' then
      begin
        rs := TZQuery.Create(nil);
@@ -444,6 +474,8 @@ begin
          rs.Free;
        end;
      end;
+  }
+
 end;
 
 function TSalesOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;

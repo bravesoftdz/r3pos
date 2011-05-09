@@ -225,33 +225,8 @@ end;
 { TSalRetuOrder }
 
 function TSalRetuOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-var
-  rs:TZQuery;
-  t:integer;
-  amt:integer;
-  SQL:string;
 begin
   if (FieldbyName('CLIENT_ID').AsString<>'') or (FieldbyName('CLIENT_ID').AsOldString<>'') then DoUpgrade(AGlobal);
-  if FieldbyName('FROM_ID').AsString <> '' then
-     begin
-        SQL :=
-        'UPDATE SAL_INDENTDATA '+
-        'SET '+
-        '  FNSH_AMOUNT = ( '+
-        '    SELECT '+
-        '      sum( b.CALC_AMOUNT ) '+
-        '    FROM  '+
-        '      SAL_SALESORDER a ,'+
-        '      SAL_SALESDATA b '+
-        '    WHERE '+
-        '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = :TENANT_ID AND a.SALES_ID = :SALES_ID '+
-        '      AND b.GODS_ID = SAL_INDENTDATA.GODS_ID AND b.LOCUS_NO = SAL_INDENTDATA.LOCUS_NO AND b.BATCH_NO = SAL_INDENTDATA.BATCH_NO '+
-        '      AND b.UNIT_ID = SAL_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = SAL_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = SAL_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = SAL_INDENTDATA.IS_PRESENT  '+
-        '  ) '+
-        'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
-       AGlobal.ExecSQL(SQL,self); 
-     end;
-
 end;
 
 function TSalRetuOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;

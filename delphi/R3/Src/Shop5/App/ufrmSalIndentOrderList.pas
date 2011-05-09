@@ -26,7 +26,7 @@ type
     fndSTATUS: TcxRadioGroup;
     fndCLIENT_ID: TzrComboBoxList;
     actReport: TAction;
-    frfSalesOrder: TfrReport;
+    frfSalIndentOrder: TfrReport;
     Label40: TLabel;
     actRecv: TAction;
     ToolButton16: TToolButton;
@@ -46,7 +46,7 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure frfSalesOrderUserFunction(const Name: String; p1, p2,
+    procedure frfSalIndentOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -55,7 +55,7 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actRecvExecute(Sender: TObject);
-    procedure frfSalesOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure frfSalIndentOrderGetValue(const ParName: String; var ParValue: Variant);
   private
     { Private declarations }
     oid:string;
@@ -92,15 +92,16 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w := w +' and not Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-       4:w := w +' and Exists(select * from SAL_SALESORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-       5:w1 := ' where RECK_MNY<>0';
-       6:w1 := ' where RECK_MNY=0';
+       3:w := w +' and A.SALBILL_STATUS=0';
+       4:w := w +' and A.SALBILL_STATUS=1';
+       5:w := w +' and A.SALBILL_STATUS=2';
+       6:w1 := ' where RECK_MNY<>0';
+       7:w1 := ' where RECK_MNY=0';
        end;
      end;
   if id<>'' then
      w := w +' and A.INDE_ID>'''+id+'''';
-  result := 'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
+  result := 'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.SALBILL_STATUS,A.INDE_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
             'from SAL_INDENTORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.RECV_MNY,c.RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.SALES_ID';
@@ -403,7 +404,7 @@ begin
    'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
 end;
 
-procedure TfrmSalIndentOrderList.frfSalesOrderUserFunction(const Name: String;
+procedure TfrmSalIndentOrderList.frfSalIndentOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -434,12 +435,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalesOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalIndentOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfSalesOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfSalIndentOrder);
            end;
       finally
          free;
@@ -459,12 +460,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalesOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalIndentOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfSalesOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfSalIndentOrder,nil,true);
            end;
       finally
          free;
@@ -582,7 +583,7 @@ begin
  end;   
 end;
 
-procedure TfrmSalIndentOrderList.frfSalesOrderGetValue(const ParName: String;
+procedure TfrmSalIndentOrderList.frfSalIndentOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

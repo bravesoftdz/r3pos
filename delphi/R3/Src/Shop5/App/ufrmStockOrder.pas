@@ -97,6 +97,7 @@ type
     procedure ReadHeader;
     function CheckInput:boolean;override;
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
+    procedure IndeFrom(id:string);
   public
     { Public declarations }
     procedure ShowInfo;
@@ -1099,7 +1100,7 @@ begin
         self.Locked := false;
       end;
       case Message.LParam of
-      0:self.ReadFrom(cdsDetail);
+      0:IndeFrom(AObj.FieldbyName('INDE_ID').AsString);
       1:
         begin
           self.edtTable.DisableControls;
@@ -1175,9 +1176,6 @@ procedure TfrmStockOrder.edtFROM_IDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 var
   s:string;
-  h,d:TZQuery;
-  Params:TftParamList;
-  HObj:TRecord_;
 begin
   inherited;
   if not IsNull then Raise Exception.Create('已经输入商品了，不能导入订单.');
@@ -1185,34 +1183,7 @@ begin
   s := TfrmFindOrder.FindDialog(self,1,edtCLIENT_ID.asString,edtSHOP_ID.asString);
   if s<>'' then
      begin
-       h := TZQuery.Create(nil);
-       d := TZQuery.Create(nil);
-       Params := TftParamList.Create(nil);
-       HObj := TRecord_.Create;
-       try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('INDE_ID').asString := s;
-          Factor.BeginBatch;
-          try
-            Factor.AddBatch(h,'TStkIndentOrder',Params);
-            Factor.AddBatch(d,'TStkIndentData',Params);
-            Factor.OpenBatch;
-            HObj.ReadFromDataSet(h);
-            ReadFromObject(HObj,self);
-            AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
-            edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
-            edtSTOCK_DATE.Date := Global.SysDate;
-            ReadFrom(d);
-          except
-            Factor.CancelBatch;
-            Raise;
-          end;
-       finally
-         HObj.Free;
-         Params.Free;
-         h.Free;
-         d.Free;
-       end;
+       IndeFrom(s);
      end;
 end;
 
@@ -1311,6 +1282,42 @@ begin
       DBGridEh1.PopupMenu.Items[i].Enabled:=False;
   end;}
   result:=true;
+end;
+
+procedure TfrmStockOrder.IndeFrom(id: string);
+var
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+   h := TZQuery.Create(nil);
+   d := TZQuery.Create(nil);
+   Params := TftParamList.Create(nil);
+   HObj := TRecord_.Create;
+   try
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('INDE_ID').asString := id;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(h,'TStkIndentOrder',Params);
+        Factor.AddBatch(d,'TStkIndentDataForStock',Params);
+        Factor.OpenBatch;
+        HObj.ReadFromDataSet(h);
+        ReadFromObject(HObj,self);
+        AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
+        edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+        edtSTOCK_DATE.Date := Global.SysDate;
+        ReadFrom(d);
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
+   finally
+     HObj.Free;
+     Params.Free;
+     h.Free;
+     d.Free;
+   end;
 end;
 
 end.

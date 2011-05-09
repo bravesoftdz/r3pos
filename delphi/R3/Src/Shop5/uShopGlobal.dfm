@@ -263,7 +263,7 @@ inherited ShopGlobal: TShopGlobal
       
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,CLIENT_SPE' +
         'LL,TELEPHONE2,ADDRESS,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG,TAX_RAT' +
-        'E,PRICE_ID'
+        'E,PRICE_ID,FLAG'
       ' from VIW_CLIENTINFO '
       'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'1'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')
@@ -289,7 +289,7 @@ inherited ShopGlobal: TShopGlobal
       
         'select CLIENT_ID,LICENSE_CODE,CLIENT_CODE,CLIENT_NAME,LINKMAN,CL' +
         'IENT_SPELL,ADDRESS,TELEPHONE2,IC_CARDNO,SETTLE_CODE,INVOICE_FLAG' +
-        ',TAX_RATE,PRICE_ID'
+        ',TAX_RATE,PRICE_ID,FLAG'
       ' from VIW_CUSTOMER'
       'where COMM not in ('#39'02'#39','#39'12'#39')  and CLIENT_TYPE='#39'2'#39
       'and TENANT_ID=:TENANT_ID order by CLIENT_CODE')

@@ -739,6 +739,18 @@ begin
    edtLINKMAN.Text := rs.FieldbyName('LINKMAN').AsString;
    edtSEND_ADDR.Text := rs.FieldbyName('ADDRESS').AsString;
    AObj.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+   AObj.FieldbyName('UNION_ID').asString := '#';
+   if rs.FieldbyName('FLAG').AsInteger = 0 then
+      begin
+        rs.Close;
+        rs.SQL.Text := 'select RECV_ADDR,RECV_LINKMAN,RECV_TELE from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+        Factor.Open(rs);
+        edtTELEPHONE.Text := rs.FieldbyName('RECV_TELE').AsString;
+        edtLINKMAN.Text := rs.FieldbyName('RECV_LINKMAN').AsString;
+        edtSEND_ADDR.Text := rs.FieldbyName('RECV_ADDR').AsString;
+      end;
    Locked := true;
    try
      edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.Fields[0].AsString);

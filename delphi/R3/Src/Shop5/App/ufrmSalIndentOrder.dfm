@@ -137,7 +137,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Caption = '%'
       end
       inherited RzPanel4: TRzPanel
-        Height = 83
+        Height = 107
         TabOrder = 14
         inherited Shape1: TShape
           Top = 33
@@ -153,6 +153,20 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         inherited lblState: TLabel
           Left = 8
           Top = 48
+        end
+        object Label18: TLabel
+          Left = 8
+          Top = 78
+          Width = 33
+          Height = 12
+          Caption = #29366#24577':'
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
         end
       end
       object edtCLIENT_ID: TzrComboBoxList
@@ -704,10 +718,18 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #25968#37327
+          Title.Caption = #35746#36135#37327
           Width = 56
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
           OnUpdateData = DBGridEh1Columns4UpdateData
+        end
+        item
+          EditButtons = <>
+          FieldName = 'FNSH_AMOUNT'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #23454#21457#37327
+          Width = 58
         end
         item
           EditButtons = <>
@@ -751,14 +773,6 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         end
         item
           EditButtons = <>
-          FieldName = 'BATCH_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #25209#21495
-          Width = 95
-        end
-        item
-          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791#27880
@@ -787,6 +801,9 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
   end
   inherited actList: TActionList
+    inherited actBatchNo: TAction
+      Visible = False
+    end
     inherited actIsPressent: TAction
       Caption = #20999#25442'('#38144#21806'-'#36192#21697'-'#20817#25442')'
     end
@@ -914,6 +931,10 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         Name = 'REMARK'
         DataType = ftString
         Size = 100
+      end
+      item
+        Name = 'FNSH_AMOUNT'
+        DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll
   end

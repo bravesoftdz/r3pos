@@ -16,7 +16,7 @@ uses
   SvcMgr, Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,Variants,
   Dialogs, Menus, ShellAPI, ExtCtrls, StdCtrls, ComCtrls, ScktComp,SyncObjs,ZConst,
   ActnList, DB,OleServer,ImgList,ActiveX,ZIocp,ZServer,ZPacket,ZWSock2,MidConst,ZLogFile,
-  RzTray,ZIntf,ZdbHelp,ZDataSet,ZBase;
+  RzTray,ZIntf,ZdbHelp,ZDataSet,ZBase, ZSqlMonitor;
 
 const
   WM_MIDASICON    = WM_USER + 1;
@@ -127,6 +127,9 @@ type
     actPlugInLoad: TAction;
     N11: TMenuItem;
     RzTrayIcon1: TRzTrayIcon;
+    ZSQLMonitor1: TZSQLMonitor;
+    Panel2: TPanel;
+    chkDebug: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -164,6 +167,9 @@ type
     procedure actPlugInExecuteExecute(Sender: TObject);
     procedure actPlugInCloseExecute(Sender: TObject);
     procedure actPlugInLoadExecute(Sender: TObject);
+    procedure ZSQLMonitor1Trace(Sender: TObject; Event: TZLoggingEvent;
+      var LogTrace: Boolean);
+    procedure chkDebugClick(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -1064,6 +1070,17 @@ begin
   PlugInList.Clear;
   PlugInList.LoadAll;
   ReadPlugIn;
+end;
+
+procedure TSocketForm.ZSQLMonitor1Trace(Sender: TObject;
+  Event: TZLoggingEvent; var LogTrace: Boolean);
+begin
+  Memo1.Lines.Add(Event.AsString); 
+end;
+
+procedure TSocketForm.chkDebugClick(Sender: TObject);
+begin
+  ZSQLMonitor1.Active := chkDebug.Checked;
 end;
 
 initialization

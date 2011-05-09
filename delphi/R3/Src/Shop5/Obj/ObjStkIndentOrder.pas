@@ -32,6 +32,10 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  TStkIndentDataForStock=class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
   TStkIndentOrderGetPrior=class(TZFactory)
   public
     procedure InitClass;override;
@@ -103,7 +107,7 @@ var
 begin
   inherited;
   SelectSQL.Text := 'select j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.IS_PRESENT,j.APRICE,j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,'+
-               'case when j.CALC_AMOUNT=0 then 0 else j.FNSH_AMOUNT / (j.CALC_AMOUNT/j.AMOUNT) end as FNSH_AMOUNT,'+
+               'case when j.CALC_AMOUNT=0 then 0 else j.FNSH_AMOUNT / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as FNSH_AMOUNT,'+
                'j.REMARK,b.GODS_NAME,b.GODS_CODE,j.ORG_PRICE*j.AMOUNT as RTL_MONEY from STK_INDENTDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID order by SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into STK_INDENTDATA(TENANT_ID,SHOP_ID,SEQNO,INDE_ID,GODS_ID,BATCH_NO,LOCUS_NO,BOM_ID,PROPERTY_01,PROPERTY_02,UNIT_ID,AMOUNT,ORG_PRICE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) '
@@ -122,7 +126,7 @@ end;
 function TStkIndentOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
 var SQL:string;
 begin
-  SQL :=
+{  SQL :=
     'UPDATE STK_INDENTDATA '+
     'SET '+
     '  FNSH_AMOUNT = ( '+
@@ -137,7 +141,7 @@ begin
     '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
     '  ) '+
     'WHERE INDE_ID = :INDE_ID AND TENANT_ID = :TENANT_ID';
-  AGlobal.ExecSQL(SQL,self);
+  AGlobal.ExecSQL(SQL,self);   }
   result := true;
 end;
 
@@ -231,14 +235,14 @@ begin
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
                '(select TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,PLAN_DATE,ADVA_MNY,FIG_ID,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,'+
-               'TIME_STAMP,INDE_AMT,INDE_MNY from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) jb '+
+               'TIME_STAMP,INDE_AMT,INDE_MNY,STKBILL_STATUS from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) jb '+
                ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
                ' left outer join CA_DEPT_INFO e on je.TENANT_ID=e.TENANT_ID and je.DEPT_ID=e.DEPT_ID ';
   IsSQLUpdate := True;
-  Str := 'insert into STK_INDENTORDER(TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,PLAN_DATE,ADVA_MNY,FIG_ID,INDE_AMT,INDE_MNY,INVOICE_FLAG,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:INDE_ID,:GLIDE_NO,:INDE_DATE,:GUIDE_USER,:CLIENT_ID,:CHK_DATE,:CHK_USER,:PLAN_DATE,:ADVA_MNY,:FIG_ID,:INDE_AMT,:INDE_MNY,:INVOICE_FLAG,:TAX_RATE,:REMARK,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
+  Str := 'insert into STK_INDENTORDER(TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,PLAN_DATE,ADVA_MNY,FIG_ID,INDE_AMT,INDE_MNY,INVOICE_FLAG,TAX_RATE,REMARK,STKBILL_STATUS,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:INDE_ID,:GLIDE_NO,:INDE_DATE,:GUIDE_USER,:CLIENT_ID,:CHK_DATE,:CHK_USER,:PLAN_DATE,:ADVA_MNY,:FIG_ID,:INDE_AMT,:INDE_MNY,:INVOICE_FLAG,:TAX_RATE,:REMARK,0,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update STK_INDENTORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,INDE_ID=:INDE_ID,GLIDE_NO=:GLIDE_NO,INDE_DATE=:INDE_DATE,ADVA_MNY=:ADVA_MNY,GUIDE_USER=:GUIDE_USER,CLIENT_ID=:CLIENT_ID,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
          'PLAN_DATE=:PLAN_DATE,FIG_ID=:FIG_ID,INDE_AMT=:INDE_AMT,INDE_MNY=:INDE_MNY,INVOICE_FLAG=:INVOICE_FLAG,TAX_RATE=:TAX_RATE,REMARK=:REMARK,'
@@ -283,6 +287,14 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
+    Temp := TZQuery.Create(nil);
+    try
+      Temp.SQL.Text := 'select STKBILL_STATUS from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
+      AGlobal.Open(Temp);
+      if Temp.Fields[0].AsInteger>0 then Raise Exception.Create('已经入库的订单不能再修改了...');  
+    finally
+      Temp.Free;
+    end;
     Str := 'update STK_INDENTORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
@@ -340,9 +352,23 @@ begin
   end;
 end;
 
+{ TStkIndentDataForStock }
+
+procedure TStkIndentDataForStock.InitClass;
+begin
+  SelectSQL.Text :=
+     ParseSQL(iDbType,
+     'select s.*,round(AMOUNT*APRICE,2) as AMONEY,round(AMOUNT*APRICE,2) as CALC_MONEY,round(AMOUNT*ORG_PRICE,2)-round(AMOUNT*APRICE,2) as AGIO_MONEY from( '+
+     'select j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.ORG_PRICE,j.IS_PRESENT,j.APRICE,j.AGIO_RATE,'+
+      'case when j.CALC_AMOUNT=0 then 0 else (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0)) / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as AMOUNT,isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0) as CALC_AMOUNT,'+
+     'j.REMARK,b.GODS_NAME,b.GODS_CODE,j.ORG_PRICE*j.AMOUNT as RTL_MONEY from STK_INDENTDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+      'where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID and (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0))>0 ) s order by SEQNO');
+end;
+
 initialization
   RegisterClass(TStkIndentOrder);
   RegisterClass(TStkIndentData);
+  RegisterClass(TStkIndentDataForStock);
   RegisterClass(TStkIndentOrderGetPrior);
   RegisterClass(TStkIndentOrderGetNext);
   RegisterClass(TStkIndentOrderAudit);
@@ -350,6 +376,7 @@ initialization
 finalization
   UnRegisterClass(TStkIndentOrder);
   UnRegisterClass(TStkIndentData);
+  UnRegisterClass(TStkIndentDataForStock);
   UnRegisterClass(TStkIndentOrderGetPrior);
   UnRegisterClass(TStkIndentOrderGetNext);
   UnRegisterClass(TStkIndentOrderAudit);

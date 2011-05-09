@@ -28,7 +28,7 @@ type
     Label1: TLabel;
     btnOk: TRzBitBtn;
     fndSTATUS: TcxRadioGroup;
-    frfStockOrder: TfrReport;
+    frfStkIndentOrder: TfrReport;
     actfrmPayOrder: TAction;
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
@@ -47,7 +47,7 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure frfStockOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+    procedure frfStkIndentOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -55,7 +55,7 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actfrmPayOrderExecute(Sender: TObject);
-    procedure frfStockOrderGetValue(const ParName: String;
+    procedure frfStkIndentOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
     oid:string;
@@ -92,16 +92,17 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w := w +' and not Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-       4:w := w +' and Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-       5:w1 := ' where RECK_MNY<>0';
-       6:w1 := ' where RECK_MNY=0';
+       3:w := w +' and A.STKBILL_STATUS=0';
+       4:w := w +' and A.STKBILL_STATUS=1';
+       5:w := w +' and A.STKBILL_STATUS=2';
+       6:w1 := ' where RECK_MNY<>0';
+       7:w1 := ' where RECK_MNY=0';
        end;
      end;
   if id<>'' then
      w := w +' and A.INDE_ID>'''+id+'''';
   result :=
-     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
+     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.STKBILL_STATUS,A.INDE_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
      'from STK_INDENTORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.STOCK_ID';
@@ -366,7 +367,7 @@ begin
 
 end;
 
-procedure TfrmStkIndentOrderList.frfStockOrderUserFunction(const Name: String;
+procedure TfrmStkIndentOrderList.frfStkIndentOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -428,12 +429,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStkIndentOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStkIndentOrder);
            end;
       finally
          free;
@@ -452,12 +453,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStkIndentOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStkIndentOrder,nil,true);
            end;
       finally
          free;
@@ -579,7 +580,7 @@ begin
   
 end;
 
-procedure TfrmStkIndentOrderList.frfStockOrderGetValue(const ParName: String;
+procedure TfrmStkIndentOrderList.frfStkIndentOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

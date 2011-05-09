@@ -91,14 +91,28 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       inherited RzPanel4: TRzPanel
         Top = 5
-        Height = 76
+        Height = 84
         TabOrder = 9
         inherited Image1: TImage
           Left = 103
           Top = 31
         end
         inherited lblState: TLabel
-          Top = 43
+          Top = 36
+        end
+        object Label18: TLabel
+          Left = 6
+          Top = 58
+          Width = 33
+          Height = 12
+          Caption = #29366#24577':'
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+          Transparent = True
         end
       end
       object edtINDE_DATE: TcxDateEdit
@@ -582,10 +596,18 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #25968#37327
+          Title.Caption = #35746#36135#37327
           Width = 53
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
           OnUpdateData = DBGridEh1Columns4UpdateData
+        end
+        item
+          EditButtons = <>
+          FieldName = 'FNSH_AMOUNT'
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #23454#20837#37327
+          Width = 54
         end
         item
           EditButtons = <>
@@ -658,14 +680,6 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         end
         item
           EditButtons = <>
-          FieldName = 'BATCH_NO'
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #25209#21495
-          Width = 86
-        end
-        item
-          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791#27880
@@ -701,6 +715,12 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
   inherited actList: TActionList
     Left = 248
     Top = 184
+    inherited actLocusNo: TAction
+      Visible = False
+    end
+    inherited actBatchNo: TAction
+      Visible = False
+    end
     object actPrintBarcode: TAction
       Caption = #25171#21360#26465#30721
       OnExecute = actPrintBarcodeExecute
@@ -812,6 +832,10 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Name = 'REMARK'
         DataType = ftString
         Size = 100
+      end
+      item
+        Name = 'FNSH_AMOUNT'
+        DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll
   end

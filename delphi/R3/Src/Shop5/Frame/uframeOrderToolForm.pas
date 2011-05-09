@@ -199,6 +199,7 @@ begin
   TDbGridEhSort.InitForm(self);
   BtnStatus;
   LoadFormRes(self);
+  InitGridPickList(DBGridEh1);
 end;
 
 destructor TframeOrderToolForm.Destroy;
@@ -644,7 +645,7 @@ var i:integer;
   Column:TColumnEh;
 begin
   inherited;
-  for i:=0 to self.ComponentCount -1 do
+{  for i:=0 to self.ComponentCount -1 do
     begin
       if self.Components[i] is TDBGridEh then
          begin
@@ -654,6 +655,7 @@ begin
            if Column<>nil then Column.Visible := (CLVersion='FIG');
          end;
     end;
+}    
 end;
 
 end.

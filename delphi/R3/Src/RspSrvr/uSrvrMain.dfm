@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 327
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet
@@ -353,9 +353,9 @@ object SocketForm: TSocketForm
       ImageIndex = 4
       object Memo1: TMemo
         Left = 0
-        Top = 0
+        Top = 25
         Width = 511
-        Height = 300
+        Height = 275
         Align = alClient
         Color = clNavy
         Font.Charset = GB2312_CHARSET
@@ -367,6 +367,24 @@ object SocketForm: TSocketForm
         ParentFont = False
         PopupMenu = pmuLogFile
         TabOrder = 0
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 511
+        Height = 25
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        object chkDebug: TCheckBox
+          Left = 8
+          Top = 4
+          Width = 97
+          Height = 17
+          Caption = #26174#31034#35843#35797#26085#24535
+          TabOrder = 0
+          OnClick = chkDebugClick
+        end
       end
     end
     object TabSheet4: TTabSheet
@@ -850,5 +868,11 @@ object SocketForm: TSocketForm
     PopupMenu = pmuSystem
     Left = 332
     Top = 174
+  end
+  object ZSQLMonitor1: TZSQLMonitor
+    MaxTraceCount = 100
+    OnTrace = ZSQLMonitor1Trace
+    Left = 60
+    Top = 103
   end
 end

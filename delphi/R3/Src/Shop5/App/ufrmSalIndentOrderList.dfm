@@ -8,22 +8,22 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 828
-    Height = 544
+    Width = 820
+    Height = 533
     inherited RzPanel2: TRzPanel
-      Width = 818
-      Height = 534
+      Width = 810
+      Height = 523
       inherited RzPage: TRzPageControl
-        Width = 812
-        Height = 528
+        Width = 804
+        Height = 517
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35746#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 810
-            Height = 501
+            Width = 802
+            Height = 490
             inherited RzPanel1: TRzPanel
-              Width = 800
+              Width = 792
               Height = 115
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -155,10 +155,13 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                     Caption = #24050#23457#26680
                   end
                   item
-                    Caption = #26410#20986#24211
+                    Caption = #24453#21457#36135
                   end
                   item
-                    Caption = #24050#20986#24211
+                    Caption = #21457#36135#20013
+                  end
+                  item
+                    Caption = #24050#21457#36135
                   end
                   item
                     Caption = #24453#32467#31639
@@ -318,8 +321,8 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 120
-              Width = 800
-              Height = 376
+              Width = 792
+              Height = 365
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -393,7 +396,7 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #25968#37327
+                  Title.Caption = #35746#36135#37327
                   Width = 54
                 end
                 item
@@ -407,21 +410,28 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
                   EditButtons = <>
                   FieldName = 'ADVA_MNY'
                   Footers = <>
-                  Title.Caption = #39044#25910#27454'|'#24212#25910
+                  Title.Caption = #39044#25910#27454'|'#23567#35745
                 end
                 item
                   EditButtons = <>
                   FieldName = 'RECV_MNY'
                   Footers = <>
-                  Title.Caption = #39044#25910#27454'|'#23454#25910
+                  Title.Caption = #39044#25910#27454'|'#24050#32467#31639
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
                   Footers = <>
-                  Title.Caption = #39044#25910#27454'|'#27424#25910
+                  Title.Caption = #39044#25910#27454'|'#26410#32467#31639
                   Width = 59
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SALBILL_STATUS'
+                  Footers = <>
+                  Title.Caption = #21457#36135#29366#24577
+                  Width = 53
                 end
                 item
                   EditButtons = <>
@@ -450,44 +460,44 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 828
+    Width = 820
     inherited Image1: TImage
-      Left = 624
-      Width = 184
+      Left = 628
+      Width = 172
     end
     inherited Image3: TImage
-      Left = 624
-      Width = 184
+      Left = 628
+      Width = 172
     end
     inherited Image14: TImage
-      Left = 808
+      Left = 800
     end
     inherited rzPanel5: TPanel
-      Left = 624
+      Left = 628
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 604
+      Width = 608
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 604
+          MinHeight = 608
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 604
+        Width = 608
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actRecv
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Action = actExit
         end
@@ -506,6 +516,10 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
       ImageIndex = 28
       OnExecute = actRecvExecute
     end
+  end
+  inherited dsList: TDataSource
+    Left = 390
+    Top = 216
   end
   inherited ppmReport: TPopupMenu
     AutoHotkeys = maManual
@@ -532,13 +546,15 @@ inherited frmSalIndentOrderList: TfrmSalIndentOrderList
     SortedFields = 'GLIDE_NO'
     AfterScroll = cdsListAfterScroll
     IndexFieldNames = 'GLIDE_NO Asc'
+    Left = 358
+    Top = 216
   end
-  object frfSalesOrder: TfrReport
+  object frfSalIndentOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfSalesOrderGetValue
-    OnUserFunction = frfSalesOrderUserFunction
+    OnGetValue = frfSalIndentOrderGetValue
+    OnUserFunction = frfSalIndentOrderUserFunction
     Left = 488
     Top = 201
     ReportForm = {

@@ -211,7 +211,8 @@ uses
   ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard},
   ufrmPassWord in 'App\ufrmPassWord.pas' {frmPassWord},
   ufrmReturn in 'App\ufrmReturn.pas' {frmReturn},
-  ufrmCancelCard in 'App\ufrmCancelCard.pas' {frmCancelCard};
+  ufrmCancelCard in 'App\ufrmCancelCard.pas' {frmCancelCard},
+  ufrmDefineStateInfo in 'App\ufrmDefineStateInfo.pas' {frmDefineStateInfo};
 
 {$R *.res}
 var

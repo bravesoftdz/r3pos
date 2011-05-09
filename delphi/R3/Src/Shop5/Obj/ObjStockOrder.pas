@@ -223,10 +223,41 @@ end;
 { TStockOrder }
 
 function TStockOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-var SQL:string;
+var
+  SQL:string;
+  rs:TZQuery;
 begin
   if FieldbyName('FROM_ID').AsString <> '' then
      begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text :=
+           'select count(*) from '+
+           '(select GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02,sum(CALC_AMOUNT) as AMOUNT from STK_INDENTDATA where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID group by GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02) A '+
+           'left outer join (select GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02,sum(CALC_AMOUNT) as AMOUNT from STK_STOCKDATA s1,STK_STOCKORDER s2 where s1.TENANT_ID=s2.TENANT_ID and s1.STOCK_ID=s2.STOCK_ID and '+
+           's2.TENANT_ID=:TENANT_ID and s2.FROM_ID=:FROM_ID group by GODS_ID,IS_PRESENT,PROPERTY_01,PROPERTY_02) B '+
+           'on A.GODS_ID=B.GODS_ID and A.IS_PRESENT=B.IS_PRESENT and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 where A.AMOUNT>B.AMOUNT or B.AMOUNT is null';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsInteger =0 then
+            AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self)
+         else
+            AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
+         if FieldbyName('FROM_ID').AsString<>FieldbyName('FROM_ID').AsOldString then
+            begin
+              rs.Close;
+              rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+              rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsOldString;
+              AGlobal.Open(rs);
+              if rs.Fields[0].AsInteger =0 then
+                 AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self)
+              else
+                 AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self);
+            end;
+       finally
+         rs.Free;
+       end;
      SQL :=
       'UPDATE STK_INDENTDATA '+
       'SET '+
@@ -237,12 +268,13 @@ begin
       '      STK_STOCKORDER a ,'+
       '      STK_STOCKDATA b '+
       '    WHERE '+
-      '      a.TENANT_ID = b.TENANT_ID AND a.STOCK_ID = b.STOCK_ID AND a.TENANT_ID = :TENANT_ID AND a.STOCK_ID = :STOCK_ID '+
-      '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.LOCUS_NO = STK_INDENTDATA.LOCUS_NO AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
+      '      a.TENANT_ID = b.TENANT_ID AND a.STOCK_ID = b.STOCK_ID AND a.TENANT_ID = STK_INDENTDATA.TENANT_ID AND a.FROM_ID = STK_INDENTDATA.INDE_ID '+
+      '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
       '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
       '  ) '+
-      'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
+      'WHERE (INDE_ID = :FROM_ID or INDE_ID = :OLD_FROM_ID) AND TENANT_ID = :TENANT_ID';
        AGlobal.ExecSQL(SQL,self);
+       
      end;
 end;
 
@@ -330,6 +362,7 @@ begin
    else
       Result := true;
   //检测订单是否重复入库
+{
   if FieldbyName('FROM_ID').asString<>'' then
      begin
        rs := TZQuery.Create(nil);
@@ -344,6 +377,8 @@ begin
          rs.Free;
        end;
      end;
+
+}     
 end;
 
 function TStockOrder.CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true): boolean;

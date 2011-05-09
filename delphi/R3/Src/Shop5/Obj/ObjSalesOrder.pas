@@ -8,6 +8,7 @@ type
     lock:boolean;
   public
     procedure DoUpgrade(AGlobal:IdbHelp);
+    procedure DoEnd(AGlobal:IdbHelp);
     function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -129,7 +130,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,2),3);
+             roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,-2),3);
 //  if not lock then
 //     WriteLogInfo(AGlobal,Parant.FieldbyName('CREA_USER').AsString,2,'500026','删除【单号'+Parant.FieldbyName('GLIDE_NO').asString+'】的“'+FieldbyName('GODS_NAME').asOldString+'”',EncodeLogInfo(self,'SAL_SALESDATA',usDeleted));
   Result := True;
@@ -247,20 +248,12 @@ begin
          rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
          AGlobal.Open(rs);
          if rs.Fields[0].AsInteger =0 then
-            AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self)
+            begin
+              AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
+              DoEnd(AGlobal);
+            end
          else
             AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
-         if FieldbyName('FROM_ID').AsString<>FieldbyName('FROM_ID').AsOldString then
-            begin
-              rs.Close;
-              rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-              rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsOldString;
-              AGlobal.Open(rs);
-              if rs.Fields[0].AsInteger =0 then
-                 AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self)
-              else
-                 AGlobal.ExecSQL('update SAL_INDENTORDER set SALBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self);
-            end;
        finally
          rs.Free;
        end;
@@ -277,7 +270,7 @@ begin
         '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = SAL_INDENTDATA.TENANT_ID AND a.FROM_ID = SAL_INDENTDATA.INDE_ID '+
         '      AND b.GODS_ID = SAL_INDENTDATA.GODS_ID AND b.PROPERTY_01 = SAL_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = SAL_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = SAL_INDENTDATA.IS_PRESENT  '+
         '  ) '+
-        'WHERE (INDE_ID = :FROM_ID or INDE_ID = :OLD_FROM_ID) AND TENANT_ID = :TENANT_ID';
+        'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
        AGlobal.ExecSQL(SQL,self);
 
      end;
@@ -335,6 +328,31 @@ begin
 end;
 
 function TSalesOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function GetAdvaMny:currency;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    result := rs.Fields[0].AsFloat;
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and SALES_ID<>:SALES_ID ';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
+    AGlobal.Open(rs);
+    result := result - rs.Fields[0].AsFloat;
+    if result >= FieldbyName('PAY_D').AsFloat then
+       result := FieldbyName('PAY_D').AsFloat;
+  finally
+    rs.Free;
+  end;
+end;
 var
   rs:TZQuery;
   r:integer;
@@ -345,8 +363,8 @@ begin
         FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_1_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      if (FieldbyName('PAY_D').AsFloat <> 0) then
      begin
-       if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
-       if roundto(FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat,3)<>0 then
+       FieldbyName('ADVA_MNY').AsFloat := GetAdvaMny;
+//       if roundto(FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
        begin
        rs := TZQuery.Create(nil);
        try
@@ -356,7 +374,7 @@ begin
          CopyToParams(rs.Params);
          rs.ParambyName('ABLE_ID').AsString := newid(FieldbyName('SHOP_ID').asString);
          rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
-         AGlobal.ExecQuery(rs);                               
+         AGlobal.ExecQuery(rs);
        finally
          rs.Free;
        end;
@@ -493,6 +511,35 @@ begin
   end;
 end;
 
+procedure TSalesOrder.DoEnd(AGlobal: IdbHelp);
+var
+  rs:TZQuery;
+  r:Currency;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := rs.Fields[0].AsFloat;
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := r - rs.Fields[0].AsFloat;
+    if r > 0 then // 如果结案后，如果有多余时要生成退款
+       begin
+         AGlobal.ExecSQL('update SAL_SALESORDER set ADVA_MNY=ADVA_MNY+ '+formatFloat('#0.00',r)+' where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',self);
+         AGlobal.ExecSQL('update ACC_RECVABLE_INFO set REVE_MNY=REVE_MNY + '+formatFloat('#0.00',r)+',RECK_MNY=RECK_MNY - '+formatFloat('#0.00',r)+' where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',self);
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+
 procedure TSalesOrder.DoUpgrade(AGlobal: IdbHelp);
 begin
 //  case AGlobal.iDbType of
@@ -612,7 +659,17 @@ function TSalesOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select count(*) from SAL_LOCUS_FORSALE where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
+  finally
+    rs.Free;
+  end;
    try
     Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);

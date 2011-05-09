@@ -8,6 +8,7 @@ type
     lock:boolean;
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
+    procedure DoEnd(AGlobal:IdbHelp);
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
@@ -241,20 +242,12 @@ begin
          rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
          AGlobal.Open(rs);
          if rs.Fields[0].AsInteger =0 then
-            AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self)
+            begin
+              AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
+              DoEnd(AGlobal);
+            end
          else
             AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID',self);
-         if FieldbyName('FROM_ID').AsString<>FieldbyName('FROM_ID').AsOldString then
-            begin
-              rs.Close;
-              rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-              rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsOldString;
-              AGlobal.Open(rs);
-              if rs.Fields[0].AsInteger =0 then
-                 AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self)
-              else
-                 AGlobal.ExecSQL('update STK_INDENTORDER set STKBILL_STATUS=1,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID=:TENANT_ID and INDE_ID=:OLD_FROM_ID',self);
-            end;
        finally
          rs.Free;
        end;
@@ -272,7 +265,7 @@ begin
       '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
       '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
       '  ) '+
-      'WHERE (INDE_ID = :FROM_ID or INDE_ID = :OLD_FROM_ID) AND TENANT_ID = :TENANT_ID';
+      'WHERE INDE_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
        AGlobal.ExecSQL(SQL,self);
        
      end;
@@ -302,6 +295,31 @@ begin
 end;
 
 function TStockOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function GetAdvaMny:currency;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    result := rs.Fields[0].AsFloat;
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and STOCK_ID<>:STOCK_ID ';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsString;
+    AGlobal.Open(rs);
+    result := result - rs.Fields[0].AsFloat;
+    if result >= FieldbyName('STOCK_MNY').AsFloat then
+       result := FieldbyName('STOCK_MNY').AsFloat;
+  finally
+    rs.Free;
+  end;
+end;
 var rs:TZQuery;
 begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
@@ -310,10 +328,10 @@ begin
      FieldbyName('GLIDE_NO').asString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_2_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      if (FieldbyName('STOCK_MNY').AsFloat <> 0) then
      begin
-       if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
+       FieldbyName('ADVA_MNY').AsFloat := GetAdvaMny;
        rs := TZQuery.Create(nil);
        try
-         if roundto(FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat,3)<>0 then
+//         if roundto(FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
          begin
            rs.SQL.Text :=
              'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
@@ -391,6 +409,35 @@ begin
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
     if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TStockOrder.DoEnd(AGlobal: IdbHelp);
+var
+  rs:TZQuery;
+  r:Currency;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := rs.Fields[0].AsFloat;
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := r - rs.Fields[0].AsFloat;
+    if r > 0 then // 如果结案后，如果有多余时要生成退款
+       begin
+         AGlobal.ExecSQL('update STK_STOCKORDER set ADVA_MNY=ADVA_MNY+ '+formatFloat('#0.00',r)+' where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',self);
+         AGlobal.ExecSQL('update ACC_PAYABLE_INFO set REVE_MNY=REVE_MNY + '+formatFloat('#0.00',r)+',RECK_MNY=RECK_MNY - '+formatFloat('#0.00',r)+' where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',self);
+       end;
   finally
     rs.Free;
   end;

@@ -63,6 +63,7 @@ end;
 procedure TfrmDbOkDialog.btnOkClick(Sender: TObject);
 begin
   inherited;
+  if edtSTOCK_USER.asString='' then Raise Exception.Create('请选择收货人...');
   ModalResult := MROK;
 end;
 

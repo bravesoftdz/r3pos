@@ -883,9 +883,11 @@ function TSyncStockOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('STOCK_MNY').AsFloat <> 0) and (FieldbyName('STOCK_TYPE').asInteger in [1,3]) then
+   if (FieldbyName('STOCK_MNY').AsFloat <> 0) and (FieldbyName('STOCK_TYPE').asInteger in [1,3]) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
+//     if roundto(FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
+     begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
@@ -909,14 +911,17 @@ begin
      finally
        rs.Free;
      end;
+     end;
    end;
 end;
 procedure UpdateAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('STOCK_TYPE').asInteger in [1,3]) then
+   if (FieldbyName('STOCK_TYPE').asInteger in [1,3]) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
+//     if roundto(FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
+     begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
@@ -927,6 +932,7 @@ begin
        AGlobal.ExecQuery(rs);
      finally
        rs.Free;
+     end;
      end;
    end;
 end;
@@ -1073,9 +1079,11 @@ function TSyncSalesOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then
+   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
+//     if roundto(FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
+     begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
@@ -1097,6 +1105,7 @@ begin
        AGlobal.ExecQuery(rs);
      finally
        rs.Free;
+     end;
      end;
    end;
 end;
@@ -1129,19 +1138,22 @@ end;
 procedure UpdateAbleInfo;
 var rs:TZQuery;
 begin
-   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) then
+   if (FieldbyName('PAY_D').AsFloat <> 0) and (FieldbyName('SALES_TYPE').AsInteger in [1,3,4]) and (FieldbyName('ABLE_ID').asString<>'') then
    begin
      if FieldbyName('ADVA_MNY').AsString = '' then FieldbyName('ADVA_MNY').AsFloat := 0;
-     rs := TZQuery.Create(nil);
-     try
-       rs.SQL.Text :=
-         'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-       + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
-       CopyToParams(rs.Params);
-       rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
-       AGlobal.ExecQuery(rs);
-     finally
-       rs.Free;
+//     if roundto(FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat,-3)<>0 then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text :=
+           'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+         + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
+         CopyToParams(rs.Params);
+         rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
+         AGlobal.ExecQuery(rs);
+       finally
+         rs.Free;
+       end;
      end;
    end;
 end;
@@ -1401,7 +1413,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1)
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
   else
   DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
              FieldbyName('GODS_ID').asString,
@@ -1409,7 +1421,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1);
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
 end;
 begin
   if not Init then
@@ -1452,7 +1464,7 @@ begin
                    rs.FieldbyName('PROPERTY_02').asString,
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
-                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,2),3)
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3)
         else
         IncStorage(AGlobal,rs.FieldbyName('TENANT_ID').asString,rs.FieldbyName('SHOP_ID').asString,
                    rs.FieldbyName('GODS_ID').asString,
@@ -1460,7 +1472,7 @@ begin
                    rs.FieldbyName('PROPERTY_02').asString,
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
-                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,2),3);
+                   roundto(rs.FieldbyName('CALC_AMOUNT').asFloat*rs.FieldbyName('COST_PRICE').asFloat,-2),3);
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from STO_CHANGEDATA where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);

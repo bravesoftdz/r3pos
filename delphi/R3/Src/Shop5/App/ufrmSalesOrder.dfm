@@ -1,6 +1,6 @@
 inherited frmSalesOrder: TfrmSalesOrder
-  Left = 172
-  Top = 174
+  Left = 173
+  Top = 11
   Width = 796
   Height = 552
   Caption = #38144#21806#21333

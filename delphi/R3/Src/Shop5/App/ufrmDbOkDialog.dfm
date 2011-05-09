@@ -1,10 +1,11 @@
 inherited frmDbOkDialog: TfrmDbOkDialog
-  Left = 362
-  Top = 292
+  Left = 363
+  Top = 293
   BorderStyle = bsDialog
   Caption = #21040#36135#30830#35748
   ClientHeight = 229
   ClientWidth = 363
+  OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
   object Label1: TLabel [0]
@@ -34,13 +35,14 @@ inherited frmDbOkDialog: TfrmDbOkDialog
     Width = 36
     Height = 12
     Alignment = taRightJustify
-    Caption = #39564#36135#21592
+    Caption = #25910#36135#20154
   end
   object edtPLAN_DATE: TcxDateEdit [3]
     Left = 194
     Top = 66
     Width = 121
     Height = 20
+    ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     TabOrder = 0
   end
   object edtSTOCK_USER: TzrComboBoxList [4]

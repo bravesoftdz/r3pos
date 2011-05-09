@@ -413,7 +413,17 @@ function TStkRetuOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select count(*) from STK_LOCUS_FORSTCK where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
+  finally
+    rs.Free;
+  end;
    try
     Str := 'update STK_STOCKORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);

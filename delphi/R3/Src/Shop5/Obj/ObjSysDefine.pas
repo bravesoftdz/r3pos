@@ -13,7 +13,10 @@ type
     function BeforeModifyRecord(AGlobal: IdbHelp): Boolean; override;
   public
   end;
-
+  TSysFastFile = class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
 implementation
 
 { TSysDefine }
@@ -82,9 +85,26 @@ begin
   DeleteSQL.Text := Str;
 end;
 
+{ TSysFastFile }
+
+procedure TSysFastFile.InitClass;
+var
+  Str:string;
+begin
+  inherited;
+  Str := 'insert into SYS_FASTFILE(TENANT_ID,frfFileName,frfFileTitle,frfBlob,frfDefault,COMM,TIME_STAMP) '+
+  'values(:TENANT_ID,:frfFileName,:frfFileTitle,:frfBlob,:frfDefault,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := Str;
+  Str := 'update SYS_FASTFILE set TENANT_ID=:TENANT_ID,frfFileName=:frfFileName,frfFileTitle=:frfFileTitle,frfBlob=:frfBlob,frfDefault=:frfDefault,'+
+  'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and frfFileName=:OLD_frfFileName';
+  UpdateSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSysDefine);
+  RegisterClass(TSysFastFile);
 finalization
   UnRegisterClass(TSysDefine);
+  UnRegisterClass(TSysFastFile);
 end.
 

@@ -127,7 +127,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,2),3)
+             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,-2),3)
   else
   IncStorage(AGlobal,FieldbyName('TENANT_ID').asOldString,FieldbyName('SHOP_ID').asOldString,
              FieldbyName('GODS_ID').asOldString,
@@ -135,7 +135,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,2),3);
+             roundto(FieldbyName('CALC_AMOUNT').asOldFloat*FieldbyName('COST_PRICE').asOldFloat,-2),3);
 //  if not lock then
 //  begin
 //  if Parant.FieldbyName('CHANGE_CODE').AsString='1' then
@@ -166,7 +166,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1)
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1)
   else
   DecStorage(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,
              FieldbyName('GODS_ID').asString,
@@ -174,7 +174,7 @@ begin
              FieldbyName('PROPERTY_02').asString,
              FieldbyName('BATCH_NO').asString,
              FieldbyName('CALC_AMOUNT').asFloat,
-             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,2),1);
+             roundto(FieldbyName('CALC_AMOUNT').asFloat*FieldbyName('COST_PRICE').AsFloat,-2),1);
   Result := True;
   except
     on E:Exception do
@@ -417,7 +417,17 @@ function TChangeOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select count(*) from STO_LOCUS_FORCHAG where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
+  finally
+    rs.Free;
+  end;
    try
     Str := 'update STO_CHANGEORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);

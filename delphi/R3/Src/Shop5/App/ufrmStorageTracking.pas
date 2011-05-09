@@ -227,7 +227,7 @@ begin
     begin
       if edtSHOP_VALUE.asString <> '' then
          begin
-           if FnString.TrimRight(edtSHOP_VALUE.asString,2)='00' then
+           if FnString.TrimRight(edtSHOP_VALUE.asString,2)<>'00' then
               StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
            else
               StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');

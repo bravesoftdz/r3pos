@@ -1460,6 +1460,10 @@ begin
         AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
         edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
         edtSALES_DATE.Date := Global.SysDate;
+        //if h.FieldByName('SALBILL_STATUS').AsInteger=0 then
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
+        //else
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := 0;
         ReadFrom(d);
       except
         Factor.CancelBatch;

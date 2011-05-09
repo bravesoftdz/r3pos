@@ -1,6 +1,6 @@
 inherited frmStockOrder: TfrmStockOrder
-  Left = 206
-  Top = 148
+  Left = 207
+  Top = 49
   Width = 786
   Height = 523
   Caption = #36827#36135#21333

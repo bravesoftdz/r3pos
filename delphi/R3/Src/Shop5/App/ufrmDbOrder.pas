@@ -301,12 +301,6 @@ var
 begin
   inherited;
   if dbState = dsBrowse then Exit;
-//  if ShopGlobal.GetParameter('GUIDE_USER')='0' then
-//  begin
-//     if edtGUIDE_USER.AsString='' then
-//        Raise Exception.Create('请输入业务员再保存！');
-//  end;
-
   Saved := false;
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('调拨日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('调入门店不能为空');
@@ -317,6 +311,10 @@ begin
       if (edtSHOP_ID.AsString <> Global.SHOP_ID) and (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
          Raise Exception.Create('只能操作本门店的调拨单...'); 
     end;
+  if edtPLAN_DATE.EditValue <> null then
+     begin
+       if edtSTOCK_USER.AsString = '' then Raise Exception.Create('请选择收货人'); 
+     end;
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
@@ -705,6 +703,8 @@ begin
       if (edtCLIENT_ID.AsString <> Global.SHOP_ID) then
          Raise Exception.Create('只能操作调入至本门店的调拨单...');
     end;
+  OkDate := Date();
+  OkUser := Global.UserId;
   if TfrmDbOkDialog.DBOkDialog(self,OkDate,OkUser) then
      begin
        edtPLAN_DATE.Date := OkDate;

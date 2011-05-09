@@ -1,6 +1,6 @@
 inherited frmDbOrder: TfrmDbOrder
-  Left = 198
-  Top = 173
+  Left = 100
+  Top = 11
   Width = 885
   Height = 552
   Caption = #35843#25320#21333
@@ -66,7 +66,7 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #39564#36135#21592
+        Caption = #25910#36135#20154
       end
       inherited RzPanel4: TRzPanel
         Height = 83

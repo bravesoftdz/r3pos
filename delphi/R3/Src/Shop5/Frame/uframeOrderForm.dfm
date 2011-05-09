@@ -1,5 +1,5 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 351
+  Left = 352
   Top = 124
   Width = 647
   Height = 467

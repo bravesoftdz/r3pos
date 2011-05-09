@@ -137,7 +137,7 @@ begin
              FieldbyName('PROPERTY_02').asOldString,
              FieldbyName('BATCH_NO').asOldString,
              FieldbyName('CALC_AMOUNT').asOldFloat,
-             roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,2),3);
+             roundto(FieldbyName('COST_PRICE').asOldFloat*FieldbyName('CALC_AMOUNT').asOldFloat,-2),3);
   if FieldbyName('PLAN_DATE').AsOldString <> '' then
      begin
        Str := 'delete from STK_STOCKDATA where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO';
@@ -292,7 +292,7 @@ var
   Str:string;
 begin
   if not Lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) from STK_STOCKORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and FROM_ID='''+FieldbyName('SALES_ID').AsOldString+''' and STOCK_TYPE=2';
     AGlobal.Open(rs);
@@ -300,6 +300,7 @@ begin
   finally
     rs.Free;
   end;
+}  
   if FieldbyName('PLAN_DATE').AsOldString <> '' then
   begin
     Str := 'delete from STK_STOCKORDER where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID and STOCK_TYPE=2';
@@ -464,14 +465,14 @@ var Str:string;
 begin
   AGlobal.BeginTrans;
   try
-    rs := TZQuery.Create(nil);
-    try
-      rs.SQL.Text := 'select PLAN_DATE from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and SALES_TYPE=2';
-      AGlobal.Open(rs);
-      if rs.Fields[0].AsString = '' then Raise Exception.Create('没有到货确认不能审核');  
-    finally
-      rs.Free;
-    end;
+//    rs := TZQuery.Create(nil);
+//    try
+//      rs.SQL.Text := 'select PLAN_DATE from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and SALES_TYPE=2';
+//      AGlobal.Open(rs);
+//      if rs.Fields[0].AsString = '' then Raise Exception.Create('没有到货确认不能审核');
+//    finally
+//      rs.Free;
+//    end;
     Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
@@ -500,7 +501,17 @@ function TDbOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select count(*) from SAL_LOCUS_FORSALE where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
+  finally
+    rs.Free;
+  end;
    AGlobal.BeginTrans; 
    try
     Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';

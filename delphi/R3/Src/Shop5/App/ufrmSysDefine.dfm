@@ -290,7 +290,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #21040#36135#21457#36135#25552#37266
+        Properties.Caption = #35746#21333#29366#24577#25552#37266
         TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end

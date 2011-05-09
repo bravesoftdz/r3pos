@@ -1,9 +1,9 @@
 inherited frmSelectFormer: TfrmSelectFormer
-  Left = 389
-  Top = 349
+  Left = 460
+  Top = 131
   BorderStyle = bsDialog
   Caption = #25253#34920#27169#29256
-  ClientHeight = 242
+  ClientHeight = 291
   ClientWidth = 304
   OldCreateOrder = True
   PixelsPerInch = 96
@@ -12,7 +12,7 @@ inherited frmSelectFormer: TfrmSelectFormer
     Left = 0
     Top = 0
     Width = 304
-    Height = 200
+    Height = 249
     ActivePage = TabSheet1
     Align = alClient
     TabHeight = 20
@@ -26,7 +26,7 @@ inherited frmSelectFormer: TfrmSelectFormer
         Left = 0
         Top = 0
         Width = 300
-        Height = 173
+        Height = 222
         Align = alClient
         BorderOuter = fsNone
         BorderWidth = 5
@@ -35,7 +35,7 @@ inherited frmSelectFormer: TfrmSelectFormer
           Left = 5
           Top = 5
           Width = 290
-          Height = 163
+          Height = 212
           Align = alClient
           BorderInner = fsFlatBold
           BorderOuter = fsFlatRounded
@@ -44,7 +44,7 @@ inherited frmSelectFormer: TfrmSelectFormer
             Left = 4
             Top = 4
             Width = 282
-            Height = 155
+            Height = 204
             Align = alClient
             ColCount = 1
             DefaultColWidth = 250
@@ -60,15 +60,16 @@ inherited frmSelectFormer: TfrmSelectFormer
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 200
+    Top = 249
     Width = 304
     Height = 42
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object btnOK: TRzBitBtn
-      Left = 113
+      Left = 129
       Top = 7
+      Width = 71
       Caption = #30830#23450'(&O)'
       Color = 15791348
       HighlightColor = 16026986
@@ -80,6 +81,7 @@ inherited frmSelectFormer: TfrmSelectFormer
     object btnCancel: TRzBitBtn
       Left = 207
       Top = 7
+      Width = 71
       Cancel = True
       ModalResult = 2
       Caption = #21462#28040'(&C)'

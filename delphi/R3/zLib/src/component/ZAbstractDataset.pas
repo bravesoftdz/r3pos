@@ -1006,6 +1006,10 @@ begin
        Stream.Write(vType,SizeOf(vType));
   //Ð´×Ö¶Î³¤¶È
        w := RowAccessor.ColumnLengths[i];
+       case vType of
+       stString:w := w - 1;
+       stUnicodeString: w := (w-2) div 2;
+       end;
        Stream.Write(w,SizeOf(w));
      end;
 end;

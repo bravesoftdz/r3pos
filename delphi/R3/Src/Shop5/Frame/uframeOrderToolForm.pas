@@ -88,7 +88,7 @@ type
   end;
 
 implementation
-uses uCtrlUtil,ufrmFastReport, uShopUtil, uGlobal, uXDictFactory, uShopGlobal;
+uses uCtrlUtil,IniFiles,ufrmFastReport, uShopUtil, uGlobal, uXDictFactory, uShopGlobal;
 {$R *.dfm}
 
 { TframeOrderToolForm }
@@ -568,9 +568,10 @@ begin
 end;
 
 procedure TframeOrderToolForm.ppmReportPopup(Sender: TObject);
-var rs:TZQuery;
+var
   frReport1:TfrReport;
   i:integer;
+  F:TIniFile;
 begin
   frReport1 := nil;
   for i:=0 to ComponentCount -1 do
@@ -581,37 +582,31 @@ begin
          end;
     end;
   if frReport1=nil then Exit;
-  rs := TZQuery.Create(nil);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frf\frfFile.cfg');
   try
-  rs.Close;
-  rs.SQL.Text := 'select * from SYS_FASTFILE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and frfFileName='''+frReport1.Name +'''';
-  Factor.Open(rs);
-  if rs.FieldByName('frfBlob').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'.frf') then
-     mnmFormer0.Caption := '默认表样(空置)'
-  else
-     mnmFormer0.Caption := '默认表样';
-  if rs.FieldByName('frfBlob1').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'1.frf') then
+  mnmFormer0.Caption := '默认表样';
+  if not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'1.frf') then
      mnmFormer1.Caption := '自定义一(空置)'
   else
-     mnmFormer1.Caption := '自定义一';
-  if rs.FieldByName('frfBlob2').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'2.frf') then
+     mnmFormer1.Caption := F.ReadString('s1','name','自定义一');
+  if not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'2.frf') then
      mnmFormer2.Caption := '自定义二(空置)'
   else
-     mnmFormer2.Caption := '自定义二';
-  if rs.FieldByName('frfBlob3').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'3.frf') then
+     mnmFormer2.Caption := F.ReadString('s2','name','自定义二');
+  if not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'3.frf') then
      mnmFormer3.Caption := '自定义三(空置)'
   else
-     mnmFormer3.Caption := '自定义三';
-  if rs.FieldByName('frfBlob4').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'4.frf') then
+     mnmFormer3.Caption := F.ReadString('s3','name','自定义三');
+  if not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'4.frf') then
      mnmFormer4.Caption := '自定义四(空置)'
   else
-     mnmFormer4.Caption := '自定义四';
-  if rs.FieldByName('frfBlob5').IsNull and not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'5.frf') then
+     mnmFormer4.Caption := F.ReadString('s4','name','自定义四');
+  if not FileExists(ExtractFilePath(ParamStr(0))+frReport1.Name+'5.frf') then
      mnmFormer5.Caption := '自定义五(空置)'
   else
-     mnmFormer5.Caption := '自定义五';
+     mnmFormer5.Caption := F.ReadString('s5','name','自定义五');
   finally
-    rs.Free;
+    F.Free;
   end;
 end;
 

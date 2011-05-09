@@ -1,6 +1,6 @@
 inherited frmFastReport: TfrmFastReport
-  Left = 1
-  Top = 1
+  Left = 154
+  Top = 151
   Width = 972
   Height = 612
   Caption = #25253#34920#25171#21360

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzPanel, RzTabs, RzButton,
-  Grids, RzGrids;
+  Grids, RzGrids,ZDataSet;
 
 type
   TfrmSelectFormer = class(TfrmBasic)
@@ -28,6 +28,8 @@ type
 
 implementation
 
+uses uGlobal;
+
 {$R *.dfm}
 
 { TfrmSelectFormer }
@@ -38,6 +40,7 @@ var
   FileAttrs: Integer;
   w:integer;
   s:string;
+  rs:TZQuery;
 begin
   FileAttrs := 0;
   FileAttrs := FileAttrs + faAnyFile;
@@ -52,12 +55,28 @@ begin
           begin
             if w >= frfGrid.RowCount then frfGrid.RowCount := frfGrid.RowCount + 1;
             frfGrid.Cells[0,w] := copy(s,length(filename)+2,255);
+            frfGrid.Cells[0,w] := copy(frfGrid.Cells[0,w],1,length(frfGrid.Cells[0,w])-4);
             w := w + 1;
           end;
         end;
       until FindNext(sr) <> 0;
       FindClose(sr);
     end;
+  if not Global.RemoteFactory.Connected then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select frfFileTitle from SYS_FASTFILE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and frfFileName like '''+filename+'%''';
+    Global.RemoteFactory.Open(rs);
+    rs.first;
+    while not rs.eof do
+      begin
+        if w >= frfGrid.RowCount then frfGrid.RowCount := frfGrid.RowCount + 1;
+        frfGrid.Cells[0,w] := rs.Fields[0].AsString+'(×Ô¶¨Òå)';
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
 end;
 
 class function TfrmSelectFormer.SelectFormer(Owner: TForm;

@@ -115,7 +115,7 @@ type
     property SelectSQL:string read FSelectSQL write SetSelectSQL;
     //设置Child方式显示时的窗体类型
     procedure SetChildDisplay(MainForm:TForm);
-    procedure OpenFile(frReport:TfrReport;Index:Integer=-1);
+    procedure OpenFile(frReport:TfrReport;Index:integer=-1);
 
   public
     { Public declarations }
@@ -576,17 +576,17 @@ begin
 
 end;
 
-procedure TfrmFastReport.OpenFile(frReport: TfrReport;Index:Integer=-1);
+procedure TfrmFastReport.OpenFile(frReport: TfrReport;Index:integer=-1);
 var
-  Temp :TZQuery;
-  sm:TMemoryStream;
+//  Temp :TZQuery;
+//  sm:TMemoryStream;
   s:string;
 begin
   if Index<=0 then s := '' else s:=Inttostr(Index);
   if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') then
   begin
      frReport.LoadFromFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') ;
-  end
+{  end
   else
   begin
     temp := TZQuery.Create(nil);
@@ -609,7 +609,7 @@ begin
     finally
        Temp.Free;
        sm.Free;
-    end;
+    end; }
   end;
 end;
 

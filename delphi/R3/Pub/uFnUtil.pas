@@ -827,7 +827,7 @@ end;
 class function FnString.TrimRight(s: string; len: integer): string;
 begin
   result := trim(s);
-  result := copy(s,length(s)-len+1,len);
+  result := copy(result,length(result)-len+1,len);
 end;
 
 end.

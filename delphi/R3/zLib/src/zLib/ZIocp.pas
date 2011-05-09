@@ -661,7 +661,7 @@ begin
     end;
     ThreadCacheSize := F.ReadInteger(Section, 'ckThreadCacheSize', 10);
     FTimeout := F.ReadInteger(Section, 'ckTimeout', 0);
-    FKeepAlive := F.ReadBool(Section, 'ckKeepAlive', false);
+    FKeepAlive := F.ReadBool(Section, 'ckKeepAlive', true);
   finally
     F.Free;
   end;

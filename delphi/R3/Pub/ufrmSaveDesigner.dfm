@@ -4,7 +4,7 @@ object frmSaveDesigner: TfrmSaveDesigner
   BorderStyle = bsDialog
   Caption = #20445#23384#34920#26679#33267'...'
   ClientHeight = 179
-  ClientWidth = 303
+  ClientWidth = 291
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
@@ -40,9 +40,9 @@ object frmSaveDesigner: TfrmSaveDesigner
     end
   end
   object btnPrint: TRzBitBtn
-    Left = 211
-    Top = 19
-    Caption = #20445#23384
+    Left = 203
+    Top = 51
+    Caption = #30830#35748'(&O)'
     Color = 15791348
     HighlightColor = 16026986
     HotTrack = True
@@ -52,15 +52,27 @@ object frmSaveDesigner: TfrmSaveDesigner
     NumGlyphs = 2
   end
   object btnPriview: TRzBitBtn
-    Left = 211
-    Top = 59
-    Caption = #21462#28040
+    Left = 203
+    Top = 83
+    Caption = #21462#28040'(&C)'
     Color = 15791348
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
     TabOrder = 2
     OnClick = btnPriviewClick
+    NumGlyphs = 2
+  end
+  object RzBitBtn1: TRzBitBtn
+    Left = 203
+    Top = 11
+    Caption = #23384#20026#27169#29256
+    Color = 15791348
+    HighlightColor = 16026986
+    HotTrack = True
+    HotTrackColor = 3983359
+    TabOrder = 3
+    OnClick = RzBitBtn1Click
     NumGlyphs = 2
   end
 end

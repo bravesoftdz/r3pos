@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 287
-  Top = 152
+  Left = 358
+  Top = 109
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -599,7 +599,7 @@ inherited frmPosMain: TfrmPosMain
         object lblDIBS: TLabel
           Left = 198
           Top = 108
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #25214#38646#65306
           Font.Charset = GB2312_CHARSET
@@ -612,7 +612,7 @@ inherited frmPosMain: TfrmPosMain
         object lblCASH: TLabel
           Left = 198
           Top = 68
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #29616#37329#65306
           Font.Charset = GB2312_CHARSET
@@ -670,7 +670,7 @@ inherited frmPosMain: TfrmPosMain
         object lblACCT_MNY: TLabel
           Left = 198
           Top = 18
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #32467#31639#65306
           Font.Charset = GB2312_CHARSET
@@ -1183,6 +1183,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h2Click
     end
     object h6: TLabel
       Left = 21
@@ -1197,6 +1198,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h6Click
     end
     object h5: TLabel
       Left = 364
@@ -1211,6 +1213,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h5Click
     end
     object h11: TLabel
       Left = 700
@@ -1225,6 +1228,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h11Click
     end
     object h12: TLabel
       Left = 700
@@ -1239,6 +1243,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h12Click
     end
     object h9: TLabel
       Left = 137
@@ -1253,6 +1258,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h9Click
     end
     object h10: TLabel
       Left = 137
@@ -1267,6 +1273,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = h10Click
     end
     object Label9: TLabel
       Left = 580
@@ -1281,6 +1288,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label9Click
     end
     object Label10: TLabel
       Left = 580
@@ -1295,6 +1303,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label10Click
     end
     object Label8: TLabel
       Left = 247
@@ -1309,6 +1318,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label8Click
     end
     object Label20: TLabel
       Left = 364
@@ -1323,12 +1333,13 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label20Click
     end
     object Label21: TLabel
       Left = 21
-      Top = 47
+      Top = 48
       Width = 84
-      Height = 12
+      Height = 11
       Cursor = crHandPoint
       Caption = #23548' '#36141' '#21592'  [F9]'
       Font.Charset = GB2312_CHARSET
@@ -1337,6 +1348,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label21Click
     end
     object Label22: TLabel
       Left = 247
@@ -1351,6 +1363,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label22Click
     end
     object Label23: TLabel
       Left = 451
@@ -1365,6 +1378,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label23Click
     end
     object Label24: TLabel
       Left = 451
@@ -1379,6 +1393,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label24Click
     end
     object Label25: TLabel
       Left = 579
@@ -1393,6 +1408,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label25Click
     end
     object Label26: TLabel
       Left = 364
@@ -1407,6 +1423,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label26Click
     end
     object Label27: TLabel
       Left = 21
@@ -1421,6 +1438,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label27Click
     end
     object Label28: TLabel
       Left = 453
@@ -1435,6 +1453,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label28Click
     end
     object Label11: TLabel
       Left = 247
@@ -1449,6 +1468,7 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      OnClick = Label11Click
     end
   end
   inherited actList: TActionList

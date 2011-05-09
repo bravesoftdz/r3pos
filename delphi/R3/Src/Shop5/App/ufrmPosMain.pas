@@ -167,6 +167,26 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure Label27Click(Sender: TObject);
+    procedure h6Click(Sender: TObject);
+    procedure Label21Click(Sender: TObject);
+    procedure h9Click(Sender: TObject);
+    procedure h10Click(Sender: TObject);
+    procedure Label22Click(Sender: TObject);
+    procedure h2Click(Sender: TObject);
+    procedure Label20Click(Sender: TObject);
+    procedure Label26Click(Sender: TObject);
+    procedure Label8Click(Sender: TObject);
+    procedure Label28Click(Sender: TObject);
+    procedure Label11Click(Sender: TObject);
+    procedure h5Click(Sender: TObject);
+    procedure h12Click(Sender: TObject);
+    procedure Label25Click(Sender: TObject);
+    procedure Label10Click(Sender: TObject);
+    procedure h11Click(Sender: TObject);
+    procedure Label23Click(Sender: TObject);
+    procedure Label24Click(Sender: TObject);
+    procedure Label9Click(Sender: TObject);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -1324,7 +1344,7 @@ var
   IsNumber,IsFind,isAdd:Boolean;
   amt:Currency;
   AObj:TRecord_;
-begin
+begin                                                                            
   inherited;
   if Key=#13 then
     begin
@@ -3530,6 +3550,153 @@ begin
   end;
   DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+end;
+
+procedure TfrmPosMain.Label27Click(Sender: TObject);
+begin
+  inherited;
+  PopupMenu;
+  Exit;
+end;
+
+procedure TfrmPosMain.h6Click(Sender: TObject);
+begin
+  inherited;
+  InputFlag := 1;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmPosMain.Label21Click(Sender: TObject);
+begin
+  inherited;
+  if (dbState = dsBrowse) then Exit;
+  PostMessage(Handle,WM_DIALOG_PULL,FIND_GUIDE_DIALOG,1);
+end;
+
+procedure TfrmPosMain.h9Click(Sender: TObject);
+begin
+  inherited;
+  InputFlag := 10;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmPosMain.h10Click(Sender: TObject);
+begin
+  inherited;
+  InputFlag := 11;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmPosMain.Label22Click(Sender: TObject);
+begin
+  inherited;
+  if (dbState = dsBrowse) then Exit;
+  ConvertUnit;
+end;
+
+procedure TfrmPosMain.h2Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,WM_EXEC_ORDER,0,2);
+end;
+
+procedure TfrmPosMain.Label20Click(Sender: TObject);
+begin
+  inherited;
+  if (dbState = dsBrowse) then Exit;
+  OpenDialogPrice;
+end;
+
+procedure TfrmPosMain.Label26Click(Sender: TObject);
+begin
+  inherited;
+  if cdsTable.FieldbyName('GODS_ID').asString='' then Exit;
+  InputFlag := 9;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmPosMain.Label8Click(Sender: TObject);
+begin
+  inherited;
+  if MessageBox(Handle,'请确认是否删除当前选中的商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  AObj := TRecord_.Create;
+  try
+     AObj.ReadFromDataSet(cdsTable);
+     DelRecord(AObj);
+  finally
+     AObj.Free;
+  end;
+end;
+
+procedure TfrmPosMain.Label28Click(Sender: TObject);
+begin
+  inherited;
+  if (dbState = dsBrowse) then Exit;
+  ConvertPresent;
+end;
+
+procedure TfrmPosMain.Label11Click(Sender: TObject);
+begin
+  inherited;
+  InputFlag := 2;
+  if edtInput.CanFocus then edtInput.SetFocus;
+end;
+
+procedure TfrmPosMain.h5Click(Sender: TObject);
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if cdsTable.IsEmpty then Exit;
+  if cdsTable.FieldByName('GODS_ID').AsString = '' then Exit;
+  ReturnGods;
+end;
+
+procedure TfrmPosMain.h12Click(Sender: TObject);
+begin
+  inherited;
+  if InputFlag<>0 then
+    begin
+      edtInput.Text := '';
+      DBGridEh1.Col := 1;
+      InputFlag := 0;
+    end;
+end;
+
+procedure TfrmPosMain.Label25Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,WM_EXEC_ORDER,0,3);
+end;
+
+procedure TfrmPosMain.Label10Click(Sender: TObject);
+begin
+  inherited;
+  frmShopMain.actfrmLockScreen.OnExecute(nil);
+end;
+
+procedure TfrmPosMain.h11Click(Sender: TObject);
+begin
+  inherited;
+  if cdsTable.IsEmpty then exit;
+  PostMessage(Handle,WM_EXEC_ORDER,0,0);
+end;
+
+procedure TfrmPosMain.Label23Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,WM_EXEC_ORDER,0,5);
+end;
+
+procedure TfrmPosMain.Label24Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,WM_EXEC_ORDER,0,6);
+end;
+
+procedure TfrmPosMain.Label9Click(Sender: TObject);
+begin
+  inherited;
+  DevFactory.OpenCashBox;
 end;
 
 end.

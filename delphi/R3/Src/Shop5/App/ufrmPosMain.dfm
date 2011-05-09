@@ -457,18 +457,18 @@ inherited frmPosMain: TfrmPosMain
           Align = alClient
           AllowedOperations = []
           AutoFitColWidths = True
-          Color = clWhite
+          Color = clBlack
           Ctl3D = False
           DataSource = dsGodsInfo
           Enabled = False
           FixedColor = clWhite
           Flat = True
           Font.Charset = GB2312_CHARSET
-          Font.Color = clBlack
+          Font.Color = clWhite
           Font.Height = -12
           Font.Name = #23435#20307
           Font.Style = []
-          FooterColor = clWhite
+          FooterColor = clBlack
           FooterFont.Charset = GB2312_CHARSET
           FooterFont.Color = clWhite
           FooterFont.Height = -12
@@ -493,6 +493,7 @@ inherited frmPosMain: TfrmPosMain
           CurrencySymbol = #65509
           DecimalNumber = 2
           DigitalNumber = 12
+          OnDrawColumnCell = DBGridEh2DrawColumnCell
           Columns = <
             item
               EditButtons = <>
@@ -502,6 +503,7 @@ inherited frmPosMain: TfrmPosMain
               Footers = <>
               ReadOnly = True
               Title.Caption = #36135#21495
+              Title.Color = clBlack
               Width = 50
             end
             item
@@ -511,6 +513,7 @@ inherited frmPosMain: TfrmPosMain
               Footers = <>
               ReadOnly = True
               Title.Caption = #21830#21697#21517#31216
+              Title.Color = clBlack
               Width = 122
             end
             item
@@ -518,6 +521,7 @@ inherited frmPosMain: TfrmPosMain
               FieldName = 'BARCODE'
               Footers = <>
               Title.Caption = #26465#30721
+              Title.Color = clBlack
               Width = 83
             end
             item
@@ -525,6 +529,7 @@ inherited frmPosMain: TfrmPosMain
               FieldName = 'NEW_OUTPRICE'
               Footers = <>
               Title.Caption = #26631#20934#21806#20215
+              Title.Color = clBlack
               Width = 54
             end
             item
@@ -532,6 +537,7 @@ inherited frmPosMain: TfrmPosMain
               FieldName = 'NEW_LOWPRICE'
               Footers = <>
               Title.Caption = #26368#20302#21806#20215
+              Title.Color = clBlack
               Width = 52
             end>
         end

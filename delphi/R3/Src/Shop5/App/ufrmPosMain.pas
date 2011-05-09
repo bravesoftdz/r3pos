@@ -165,6 +165,8 @@ type
     procedure RzStatusPane7Click(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -3514,6 +3516,19 @@ begin
   inherited;
   if cdsTable.FieldbyName('IS_PRESENT').AsInteger<>0 then
      AFont.Color := clRed;
+
+end;
+
+procedure TfrmPosMain.DBGridEh2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh2.Focused) then
+  begin
+    DBGridEh2.Canvas.Brush.Color := clAqua;
+  end;
 
 end;
 

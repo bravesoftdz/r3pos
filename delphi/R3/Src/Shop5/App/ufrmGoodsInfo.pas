@@ -456,7 +456,7 @@ begin
         RowID:=ExtBarCode.RecordCount;
       end;
       //根据单位:数据集DataSet
-      if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+      if (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0') or (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='') then //自主经营
         UpdateUNITSData 
       else  //加盟供应链
         UpdateUNITSData(False);
@@ -2768,9 +2768,10 @@ begin
     begin
       for i:=DropUNITS_Ds.RecordCount downto 1 do
       begin
+        DropUNITS_Ds.RecNo:=i;
         if trim(DropUNITS_Ds.FieldByName('RELATION_FLAG').AsString)<>'2' then //判断到非自主创建的
         begin
-          DropUNITS_Ds.RecNo:=i;
+
           DropUNITS_Ds.Delete;
         end;
       end;

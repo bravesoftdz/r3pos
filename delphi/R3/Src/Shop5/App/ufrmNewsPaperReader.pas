@@ -545,7 +545,7 @@ begin
                  end;
              end;
              9:begin
-               rs.Close;
+               rs := TZQuery.Create(nil);
                rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''BIRTHDAY'' ';
                Factor.Open(rs);
                try
@@ -558,7 +558,7 @@ begin
                end;
              end;
              10:begin
-               rs.Close;
+               rs := TZQuery.Create(nil);
                rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''CUSTCONTINU'' ';
                Factor.Open(rs);
                try

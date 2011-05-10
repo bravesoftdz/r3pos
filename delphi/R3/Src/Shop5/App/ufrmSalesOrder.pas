@@ -252,6 +252,7 @@ begin
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '销售仓库';
+      Label6.Caption := '业务员';
     end;
 end;
 

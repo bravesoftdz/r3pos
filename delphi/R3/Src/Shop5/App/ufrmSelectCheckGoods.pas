@@ -219,8 +219,18 @@ begin
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then
        rs.Params.ParamByName('KEYVALUE').AsString := trim(edtSearch.Text);
-    if rs.Params.FindParam('SORT_ID')<>nil then
-       rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+
+    if TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger = 3 then
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('CLIENT_ID').AsString;
+      end
+    else
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+      end;
+
     if rs.Params.FindParam('LEVEL_ID')<>nil then
        rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
     if rs.Params.FindParam('RELATION_ID')<>nil then
@@ -431,7 +441,7 @@ begin
   N4.Enabled:=False;
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
-       DBGridEh1.Columns[7].Free;
+       DBGridEh1.Columns[6].Free;
      end;
 end;
 
@@ -535,24 +545,23 @@ var
 begin
   ClearTree(rzTree);
   case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-   2: rs := Global.GetZQueryFromName('PUB_CATE_INFO');
-   4: rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
-   5: rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
-   6: rs := Global.GetZQueryFromName('PUB_AREA_INFO');
-   7: rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-   8: rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  2:rs := Global.GetZQueryFromName('PUB_CATE_INFO');
+  4:rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
+  5:rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
+  6:rs := Global.GetZQueryFromName('PUB_AREA_INFO');
+  7:rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  8:rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
   end;
-
   if (rs<>nil) and (rs.Active) then
   begin
     rs.First;
     while not rs.Eof do
-    begin
-      AObj := TRecord_.Create(rs);
-      AObj.ReadFromDataSet(rs);
-      rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj);
-      rs.Next;
-    end;
+      begin
+        AObj := TRecord_.Create(rs);
+        AObj.ReadFromDataSet(rs);
+        rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj);
+        rs.Next;
+      end;
     AddRoot(rzTree,'全部商品');
     if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
   end;
@@ -563,13 +572,14 @@ var
   rs:TZQuery;
   AObj:TRecord_;
 begin
+  ClearTree(RzTree);
   rs := Global.GetZQueryFromName('PUB_CLIENTINFO'); 
   rs.First;
   while not rs.Eof do
     begin
       AObj := TRecord_.Create(rs);
       AObj.ReadFromDataSet(rs);
-      rzTree.Items.AddObject(nil,rs.FieldbyName('CODE_NAME').AsString,AObj); 
+      rzTree.Items.AddObject(nil,rs.FieldbyName('CLIENT_NAME').AsString,AObj); 
       rs.Next;
     end;
   AddRoot(rzTree,'全部商品');

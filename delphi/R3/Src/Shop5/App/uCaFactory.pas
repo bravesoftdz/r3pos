@@ -728,10 +728,18 @@ end;
 constructor TCaFactory.Create;
 var
   f:TIniFile;
+  s:string;
 begin
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    URL := f.ReadString('soft','rsp','http://10.10.11.249/services/');
+    s := f.ReadString('soft','rsp','http://rsp.xinshangmeng.com/services/');
+    if s[1]='#' then
+       begin
+         delete(s,1,1);
+         url := DecStr(s,ENC_KEY);
+       end
+    else
+       url := s;
     pubpwd := 'SaRi0+jf';
   finally
     f.Free;

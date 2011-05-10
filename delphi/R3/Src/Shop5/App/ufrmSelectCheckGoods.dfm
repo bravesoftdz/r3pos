@@ -168,15 +168,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Footers = <>
                   Title.Caption = #26465#30721
                   Title.Color = clWhite
-                  Width = 80
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'BATCH_NO'
-                  Footers = <>
-                  Title.Caption = #25209#21495
-                  Title.Color = clWhite
-                  Width = 86
+                  Width = 87
                 end
                 item
                   EditButtons = <>
@@ -211,6 +203,14 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Title.Caption = #26631#20934#21806#20215
                   Title.Color = clWhite
                   Width = 36
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'BATCH_NO'
+                  Footers = <>
+                  Title.Caption = #25209#21495
+                  Title.Color = clWhite
+                  Width = 86
                 end>
             end
             object fndPanel: TPanel

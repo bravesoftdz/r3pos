@@ -110,14 +110,14 @@ begin
   if cdsHeader.IsEmpty then Raise Exception.Create('不能删除空单据');
   if IsAudit then Raise Exception.Create('已经审核的单据不能删除');
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能删除');
-  if MessageBox(Handle,'是否真想删除当前单据?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,'数据删除后无法恢复，是否真想删除当前单据?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsHeader.Delete;
   cdsDetail.First;
   while not cdsDetail.Eof do cdsDetail.Delete;
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsHeader,'TPrintOrder',nil);
-    Factor.AddBatch(cdsDetail,'TPrintData',nil);
+//    Factor.AddBatch(cdsDetail,'TPrintData',nil);
     Factor.CommitBatch;
     Saved := true;
   except

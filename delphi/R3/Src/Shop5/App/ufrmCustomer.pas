@@ -8,7 +8,7 @@ uses
   RzTabs, ExtCtrls, RzPanel, RzButton, DB, Grids, uGlobal, DBGridEh, cxControls,
   cxContainer, cxEdit, cxTextEdit, zBase, cxMaskEdit, cxDropDownEdit, cxCalendar,
   cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh, jpeg, ZAbstractRODataset, 
-  ZAbstractDataset, ZDataset;
+  ZAbstractDataset, ZDataset, ObjCommon;
 
 type
   TfrmCustomer = class(TframeToolForm)
@@ -418,7 +418,8 @@ begin
 end;
 
 function TfrmCustomer.EncodeSQL(id: string;var Str1:string): string;
-var Str_Where,Str_Sql:string;
+var Str_Where,Str_Sql,Str_Join:string;
+    Date1,Date2:TDate;
 begin
   if Trim(edtKey.Text)<>'' then
      begin
@@ -429,21 +430,49 @@ begin
   if id<>'' then
     Str_Where := Str_Where + ' and CUST_ID>'''+id+'''';
 
+  case Factor.iDbType of
+   0,2,3: Str_Join:='+';
+   1,4,5: Str_Join:='||';
+   else Str_Join:='+';
+  end;
+  
   //  对会员生日日期进行条件查询
   if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and BIRTHDAY='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     Str_Where:=Str_Where+' and BIRTHDAY='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date));
+     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate1.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and BIRTHDAY>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))+' and BIRTHDAY<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date));
+    begin
+      Date1 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate1.Date));
+      Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
+      if Date1 < Date2 then
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date))
+      else if Date1 > Date2 then
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))
+      else
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
+    end;
 
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
-     Str_Where:=Str_Where+' and SND_DATE='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date));
+     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate3.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and SND_DATE>='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate3.Date))+' and SND_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate4.Date));
+    begin
+      Date1 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate3.Date));
+      Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
+      if Date1 < Date2 then
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date))
+      else if Date1 > Date2 then
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))
+      else
+        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
+    end;
 
   if cmbSHOP_ID.AsString<>'' then
      Str_Where:=Str_Where+' and SHOP_ID='+QuotedStr(cmbSHOP_ID.AsString);
@@ -457,10 +486,10 @@ begin
   Str_Sql :=
   'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from ('+
   'select 0 selflag,CUST_ID,TENANT_ID,SHOP_ID,CUST_CODE,CUST_NAME,SEX,MOVE_TELE,BIRTHDAY,FAMI_ADDR,'+
-  'SORT_ID,PRICE_ID,''#'' as UNION_ID from PUB_CUSTOMER where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Str_Where+') '+
+  'SORT_ID,PRICE_ID,''#'' as UNION_ID from PUB_CUSTOMER where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+ParseSQL(Factor.iDbType,Str_Where)+') '+
   'A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.UNION_ID=B.UNION_ID ';
 
-  Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Str_Where;
+  Str1 := 'select count(A.CUST_ID) from PUB_CUSTOMER A where A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+ParseSQL(Factor.iDbType,Str_Where);
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+Str_Sql+') jp order by CUST_ID';

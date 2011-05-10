@@ -208,7 +208,7 @@ begin
                flag := FLAG_TEXT
             else
                flag := Temp.FieldbyName('FLAG_TEXT').AsString;
-            if Factor.iDbType = 3 then
+            if (Factor.iDbType=3) or (Factor.iDbType=5) then
                begin
                  Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger);
                  Number := 0;
@@ -274,7 +274,7 @@ begin
             else
                flag := Temp.FieldbyName('FLAG_TEXT').AsString;
             n := 1;
-            if AFactor.iDbType = 3 then
+            if (AFactor.iDbType = 3) or (AFactor.iDbType = 5) then
                begin
                  Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger);
                  n := 0;

@@ -70,7 +70,7 @@ type
     procedure SetRecordNum;
   public
     { Public declarations }
-    function DoActionExecute(s:string):boolean;
+    function DoActionExecute(s:string; Flag:Integer):boolean;
     procedure Open;
     function EncodeSql:String;
     procedure GetInfomation(MSG_ID:String);
@@ -79,7 +79,9 @@ type
 
 
 implementation
-uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire;
+uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uFnUtil, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire,
+     ufrmStkIndentOrderList, ufrmStockOrderList, ufrmStkRetuOrderList, ufrmSalIndentOrderList, ufrmSalesOrderList,
+     ufrmSalRetuOrderList, ufrmDbOrderList, ufrmCustomer;
 {$R *.dfm}
 
 { TfrmNewPaperReader }
@@ -133,7 +135,7 @@ begin
     end
   else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7,9,10,11,12] then
     begin
-      if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString) then
+      if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString,CdsNewsPaper.FieldByName('sFlag').AsInteger) then
          Close;
     end
   else if CdsNewsPaper.FieldByName('sFlag').AsInteger = 8 then
@@ -465,17 +467,138 @@ begin
 
 end;
 
-function TfrmNewPaperReader.DoActionExecute(s: string): boolean;
+function TfrmNewPaperReader.DoActionExecute(s: string; Flag:Integer): boolean;
 var
   i:integer;
+  Form:TfrmBasic;
+  rs:TZQuery;
 begin
   result := false;
   for i:=0 to frmMain.actList.ActionCount-1 do
     begin
       if lowercase(frmMain.actList.Actions[i].Name) = lowercase(s) then
          begin
-           if not TAction(frmMain.actList.Actions[i]).Enabled then Raise Exception.Create('没有此单据!'); 
+           if not TAction(frmMain.actList.Actions[i]).Enabled then Raise Exception.Create('没有此单据!');
            TAction(frmMain.actList.Actions[i]).OnExecute(nil);
+           case Flag of
+             1:begin
+               if PrainpowerJudge.List.Locate('sFlag',1,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmStkIndentOrderList);
+                   TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmStkIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmStkIndentOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             2:begin
+               if PrainpowerJudge.List.Locate('sFlag',2,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmStockOrderList);
+                   TfrmStockOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmStockOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmStockOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             3:begin
+               if PrainpowerJudge.List.Locate('sFlag',3,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmStkRetuOrderList);
+                   TfrmStkRetuOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmStkRetuOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmStkRetuOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             4:begin
+               if PrainpowerJudge.List.Locate('sFlag',4,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmSalIndentOrderList);
+                   TfrmSalIndentOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmSalIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmSalIndentOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             5:begin
+               if PrainpowerJudge.List.Locate('sFlag',5,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmSalesOrderList);
+                   TfrmSalesOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmSalesOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmSalesOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             6:begin
+               if PrainpowerJudge.List.Locate('sFlag',6,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmSalRetuOrderList);
+                   TfrmSalRetuOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmSalRetuOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmSalRetuOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             7:begin
+               if PrainpowerJudge.List.Locate('sFlag',7,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmDbOrderList);
+                   TfrmDbOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmDbOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmDbOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             9:begin
+               rs.Close;
+               rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''BIRTHDAY'' ';
+               Factor.Open(rs);
+               try
+                 Form := frmMain.FindChildForm(TfrmCustomer);
+                 TfrmCustomer(Form).edtDate1.Date := Date();
+                 TfrmCustomer(Form).edtDate2.Date := Date()+rs.FieldbyName('VALUE').AsInteger;
+                 TfrmCustomer(Form).actFindExecute(nil);
+               finally
+                 rs.Free;
+               end;
+             end;
+             10:begin
+               rs.Close;
+               rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''CUSTCONTINU'' ';
+               Factor.Open(rs);
+               try
+                 Form := frmMain.FindChildForm(TfrmCustomer);
+                 TfrmCustomer(Form).edtDate3.Date := Date();
+                 TfrmCustomer(Form).edtDate4.Date := Date()+rs.FieldbyName('VALUE').AsInteger;
+                 TfrmCustomer(Form).actFindExecute(nil);
+               finally
+                 rs.Free;
+               end;
+             end;
+             11:begin
+               if PrainpowerJudge.List.Locate('sFlag',11,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmSalIndentOrderList);
+                   if Assigned(Form) then
+                     begin
+                       if (PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000) > 0 then
+                        TfrmSalIndentOrderList(Form).fndSTATUS.ItemIndex := 3
+                       else
+                        TfrmSalIndentOrderList(Form).fndSTATUS.ItemIndex := 4;
+                       TfrmSalIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                       TfrmSalIndentOrderList(Form).actFindExecute(nil);
+                     end;
+                 end;
+             end;
+             12:begin
+               if PrainpowerJudge.List.Locate('sFlag',12,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmStkIndentOrderList);
+                   if (PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000) > 0 then
+                    TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 3
+                   else
+                    TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 4;
+                   TfrmStkIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmStkIndentOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+           end;
+
            result := true;
            Exit;
          end;

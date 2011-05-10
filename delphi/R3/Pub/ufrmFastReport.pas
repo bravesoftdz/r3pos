@@ -139,7 +139,7 @@ var GlobalIndex:Integer=-1;
     Language:Integer=0;
 implementation
 {$R *.dfm}
-uses RzSplit,udmIcon,uFnUtil,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer,uGlobal;
+uses RzSplit,IniFiles,udmIcon,uFnUtil,FR_PrDlg,ufrmSaveDesigner,ufrmSelectFormer,uGlobal;
 { TfrmFastReport }
 var SaveIndex:Integer=-1;
 procedure TfrmFastReport.DoFormer;
@@ -147,23 +147,46 @@ var
   s:string;
   sm:TFileStream;
   r:integer;
+  rs:TZQuery;
 begin
   s := TfrmSelectFormer.SelectFormer(self,frReport.Name);
   if s='' then Exit;
   r := TfrmSaveDesigner.SaveDialog(self,frReport.Name,nil);
-  sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s,fmOpenRead);
-  try
-     sm.Position := 0;
-     frReport.LoadFromStream(sm);
-     if r<=0 then
-        frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
-     else
-        frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
-     SaveIndex := r;
-     GlobalIndex := r;
-  finally
-     sm.Free;
-  end;
+  if pos('(自定义)',s)=0 then
+     begin
+        sm := TFileStream.Create(ExtractFilePath(ParamStr(0))+'frf\'+s+'.frf',fmOpenRead);
+        try
+           sm.Position := 0;
+           frReport.LoadFromStream(sm);
+           if r<=0 then
+              frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
+           else
+              frReport.SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
+           SaveIndex := r;
+           GlobalIndex := r;
+           delete(s,1,length(frReport.Name)+1);
+        finally
+           sm.Free;
+        end;
+     end
+  else
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         delete(s,1,length(frReport.Name)+1);
+         rs.SQL.Text := 'select frfBlob from SYS_FASTFILE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and frfFileName like '''+frReport.Name+'%'' and frfFileTitle='''+copy(s,1,length(s)-8)+'''';
+         Global.RemoteFactory.Open(rs);
+         if rs.IsEmpty then Raise Exception.Create('没找到模版文件'); 
+         if r<=0 then
+            TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+'.frf')
+         else
+            TBlobField(rs.Fields[0]).SaveToFile(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+inttostr(r)+'.frf');
+         SaveIndex := r;
+         GlobalIndex := r;
+       finally
+         rs.Free;
+       end;
+     end;
 end;
 function TfrmFastReport.PrintReport(CommandText: string;
   AfrReport: TfrReport): Boolean;
@@ -611,6 +634,7 @@ begin
        sm.Free;
     end; }
   end;
+  if not Desgn then SaveIndex := -1;
 end;
 
 

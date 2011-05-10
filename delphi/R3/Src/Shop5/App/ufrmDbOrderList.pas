@@ -246,7 +246,7 @@ begin
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('14100001',2) and (MessageBox(Handle,'是否继续新增销售单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('14100001',2) and (MessageBox(Handle,'是否继续新增调拨单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -255,7 +255,7 @@ end;
 
 procedure TfrmDbOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('14100001',6) then Raise Exception.Create('你没有审核销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',6) then Raise Exception.Create('你没有审核调拨单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -408,7 +408,7 @@ end;
 procedure TfrmDbOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('14100001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',7) then Raise Exception.Create('你没有打印调拨单的权限,请和管理员联系.');
   //if (CurOrder<>nil) then
   //   begin
   //     if DevFactory.SavePrint then
@@ -441,7 +441,7 @@ end;
 procedure TfrmDbOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('14100001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',7) then Raise Exception.Create('你没有打印调拨单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -464,7 +464,7 @@ end;
 
 procedure TfrmDbOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('14100001',2) then Raise Exception.Create('你没有新增销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14100001',2) then Raise Exception.Create('你没有新增调拨单的权限,请和管理员联系.');
   inherited;
 
 end;

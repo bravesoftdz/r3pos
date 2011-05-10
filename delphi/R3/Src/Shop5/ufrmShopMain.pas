@@ -475,7 +475,7 @@ type
     function GetDeskFlag:string;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
-    function Login(Locked:boolean=false):boolean;
+    function Login(Locked:boolean=false;Exited:boolean=true):boolean;
     procedure WriteAction(s:string;flag:integer);
     procedure AddFrom(form:TForm);
     procedure RemoveFrom(form:TForm);
@@ -562,7 +562,7 @@ procedure TfrmShopMain.AddFrom(form: TForm);
 var
   button:TrzBmpButton;
 begin
-  if FList.Count > 5 then Exit;
+//  if FList.Count > 5 then Exit;
   button := TrzBmpButton.Create(rzToolButton);
   button.GroupIndex := 999;
   button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
@@ -649,10 +649,10 @@ begin
            TrzBmpButton(FList[i]).Tag := 0;
            TObject(FList[i]).Free;
            FList.Delete(i);
-           SortToolButton;
            break;
          end;
     end;
+  SortToolButton;
 end;
 
 function TfrmShopMain.CheckVersion:boolean;
@@ -724,7 +724,7 @@ begin
        end;
   end;
 end;
-function TfrmShopMain.Login(Locked:boolean=false):boolean;
+function TfrmShopMain.Login(Locked:boolean=false;Exited:boolean=true):boolean;
 var
   Params:ufrmLogin.TLoginParam;
   lDate:TDate;
@@ -796,7 +796,9 @@ begin
             Exit;
           end
        else
-          Application.Terminate;
+          begin
+            if Exited then Application.Terminate;
+          end;
      end;
   LoadFrame;
 end;
@@ -980,8 +982,11 @@ begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您没有消息';
        rzUserInfo.Caption := lblUserInfo.Caption;
      end;
-  P := MsgFactory.ReadMsg;
-  if P<>nil then MsgFactory.HintMsg(P);  
+  if (MsgFactory.Loaded and ((Timer1.Tag mod 120)=0)) then
+     begin
+       P := MsgFactory.ReadMsg;
+       if P<>nil then MsgFactory.HintMsg(P);
+     end;
 end;
 
 procedure TfrmShopMain.LoadFrame;
@@ -1256,7 +1261,7 @@ begin
      end;
   if FList.Count=0 then
      begin
-       Logined := Login(false);
+       Logined := Login(false,false);
      end;
 end;
 

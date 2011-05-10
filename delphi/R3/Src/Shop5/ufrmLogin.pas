@@ -69,7 +69,7 @@ procedure TfrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
 var F:TIniFile;
 begin
   inherited;
-  if cxcbSave.Checked then
+  if cxcbSave.Checked and cxedtUsers.Enabled then
      begin
        F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
        try
@@ -174,6 +174,7 @@ begin
            if not Connect then Exit;
         end;
         LoadTenant;
+        cbxTenant.Enabled := not Locked;
         cxbtnCancel.Enabled := not Locked;
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;

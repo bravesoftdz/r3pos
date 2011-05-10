@@ -56,7 +56,8 @@ uses
   ObjImpeach in '..\Shop5\Obj\ObjImpeach.pas',
   ObjQuestionnaire in '..\Shop5\Obj\ObjQuestionnaire.pas',
   objDownOrder in '..\PlugIn\obj\objDownOrder.pas',
-  ObjSyncMessage in '..\PlugIn\obj\ObjSyncMessage.pas';
+  ObjSyncMessage in '..\PlugIn\obj\ObjSyncMessage.pas',
+  ObjDefineGodsState in '..\Shop5\Obj\ObjDefineGodsState.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

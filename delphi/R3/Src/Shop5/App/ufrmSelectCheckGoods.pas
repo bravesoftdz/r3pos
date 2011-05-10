@@ -124,10 +124,7 @@ begin
     end;
   end;
   
-  rs := Global.GetZQueryFromName('PUB_PARAMS');
-  rs.Filtered := false;
-  rs.Filter := 'TYPE_CODE=''SORT_TYPE''';
-  rs.Filtered := true;
+  rs := Global.GetZQueryFromName('PUB_STAT_INFO');
   TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
   fndGODS_FLAG1.ItemIndex := 0;
   LoadTree;
@@ -432,6 +429,10 @@ begin
   N2.Enabled:=False;
   N3.Enabled:=False;
   N4.Enabled:=False;
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       DBGridEh1.Columns[7].Free;
+     end;
 end;
 
 procedure TfrmSelectCheckGoods.chkMultSelectClick(Sender: TObject);

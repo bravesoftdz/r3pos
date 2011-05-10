@@ -166,12 +166,9 @@ begin
   CurDate:=formatdatetime('YYYYMMDD',mdate);  //当前日期
   CurDateTime:=formatdatetime('YYYY-MM-DD',mdate)+' '+formatdatetime('HH:MM:SS',Now());    //当前时间
   if RB_Single.Checked then Check_Type:='1' else Check_Type:='2';  //盘点方式: 1简单盘点; 2多人盘点
+  rs:=TZQuery.Create(nil);
   try
-    Aobj:=TRecord_.Create;
-    Str:='select GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,AMOUNT from STO_STORAGE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and '+
-         ' not Exists(select GODS_ID from PUB_GOODSINFO A where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+
-         ' and A.COMM in (''02'',''12'')  and A.GODS_ID=STO_STORAGE.GODS_ID and STO_STORAGE.AMOUNT=0)  ';  //过滤掉已经删除商品并且库存为0商品
-    rs:=TZQuery.Create(nil);
+    Str:='select A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.AMOUNT from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+''' and B.COMM not in (''02'',''12'') ';  //过滤掉已经删除商品并且库存为0商品
     rs.SQL.Text:=Str;
     Factor.Open(rs);
     Factor.BeginTrans(3000); 
@@ -180,22 +177,19 @@ begin
       Str:='insert into STO_PRINTORDER (TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) values '+
            '('+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+',1,'+Check_Type+','''+CurDateTime+''','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+')';
       Factor.ExecSQL(Str);
-      if (rs.Active) and (not rs.IsEmpty) then
+      rs.first;
+      while not rs.Eof do
       begin
-        while not rs.Eof do
-        begin
-          Rows_ID:=TSequence.NewId();
-          Aobj.ReadFromDataSet(rs);
-          GODS_ID:=AObj.fieldbyName('GODS_ID').AsString;
-          BatchNo:=AObj.fieldbyName('BATCH_NO').AsString;
-          PROPERTY_01:=AObj.fieldbyName('PROPERTY_01').AsString;
-          PROPERTY_02:=AObj.fieldbyName('PROPERTY_02').AsString;            
-          //生成结帐数据
-          Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
-               ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+','''+BatchNo+''',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(AObj.fieldbyName('AMOUNT').AsFloat)+',0,''1'')';
-          Factor.ExecSQL(Str);
-          rs.Next;
-        end;
+        Rows_ID:=TSequence.NewId();
+        GODS_ID:=rs.fieldbyName('GODS_ID').AsString;
+        BatchNo:=rs.fieldbyName('BATCH_NO').AsString;
+        PROPERTY_01:=rs.fieldbyName('PROPERTY_01').AsString;
+        PROPERTY_02:=rs.fieldbyName('PROPERTY_02').AsString;
+        //生成结帐数据
+        Str:='insert into STO_PRINTDATA(ROWS_ID,TENANT_ID,SHOP_ID,PRINT_DATE,BATCH_NO,LOCUS_NO,BOM_ID,GODS_ID,PROPERTY_01,PROPERTY_02,RCK_AMOUNT,CHK_AMOUNT,CHECK_STATUS) '+
+             ' values ('''+Rows_ID+''','+InttoStr(Global.TENANT_ID)+','''+Global.SHOP_ID+''','+CurDate+','''+BatchNo+''',null,null,'''+GODS_ID+''','''+PROPERTY_01+''','''+PROPERTY_02+''','+FloatToStr(rs.fieldbyName('AMOUNT').AsFloat)+',0,''1'')';
+        Factor.ExecSQL(Str);
+        rs.Next;
       end;
       Factor.CommitTrans;
     except
@@ -203,7 +197,6 @@ begin
     end;
   finally
     rs.Free;
-    Aobj.Free;
   end;
 end;
 

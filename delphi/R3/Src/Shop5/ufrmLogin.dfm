@@ -1,6 +1,6 @@
 inherited frmLogin: TfrmLogin
-  Left = 328
-  Top = 188
+  Left = 329
+  Top = 189
   ActiveControl = cxedtUsers
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#38470

@@ -75,6 +75,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                 Top = 7
                 Width = 77
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.OnChange = fndGODS_FLAGPropertiesChange
                 TabOrder = 0
               end
@@ -104,6 +105,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               FrozenCols = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               PopupMenu = PopupMenu1
@@ -183,7 +185,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   ReadOnly = True
                   Title.Caption = #24080#38754#24211#23384
                   Title.Color = clWhite
-                  Width = 34
+                  Width = 37
                 end
                 item
                   EditButtons = <>
@@ -200,7 +202,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Footers = <>
                   Title.Caption = #25104#26412#20215
                   Title.Color = clWindow
-                  Width = 33
+                  Width = 46
                 end
                 item
                   EditButtons = <>
@@ -208,7 +210,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
                   Footers = <>
                   Title.Caption = #26631#20934#21806#20215
                   Title.Color = clWhite
-                  Width = 40
+                  Width = 36
                 end>
             end
             object fndPanel: TPanel

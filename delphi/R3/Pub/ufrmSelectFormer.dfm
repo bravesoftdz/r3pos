@@ -21,7 +21,7 @@ inherited frmSelectFormer: TfrmSelectFormer
     TabStyle = tsRoundCorners
     FixedDimension = 20
     object TabSheet1: TRzTabSheet
-      Caption = #21487#29992#27169#29256#21015#34920
+      Caption = #27169#29256#21015#34920
       object RzPanel2: TRzPanel
         Left = 0
         Top = 0
@@ -53,6 +53,8 @@ inherited frmSelectFormer: TfrmSelectFormer
             FixedRows = 0
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
             TabOrder = 0
+            FrameHotStyle = fsFlat
+            FrameVisible = True
           end
         end
       end

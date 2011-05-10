@@ -12,6 +12,7 @@ object frmSaveDesigner: TfrmSaveDesigner
   Font.Name = #23435#20307
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel
@@ -33,7 +34,7 @@ object frmSaveDesigner: TfrmSaveDesigner
       FixedCols = 0
       RowCount = 6
       FixedRows = 0
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goRowSelect]
       TabOrder = 0
       ColWidths = (
         154)
@@ -41,7 +42,7 @@ object frmSaveDesigner: TfrmSaveDesigner
   end
   object btnPrint: TRzBitBtn
     Left = 203
-    Top = 51
+    Top = 43
     Caption = #30830#35748'(&O)'
     Color = 15791348
     HighlightColor = 16026986
@@ -53,7 +54,7 @@ object frmSaveDesigner: TfrmSaveDesigner
   end
   object btnPriview: TRzBitBtn
     Left = 203
-    Top = 83
+    Top = 75
     Caption = #21462#28040'(&C)'
     Color = 15791348
     HighlightColor = 16026986

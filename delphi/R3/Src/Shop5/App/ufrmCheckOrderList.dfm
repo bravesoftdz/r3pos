@@ -8,22 +8,22 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 883
-    Height = 508
+    Width = 875
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 873
-      Height = 498
+      Width = 865
+      Height = 487
       inherited RzPage: TRzPageControl
-        Width = 867
-        Height = 492
+        Width = 859
+        Height = 481
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 865
-            Height = 465
+            Width = 857
+            Height = 454
             inherited RzPanel1: TRzPanel
-              Width = 855
+              Width = 847
               Height = 91
               object RzLabel2: TRzLabel
                 Left = 57
@@ -81,6 +81,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 Top = -1
                 Width = 104
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 0
               end
@@ -89,6 +90,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 Top = -1
                 Width = 109
                 Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
@@ -98,6 +100,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 Width = 104
                 Height = 20
                 TabOrder = 2
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
                 Left = 480
@@ -231,8 +234,8 @@ inherited frmCheckOrderList: TfrmCheckOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 96
-              Width = 855
-              Height = 364
+              Width = 847
+              Height = 353
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -306,40 +309,40 @@ inherited frmCheckOrderList: TfrmCheckOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 883
+    Width = 875
     inherited Image1: TImage
-      Left = 581
-      Width = 282
+      Left = 585
+      Width = 270
     end
     inherited Image3: TImage
-      Left = 581
-      Width = 282
+      Left = 585
+      Width = 270
     end
     inherited Image14: TImage
-      Left = 863
+      Left = 855
     end
     inherited rzPanel5: TPanel
-      Left = 581
+      Left = 585
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #30424#28857#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton11: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end

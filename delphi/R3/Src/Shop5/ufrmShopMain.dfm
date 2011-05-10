@@ -1,5 +1,5 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 163
+  Left = 164
   Top = 33
   Width = 701
   Height = 535

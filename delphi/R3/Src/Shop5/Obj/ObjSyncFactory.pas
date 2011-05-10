@@ -1321,7 +1321,7 @@ begin
                    rs.FieldbyName('PROPERTY_02').asString,
                    rs.FieldbyName('BATCH_NO').asString,
                    rs.FieldbyName('CALC_AMOUNT').asFloat,
-                   roundto(rs.FieldbyName('COST_PRICE').asFloat*rs.FieldbyName('CALC_AMOUNT').asFloat,2),3);
+                   roundto(rs.FieldbyName('COST_PRICE').asFloat*rs.FieldbyName('CALC_AMOUNT').asFloat,-2),3);
         rs.Next;
       end;
     AGlobal.ExecSQL('delete from SAL_SALESDATA where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID',Params);

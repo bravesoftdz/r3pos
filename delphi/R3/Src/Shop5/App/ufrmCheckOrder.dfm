@@ -2,13 +2,13 @@ inherited frmCheckOrder: TfrmCheckOrder
   Left = 229
   Top = 123
   Width = 774
-  Height = 468
+  Height = 593
   Caption = #30424#28857#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
     Width = 758
-    Height = 430
+    Height = 555
     inherited RzPanel2: TRzPanel
       Width = 748
       Height = 81
@@ -174,7 +174,7 @@ inherited frmCheckOrder: TfrmCheckOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 318
+      Top = 443
       Width = 748
       Height = 35
       TabOrder = 2
@@ -259,7 +259,7 @@ inherited frmCheckOrder: TfrmCheckOrder
     inherited DBGridEh1: TDBGridEh
       Top = 119
       Width = 748
-      Height = 199
+      Height = 324
       TabOrder = 3
       UseMultiTitle = False
       Columns = <
@@ -338,6 +338,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 62
         end
         item
+          DisplayFormat = '#0.00#'
           EditButtons = <>
           FieldName = 'NEW_INPRICE'
           Footers = <>
@@ -346,6 +347,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 53
         end
         item
+          DisplayFormat = '#0.00#'
           EditButtons = <>
           FieldName = 'NEW_OUTPRICE'
           Footers = <>
@@ -354,6 +356,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 50
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'PAL_INAMONEY'
           Footer.ValueType = fvtSum
@@ -363,6 +366,7 @@ inherited frmCheckOrder: TfrmCheckOrder
           Width = 60
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'PAL_OUTAMONEY'
           Footer.ValueType = fvtSum
@@ -391,11 +395,11 @@ inherited frmCheckOrder: TfrmCheckOrder
       Width = 748
     end
     inherited stbHint: TRzPanel
-      Top = 401
+      Top = 526
       Width = 748
     end
     inherited rzHelp: TRzPanel
-      Top = 353
+      Top = 478
       Width = 748
     end
   end

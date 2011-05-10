@@ -2011,10 +2011,10 @@ procedure TfrmPosMain.NewOrder;
 var
   rs:TZQuery;
 begin
-  if not ShopGlobal.GetChkRight('13100001',2) then
-    Raise Exception.Create('  您没有新增权限，请联系管理员！  '); 
   inherited;
   Open('');
+  if not ShopGlobal.GetChkRight('13100001',2) then
+     Raise Exception.Create('  您没有新增权限，请联系管理员！  '); 
   dbState := dsInsert;
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('GLIDE_NO').asString := '..新增..';

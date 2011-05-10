@@ -5925,7 +5925,7 @@ CREATE TABLE STK_INDENTORDER (
         --送货地址
 	SEND_ADDR varchar (255) ,
         --采购员
-	GUIDE_USER varchar (30) ,
+	GUIDE_USER varchar (36) ,
         --供应商
 	CLIENT_ID varchar (36) NOT NULL ,
         --审核日期

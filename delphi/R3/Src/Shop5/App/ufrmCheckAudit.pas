@@ -63,7 +63,7 @@ end;
 procedure TfrmCheckAudit.RzBitBtn5Click(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('600037') then Raise Exception.Create('你没有盘点校对的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('14400001',5) then Raise Exception.Create('你没有盘点审核的权限,请和管理员联系.');
   ModalResult := MROK;
 end;
 

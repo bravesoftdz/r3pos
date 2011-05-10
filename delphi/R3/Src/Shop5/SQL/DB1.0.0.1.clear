@@ -27,6 +27,7 @@ delete from RCK_MONTH_CLOSE;
 delete from RCK_ACCT_MONTH;
 delete from RCK_GOODS_DAYS;
 delete from RCK_GOODS_MONTH;
+delete from RCK_C_GOODS_DAYS;
 
 delete from SAL_IC_GLIDE;
 delete from SAL_INTEGRAL_GLIDE;

@@ -379,10 +379,14 @@ begin
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='×Ô¶¯±àºÅ..') then
      AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
-  cdsCustomerExt.Edit;
-  cdsCustomerExt.FieldByName('CUST_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
-  cdsCustomerExt.Post;
-  
+  cdsCustomerExt.First;
+  while not cdsCustomerExt.Eof do
+     begin
+       cdsCustomerExt.Edit;
+       cdsCustomerExt.FieldByName('CUST_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+       cdsCustomerExt.Post;
+       cdsCustomerExt.Next;
+     end;
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;

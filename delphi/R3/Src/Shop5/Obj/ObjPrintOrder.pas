@@ -125,9 +125,26 @@ end;
 { TCheckOrder }
 
 function TPrintOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
   if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   result := true;
+  if not lock then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select CHK_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
+         rs.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
+         rs.ParamByName('PRINT_DATE').AsInteger := FieldbyName('PRINT_DATE').AsOldInteger;
+         AGlobal.Open(rs);
+         if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经审核了不能删除...');  
+       finally
+         rs.Free;
+       end;
+       AGlobal.ExecSQL('delete from STO_PRINTDATA where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and PRINT_DATE=:OLD_PRINT_DATE',self); 
+       AGlobal.ExecSQL('delete from STO_CHECKDATA where TENANT_ID=:OLD_TENANT_ID and SHOP_ID=:OLD_SHOP_ID and PRINT_DATE=:OLD_PRINT_DATE',self); 
+     end;
 end;
 
 function TPrintOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;

@@ -2214,9 +2214,11 @@ begin
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
        begin
-         MessageBox(Handle,'你没有新商盟账号无法完成登录','友情提示..',MB_OK+MB_ICONINFORMATION);
-         Form.Free;
-         Exit;
+         if MessageBox(Handle,'你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
+            begin
+              Form.Free;
+              Exit;
+            end;
          TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
        end;
     Form.Show;
@@ -2804,6 +2806,7 @@ begin
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
   SyncFactory.SyncAll;
   Global.LoadBasic;
+  ShopGlobal.LoadRight;
 end;
 
 procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject); 

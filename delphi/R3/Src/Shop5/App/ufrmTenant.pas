@@ -251,7 +251,7 @@ begin
     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
-  if TENANT_ID=0 then
+//  if TENANT_ID=0 then
      begin
        TENANT_ID := Tenant.TENANT_ID;
        SaveParams;

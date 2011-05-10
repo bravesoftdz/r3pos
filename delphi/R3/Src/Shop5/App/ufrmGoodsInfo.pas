@@ -564,13 +564,14 @@ begin
 
   if dbState = dsInsert then
   begin
-    AObj.FieldByName('RELATION_ID').AsString:='0'; //自主创建 
+    AObj.FieldByName('RELATION_ID').AsString:='0'; //自主创建
     AObj.FieldbyName('GODS_ID').AsString :=TSequence.NewId;  //GUID号
     if (trim(edtGODS_CODE.Text)='自动编号') or (trim(edtGODS_CODE.Text)='') or (IsChinese(trim(edtGODS_CODE.Text))) then
     begin
       edtGODS_CODE.Text:=TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
       AObj.FieldbyName('GODS_CODE').AsString :=edtGODS_CODE.Text;  //企业内码ID
-    end else AObj.FieldbyName('GODS_CODE').AsString:=trim(edtGODS_CODE.Text);
+    end else
+      AObj.FieldbyName('GODS_CODE').AsString:=trim(edtGODS_CODE.Text);
   end;
 
   if (edtBARCODE1.Text = '自编条码') or (trim(edtBARCODE1.Text)='') or (IsChinese(trim(edtBARCODE1.Text))) then
@@ -1975,6 +1976,12 @@ end;
 
 procedure TfrmGoodsInfo.CheckGoodsFieldIsEmpty;
 begin
+  if (dbState = dsEdit) and (trim(edtGODS_CODE.Text)='') then
+  begin
+    if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
+    Raise Exception.Create('货号不能为空，请输入！');
+  end;
+
   if Trim(edtGODS_NAME.Text)='' then
   begin
     if edtGODS_NAME.CanFocus then edtGODS_NAME.SetFocus;

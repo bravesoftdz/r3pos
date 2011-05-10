@@ -545,30 +545,22 @@ begin
                  end;
              end;
              9:begin
-               rs := TZQuery.Create(nil);
-               rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''BIRTHDAY'' ';
-               Factor.Open(rs);
-               try
-                 Form := frmMain.FindChildForm(TfrmCustomer);
-                 TfrmCustomer(Form).edtDate1.Date := Date();
-                 TfrmCustomer(Form).edtDate2.Date := Date()+rs.FieldbyName('VALUE').AsInteger;
-                 TfrmCustomer(Form).actFindExecute(nil);
-               finally
-                 rs.Free;
-               end;
+               if PrainpowerJudge.List.Locate('sFlag',9,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmCustomer);
+                   TfrmCustomer(Form).edtDate1.Date := Date();
+                   TfrmCustomer(Form).edtDate2.Date := Date()+PrainpowerJudge.List.FieldByName('MIN_DATE').AsInteger;
+                   TfrmCustomer(Form).actFindExecute(nil);
+                 end;
              end;
              10:begin
-               rs := TZQuery.Create(nil);
-               rs.SQL.Text := 'select DEFINE,VALUE from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''12'',''02'') and DEFINE=''CUSTCONTINU'' ';
-               Factor.Open(rs);
-               try
-                 Form := frmMain.FindChildForm(TfrmCustomer);
-                 TfrmCustomer(Form).edtDate3.Date := Date();
-                 TfrmCustomer(Form).edtDate4.Date := Date()+rs.FieldbyName('VALUE').AsInteger;
-                 TfrmCustomer(Form).actFindExecute(nil);
-               finally
-                 rs.Free;
-               end;
+               if PrainpowerJudge.List.Locate('sFlag',10,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmCustomer);
+                   TfrmCustomer(Form).edtDate3.Date := Date();
+                   TfrmCustomer(Form).edtDate4.Date := Date()+PrainpowerJudge.List.FieldByName('MIN_DATE').AsInteger;
+                   TfrmCustomer(Form).actFindExecute(nil);
+                 end;
              end;
              11:begin
                if PrainpowerJudge.List.Locate('sFlag',11,[]) then

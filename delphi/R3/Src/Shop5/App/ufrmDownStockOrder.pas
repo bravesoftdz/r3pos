@@ -37,7 +37,8 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
   private
-    function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh; 
+    procedure CheckIsOrderDown; //判断本地是否已下载过
+    function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function GetOrderDate: TDate;
     function GetINDE_ID: string;
   public
@@ -91,6 +92,8 @@ begin
   if cdsTable.IsEmpty then Raise Exception.Create(' 没有订单！ ');
   if trim(CdsTable.fieldbyName('INDE_ID').AsString)<>'' then
   begin
+    //2011.05.10 Add判断是否本地已下载过
+    CheckIsOrderDown;
     self.DoCopyIndeOrderData;  //复制明细数据
     FAobj.ReadFromDataSet(cdsTable);  //读取返回值
     ModalResult:=MROK; //正常返回
@@ -246,6 +249,28 @@ begin
       SetCol.PickList.Add(trim(Rs.FieldByName('TENANT_NAME').AsString));  
       Rs.Next;
     end;
+  end;
+end;
+
+procedure TfrmDownStockOrder.CheckIsOrderDown;
+var
+  Rs: TZQuery;
+  Str,IndeID: string;
+begin
+  IndeID:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
+  Str:='select Count(*) as ReSum from STK_STOCKORDER where COMM_ID='''+IndeID+''' ';
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.Close;
+    Rs.SQL.Text:=Str;
+    Factor.Open(Rs);
+    if Rs.FieldByName('ReSum').AsInteger>0 then
+    begin
+      cdsTable.Delete;
+      Raise Exception.Create('当前订单：'+IndeID+'已本地下载不能重复下载！');
+    end;
+  finally
+    Rs.Free;
   end;
 end;
 

@@ -160,7 +160,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     end
     object btnOK: TRzBitBtn
       Left = 293
-      Top = 12
+      Top = 13
       Width = 79
       Caption = #21040#36135#30830#35748'(&O)'
       Color = 15791348
@@ -172,7 +172,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     end
     object RzBitBtn1: TRzBitBtn
       Left = 376
-      Top = 12
+      Top = 13
       Width = 64
       Caption = #21462#28040'(&C)'
       Color = 15791348

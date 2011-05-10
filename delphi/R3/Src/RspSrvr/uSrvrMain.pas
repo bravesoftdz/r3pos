@@ -427,7 +427,7 @@ begin
 //  Timer1.Enabled := False;
   UpdateTimer.Enabled := False;
   try
-    CanClose := (MessageBox(Handle,'是否真想退出服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+    CanClose := not FFromService and (MessageBox(Handle,'是否真想退出服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
 //    if not SystemShutDown and not Application.Terminated then
 //       begin
 //          CanClose := False;
@@ -495,7 +495,7 @@ begin
     Sections := TStringList.Create;
     try
       F.ReadSections(Sections);
-      if Sections.Count > 1 then
+      if Sections.Count > 0 then
       begin
         for i := 0 to Sections.Count - 1 do
           if CompareText(Sections[i], csSettings) <> 0 then
@@ -701,12 +701,22 @@ begin
 end;
 
 procedure TSocketForm.RemovePortActionExecute(Sender: TObject);
+var
+  F:TIniFile;
+  Section:string;
 begin
   CheckValues;
+  Section := PortList.Items[ItemIndex];
   PortList.Items.Objects[ItemIndex].Free;
   PortList.Items.Delete(ItemIndex);
   FCurItem := -1;
   ItemIndex := 0;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sckt.cfg');
+  try
+    F.EraseSection(Section);
+  finally
+    F.Free;
+  end;
 end;
 
 procedure TSocketForm.UpDownClick(Sender: TObject; Button: TUDBtnType);

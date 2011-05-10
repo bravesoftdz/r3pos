@@ -106,24 +106,25 @@ begin
     Result := CompareText(UserName, ServiceStartName) = 0;
   end;
 end;
-
+var FromService:boolean;
 begin
-  if not Installing then
-  begin
-    CreateMutex(nil, True, 'ADOSCKTSRVR');
-    if GetLastError = ERROR_ALREADY_EXISTS then
-    begin
-      MessageBox(0, PChar(SAlreadyRunning), SApplicationName, MB_ICONERROR);
-      Halt;
-    end;
-  end;
-  if Installing or StartService then
+  FromService := StartService;
+//  if not Installing and FromService then
+//  begin
+//    CreateMutex(nil, True, 'RSPSCKTSRVR');
+//    if GetLastError = ERROR_ALREADY_EXISTS then
+//    begin
+//      MessageBox(0, PChar(SAlreadyRunning), SApplicationName, MB_ICONERROR);
+//      Halt;
+//    end;
+//  end;
+  if Installing or FromService then
   begin
     SvcMgr.Application.Initialize;
     SvcMgr.Application.Title := '通讯服务器';
-  SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
+    SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-  SvcMgr.Application.Run;
+    SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

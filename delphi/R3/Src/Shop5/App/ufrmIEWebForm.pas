@@ -123,9 +123,9 @@ begin
   xsm_url := ShopGlobal.GetParameter('XSM_URL');
   if xsm_url='' then xsm_url := 'http://test.xinshangmeng.com/';
   xsm_username := ShopGlobal.GetParameter('XSM_USERNAME');
-  if xsm_username='' then xsm_username := 'yc';
+  if xsm_username='' then xsm_username := 'testcusta20';
   xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
-  if xsm_password='' then xsm_password := '1';
+  if xsm_password='' then xsm_password := 'admin';
 end;
 
 procedure TfrmIEWebForm.FormDestroy(Sender: TObject);

@@ -1708,7 +1708,7 @@ begin
    rs := TZQuery.Create(nil);
    try
      rs.SQL.Text :=
-       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
      + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);

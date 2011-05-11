@@ -505,7 +505,7 @@ uses
 procedure TfrmShopMain.FormActivate(Sender: TObject);
 begin
   inherited;
-//if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
+  //if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
 end;
 
 procedure TfrmShopMain.fdsfds1Click(Sender: TObject);

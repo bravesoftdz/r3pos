@@ -118,11 +118,11 @@ var
 begin
   Temp := TZQuery.Create(nil);
   try
-     Temp.SQL.Text :=
-         'select max(PRINT_DATE) from ('+
-         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' ) j';
-     Factor.Open(Temp);
-     if Temp.Fields[0].AsString = '' then
+//     Temp.SQL.Text :=
+//         'select max(PRINT_DATE) from ('+
+//         'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' ) j';
+//     Factor.Open(Temp);
+//     if Temp.Fields[0].AsString = '' then
         begin
            Temp.close;
            Temp.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(TENANT_ID)+' and DEFINE=''USING_DATE''';
@@ -131,9 +131,9 @@ begin
               B := FormatDatetime('YYYYMMDD',Date()-1)
            else
               B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
-        end
-     else
-        B := Temp.Fields[0].AsString;
+        end;
+//     else
+//        B := Temp.Fields[0].AsString;
      if FnTime.fnStrtoDate(B)<(inherited GetSysDate) then
         result := inherited GetSysDate
      else

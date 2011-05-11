@@ -1,7 +1,7 @@
 栁州远程控制
 220.173.61.110:9089
 administrator 
-tszsapp
+tszxapp
 
 
 银基
@@ -9,7 +9,15 @@ ftp://112.95.239.67:6421/
 rspftp
 rsp@2011
 
+
 http://112.95.239.67/update
+银基远程协助
+112.95.239.67:4389
+amdin\Silverbase5709
+
+
+用户名silverbase\yinji570916
+密码Silver(*)570916 
 
 数据中心
 
@@ -17,3 +25,10 @@ ftp://10.0.8.111/
 r3/r3
 
  http://rsp.xinshangmeng.com/dl/r3/rsp3.0.1.4.exe
+ 
+ 
+ １１２．９５．２３９．６７:4389
+陈登杰  22:20:59
+你要上去升级么？
+陈登杰  22:22:03
+amdin\Silverbase5709

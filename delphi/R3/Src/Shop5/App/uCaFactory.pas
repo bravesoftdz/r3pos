@@ -2787,7 +2787,7 @@ try
                if indexResp.nodeName='pubPricegrade' then
                   begin
                      prc.Append;
-                     prc.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(indexResp,'tenantId'));
+                     prc.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
                      prc.FieldByName('PRICE_ID').AsString := GetNodeValue(indexResp,'priceId');
                      prc.FieldByName('PRICE_NAME').AsString := GetNodeValue(indexResp,'priceName');
                      prc.FieldByName('PRICE_SPELL').AsString := GetNodeValue(indexResp,'priceSpell');

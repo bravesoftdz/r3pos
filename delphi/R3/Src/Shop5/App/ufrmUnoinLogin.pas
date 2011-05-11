@@ -117,7 +117,7 @@ begin
             Password := EncStr(Trim(edtPassword.Text),ENC_KEY);
             Result := True;
           end
-        else ShowModal = mrIgnore then
+        else if ShowModal = mrIgnore then
           Result := False;
       finally
       end;

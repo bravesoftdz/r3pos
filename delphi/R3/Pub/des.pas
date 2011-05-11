@@ -2,9 +2,11 @@ unit Des;
 
 interface
 
-uses SysUtils;
-
+uses SysUtils,Classes;
+const
+  DES_KEY='SaRi0+jf';
 type
+
   TKeyByte = array[0..5] of Byte;
   TDesMode = (dmEncry, dmDecry);
 
@@ -12,6 +14,9 @@ type
   function DecryStr(Str, Key: String): String;
   function EncryStrHex(Str, Key: String): String;
   function DecryStrHex(StrHex, Key: String): String;
+
+  function EncryFile(filename:string;Key:string):boolean;
+  function DecryFile(filename:string;Key:string):boolean;
 
 const
   BitIP: array[0..63] of Byte =
@@ -457,6 +462,49 @@ begin
     Str := Str + Chr(HexToInt(Temp));
   end;
   Result := DecryStr(Str, Key);
+end;
+
+function EncryFile(filename:string;Key:string):boolean;
+var
+  mm:TMemoryStream;
+  ss:TStringStream;
+  s:string;
+begin
+  mm := TMemoryStream.Create;
+  ss := TStringStream.Create('');
+  try
+    mm.LoadFromFile(filename);
+    ss.CopyFrom(mm,mm.Size);
+    s := EncryStr(ss.DataString,Key);
+    mm.Clear;
+    mm.Read(Pchar(s)^,length(s));
+    mm.SaveToFile(filename);
+    result := true; 
+  finally
+    ss.free;
+    mm.Free;
+  end;
+end;
+function DecryFile(filename:string;Key:string):boolean;
+var
+  mm:TMemoryStream;
+  ss:TStringStream;
+  s:string;
+begin
+  mm := TMemoryStream.Create;
+  ss := TStringStream.Create('');
+  try
+    mm.LoadFromFile(filename);
+    ss.CopyFrom(mm,mm.Size);
+    s := DecryStr(ss.DataString,Key);
+    mm.Clear;
+    mm.Read(Pchar(s)^,length(s));
+    mm.SaveToFile(filename);
+    result := true;
+  finally
+    ss.free;
+    mm.Free;
+  end;
 end;
 end.
 

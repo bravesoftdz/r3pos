@@ -113,7 +113,7 @@ begin
       Cmb.Properties.ReadOnly := True;
       Cmb.Style.Color := clBtnFace;
     end;
-  if Is_Null = 2 then CreateStarLabel(UNION_ID);    
+  if Is_Null = 1 then CreateStarLabel(UNION_ID);    
   FList.Add(Cmb);
   if Row_Num mod 2 = 0 then
     Top_Value := Top_Value+29;
@@ -142,7 +142,7 @@ begin
     Date_Time.Date := FnTime.fnStrtoDate(In_Value)
   else
     Date_Time.EditValue := null;
-  if Is_Null = 2 then CreateStarLabel(UNION_ID);
+  if Is_Null = 1 then CreateStarLabel(UNION_ID);
   FList.Add(Date_Time);
   if Row_Num mod 2 = 0 then
     Top_Value := Top_Value+29;
@@ -188,7 +188,7 @@ begin
       Num_Text.Properties.ReadOnly := True;
       Num_Text.Style.Color := clBtnFace;
     end;
-  if Is_Null = 2 then CreateStarLabel(UNION_ID);
+  if Is_Null = 1 then CreateStarLabel(UNION_ID);
   FList.Add(Num_Text);
   if Row_Num mod 2 = 0 then
     Top_Value := Top_Value + 29;
@@ -234,7 +234,7 @@ begin
       Radio.Properties.ReadOnly := True;
       Radio.Style.Color := clBtnFace;
     end;
-  if Is_Null = 2 then CreateStarLabel(UNION_ID);
+  if Is_Null = 1 then CreateStarLabel(UNION_ID);
   FList.Add(Radio);
   if Row_Num mod 2 = 0 then
     Top_Value := Top_Value+29;
@@ -261,7 +261,7 @@ begin
     begin
       if Tobject(FList[i]) is TcxComboBox then
         begin
-          if (TcxComboBox(FList[i]).Tag = 2) and (Trim(TcxComboBox(FList[i]).Text) = '') then
+          if (TcxComboBox(FList[i]).Tag = 1) and (Trim(TcxComboBox(FList[i]).Text) = '') then
             raise Exception.Create('有必填项没有填写!');
           Index_Id := copy(TcxComboBox(FList[i]).Name,5,50);
           Index_Id := AnsiReplaceText(Index_Id,'_','-');
@@ -277,7 +277,7 @@ begin
         end
       else if Tobject(FList[i]) is TcxSpinEdit then
         begin
-          if (TcxSpinEdit(FList[i]).Tag = 2) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
+          if (TcxSpinEdit(FList[i]).Tag = 1) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
             raise Exception.Create('有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
@@ -289,13 +289,16 @@ begin
         end
       else if Tobject(FList[i]) is TcxDateEdit then
         begin
-          if (TcxDateEdit(FList[i]).Tag = 2) and (Trim(TcxDateEdit(FList[i]).Text) = '') then
+          if (TcxDateEdit(FList[i]).Tag = 1) and (TcxDateEdit(FList[i]).EditValue = null) then
             raise Exception.Create('有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
               DataSet.Edit;
-              DataSet.FieldByName('INDEX_VALUE').AsString := FormatDateTime('YYYY-MM-DD',TcxDateEdit(FList[i]).Date);
+              if TcxDateEdit(FList[i]).EditValue = null then
+                DataSet.FieldByName('INDEX_VALUE').AsString := ''
+              else
+                DataSet.FieldByName('INDEX_VALUE').AsString := FormatDateTime('YYYY-MM-DD',TcxDateEdit(FList[i]).Date);
               DataSet.Post;
             end;
         end;

@@ -15,8 +15,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
       inherited RzPage: TRzPageControl
         Width = 736
         Height = 546
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -297,6 +299,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 156
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
@@ -307,6 +310,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_CST'
@@ -317,6 +321,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 62
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
@@ -327,6 +332,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -337,6 +343,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 61
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -347,6 +354,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 69
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -357,6 +365,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 68
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -367,6 +376,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 59
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
@@ -377,6 +387,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
@@ -387,6 +398,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
@@ -397,6 +409,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
@@ -407,6 +420,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 67
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
@@ -417,6 +431,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
@@ -427,6 +442,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 73
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
@@ -435,6 +451,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 52
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
@@ -445,6 +462,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
@@ -455,6 +473,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
@@ -465,6 +484,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
@@ -475,6 +495,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -485,6 +506,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -495,6 +517,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 77
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
@@ -852,6 +875,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
@@ -862,6 +886,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_CST'
@@ -872,6 +897,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 62
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
@@ -882,6 +908,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -892,6 +919,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 61
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -902,6 +930,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 69
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -912,6 +941,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 68
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -922,6 +952,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 59
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
@@ -932,6 +963,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
@@ -942,6 +974,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
@@ -952,6 +985,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
@@ -962,6 +996,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 67
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
@@ -972,6 +1007,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
@@ -982,6 +1018,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 73
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
@@ -990,6 +1027,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 52
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
@@ -1000,6 +1038,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
@@ -1010,6 +1049,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
@@ -1020,6 +1060,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
@@ -1030,6 +1071,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -1040,6 +1082,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -1050,6 +1093,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 77
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'
@@ -1396,6 +1440,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 168
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
@@ -1404,6 +1449,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_CST'
@@ -1412,6 +1458,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 62
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
@@ -1420,6 +1467,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -1428,6 +1476,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 61
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -1436,6 +1485,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 69
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -1444,6 +1494,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 68
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -1452,6 +1503,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 59
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
@@ -1460,6 +1512,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
@@ -1468,6 +1521,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
@@ -1476,6 +1530,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
@@ -1484,6 +1539,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 67
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
@@ -1492,6 +1548,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
@@ -1500,6 +1557,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 73
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
@@ -1508,6 +1566,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 52
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
@@ -1516,6 +1575,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
@@ -1524,6 +1584,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
@@ -1532,6 +1593,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
@@ -1540,6 +1602,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -1548,6 +1611,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -1556,6 +1620,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 77
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
@@ -1973,6 +2038,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 27
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
@@ -1983,6 +2049,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_CST'
@@ -1993,6 +2060,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 62
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ORG_RTL'
@@ -2003,6 +2071,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -2013,6 +2082,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 61
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -2023,6 +2093,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 69
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -2033,6 +2104,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 68
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -2043,6 +2115,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 59
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
@@ -2053,6 +2126,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
@@ -2063,6 +2137,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
@@ -2073,6 +2148,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
@@ -2083,6 +2159,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 67
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
@@ -2093,6 +2170,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
@@ -2103,6 +2181,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 73
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
@@ -2111,6 +2190,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 52
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBIN_AMT'
@@ -2121,6 +2201,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'DBIN_CST'
@@ -2131,6 +2212,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DBOUT_AMT'
@@ -2141,6 +2223,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'DBOUT_CST'
@@ -2151,6 +2234,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 74
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -2161,6 +2245,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -2171,6 +2256,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Width = 77
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
                       Footer.DisplayFormat = '#0.00'

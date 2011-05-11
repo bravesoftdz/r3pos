@@ -187,6 +187,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -219,6 +220,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAYM_MNY'
@@ -466,6 +468,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -498,6 +501,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAYM_MNY'
@@ -789,6 +793,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 99
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -821,6 +826,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAYM_MNY'
@@ -1108,6 +1114,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Width = 99
                   end
                   item
+                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'ACCT_MNY'
@@ -1140,6 +1147,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Width = 110
                   end
                   item
+                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PAYM_MNY'
@@ -1557,6 +1565,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Width = 208
                   end
                   item
+                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'ACCT_MNY'
@@ -1607,6 +1616,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Width = 66
                   end
                   item
+                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PAYM_MNY'

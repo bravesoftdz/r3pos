@@ -290,6 +290,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -679,6 +680,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -1056,6 +1058,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 185
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -1500,6 +1503,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 32
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -1973,6 +1977,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 33
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -2039,13 +2044,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 73
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'LOCUS_NO'
-                      Footers = <>
-                      Title.Caption = #29289#27969#36319#36394#21495
-                      Width = 74
                     end
                     item
                       EditButtons = <>

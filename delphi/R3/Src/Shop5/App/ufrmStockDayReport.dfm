@@ -289,6 +289,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -299,6 +300,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
@@ -307,6 +309,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -317,6 +320,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -327,6 +331,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 82
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -337,6 +342,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
@@ -347,6 +353,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'STOCK_RATE'
@@ -355,6 +362,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 49
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
@@ -365,6 +373,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AVG_AGIO'
@@ -707,6 +716,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 146
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -717,6 +727,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 63
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
@@ -725,6 +736,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -735,6 +747,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -745,6 +758,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 82
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -755,6 +769,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
@@ -765,6 +780,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'STOCK_RATE'
@@ -773,6 +789,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 49
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
@@ -783,6 +800,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AVG_AGIO'
@@ -1112,6 +1130,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 171
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -1120,6 +1139,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 63
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
@@ -1128,6 +1148,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -1136,6 +1157,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -1144,6 +1166,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 82
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -1152,6 +1175,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
@@ -1160,6 +1184,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'STOCK_RATE'
@@ -1168,6 +1193,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 49
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
@@ -1176,6 +1202,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AVG_AGIO'
@@ -1581,6 +1608,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 35
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
@@ -1591,6 +1619,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 63
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'STOCK_PRC'
@@ -1599,6 +1628,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 65
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
@@ -1609,6 +1639,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
@@ -1619,6 +1650,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 82
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
@@ -1629,6 +1661,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
@@ -1639,6 +1672,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'STOCK_RATE'
@@ -1647,6 +1681,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 49
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
@@ -1657,6 +1692,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AVG_AGIO'
@@ -1736,14 +1772,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
-                object Label23: TLabel
-                  Left = 568
-                  Top = 16
-                  Width = 48
-                  Height = 12
-                  Caption = #26174#31034#21333#20301
-                  Visible = False
-                end
                 object Label28: TLabel
                   Left = 24
                   Top = 35
@@ -1810,19 +1838,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 3
                 end
-                object fndP5_UNIT_ID: TcxComboBox
-                  Left = 624
-                  Top = 12
-                  Width = 121
-                  Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
-                  TabOrder = 4
-                  Visible = False
-                end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
@@ -1835,7 +1850,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1877,7 +1892,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 5
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
@@ -1892,7 +1907,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1934,7 +1949,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1973,7 +1988,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 9
+                  TabOrder = 8
                 end
                 object fndP5_ALL: TcxRadioButton
                   Left = 80
@@ -1982,7 +1997,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 17
                   Caption = #20840#37096
                   Checked = True
-                  TabOrder = 10
+                  TabOrder = 9
                   TabStop = True
                 end
                 object fndP5_InStock: TcxRadioButton
@@ -1991,7 +2006,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 57
                   Height = 17
                   Caption = #36827#36135#21333
-                  TabOrder = 11
+                  TabOrder = 10
                 end
                 object fndP5_ReturnStock: TcxRadioButton
                   Left = 208
@@ -1999,7 +2014,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 57
                   Height = 17
                   Caption = #36864#36135#21333
-                  TabOrder = 12
+                  TabOrder = 11
                 end
               end
               object RzPanel18: TRzPanel
@@ -2118,6 +2133,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 31
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
@@ -2128,6 +2144,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 63
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
@@ -2136,6 +2153,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 55
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'CALC_MONEY'
@@ -2146,6 +2164,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 84
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TAX_MONEY'
@@ -2156,6 +2175,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 82
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'NOTAX_MONEY'
@@ -2166,6 +2186,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 76
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RTL_MONEY'
@@ -2176,6 +2197,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'AGIO_RATE'
@@ -2184,6 +2206,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Width = 49
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AGIO_MONEY'
@@ -2199,13 +2222,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 73
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'LOCUS_NO'
-                      Footers = <>
-                      Title.Caption = #29289#27969#36319#36394#21495
-                      Width = 74
                     end
                     item
                       EditButtons = <>

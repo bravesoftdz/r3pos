@@ -188,6 +188,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 163
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'IN_MONEY'
@@ -198,6 +199,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 130
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'OUT_MONEY'
@@ -445,6 +447,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'IN_MONEY'
@@ -455,6 +458,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 130
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'OUT_MONEY'
@@ -813,6 +817,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 204
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'IN_MONEY'
@@ -823,6 +828,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Width = 130
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'OUT_MONEY'

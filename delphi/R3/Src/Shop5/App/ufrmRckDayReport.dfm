@@ -188,6 +188,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
@@ -198,6 +199,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 86
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
@@ -208,6 +210,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
@@ -218,6 +221,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
@@ -228,6 +232,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
@@ -238,6 +243,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
@@ -248,6 +254,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
@@ -258,6 +265,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
@@ -268,6 +276,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
@@ -278,6 +287,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
@@ -288,6 +298,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
@@ -298,6 +309,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 78
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TRN_MNY'
@@ -308,6 +320,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 90
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TRN_REST_MNY'
@@ -555,6 +568,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
@@ -565,6 +579,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
@@ -575,6 +590,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
@@ -585,6 +601,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
@@ -595,6 +612,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
@@ -605,6 +623,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
@@ -615,6 +634,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
@@ -625,6 +645,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
@@ -635,6 +656,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
@@ -645,6 +667,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
@@ -655,6 +678,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
@@ -665,6 +689,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TRN_MNY'
@@ -675,6 +700,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 66
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'TRN_REST_MNY'
@@ -966,6 +992,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 99
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
@@ -976,6 +1003,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
@@ -986,6 +1014,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
@@ -996,6 +1025,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
@@ -1006,6 +1036,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
@@ -1016,6 +1047,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'PAY_E'
@@ -1026,6 +1058,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
@@ -1036,6 +1069,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'PAY_G'
                       Footer.DisplayFormat = '#0.00'
@@ -1045,6 +1079,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'PAY_H'
                       Footer.DisplayFormat = '#0.00'
@@ -1054,6 +1089,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'PAY_I'
                       Footer.DisplayFormat = '#0.00'
@@ -1063,6 +1099,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'PAY_J'
                       Footer.DisplayFormat = '#0.00'
@@ -1072,6 +1109,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'TRN_MNY'
                       Footer.DisplayFormat = '#0.00'
@@ -1081,6 +1119,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 69
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'TRN_REST_MNY'
                       Footer.DisplayFormat = '#0.00'
@@ -1375,6 +1414,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 99
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECV_MNY'
@@ -1385,6 +1425,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 80
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_A'
@@ -1395,6 +1436,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_B'
@@ -1405,6 +1447,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_C'
@@ -1415,6 +1458,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_D'
@@ -1425,6 +1469,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_E'
@@ -1435,6 +1480,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_F'
@@ -1445,6 +1491,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_G'
@@ -1455,6 +1502,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_H'
@@ -1465,6 +1513,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_I'
@@ -1475,6 +1524,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PAY_J'
@@ -1485,6 +1535,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BALANCE'

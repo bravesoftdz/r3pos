@@ -291,6 +291,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -301,6 +302,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 100
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
@@ -310,6 +312,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 91
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -320,6 +323,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
@@ -329,6 +333,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 79
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
@@ -674,6 +679,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 146
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -684,6 +690,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 100
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
@@ -692,6 +699,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 91
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -701,6 +709,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
@@ -709,6 +718,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 79
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
@@ -1040,6 +1050,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 171
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -1048,6 +1059,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 100
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
@@ -1056,6 +1068,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 91
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -1064,6 +1077,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
@@ -1072,6 +1086,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 79
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
@@ -1477,6 +1492,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 35
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
@@ -1487,6 +1503,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 100
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_PRC'
@@ -1495,6 +1512,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 91
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
@@ -1505,6 +1523,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 97
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'BAL_OUTPRC'
@@ -1513,6 +1532,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Width = 79
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'

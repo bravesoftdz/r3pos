@@ -110,10 +110,8 @@ type
     Label17: TLabel;
     Label18: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
     Label28: TLabel;
     fndP5_TYPE_ID: TcxComboBox;
-    fndP5_UNIT_ID: TcxComboBox;
     fndP5_STAT_ID: TzrComboBoxList;
     fndP5_SORT_ID: TcxButtonEdit;
     fndP5_SHOP_ID: TzrComboBoxList;

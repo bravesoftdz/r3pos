@@ -188,6 +188,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -220,6 +221,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECK_MNY'
@@ -467,6 +469,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 153
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -499,6 +502,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECK_MNY'
@@ -790,6 +794,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 99
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -822,6 +827,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 110
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECK_MNY'
@@ -1101,6 +1107,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Width = 121
                 end
                 item
+                  Alignment = taRightJustify
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'ACCT_MNY'
@@ -1133,6 +1140,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Width = 110
                 end
                 item
+                  Alignment = taRightJustify
                   DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'RECK_MNY'
@@ -1509,6 +1517,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 208
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'ACCT_MNY'
@@ -1559,6 +1568,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Width = 72
                     end
                     item
+                      Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'RECK_MNY'

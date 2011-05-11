@@ -177,6 +177,7 @@ type
     SortName: string; //临时变量
     sid1,sid2,sid3,sid4,sid5:string;
     srid1,srid2,srid3,srid4,srid5:string;
+    procedure SetUnitIDList(DBGrid: TDBGridEh; ColName: string); //设置ColList
     //按管理销售汇总表
     function GetGroupSQL(chk:boolean=true): string;
     //按门店销售汇总表
@@ -266,7 +267,11 @@ begin
 
       Label28.Caption := '仓库群组';
       Label17.Caption := '仓库名称';
-    end;  
+    end;
+
+  //增加单位显示：
+  SetUnitIDList(DBGridEh4,'UNIT_ID');
+  SetUnitIDList(DBGridEh5,'UNIT_ID');
 end;
 
 function TfrmSaleDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -409,6 +414,7 @@ begin
         strSql := GetSortSQL;
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
+        //showmessage(StrSQl);
         Factor.Open(adoReport3);
       end;
     3: begin //按商品汇总表
@@ -416,6 +422,7 @@ begin
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
+        //showmessage(StrSQl);
         Factor.Open(adoReport4);
       end;
     4: begin //按商品流水帐
@@ -424,6 +431,7 @@ begin
         strSql := GetGlideSQL;
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
+        //showmessage(StrSQl);
         Factor.Open(adoReport5);
       end;
   end;
@@ -1272,6 +1280,25 @@ procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
+end;
+
+procedure TfrmSaleDayReport.SetUnitIDList(DBGrid: TDBGridEh; ColName: string);
+var
+  Rs: TZQuery;
+  SetCol: TColumnEh;
+begin
+  Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+  SetCol:=FindColumn(DBGrid,ColName); 
+  if (Rs<>nil) and (Rs.Active) and (SetCol<>nil) then
+  begin
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      SetCol.KeyList.Add(Rs.fieldByName('UNIT_ID').AsString);
+      SetCol.PickList.Add(Rs.fieldByName('UNIT_NAME').AsString);
+      Rs.Next;
+    end;
+  end;
 end;
 
 end.

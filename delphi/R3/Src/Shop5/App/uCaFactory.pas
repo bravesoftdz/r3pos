@@ -2824,8 +2824,8 @@ try
           Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;PRICE_ID';
           Params.ParamByName('KEY_FLAG').AsString := '2';
           Factor.AddBatch(prc,'TSyncSingleTable',Params);
-          SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
           Factor.CommitBatch;
+          SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
         except
           Factor.CancelBatch;
           Raise;

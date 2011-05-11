@@ -216,8 +216,7 @@ begin
   Radio.Tag := Is_Null;
   vList := TStringList.Create;
   try
-    vList.Delimiter := ';';
-    vList.DelimitedText := OPTION;
+    vList.CommaText := OPTION;
     for i := 0 to vList.Count - 1 do
       begin
         rs := TRecord_.Create;
@@ -311,9 +310,9 @@ begin
   cdsUnionIndex := TZQuery.Create(nil);
   try
     cdsUnionIndex.SQL.Text :=
-    'select UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID and TENANT_ID=:TENANT_ID';
+    'select UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX where UNION_ID=:UNION_ID';// and TENANT_ID=:TENANT_ID';
     cdsUnionIndex.Params.ParamByName('UNION_ID').AsString := UnionID;
-    cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+//    cdsUnionIndex.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsUnionIndex);
     Aobj.ReadFromDataSet(cdsUnionIndex);
 

@@ -6,6 +6,7 @@ inherited frmUnoinLogin: TfrmUnoinLogin
   ClientHeight = 203
   ClientWidth = 342
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]

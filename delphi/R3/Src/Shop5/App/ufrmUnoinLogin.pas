@@ -24,6 +24,7 @@ type
     cdsUnion: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     //xsm_url,xsm_username,xsm_password :string;
@@ -43,11 +44,11 @@ procedure TfrmUnoinLogin.FormCreate(Sender: TObject);
 begin
   inherited;
   xsm_url := ShopGlobal.GetParameter('XSM_URL');
-  if xsm_url='' then xsm_url := 'http://test.xinshangmeng.com/';
+  //if xsm_url='' then xsm_url := 'http://test.xinshangmeng.com/';
   xsm_username := ShopGlobal.GetParameter('XSM_USERNAME');
-  if xsm_username='' then xsm_username := 'testcusta20';
+  //if xsm_username='' then xsm_username := 'testcusta20';
   xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
-  if xsm_password='' then xsm_password := 'admin';
+  //if xsm_password='' then xsm_password := 'admin';
 end;
 
 procedure TfrmUnoinLogin.ReadFrom;
@@ -55,11 +56,15 @@ begin
   cdsUnion.Close;
   cdsUnion.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE like ''%_'+Global.SHOP_ID+'''';
   Factor.Open(cdsUnion);
+  if cdsUnion.Locate('DEFINE','XSM_URL_'+Global.SHOP_ID,[]) then
+    edtUrl.Text := copy(cdsUnion.FieldbyName('VALUE').AsString,8,length(cdsUnion.FieldbyName('VALUE').AsString)-1);
+  if cdsUnion.Locate('DEFINE','XSM_USERNAME_'+Global.SHOP_ID,[]) then
+    edtUsername.Text := cdsUnion.FieldbyName('VALUE').AsString;
 end;
 
 procedure TfrmUnoinLogin.SetValue(ID, Value: String);
 begin
-  if cdsUnion.Locate(ID,Value,[]) then
+  if cdsUnion.Locate('DEFINE',ID,[]) then
     cdsUnion.Edit
   else
     cdsUnion.Append;
@@ -95,7 +100,6 @@ begin
        edtUsername.SetFocus;
        Raise Exception.Create('«Î ‰»Î√‹¬Î°£');
     end;
-  ReadFrom;
   WriteTo;
   Factor.UpdateBatch(cdsUnion,'TSysDefine');
 end;
@@ -118,6 +122,12 @@ begin
       finally
       end;
     end;
+end;
+
+procedure TfrmUnoinLogin.FormShow(Sender: TObject);
+begin
+  inherited;
+  ReadFrom;
 end;
 
 end.

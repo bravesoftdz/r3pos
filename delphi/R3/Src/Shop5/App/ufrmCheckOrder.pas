@@ -152,14 +152,17 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改');
 //  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-    begin
-      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
-      edtSHOP_ID.Properties.ReadOnly := True;
-      if edtCREA_DATE.CanFocus then edtCREA_DATE.SetFocus;
-    end
-  else
-    if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
+  SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+  edtSHOP_ID.Properties.ReadOnly := True;
+//  edtCREA_USER.SetFocus;
+//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+//    begin
+//      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+//      edtSHOP_ID.Properties.ReadOnly := True;
+//      if edtCREA_DATE.CanFocus then edtCREA_DATE.SetFocus;
+//    end
+//  else
+//    if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
 end;
 
 procedure TfrmCheckOrder.FormCreate(Sender: TObject);
@@ -206,17 +209,20 @@ begin
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   InitRecord;
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-    begin
-      edtSHOP_ID.Properties.ReadOnly := False;
-      edtSHOP_ID.KeyValue := Global.SHOP_ID;
-      edtSHOP_ID.Text := Global.SHOP_NAME;
-      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
-      edtSHOP_ID.Properties.ReadOnly := True;
-      edtCREA_USER.SetFocus;
-    end
-  else
-    if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
+  SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+  edtSHOP_ID.Properties.ReadOnly := True;
+  edtCREA_USER.SetFocus;
+//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+//    begin
+//      edtSHOP_ID.Properties.ReadOnly := False;
+//      edtSHOP_ID.KeyValue := Global.SHOP_ID;
+//      edtSHOP_ID.Text := Global.SHOP_NAME;
+//      SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+//      edtSHOP_ID.Properties.ReadOnly := True;
+//      edtCREA_USER.SetFocus;
+//    end
+//  else
+//    if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
   TabSheet.Caption := '..新增..';
   {rs := TZQuery.Create(nil);
   try
@@ -500,7 +506,7 @@ procedure TfrmCheckOrder.edtSHOP_IDSaveValue(Sender: TObject);
 var rs: TZQuery;
 begin
   inherited;
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.Close;
     rs.SQL.Text := 'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHECK_STATUS<2 ';
@@ -533,7 +539,7 @@ begin
     edtCREA_DATE.Date := fnTime.fnStrtoDate(rs.Fields[0].AsString);
   finally
     rs.Free;
-  end;   
+  end;    }
 end;
 
 procedure TfrmCheckOrder.edtInputKeyPress(Sender: TObject; var Key: Char);

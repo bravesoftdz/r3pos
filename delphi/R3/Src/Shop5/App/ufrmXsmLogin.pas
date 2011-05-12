@@ -1,4 +1,4 @@
-unit ufrmUnoinLogin;
+unit ufrmXsmLogin;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
-  TfrmUnoinLogin = class(TfrmBasic)
+  TfrmXsmLogin = class(TfrmBasic)
     RzPanel1: TRzPanel;
     RzPanel2: TRzPanel;
     Image1: TImage;
@@ -40,7 +40,7 @@ implementation
 uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,uShopGlobal,uDsUtil,ufrmIEWebForm;
 {$R *.dfm}
 
-procedure TfrmUnoinLogin.FormCreate(Sender: TObject);
+procedure TfrmXsmLogin.FormCreate(Sender: TObject);
 begin
   inherited;
   xsm_url := ShopGlobal.GetParameter('XSM_URL');
@@ -51,7 +51,7 @@ begin
   //if xsm_password='' then xsm_password := 'admin';
 end;
 
-procedure TfrmUnoinLogin.ReadFrom;
+procedure TfrmXsmLogin.ReadFrom;
 begin
   cdsUnion.Close;
   cdsUnion.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE like ''%_'+Global.SHOP_ID+'''';
@@ -62,7 +62,7 @@ begin
     edtUsername.Text := cdsUnion.FieldbyName('VALUE').AsString;
 end;
 
-procedure TfrmUnoinLogin.SetValue(ID, Value: String);
+procedure TfrmXsmLogin.SetValue(ID, Value: String);
 begin
   if cdsUnion.Locate('DEFINE',ID,[]) then
     cdsUnion.Edit
@@ -75,14 +75,14 @@ begin
   cdsUnion.Post;
 end;
 
-procedure TfrmUnoinLogin.WriteTo;
+procedure TfrmXsmLogin.WriteTo;
 begin
   SetValue('XSM_URL_'+Global.SHOP_ID,'http://'+Trim(edtUrl.Text)+'/');
   SetValue('XSM_USERNAME_'+Global.SHOP_ID,Trim(edtUsername.Text));
   SetValue('XSM_PASSWORD_'+Global.SHOP_ID,EncStr(Trim(edtPassword.Text),ENC_KEY));
 end;
 
-procedure TfrmUnoinLogin.cxBtnOkClick(Sender: TObject);
+procedure TfrmXsmLogin.cxBtnOkClick(Sender: TObject);
 begin
   inherited;
   if Trim(edtUrl.Text) = '' then
@@ -104,7 +104,7 @@ begin
   Factor.UpdateBatch(cdsUnion,'TSysDefine');
 end;
 
-class function TfrmUnoinLogin.ShowUnoinLogin(var Url, UserName,
+class function TfrmXsmLogin.ShowUnoinLogin(var Url, UserName,
   Password: String): Boolean;
 begin
   with TfrmUnoinLogin.Create(nil) do
@@ -124,7 +124,7 @@ begin
     end;
 end;
 
-procedure TfrmUnoinLogin.FormShow(Sender: TObject);
+procedure TfrmXsmLogin.FormShow(Sender: TObject);
 begin
   inherited;
   ReadFrom;

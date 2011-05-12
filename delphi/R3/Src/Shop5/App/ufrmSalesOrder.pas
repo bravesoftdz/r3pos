@@ -1360,6 +1360,7 @@ begin
           inc(self.RowID);
           self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
           self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+          self.edtTable.FieldByName('COST_PRICE').AsFloat := GetCostPrice(edtSHOP_ID.AsString,self.edtTable.FieldbyName('GODS_ID').AsString,self.edtTable.FieldbyName('BATCH_NO').AsString);
           self.edtTable.Post;
 
           edtProperty.Filtered := false;
@@ -1470,6 +1471,14 @@ begin
         Factor.CancelBatch;
         Raise;
       end;
+     edtTable.First;
+     while not edtTable.Eof do
+       begin
+         edtTable.Edit;
+         edtTable.FieldByName('COST_PRICE').AsFloat := GetCostPrice(edtSHOP_ID.AsString,edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('BATCH_NO').AsString);
+         edtTable.Post; 
+         edtTable.Next;
+       end;
    finally
      HObj.Free;
      Params.Free;

@@ -1015,7 +1015,7 @@ end;
 procedure TfrmStkIndentOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
-//  FindColumn('FNSH_AMOUNT').Visible := (Value=dsBrowse);
+  FindColumn('FNSH_AMOUNT').Visible := (Value=dsBrowse);
 
 end;
 

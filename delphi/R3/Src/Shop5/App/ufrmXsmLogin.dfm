@@ -1,10 +1,11 @@
-inherited frmUnoinLogin: TfrmUnoinLogin
+inherited frmXsmLogin: TfrmXsmLogin
   Left = 482
   Top = 197
   BorderStyle = bsDialog
   Caption = #26032#21830#30431
   ClientHeight = 203
   ClientWidth = 342
+  OldCreateOrder = True
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96

@@ -36,7 +36,7 @@ type
   end;
 
 implementation
-uses uDsUtil, uGlobal, uShopGlobal, Math, StrUtils;
+uses uDsUtil, uGlobal, uShopGlobal, Math, StrUtils, Des;
 {$R *.dfm}
 
 { TfrmClearData }
@@ -140,7 +140,11 @@ class function TfrmClearData.DeleteDB: Boolean;
 begin
   with TfrmClearData.Create(Application) do
     begin
-      Result := ShowModal = mrOk;
+      try
+        Result := ShowModal = mrOk;
+      finally
+        Free;
+      end;
     end;
 end;
 

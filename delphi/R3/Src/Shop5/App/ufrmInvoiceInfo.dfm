@@ -394,6 +394,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
       Top = 13
       Width = 121
       Height = 20
+      Properties.MaxLength = 50
       TabOrder = 0
     end
     object edtSHOP_ID: TzrComboBoxList

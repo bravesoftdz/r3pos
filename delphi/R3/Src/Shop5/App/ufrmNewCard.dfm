@@ -110,6 +110,7 @@ inherited frmNewCard: TfrmNewCard
             Top = 46
             Width = 166
             Height = 20
+            Properties.MaxLength = 36
             TabOrder = 2
           end
           object edtCLIENT_NAME: TcxTextEdit
@@ -134,6 +135,7 @@ inherited frmNewCard: TfrmNewCard
             Width = 121
             Height = 20
             Properties.EchoMode = eemPassword
+            Properties.MaxLength = 25
             TabOrder = 3
           end
           object edtPASSWRD1: TcxTextEdit
@@ -142,6 +144,7 @@ inherited frmNewCard: TfrmNewCard
             Width = 121
             Height = 20
             Properties.EchoMode = eemPassword
+            Properties.MaxLength = 25
             TabOrder = 4
           end
         end

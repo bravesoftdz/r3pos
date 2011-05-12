@@ -169,6 +169,7 @@ inherited frmPassWord: TfrmPassWord
             Width = 121
             Height = 20
             Properties.EchoMode = eemPassword
+            Properties.MaxLength = 25
             TabOrder = 0
           end
           object edtPASSWRD: TcxTextEdit
@@ -177,6 +178,7 @@ inherited frmPassWord: TfrmPassWord
             Width = 121
             Height = 20
             Properties.EchoMode = eemPassword
+            Properties.MaxLength = 25
             TabOrder = 1
           end
           object edtPASSWRD1: TcxTextEdit
@@ -185,6 +187,7 @@ inherited frmPassWord: TfrmPassWord
             Width = 121
             Height = 20
             Properties.EchoMode = eemPassword
+            Properties.MaxLength = 25
             TabOrder = 2
           end
           object edtIC_CARDNO: TcxTextEdit

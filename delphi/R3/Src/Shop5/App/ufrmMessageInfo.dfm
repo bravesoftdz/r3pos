@@ -136,6 +136,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Top = 81
             Width = 362
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 2
             OnKeyDown = edtMSG_TITLEKeyDown
           end
@@ -152,6 +153,7 @@ inherited frmMessageInfo: TfrmMessageInfo
             Top = 109
             Width = 362
             Height = 173
+            Properties.MaxLength = 500
             TabOrder = 3
           end
           object edtISSUE_DATE: TcxDateEdit

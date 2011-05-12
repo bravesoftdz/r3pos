@@ -270,6 +270,7 @@ begin
                  if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
                     Factor.ExecSQL(SQL.Text);
                  srDbType := -1;
+                 SQL.Clear;
                  if Assigned(onCreateDbCallBack) then
                     onCreateDbCallBack('Ö´ÐÐ½Å±¾',SQL.Text,100);
                except

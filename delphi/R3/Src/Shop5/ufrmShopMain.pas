@@ -334,6 +334,7 @@ type
     actfrmDownIndeOrder: TAction;
     actfrmRecvForDay: TAction;
     actfrmImpeach: TAction;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -443,6 +444,7 @@ type
     procedure actfrmRecvForDayExecute(Sender: TObject);
     procedure rzUserInfoClick(Sender: TObject);
     procedure actfrmImpeachExecute(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -499,7 +501,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2214,12 +2216,16 @@ begin
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
        begin
-         if MessageBox(Handle,'你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
+//         if MessageBox(Handle,'你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
+//            begin
+//              Form.Free;
+//              Exit;
+//            end;
+         if not TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url)) then
             begin
               Form.Free;
               Exit;
             end;
-         TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url));
        end;
     Form.Show;
     Form.BringToFront;
@@ -3344,6 +3350,12 @@ procedure TfrmShopMain.actfrmImpeachExecute(Sender: TObject);
 begin
   inherited;
   TfrmImpeach.ShowImpeach(self); 
+end;
+
+procedure TfrmShopMain.Button1Click(Sender: TObject);
+begin
+  inherited;
+  TfrmClearData.DeleteDB(self);
 end;
 
 end.

@@ -32,14 +32,14 @@ type
   public
     { Public declarations }
     function GetDoLogin(Url:string):string;
-    procedure Open(Url:string);
+    function Open(Url:string):boolean;
   end;
 var
   xsm_url:string;
   xsm_username:string;
   xsm_password:string;
 implementation
-uses EncDec,uShopGlobal;
+uses EncDec,uShopGlobal,ufrmXsmLogin;
 
 {$R *.dfm}
 
@@ -57,14 +57,33 @@ var
   Root:IXMLDOMElement;
   challenge:string;
 begin
-  challenge := GetForLogin(Url);
-  doc := GetXml(Url+'st/users/dologin?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+challenge),1);
-  if not Assigned(doc) then Raise Exception.Create('请求登录失败...');
-  Root :=  doc.DocumentElement;
-  if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-  if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
-  result := Url+'xsm2/xsm.html';
+  if xsm_url<>'' then
+  begin
+    try
+      challenge := GetForLogin(Url);
+      doc := GetXml(Url+'st/users/dologin?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+challenge),1);
+      if not Assigned(doc) then Raise Exception.Create('请求登录失败...');
+      Root :=  doc.DocumentElement;
+      if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
+      if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
+      if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+      result := Url+'xsm2/xsm.html';
+    except
+      on E:Exception do
+         begin
+           MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+           if TfrmXsmLogin.XsmLogin then
+              result := GetDoLogin(xsm_url)
+           else
+              result := '';
+         end;
+    end;
+  end
+  else
+  begin
+    if TfrmXsmLogin.XsmLogin then
+       result := GetDoLogin(xsm_url) else result := '';
+  end;
 end;
 
 function TfrmIEWebForm.GetForLogin(Url:string): string;
@@ -111,9 +130,12 @@ begin
   end;
 end;
 
-procedure TfrmIEWebForm.Open(Url: string);
+function TfrmIEWebForm.Open(Url: string):boolean;
 begin
+  result := false;
+  if url='' then Exit;
   IEBrowser.Navigate(url);
+  result := true;
 end;
 
 procedure TfrmIEWebForm.FormCreate(Sender: TObject);
@@ -121,11 +143,11 @@ begin
   inherited;
   FhEvent := CreateEvent(nil, True, False, nil);
   xsm_url := ShopGlobal.GetParameter('XSM_URL');
-  if xsm_url='' then xsm_url := 'http://test.xinshangmeng.com/';
+  if xsm_url='' then xsm_url := '';
   xsm_username := ShopGlobal.GetParameter('XSM_USERNAME');
-  if xsm_username='' then xsm_username := 'testcusta20';
+  if xsm_username='' then xsm_username := '';
   xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
-  if xsm_password='' then xsm_password := 'admin';
+  if xsm_password='' then xsm_password := '';
 end;
 
 procedure TfrmIEWebForm.FormDestroy(Sender: TObject);
@@ -148,7 +170,7 @@ procedure TfrmIEWebForm.IEBrowserNavigateComplete2(Sender: TObject;
 begin
   inherited;
   Runed := false;
-  if lowercase(URL)=lowercase(xsm_url) then close;
+  if pos('relogin',lowercase(URL))>0 then close;
 //  SetEvent(FhEvent);
 
 end;

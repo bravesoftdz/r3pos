@@ -47,6 +47,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
             FooterFont.Style = []
             FooterRowCount = 1
             FrozenCols = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -377,6 +378,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Top = 13
         Width = 131
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
         TabOrder = 6
       end
@@ -387,6 +389,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
         Left = 8
@@ -663,6 +666,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Top = 36
         Width = 120
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 1
       end
@@ -714,6 +718,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
   end

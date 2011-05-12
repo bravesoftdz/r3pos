@@ -1,16 +1,16 @@
 inherited frmClearData: TfrmClearData
-  Left = 454
-  Top = 197
-  Width = 450
-  Height = 240
-  Caption = #28165#38500#19994#21153#25968#25454
+  Left = 339
+  Top = 206
+  Width = 413
+  Height = 289
+  Caption = #25968#25454#28165#29702
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 442
+    Width = 397
     Height = 57
     Align = alTop
     BorderOuter = fsNone
@@ -18,7 +18,7 @@ inherited frmClearData: TfrmClearData
     Color = clWhite
     TabOrder = 0
     object Image1: TImage
-      Left = 361
+      Left = 329
       Top = 0
       Width = 56
       Height = 56
@@ -399,40 +399,53 @@ inherited frmClearData: TfrmClearData
         E0844A8EE21AF81070269F5E791FC8B61E49D26D349D3C9FABD9A048F912CC7C
         4B3124924EE49EA714BFFFD9}
     end
+    object Label3: TLabel
+      Left = 19
+      Top = 21
+      Width = 78
+      Height = 12
+      Caption = #25968#25454#28165#29702#24037#20855
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
   end
   object RzPanel2: TRzPanel [1]
     Left = 0
     Top = 57
-    Width = 442
-    Height = 156
+    Width = 397
+    Height = 194
     Align = alClient
     BorderOuter = fsNone
     BorderColor = clWhite
     TabOrder = 1
     object Bevel2: TBevel
-      Left = 144
-      Top = 106
-      Width = 281
+      Left = 145
+      Top = 138
+      Width = 237
       Height = 2
     end
     object Label1: TLabel
-      Left = 37
-      Top = 15
-      Width = 204
+      Left = 21
+      Top = 13
+      Width = 210
       Height = 12
-      Caption = #28165#38500#8220#19994#21153#25968#25454#8221#21069#65292#35831#22791#20221#21407#22987#25968#25454
+      Caption = '1'#12289#28165#38500#25152#26377#19994#21153#25968#25454#65292#20445#30041#22522#30784#36164#26009#12290
     end
     object Label2: TLabel
-      Left = 18
-      Top = 100
+      Left = 19
+      Top = 132
       Width = 120
       Height = 12
       Caption = #28165#38500#8220#19994#21153#25968#25454#8221#21521#23548
     end
     object ProgressBar1: TRzProgressBar
       Left = 21
-      Top = 40
-      Width = 401
+      Top = 68
+      Width = 356
       Height = 17
       BorderInner = fsFlatRounded
       BorderOuter = fsFlatRounded
@@ -442,9 +455,16 @@ inherited frmClearData: TfrmClearData
       Percent = 0
       TotalParts = 0
     end
+    object Label4: TLabel
+      Left = 21
+      Top = 37
+      Width = 330
+      Height = 12
+      Caption = '2'#12289#19994#21153#25968#25454#28165#38500#21518#23558#19981#33021#20877#24674#22797#65292#35831#22312#28165#29702#21069#20570#22909#22791#20221#24037#20855#12290
+    end
     object btnCancel: TRzBitBtn
-      Left = 316
-      Top = 117
+      Left = 292
+      Top = 153
       Caption = #21462#28040
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
@@ -460,8 +480,8 @@ inherited frmClearData: TfrmClearData
       NumGlyphs = 2
     end
     object btnDelete: TRzBitBtn
-      Left = 228
-      Top = 117
+      Left = 204
+      Top = 153
       Caption = #28165#38500
       Enabled = False
       Font.Charset = GB2312_CHARSET
@@ -479,25 +499,25 @@ inherited frmClearData: TfrmClearData
     end
     object IsBackupDataBase: TcxCheckBox
       Left = 37
-      Top = 68
+      Top = 96
       Width = 113
       Height = 21
       Properties.DisplayUnchecked = 'False'
       Properties.OnChange = IsBackupDataBasePropertiesChange
       Properties.Caption = #26159#21542#22791#20221#25968#25454#24211
-      State = cbsChecked
       TabOrder = 2
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
     object IsDelete: TcxCheckBox
       Left = 149
-      Top = 68
-      Width = 73
+      Top = 96
+      Width = 132
       Height = 21
       Properties.DisplayUnchecked = 'False'
       Properties.OnChange = IsHavePropertiesChange
-      Properties.Caption = #26159#21542#28165#38500
-      State = cbsChecked
+      Properties.Caption = #26159#21542#30830#35748#28165#38500#25152#26377#19994#21153#25968#25454
       TabOrder = 3
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
   end
   inherited mmMenu: TMainMenu

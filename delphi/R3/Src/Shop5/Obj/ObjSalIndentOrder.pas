@@ -181,15 +181,15 @@ end;
 
 function TSalIndentOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 begin
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
-      begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('INDE_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
-        if FieldbyName('INDE_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('INDE_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
-        result := true;
-      end
-   else
-      Result := true;
+//   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
+//      begin
+//        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('INDE_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
+//        if FieldbyName('INDE_DATE').AsOldString <> '' then
+//           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('INDE_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
+//        result := true;
+//      end
+//   else
+//      Result := true;
   result := true;
 end;
 

@@ -1,9 +1,9 @@
 inherited frmXsmLogin: TfrmXsmLogin
-  Left = 482
-  Top = 197
+  Left = 358
+  Top = 212
   BorderStyle = bsDialog
   Caption = #26032#21830#30431
-  ClientHeight = 203
+  ClientHeight = 210
   ClientWidth = 342
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -824,7 +824,7 @@ inherited frmXsmLogin: TfrmXsmLogin
     Left = 0
     Top = 57
     Width = 342
-    Height = 146
+    Height = 153
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -848,7 +848,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       Top = 19
       Width = 60
       Height = 12
-      Caption = #21830#30431#22320#22336#65306
+      Caption = #21830#30431#20027#26426#65306
     end
     object edtPassword: TcxTextEdit
       Left = 111
@@ -868,7 +868,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
     object cxBtnOk: TRzBitBtn
-      Left = 166
+      Left = 150
       Top = 106
       Caption = #30331#24405'(&O)'
       Color = 15791348
@@ -931,16 +931,17 @@ inherited frmXsmLogin: TfrmXsmLogin
       NumGlyphs = 2
     end
     object cxbtnCancel: TRzBitBtn
-      Left = 254
+      Left = 238
       Top = 106
       Cancel = True
       ModalResult = 2
-      Caption = #36864#20986'(&C)'
+      Caption = #20851#38381'(&C)'
       Color = 15791348
       HighlightColor = 16026986
       HotTrack = True
       HotTrackColor = 3983359
       TabOrder = 3
+      OnClick = cxbtnCancelClick
       Glyph.Data = {
         36060000424D3606000000000000360400002800000020000000100000000100
         0800000000000002000000000000000000000001000000000000000000003300

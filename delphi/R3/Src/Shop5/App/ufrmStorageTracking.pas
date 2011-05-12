@@ -8,7 +8,8 @@ uses
   RzLabel, ExtCtrls, jpeg, RzTabs, RzPanel, Grids, DBGridEh, RzTreeVw, ZBase,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, DB,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxMaskEdit,
-  cxDropDownEdit, cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh;
+  cxDropDownEdit, cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh,
+  RzStatus;
 
 type
   TfrmStorageTracking = class(TframeToolForm)
@@ -48,6 +49,64 @@ type
     ToolButton6: TToolButton;
     Label3: TLabel;
     edtSTOR_AMT: TcxComboBox;
+    TabSheet2: TRzTabSheet;
+    TabSheet3: TRzTabSheet;
+    RzPanel8: TRzPanel;
+    Splitter2: TSplitter;
+    RzPanel10: TRzPanel;
+    RzTreeView1: TRzTreeView;
+    RzPanel11: TRzPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Label4: TLabel;
+    RzStatusPane3: TRzStatusPane;
+    RzStatusPane4: TRzStatusPane;
+    DBGridEh1: TDBGridEh;
+    RzPanel12: TRzPanel;
+    Panel6: TPanel;
+    Panel7: TPanel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    RzBitBtn1: TRzBitBtn;
+    cxComboBox1: TcxComboBox;
+    cxComboBox2: TcxComboBox;
+    zrComboBoxList1: TzrComboBoxList;
+    zrComboBoxList2: TzrComboBoxList;
+    zrComboBoxList3: TzrComboBoxList;
+    cxComboBox3: TcxComboBox;
+    zrComboBoxList4: TzrComboBoxList;
+    RzPanel13: TRzPanel;
+    Splitter3: TSplitter;
+    RzPanel14: TRzPanel;
+    RzTreeView2: TRzTreeView;
+    RzPanel15: TRzPanel;
+    Panel8: TPanel;
+    Panel9: TPanel;
+    Label11: TLabel;
+    DBGridEh2: TDBGridEh;
+    RzPanel16: TRzPanel;
+    Panel10: TPanel;
+    Panel11: TPanel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    RzBitBtn2: TRzBitBtn;
+    cxComboBox5: TcxComboBox;
+    cxComboBox6: TcxComboBox;
+    zrComboBoxList5: TzrComboBoxList;
+    zrComboBoxList6: TzrComboBoxList;
+    zrComboBoxList7: TzrComboBoxList;
+    cxComboBox7: TcxComboBox;
+    zrComboBoxList8: TzrComboBoxList;
+    cxComboBox8: TcxComboBox;
+    RzStatusPane1: TRzStatusPane;
+    RzStatusPane2: TRzStatusPane;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;

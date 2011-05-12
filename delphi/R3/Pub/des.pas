@@ -477,7 +477,8 @@ begin
     ss.CopyFrom(mm,mm.Size);
     s := EncryStr(ss.DataString,Key);
     mm.Clear;
-    mm.Read(Pchar(s)^,length(s));
+    mm.Write(Pchar(s)^,length(s));
+    mm.Position := 0;
     mm.SaveToFile(filename);
     result := true; 
   finally
@@ -498,7 +499,8 @@ begin
     ss.CopyFrom(mm,mm.Size);
     s := DecryStr(ss.DataString,Key);
     mm.Clear;
-    mm.Read(Pchar(s)^,length(s));
+    mm.Write(Pchar(s)^,length(s));
+    mm.Position := 0;
     mm.SaveToFile(filename);
     result := true;
   finally

@@ -824,81 +824,137 @@ item: Include Script
   Pathname=%_WISE_%\INCLUDE\uninstal.wse
 end
 item: Install File
-  Source=frf\frfTransOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfTransOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfTransOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfTransOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
-  File Size=6514
-  File Date=20110329 131633
+  File Size=6513
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfStockOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfStockOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfStockOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfStockOrder_针孔（210※140）无金额.frf
   Flags=0000000010000010
-  File Size=7998
-  File Date=20110328 184309
+  File Size=7730
+  File Date=20110509 110113
 end
 item: Install File
-  Source=frf\frfStkRetuOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfStkRetuOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfStockOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfStockOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
-  File Size=7998
-  File Date=20110328 184309
+  File Size=7999
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfStkIndentOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfStkIndentOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfStkRetuOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfStkRetuOrder_针孔（210※140）无金额.frf
   Flags=0000000010000010
-  File Size=7992
-  File Date=20110329 131818
+  File Size=7440
+  File Date=20110509 110113
 end
 item: Install File
-  Source=frf\frfSalRetuOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfSalRetuOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfStkRetuOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfStkRetuOrder_针孔（210※140）标准样式.frf
+  Flags=0000000010000010
+  File Size=7999
+  File Date=20110508 185602
+end
+item: Install File
+  Source=frf\frfStkIndentOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfStkIndentOrder_针孔（210※140）标准样式.frf
+  Flags=0000000010000010
+  File Size=7993
+  File Date=20110509 093825
+end
+item: Install File
+  Source=frf\frfSalRetuOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfSalRetuOrder_针孔（210※140）无金额.frf
+  Flags=0000000010000010
+  File Size=7754
+  File Date=20110509 110113
+end
+item: Install File
+  Source=frf\frfSalRetuOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfSalRetuOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
   File Size=8388
-  File Date=20110328 184309
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfSalIndentOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfSalIndentOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfSalIndentOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfSalIndentOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
   File Size=8387
-  File Date=20110328 184309
+  File Date=20110509 093845
 end
 item: Install File
-  Source=frf\frfSalesOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfSalesOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfSalesOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfSalesOrder_针孔（210※140）无金额.frf
+  Flags=0000000010000010
+  File Size=7905
+  File Date=20110509 110113
+end
+item: Install File
+  Source=frf\frfSalesOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfSalesOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
   File Size=8388
-  File Date=20110328 184309
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfChangeOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfChangeOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfRecvPosOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfRecvPosOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
-  File Size=7370
-  File Date=20110328 184309
+  File Size=6517
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfIoroOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfIoroOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfRecvOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfRecvOrder_针孔（210※140）标准样式.frf
+  Flags=0000000010000010
+  File Size=6523
+  File Date=20110508 185602
+end
+item: Install File
+  Source=frf\frfPayOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfPayOrder_针孔（210※140）标准样式.frf
+  Flags=0000000010000010
+  File Size=6501
+  File Date=20110508 185602
+end
+item: Install File
+  Source=frf\frfIoroOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfIoroOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
   File Size=6468
-  File Date=20110329 131732
+  File Date=20110508 185602
 end
 item: Install File
-  Source=frf\frfPayOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfPayOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfDbOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfDbOrder_针孔（210※140）无金额.frf
   Flags=0000000010000010
-  File Size=6502
-  File Date=20110328 184309
+  File Size=7057
+  File Date=20110509 110113
 end
 item: Install File
-  Source=frf\frfRecvOrder_针孔打印纸（210※140）.frf
-  Destination=%MAINDIR%\frf\frfRecvOrder_针孔打印纸（210※140）.frf
+  Source=frf\frfDbOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfDbOrder_针孔（210※140）标准样式.frf
   Flags=0000000010000010
-  File Size=6524
-  File Date=20110328 184309
+  File Size=7128
+  File Date=20110509 102041
+end
+item: Install File
+  Source=frf\frfChangeOrder_针孔（210※140）无金额.frf
+  Destination=%MAINDIR%\frf\frfChangeOrder_针孔（210※140）无金额.frf
+  Flags=0000000010000010
+  File Size=6619
+  File Date=20110509 110113
+end
+item: Install File
+  Source=frf\frfChangeOrder_针孔（210※140）标准样式.frf
+  Destination=%MAINDIR%\frf\frfChangeOrder_针孔（210※140）标准样式.frf
+  Flags=0000000010000010
+  File Size=7370
+  File Date=20110508 185602
 end
 item: Install File
   Source=readme.txt
@@ -1131,7 +1187,7 @@ item: Edit INI File
   Settings=copyright=2010-2020版权所属:山东浪潮齐鲁软件产业股份有限公司
   Settings=telephone=13860431130
   Settings=
-  Settings=rsp=http://soft.ymeng.cn:9082/rsp/services/
+  Settings=rsp=#20071D0469571D414347184A58260001153D1F5F565E5018515E255C1A11210E5B50554419
   Settings=
 end
 item: Remark

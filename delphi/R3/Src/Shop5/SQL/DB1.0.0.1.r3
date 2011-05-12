@@ -35,6 +35,46 @@ CREATE TABLE [PUB_GOODSINFOEXT] (
 	[TENANT_ID] int NOT NULL ,
         --货号编码
 	[GODS_ID] [char] (36) NOT NULL ,
+        --分类1
+	[SORT_ID1] [varchar] (36) NULL ,
+        --分类2
+	[SORT_ID2] [varchar] (36) NULL ,
+        --分类3
+	[SORT_ID3] [varchar] (36) NULL ,
+        --分类4
+	[SORT_ID4] [varchar] (36) NULL ,
+        --分类5
+	[SORT_ID5] [varchar] (36) NULL ,
+        --分类6
+	[SORT_ID6] [varchar] (36) NULL ,
+        --颜色组
+	[SORT_ID7] [varchar] (36) NULL ,
+        --尺码组
+	[SORT_ID8] [varchar] (36) NULL ,
+        --自定义9
+	[SORT_ID9] [varchar] (36) NULL ,
+        --自定义10
+	[SORT_ID10] [varchar] (36) NULL ,
+        --自定义11
+	[SORT_ID11] [varchar] (36) NULL ,
+        --自定义12
+	[SORT_ID12] [varchar] (36) NULL ,
+        --自定义13
+	[SORT_ID13] [varchar] (36) NULL ,
+        --自定义14
+	[SORT_ID14] [varchar] (36) NULL ,
+        --自定义15
+	[SORT_ID15] [varchar] (36) NULL ,
+        --自定义16
+	[SORT_ID16] [varchar] (36) NULL ,
+        --自定义17
+	[SORT_ID17] [varchar] (36) NULL ,
+        --自定义18
+	[SORT_ID18] [varchar] (36) NULL ,
+        --自定义19
+	[SORT_ID19] [varchar] (36) NULL ,
+        --自定义20
+	[SORT_ID20] [varchar] (36) NULL ,
         --计量单位最新进价
 	[NEW_INPRICE] [decimal](18, 3) NULL ,
         --包装1单位最新进价
@@ -49,6 +89,8 @@ CREATE TABLE [PUB_GOODSINFOEXT] (
 	[LOWER_RATE] [decimal](18, 3) NULL ,
         --最高存销比
 	[UPPER_RATE] [decimal](18, 3) NULL ,
+        --日均销量
+	[DAY_SALE_AMT] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSINFOEXT_COMM] DEFAULT ('00'),
         --更新时间 从2011-01-01开始的秒数
@@ -132,6 +174,8 @@ CREATE TABLE [STO_STORAGE] (
 	[LOWER_RATE] [decimal](18, 3) NULL ,
         --最高存销比
 	[UPPER_RATE] [decimal](18, 3) NULL ,
+        --日均销量
+	[DAY_SALE_AMT] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_STORAGE_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数

@@ -25,6 +25,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure cxbtnCancelClick(Sender: TObject);
   private
     { Private declarations }
     //xsm_url,xsm_username,xsm_password :string;
@@ -33,7 +34,7 @@ type
     procedure ReadFrom;
     procedure WriteTo;
     procedure SetValue(ID,Value:String);
-    class function ShowUnoinLogin(var Url,UserName,Password:String):Boolean;
+    class function XsmLogin:Boolean;
   end;
 
 implementation
@@ -57,7 +58,7 @@ begin
   cdsUnion.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and DEFINE like ''%_'+Global.SHOP_ID+'''';
   Factor.Open(cdsUnion);
   if cdsUnion.Locate('DEFINE','XSM_URL_'+Global.SHOP_ID,[]) then
-    edtUrl.Text := copy(cdsUnion.FieldbyName('VALUE').AsString,8,length(cdsUnion.FieldbyName('VALUE').AsString)-1);
+    edtUrl.Text := copy(cdsUnion.FieldbyName('VALUE').AsString,8,length(cdsUnion.FieldbyName('VALUE').AsString)-8);
   if cdsUnion.Locate('DEFINE','XSM_USERNAME_'+Global.SHOP_ID,[]) then
     edtUsername.Text := cdsUnion.FieldbyName('VALUE').AsString;
 end;
@@ -102,24 +103,25 @@ begin
     end;
   WriteTo;
   Factor.UpdateBatch(cdsUnion,'TSysDefine');
+  ModalResult := MROK;
 end;
 
-class function TfrmXsmLogin.ShowUnoinLogin(var Url, UserName,
-  Password: String): Boolean;
+class function TfrmXsmLogin.XsmLogin: Boolean;
 begin
-  with TfrmUnoinLogin.Create(nil) do
+  with TfrmXsmLogin.Create(nil) do
     begin
       try
         if ShowModal = mrOk then
           begin
-            Url := 'http://'+Trim(edtUrl.Text)+'/';
-            UserName := Trim(edtUsername.Text);
-            Password := EncStr(Trim(edtPassword.Text),ENC_KEY);
+            xsm_url := 'http://'+Trim(edtUrl.Text)+'/';
+            xsm_UserName := Trim(edtUsername.Text);
+            xsm_Password := Trim(edtPassword.Text);
             Result := True;
           end
-        else if ShowModal = mrIgnore then
+        else 
           Result := False;
       finally
+        free;
       end;
     end;
 end;
@@ -128,6 +130,12 @@ procedure TfrmXsmLogin.FormShow(Sender: TObject);
 begin
   inherited;
   ReadFrom;
+end;
+
+procedure TfrmXsmLogin.cxbtnCancelClick(Sender: TObject);
+begin
+  inherited;
+  Close;
 end;
 
 end.

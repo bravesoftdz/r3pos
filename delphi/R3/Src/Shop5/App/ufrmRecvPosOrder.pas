@@ -75,6 +75,7 @@ type
     { Public declarations }
     AObj:TRecord_;
     locked:Boolean;
+    procedure ClearPayment;
     procedure Calc;
     procedure Open(id:string);
     procedure Append;
@@ -559,6 +560,16 @@ begin
      begin
        if Value then Label14.Caption := '×´Ì¬:ÉóºË' else Label14.Caption := '×´Ì¬:´ýÉó';
      end;
+end;
+
+procedure TfrmRecvPosOrder.ClearPayment;
+var
+  i:integer;
+begin
+//  for i:=edtPAYM_ID.Properties.Items.Count downto 0 do
+//    begin
+//      if TRecord_().FieldbyName('CODE_ID').AsString = '
+//    end;
 end;
 
 end.

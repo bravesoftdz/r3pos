@@ -104,9 +104,9 @@ type
     property upgrade:boolean read Fupgrade write Setupgrade;
     //是否能连上RSP服务主机
     property rspConnected:boolean read FrspConnected write SetrspConnected;
-    //远程连接
-    property LocalFactory:TdbFactory read FLocalFactory write SetLocalFactory;
     //本地连接
+    property LocalFactory:TdbFactory read FLocalFactory write SetLocalFactory;
+    //远程连接
     property RemoteFactory:TdbFactory read FRemoteFactory write SetRemoteFactory;
   end;
   

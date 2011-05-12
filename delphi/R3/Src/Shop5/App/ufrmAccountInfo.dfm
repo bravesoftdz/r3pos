@@ -296,6 +296,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         Top = 24
         Width = 118
         Height = 20
+        Properties.MaxLength = 50
         Properties.OnChange = edtACCT_NAMEPropertiesChange
         TabOrder = 0
       end
@@ -314,6 +315,7 @@ inherited frmAccountInfo: TfrmAccountInfo
         Width = 118
         Height = 20
         TabStop = False
+        Properties.MaxLength = 50
         TabOrder = 3
       end
       object edtPAYM_ID: TcxComboBox

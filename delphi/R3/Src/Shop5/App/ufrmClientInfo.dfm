@@ -19,8 +19,10 @@ inherited frmClientInfo: TfrmClientInfo
       Top = 135
       Width = 518
       Height = 184
+      ActivePage = TabSheet4
       Color = clWhite
       ParentColor = False
+      TabIndex = 3
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -140,6 +142,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 84
             Width = 397
             Height = 64
+            Properties.MaxLength = 200
             TabOrder = 6
           end
           object edtBALANCE: TcxTextEdit
@@ -222,6 +225,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 35
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 1
             OnKeyDown = edtLICENSE_CODEKeyDown
           end
@@ -364,6 +368,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 21
             Width = 121
             Height = 20
+            Properties.MaxLength = 10
             TabOrder = 0
           end
           object edtTELEPHONE1: TcxTextEdit
@@ -371,6 +376,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 82
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 2
           end
           object edtFAXES: TcxTextEdit
@@ -378,6 +384,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 52
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 1
           end
           object edtEMAIL: TcxTextEdit
@@ -385,6 +392,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 83
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 6
           end
           object edtQQ: TcxTextEdit
@@ -392,6 +400,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 23
             Width = 121
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 4
           end
           object edtTELEPHONE2: TcxTextEdit
@@ -399,6 +408,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 112
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 3
           end
           object edtMSN: TcxTextEdit
@@ -406,6 +416,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 53
             Width = 121
             Height = 20
+            Properties.MaxLength = 35
             TabOrder = 5
           end
           object edtHOMEPAGE: TcxTextEdit
@@ -413,6 +424,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 113
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 7
           end
         end
@@ -539,6 +551,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 33
             Width = 121
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 1
           end
           object edtSEND_ADDR: TcxTextEdit
@@ -546,6 +559,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 9
             Width = 395
             Height = 20
+            Properties.MaxLength = 100
             TabOrder = 0
           end
           object edtRECV_TELE: TcxTextEdit
@@ -553,6 +567,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 130
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 6
           end
           object edtSEND_TELE: TcxTextEdit
@@ -560,6 +575,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 56
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 2
           end
           object edtRECV_LINKMAN: TcxTextEdit
@@ -567,6 +583,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 107
             Width = 121
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 5
           end
           object edtRECV_ADDR: TcxTextEdit
@@ -574,6 +591,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 83
             Width = 395
             Height = 20
+            Properties.MaxLength = 100
             TabOrder = 4
           end
           object edtPOSTALCODE: TcxTextEdit
@@ -581,6 +599,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 33
             Width = 121
             Height = 20
+            Properties.MaxLength = 6
             TabOrder = 3
           end
         end
@@ -730,6 +749,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 95
             Width = 170
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 3
           end
           object edtBANK_ID: TcxComboBox
@@ -745,6 +765,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 122
             Width = 394
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 7
           end
           object edtLEGAL_REPR: TcxTextEdit
@@ -752,6 +773,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 42
             Width = 121
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 1
           end
           object edtINVO_NAME: TcxTextEdit
@@ -759,6 +781,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 16
             Width = 241
             Height = 20
+            Properties.MaxLength = 60
             TabOrder = 0
           end
           object edtTAX_NO: TcxTextEdit
@@ -766,6 +789,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 95
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 6
           end
           object edtTELEPHONE3: TcxTextEdit
@@ -773,6 +797,7 @@ inherited frmClientInfo: TfrmClientInfo
             Top = 42
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 4
           end
         end
@@ -1048,6 +1073,7 @@ inherited frmClientInfo: TfrmClientInfo
         Top = 38
         Width = 160
         Height = 20
+        Properties.MaxLength = 50
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
         TabOrder = 1
       end
@@ -1057,6 +1083,7 @@ inherited frmClientInfo: TfrmClientInfo
         Width = 121
         Height = 20
         TabStop = False
+        Properties.MaxLength = 50
         TabOrder = 6
       end
       object edtSORT_ID: TzrComboBoxList
@@ -1148,6 +1175,7 @@ inherited frmClientInfo: TfrmClientInfo
         Top = 12
         Width = 121
         Height = 20
+        Properties.MaxLength = 20
         Properties.OnChange = edtCLIENT_NAMEPropertiesChange
         TabOrder = 0
       end

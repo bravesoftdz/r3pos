@@ -139,9 +139,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
-      ActivePage = TabSheet6
       Align = alBottom
-      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -308,6 +306,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 30
             Width = 122
             Height = 20
+            Properties.MaxLength = 50
             Properties.OnChange = edtCUST_NAMEPropertiesChange
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -363,6 +362,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 123
             Width = 360
             Height = 56
+            Properties.MaxLength = 500
             TabOrder = 5
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -594,6 +594,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 106
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 9
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnKeyPress = cmbOFFI_TELEKeyPress
@@ -654,6 +655,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 129
             Width = 121
             Height = 20
+            Properties.MaxLength = 6
             TabOrder = 5
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -662,6 +664,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 36
             Width = 121
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 6
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -670,6 +673,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 59
             Width = 121
             Height = 20
+            Properties.MaxLength = 35
             TabOrder = 7
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -678,6 +682,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 82
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 8
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -686,6 +691,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 129
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 10
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -719,6 +725,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 106
             Width = 150
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -1143,6 +1150,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 1
         Width = 121
         Height = 20
+        Properties.MaxLength = 20
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1151,6 +1159,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 25
         Width = 121
         Height = 20
+        Properties.MaxLength = 30
         Properties.OnChange = edtCUST_NAMEPropertiesChange
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1161,6 +1170,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Width = 121
         Height = 20
         TabStop = False
+        Properties.MaxLength = 30
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1214,6 +1224,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Top = 108
         Width = 121
         Height = 20
+        Properties.MaxLength = 30
         Properties.OnChange = edtCUST_NAMEPropertiesChange
         TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

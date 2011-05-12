@@ -1,7 +1,7 @@
 inherited frmTenant: TfrmTenant
   Left = 333
   Top = 199
-  ActiveControl = cxedtLOGIN_NAME
+  ActiveControl = edtLOGIN_NAME
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -17,9 +17,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 476
     Height = 326
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet
@@ -923,6 +923,7 @@ inherited frmTenant: TfrmTenant
         Top = 13
         Width = 90
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -932,6 +933,7 @@ inherited frmTenant: TfrmTenant
         Top = 34
         Width = 185
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -941,6 +943,7 @@ inherited frmTenant: TfrmTenant
         Top = 55
         Width = 111
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 2
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -950,6 +953,7 @@ inherited frmTenant: TfrmTenant
         Top = 176
         Width = 111
         Height = 20
+        Properties.MaxLength = 20
         TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -959,6 +963,7 @@ inherited frmTenant: TfrmTenant
         Top = 197
         Width = 111
         Height = 20
+        Properties.MaxLength = 20
         TabOrder = 9
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -968,6 +973,7 @@ inherited frmTenant: TfrmTenant
         Top = 197
         Width = 111
         Height = 20
+        Properties.MaxLength = 30
         TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -977,6 +983,7 @@ inherited frmTenant: TfrmTenant
         Top = 176
         Width = 111
         Height = 20
+        Properties.MaxLength = 30
         TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -986,6 +993,7 @@ inherited frmTenant: TfrmTenant
         Top = 76
         Width = 159
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -995,6 +1003,7 @@ inherited frmTenant: TfrmTenant
         Top = 220
         Width = 183
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 11
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1004,6 +1013,7 @@ inherited frmTenant: TfrmTenant
         Top = 219
         Width = 71
         Height = 20
+        Properties.MaxLength = 6
         TabOrder = 12
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1014,6 +1024,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         Properties.EchoMode = eemPassword
+        Properties.MaxLength = 25
         TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1024,6 +1035,7 @@ inherited frmTenant: TfrmTenant
         Width = 111
         Height = 20
         Properties.EchoMode = eemPassword
+        Properties.MaxLength = 25
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end

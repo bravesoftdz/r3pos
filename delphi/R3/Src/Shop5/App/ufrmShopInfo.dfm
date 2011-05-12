@@ -88,6 +88,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 9
             Width = 120
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 0
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -96,6 +97,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 33
             Width = 120
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -104,6 +106,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 9
             Width = 120
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 2
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -112,6 +115,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 57
             Width = 370
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -120,6 +124,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 81
             Width = 370
             Height = 68
+            Properties.MaxLength = 100
             TabOrder = 5
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -128,6 +133,7 @@ inherited frmShopInfo: TfrmShopInfo
             Top = 33
             Width = 120
             Height = 20
+            Properties.MaxLength = 6
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
@@ -376,6 +382,7 @@ inherited frmShopInfo: TfrmShopInfo
         Top = 29
         Width = 120
         Height = 20
+        Properties.MaxLength = 50
         Properties.OnChange = edtSHOP_NAMEPropertiesChange
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -386,6 +393,7 @@ inherited frmShopInfo: TfrmShopInfo
         Width = 120
         Height = 20
         TabStop = False
+        Properties.MaxLength = 50
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -394,6 +402,7 @@ inherited frmShopInfo: TfrmShopInfo
         Top = 54
         Width = 120
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end

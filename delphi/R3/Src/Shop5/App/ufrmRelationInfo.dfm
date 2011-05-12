@@ -278,6 +278,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         Top = 38
         Width = 118
         Height = 20
+        Properties.MaxLength = 50
         Properties.OnChange = edtRELATION_NAMEPropertiesChange
         TabOrder = 1
       end
@@ -286,6 +287,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         Top = 38
         Width = 118
         Height = 20
+        Properties.MaxLength = 50
         TabOrder = 2
       end
       object edtREMARK: TcxMemo
@@ -293,6 +295,7 @@ inherited frmRelationInfo: TfrmRelationInfo
         Top = 68
         Width = 328
         Height = 67
+        Properties.MaxLength = 255
         TabOrder = 3
       end
     end

@@ -1,6 +1,6 @@
 inherited frmUsersInfo: TfrmUsersInfo
-  Left = 607
-  Top = 235
+  Left = 381
+  Top = 200
   Caption = #29992#25143#26723#26696
   ClientHeight = 351
   ClientWidth = 529
@@ -214,9 +214,11 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 127
       Width = 519
       Height = 187
+      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
+      TabIndex = 1
       TabOrder = 7
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -336,6 +338,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 87
             Width = 355
             Height = 68
+            Properties.MaxLength = 100
             TabOrder = 6
           end
           object edtWORK_DATE: TcxDateEdit
@@ -357,6 +360,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 61
             Width = 150
             Height = 20
+            Properties.MaxLength = 50
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 2
           end
@@ -536,6 +540,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 92
             Width = 121
             Height = 20
+            Properties.MaxLength = 6
             TabOrder = 3
           end
           object edtOFFI_TELE: TcxTextEdit
@@ -543,6 +548,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 67
             Width = 121
             Height = 20
+            Properties.MaxLength = 11
             TabOrder = 2
           end
           object edtMOBILE: TcxTextEdit
@@ -550,6 +556,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 42
             Width = 121
             Height = 20
+            Properties.MaxLength = 11
             TabOrder = 1
           end
           object edtFAMI_TELE: TcxTextEdit
@@ -557,6 +564,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 17
             Width = 121
             Height = 20
+            Properties.MaxLength = 11
             TabOrder = 0
           end
           object edtFAMI_ADDR: TcxTextEdit
@@ -564,6 +572,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 117
             Width = 355
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 8
           end
           object edtEMAIL: TcxTextEdit
@@ -571,6 +580,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 92
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 7
           end
           object edtQQ: TcxTextEdit
@@ -578,6 +588,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 17
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 4
           end
@@ -586,6 +597,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 42
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             Properties.OnChange = edt_USER_NAMEPropertiesChange
             TabOrder = 5
           end
@@ -594,6 +606,7 @@ inherited frmUsersInfo: TfrmUsersInfo
             Top = 67
             Width = 121
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 6
           end
         end
@@ -666,6 +679,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 12
       Width = 121
       Height = 20
+      Properties.MaxLength = 20
       TabOrder = 0
     end
     object edtUSER_NAME: TcxTextEdit
@@ -673,6 +687,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Top = 37
       Width = 121
       Height = 20
+      Properties.MaxLength = 20
       Properties.OnChange = edt_USER_NAMEPropertiesChange
       TabOrder = 1
     end
@@ -682,6 +697,7 @@ inherited frmUsersInfo: TfrmUsersInfo
       Width = 121
       Height = 20
       TabStop = False
+      Properties.MaxLength = 20
       TabOrder = 4
     end
     object edtSHOP_ID: TzrComboBoxList

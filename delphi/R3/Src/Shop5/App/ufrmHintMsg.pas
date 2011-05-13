@@ -327,8 +327,11 @@ end;
 
 procedure TMsgFactory.SetMsgRead(Msg: PMsgInfo; const Value: boolean);
 begin
-  Msg.Rdd := Value;
-  GetUnRead;
+  if Msg <> nil then
+    begin
+      Msg.Rdd := Value;
+      GetUnRead;
+    end;
 end;
 
 procedure TMsgFactory.ClearType(C_Type: Integer);

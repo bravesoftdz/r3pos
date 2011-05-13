@@ -447,9 +447,7 @@ begin
   IsOnDblClick:=true; //设置标记位
   P3_D1.Date:=P2_D1.Date;
   P3_D2.Date:=P2_D2.Date;
-  fndP3_SHOP_TYPE.ItemIndex:=fndP2_SHOP_TYPE.ItemIndex;
-  fndP3_SHOP_VALUE.KeyValue:=fndP2_SHOP_VALUE.KeyValue;
-  fndP3_SHOP_VALUE.Text:=fndP2_SHOP_VALUE.Text;
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
   fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
   fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then

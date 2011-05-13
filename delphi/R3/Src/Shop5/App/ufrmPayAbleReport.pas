@@ -94,11 +94,11 @@ type
     Label8: TLabel;
     fndP5_GLIDE_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -442,9 +442,8 @@ begin
   IsOnDblClick:=true; //设置标记位
   P3_D1.Date:=P2_D1.Date;
   P3_D2.Date:=P2_D2.Date;
-  fndP3_SHOP_TYPE.ItemIndex:=fndP2_SHOP_TYPE.ItemIndex;
-  fndP3_SHOP_VALUE.KeyValue:=fndP2_SHOP_VALUE.KeyValue;
-  fndP3_SHOP_VALUE.Text:=fndP2_SHOP_VALUE.Text;
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  
   fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
   fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
@@ -461,11 +460,8 @@ begin
   IsOnDblClick:=true; //设置标记位
   P4_D1.Date:=fnTime.fnStrtoDate(adoReport3.fieldbyName('RECV_DATE').AsString);
   P4_D2.Date:=P4_D1.Date;
-  fndP4_SHOP_TYPE.ItemIndex:=fndP3_SHOP_TYPE.ItemIndex;
-  fndP4_SHOP_VALUE.KeyValue:=fndP3_SHOP_VALUE.KeyValue;
-  fndP4_SHOP_VALUE.Text:=fndP3_SHOP_VALUE.Text;
-  fndP4_SHOP_ID.KeyValue:=fndP3_SHOP_ID.KeyValue;
-  fndP4_SHOP_ID.Text:=fndP3_SHOP_ID.Text;
+  Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //管理群组
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;
@@ -638,11 +634,9 @@ begin
   IsOnDblClick:=true; //设置标记位
   P5_D1.Date:=P4_D1.Date;
   P5_D2.Date:=P4_D2.Date;
-  fndP5_SHOP_TYPE.ItemIndex:=fndP4_SHOP_TYPE.ItemIndex;
-  fndP5_SHOP_VALUE.KeyValue:=fndP4_SHOP_VALUE.KeyValue;
-  fndP5_SHOP_VALUE.Text:=fndP4_SHOP_VALUE.Text;
-  fndP5_SHOP_ID.KeyValue:=fndP4_SHOP_ID.KeyValue;
-  fndP5_SHOP_ID.Text:=fndP4_SHOP_ID.Text;
+  Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
+  Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //门店名称
+  
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;

@@ -3070,8 +3070,8 @@ procedure TfrmGoodsInfo.ExtBarCodeGridKeyPress(Sender: TObject;
   var Key: Char);
 begin
 //  inherited;
-//  if Key=#13 then
-//    ExtGridFocusNextColumn;
+  if Key=#13 then
+     ExtGridFocusNextColumn;
 end;
 
 procedure TfrmGoodsInfo.ExtBarCodeGridMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -3080,7 +3080,7 @@ var
 begin
   inherited;
   Cell := ExtBarCodeGrid.MouseCoord(X,Y);
-  if Cell.Y > (ExtBarCodeGrid.VisibleRowCount-1) then
+  if (Cell.Y > ExtBarCodeGrid.VisibleRowCount) or (Cell.Y<0) then
     InitRecord;
 end;
 

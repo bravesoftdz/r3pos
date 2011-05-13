@@ -240,6 +240,7 @@ end;
 procedure TfrmStorageTracking.FormCreate(Sender: TObject);
 begin
   inherited;
+  RzPage.ActivePageIndex := 0;
   edtSTOR_AMT.ItemIndex := 0;
   AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);

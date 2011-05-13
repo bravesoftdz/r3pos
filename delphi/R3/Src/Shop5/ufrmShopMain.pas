@@ -1332,6 +1332,7 @@ begin
   result := TfrmTenant.coRegister(self);
   if result then LoadFrame;
   if result and CaFactory.Audited then result := CheckVersion;
+  if not result then Exit; //不为true时没必要执行下载的语句了
   if result then
      begin
       if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
@@ -3395,7 +3396,10 @@ begin
        Exit;
      end;
   Global.MoveToRemate;
-  Global.RemoteFactory.Initialize(DecStr(ParamStr(2),ENC_KEY));
+  if pos(';',ParamStr(2))>0 then //如果带分号，代表没加密码的
+     Global.RemoteFactory.Initialize(ParamStr(2))
+  else
+     Global.RemoteFactory.Initialize(DecStr(ParamStr(2),ENC_KEY));
   Global.Connect;
    with TCreateDbFactory.Create do
    begin

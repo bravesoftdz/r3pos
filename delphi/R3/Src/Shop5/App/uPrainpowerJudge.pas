@@ -112,7 +112,7 @@ begin
                            ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,'+rs.FieldByName('VALUE').AsString+' as MIN_DATE,9 as sFlag '+
+            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,'''+rs.FieldByName('VALUE').AsString+''' as MIN_DATE,9 as sFlag '+
             ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and BIRTHDAY is not null and ' + Str_Bir;
           end;
 
@@ -130,7 +130,7 @@ begin
                            ' ('''+FormatDateTime('YYYY-MM-DD',Date()+rs.FieldByName('VALUE').AsInteger)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
             end;
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,'+rs.FieldByName('VALUE').AsString+' as MIN_DATE,10 as sFlag '+
+            Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(SHOP_ID) as SUM_ORDER,'''+rs.FieldByName('VALUE').AsString+''' as MIN_DATE,10 as sFlag '+
             ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and CON_DATE is not null and '+ Str_Bir;
           end;
       end;

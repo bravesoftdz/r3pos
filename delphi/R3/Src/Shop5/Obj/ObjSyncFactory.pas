@@ -27,7 +27,7 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     //≥ı ºªØ
     procedure InitClass;override;
-    destructor  Destroy;override;
+    destructor Destroy;override;
     property RowAccessor:TZRowAccessor read GetRowAccessor;
     property MaxCol:integer read FMaxCol write SetMaxCol;
   end;

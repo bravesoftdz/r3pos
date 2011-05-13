@@ -17,8 +17,6 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 1041
         Height = 514
-        ActivePage = TabSheet2
-        TabIndex = -1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810

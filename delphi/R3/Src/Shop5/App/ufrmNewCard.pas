@@ -218,7 +218,10 @@ begin
     begin
       cdsTable.Edit;
       cdsTable.FieldByName('IC_CARDNO').AsString := edtIC_CARDNO.Text;
-      cdsTable.FieldByName('IC_STATUS').AsString := '1';
+      if cdsTable.FieldByName('IC_STATUS').AsString = '2' then
+        cdsTable.FieldByName('IC_STATUS').AsString := '1'
+      else if cdsTable.FieldByName('IC_STATUS').AsString = '9' then
+        cdsTable.FieldByName('IC_STATUS').AsString := '0';
       cdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
       cdsTable.Post;
     end

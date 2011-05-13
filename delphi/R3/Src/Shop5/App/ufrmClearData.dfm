@@ -10,7 +10,7 @@ inherited frmClearData: TfrmClearData
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 405
+    Width = 397
     Height = 57
     Align = alTop
     BorderOuter = fsNone
@@ -416,8 +416,8 @@ inherited frmClearData: TfrmClearData
   object RzPanel2: TRzPanel [1]
     Left = 0
     Top = 57
-    Width = 405
-    Height = 205
+    Width = 397
+    Height = 194
     Align = alClient
     BorderOuter = fsNone
     BorderColor = clWhite

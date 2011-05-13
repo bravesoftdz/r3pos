@@ -78,7 +78,7 @@ begin
     w := w + ' and REGION_ID='''+fndREGION_NAME.AsString+'''';
 
   cdsList.Close;
-  cdsList.SQL.Text:= 'select 0 as A,SHOP_ID,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,SEQ_NO '+
+  cdsList.SQL.Text:= 'select 0 as A,SHOP_ID,SEQ_NO as SHOW_ID,SHOP_NAME,SHOP_SPELL,SHOP_TYPE,TENANT_ID,REGION_ID,LINKMAN,TELEPHONE,FAXES,ADDRESS,POSTALCODE,REMARK,SEQ_NO '+
     ' from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '+w+' order by SEQ_NO';
   if cdsList.Params.FindParam('TENANT_ID')<>nil then cdsList.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
   Factor.Open(cdsList);

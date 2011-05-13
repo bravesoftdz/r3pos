@@ -78,16 +78,16 @@ inherited frameSelectCompany: TframeSelectCompany
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24207#21495
-                Width = 31
+                Width = 22
               end
               item
                 Alignment = taRightJustify
                 EditButtons = <>
-                FieldName = 'SHOP_ID'
+                FieldName = 'SHOW_ID'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38376#24215#20195#30721
-                Width = 60
+                Width = 34
               end
               item
                 EditButtons = <>
@@ -95,7 +95,7 @@ inherited frameSelectCompany: TframeSelectCompany
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38376#24215#21517#31216
-                Width = 125
+                Width = 131
               end
               item
                 EditButtons = <>

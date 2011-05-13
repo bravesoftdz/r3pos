@@ -147,6 +147,7 @@ procedure TfrmClearData.btnDeleteClick(Sender: TObject);
 var sFactor:TdbFactory;
 begin
   inherited;
+  if Global.UserID <> 'system' then Raise Exception.Create('只有超级管理员才能执行数据清理.'); 
   sFactor := Factor;
   try
      if CaFactory.Audited and not Global.RemoteFactory.Connected then

@@ -465,6 +465,12 @@ type
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
     function  ConnectToDb:boolean;
+    //p1 -rsp
+    //p2 连接串
+    //p3 企业号
+    //p4 产品号
+    //p5 行业号
+    function  ConnectToSrvr:boolean;
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
@@ -473,7 +479,7 @@ type
     procedure LoadPic32;
     procedure LoadMenu;
     procedure LoadFrame;
-    procedure InitVersioin;                                             
+    procedure InitVersioin;
     function GetDeskFlag:string;
     procedure CheckEnabled;
     procedure DoConnectError(Sender:TObject);
@@ -501,7 +507,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -810,10 +816,21 @@ var prm:string;
 begin
   if Logined then Exit;
   try
-    if not ConnectToDb then
+    if ParamStr(1)='-rsp' then
        begin
-         Application.Terminate;
-         Exit;
+         if not ConnectToSrvr then
+           begin
+             Application.Terminate;
+             Exit;
+           end;
+       end
+    else
+       begin
+         if not ConnectToDb then
+           begin
+             Application.Terminate;
+             Exit;
+           end;
        end;
     Logined := Login(false);
     if not frmShopMain.Visible and Logined then
@@ -2796,6 +2813,7 @@ end;
 procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不能执行数据同步..'); 
   if ShopGlobal.offline and not Global.RemoteFactory.Connected then
      begin
        Global.MoveToRemate;
@@ -3357,6 +3375,64 @@ begin
   inherited;
   TfrmClearData.DeleteDB(self);
 
+end;
+
+function TfrmShopMain.ConnectToSrvr: boolean;
+var
+  rs:TZQuery;
+begin
+  frmLogo.Show;
+  try
+    result := false;
+    Global.MoveToLocal;
+    Global.Connect;
+  finally
+    frmLogo.Close;
+  end;
+  if not UpdateDbVersion then
+     begin
+       result := false;
+       Exit;
+     end;
+  Global.MoveToRemate;
+  Global.RemoteFactory.Initialize(DecStr(ParamStr(2),ENC_KEY));
+  Global.Connect;
+   with TCreateDbFactory.Create do
+   begin
+     try
+        if CheckVersion(DBVersion,Global.RemoteFactory) then
+        begin
+           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+           result := false;
+           Exit;
+        end;
+     finally
+        free;
+     end;
+   end;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TENANT_ID,TENANT_NAME,SHORT_TENANT_NAME from CA_TENANT where TENANT_ID='+ParamStr(3);
+    Factor.Open(rs);
+    if rs.IsEmpty then
+       begin
+         MessageBox(Handle,'参数传入的企业号无效..','友情提示...',MB_OK+MB_ICONINFORMATION);
+         result := false;
+       end;
+    Global.TENANT_ID := rs.Fields[0].AsInteger;
+    Global.TENANT_NAME := rs.Fields[1].AsString;
+    Global.SHOP_ID := rs.Fields[0].AsString+'0001';
+    Global.SHOP_NAME := rs.Fields[2].AsString;
+    Global.UserID := 'system';
+    Global.UserName := '系统用户';
+  finally
+    rs.Free;
+  end;
+  LoadFrame;
+  ProductId := ParamStr(4);
+  SFVersion := '.ONL';
+  CLVersion := ParamStr(5);
+  result := true;
 end;
 
 end.

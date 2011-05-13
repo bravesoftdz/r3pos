@@ -124,8 +124,6 @@ type
     function  AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
     function  FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
-    //DrawGrid [奇偶数行]
-    procedure DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState; FieldName: string);
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
@@ -1012,8 +1010,15 @@ begin
   begin
     TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
-  
-  // 3、商品指标：
+
+  // 3、部门名称:  
+  FindCmp1:=FindComponent('fndP'+PageNo+'_DEPT_ID');
+  if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
+  begin
+    TitleList.Add('部门名称：'+TzrComboBoxList(FindCmp1).Text);
+  end;
+
+  // 4、商品指标：
   FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');
   FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp2<>nil)and (FindCmp2.Tag<>100) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
@@ -1021,26 +1026,26 @@ begin
   begin
     TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
   end;
-  // 4、商品分类
+  // 5、商品分类
   FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
   begin
     TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);
   end;
 
-  // 5、商品名称：
+  // 6、商品名称：
   FindCmp1:=FindComponent('fndP'+PageNo+'_GODS_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
   begin
     TitleList.Add('商品名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 6、计量单位
+  // 7、计量单位
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 
-  // 7、单据类型:[全部命名规则]
+  // 8、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin
@@ -1053,7 +1058,7 @@ begin
         if (Contrl.Controls[i] is TcxRadioButton) and (TcxRadioButton(Contrl.Controls[i]).Checked) and (CmpName='fndp'+PageNo+'_') then
         begin
           TitleList.Add('单据类型：'+TcxRadioButton(Contrl.Controls[i]).Caption);
-          Break; 
+          Break;
         end;
       end;
     end;
@@ -1089,36 +1094,6 @@ begin
       rzPage.ActivePageIndex:=i;
       Break;
     end;
-  end;
-end;
-
-procedure TframeBaseReport.DBGridDrawColumn(Sender: TObject; const Rect: TRect; DataCol: Integer;
-  Column: TColumnEh; State: TGridDrawState; FieldName: string);
-var
-  ARect:TRect; GridDs: TDataSet;
-begin
-  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
-  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
-  GridDs:=TDBGridEh(Sender).DataSource.DataSet;
-
-  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
-     (not (gdFocused in State) or not Column.Grid.Focused) then
-  begin
-    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
-  end else
-  begin
-    if (Column.FieldName<>'SEQNO') and (GridDs.FindField(FieldName)<>nil) then
-    begin
-      if RightStr(GridDs.FieldByName(FieldName).AsString,1)='1' then //奇数行
-        Column.Grid.Canvas.Brush.Color := $00F7F1BD;
-    end;
-  end;
-  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-
-  if Column.FieldName = 'SEQNO' then
-  begin
-    ARect := Rect;
-    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 end;
 

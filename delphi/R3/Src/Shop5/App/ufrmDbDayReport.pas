@@ -110,10 +110,8 @@ type
     Label17: TLabel;
     Label18: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
     Label28: TLabel;
     fndP5_TYPE_ID: TcxComboBox;
-    fndP5_UNIT_ID: TcxComboBox;
     fndP5_STAT_ID: TzrComboBoxList;
     fndP5_SORT_ID: TcxButtonEdit;
     fndP5_SHOP_ID: TzrComboBoxList;
@@ -128,8 +126,8 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
@@ -877,16 +875,16 @@ begin
   if adoReport1.IsEmpty then Exit;
   P2_D1.Date := P1_D1.Date;
   P2_D2.Date := P1_D2.Date;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   srid2 := srid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
+  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
+  Copy_ParamsValue('TYPE_ID',1,2); //统计指标
   fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
-  fndP2_SHOP_TYPE.ItemIndex := 0;
+
+  fndP2_SHOP_TYPE.ItemIndex := 0; //管理群组
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;
+
   rzPage.ActivePageIndex := 1;
   actFind.OnExecute(nil);
 end;
@@ -897,14 +895,12 @@ begin
   if adoReport2.IsEmpty then Exit;
   P3_D1.Date := P2_D1.Date;
   P3_D2.Date := P2_D2.Date;
-  fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  Copy_ParamsValue('SHOP_ID',2,3); //门店名称
+  fndP3_SHOP_ID.KeyValue:=adoReport2.fieldbyName('SHOP_ID').AsString; //门店ID
+  fndP3_SHOP_ID.Text:=adoReport2.fieldbyName('SHOP_NAME').AsString; //门店名称
+  fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex; //显示单位
 
-  fndP3_SHOP_TYPE.ItemIndex := fndP2_SHOP_TYPE.ItemIndex;
-  fndP3_SHOP_VALUE.KeyValue := fndP2_SHOP_VALUE.KeyValue;
-  fndP3_SHOP_VALUE.Text := fndP2_SHOP_VALUE.Text;
-
-  fndP3_SHOP_ID.KeyValue := adoReport2.FieldbyName('SHOP_ID').AsString;
-  fndP3_SHOP_ID.Text := adoReport2.FieldbyName('SHOP_NAME').AsString;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
 end;
@@ -955,15 +951,10 @@ begin
 
   P4_D1.Date := P3_D1.Date;
   P4_D2.Date := P3_D2.Date;
+  Copy_ParamsValue('SHOP_TYPE',3,4);  //管理群组
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID);  //门店
+  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;  //显示单位
 
-  fndP4_SHOP_TYPE.ItemIndex := fndP3_SHOP_TYPE.ItemIndex;
-  fndP4_SHOP_VALUE.KeyValue := fndP3_SHOP_VALUE.KeyValue;
-  fndP4_SHOP_VALUE.Text := fndP3_SHOP_VALUE.Text;
-
-  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_SHOP_ID.KeyValue := fndP3_SHOP_ID.KeyValue;
-  fndP4_SHOP_ID.Text := fndP3_SHOP_ID.Text;
-  
   rzPage.ActivePageIndex := 3;
   actFind.OnExecute(nil);
 end;
@@ -980,14 +971,16 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
+  sid5 := sid4;
+  srid5 := srid4;
+  fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text; //分类
+
   P5_D1.Date:=P4_D1.Date;
   P5_D2.Date:=P4_D2.Date;
-  fndP5_TYPE_ID.ItemIndex:=fndP4_TYPE_ID.ItemIndex;
-  fndP5_STAT_ID.KeyValue:=fndP4_STAT_ID.KeyValue;
-  fndP5_STAT_ID.Text:=fndP4_STAT_ID.Text;
-  fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text;
-  sid5:=sid4;
-  srid5:=srid4;
+  Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
+  Copy_ParamsValue('TYPE_ID',4,5);   //商品指标
+  Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //调出门店
+  
   if RzPage.ActivePageIndex+1<=RzPage.PageCount then
   begin
     RzPage.ActivePageIndex:=RzPage.ActivePageIndex+1;

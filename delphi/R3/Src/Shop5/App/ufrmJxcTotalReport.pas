@@ -99,11 +99,11 @@ type
     adoReport3: TZQuery;
     adoReport4: TZQuery;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
@@ -839,9 +839,7 @@ begin
   fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   srid2 := srid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
+  self.Copy_ParamsValue('TYPE_ID',1,2); //商品指标
   fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
   fndP2_SHOP_TYPE.ItemIndex := 0;
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
@@ -858,16 +856,12 @@ begin
   P3_D1.asString := P2_D1.asString;
   P3_D2.asString := P2_D2.asString;
   fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
-
-  fndP3_SHOP_TYPE.ItemIndex := fndP2_SHOP_TYPE.ItemIndex;
-  fndP3_SHOP_VALUE.KeyValue := fndP2_SHOP_VALUE.KeyValue;
-  fndP3_SHOP_VALUE.Text := fndP2_SHOP_VALUE.Text;
+  Copy_ParamsValue('SHOP_TYPE',2,3);
 
   fndP3_SHOP_ID.KeyValue := adoReport2.FieldbyName('SHOP_ID').AsString;
   fndP3_SHOP_ID.Text := adoReport2.FieldbyName('SHOP_NAME').AsString;
   rzPage.ActivePageIndex := 2;
-  actFind.OnExecute(nil);
-
+  actFind.OnExecute(nil); 
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh3DblClick(Sender: TObject);
@@ -924,18 +918,12 @@ begin
   
   P4_D1.asString := P3_D1.asString;
   P4_D2.asString := P3_D2.asString;
-
-  fndP4_SHOP_TYPE.ItemIndex := fndP3_SHOP_TYPE.ItemIndex;
-  fndP4_SHOP_VALUE.KeyValue := fndP3_SHOP_VALUE.KeyValue;
-  fndP4_SHOP_VALUE.Text := fndP3_SHOP_VALUE.Text;
-
-  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_SHOP_ID.KeyValue := fndP3_SHOP_ID.KeyValue;
-  fndP4_SHOP_ID.Text := fndP3_SHOP_ID.Text;
+  Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称
+  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex; //显示单位
 
   rzPage.ActivePageIndex := 3;
   actFind.OnExecute(nil);
-
 end;
 
 procedure TfrmJxcTotalReport.FormDestroy(Sender: TObject);

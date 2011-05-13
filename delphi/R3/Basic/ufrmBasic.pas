@@ -171,7 +171,7 @@ begin
          begin
            TcxMaskEdit(Components[i]).ImeName := '';
          end;
-      if Components[i] is TzrComboBoxList then
+      if Components[i].ClassNameIs('TzrComboBoxList') then
          begin
            TzrComboBoxList(Components[i]).ImeName := '';
          end;

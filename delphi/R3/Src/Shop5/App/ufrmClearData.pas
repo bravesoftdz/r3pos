@@ -65,7 +65,7 @@ var
   i,CurSize,TotalSize:Integer;
 begin
   FileName := ExtractFilePath(Application.ExeName)+'Clear.dat';
-  if not FileExists(FileName) then Raise Exception.Create('系统没找清理脚本，无法执行清理工作!');
+  if not FileExists(FileName) then Raise Exception.Create('系统没找到清理脚本，无法执行清理工作!');
   copyfile(pchar(FileName),pchar(FileName+'~'),false);
   des.DecryFile(FileName+'~',DES_KEY);
   SQL := TStringList.Create;

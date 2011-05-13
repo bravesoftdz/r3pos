@@ -116,7 +116,6 @@ begin
   RzPage.ActivePageIndex := 0;
   Open;
   SetRecordNum;
-  ID := '';
   MsgFactory.Showing := true;
 end;
 
@@ -377,7 +376,8 @@ begin
   CdsNewsPaper.FieldByName('MSG_READ_STATUS').AsInteger := 2;
   CdsNewsPaper.Post;
   MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger] := MSGArr[CdsNewsPaper.FieldByName('MSG_CLASS').AsInteger]-1;
-  MsgFactory.MsgRead[MsgFactory.FindMsg(ID)] := True;
+  if MsgFactory.FindMsg(ID) <> nil then
+    MsgFactory.MsgRead[MsgFactory.FindMsg(ID)] := True;
   RzPage.ActivePageIndex := 0;
   SetRecordNum;
 end;

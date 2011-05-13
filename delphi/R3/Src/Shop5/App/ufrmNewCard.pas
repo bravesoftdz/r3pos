@@ -48,6 +48,7 @@ type
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property ShowModel:Integer read FShowModel write SetShowModel;
     class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer):boolean;
+    class function GetSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;var CardNo,PWD:String;Model:integer):boolean;
     { Public declarations }
   end;
 
@@ -82,7 +83,8 @@ begin
       raise Exception.Create('两次密码输入不一致！');
     end;
 
-  Save;
+  if ShowModel = 1 then
+    Save;
   ModalResult := mrOk;
 
 end;
@@ -139,27 +141,11 @@ begin
       Param.ParamByName('UNION_ID').AsString := '#';
     Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsTable,'TNewCard',Param);
-    //Aobj.ReadFromDataSet(cdsTable);
-    //ReadFromObject(Aobj,Self);
-   { if cdsTable.IsEmpty then
-      begin
-        rs.SQL.Text := 'select A.CUST_NAME,A.CUST_CODE,B.PASSWRD from PUB_CUSTOMER A left join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.CUST_CODE=B.IC_CARDNO '+
-        ' where A.CUST_ID='+QuotedStr(CUST_ID)+' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
-        Factor.Open(rs);
-        edtCLIENT_NAME.Text := rs.FieldbyName('CUST_NAME').AsString;
-        edtIC_CARDNO.Text := rs.FieldbyName('CUST_CODE').AsString;
-        edtPASSWRD.Text := DecStr(rs.FieldbyName('PASSWRD').AsString,ENC_KEY);
-        edtPASSWRD1.Text := edtPASSWRD.Text;
-        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
-      end
-    else
-      begin }
-        //edtCLIENT_NAME.Text := cdsTable.FieldbyName('CLIENT_NAME').AsString;
-        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
-        edtIC_CARDNO.Text := cdsTable.FieldbyName('IC_CARDNO').AsString;
-        edtPASSWRD.Text := DecStr(cdsTable.FieldbyName('PASSWRD').AsString,ENC_KEY);
-        edtPASSWRD1.Text := edtPASSWRD.Text;
-      //end;
+
+    edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+    edtIC_CARDNO.Text := cdsTable.FieldbyName('IC_CARDNO').AsString;
+    edtPASSWRD.Text := DecStr(cdsTable.FieldbyName('PASSWRD').AsString,ENC_KEY);
+    edtPASSWRD1.Text := edtPASSWRD.Text;
     if Trim(edtPASSWRD.Text) = '' then
       begin
         edtPASSWRD.Text := '1234';
@@ -277,6 +263,28 @@ begin
   inherited;
   UnionId := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString;
   Open(Cust_Id,UnionId);
+end;
+
+class function TfrmNewCard.GetSendCard(Owner: TForm; CUSTID, UNION_ID,
+  CUSTNAME: string; var CardNo, PWD: String; Model: integer): boolean;
+begin
+  with TfrmNewCard.Create(Owner) do
+    begin
+      try
+        ShowModel := Model;
+        Cust_Id := CUSTID;
+        edtCLIENT_NAME.Text := CUSTNAME;
+        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+        //Open(Cust_Id,UNION_ID);
+        if ShowModal = mrOk then
+          begin
+            CardNo := Trim(edtIC_CARDNO.Text);
+            PWD := Trim(edtPASSWRD.Text);
+          end;
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

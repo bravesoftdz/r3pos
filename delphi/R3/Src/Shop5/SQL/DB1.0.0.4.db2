@@ -3,94 +3,92 @@
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','财务部','DEPT_TYPE','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','管理部','DEPT_TYPE','00',5497000);
 --发货仓库(默认)
-alter table CA_DEPT_INFO add SHOP_ID varchar2(13);
+alter table CA_DEPT_INFO add SHOP_ID varchar(13);
 --部门类型
 alter table CA_DEPT_INFO add DEPT_TYPE char(1);
 --历史数据默认成（营销部）
 update CA_DEPT_INFO set DEPT_TYPE='1';
-
-update CA_DEPT_INFO set SHOP_ID=TO_CHAR(TENANT_ID)||'0001';
+update CA_DEPT_INFO set SHOP_ID=trim(char(TENANT_ID))||'0001';
 
 --添加营销部门
-alter table STK_STOCKORDER add DEPT_ID varchar2(12);
-alter table STK_INDENTORDER add DEPT_ID varchar2(12);
-alter table SAL_SALESORDER add DEPT_ID varchar2(12);
-alter table SAL_INDENTORDER add DEPT_ID varchar2(12);
+alter table STK_STOCKORDER add DEPT_ID varchar(12);
+alter table STK_INDENTORDER add DEPT_ID varchar(12);
+alter table SAL_SALESORDER add DEPT_ID varchar(12);
+alter table SAL_INDENTORDER add DEPT_ID varchar(12);
 
 --为银联添加银行及卡号
 --刷卡银行
-alter table SAL_SALESORDER add BANK_ID varchar2(36);
+alter table SAL_SALESORDER add BANK_ID varchar(36);
 --刷卡卡号
-alter table SAL_SALESORDER add BANK_CODE varchar2(36);
+alter table SAL_SALESORDER add BANK_CODE varchar(36);
 
-update STK_STOCKORDER set DEPT_ID=TO_CHAR(TENANT_ID)||'001';
-update STK_INDENTORDER set DEPT_ID=TO_CHAR(TENANT_ID)||'001';
-update SAL_SALESORDER set DEPT_ID=TO_CHAR(TENANT_ID)||'001';
-update SAL_INDENTORDER set DEPT_ID=TO_CHAR(TENANT_ID)||'001';
+update STK_STOCKORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
+update STK_INDENTORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
+update SAL_SALESORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
+update SAL_INDENTORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
 
 drop view VIW_USERS;
-
-create view VIW_USERS
+CREATE view VIW_USERS
 as
 select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,QQ,MM,MSN,PASS_WRD,DEPT_ID,COMM from CA_USERS
 union all
-select TENANT_ID,TO_CHAR(TENANT_ID*10000+1) as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
-VALUE as PASS_WRD,TO_CHAR(TENANT_ID*1000+1) as DEPT_ID, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID<>0
+select TENANT_ID,trim(char(TENANT_ID))||'0001' as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
+VALUE as PASS_WRD,trim(char(TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID<>0
 union all
-select B.TENANT_ID,TO_CHAR(B.TENANT_ID*10000+1) as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
-VALUE as PASS_WRD,TO_CHAR(B.TENANT_ID*1000+1) as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
+select B.TENANT_ID,trim(char(B.TENANT_ID))||'0001' as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
+VALUE as PASS_WRD,trim(char(B.TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
 
 --企业客户
 --送货资料
-alter table PUB_CLIENTINFO add SEND_ADDR varchar2(100);
-alter table PUB_CLIENTINFO add SEND_TELE varchar2(50);
-alter table PUB_CLIENTINFO add SEND_LINKMAN varchar2(20);
+alter table PUB_CLIENTINFO add SEND_ADDR varchar(100);
+alter table PUB_CLIENTINFO add SEND_TELE varchar(50);
+alter table PUB_CLIENTINFO add SEND_LINKMAN varchar(20);
 
-alter table PUB_CLIENTINFO add RECV_ADDR varchar2(100);
-alter table PUB_CLIENTINFO add RECV_LINKMAN varchar2(20);
-alter table PUB_CLIENTINFO add RECV_TELE varchar2(50);
+alter table PUB_CLIENTINFO add RECV_ADDR varchar(100);
+alter table PUB_CLIENTINFO add RECV_LINKMAN varchar(20);
+alter table PUB_CLIENTINFO add RECV_TELE varchar(50);
 --开票全称
-alter table PUB_CLIENTINFO add LEGAL_REPR varchar2(20);
-alter table PUB_CLIENTINFO add INVO_NAME varchar2(60);
-alter table PUB_CLIENTINFO add TAX_NO varchar2(30);
+alter table PUB_CLIENTINFO add LEGAL_REPR varchar(20);
+alter table PUB_CLIENTINFO add INVO_NAME varchar(60);
+alter table PUB_CLIENTINFO add TAX_NO varchar(30);
 
 --扫码出库
 CREATE TABLE SAL_LOCUS_FORSALE(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID int NOT NULL ,
         --门店代码
-	SHOP_ID varchar2(13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --销售单号
 	SALES_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO int NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
-	PROPERTY_01 varchar2(36) NOT NULL ,
+	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色<不分时用 # 号>
-	PROPERTY_02 varchar2(36) NOT NULL ,
+	PROPERTY_02 varchar (36) NOT NULL ,
         --批号
-	BATCH_NO varchar2(36) NOT NULL ,
+	BATCH_NO varchar (36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE int NOT NULL ,
         --物流跟踪号
-	LOCUS_NO varchar2(36) NOT NULL ,
+	LOCUS_NO varchar (36) NOT NULL ,
         --单位
-	UNIT_ID varchar2(36) NOT NULL ,
+	UNIT_ID varchar (36) NOT NULL ,
         --数量
 	AMOUNT decimal(18, 3) ,
         --计量单位数据
 	CALC_AMOUNT decimal(18, 3) ,
 
         --操作时间
-	CREA_DATE varchar2(30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2(36) ,
+	CREA_USER varchar (36) ,
         --通讯标志
-	COMM varchar2(2) DEFAULT '00' NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP bigint NOT NULL,
 	
 	CONSTRAINT PK_SAL_LS_FORSALE PRIMARY KEY  
 	(
@@ -103,40 +101,40 @@ CREATE TABLE SAL_LOCUS_FORSALE(
 --扫码出库<领用，损益等的出库>
 CREATE TABLE STO_LOCUS_FORCHAG(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID int NOT NULL ,
         --门店代码
-	SHOP_ID varchar2(13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --调整单号
 	CHANGE_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO int NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
-	PROPERTY_01 varchar2(36) NOT NULL ,
+	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色<不分时用 # 号>
-	PROPERTY_02 varchar2(36) NOT NULL ,
+	PROPERTY_02 varchar (36) NOT NULL ,
         --批号
-	BATCH_NO varchar2(36) NOT NULL ,
+	BATCH_NO varchar (36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE int NOT NULL ,
         --物流跟踪号
-	LOCUS_NO varchar2(36) NOT NULL ,
+	LOCUS_NO varchar (36) NOT NULL ,
         --单位
-	UNIT_ID varchar2(36) NOT NULL ,
+	UNIT_ID varchar (36) NOT NULL ,
         --数量
 	AMOUNT decimal(18, 3) ,
         --计量单位数据
 	CALC_AMOUNT decimal(18, 3) ,
 
         --操作时间
-	CREA_DATE varchar2(30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2(36) ,
+	CREA_USER varchar (36) ,
         --通讯标志
-	COMM varchar2(2) DEFAULT '00' NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP bigint NOT NULL,
 	
 	CONSTRAINT PK_STO_LS_FORCHAG PRIMARY KEY  
 	(
@@ -150,40 +148,40 @@ CREATE TABLE STO_LOCUS_FORCHAG(
 --扫码入库
 CREATE TABLE STK_LOCUS_FORSTCK(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID int NOT NULL ,
         --门店代码
-	SHOP_ID varchar2(13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --销售单号
 	STOCK_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO int NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
-	PROPERTY_01 varchar2(36) NOT NULL ,
+	PROPERTY_01 varchar (36) NOT NULL ,
         --颜色<不分时用 # 号>
-	PROPERTY_02 varchar2(36) NOT NULL ,
+	PROPERTY_02 varchar (36) NOT NULL ,
         --批号
-	BATCH_NO varchar2(36) NOT NULL ,
+	BATCH_NO varchar (36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE int NOT NULL ,
         --物流跟踪号
-	LOCUS_NO varchar2(36) NOT NULL ,
+	LOCUS_NO varchar (36) NOT NULL ,
         --单位
-	UNIT_ID varchar2(36) NOT NULL ,
+	UNIT_ID varchar (36) NOT NULL ,
         --数量
 	AMOUNT decimal(18, 3) ,
         --计量单位数据
 	CALC_AMOUNT decimal(18, 3) ,
 
         --操作时间
-	CREA_DATE varchar2(30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2(36) ,
+	CREA_USER varchar (36) ,
         --通讯标志
-	COMM varchar2(2) DEFAULT '00' NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP bigint NOT NULL,
 	
 	CONSTRAINT PK_STK_LS_FORSTCK PRIMARY KEY  
 	(

@@ -307,7 +307,7 @@ begin
     begin
       edtCALC_UNITS.KeyValue := edtCALC_UNITS.DataSet.FieldbyName('UNIT_ID').AsString;
       edtCALC_UNITS.Text := edtCALC_UNITS.DataSet.FieldbyName('UNIT_NAME').AsString;
-      if not TabGoodPrice.TabVisible then CheckTabGoodPriceVisible; //判断会员价格是否显示     
+      if not TabGoodPrice.TabVisible then CheckTabGoodPriceVisible; //判断会员价格是否显示
     end;
     edtSORT_ID7.KeyValue:='#';
     edtSORT_ID7.Text:='无';
@@ -318,7 +318,7 @@ begin
   edtBARCODE1.Text := '自编条码';
   edtBARCODE2.Text := '';
   edtBARCODE3.Text := '';
-  if ExtBarCode.Active then InitRecord;  
+  InitRecord;
 end;
 
 procedure TfrmGoodsInfo.btnCloseClick(Sender: TObject);
@@ -359,7 +359,7 @@ begin
   if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
     EditPrice;
 
-  if ExtBarCode.Active and ExtBarCode.IsEmpty then InitRecord;    
+  InitRecord;
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
@@ -1360,6 +1360,10 @@ begin
       begin
         TcxCheckBox(Components[i]).Enabled:=False;
       end;
+    if Components[i] is TDBGridEh then
+      begin
+        TDBGridEh(Components[i]).ReadOnly:=true;
+      end;
   end;
   //edtUSING_BARTER[启用积分]
   RB_NotUSING_BARTER.Enabled:=False;
@@ -1381,6 +1385,7 @@ begin
   edtNEW_INPRICE.Properties.ReadOnly:=False;
   SetEditStyle(dsEdit,edtPROFIT_RATE.Style);
   edtPROFIT_RATE.Properties.ReadOnly:=False;
+  PriceGrid.ReadOnly:=false;
 end;
 
 procedure TfrmGoodsInfo.WriteBarCode;
@@ -3012,6 +3017,7 @@ end;
 procedure TfrmGoodsInfo.InitRecord;
 begin
   if dbState = dsBrowse then Exit;
+  if ExtBarCodeGrid.ReadOnly then Exit;
   if ExtBarCode.State in [dsEdit,dsInsert] then ExtBarCode.Post;
   fndUNIT_ID.Visible := false;
   ExtBarCode.DisableControls;
@@ -3027,6 +3033,7 @@ begin
       ExtBarCode.Post;
     end;
     ExtBarCodeGrid.Col := 1 ;
+    if ExtBarCodeGrid.CanFocus and Visible and (dbState <> dsBrowse) then ExtBarCodeGrid.SetFocus;
   finally
     ExtBarCode.EnableControls;
     ExtBarCode.Edit;
@@ -3067,7 +3074,6 @@ procedure TfrmGoodsInfo.ExtBarCodeGridColumns1BeforeShowControl(Sender: TObject)
 var
   rs:TZQuery;
 begin
-  inherited;
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   if rs.Locate('UNIT_ID',ExtBarCode.FieldbyName('UNIT_ID').AsString,[]) then
   begin
@@ -3089,7 +3095,7 @@ end;
 procedure TfrmGoodsInfo.fndUNIT_IDExit(Sender: TObject);
 begin
   inherited;
-  fndUNIT_ID.Visible := false;
+  if not fndUNIT_ID.DropListed then fndUNIT_ID.Visible := false;
 end;
 
 procedure TfrmGoodsInfo.fndUNIT_IDKeyDown(Sender: TObject; var Key: Word;
@@ -3157,7 +3163,7 @@ var
 begin
   inherited;
   Cell := ExtBarCodeGrid.MouseCoord(X,Y);
-  if Cell.Y > ExtBarCodeGrid.VisibleRowCount -1 then
+  if Cell.Y > ExtBarCodeGrid.VisibleRowCount then
     InitRecord;
 end;
 

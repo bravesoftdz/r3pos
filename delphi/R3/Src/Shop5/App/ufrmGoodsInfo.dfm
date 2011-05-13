@@ -55,7 +55,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 5
+      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -741,6 +741,129 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           TabOrder = 5
         end
       end
+      object TabSheet4: TRzTabSheet
+        Color = clWhite
+        Caption = #38468#21152#26465#30721
+        object RzPnl_BarCode: TRzPanel
+          Left = 11
+          Top = 16
+          Width = 491
+          Height = 175
+          BorderOuter = fsFlat
+          BorderColor = clGray
+          TabOrder = 0
+          object ExtBarCodeGrid: TDBGridEh
+            Left = 1
+            Top = 1
+            Width = 489
+            Height = 173
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            AutoFitColWidths = True
+            DataSource = ExtBarCodeDs
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FrozenCols = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
+            PopupMenu = ExtPm
+            RowHeight = 17
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            UseMultiTitle = True
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            OnKeyPress = ExtBarCodeGridKeyPress
+            OnMouseDown = ExtBarCodeGridMouseDown
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #24207#21495
+                Width = 29
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_ID'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Width = 63
+                Control = fndUNIT_ID
+                OnBeforeShowControl = ExtBarCodeGridColumns1BeforeShowControl
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                Title.Caption = #26465#24418#30721
+                Width = 368
+              end>
+          end
+          object fndUNIT_ID: TzrComboBoxList
+            Left = 102
+            Top = 54
+            Width = 63
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 1
+            Visible = False
+            OnEnter = fndUNIT_IDEnter
+            OnExit = fndUNIT_IDExit
+            OnKeyDown = fndUNIT_IDKeyDown
+            OnKeyPress = fndUNIT_IDKeyPress
+            InGrid = True
+            KeyValue = Null
+            FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
+            KeyField = 'UNIT_ID'
+            ListField = 'UNIT_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_NAME'
+                Footers = <>
+                Title.Caption = #21333#20301#21517#31216
+                Width = 50
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_ID'
+                Footers = <>
+                Title.Caption = #20195#30721
+                Visible = False
+                Width = 50
+              end>
+            DropWidth = 66
+            DropHeight = 140
+            ShowTitle = False
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = []
+            DropListStyle = lsFixed
+            OnSaveValue = fndUNIT_IDSaveValue
+            MultiSelect = False
+          end
+        end
+      end
       object tabProperty: TRzTabSheet
         Color = clWhite
         Caption = #32479#35745#25351#26631
@@ -837,133 +960,9 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Left = 58
           Top = 13
           Width = 442
-          Height = 101
+          Height = 184
           TabOrder = 0
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        end
-      end
-      object TabSheet4: TRzTabSheet
-        Color = clWhite
-        Caption = #38468#21152#26465#30721
-        object RzPnl_BarCode: TRzPanel
-          Left = 11
-          Top = 16
-          Width = 491
-          Height = 175
-          BorderOuter = fsFlat
-          BorderColor = clGray
-          TabOrder = 0
-          object ExtBarCodeGrid: TDBGridEh
-            Left = 1
-            Top = 1
-            Width = 489
-            Height = 173
-            Align = alClient
-            AutoFitColWidths = True
-            DataSource = ExtBarCodeDs
-            Flat = True
-            FooterColor = clWindow
-            FooterFont.Charset = GB2312_CHARSET
-            FooterFont.Color = clWindowText
-            FooterFont.Height = -12
-            FooterFont.Name = #23435#20307
-            FooterFont.Style = []
-            FrozenCols = 1
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
-            PopupMenu = ExtPm
-            RowHeight = 17
-            TabOrder = 0
-            TitleFont.Charset = GB2312_CHARSET
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -12
-            TitleFont.Name = #23435#20307
-            TitleFont.Style = []
-            UseMultiTitle = True
-            IsDrawNullRow = False
-            CurrencySymbol = #65509
-            DecimalNumber = 2
-            DigitalNumber = 12
-            OnKeyPress = ExtBarCodeGridKeyPress
-            OnMouseDown = ExtBarCodeGridMouseDown
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'SEQNO'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #24207#21495
-                Width = 29
-              end
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_ID'
-                Footers = <>
-                Title.Caption = #21333#20301
-                Width = 63
-                Control = fndUNIT_ID
-                OnBeforeShowControl = ExtBarCodeGridColumns1BeforeShowControl
-              end
-              item
-                EditButtons = <>
-                FieldName = 'BARCODE'
-                Footers = <>
-                Title.Caption = #26465#24418#30721
-                Width = 368
-              end>
-          end
-          object fndUNIT_ID: TzrComboBoxList
-            Left = 30
-            Top = 22
-            Width = 63
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            Properties.OnChange = edtCALC_UNITSPropertiesChange
-            TabOrder = 1
-            Visible = False
-            OnEnter = fndUNIT_IDEnter
-            OnExit = fndUNIT_IDExit
-            OnKeyDown = fndUNIT_IDKeyDown
-            OnKeyPress = fndUNIT_IDKeyPress
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
-            KeyField = 'UNIT_ID'
-            ListField = 'UNIT_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_NAME'
-                Footers = <>
-                Title.Caption = #21333#20301#21517#31216
-                Width = 50
-              end
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_ID'
-                Footers = <>
-                Title.Caption = #20195#30721
-                Visible = False
-                Width = 50
-              end>
-            DropWidth = 66
-            DropHeight = 140
-            ShowTitle = False
-            AutoFitColWidth = True
-            OnAddClick = edtCALC_UNITSAddClick
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew]
-            DropListStyle = lsFixed
-            OnSaveValue = fndUNIT_IDSaveValue
-            MultiSelect = False
-          end
         end
       end
     end

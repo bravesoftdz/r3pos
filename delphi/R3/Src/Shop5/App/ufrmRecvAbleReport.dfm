@@ -1,6 +1,5 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Left = 177
-  Top = 127
+  Left = 191
   Width = 1022
   Height = 611
   Caption = #24212#25910#27454#25253#34920
@@ -15,10 +14,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet5
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

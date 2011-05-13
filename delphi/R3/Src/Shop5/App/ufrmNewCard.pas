@@ -38,6 +38,7 @@ type
     FShowModel: Integer;
     procedure SetCust_Id(const Value: String);
     procedure SetShowModel(const Value: Integer);
+    function GetCheckNo:string;
     { Private declarations }
   protected
     procedure SetdbState(const Value: TDataSetState);override;
@@ -59,12 +60,18 @@ uses uGlobal,uDsUtil,uFnUtil,IniFiles,uShopUtil,EncDec, uShopGlobal, ufrmBasic;
 
 
 procedure TfrmNewCard.btnOkClick(Sender: TObject);
+var rs:TZQuery;
 begin
   inherited;
   if Trim(edtIC_CARDNO.Text) = '' then
     begin
       if edtIC_CARDNO.CanFocus then edtIC_CARDNO.SetFocus;
       Raise Exception.Create('会员卡号不能为空！');
+    end;
+  if not FnString.IsCodeString(Trim(edtIC_CARDNO.Text)) then
+    begin
+      if edtIC_CARDNO.CanFocus then edtIC_CARDNO.SetFocus;
+      Raise Exception.Create('会员卡号中有错误字符！');    
     end;
   if Trim(edtPASSWRD.Text) = '' then
     begin
@@ -83,6 +90,17 @@ begin
       raise Exception.Create('两次密码输入不一致！');
     end;
 
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select IC_CARDNO,IC_STATUS from PUB_IC_INFO where CLIENT_ID='+QuotedStr(cid)+' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    ' and UNION_ID='+QuotedStr(TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString);
+    Factor.Open(rs);
+    if (rs.FieldByName('IC_CARDNO').AsString = GetCheckNo) and (rs.FieldByName('IC_STATUS').AsInteger in [1,0]) then
+      raise Exception.Create('"'+GetCheckNo+'"已经存在!');
+  finally
+    rs.Free;
+  end;
+
   if ShowModel = 1 then
     Save;
   ModalResult := mrOk;
@@ -98,7 +116,11 @@ end;
 procedure TfrmNewCard.FormShow(Sender: TObject);
 begin
   inherited;
-  //if cmbIC_CARDNO.CanFocus  then  cmbIC_CARDNO.SetFocus;
+  if edtIC_CARDNO.CanFocus then
+    begin
+      edtIC_CARDNO.SelectAll;
+      edtIC_CARDNO.SetFocus;
+    end;
 end;
 
 procedure TfrmNewCard.InitControl;
@@ -109,7 +131,7 @@ begin
   Str_Sql :=
   'select UNION_ID,UNION_NAME,1 as CODE_ID from PUB_UNION_INFO where COMM not in (''12'',''02'') '+
   'union all '+
-  'select '''+IntToStr(Global.TENANT_ID)+''' as UNION_ID,''企业卡'' as UNION_NAME,0 as CODE_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID);
+  'select ''#'' as UNION_ID,''企业卡'' as UNION_NAME,0 as CODE_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID);
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := Str_Sql;
@@ -155,7 +177,7 @@ begin
     if ShowModel = 0 then
       edtUNION_ID.Enabled := False;
 
-    if cdsTable.FieldByName('IC_STATUS').AsInteger = 1 then
+    if cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1] then
       btnOk.Enabled := False
     else
       btnOk.Enabled := True;
@@ -212,12 +234,12 @@ begin
       else
         cdsTable.FieldByName('UNION_ID').AsString := '#';
 
-      cdsTable.FieldByName('IC_CARDNO').AsString := edtIC_CARDNO.Text;
+      cdsTable.FieldByName('IC_CARDNO').AsString := GetCheckNo;
       cdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
       cdsTable.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
       cdsTable.FieldByName('CREA_USER').AsString := Global.UserID;;
       cdsTable.FieldByName('IC_INFO').AsString := edtUNION_ID.Text;
-      cdsTable.FieldByName('IC_STATUS').AsString := '1';
+      cdsTable.FieldByName('IC_STATUS').AsString := '0';
       cdsTable.FieldByName('IC_TYPE').AsString := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('CODE_ID').AsString;
       cdsTable.Post;
     end;
@@ -278,7 +300,7 @@ begin
         Open(Cust_Id,UNION_ID);
         if ShowModal = mrOk then
           begin
-            CardNo := Trim(edtIC_CARDNO.Text);
+            CardNo := GetCheckNo;
             PWD := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
             Result := True;
           end
@@ -288,6 +310,18 @@ begin
         Free;
       end;
     end;
+end;
+
+function TfrmNewCard.GetCheckNo: string;
+begin
+  result := trim(edtIC_CARDNO.Text);
+  if edtIC_CARDNO.Properties.EchoMode <> eemPassword then
+     begin
+       if pos('=',result)>0 then
+          begin
+            result := copy(result,1,pos('=',result)-1);
+          end;
+     end;
 end;
 
 end.

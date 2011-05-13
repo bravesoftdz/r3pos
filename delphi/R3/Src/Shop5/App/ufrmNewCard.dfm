@@ -1,7 +1,7 @@
 inherited frmNewCard: TfrmNewCard
   Left = 520
   Top = 285
-  Caption = #21457#26032#21345
+  Caption = #21457#21345
   ClientHeight = 193
   ClientWidth = 322
   OnCreate = FormCreate

@@ -372,7 +372,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 85
+                Height = 80
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -409,7 +409,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label14: TLabel
                   Left = 24
-                  Top = 56
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
@@ -600,9 +600,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 85
+                Top = 80
                 Width = 665
-                Height = 388
+                Height = 393
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -611,7 +611,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 384
+                  Height = 389
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

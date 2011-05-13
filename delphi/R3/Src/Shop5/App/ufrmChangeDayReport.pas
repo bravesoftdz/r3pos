@@ -124,19 +124,19 @@ type
     adoReport4: TZQuery;
     adoReport5: TZQuery;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure DBGridEh4DblClick(Sender: TObject);
+    procedure DBGridEh4DblClick(Sender: TObject);     
+    procedure actPriorExecute(Sender: TObject);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-    procedure actPriorExecute(Sender: TObject);
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
@@ -882,22 +882,41 @@ begin
     ' order by j.CHANGE_DATE,r.GODS_CODE ';
 
   Result:= ParseSQL(Factor.iDbType, strSql);
+  showmessage(Result);
 end;
 
 procedure TfrmChangeDayReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
+  P2_D1.Date:=P1_D1.Date;
+  P2_D2.Date:=P1_D2.Date;
   sid2:=sid1;
   srid2:=srid1;
-  DoAssignParamsValue(w1,RzPanel9);
+  fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text; //分类
+  Copy_ParamsValue('TYPE_ID',1,2);   //统计指标
+
+  fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
+  fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
+  fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
+  fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex;  //显示单位
+
+  RzPage.ActivePageIndex:=1;
+  actFindExecute(nil);
 end;
 
 procedure TfrmChangeDayReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-  DoAssignParamsValue(RzPanel9,RzPanel11);
+  P3_D1.Date:=P2_D1.Date;
+  P3_D2.Date:=P2_D2.Date;
+  fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString); //门店ID
+  fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);   //门店名称
+  Copy_ParamsValue('SHOP_TYPE',2,3);  //管理群组
+  fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
+  RzPage.ActivePageIndex:=2;
+  actFindExecute(nil);
 end;
 
 procedure TfrmChangeDayReport.DBGridEh3DblClick(Sender: TObject);
@@ -908,6 +927,7 @@ var
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
+
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
@@ -943,15 +963,14 @@ begin
       end;
     end;
   end;
-
-  DoAssignParamsValue(RzPanel11,RzPanel14);  
-end;
-
-procedure TfrmChangeDayReport.FormDestroy(Sender: TObject);
-begin
-  TDbGridEhSort.FreeForm(self);
-  inherited;
-
+  P4_D1.Date:=P3_D1.Date;
+  P4_D2.Date:=P3_D2.Date;
+  Copy_ParamsValue('SHOP_TYPE',3,4);  //管理群组
+  Copy_ParamsValue('TYPE_ID',3,4);   //统计指标
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID);  //门店名称
+  fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
+  RzPage.ActivePageIndex:=3;
+  actFindExecute(nil);   
 end;
 
 procedure TfrmChangeDayReport.DBGridEh4DblClick(Sender: TObject);
@@ -959,7 +978,25 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
-  DoAssignParamsValue(RzPanel14,RzPanel17);
+  sid5:=sid4;
+  srid5:=srid4;
+  fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text; //分类
+
+  P5_D1.Date:=P4_D1.Date;
+  P5_D2.Date:=P4_D2.Date;
+  Copy_ParamsValue('SHOP_TYPE',4,5);  //管理群组
+  Copy_ParamsValue('TYPE_ID',4,5);   //统计指标
+  Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID);  //门店名称
+  fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
+  RzPage.ActivePageIndex:=4;
+  actFindExecute(nil);
+end;
+
+procedure TfrmChangeDayReport.FormDestroy(Sender: TObject);
+begin
+  TDbGridEhSort.FreeForm(self);
+  inherited;
+
 end;
 
 procedure TfrmChangeDayReport.PrintBefore;

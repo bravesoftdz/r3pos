@@ -640,7 +640,7 @@ end;
 procedure TfrmSalIndentOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 end;
 
 procedure TfrmSalIndentOrder.Calc;

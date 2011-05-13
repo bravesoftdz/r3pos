@@ -926,6 +926,7 @@ inherited frmSalesOrder: TfrmSalesOrder
         Size = 100
       end>
     AfterScroll = edtTableAfterScroll
+    AfterPost = edtTableAfterPost
   end
   inherited edtProperty: TZQuery
     FieldDefs = <

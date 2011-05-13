@@ -937,6 +937,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll
+    AfterPost = edtTableAfterPost
   end
   inherited edtProperty: TZQuery
     FieldDefs = <

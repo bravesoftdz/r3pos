@@ -492,7 +492,7 @@ begin
         begin
           AObj.FieldbyName('TAX_RATE').AsFloat := rs.FieldbyName('TAX_RATE').AsFloat;
           edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
-          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
         end;
      Calc;
    finally
@@ -534,7 +534,7 @@ end;
 procedure TfrmStkRetuOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 
 end;
 
@@ -919,6 +919,7 @@ begin
       self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
       self.edtDEPT_ID.Text := edtDEPT_ID.Text;
       self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('STOCK_ID').AsString;
+      self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
       self.edtSTK_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtREMARK.Text := edtREMARK.Text;
       self.Locked := true;
@@ -970,7 +971,7 @@ begin
           end;
         end;
       end;
-
+      self.Calc;
     end;
   inherited;
 end;
@@ -1011,11 +1012,14 @@ begin
             AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('STOCK_ID').AsString;
             edtSTK_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
             edtSTOCK_DATE.Date := Global.SysDate;
+            AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+            edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
             ReadFrom(d);
           except
             Factor.CancelBatch;
             Raise;
           end;
+          Calc;
        finally
          HObj.Free;
          Params.Free;

@@ -501,7 +501,7 @@ begin
         begin
           AObj.FieldbyName('TAX_RATE').AsFloat := rs.FieldbyName('TAX_RATE').AsFloat;
           edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
-          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
         end;
      Calc;
    finally
@@ -539,7 +539,7 @@ end;
 procedure TfrmStkIndentOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 
 end;
 
@@ -981,6 +981,7 @@ var frmStockOrderList:TfrmStockOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
@@ -994,6 +995,7 @@ var frmStockOrderList:TfrmStockOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));

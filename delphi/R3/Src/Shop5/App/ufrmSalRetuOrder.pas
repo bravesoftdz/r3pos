@@ -653,7 +653,7 @@ end;
 procedure TfrmSalRetuOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 end;
 
 procedure TfrmSalRetuOrder.Calc;
@@ -1430,6 +1430,9 @@ begin
       self.edtSEND_ADDR.Text := edtSEND_ADDR.Text;
       self.edtPLAN_DATE.Date := edtPLAN_DATE.Date;
       self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('SALES_ID').AsString;
+      self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+      self.AObj.FieldbyName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
+      self.AObj.FieldbyName('UNION_ID').AsString := AObj.FieldbyName('UNION_ID').AsString;
       self.edtSAL_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtREMARK.Text := edtREMARK.Text;
       self.Locked := true;
@@ -1481,7 +1484,7 @@ begin
           end;
         end;
       end;
-
+      self.Calc;
     end;
   inherited;
 end;
@@ -1525,9 +1528,14 @@ begin
             HObj.ReadFromDataSet(h);
             ReadFromObject(HObj,self);
             AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('SALES_ID').AsString;
+            AObj.FieldbyName('PRICE_ID').AsString := HObj.FieldbyName('PRICE_ID').AsString;
+            AObj.FieldbyName('UNION_ID').AsString := HObj.FieldbyName('UNION_ID').AsString;
             edtSAL_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
             edtSALES_DATE.Date := Global.SysDate;
+            AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+            edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
             ReadFrom(d);
+            Calc;
           except
             Factor.CancelBatch;
             Raise;

@@ -32,7 +32,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Top = 30
         Width = 36
         Height = 12
-        Caption = #39564#36135#21592
+        Caption = #25910#36135#21592
       end
       object Label2: TLabel [3]
         Left = 194
@@ -795,6 +795,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         Size = 100
       end>
     AfterScroll = edtTableAfterScroll
+    AfterPost = edtTableAfterPost
   end
   inherited edtProperty: TZQuery
     FieldDefs = <

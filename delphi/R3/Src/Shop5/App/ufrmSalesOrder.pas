@@ -663,7 +663,7 @@ end;
 procedure TfrmSalesOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 end;
 
 procedure TfrmSalesOrder.Calc;
@@ -1258,6 +1258,7 @@ var frmSalRetuOrderList:TfrmSalRetuOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核单据，不能退货..');
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
@@ -1271,6 +1272,7 @@ var frmSalRetuOrderList:TfrmSalRetuOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核单据，不能退货..');
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
@@ -1326,6 +1328,9 @@ begin
       self.edtTELEPHONE.Text := edtTELEPHONE.Text;
       self.edtLINKMAN.Text := edtLINKMAN.Text;
       self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('INDE_ID').AsString;
+      self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+      self.AObj.FieldbyName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
+      self.AObj.FieldbyName('UNION_ID').AsString := AObj.FieldbyName('UNION_ID').AsString;
       self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtSALE_STYLE.KeyValue := edtSALE_STYLE.KeyValue;
       self.edtADVA_MNY.Text := edtADVA_MNY.Text;
@@ -1381,6 +1386,7 @@ begin
           finally
             self.edtTable.EnableControls;
           end;
+          self.Calc;
         end;
       end;
 
@@ -1460,8 +1466,12 @@ begin
         HObj.ReadFromDataSet(h);
         ReadFromObject(HObj,self);
         AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
+        AObj.FieldbyName('PRICE_ID').AsString := HObj.FieldbyName('PRICE_ID').AsString;
+        AObj.FieldbyName('UNION_ID').AsString := HObj.FieldbyName('UNION_ID').AsString;
         edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
         edtSALES_DATE.Date := Global.SysDate;
+        AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+        edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
         //if h.FieldByName('SALBILL_STATUS').AsInteger=0 then
         //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
         //else
@@ -1479,6 +1489,7 @@ begin
          edtTable.Post; 
          edtTable.Next;
        end;
+     Calc;
    finally
      HObj.Free;
      Params.Free;

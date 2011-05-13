@@ -62,6 +62,8 @@ type
     procedure N4Click(Sender: TObject);
     procedure fndGODS_FLAGPropertiesChange(Sender: TObject);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     IsEnd: boolean;
@@ -638,6 +640,21 @@ begin
       Exit;
     end;
   end;
+end;
+
+procedure TfrmSelectCheckGoods.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 end.

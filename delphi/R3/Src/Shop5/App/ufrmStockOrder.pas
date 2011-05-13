@@ -520,7 +520,7 @@ begin
         begin
           AObj.FieldbyName('TAX_RATE').AsFloat := rs.FieldbyName('TAX_RATE').AsFloat;
           edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
-          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
+          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
         end;
      Calc;
    finally
@@ -562,7 +562,7 @@ end;
 procedure TfrmStockOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  Calc;
+  if not edtTable.ControlsDisabled then Calc;
 
 end;
 
@@ -1089,6 +1089,7 @@ begin
       self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
       self.edtDEPT_ID.Text := edtDEPT_ID.Text;
       self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('INDE_ID').AsString;
+      self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
       self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
       self.edtADVA_MNY.Text := edtADVA_MNY.Text;
       self.edtREMARK.Text := edtREMARK.Text;
@@ -1139,9 +1140,9 @@ begin
           finally
             self.edtTable.EnableControls;
           end;
+          self.Calc;
         end;
       end;
-
     end;
   inherited;
 end;
@@ -1152,6 +1153,7 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
   frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
   frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
   PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
@@ -1165,6 +1167,7 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
   frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
   frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
   PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
@@ -1307,11 +1310,14 @@ begin
         AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('INDE_ID').AsString;
         edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
         edtSTOCK_DATE.Date := Global.SysDate;
+        AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+        edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
         //if h.FieldByName('STKBILL_STATUS').AsInteger=0 then
         //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
         //else
         //   AObj.FieldByName('ADVA_MNY').AsFloat := 0;
         ReadFrom(d);
+        Calc;
       except
         Factor.CancelBatch;
         Raise;

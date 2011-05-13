@@ -334,7 +334,7 @@ type
     actfrmDownIndeOrder: TAction;
     actfrmRecvForDay: TAction;
     actfrmImpeach: TAction;
-    Button1: TButton;
+    actfrmClearData: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -444,7 +444,7 @@ type
     procedure actfrmRecvForDayExecute(Sender: TObject);
     procedure rzUserInfoClick(Sender: TObject);
     procedure actfrmImpeachExecute(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure actfrmClearDataExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -3352,10 +3352,11 @@ begin
   TfrmImpeach.ShowImpeach(self); 
 end;
 
-procedure TfrmShopMain.Button1Click(Sender: TObject);
+procedure TfrmShopMain.actfrmClearDataExecute(Sender: TObject);
 begin
   inherited;
   TfrmClearData.DeleteDB(self);
+
 end;
 
 end.

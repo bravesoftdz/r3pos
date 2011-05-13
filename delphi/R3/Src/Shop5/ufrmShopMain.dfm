@@ -2355,15 +2355,6 @@ inherited frmShopMain: TfrmShopMain
                 end
               end
             end
-            object Button1: TButton
-              Left = 136
-              Top = 32
-              Width = 75
-              Height = 25
-              Caption = 'Button1'
-              TabOrder = 1
-              OnClick = Button1Click
-            end
           end
         end
         object rzTool: TPanel
@@ -7763,6 +7754,10 @@ inherited frmShopMain: TfrmShopMain
       Tag = 91500001
       Caption = #25237#35785#24314#35758
       OnExecute = actfrmImpeachExecute
+    end
+    object actfrmClearData: TAction
+      Caption = #25968#25454#28165#29702
+      OnExecute = actfrmClearDataExecute
     end
   end
   inherited PopupMenu: TPopupMenu

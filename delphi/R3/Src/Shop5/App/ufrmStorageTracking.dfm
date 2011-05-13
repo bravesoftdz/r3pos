@@ -225,6 +225,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         FieldName = 'ROAD_AMT'
                         Footers = <>
                         Title.Caption = #22312#36884#37327
+                        Visible = False
                         Width = 60
                       end
                       item
@@ -630,6 +631,7 @@ inherited frmStorageTracking: TfrmStorageTracking
           end
         end
         object TabSheet2: TRzTabSheet
+          TabVisible = False
           Caption = #38656#27714#20998#26512
           object RzPanel8: TRzPanel
             Left = 0
@@ -736,7 +738,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
-                  DataSource = DsStorage
                   Flat = True
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
@@ -1232,6 +1233,7 @@ inherited frmStorageTracking: TfrmStorageTracking
           end
         end
         object TabSheet3: TRzTabSheet
+          TabVisible = False
           Caption = #23384#38144#27604#30417#25511
           object RzPanel13: TRzPanel
             Left = 0
@@ -1338,7 +1340,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
-                  DataSource = DsStorage
                   Flat = True
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET

@@ -122,6 +122,7 @@ inherited frmSelectCheckGoods: TfrmSelectCheckGoods
               DecimalNumber = 2
               DigitalNumber = 12
               OnDblClick = DBGridEh1DblClick
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
               OnKeyDown = DBGridEh1KeyDown
               OnTitleClick = DBGridEh1TitleClick
               Columns = <

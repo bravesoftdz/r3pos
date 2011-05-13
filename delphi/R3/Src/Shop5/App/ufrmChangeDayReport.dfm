@@ -15,10 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 510
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1044,13 +1044,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SORT_ID'
-                      Footers = <>
-                      Title.Caption = #20998#31867#20195#30721
-                      Width = 62
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'SORT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
@@ -1478,7 +1471,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
-                      Width = 95
+                      Width = 82
                     end
                     item
                       EditButtons = <>
@@ -1493,14 +1486,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 62
+                      Width = 82
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 32
+                      Width = 19
                     end
                     item
                       Alignment = taRightJustify
@@ -1917,7 +1910,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 95
+                      Width = 92
                     end
                     item
                       EditButtons = <>
@@ -1932,7 +1925,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
-                      Width = 95
+                      Width = 82
                     end
                     item
                       EditButtons = <>
@@ -1946,14 +1939,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 62
+                      Width = 82
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 33
+                      Width = 18
                     end
                     item
                       Alignment = taRightJustify

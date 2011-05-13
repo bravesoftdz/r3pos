@@ -15,10 +15,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1036,13 +1034,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SORT_ID'
-                      Footers = <>
-                      Title.Caption = #20998#31867#20195#30721
-                      Width = 62
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'SORT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
@@ -1467,7 +1458,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
-                      Width = 95
+                      Width = 82
                     end
                     item
                       EditButtons = <>
@@ -1482,14 +1473,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 62
+                      Width = 82
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 35
+                      Width = 22
                     end
                     item
                       Alignment = taRightJustify

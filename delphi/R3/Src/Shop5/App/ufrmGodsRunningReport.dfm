@@ -30,7 +30,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
               Height = 509
               inherited w1: TRzPanel
                 Width = 724
-                Height = 83
+                Height = 82
                 object RzLabel2: TRzLabel
                   Left = 22
                   Top = 14
@@ -286,12 +286,12 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 83
+                Top = 82
                 Width = 724
-                Height = 426
+                Height = 427
                 inherited DBGridEh1: TDBGridEh
                   Width = 720
-                  Height = 422
+                  Height = 423
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams

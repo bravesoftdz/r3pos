@@ -468,7 +468,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 82
+                Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -750,9 +750,9 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 79
                 Width = 848
-                Height = 424
+                Height = 427
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -761,7 +761,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 420
+                  Height = 423
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -952,7 +952,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 82
+                Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -975,30 +975,32 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 56
                   Width = 48
                   Height = 12
+                  Alignment = taRightJustify
                   Caption = #38376#24215#21517#31216
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
                   Left = 288
-                  Top = 58
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 35
                   Width = 48
                   Height = 12
+                  Alignment = taRightJustify
                   Caption = #38376#24215#32676#32452
                 end
                 object P3_D1: TcxDateEdit
@@ -1019,7 +1021,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 486
-                  Top = 40
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1047,7 +1049,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 54
+                  Top = 52
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1088,7 +1090,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 32
+                  Top = 31
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1097,7 +1099,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 54
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1110,7 +1112,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 31
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1151,7 +1153,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1163,9 +1165,9 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 82
+                Top = 79
                 Width = 848
-                Height = 424
+                Height = 427
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1175,7 +1177,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 420
+                  Height = 423
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1227,13 +1229,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Footers = <>
                       Title.Caption = #24207#21495
                       Width = 30
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SORT_ID'
-                      Footers = <>
-                      Title.Caption = #20998#31867#20195#30721
-                      Width = 62
                     end
                     item
                       EditButtons = <>
@@ -1354,7 +1349,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 106
+                Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1377,16 +1372,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label21: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 288
-                  Top = 57
-                  Width = 48
+                  Left = 287
+                  Top = 58
+                  Width = 50
                   Height = 12
+                  Alignment = taRightJustify
                   Caption = #21830#21697#20998#31867
                 end
                 object Label25: TLabel
@@ -1397,15 +1393,16 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 288
+                  Left = 287
                   Top = 79
-                  Width = 48
+                  Width = 50
                   Height = 12
+                  Alignment = taRightJustify
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
@@ -1628,9 +1625,9 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 106
+                Top = 103
                 Width = 848
-                Height = 400
+                Height = 403
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1639,7 +1636,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 396
+                  Height = 399
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1844,7 +1841,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 85
+                Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1874,28 +1871,28 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label18: TLabel
                   Left = 286
-                  Top = 38
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 61
+                  Top = 59
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label28: TLabel
                   Left = 24
-                  Top = 38
+                  Top = 36
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label29: TLabel
                   Left = 286
-                  Top = 61
+                  Top = 59
                   Width = 48
                   Height = 12
                   Caption = #21333#25454#31867#22411
@@ -1910,7 +1907,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object RzBitBtn4: TRzBitBtn
                   Left = 525
-                  Top = 47
+                  Top = 43
                   Width = 72
                   Height = 32
                   Action = actFind
@@ -1945,7 +1942,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 57
+                  Top = 55
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1954,7 +1951,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 57
+                  Top = 55
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1995,7 +1992,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
                   Left = 338
-                  Top = 33
+                  Top = 31
                   Width = 168
                   Height = 20
                   Properties.Buttons = <
@@ -2053,7 +2050,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 33
+                  Top = 31
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -2094,7 +2091,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 33
+                  Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -2105,7 +2102,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object RzGB: TRzGroupBox
                   Left = 339
-                  Top = 52
+                  Top = 50
                   Width = 167
                   Height = 27
                   Color = clWindow
@@ -2142,9 +2139,9 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               object RzPanel18: TRzPanel
                 Left = 0
-                Top = 85
+                Top = 82
                 Width = 848
-                Height = 421
+                Height = 424
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2153,7 +2150,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 417
+                  Height = 420
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2217,7 +2214,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 80
+                      Width = 92
                     end
                     item
                       EditButtons = <>
@@ -2232,7 +2229,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
-                      Width = 95
+                      Width = 82
                     end
                     item
                       EditButtons = <>
@@ -2246,14 +2243,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 62
+                      Width = 82
                     end
                     item
                       EditButtons = <>
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 31
+                      Width = 23
                     end
                     item
                       Alignment = taRightJustify

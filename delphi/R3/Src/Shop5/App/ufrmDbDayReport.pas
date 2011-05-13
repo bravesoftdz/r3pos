@@ -107,7 +107,7 @@ type
     fndP4_SHOP_VALUE: TzrComboBoxList;
     fndP4_SHOP_TYPE: TcxComboBox;
     DBGridEh5: TDBGridEh;
-    Label17: TLabel;
+    LblShopName: TLabel;
     Label18: TLabel;
     Label22: TLabel;
     Label28: TLabel;
@@ -122,6 +122,9 @@ type
     adoReport3: TZQuery;
     adoReport4: TZQuery;
     Label3: TLabel;
+    RzGB: TRzGroupBox;
+    fndP6_DBIN: TcxRadioButton;
+    fndP6_DBOUT: TcxRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -158,6 +161,7 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure fndP6_DBINClick(Sender: TObject);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -255,7 +259,7 @@ begin
       Label21.Caption := '仓库名称';
 
       Label28.Caption := '仓库群组';
-      Label17.Caption := '调出仓库';
+      LblShopName.Caption := '调出仓库';
     end;
 end;
 
@@ -775,12 +779,6 @@ begin
   //GodsID不为空：
   if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
 
-  //月份日期:
-  if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
-    strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
-  else if P5_D1.Date<P5_D2.Date then
-    strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
-
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
   begin
@@ -789,9 +787,6 @@ begin
      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
     end;
   end;
-  //门店条件:
-  if (fndP5_SHOP_ID.AsString<>'') then
-    strWhere:=strWhere+' and (A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' or A.CLIENT_ID='''+fndP3_SHOP_ID.AsString+''')';
 
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
@@ -818,38 +813,108 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  strSql :=
-    'SELECT '+
-    ' A.TENANT_ID '+
-    ',A.GLIDE_NO '+
-    ',A.SALES_ID '+
-    ',A.GODS_ID '+
-    ',A.BATCH_NO '+
-    ',A.LOCUS_NO '+
-    ',A.UNIT_ID '+
-    ',A.SALES_DATE as MOVE_DATE '+
-    ',A.PROPERTY_01 '+
-    ',A.PROPERTY_02 '+
-    ',A.IS_PRESENT '+
-    ',A.CREA_DATE '+
-    ',A.CREA_USER '+
-    ',A.SHOP_ID '+        //调出门店
-    ',A.CLIENT_ID '+      //调入门店
-    ',A.GUIDE_USER '+     //导购员
-    ',A.AMOUNT as DB_AMT '+      //数量
-    ',A.APRICE as DB_PRC '+      //单价
-    ',A.RTL_MONEY as DB_RTL '+   //零售金额
-    ',A.COST_MONEY as DB_CST '+  //成本
-    ',B.SHOP_NAME '+             //调出门店
-    ',D.STOCK_DATE as PLAN_DATE '+   //到货日期
-    ',D.GUIDE_USER as SEND_USER '+   //发货人
-    ',C.BARCODE as BARCODE '+
-    ',C.GODS_CODE as GODS_CODE '+
-    ',C.GODS_NAME as GODS_NAME '+   //关联商品表
-    'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C,STK_STOCKORDER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-    ' and A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.STOCK_ID  '+
-    ' '+ strWhere + ' ';
+  if fndP6_DBOUT.Checked then //调出单
+  begin
+    //月份日期:
+    if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
+      strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+    else if P5_D1.Date<P5_D2.Date then
+      strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
+
+    //门店条件:
+    if fndP5_SHOP_ID.AsString<>'' then
+      strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
+    strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.GLIDE_NO '+
+      ',A.SALES_ID '+
+      ',A.GODS_ID '+
+      ',A.BATCH_NO '+
+      ',A.LOCUS_NO '+
+      ',A.UNIT_ID '+
+      ',A.SALES_DATE as MOVE_DATE '+
+      ',A.PROPERTY_01 '+
+      ',A.PROPERTY_02 '+
+      ',A.IS_PRESENT '+
+      ',A.CREA_DATE '+
+      ',A.CREA_USER '+
+      ',A.SHOP_ID '+        //调出门店
+      ',A.CLIENT_ID '+      //调入门店
+      ',A.GUIDE_USER '+     //导购员
+      ',A.AMOUNT as DB_AMT '+      //数量
+      ',A.APRICE as DB_PRC '+      //单价
+      ',A.RTL_MONEY as DB_RTL '+   //零售金额
+      ',A.COST_MONEY as DB_CST '+  //成本
+      ',B.SHOP_NAME as OUTSHOP_NAME '+             //调出门店
+      ',D.STOCK_DATE as PLAN_DATE '+   //到货日期
+      ',A.GUIDE_USER as SEND_USER '+   //发货人
+      ',C.BARCODE as BARCODE '+
+      ',C.GODS_CODE as GODS_CODE '+
+      ',C.GODS_NAME as GODS_NAME '+   //关联商品表
+      'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C,STK_STOCKORDER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' and A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.STOCK_ID  '+
+      ' '+ strWhere + ' ';
+    strSql :=
+      'select j.* '+
+      ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
+      ',u.UNIT_NAME as UNIT_NAME '+
+      ',c.SHOP_NAME as SHOP_NAME '+
+      ',d.USER_NAME as GUIDE_USER_TEXT '+
+      ',e.USER_NAME as CREA_USER_TEXT '+
+      ',f.USER_NAME as SEND_USER_TEXT '+
+      'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
+      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+      'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+      'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
+      'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
+      'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+      'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
+      ' order by j.MOVE_DATE,j.GODS_CODE';
+  end else
+  begin
+    //月份日期:
+    if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
+      strWhere:=strWhere+' and A.STOCK_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+    else if P5_D1.Date<P5_D2.Date then
+      strWhere:=strWhere+' and A.STOCK_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.STOCK_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
+    //门店条件:
+    if fndP5_SHOP_ID.AsString<>'' then
+      strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
+
+     strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.GLIDE_NO '+
+      ',A.STOCK_ID '+
+      ',A.GODS_ID '+
+      ',A.BATCH_NO '+
+      ',A.LOCUS_NO '+
+      ',A.UNIT_ID '+
+      ',A.STOCK_DATE as MOVE_DATE '+
+      ',A.PROPERTY_01 '+
+      ',A.PROPERTY_02 '+
+      ',A.IS_PRESENT '+
+      ',A.CREA_DATE '+
+      ',A.CREA_USER '+
+      ',A.CLIENT_ID  '+    //调出门店
+      ',A.SHOP_ID  '+      //调入门店
+      ',D.GUIDE_USER '+     //导购员
+      ',A.AMOUNT as DB_AMT '+      //数量
+      ',A.APRICE as DB_PRC '+      //单价
+      ',A.RTL_MONEY as DB_RTL '+   //零售金额
+      ',A.COST_MONEY as DB_CST '+  //成本
+      ',B.SHOP_NAME  '+             //调入门店
+      ',A.STOCK_DATE as PLAN_DATE '+   //到货日期
+      ',A.GUIDE_USER as SEND_USER '+   //发货人
+      ',C.BARCODE as BARCODE '+
+      ',C.GODS_CODE as GODS_CODE '+
+      ',C.GODS_NAME as GODS_NAME '+   //关联商品表
+      'from VIW_MOVEINDATA A,CA_SHOP_INFO B,'+GoodTab+' C,SAL_SALESORDER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' and A.TENANT_ID=D.TENANT_ID and A.STOCK_ID=D.SALES_ID  '+
+      ' '+ strWhere + ' ';
 
   strSql :=
     'select j.* '+
@@ -867,7 +932,8 @@ begin
     'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
     'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
     ' order by j.MOVE_DATE,j.GODS_CODE';
-    
+  end;
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -972,6 +1038,11 @@ begin
   inherited;
   if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
+  if adoReport4.FieldByName('DBIN_AMT').AsFloat>0 then //调入
+    fndP6_DBIN.Checked:=true
+  else
+    fndP6_DBOUT.Checked:=true;
+
   sid5 := sid4;
   srid5 := srid4;
   fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text; //分类
@@ -1142,6 +1213,24 @@ procedure TfrmDbDayReport.DBGridEh5GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'MOVE_DATE' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmDbDayReport.fndP6_DBINClick(Sender: TObject);
+begin
+  inherited;
+  if ShopGlobal.GetProdFlag = 'E' then
+  begin
+    if fndP6_DBIN.Checked then
+      LblShopName.Caption:='调入仓库'
+    else if fndP6_DBOUT.Checked then
+      LblShopName.Caption:='调出仓库';
+  end else
+  begin
+    if fndP6_DBIN.Checked then
+      LblShopName.Caption:='调入门店'
+    else if fndP6_DBOUT.Checked then
+      LblShopName.Caption:='调出门店';
+  end;
 end;
 
 end.

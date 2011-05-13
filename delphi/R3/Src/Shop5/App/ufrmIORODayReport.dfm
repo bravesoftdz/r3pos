@@ -15,10 +15,10 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet2
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -32,7 +32,7 @@ inherited frmIORODayReport: TfrmIORODayReport
               Height = 495
               inherited w1: TRzPanel
                 Width = 787
-                Height = 64
+                Height = 60
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -153,12 +153,12 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 64
+                Top = 60
                 Width = 787
-                Height = 431
+                Height = 435
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 427
+                  Height = 431
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -239,7 +239,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 64
+                Height = 60
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -286,7 +286,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 31
+                  Top = 32
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -354,7 +354,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 31
+                  Top = 32
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -366,9 +366,9 @@ inherited frmIORODayReport: TfrmIORODayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 64
+                Top = 60
                 Width = 787
-                Height = 431
+                Height = 435
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -377,7 +377,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 427
+                  Height = 431
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -541,7 +541,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Caption = #32479#35745#26041#24335
                 end
                 object LblSortName: TLabel
-                  Left = 283
+                  Left = 284
                   Top = 57
                   Width = 48
                   Height = 12
@@ -926,7 +926,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Caption = #32463' '#25163' '#20154
                 end
                 object Label13: TLabel
-                  Left = 25
+                  Left = 24
                   Top = 79
                   Width = 48
                   Height = 12

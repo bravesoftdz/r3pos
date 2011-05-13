@@ -15,10 +15,8 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -367,8 +365,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                 Color = clWhite
                 TabOrder = 0
                 object RzLabel4: TRzLabel
-                  Left = 24
-                  Top = 14
+                  Left = 26
+                  Top = 13
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -382,8 +380,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Caption = #33267
                 end
                 object Label10: TLabel
-                  Left = 24
-                  Top = 35
+                  Left = 26
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452

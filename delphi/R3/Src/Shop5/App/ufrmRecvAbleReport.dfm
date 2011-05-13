@@ -14,10 +14,10 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,7 +31,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Height = 495
               inherited w1: TRzPanel
                 Width = 787
-                Height = 64
+                Height = 60
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -152,12 +152,12 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 64
+                Top = 60
                 Width = 787
-                Height = 431
+                Height = 435
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 427
+                  Height = 431
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -260,7 +260,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 64
+                Height = 60
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -387,9 +387,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 64
+                Top = 60
                 Width = 787
-                Height = 431
+                Height = 435
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -398,7 +398,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 427
+                  Height = 431
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

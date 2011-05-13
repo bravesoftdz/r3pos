@@ -777,14 +777,21 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               FieldName = 'UNION_NAME'
               Footers = <>
               Title.Caption = #21830#30431#21517#31216
-              Width = 70
+              Width = 102
             end
             item
               EditButtons = <>
               FieldName = 'IC_CARDNO'
               Footers = <>
               Title.Caption = #21345'  '#21495
-              Width = 120
+              Width = 110
+            end
+            item
+              EditButtons = <>
+              FieldName = 'IC_STATUS'
+              Footers = <>
+              Title.Caption = #29366#24577
+              Width = 40
             end
             item
               EditButtons = <>
@@ -1153,6 +1160,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Width = 121
         Height = 20
         Properties.MaxLength = 20
+        Properties.OnChange = cmbCUST_CODEPropertiesChange
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end

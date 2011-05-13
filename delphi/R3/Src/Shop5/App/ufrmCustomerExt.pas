@@ -21,6 +21,7 @@ type
     FDataState: TDataSetState;
     FCust_Id: String;
     FIsRecordChange: Boolean;
+    FUnionName: String;
     procedure CreateLabel(UNION_ID,LblName:string);
     procedure CreateStarLabel(UNION_ID:String);
     procedure CreateRaido(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
@@ -33,6 +34,7 @@ type
     procedure SetDataState(const Value: TDataSetState);
     procedure SetCust_Id(const Value: String);
     procedure SetIsRecordChange(const Value: Boolean);
+    procedure SetUnionName(const Value: String);
   public
     { Public declarations }
     Aobj:TRecord_;
@@ -41,6 +43,7 @@ type
     procedure InitControl;
     procedure ReadFrom;
     procedure WriteTo;
+    property UnionName:String read FUnionName write SetUnionName;
     property UnionID:string read FUnionID write SetUnionID;
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property DataSet:TDataSet read FDataSet write SetDataSet;
@@ -262,7 +265,7 @@ begin
       if Tobject(FList[i]) is TcxComboBox then
         begin
           if (TcxComboBox(FList[i]).Tag = 1) and (Trim(TcxComboBox(FList[i]).Text) = '') then
-            raise Exception.Create('有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
           Index_Id := copy(TcxComboBox(FList[i]).Name,5,50);
           Index_Id := AnsiReplaceText(Index_Id,'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
@@ -278,7 +281,7 @@ begin
       else if Tobject(FList[i]) is TcxSpinEdit then
         begin
           if (TcxSpinEdit(FList[i]).Tag = 1) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
-            raise Exception.Create('有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
@@ -290,7 +293,7 @@ begin
       else if Tobject(FList[i]) is TcxDateEdit then
         begin
           if (TcxDateEdit(FList[i]).Tag = 1) and (TcxDateEdit(FList[i]).EditValue = null) then
-            raise Exception.Create('有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
@@ -405,6 +408,11 @@ end;
 procedure TfrmCustomerExt.SetIsRecordChange(const Value: Boolean);
 begin
   FIsRecordChange := Value;
+end;
+
+procedure TfrmCustomerExt.SetUnionName(const Value: String);
+begin
+  FUnionName := Value;
 end;
 
 end.

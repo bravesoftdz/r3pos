@@ -123,9 +123,12 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure cmbCUST_CODEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
-    procedure GetUnionCard;
+    function GetCheckNo:string;
+    function FindColumn(Grid:TDBGridEh;ColumnName:String):TColumnEh;
+    procedure InitGrid;
   public
     { Public declarations }
     Aobj:TRecord_;
@@ -133,6 +136,7 @@ type
     FList:TList;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure ReadFrom;
+    procedure AddFrom;
     procedure WriteTo(AObj:TRecord_);
     procedure Open(code:string);
     procedure OpenCard;
@@ -147,7 +151,7 @@ type
 
 implementation
 uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrmshopinfo,ufrmNewCard,
-  Math, ufrmBasic;
+  Math, EncDec, ufrmBasic;
 
 {$R *.dfm}
 
@@ -366,16 +370,13 @@ begin
      begin
        AObj.FieldbyName('CUST_ID').AsString := TSequence.NewId;
        Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+       Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
+       Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+       Aobj.FieldByName('IC_INFO').AsString := '∆Û“µø®';
+       Aobj.FieldByName('UNION_ID').AsString := '#';
+       Aobj.FieldByName('IC_STATUS').AsString := '0';
+       Aobj.FieldByName('IC_TYPE').AsString := '0';
      end;
-  if (Aobj.FieldByName('IC_CARDNO').AsString='') then
-    begin
-      Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
-      Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
-      Aobj.FieldByName('IC_INFO').AsString := '∆Û“µø®';
-      Aobj.FieldByName('UNION_ID').AsString := '#';
-      Aobj.FieldByName('IC_STATUS').AsString := '0';
-      Aobj.FieldByName('IC_TYPE').AsString := '0';
-    end;
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='◊‘∂Ø±‡∫≈..') then
      AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
@@ -390,9 +391,13 @@ begin
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
+  cdsUnionCard.Edit;
+  cdsUnionCard.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+  cdsUnionCard.Post;
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsTable,'TCustomer');
+    Factor.AddBatch(cdsUnionCard,'TPubIcInfo');
     Factor.AddBatch(cdsCustomerExt,'TCustomerExt');
     Factor.CommitBatch;
   except
@@ -554,7 +559,9 @@ begin
   if Trim(edtACCU_INTEGRAL.Text)='' then AObj.FieldByName('ACCU_INTEGRAL').AsString:='0';
   if Trim(cmbRULE_INTEGRAL.Text)='' then AObj.FieldByName('RULE_INTEGRAL').AsString:='0';
   AObj.FieldByName('SEX').AsInteger:=cmbSEX.ItemIndex;
-  if Trim(edtREGION_ID.Text)='' then AObj.FieldByName('REGION_ID').AsString := '#'; 
+  if Trim(edtREGION_ID.Text)='' then AObj.FieldByName('REGION_ID').AsString := '#';
+  Aobj.FieldByName('CUST_CODE').AsString := GetCheckNo;
+  if Aobj.FieldByName('PASSWRD').AsString = '' then Aobj.FieldByName('PASSWRD').AsString := EncStr('1234',ENC_KEY);
 end;
 
 class function TfrmCustomerInfo.AddDialog(Owner: TForm;
@@ -731,16 +738,6 @@ begin
   end;
 end;
 
-procedure TfrmCustomerInfo.GetUnionCard;
-var Str_Sql:String;
-begin
-  {Str_Sql :=
-  '';
-  cdsUnionCard.SQL.Text := Str_Sql;
-  Factor.Open(cdsUnionCard);}
-
-end;
-
 procedure TfrmCustomerInfo.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
@@ -757,7 +754,7 @@ begin
 
   if Column.FieldName = 'IC_CARDNO' then
     begin
-      if (cdsUnionCard.FieldByName('IC_CARDNO').AsString = '') then 
+      if (cdsUnionCard.FieldByName('IC_CARDNO').AsString = '') then
         begin
           ARect := Rect;
           AFont := TFont.Create;
@@ -771,12 +768,36 @@ begin
             DBGridEh1.Canvas.Font.Assign(AFont);
             AFont.Free;
           end;
+        end
+      else if (cdsUnionCard.FieldByName('IC_CARDNO').AsString <> '')
+        and
+         (cdsUnionCard.FieldByName('UNION_ID').AsString <> '#')
+        and
+         (cdsUnionCard.FieldByName('IC_STATUS').AsInteger in [2,9])
+      then
+        begin
+          ARect := Rect;
+          AFont := TFont.Create;
+          AFont.Assign(DBGridEh1.Canvas.Font);
+          try
+            DBGridEh1.canvas.FillRect(ARect);
+            DBGridEh1.Canvas.Font.Color := clBlue;
+            DBGridEh1.Canvas.Font.Style := [fsUnderline];
+            if (cdsUnionCard.FieldByName('IC_STATUS').AsString = '2') then
+              DrawText(DBGridEh1.Canvas.Handle,pchar('≤πø®'),length('≤πø®'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER)
+            else
+              DrawText(DBGridEh1.Canvas.Handle,pchar('…Í«Î'),length('…Í«Î'),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+          finally
+            DBGridEh1.Canvas.Font.Assign(AFont);
+            AFont.Free;
+          end;
         end;
     end;
 end;
 
 procedure TfrmCustomerInfo.DBGridEh1CellClick(Column: TColumnEh);
 var Params:TftParamList;
+    CardNo,Pwd,UnionID:String;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
@@ -786,10 +807,54 @@ begin
     begin
       if cdsUnionCard.FieldbyName('IC_CARDNO').AsString = '' then
         begin
-          if TfrmNewCard.SelectSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,cdsUnionCard.FieldbyName('UNION_ID').AsString,cmbCUST_NAME.Text,0) then
+          UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,CardNo,Pwd,0) then
             begin
-              OpenCard;
-              ReadFrom;
+              if cdsUnionCard.Locate('UNION_ID',UnionID,[]) then
+                begin
+                  cdsUnionCard.Edit;
+                  cdsUnionCard.FieldByName('IC_CARDNO').AsString := CardNo;
+                  cdsUnionCard.FieldByName('PASSWRD').AsString := Pwd;
+                  cdsUnionCard.FieldByName('IC_STATUS').AsString := '0';
+                  cdsUnionCard.FieldByName('CREA_USER').AsString := Global.UserID;
+                  cdsUnionCard.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+                  cdsUnionCard.FieldByName('IC_INFO').AsString := cdsUnionCard.FieldByName('UNION_NAME').AsString;
+                  cdsUnionCard.FieldByName('IC_TYPE').AsString := '0';
+                  cdsUnionCard.Post;
+                end;
+              if UnionID = '#' then
+                begin
+                  cmbCUST_CODE.Text := CardNo;
+                  Aobj.FieldByName('PASSWRD').AsString := Pwd;
+                end;
+              AddFrom;
+            end;
+        end
+      else if (cdsUnionCard.FieldByName('IC_CARDNO').AsString <> '')
+        and
+         (cdsUnionCard.FieldByName('UNION_ID').AsString <> '#')
+        and
+         (cdsUnionCard.FieldByName('IC_STATUS').AsString <> '1')
+      then
+        begin
+          UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,CardNo,Pwd,0) then
+            begin
+              if cdsUnionCard.Locate('UNION_ID',UnionID,[]) then
+                begin
+                  cdsUnionCard.Edit;
+                  cdsUnionCard.FieldByName('IC_CARDNO').AsString := CardNo;
+                  cdsUnionCard.FieldByName('PASSWRD').AsString := Pwd;
+                  if cdsUnionCard.FieldByName('IC_STATUS').AsString = '9' then
+                    cdsUnionCard.FieldByName('IC_STATUS').AsString := '0'
+                  else if cdsUnionCard.FieldByName('IC_STATUS').AsString = '2' then
+                    cdsUnionCard.FieldByName('IC_STATUS').AsString := '1';
+                  cdsUnionCard.FieldByName('CREA_USER').AsString := Global.UserID;
+                  cdsUnionCard.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+                  //cdsUnionCard.FieldByName('IC_INFO').AsString := cdsUnionCard.FieldByName('UNION_NAME').AsString;
+                  //cdsUnionCard.FieldByName('IC_TYPE').AsString := '0';
+                  cdsUnionCard.Post;
+                end;
             end;
         end;
     end;
@@ -834,6 +899,7 @@ begin
            frame.IsRecordChange := IsExtChange;
            frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
            frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
+           frame.UnionName := cdsUnionCard.FieldbyName('UNION_NAME').AsString;
            frame.DataState := dbState;
            frame.ReadFrom;
          end;
@@ -841,27 +907,98 @@ begin
     end;
 end;
 
-procedure TfrmCustomerInfo.OpenCard;
-var Params:TftParamList;
+procedure TfrmCustomerInfo.cmbCUST_CODEPropertiesChange(Sender: TObject);
 begin
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('CUST_ID').asString := Aobj.FieldbyName('CUST_ID').AsString;
-    Params.ParamByName('UNION_ID').AsString := '#';
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-
-    Factor.BeginBatch;
-    try
-      Factor.AddBatch(cdsCustomerExt,'TCustomerExt',Params);
-      Factor.AddBatch(cdsUnionCard,'TPubIcInfo',Params);
-      Factor.OpenBatch;
-    except
-      Factor.CancelBatch;
-      raise;
+  inherited;
+  if cdsUnionCard.Locate('UNION_ID','#',[]) then
+    begin
+      if not FnString.IsCodeString(Trim(cmbCUST_CODE.Text)) then Exit;
+      cdsUnionCard.Edit;
+      cdsUnionCard.FieldByName('IC_CARDNO').AsString := Trim(cmbCUST_CODE.Text);
+      cdsUnionCard.Post;
     end;
-  finally
-    Params.Free;
-  end;
+end;
+
+procedure TfrmCustomerInfo.AddFrom;
+var
+  tab:TrzTabSheet;
+  frame:TfrmCustomerExt;
+  i,j:integer;
+begin
+  if (cdsUnionCard.FieldbyName('UNION_ID').AsString<>'#')
+      and
+     (cdsUnionCard.FieldbyName('IC_CARDNO').AsString<>'')
+  then
+    begin
+      tab := TrzTabSheet.Create(RzPage);
+      tab.PageControl := RzPage;
+      tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
+      frame := TfrmCustomerExt.Create(tab);
+      FList.Add(frame);
+      frame.Parent:=tab;
+      frame.DataSet := cdsCustomerExt;
+      frame.IsRecordChange := IsExtChange;
+      frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+      frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
+      frame.DataState := dbState;
+      frame.ReadFrom;
+    end;
+end;
+
+function TfrmCustomerInfo.GetCheckNo: string;
+begin
+  result := trim(cmbCUST_CODE.Text);
+  if cmbCUST_CODE.Properties.EchoMode <> eemPassword then
+     begin
+       if pos('=',result)>0 then
+          begin
+            result := copy(result,1,pos('=',result)-1);
+          end;
+     end;
+end;
+
+procedure TfrmCustomerInfo.InitGrid;
+var rs:TZQuery;
+    Col:TColumnEh;
+begin
+  Col := FindColumn(DBGridEh1,'IC_STATUS');
+  if Col = nil then Exit;
+
+  rs := Global.GetZQueryFromName('PUB_PARAMS');
+  if not rs.Active then Exit;
+  rs.Filtered := False;
+  rs.Filter := ' TYPE_CODE=''IC_STATUS'' ';
+  rs.Filtered := True;
+
+  Col.KeyList.Clear;
+  Col.PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      Col.KeyList.Add(rs.FieldbyName('CODE_ID ').AsString);
+      Col.PickList.Add(rs.FieldbyName('CODE_NAME').AsString);
+      rs.Next;
+    end;
+end;
+
+procedure TfrmCustomerInfo.OpenCard;
+begin
+
+end;
+
+function TfrmCustomerInfo.FindColumn(Grid: TDBGridEh;
+  ColumnName: String): TColumnEh;
+var i:Integer;
+begin
+  Result := nil;
+  for i := 0 to Grid.Columns.Count - 1 do
+    begin
+      if Grid.Columns[i].FieldName = ColumnName then
+        begin
+          Result := Grid.Columns[i];
+          Exit;
+        end;
+    end;
 end;
 
 end.

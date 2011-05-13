@@ -638,7 +638,7 @@ begin
   if Cds_Customer.IsEmpty then Exit;
   //if Cds_Customer.FieldByName('IC_CARDNO').AsString<>'' then Raise Exception.Create('此会员已经有储值卡！');
 
-  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,IntToStr(Global.TENANT_ID),Cds_Customer.FieldByName('CUST_NAME').AsString,1) then
+  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1) then
     begin
       {Cds_Customer.Edit;
       Cds_Customer.FieldByName('IC_CARDNO').AsString:=card;

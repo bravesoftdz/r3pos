@@ -206,6 +206,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 11
             Width = 71
             Height = 20
+            Properties.MaxLength = 12
             TabOrder = 0
           end
           object edtDEPT_NAME: TcxTextEdit
@@ -213,6 +214,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 38
             Width = 175
             Height = 20
+            Properties.MaxLength = 50
             Properties.OnChange = edtDEPT_NAMEPropertiesChange
             TabOrder = 1
           end
@@ -222,6 +224,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Width = 124
             Height = 20
             TabStop = False
+            Properties.MaxLength = 50
             TabOrder = 2
           end
           object edtUPDEPT_ID: TzrComboBoxList
@@ -272,6 +275,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 208
             Width = 263
             Height = 43
+            Properties.MaxLength = 100
             TabOrder = 7
           end
           object edtTELEPHONE: TcxTextEdit
@@ -279,6 +283,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 151
             Width = 118
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 5
           end
           object edtLINKMAN: TcxTextEdit
@@ -286,6 +291,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 122
             Width = 118
             Height = 20
+            Properties.MaxLength = 20
             TabOrder = 4
           end
           object edtFAXES: TcxTextEdit
@@ -293,6 +299,7 @@ inherited frmDeptInfo: TfrmDeptInfo
             Top = 179
             Width = 118
             Height = 20
+            Properties.MaxLength = 30
             TabOrder = 6
             OnKeyPress = edtFAXESKeyPress
           end

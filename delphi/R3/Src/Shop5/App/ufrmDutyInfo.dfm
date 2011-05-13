@@ -1,6 +1,6 @@
 inherited frmDutyInfo: TfrmDutyInfo
-  Left = 743
-  Top = 318
+  Left = 379
+  Top = 231
   Caption = #32844#21153#26723#26696
   ClientHeight = 315
   ClientWidth = 421
@@ -138,6 +138,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Top = 16
             Width = 118
             Height = 20
+            Properties.MaxLength = 12
             TabOrder = 0
           end
           object edtDUTY_NAME: TcxTextEdit
@@ -145,6 +146,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Top = 52
             Width = 180
             Height = 20
+            Properties.MaxLength = 30
             Properties.OnChange = edtDUTY_NAMEPropertiesChange
             TabOrder = 1
           end
@@ -154,6 +156,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Width = 118
             Height = 20
             TabStop = False
+            Properties.MaxLength = 30
             TabOrder = 2
           end
           object edtUPDUTY_ID: TzrComboBoxList
@@ -204,6 +207,7 @@ inherited frmDutyInfo: TfrmDutyInfo
             Top = 165
             Width = 263
             Height = 43
+            Properties.MaxLength = 100
             TabOrder = 4
           end
         end

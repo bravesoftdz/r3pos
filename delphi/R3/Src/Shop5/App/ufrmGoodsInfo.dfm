@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
-      ActivePage = TabSheet4
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 3
       TabOrder = 1
       OnChange = RzPageChange
       FixedDimension = 20
@@ -297,6 +295,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Top = 43
               Width = 160
               Height = 20
+              Properties.MaxLength = 30
               TabOrder = 3
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -448,6 +447,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               Top = 44
               Width = 160
               Height = 20
+              Properties.MaxLength = 30
               TabOrder = 3
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -1325,6 +1325,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         TabStop = False
+        Properties.MaxLength = 50
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -1333,6 +1334,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Top = 47
         Width = 172
         Height = 20
+        Properties.MaxLength = 50
         Properties.OnChange = edtGODS_NAMEPropertiesChange
         TabOrder = 2
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1342,6 +1344,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Top = 26
         Width = 100
         Height = 20
+        Properties.MaxLength = 20
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtGODS_CODEKeyPress
@@ -1420,6 +1423,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Top = 5
         Width = 100
         Height = 20
+        Properties.MaxLength = 30
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtBARCODE1KeyPress

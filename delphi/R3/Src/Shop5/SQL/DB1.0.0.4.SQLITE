@@ -3,25 +3,24 @@
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','财务部','DEPT_TYPE','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','管理部','DEPT_TYPE','00',5497000);
 --发货仓库(默认)
-alter table CA_DEPT_INFO add SHOP_ID varchar(13);
+alter table CA_DEPT_INFO add SHOP_ID varchar(13) null;
 --部门类型
-alter table CA_DEPT_INFO add DEPT_TYPE char(1);
+alter table CA_DEPT_INFO add DEPT_TYPE char(1) null;
 --历史数据默认成（营销部）
 update CA_DEPT_INFO set DEPT_TYPE='1';
-
 update CA_DEPT_INFO set SHOP_ID=cast(TENANT_ID as varchar)||'0001';
 
 --添加营销部门
-alter table STK_STOCKORDER add DEPT_ID varchar(12);
-alter table STK_INDENTORDER add DEPT_ID varchar(12);
-alter table SAL_SALESORDER add DEPT_ID varchar(12);
-alter table SAL_INDENTORDER add DEPT_ID varchar(12);
+alter table STK_STOCKORDER add DEPT_ID varchar(12) null;
+alter table STK_INDENTORDER add DEPT_ID varchar(12) null;
+alter table SAL_SALESORDER add DEPT_ID varchar(12) null;
+alter table SAL_INDENTORDER add DEPT_ID varchar(12) null;
 
 --为银联添加银行及卡号
 --刷卡银行
-alter table SAL_SALESORDER add BANK_ID varchar(36);
+alter table SAL_SALESORDER add BANK_ID varchar(36) null;
 --刷卡卡号
-alter table SAL_SALESORDER add BANK_CODE varchar(36);
+alter table SAL_SALESORDER add BANK_CODE varchar(36) null;
 
 update STK_STOCKORDER set DEPT_ID=cast(TENANT_ID as varchar)||'001';
 update STK_INDENTORDER set DEPT_ID=cast(TENANT_ID as varchar)||'001';
@@ -39,19 +38,20 @@ union all
 select B.TENANT_ID,cast(B.TENANT_ID*10000+1 as varchar(11)) as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLES_IDS,'' as QQ,'' as MM,'' as MSN,
 VALUE as PASS_WRD,cast(B.TENANT_ID*1000+1 as varchar(12)) as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
 
+
 --企业客户
 --送货资料
-alter table PUB_CLIENTINFO add SEND_ADDR varchar(100);
-alter table PUB_CLIENTINFO add SEND_TELE varchar(50);
-alter table PUB_CLIENTINFO add SEND_LINKMAN varchar(20);
+alter table PUB_CLIENTINFO add SEND_ADDR varchar(100) null;
+alter table PUB_CLIENTINFO add SEND_TELE varchar(50) null;
+alter table PUB_CLIENTINFO add SEND_LINKMAN varchar(20) null;
 
-alter table PUB_CLIENTINFO add RECV_ADDR varchar(100);
-alter table PUB_CLIENTINFO add RECV_LINKMAN varchar(20);
-alter table PUB_CLIENTINFO add RECV_TELE varchar(50);
+alter table PUB_CLIENTINFO add RECV_ADDR varchar(100) null;
+alter table PUB_CLIENTINFO add RECV_LINKMAN varchar(20) null;
+alter table PUB_CLIENTINFO add RECV_TELE varchar(50) null;
 --开票全称
-alter table PUB_CLIENTINFO add LEGAL_REPR varchar(20);
-alter table PUB_CLIENTINFO add INVO_NAME varchar(60);
-alter table PUB_CLIENTINFO add TAX_NO varchar(30);
+alter table PUB_CLIENTINFO add LEGAL_REPR varchar(20) null;
+alter table PUB_CLIENTINFO add INVO_NAME varchar(60) null;
+alter table PUB_CLIENTINFO add TAX_NO varchar(30) null;
 
 --扫码出库
 CREATE TABLE SAL_LOCUS_FORSALE(
@@ -78,14 +78,14 @@ CREATE TABLE SAL_LOCUS_FORSALE(
         --单位
 	UNIT_ID varchar (36) NOT NULL ,
         --数量
-	AMOUNT decimal(18, 3) ,
+	AMOUNT decimal(18, 3)  null,
         --计量单位数据
-	CALC_AMOUNT decimal(18, 3) ,
+	CALC_AMOUNT decimal(18, 3)  null,
 
         --操作时间
-	CREA_DATE varchar (30) ,
+	CREA_DATE varchar (30)  null,
         --操作人员
-	CREA_USER varchar (36) ,
+	CREA_USER varchar (36)  null,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
@@ -124,14 +124,14 @@ CREATE TABLE STO_LOCUS_FORCHAG(
         --单位
 	UNIT_ID varchar (36) NOT NULL ,
         --数量
-	AMOUNT decimal(18, 3) ,
+	AMOUNT decimal(18, 3)  null,
         --计量单位数据
-	CALC_AMOUNT decimal(18, 3) ,
+	CALC_AMOUNT decimal(18, 3)  null,
 
         --操作时间
-	CREA_DATE varchar (30) ,
+	CREA_DATE varchar (30)  null,
         --操作人员
-	CREA_USER varchar (36) ,
+	CREA_USER varchar (36)  null,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
@@ -171,14 +171,14 @@ CREATE TABLE STK_LOCUS_FORSTCK(
         --单位
 	UNIT_ID varchar (36) NOT NULL ,
         --数量
-	AMOUNT decimal(18, 3) ,
+	AMOUNT decimal(18, 3)  null,
         --计量单位数据
-	CALC_AMOUNT decimal(18, 3) ,
+	CALC_AMOUNT decimal(18, 3)  null,
 
         --操作时间
-	CREA_DATE varchar (30) ,
+	CREA_DATE varchar (30)  null,
         --操作人员
-	CREA_USER varchar (36) ,
+	CREA_USER varchar (36)  null,
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000

@@ -836,11 +836,11 @@ begin
   IsOnDblClick:=true;
   P2_D1.asString := P1_D1.asString;
   P2_D2.asString := P1_D2.asString;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   srid2 := srid1;
-  self.Copy_ParamsValue('TYPE_ID',1,2); //商品指标
-  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
+  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
+  Copy_ParamsValue('TYPE_ID',1,2);  //商品指标
+  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex; //显示单位
   fndP2_SHOP_TYPE.ItemIndex := 0;
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;
@@ -855,9 +855,8 @@ begin
   IsOnDblClick:=true;  
   P3_D1.asString := P2_D1.asString;
   P3_D2.asString := P2_D2.asString;
-  fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
-  Copy_ParamsValue('SHOP_TYPE',2,3);
-
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex; //显示单位
   fndP3_SHOP_ID.KeyValue := adoReport2.FieldbyName('SHOP_ID').AsString;
   fndP3_SHOP_ID.Text := adoReport2.FieldbyName('SHOP_NAME').AsString;
   rzPage.ActivePageIndex := 2;
@@ -876,9 +875,10 @@ begin
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
-   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   1,3:
+     if trim(adoReport3.FieldByName('SORT_NAME').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
    else
-      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+     if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
   end;
 
   sid4:='';
@@ -900,22 +900,21 @@ begin
       fndP4_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
       begin
-        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        Aobj:=TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]);
         if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
         begin
           fndP4_TYPE_ID.ItemIndex:=i;
+          case CodeID of
+            3: fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+            else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+          end;
+          fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
           break;
         end;
       end;
-      if fndP4_TYPE_ID.ItemIndex<>-1 then
-      begin
-        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
-        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
-        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
-      end;
     end;
   end;
-  
+
   P4_D1.asString := P3_D1.asString;
   P4_D2.asString := P3_D2.asString;
   Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组

@@ -121,6 +121,7 @@ type
     adoReport5: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -137,8 +138,6 @@ type
     procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
     procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
-    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -774,34 +773,37 @@ begin
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+'';
 
   //GodsID不为空：
-  if trim(GodsID)<>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+  if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
 
   //月份日期:
   if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
-     strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+    strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
   else if P5_D1.Date<P5_D2.Date then
-     strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
+    strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP5_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
-      end;
+  begin
+    case fndP5_SHOP_TYPE.ItemIndex of
+     0:strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+     1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
     end;
+  end;
+  //门店条件:
+  if (fndP5_SHOP_ID.AsString<>'') then
+    strWhere:=strWhere+' and (A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' or A.CLIENT_ID='''+fndP3_SHOP_ID.AsString+''')';
+
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
+     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
+     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
+     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
+     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
+    end;
+  end;
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
@@ -916,9 +918,10 @@ begin
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
-   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   1,3:
+     if trim(adoReport3.FieldByName('SORT_NAME').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
    else
-      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+     if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
   end;
   
   case CodeID of
@@ -933,18 +936,17 @@ begin
       fndP4_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
       begin
-        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        Aobj:=TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]);
         if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
         begin
           fndP4_TYPE_ID.ItemIndex:=i;
+          case CodeID of
+           3: fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+           else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+          end;
+          fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
           break;
         end;
-      end;
-      if fndP4_TYPE_ID.ItemIndex<>-1 then
-      begin
-        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
-        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
-        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
       end;
     end;
   end;
@@ -962,8 +964,7 @@ end;
 procedure TfrmDbDayReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
-  inherited;
-
+  inherited;  
 end;
 
 procedure TfrmDbDayReport.DBGridEh4DblClick(Sender: TObject);
@@ -1096,14 +1097,6 @@ begin
   sid5 := '';
   srid5 :='';
   fndP5_SORT_ID.Text := '';
-end;
-
-procedure TfrmDbDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 procedure TfrmDbDayReport.DBGridEh1GetFooterParams(Sender: TObject;

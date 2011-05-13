@@ -109,10 +109,8 @@ type
     Label17: TLabel;
     Label18: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
     Label28: TLabel;
     fndP5_TYPE_ID: TcxComboBox;
-    fndP5_UNIT_ID: TcxComboBox;
     fndP5_STAT_ID: TzrComboBoxList;
     fndP5_SORT_ID: TcxButtonEdit;
     fndP5_SHOP_ID: TzrComboBoxList;
@@ -160,8 +158,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -892,8 +888,8 @@ begin
   P2_D2.Date:=P1_D2.Date;
   sid2:=sid1;
   srid2:=srid1;
-  fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text; //分类
-  Copy_ParamsValue('TYPE_ID',1,2);   //统计指标
+  fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text;  //分类
+  Copy_ParamsValue('TYPE_ID',1,2);  //统计指标
 
   fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
   fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
@@ -930,9 +926,10 @@ begin
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
-   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   1,3:
+     if trim(adoReport3.FieldByName('SORT_NAME').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
    else
-      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+     if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
   end;
   
   case CodeID of
@@ -947,25 +944,24 @@ begin
       fndP4_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
       begin
-        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        Aobj:=TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]);
         if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
         begin
           fndP4_TYPE_ID.ItemIndex:=i;
+          case CodeID of
+           3: fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+           else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+          end;
+          fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
           break;
         end;
       end;
-      if fndP4_TYPE_ID.ItemIndex<>-1 then
-      begin
-        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
-        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
-        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
-      end;
     end;
   end;
+  
   P4_D1.Date:=P3_D1.Date;
   P4_D2.Date:=P3_D2.Date;
   Copy_ParamsValue('SHOP_TYPE',3,4);  //管理群组
-  Copy_ParamsValue('TYPE_ID',3,4);   //统计指标
   Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID);  //门店名称
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
   RzPage.ActivePageIndex:=3;
@@ -975,7 +971,7 @@ end;
 procedure TfrmChangeDayReport.DBGridEh4DblClick(Sender: TObject);
 begin
   inherited;
-  if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('请选择查询流水帐的商品...');
+  if adoReport4.FieldbyName('GODS_ID').AsString = '' then Raise Exception.Create('没有商品！...');
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
   sid5:=sid4;
   srid5:=srid4;
@@ -984,7 +980,7 @@ begin
   P5_D1.Date:=P4_D1.Date;
   P5_D2.Date:=P4_D2.Date;
   Copy_ParamsValue('SHOP_TYPE',4,5);  //管理群组
-  Copy_ParamsValue('TYPE_ID',4,5);   //统计指标
+  Copy_ParamsValue('TYPE_ID',4,5);    //统计指标
   Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID);  //门店名称
   fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
   RzPage.ActivePageIndex:=4;
@@ -1182,14 +1178,6 @@ procedure TfrmChangeDayReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
-end;
-
-procedure TfrmChangeDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  inherited;
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
 end;
 
 end.

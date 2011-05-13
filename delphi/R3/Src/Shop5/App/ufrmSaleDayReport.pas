@@ -1517,7 +1517,10 @@ begin
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := IsVisble;
   rzPage.Pages[2].TabVisible := IsVisble;
-  rzPage.ActivePageIndex:=0;
+  if rzPage.Pages[0].TabVisible then rzPage.ActivePageIndex:=0
+  else if rzPage.Pages[1].TabVisible then rzPage.ActivePageIndex:=1
+  else if rzPage.Pages[2].TabVisible then rzPage.ActivePageIndex:=2
+  else if rzPage.Pages[3].TabVisible then rzPage.ActivePageIndex:=3;
 end;
 
 procedure TfrmSaleDayReport.fndP6_SORT_IDPropertiesButtonClick(

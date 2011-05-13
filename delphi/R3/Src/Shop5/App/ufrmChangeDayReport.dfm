@@ -15,10 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 510
-        ActivePage = TabSheet5
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1627,14 +1627,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
-                object Label23: TLabel
-                  Left = 520
-                  Top = 16
-                  Width = 48
-                  Height = 12
-                  Caption = #26174#31034#21333#20301
-                  Visible = False
-                end
                 object Label28: TLabel
                   Left = 24
                   Top = 35
@@ -1696,19 +1688,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #21697#29260#21517#31216)
                   TabOrder = 3
                 end
-                object fndP5_UNIT_ID: TcxComboBox
-                  Left = 576
-                  Top = 12
-                  Width = 121
-                  Height = 20
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #35745#37327#21333#20301
-                    #21253#35013'1'
-                    #21253#35013'2')
-                  TabOrder = 4
-                  Visible = False
-                end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
@@ -1721,7 +1700,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1763,7 +1742,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 5
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
@@ -1778,7 +1757,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1820,7 +1799,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1859,7 +1838,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 9
+                  TabOrder = 8
                 end
               end
               object RzPanel18: TRzPanel
@@ -1915,7 +1894,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh5DrawColumnCell
+                  OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <
@@ -1938,7 +1917,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 80
+                      Width = 95
                     end
                     item
                       EditButtons = <>
@@ -1946,7 +1925,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #37096#38376#21517#31216
-                      Width = 134
+                      Width = 121
                     end
                     item
                       EditButtons = <>
@@ -2064,7 +2043,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21046#21333#26102#38388
-                      Width = 111
+                      Width = 118
                     end>
                 end
               end

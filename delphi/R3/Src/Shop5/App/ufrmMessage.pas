@@ -370,7 +370,8 @@ begin
           cds_Message.FieldByName('PUBLISH_NUM').AsInteger := Num;
           cds_Message.Post;
         except
-          Raise Exception.Create('信息发布失败!');
+          on E:Exception do
+            Raise E.Create('信息发布出错了,错误:'+E.Message);
         end;
         MessageBox(Handle,pchar('信息发布成功!'),pchar('友情提示..'),MB_OK);
       end;

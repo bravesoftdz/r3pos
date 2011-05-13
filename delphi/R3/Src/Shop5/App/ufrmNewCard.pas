@@ -274,13 +274,16 @@ begin
         ShowModel := Model;
         Cust_Id := CUSTID;
         edtCLIENT_NAME.Text := CUSTNAME;
-        edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
-        //Open(Cust_Id,UNION_ID);
+        //edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+        Open(Cust_Id,UNION_ID);
         if ShowModal = mrOk then
           begin
             CardNo := Trim(edtIC_CARDNO.Text);
-            PWD := Trim(edtPASSWRD.Text);
-          end;
+            PWD := EncStr(Trim(edtPASSWRD.Text),ENC_KEY);
+            Result := True;
+          end
+        else
+          Result := False;
       finally
         Free;
       end;

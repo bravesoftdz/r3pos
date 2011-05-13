@@ -206,6 +206,10 @@ type
       State: TGridDrawState; var Text: String);
     procedure DBGridEh6DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -429,7 +433,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,B.REGION_ID';
+    'group by A.TENANT_ID,A.DEPT_ID';
 
   Result := ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -1371,7 +1375,7 @@ procedure TfrmSaleDayReport.DBGridEh2GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmSaleDayReport.DBGridEh1GetFooterParams(Sender: TObject;
@@ -1380,7 +1384,7 @@ procedure TfrmSaleDayReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmSaleDayReport.DBGridEh6DrawColumnCell(Sender: TObject;
@@ -1509,8 +1513,8 @@ begin
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   Rs:=Global.GetZQueryFromName('CA_DEPT_INFO'); 
   rzPage.Pages[0].TabVisible := (Rs<>nil) and (Rs.RecordCount>1);
-  rzPage.Pages[1].TabVisible := IsVisble;
-  rzPage.Pages[2].TabVisible := IsVisble;
+//  rzPage.Pages[1].TabVisible := IsVisble;
+//  rzPage.Pages[2].TabVisible := IsVisble;
   rzPage.ActivePageIndex:=0;
 end;
 
@@ -1520,6 +1524,15 @@ begin
   inherited;
   if SelectGoodSortType(sid6,srid6,SortName) then
     fndP6_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmSaleDayReport.DBGridEh3GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 end.

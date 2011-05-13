@@ -882,7 +882,6 @@ begin
     ' order by j.CHANGE_DATE,r.GODS_CODE ';
 
   Result:= ParseSQL(Factor.iDbType, strSql);
-  showmessage(Result);
 end;
 
 procedure TfrmChangeDayReport.DBGridEh1DblClick(Sender: TObject);

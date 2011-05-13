@@ -102,6 +102,7 @@ begin
       SrcQry.Data:=CdsStateInfo.Data;
     end;
   finally
+    CdsStateInfo.First;
     CdsStateInfo.EnableControls;
     Param.Free;
   end;

@@ -51,6 +51,9 @@ type
     N10: TMenuItem;
     PrintDBGridEh1: TPrintDBGridEh;
     edtProperty: TZQuery;
+    ToolButton3: TToolButton;
+    ToolButton6: TToolButton;
+    actDefineState: TAction;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -81,6 +84,7 @@ type
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure N8Click(Sender: TObject);
     procedure N10Click(Sender: TObject);
+    procedure actDefineStateExecute(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure PrintView;
@@ -110,7 +114,7 @@ implementation
 
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint,
-  uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort,
+  uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort, ufrmDefineStateInfo,
   ufrmGoodssortTree, ObjCommon;
    
 
@@ -1110,6 +1114,12 @@ begin
     PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
     DBGridEh1.DataSource.DataSet.Filtered := False;
     PrintDBGridEh1.DBGridEh := DBGridEh1;
+end;
+
+procedure TfrmGoodsInfoList.actDefineStateExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmDefineStateInfo.ShowDialog(self);
 end;
 
 end.

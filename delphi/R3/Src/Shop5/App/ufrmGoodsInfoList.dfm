@@ -10,36 +10,36 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 940
-    Height = 554
+    Width = 948
+    Height = 565
     inherited RzPanel2: TRzPanel
-      Width = 930
-      Height = 544
+      Width = 938
+      Height = 555
       inherited RzPage: TRzPageControl
-        Width = 924
-        Height = 538
+        Width = 932
+        Height = 549
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21830#21697#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 922
-            Height = 511
+            Width = 930
+            Height = 522
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 465
+              Height = 476
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 912
+              Width = 920
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                912
+                920
                 36)
               object Panel3: TPanel
                 Left = 0
@@ -130,7 +130,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               Left = 5
               Top = 41
               Width = 176
-              Height = 465
+              Height = 476
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -146,16 +146,16 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
             object Panel1: TPanel
               Left = 184
               Top = 41
-              Width = 733
-              Height = 465
+              Width = 741
+              Height = 476
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 731
-                Height = 444
+                Width = 739
+                Height = 455
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -344,8 +344,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 445
-                Width = 731
+                Top = 456
+                Width = 739
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -371,63 +371,77 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 940
+    Width = 948
     inherited Image1: TImage
-      Left = 331
-      Width = 589
+      Left = 384
+      Width = 544
     end
     inherited Image3: TImage
-      Left = 331
-      Width = 589
+      Left = 384
+      Width = 544
     end
     inherited Image14: TImage
-      Left = 920
+      Left = 928
     end
     inherited rzPanel5: TPanel
-      Left = 331
+      Left = 384
       inherited lblToolCaption: TRzLabel
         Width = 48
         Caption = #21830#21697#26723#26696
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 311
+      Width = 364
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 311
+          MinHeight = 364
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 311
+        Width = 364
         ButtonWidth = 43
-        object ToolButton2: TToolButton
+        object ToolButton3: TToolButton
           Left = 0
+          Top = 0
+          Action = actDefineState
+          ImageIndex = 18
+        end
+        object ToolButton6: TToolButton
+          Left = 43
+          Top = 0
+          Width = 10
+          Caption = 'ToolButton6'
+          ImageIndex = 14
+          Style = tbsSeparator
+        end
+        object ToolButton2: TToolButton
+          Left = 53
           Top = 0
           Action = actNew
         end
         object ToolButton4: TToolButton
-          Left = 43
+          Left = 96
           Top = 0
           Action = actEdit
           Caption = #20462#25913
         end
         object ToolButton1: TToolButton
-          Left = 86
+          Left = 139
           Top = 0
           Action = actInfo
           Caption = #35814#32454
         end
         object ToolButton5: TToolButton
-          Left = 129
+          Left = 182
           Top = 0
           Action = actDelete
         end
         object ToolButton7: TToolButton
-          Left = 172
+          Left = 225
           Top = 0
           Width = 10
           Caption = 'ToolButton7'
@@ -435,17 +449,17 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
           Style = tbsDivider
         end
         object ToolButton8: TToolButton
-          Left = 182
+          Left = 235
           Top = 0
           Action = actPrint
         end
         object ToolButton9: TToolButton
-          Left = 225
+          Left = 278
           Top = 0
           Action = actPreview
         end
         object ToolButton10: TToolButton
-          Left = 268
+          Left = 321
           Top = 0
           Action = actExit
         end
@@ -487,6 +501,10 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
     object actPrintBarCode: TAction
       Caption = #25171#21360#26465#30721
       OnExecute = actPrintBarCodeExecute
+    end
+    object actDefineState: TAction
+      Caption = #25351#26631
+      OnExecute = actDefineStateExecute
     end
   end
   object DataSource1: TDataSource

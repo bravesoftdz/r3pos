@@ -109,7 +109,6 @@ type
     edtREMARK: TcxMemo;
     TabSheet4: TRzTabSheet;
     RzPnl_BarCode: TRzPanel;
-    BtnStateInfo: TRzBitBtn;
     ExtBarCode: TZQuery;
     ExtBarCodeDs: TDataSource;
     ExtBarCodeGrid: TDBGridEh;
@@ -141,7 +140,6 @@ type
     procedure RzBitBtn4Click(Sender: TObject);
     procedure edtBARCODE1KeyPress(Sender: TObject; var Key: Char);
     procedure edtBIGTO_CALCPropertiesChange(Sender: TObject);
-    procedure RzPageChange(Sender: TObject);
     procedure edtMY_OUTPRICEPropertiesChange(Sender: TObject);
     procedure edtSORT_ID2AddClick(Sender: TObject);
     procedure edtSORT_ID6AddClick(Sender: TObject);
@@ -174,7 +172,6 @@ type
     procedure edtNEW_OUTPRICEExit(Sender: TObject);
     procedure edtMY_OUTPRICE2Exit(Sender: TObject);
     procedure edtMY_OUTPRICE1Exit(Sender: TObject);
-    procedure BtnStateInfoClick(Sender: TObject);
     procedure ExtBarCodeGridDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh;
       State: TGridDrawState);
@@ -266,7 +263,7 @@ implementation
 uses
   DBGrids,uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
-  ufrmSupplierInfo, ufrmDefineStateInfo;
+  ufrmSupplierInfo;
 
 {$R *.dfm}
 
@@ -1721,60 +1718,9 @@ begin
   end;
 end;
 
-procedure TfrmGoodsInfo.RzPageChange(Sender: TObject);
-//var Params:TftParamList;
-begin
-  inherited;
-  BtnStateInfo.Visible:=(RzPage.ActivePage=tabProperty); 
-
-  //暂时先关闭 
- {
-  if RzPage.ActivePageIndex=4 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('TENANT_ID').AsInteger :=ShopGlobal.TENANT_ID;
-      Params.ParamByName('USER_ID').asString :=Global.UserID;
-      Params.ParamByName('GODS_ID').asString :=cdsGoods.FieldByName('GODS_ID').AsString;
-      GetStorage.Close;
-      Factor.Open(GetStorage,'TGetStorage',Params);
-    finally
-      Params.Free;
-    end;
-  end;
-
-  if RzPage.ActivePageIndex=5 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('TENANT_ID').AsInteger :=ShopGlobal.TENANT_ID;
-      Params.ParamByName('USER_ID').asString :=Global.UserID;
-      Params.ParamByName('GODS_ID').asString :=cdsGoods.FieldByName('GODS_ID').AsString;
-      GetStockData.Close;
-      Factor.Open(GetStockData,'TGetStockData',Params);
-    finally
-      Params.Free;
-    end;
-  end;
-
-  if RzPage.ActivePageIndex=6 then
-  begin
-    Params := TftParamList.Create(nil);
-    try
-        Params.ParamByName('TENANT_ID').AsInteger :=ShopGlobal.TENANT_ID;
-        Params.ParamByName('USER_ID').asString :=Global.UserID;
-        Params.ParamByName('GODS_ID').asString :=cdsGoods.FieldByName('GODS_ID').AsString;
-        GetSalesData.Close;
-        Factor.Open(GetSalesData,'TGetSalesData',Params);
-    finally
-      Params.Free;
-    end;
-  end;
- }
-end;
-
 function TfrmGoodsInfo.ReadBarCode_INFO(BarCode: string):boolean;
-var tmp: TZQuery;
+var
+  tmp: TZQuery;
 begin
     result := false;
     tmp:=TZQuery.Create(nil);
@@ -2798,38 +2744,7 @@ begin
     end;
   end;
 end;
-
-procedure TfrmGoodsInfo.BtnStateInfoClick(Sender: TObject);
-var
-  i: integer;
-  fldname: string;
-  edtSortID: TzrComboBoxList;
-begin
-  inherited;
-  if TfrmDefineStateInfo.ShowDialog(self) then
-  begin
-    CreateGodsSTAT_INFO(True);
-    for i:=0 to ComponentCount-1 do
-    begin
-      if Components[i] is TzrComboBoxList then
-      begin
-        edtSortID:=TzrComboBoxList(Components[i]);
-        fldname:=UpperCase(Copy(trim(edtSortID.Name),4,50));
-        if Pos('SORT_ID',fldname)>0 then
-        begin
-          edtSortID.KeyValue := AObj.FieldbyName(fldname).AsString;
-          if AObj.FindField(fldname+'_TEXT') <> nil then
-            edtSortID.Text := AObj.FieldbyName(fldname+'_TEXT').AsString
-          else
-          begin
-           if (edtSortID.DataSet <> nil) and (edtSortID.DataSet.Active) then
-             edtSortID.Text := TdsFind.GetNameByID(edtSortID.DataSet,edtSortID.KeyField,edtSortID.ListField,AObj.FieldbyName(fldname).AsString);
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
+ 
 
 //创建统计指标属性:
 procedure TfrmGoodsInfo.CreateGodsSTAT_INFO(IsExists: Boolean);
@@ -2840,8 +2755,8 @@ var
   i,CodeID,vLeft,vRight,vTop,vCount: integer;
   Rs, CdsList, DropDs: TZQuery;
 begin
-  vLeft:=69;
-  vRight:=297;
+  vLeft:=76;
+  vRight:=304;
   vTop:=28;
   vCount:=1;
   //1..8:为修改标签一定显示
@@ -2958,11 +2873,13 @@ begin
   EdtSort.AutoFitColWidth:=true;
   //创建下拉Grid的Column列:
   Columns:=EdtSort.Columns.Add;
-  Columns.FieldName:='SEQ_NO';
-  Columns.Title.Caption:='序号';
-  Columns:=EdtSort.Columns.Add;
   Columns.FieldName:='SORT_NAME';
   Columns.Title.Caption:='名称';
+  Columns.Width:=130;
+  Columns:=EdtSort.Columns.Add;
+  Columns.FieldName:='SEQ_NO';
+  Columns.Title.Caption:='序号';
+  Columns.Width:=40; 
 
   EdtSort.DropWidth:=EdtSort.Width;
   EdtSort.DropHeight:=200;
@@ -3057,9 +2974,9 @@ begin
       if (i=1) and (Trim(ExtBarCode.FieldbyName('UNIT_ID').asString)<>'') then
       begin
         ExtBarCode.Next;
-        if ExtBarCode.Eof then
+        if ExtBarCode.Eof and not ExtBarCodeGrid.Readonly then
         begin
-          ExtGridFocusNextColumn;
+          InitRecord;
         end;
         ExtBarCodeGrid.SetFocus;
         ExtBarCodeGrid.Col := 1 ;
@@ -3152,9 +3069,9 @@ end;
 procedure TfrmGoodsInfo.ExtBarCodeGridKeyPress(Sender: TObject;
   var Key: Char);
 begin
-  inherited;
-  if Key=#13 then
-    ExtGridFocusNextColumn;
+//  inherited;
+//  if Key=#13 then
+//    ExtGridFocusNextColumn;
 end;
 
 procedure TfrmGoodsInfo.ExtBarCodeGridMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -3163,7 +3080,7 @@ var
 begin
   inherited;
   Cell := ExtBarCodeGrid.MouseCoord(X,Y);
-  if Cell.Y > ExtBarCodeGrid.VisibleRowCount then
+  if Cell.Y > (ExtBarCodeGrid.VisibleRowCount-1) then
     InitRecord;
 end;
 

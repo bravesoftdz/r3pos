@@ -57,7 +57,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       ParentColor = False
       TabIndex = 3
       TabOrder = 1
-      OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -870,7 +869,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Color = clWhite
         Caption = #32479#35745#25351#26631
         object lblSORT_ID3: TLabel
-          Left = 17
+          Left = 24
           Top = 10
           Width = 48
           Height = 12
@@ -884,7 +883,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           ParentFont = False
         end
         object edtSORT_ID3: TzrComboBoxList
-          Left = 69
+          Left = 76
           Top = 6
           Width = 162
           Height = 20
@@ -1028,33 +1027,6 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnCloseClick
-        NumGlyphs = 2
-        Spacing = 5
-      end
-      object BtnStateInfo: TRzBitBtn
-        Left = 2
-        Top = 9
-        Width = 96
-        Height = 26
-        Anchors = [akTop, akRight]
-        Caption = #33258#23450#20041#25351#26631'(&D)'
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 2
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = BtnStateInfoClick
         NumGlyphs = 2
         Spacing = 5
       end

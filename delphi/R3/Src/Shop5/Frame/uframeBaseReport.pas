@@ -93,8 +93,10 @@ type
     //返回指定控件名中数序号如: ('fndP3_D1','fndP'); 返回: 3;
     function  GetCmpNum(CmpName,BegName: string): string;
 
-    {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[查询条件值] =======}
-    procedure DoAssignParamsValue(SrcPnl,DestPnl: TRzPanel; ExecteFind: Boolean=true); virtual; //PageIndex=-1表示由Sender的序号确定PageIndex
+    {=======  2011.03.02 Add 双击TDBGridEh显示明细数据[复制查询条件值] =======}
+    procedure Copy_ParamsValue(SrcList,DestList: TzrComboBoxList); overload;      //复制值TzrComboBoxList
+    procedure Copy_ParamsValue(vType: string; SrcIdx,DestIdx: integer); overload; //复制门店管理群组:SHOP_TYPE;商品指标:TYPE_ID
+
     {=======  2011.03.02 Add TDBGridEh =======}
     //添加Grid的列Column.KeyList,PickList;
     procedure AddDBGridEhColumnItems(Grid: TDBGridEh; rs: TDataSet; ColName,KeyID,ListName: string);
@@ -109,7 +111,7 @@ type
     //不同数据库类型转换：输入字段名称，返回转化后表达式:
     function IntToVarchar(FieldName: string): string;
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
-    procedure SetRzPageActivePage(IsGroupReport: Boolean=true); //
+    procedure SetRzPageActivePage(IsGroupReport: Boolean=true);virtual; //
 
     {=======  2011.03.03 Add 商品统计单位换算关系   =======}
     //参数: CalcIdx: 0:默认(管理)单位; 1:计量单位;  2:小包装单位; 3:大包装单位;
@@ -430,6 +432,15 @@ begin
           TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
         TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
       end;
+      //部门名称
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_DEPT_ID') then
+      begin
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_DEPT_INFO');
+      end;
       //商品统计指标
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_SHOP_VALUE') then
       begin
@@ -444,7 +455,7 @@ begin
         TzrComboBoxList(Components[i]).ShowButton:=true;
         TzrComboBoxList(Components[i]).Buttons:=[zbClear];
         if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
-          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;        
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
         TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('PUB_GOODSINFO');
       end;
       //制单人
@@ -817,83 +828,56 @@ begin
   end;
 end;
 
-procedure TframeBaseReport.DoAssignParamsValue(SrcPnl, DestPnl: TRzPanel; ExecteFind: Boolean=true);
- function FindDestComponent(DestPnl: TRzPanel; DestCmpName: string): TComponent;
- var i: integer; FindCmp: TComponent;
- begin
-   for i:=0 to DestPnl.ControlCount-1 do
-   begin
-     FindCmp:=TComponent(DestPnl.Controls[i]);
-     if trim(LowerCase(FindCmp.Name))=trim(LowerCase(DestCmpName)) then
-     begin
-       result:=FindCmp;
-       break;
-     end;
-   end;
- end;
- function GetDestCmpName(SrcCmpName: string): string;  //第一个下划线之前的Numn为控件PageNum
- var i,PosIdx: integer;FirtStr,NumStr: string; 
- begin
-   result:='';
-   FirtStr:='';
-   NumStr:='';
-   PosIdx:=Pos('_',SrcCmpName);
-   for i:=1 to PosIdx-1 do
-   begin
-     if SrcCmpName[i] in ['0'..'9'] then
-       NumStr:=NumStr+SrcCmpName[i]
-     else
-       FirtStr:=FirtStr+SrcCmpName[i];
-   end;
-   if NumStr<>'' then
-   begin
-     NumStr:=InttoStr(StrtoIntDef(NumStr,0)+1);
-     result:=FirtStr+NumStr+Copy(SrcCmpName,PosIdx,100);
-   end;
- end;
-var
-  DestTab:TRzTabSheet;
-  i,PageIdx: integer;
-  SrcCmpName,DestCmpName: string;
-  SrcCmp,DestCmp: TComponent;
-  ParentCmp: TWinControl;
+procedure TframeBaseReport.Copy_ParamsValue(SrcList, DestList: TzrComboBoxList);
 begin
-  if (not assigned(SrcPnl)) or (not assigned(DestPnl)) then Exit;
-  for i:=0 to SrcPnl.ControlCount -1 do
+  if (SrcList<>nil) and (DestList<>nil) then
   begin
-    if (SrcPnl.Controls[i] is TLabel) or (SrcPnl.Controls[i] is TRzLabel) or (SrcPnl.Controls[i] is TRzBitBtn) then Continue;
-    SrcCmp:=TComponent(SrcPnl.Controls[i]);
-    SrcCmpName:=SrcCmp.Name;
-    DestCmpName:=GetDestCmpName(SrcCmpName);
-    DestCmp:=FindDestComponent(DestPnl,DestCmpName);
-    if DestCmp=nil then Continue;
-    if SrcPnl.Controls[i] is TcxDateEdit then
-      TcxDateEdit(DestCmp).Date:=TcxDateEdit(SrcCmp).Date
-    else if SrcPnl.Controls[i] is TcxComboBox then
-      TcxComboBox(DestCmp).ItemIndex:=TcxComboBox(SrcCmp).ItemIndex
-    else if SrcPnl.Controls[i] is TzrComboBoxList then
+    DestList.KeyValue:=SrcList.KeyValue;
+    DestList.Text:=SrcList.Text;
+  end;
+end;
+
+//复制门店管理群组:SHOP_TYPE;  商品指标:TYPE_ID
+procedure TframeBaseReport.Copy_ParamsValue(vType: string; SrcIdx,DestIdx: integer);
+var
+  SrcCmp,DestCmp: TComponent;
+begin
+  if vType='SHOP_TYPE' then
+  begin
+    //先复制群组类型
+    SrcCmp:=FindComponent('fndP'+InttoStr(SrcIdx)+'_SHOP_TYPE');
+    DestCmp:=FindComponent('fndP'+InttoStr(DestIdx)+'_SHOP_TYPE');
+    if (SrcCmp<>nil) and (DestCmp<>nil) and (SrcCmp is TcxComboBox) and (DestCmp is TcxComboBox) then
+    begin
+      TcxComboBox(DestCmp).ItemIndex:=TcxComboBox(SrcCmp).ItemIndex;
+    end;
+    //复制群组选项值
+    SrcCmp:=FindComponent('fndP'+InttoStr(SrcIdx)+'_SHOP_VALUE');
+    DestCmp:=FindComponent('fndP'+InttoStr(DestIdx)+'_SHOP_VALUE');
+    if (SrcCmp<>nil) and (DestCmp<>nil) and (SrcCmp is TzrComboBoxList) and (DestCmp is TzrComboBoxList) then
     begin
       TzrComboBoxList(DestCmp).KeyValue:=TzrComboBoxList(SrcCmp).KeyValue;
       TzrComboBoxList(DestCmp).Text:=TzrComboBoxList(SrcCmp).Text;
-    end else
-    if SrcPnl.Controls[i] is TcxButtonEdit then
-      TcxButtonEdit(DestCmp).Text:=TcxButtonEdit(SrcCmp).Text;
-  end;
-  
-  //设置分页：
-  ParentCmp:=DestPnl.Parent;
-  for i:=1 to 100 do
+    end;
+  end else
+  if vType='TYPE_ID' then
   begin
-    if ParentCmp=nil then break;
-    if (ParentCmp<>nil) and (ParentCmp is TRzTabSheet) then
+    //先复制群组类型
+    SrcCmp:=FindComponent('fndP'+InttoStr(SrcIdx)+'_TYPE_ID');
+    DestCmp:=FindComponent('fndP'+InttoStr(DestIdx)+'_TYPE_ID');
+    if (SrcCmp<>nil) and (DestCmp<>nil) and (SrcCmp is TcxComboBox) and (DestCmp is TcxComboBox) then
     begin
-      RzPage.ActivePage:=TRzTabSheet(ParentCmp);
-      break;
-    end else
-      ParentCmp:=ParentCmp.Parent;
+      TcxComboBox(DestCmp).ItemIndex:=TcxComboBox(SrcCmp).ItemIndex;
+    end;
+    //复制群组选项值
+    SrcCmp:=FindComponent('fndP'+InttoStr(SrcIdx)+'_STAT_ID');
+    DestCmp:=FindComponent('fndP'+InttoStr(DestIdx)+'_STAT_ID');
+    if (SrcCmp<>nil) and (DestCmp<>nil) and (SrcCmp is TzrComboBoxList) and (DestCmp is TzrComboBoxList) then
+    begin
+      TzrComboBoxList(DestCmp).KeyValue:=TzrComboBoxList(SrcCmp).KeyValue;
+      TzrComboBoxList(DestCmp).Text:=TzrComboBoxList(SrcCmp).Text;
+    end;
   end;
-  if ExecteFind then 
-    self.actFind.OnExecute(nil);
 end;
 
 function TframeBaseReport.CheckAccDate(BegDate, EndDate: integer; ShopID: string): integer;

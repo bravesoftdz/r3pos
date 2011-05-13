@@ -175,7 +175,7 @@ begin
     cmbPRICE_ID.KeyValue := rs.FieldByName('PRICE_ID').AsString;
     cmbPRICE_ID.Text := rs.FieldByName('PRICE_NAME').AsString;
   end;
-  TabSheet2.TabVisible := False;
+  //TabSheet2.TabVisible := False;
   if cmbCUST_NAME.CanFocus and Visible then cmbCUST_NAME.SetFocus;
 end;
 

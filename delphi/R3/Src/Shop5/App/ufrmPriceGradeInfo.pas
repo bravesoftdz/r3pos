@@ -120,7 +120,9 @@ begin
   Notebook1.ActivePage:='P'+id;
   if locked then exit;
   edtSave.Enabled:=True;
-  edtCancel.Enabled:=True;  
+  edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.rzTreeChange(Sender: TObject;
@@ -344,6 +346,8 @@ begin
   if InFlag=1 then
   begin
     edtSave.Enabled:=False;
+    btnAdd.Enabled := edtSave.Enabled;
+    btnDetele.Enabled := edtSave.Enabled;
     ModalResult:=MROK;
     exit;
   end;
@@ -368,6 +372,8 @@ begin
     begin
       edtSave.Enabled:=False;
       edtCancel.Enabled:=False;
+      btnAdd.Enabled := edtSave.Enabled;
+      btnDetele.Enabled := edtSave.Enabled;
       edtPRICEGRADE.Enabled:=True;  //******
     end;
 
@@ -425,12 +431,16 @@ begin
       edtDelete.Enabled:=False;
       edtSave.Enabled:=true;
       edtCancel.Enabled:=False;
+      btnAdd.Enabled := edtSave.Enabled;
+      btnDetele.Enabled := edtSave.Enabled;
     end
   else
     begin
       //edtDelete.Enabled:=True;
       edtSave.Enabled:=True;
       edtCancel.Enabled:=True;
+      btnAdd.Enabled := edtSave.Enabled;
+      btnDetele.Enabled := edtSave.Enabled;
     end;
   DBGridEh1.ReadOnly:=False;
 end;
@@ -513,6 +523,8 @@ begin
       edtSave.Enabled:=False;
       edtCancel.Enabled:=False;
       edtDelete.Enabled:=False;
+      btnAdd.Enabled := edtSave.Enabled;
+      btnDetele.Enabled := edtSave.Enabled;
     end
   else
     begin
@@ -533,6 +545,8 @@ begin
           edtSave.Enabled:=True;
           edtCancel.Enabled:=False;
           edtDelete.Enabled:=False;
+          btnAdd.Enabled := edtSave.Enabled;
+          btnDetele.Enabled := edtSave.Enabled;
         end
       else if ShopGlobal.GetChkRight('33200001',4) then
         begin
@@ -559,6 +573,8 @@ begin
   edtPRICE_SPELL.Text:=Fnstring.GetWordSpell(Trim(edtPRICE_NAME.Text),3);
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.InitButton;
@@ -571,6 +587,8 @@ begin
   end;
   edtSave.Enabled:=False;
   edtCancel.Enabled:=False;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.FormClose(Sender: TObject;
@@ -633,6 +651,8 @@ begin
   end;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
   if rzTree.Items.Count=0 then
   begin
     edtDelete.Enabled:=False;
@@ -693,6 +713,8 @@ begin
   end;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.edtPRICE_SPELLPropertiesChange(
@@ -702,6 +724,8 @@ begin
   if locked then exit;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;
 end;
 
 procedure TfrmPriceGradeInfo.edtINTEGRALPropertiesChange(Sender: TObject);
@@ -710,6 +734,8 @@ begin
   if locked then exit;  
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.edtINTE_AMOUNTPropertiesChange(
@@ -719,6 +745,8 @@ begin
   if locked then exit;  
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.edtAGIO_PERCENTPropertiesChange(
@@ -730,6 +758,8 @@ begin
     edtAGIO_PERCENT.EditValue:='0';
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.SetInFlag(const Value: integer);
@@ -809,6 +839,8 @@ begin
       edtPRICEGRADE.Enabled:=True;
     edtSave.Enabled:=False;
     edtCancel.Enabled:=False;
+    btnAdd.Enabled := edtSave.Enabled;
+    btnDetele.Enabled := edtSave.Enabled;
     if ShopGlobal.GetChkRight('33200001',4) then
       edtDelete.Enabled:=True;
     if rzTree.Items.Count=0 then
@@ -852,6 +884,8 @@ begin
 
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;  
 end;
 
 procedure TfrmPriceGradeInfo.edtMINIMUM_PERCENTPropertiesChange(
@@ -861,6 +895,8 @@ begin
   if locked then exit;
   edtSave.Enabled:=True;
   edtCancel.Enabled:=True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;
 end;
 
 procedure TfrmPriceGradeInfo.btnAddClick(Sender: TObject);
@@ -900,6 +936,8 @@ begin
   edtDelete.Enabled := False;
   edtCancel.Enabled := True;
   edtSave.Enabled := True;
+  btnAdd.Enabled := edtSave.Enabled;
+  btnDetele.Enabled := edtSave.Enabled;
 end;
 
 class function TfrmPriceGradeInfo.ShowDialog(Owner: TForm): boolean;

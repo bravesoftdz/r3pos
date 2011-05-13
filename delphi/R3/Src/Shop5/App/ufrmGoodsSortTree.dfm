@@ -1,6 +1,6 @@
 inherited frmGoodsSortTree: TfrmGoodsSortTree
-  Left = 524
-  Top = 196
+  Left = 363
+  Top = 200
   Caption = ''
   ClientHeight = 370
   ClientWidth = 434
@@ -109,6 +109,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             Top = 33
             Width = 122
             Height = 20
+            Properties.MaxLength = 30
             Properties.OnChange = edtSORT_NAMEPropertiesChange
             TabOrder = 0
             OnExit = edtSORT_NAMEExit
@@ -119,6 +120,7 @@ inherited frmGoodsSortTree: TfrmGoodsSortTree
             Width = 90
             Height = 20
             TabStop = False
+            Properties.MaxLength = 30
             Properties.OnChange = edtSORT_SPELLPropertiesChange
             TabOrder = 2
           end

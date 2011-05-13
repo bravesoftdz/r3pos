@@ -143,6 +143,7 @@ inherited frmRoleInfo: TfrmRoleInfo
             Top = 16
             Width = 71
             Height = 20
+            Properties.MaxLength = 12
             TabOrder = 0
           end
           object edtROLE_NAME: TcxTextEdit
@@ -150,6 +151,7 @@ inherited frmRoleInfo: TfrmRoleInfo
             Top = 52
             Width = 140
             Height = 20
+            Properties.MaxLength = 30
             Properties.OnChange = edtDUTY_NAMEPropertiesChange
             TabOrder = 1
           end
@@ -159,6 +161,7 @@ inherited frmRoleInfo: TfrmRoleInfo
             Width = 140
             Height = 20
             TabStop = False
+            Properties.MaxLength = 30
             TabOrder = 2
           end
           object edtREMARK: TcxMemo
@@ -166,6 +169,7 @@ inherited frmRoleInfo: TfrmRoleInfo
             Top = 125
             Width = 263
             Height = 43
+            Properties.MaxLength = 100
             TabOrder = 3
           end
         end

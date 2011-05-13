@@ -1,6 +1,6 @@
 inherited frmPriceGradeInfo: TfrmPriceGradeInfo
-  Left = 417
-  Top = 163
+  Left = 229
+  Top = 152
   Caption = #23458#25143#31561#32423#31649#29702
   ClientHeight = 435
   ClientWidth = 603
@@ -177,6 +177,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Top = 12
             Width = 121
             Height = 20
+            Properties.MaxLength = 30
             Properties.OnChange = edtPRICE_NAMEPropertiesChange
             TabOrder = 0
           end
@@ -186,6 +187,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Width = 90
             Height = 20
             TabStop = False
+            Properties.MaxLength = 30
             Properties.OnChange = edtPRICE_SPELLPropertiesChange
             TabOrder = 5
           end

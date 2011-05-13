@@ -14,6 +14,7 @@ type
   end;
   TPubIcInfo=class(TZFactory)
   private
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
   TCustomerExt=class(TZFactory)
@@ -135,7 +136,7 @@ begin
 
        Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
        'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,''#'',:CUST_CODE,:CREA_DATE,:CREA_USER,'+
-       ':IC_INFO,''0'',''0'',0,0,0,0,null,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+       ':IC_INFO,:IC_STATUS,''0'',0,0,0,0,:PASSWRD,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
        AGlobal.ExecSQL(Str,Self);
      finally
        Tmp.Free;
@@ -313,7 +314,7 @@ begin
   ':IC_STATUS,:IC_TYPE,:ACCU_INTEGRAL,:RULE_INTEGRAL,:INTEGRAL,:BALANCE,:PASSWRD,:USING_DATE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := SQL;
 
-  SQL := 'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,PASSWRD=:PASSWRD,IC_STATUS=:IC_STATUS,BALANCE=:BALANCE,COMM='+GetCommStr(iDbType)+
+  SQL := 'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,PASSWRD=:PASSWRD,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,BALANCE=:BALANCE,COMM='+GetCommStr(iDbType)+
   ',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and CLIENT_ID=:OLD_CLIENT_ID and UNION_ID=:OLD_UNION_ID';
   UpdateSQL.Text := SQL;
 end;
@@ -477,6 +478,24 @@ end;
 
 { TPubIcInfo }
 
+function TPubIcInfo.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+  r:Integer;
+begin
+  if FieldbyName('UNION_ID').asString='#' then Exit;
+  Str := 'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,IC_CARDNO=:IC_CARDNO,IC_STATUS=:IC_STATUS,PASSWRD=:PASSWRD '+
+         ' where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and UNION_ID=:UNION_ID';
+  r := AGlobal.ExecSQL(Str,self);
+  if r=0 then
+    begin
+      Str := 'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,'+
+      'RULE_INTEGRAL,INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CLIENT_ID,:TENANT_ID,:UNION_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,'+
+      ':IC_INFO,:IC_STATUS,''0'',0,0,0,0,:PASSWRD,null,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+      AGlobal.ExecSQL(Str,Self);
+    end;
+end;
+
 procedure TPubIcInfo.InitClass;
 var Str:String;
 begin
@@ -491,13 +510,14 @@ begin
   IsSQLUpdate := true;
 
   Str :=
-  'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,RULE_INTEGRAL,INTEGRAL,'+
-  'BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,:UNION_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,'+
+  'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,RULE_INTEGRAL,'+
+  'INTEGRAL,BALANCE,PASSWRD,USING_DATE,COMM,TIME_STAMP) values(:CUST_ID,:TENANT_ID,:UNION_ID,:IC_CARDNO,:CREA_DATE,:CREA_USER,'+
   ':IC_INFO,:IC_STATUS,:IC_TYPE,0,0,0,0,null,null,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str :=
-  'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,'+
-  'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+
+  'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,'+
+  'IC_TYPE=:IC_TYPE,ACCU_INTEGRAL=:ACCU_INTEGRAL,RULE_INTEGRAL=:RULE_INTEGRAL,INTEGRAL=:INTEGRAL,'+
+  'BALANCE=:BALANCE,PASSWRD=:PASSWRD,USING_DATE=:USING_DATE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+
   GetTimeStamp(iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID' ;
   UpdateSQL.Text := Str;
 end;

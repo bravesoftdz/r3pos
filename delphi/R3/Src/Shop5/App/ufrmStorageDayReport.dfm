@@ -15,10 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet4
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -757,7 +757,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 89
+                Height = 87
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -969,9 +969,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 89
+                Top = 87
                 Width = 848
-                Height = 417
+                Height = 419
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -981,7 +981,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 413
+                  Height = 415
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1124,7 +1124,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 108
+                Height = 106
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1399,9 +1399,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 108
+                Top = 106
                 Width = 848
-                Height = 398
+                Height = 400
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1410,7 +1410,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 394
+                  Height = 396
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

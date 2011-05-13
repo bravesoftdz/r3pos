@@ -707,18 +707,17 @@ begin
   if adoReport1.IsEmpty then Exit;
   IsOnDblClick:=true;
   //复制查询条件参数
-  fndP2_ReckType.ItemIndex:=fndP1_ReckType.ItemIndex;
-  P1_D1.Date := P2_D1.Date;
-  fndP2_SHOP_TYPE.ItemIndex:=0;
-  fndP2_SHOP_VALUE.KeyValue:=trim(adoReport1.fieldbyName('REGION_ID').AsString);
-  fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
-  fndP2_TYPE_ID.ItemIndex:=fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue:=fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text:=fndP1_STAT_ID.Text;
   sid2 := sid1;
   srid2 := srid1;
   fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text;
-  fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex;
+
+  P1_D1.Date := P2_D1.Date;
+  fndP2_ReckType.ItemIndex:=fndP1_ReckType.ItemIndex;
+  fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
+  fndP2_SHOP_VALUE.KeyValue:=trim(adoReport1.fieldbyName('REGION_ID').AsString);
+  fndP2_SHOP_VALUE.Text:=trim(adoReport1.fieldbyName('CODE_NAME').AsString);
+  Copy_ParamsValue('TYPE_ID',1,2);  //商品指标
+  fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex; //显示单位
   rzPage.ActivePageIndex := 1;
   actFind.OnExecute(nil);
 end;
@@ -728,7 +727,16 @@ begin
   inherited;
   if adoReport2.IsEmpty then Exit;
   IsOnDblClick:=true;
-  self.DoAssignParamsValue(RzPanel9,RzPanel11);
+  //查询日期
+  fndP3_ReckType.ItemIndex:=fndP2_ReckType.ItemIndex;
+  P3_D1.Date:=P2_D1.Date;
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  fndP3_SHOP_ID.KeyValue:=adoReport2.fieldbyName('SHOP_ID').AsString; //门店ID
+  fndP3_SHOP_ID.Text:=adoReport2.fieldbyName('SHOP_NAME').AsString;   //门店名称 
+  fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex;  //显示单位
+
+  rzPage.ActivePageIndex := 2;
+  actFind.OnExecute(nil);
 end;
 
 procedure TfrmStorageDayReport.DBGridEh3DblClick(Sender: TObject);
@@ -775,8 +783,15 @@ begin
       end;
     end;
   end;
-  
-  self.DoAssignParamsValue(RzPanel11,RzPanel14);
+
+  //查询日期
+  fndP4_ReckType.ItemIndex:=fndP3_ReckType.ItemIndex;
+  P4_D1.Date:=P3_D1.Date;
+  Copy_ParamsValue('SHOP_TYPE',3,4);  //管理群组
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID);  //门店名称
+  fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex;  //显示单位
+  rzPage.ActivePageIndex := 3;
+  actFind.OnExecute(nil);
 end;
 
 procedure TfrmStorageDayReport.FormDestroy(Sender: TObject);

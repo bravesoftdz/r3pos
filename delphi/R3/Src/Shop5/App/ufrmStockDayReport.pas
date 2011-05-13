@@ -118,20 +118,25 @@ type
     fndP5_SHOP_VALUE: TzrComboBoxList;
     fndP5_SHOP_TYPE: TcxComboBox;
     Label29: TLabel;
-    fndP5_ALL: TcxRadioButton;
-    fndP5_InStock: TcxRadioButton;
-    fndP5_ReturnStock: TcxRadioButton;
     adoReport2: TZQuery;
     adoReport5: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
+    Label3: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
+    Label4: TLabel;
+    fndP2_GODS_ID: TzrComboBoxList;
+    RzGB: TRzGroupBox;
+    fndP5_ALL: TcxRadioButton;
+    fndP5_InStock: TcxRadioButton;
+    fndP5_ReturnStock: TcxRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
@@ -335,6 +340,10 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';   
 
+  //2011.05.11 Add 商品名称:
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
@@ -484,6 +493,10 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
+  //2011.05.11 Add 商品名称:
+  if trim(fndP2_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+        
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
@@ -913,13 +926,11 @@ begin
   if adoReport1.IsEmpty then Exit;
   P2_D1.Date := P1_D1.Date;
   P2_D2.Date := P1_D2.Date;
-  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text;
   sid2 := sid1;
   srid2 := srid1;
-  fndP2_TYPE_ID.ItemIndex := fndP1_TYPE_ID.ItemIndex;
-  fndP2_STAT_ID.KeyValue := fndP1_STAT_ID.KeyValue;
-  fndP2_STAT_ID.Text := fndP1_STAT_ID.Text;
-  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex;
+  fndP2_SORT_ID.Text := fndP1_SORT_ID.Text; //分类
+  fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex; //显示单位
+  Copy_ParamsValue('TYPE_ID',1,2);    //商品指标
   fndP2_SHOP_TYPE.ItemIndex := 0;
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;
@@ -934,13 +945,10 @@ begin
   P3_D1.Date := P2_D1.Date;
   P3_D2.Date := P2_D2.Date;
   fndP3_UNIT_ID.ItemIndex := fndP2_UNIT_ID.ItemIndex;
+  Copy_ParamsValue('SHOP_TYPE',2,3); //管理群组
+  fndP3_SHOP_ID.KeyValue:=adoReport2.fieldbyName('SHOP_ID').AsString; //门店ID
+  fndP3_SHOP_ID.Text:=adoReport2.fieldbyName('SHOP_NAME').AsString;   //门店名称
 
-  fndP3_SHOP_TYPE.ItemIndex := fndP2_SHOP_TYPE.ItemIndex;
-  fndP3_SHOP_VALUE.KeyValue := fndP2_SHOP_VALUE.KeyValue;
-  fndP3_SHOP_VALUE.Text := fndP2_SHOP_VALUE.Text;
-
-  fndP3_SHOP_ID.KeyValue := adoReport2.FieldbyName('SHOP_ID').AsString;
-  fndP3_SHOP_ID.Text := adoReport2.FieldbyName('SHOP_NAME').AsString;
   rzPage.ActivePageIndex := 2;
   actFind.OnExecute(nil);
 end;
@@ -991,24 +999,12 @@ begin
 
   P4_D1.Date := P3_D1.Date;
   P4_D2.Date := P3_D2.Date;
-
-  fndP4_SHOP_TYPE.ItemIndex := fndP3_SHOP_TYPE.ItemIndex;
-  fndP4_SHOP_VALUE.KeyValue := fndP3_SHOP_VALUE.KeyValue;
-  fndP4_SHOP_VALUE.Text := fndP3_SHOP_VALUE.Text;
-
-  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex;
-  fndP4_SHOP_ID.KeyValue := fndP3_SHOP_ID.KeyValue;
-  fndP4_SHOP_ID.Text := fndP3_SHOP_ID.Text;
+  Copy_ParamsValue(fndP3_SHOP_ID,fndP4_SHOP_ID); //门店名称 
+  Copy_ParamsValue('SHOP_TYPE',3,4); //管理群组 
+  fndP4_UNIT_ID.ItemIndex := fndP3_UNIT_ID.ItemIndex; //显示单位
   
   rzPage.ActivePageIndex := 3;
   actFind.OnExecute(nil);
-end;
-
-procedure TfrmStockDayReport.FormDestroy(Sender: TObject);
-begin
-  TDbGridEhSort.FreeForm(self);
-  inherited;
-
 end;
 
 procedure TfrmStockDayReport.DBGridEh4DblClick(Sender: TObject);
@@ -1018,8 +1014,22 @@ begin
   GodsID:=trim(adoReport4.FieldbyName('GODS_ID').AsString);
   sid5:=sid4;
   srid5:=srid4;
+  fndP5_SORT_ID.Text:=fndP4_SORT_ID.Text;
   fndP5_ALL.Checked:=true;
-  DoAssignParamsValue(RzPanel14, RzPanel17);
+  P5_D1.Date:=P4_D1.Date;
+  P5_D2.Date:=P4_D2.Date;
+  Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
+  Copy_ParamsValue('TYPE_ID',4,5); //商品指标
+  Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID); //门店名称
+
+  RzPage.ActivePageIndex:=4;
+  actFindExecute(nil);  
+end;
+
+procedure TfrmStockDayReport.FormDestroy(Sender: TObject);
+begin
+  TDbGridEhSort.FreeForm(self);
+  inherited;
 end;
 
 procedure TfrmStockDayReport.PrintBefore;
@@ -1037,6 +1047,7 @@ begin
      2: AddReportReport(Title,'3');
      3: AddReportReport(Title,'4');
      4: AddReportReport(Title,'5');
+     5: AddReportReport(Title,'6');
     end;
     ReStr:=FormatReportHead(Title,4);
     PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
@@ -1044,12 +1055,6 @@ begin
   finally
     Title.Free;
   end;
-end;
-
-procedure TfrmStockDayReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
-begin
-  if self.SelectGoodSortType(sid1,srid1,SortName) then
-    fndP1_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmStockDayReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -1079,23 +1084,27 @@ begin
   fndP4_SORT_ID.Text := '';
 end;
 
-procedure TfrmStockDayReport.fndP2_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+
+procedure TfrmStockDayReport.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
+begin
+  if self.SelectGoodSortType(sid1,srid1,SortName) then
+    fndP1_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmStockDayReport.fndP2_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   if self.SelectGoodSortType(sid2,srid2,SortName) then
     fndP2_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmStockDayReport.fndP4_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+procedure TfrmStockDayReport.fndP4_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
   if SelectGoodSortType(sid4,srid4,SortName) then
     fndP4_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmStockDayReport.fndP5_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+procedure TfrmStockDayReport.fndP5_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
   if SelectGoodSortType(sid5,srid5,SortName) then

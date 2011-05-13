@@ -63,27 +63,6 @@ type
     fndP6_SHOP_ID: TzrComboBoxList;
     RzPanel18: TRzPanel;
     DBGridEh6: TDBGridEh;
-    Panel6: TPanel;
-    RzPanel14: TRzPanel;
-    RzLabel8: TRzLabel;
-    RzLabel9: TRzLabel;
-    Label21: TLabel;
-    Label24: TLabel;
-    Label25: TLabel;
-    Label26: TLabel;
-    Label12: TLabel;
-    P5_D1: TcxDateEdit;
-    P5_D2: TcxDateEdit;
-    BtnSaleSum: TRzBitBtn;
-    fndP5_TYPE_ID: TcxComboBox;
-    fndP5_UNIT_ID: TcxComboBox;
-    fndP5_STAT_ID: TzrComboBoxList;
-    fndP5_SORT_ID: TcxButtonEdit;
-    fndP5_SHOP_VALUE: TzrComboBoxList;
-    fndP5_SHOP_TYPE: TcxComboBox;
-    fndP5_SHOP_ID: TzrComboBoxList;
-    RzPanel15: TRzPanel;
-    DBGridEh5: TDBGridEh;
     Panel3: TPanel;
     RzPanel11: TRzPanel;
     RzLabel6: TRzLabel;
@@ -121,14 +100,34 @@ type
     RzPanel10: TRzPanel;
     DBGridEh3: TDBGridEh;
     TabSheet2: TRzTabSheet;
-    Panel1: TPanel;
+    adoReport6: TZQuery;
+    dsadoReport6: TDataSource;
+    Label31: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
+    Label34: TLabel;
+    fndP3_DEPT_ID: TzrComboBoxList;
+    Label35: TLabel;
+    fndP4_DEPT_ID: TzrComboBoxList;
+    RzGB: TRzGroupBox;
+    fndP6_ALL: TcxRadioButton;
+    fndP6_SALEORDER: TcxRadioButton;
+    fndP6_POSMAIN: TcxRadioButton;
+    fndP6_SALRETU: TcxRadioButton;
+    Label37: TLabel;
+    fndP6_DEPT_ID: TzrComboBoxList;
+    Label30: TLabel;
+    fndP3_GODS_ID: TzrComboBoxList;
     RzPanel8: TRzPanel;
+    Panel1: TPanel;
+    RzPanel19: TRzPanel;
     RzLabel1: TRzLabel;
     RzLabel12: TRzLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label16: TLabel;
     Label23: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
     P2_D1: TcxDateEdit;
     P2_D2: TcxDateEdit;
     BtnDept: TRzBitBtn;
@@ -138,31 +137,34 @@ type
     fndP2_SORT_ID: TcxButtonEdit;
     fndP2_SHOP_TYPE: TcxComboBox;
     fndP2_SHOP_VALUE: TzrComboBoxList;
-    RzPanel19: TRzPanel;
-    DBGridEh2: TDBGridEh;
-    adoReport6: TZQuery;
-    dsadoReport6: TDataSource;
-    Label30: TLabel;
-    fndP1_DEPT_ID: TzrComboBoxList;
-    Label31: TLabel;
-    fndP1_GODS_ID: TzrComboBoxList;
-    Label32: TLabel;
     fndP2_DEPT_ID: TzrComboBoxList;
-    Label33: TLabel;
     fndP2_GODS_ID: TzrComboBoxList;
-    Label34: TLabel;
-    fndP3_DEPT_ID: TzrComboBoxList;
-    Label35: TLabel;
-    fndP4_DEPT_ID: TzrComboBoxList;
+    RzPanel20: TRzPanel;
+    DBGridEh2: TDBGridEh;
+    RzPanel14: TRzPanel;
+    Panel6: TPanel;
+    RzPanel15: TRzPanel;
+    RzLabel8: TRzLabel;
+    RzLabel9: TRzLabel;
+    Label21: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label12: TLabel;
     Label36: TLabel;
+    P5_D1: TcxDateEdit;
+    P5_D2: TcxDateEdit;
+    BtnSaleSum: TRzBitBtn;
+    fndP5_TYPE_ID: TcxComboBox;
+    fndP5_UNIT_ID: TcxComboBox;
+    fndP5_STAT_ID: TzrComboBoxList;
+    fndP5_SORT_ID: TcxButtonEdit;
+    fndP5_SHOP_VALUE: TzrComboBoxList;
+    fndP5_SHOP_TYPE: TcxComboBox;
+    fndP5_SHOP_ID: TzrComboBoxList;
     fndP5_DEPT_ID: TzrComboBoxList;
-    RzGB: TRzGroupBox;
-    fndP6_ALL: TcxRadioButton;
-    fndP6_SALEORDER: TcxRadioButton;
-    fndP6_POSMAIN: TcxRadioButton;
-    fndP6_SALRETU: TcxRadioButton;
-    Label37: TLabel;
-    fndP6_DEPT_ID: TzrComboBoxList;
+    RzPanel21: TRzPanel;
+    DBGridEh5: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
@@ -204,8 +206,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh6DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -393,10 +393,7 @@ begin
   //2011.05.11 Add 商品名称:
   if trim(fndP1_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
-  //2011.05.11 Add 部门名称:
-  if trim(fndP1_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
-
+    
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
@@ -598,7 +595,6 @@ begin
         strSql := GetSortSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
-        //showmessage(StrSQl);
         Factor.Open(adoReport4);
       end;
     4: begin //按商品汇总表
@@ -606,7 +602,6 @@ begin
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
-        //showmessage(StrSQl);
         Factor.Open(adoReport5);
       end;
     5: begin //按商品流水帐
@@ -615,7 +610,6 @@ begin
         strSql := GetGlideSQL;
         if strSql='' then Exit;
         adoReport6.SQL.Text := strSql;
-        //showmessage(StrSQl);
         Factor.Open(adoReport6);
       end;
   end;
@@ -693,6 +687,9 @@ begin
   //2011.05.11 Add 部门名称:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+  //2011.05.11 Add 商品名称:
+  if trim(fndP3_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.GODS_ID='''+fndP3_GODS_ID.AsString+''' ';     
     
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1387,13 +1384,6 @@ begin
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmSaleDayReport.DBGridEh6DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 procedure TfrmSaleDayReport.SetUnitIDList(DBGrid: TDBGridEh; ColName: string);
 var
   Rs: TZQuery;
@@ -1510,11 +1500,23 @@ var
   IsVisble: Boolean;
   Rs: TZQuery;
 begin
+  Rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
+  if Rs<>nil then
+  begin
+    try
+      Rs.Filtered:=false;
+      Rs.Filter:='DEPT_TYPE=1';
+      Rs.Filtered:=true;
+      rzPage.Pages[0].TabVisible:=(Rs.RecordCount>0);  //多个营销部时显示
+    finally
+      Rs.Filtered:=false;
+      Rs.Filter:='';
+    end;
+  end;
+
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
-  Rs:=Global.GetZQueryFromName('CA_DEPT_INFO'); 
-  rzPage.Pages[0].TabVisible := (Rs<>nil) and (Rs.RecordCount>1);
-//  rzPage.Pages[1].TabVisible := IsVisble;
-//  rzPage.Pages[2].TabVisible := IsVisble;
+  rzPage.Pages[1].TabVisible := IsVisble;
+  rzPage.Pages[2].TabVisible := IsVisble;
   rzPage.ActivePageIndex:=0;
 end;
 

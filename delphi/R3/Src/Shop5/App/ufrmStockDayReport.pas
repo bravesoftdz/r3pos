@@ -168,8 +168,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -371,7 +369,7 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0)-isnull(sum(STOCK_AGO),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))+sum(STOCK_AGO)<>0 then cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3))*100.00/cast((sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -524,7 +522,7 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -618,7 +616,7 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+isnull(sum(STOCK_TAX),0) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -785,7 +783,7 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
-    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3)) else 0 end as STOCK_RATE '+
+    ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
@@ -964,9 +962,10 @@ begin
   //肯定有报表类型:
   CodeID:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   case CodeID of
-   3: if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+   1,3:
+     if trim(adoReport3.FieldByName('SORT_NAME').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
    else
-      if trim(adoReport3.FieldByName('SORT_ID').AsString)='' then Raise Exception.Create('分类名称不能为空！');
+     if trim(adoReport3.FieldByName('SID').AsString)='' then Raise Exception.Create(fndP3_REPORT_FLAG.Text+'名称不能为空！');
   end;
   
   case CodeID of
@@ -976,23 +975,22 @@ begin
       srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;
-   else
+    else
     begin
       fndP4_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
       begin
-        Aobj:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]);
+        Aobj:=TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[i]);
         if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
         begin
           fndP4_TYPE_ID.ItemIndex:=i;
+          case CodeID of
+           3: fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
+           else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+          end;
+          fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
           break;
         end;
-      end;
-      if fndP4_TYPE_ID.ItemIndex<>-1 then
-      begin
-        if CodeID=3 then fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString)
-        else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
-        fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
       end;
     end;
   end;
@@ -1184,16 +1182,8 @@ begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmStockDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-begin
-  DBGridDrawColumn(Sender,Rect,DataCol,Column,State,'GLIDE_NO');
-end;
-
 function TfrmStockDayReport.DoBeforeExport: boolean;
 begin
- 
 
 end;
 

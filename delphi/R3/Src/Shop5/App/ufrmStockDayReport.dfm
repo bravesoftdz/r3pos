@@ -14,10 +14,10 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -259,7 +259,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   MultiSelect = False
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 31
                   Width = 121
@@ -699,7 +698,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 8
                 end
                 object fndP2_GODS_ID: TzrComboBoxList
-                  Tag = 100
                   Left = 344
                   Top = 31
                   Width = 121
@@ -2195,7 +2193,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh5DrawColumnCell
+                  OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <

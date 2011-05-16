@@ -77,6 +77,9 @@ type
     PopupMenu3: TPopupMenu;
     N14: TMenuItem;
     N15: TMenuItem;
+    N16: TMenuItem;
+    N17: TMenuItem;
+    actLossCard: TAction;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -114,6 +117,7 @@ type
     procedure N14Click(Sender: TObject);
     procedure N15Click(Sender: TObject);
     procedure actfrmIntegralExecute(Sender: TObject);
+    procedure actLossCardExecute(Sender: TObject);
   private
     function CheckCanExport:boolean;
     procedure PrintView;
@@ -134,7 +138,8 @@ type
 
 implementation
 uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
-     ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord;
+     ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord,
+     ufrmLossCard;
 //  ufrmSendGsm, ufrmReNew,
 
 {$R *.dfm}
@@ -712,7 +717,7 @@ begin
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
 
-  if TfrmCancelCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,IntToStr(Global.TENANT_ID),CardNo,CardName) then
+  if TfrmCancelCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',CardNo,CardName) then
     begin
       MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
     end;
@@ -932,6 +937,19 @@ procedure TfrmCustomer.actfrmIntegralExecute(Sender: TObject);
 begin
   inherited;
   N15Click(Sender);  
+end;
+
+procedure TfrmCustomer.actLossCardExecute(Sender: TObject);
+var CardNo,CardName:String;
+begin
+  inherited;
+  if not Cds_Customer.Active then exit;
+  if Cds_Customer.IsEmpty then exit;
+
+  if TfrmLossCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"挂失成功！'),pchar(Application.Title),MB_OK);
+    end;
 end;
 
 end.

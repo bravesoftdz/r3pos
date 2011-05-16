@@ -1,6 +1,6 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 402
-  Top = 126
+  Left = 198
+  Top = 196
   Width = 805
   Height = 534
   Caption = #20250#21592#26723#26696#31649#29702
@@ -693,7 +693,7 @@ inherited frmCustomer: TfrmCustomer
       OnExecute = actfrmIntegralExecute
     end
     object actNewCard: TAction
-      Caption = #21457#26032#21345
+      Caption = #21457#21345
       ImageIndex = 24
       OnExecute = actNewCardExecute
     end
@@ -717,6 +717,10 @@ inherited frmCustomer: TfrmCustomer
       Caption = #32493#20250
       ImageIndex = 37
       OnExecute = actRenewExecute
+    end
+    object actLossCard: TAction
+      Caption = #25346#22833
+      OnExecute = actLossCardExecute
     end
   end
   object Ds_Customer: TDataSource
@@ -768,17 +772,23 @@ inherited frmCustomer: TfrmCustomer
     object N10: TMenuItem
       Action = actNewCard
     end
-    object N11: TMenuItem
-      Action = actPassword
-    end
     object N13: TMenuItem
       Action = actDeposit
     end
     object N12: TMenuItem
       Action = actReturn
     end
+    object N17: TMenuItem
+      Action = actLossCard
+    end
     object N9: TMenuItem
       Action = actCancelCard
+    end
+    object N16: TMenuItem
+      Caption = '-'
+    end
+    object N11: TMenuItem
+      Action = actPassword
     end
   end
   object Cds_Customer: TZQuery

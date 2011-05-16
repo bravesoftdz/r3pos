@@ -39,6 +39,7 @@ type
     procedure CtrlHomeExecute(Sender: TObject);
     procedure CtrlEndExecute(Sender: TObject);
   private
+    FIsChange: Boolean;
     RunResult: Boolean;
     SrcQry: TZQuery;
     procedure CheckRightBeforeSave(var ChangeCount: Integer); //保存前检查数据
@@ -270,6 +271,7 @@ procedure TfrmDefineStateInfo.FormCreate(Sender: TObject);
 begin
   inherited;
   RunResult:=false;
+  FIsChange:=False;
   SrcQry:=TZQuery.Create(self);
 end;
 
@@ -315,20 +317,20 @@ begin
            1:
             begin
               if (CodeName<>SrcQry.FieldByName('CODE_NAME').AsString) or
-                 (cdsStateInfo.FieldByName('SEQ_NO').AsInteger<>cdsStateInfo.FieldByName('SEQ_NO').AsInteger) then
+                 (cdsStateInfo.FieldByName('SEQ_NO').AsInteger<>SrcQry.FieldByName('SEQ_NO').AsInteger) then
                 inc(ChangeCount);  //由 空白 --> 打勾
             end;
           end;
         end else
-        if NewUseFlag=OldUseFlag then //新标记 与 原标记不相等
+        if NewUseFlag=OldUseFlag then //新标记 与 原标记相等
         begin
-          if (CodeName<>SrcQry.FieldByName('CODE_NAME').AsString) then
+          if CodeName<>SrcQry.FieldByName('CODE_NAME').AsString then
           begin
             if strtoInt(CodeID)<9 then inc(ChangeCount)
             else
             begin
               if (NewUseFlag=1) or
-                 (cdsStateInfo.FieldByName('SEQ_NO').AsInteger<>cdsStateInfo.FieldByName('SEQ_NO').AsInteger) then
+                 (cdsStateInfo.FieldByName('SEQ_NO').AsInteger<>SrcQry.FieldByName('SEQ_NO').AsInteger) then
                 inc(ChangeCount);
             end;
           end;
@@ -347,8 +349,10 @@ var
 begin
   inherited;
   CheckRightBeforeSave(ChangeCount); //保存前检查数据
-  if ChangeCount=0 then Raise Exception.Create('系统检测没有修改指标，不需要保存！');
+  if (ChangeCount=0) and (not FIsChange) then
+     Raise Exception.Create('系统检测没有修改指标，不需要保存！');
   self.Save;
+  FIsChange:=False;
 end;
 
 procedure TfrmDefineStateInfo.CheckSaveBeforeClose;
@@ -359,7 +363,7 @@ begin
   if btnSave.Enabled=True  then
   begin
     CheckRightBeforeSave(i);
-    if i>0 then
+    if (i>0) or (FIsChange) then
     begin
       i:=MessageBox(Handle,Pchar('定义商品指标有修改，是否保存？'),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
       case i of
@@ -405,7 +409,8 @@ begin
     cdsStateInfo.FieldByName('SEQ_NO').AsInteger:=SEQ_NO1;
     cdsStateInfo.Post;
   end;
-  cdsStateInfo.indexfieldnames:='SEQ_NO';  
+  cdsStateInfo.indexfieldnames:='SEQ_NO';
+  FIsChange:=true;  
 end;
 
 procedure TfrmDefineStateInfo.CtrlDownExecute(Sender: TObject);
@@ -436,6 +441,7 @@ begin
     cdsStateInfo.Post;
   end;
   cdsStateInfo.indexfieldnames:='SEQ_NO';
+  FIsChange:=true;  
 end;
 
 procedure TfrmDefineStateInfo.CtrlHomeExecute(Sender: TObject);

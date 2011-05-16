@@ -44,9 +44,6 @@ type
     { Public declarations }
   end;
 
-var
-  frmCancelCard: TfrmCancelCard;
-
 implementation
 
 uses uGlobal, ufrmBasic, uDsUtil;
@@ -91,7 +88,7 @@ begin
   Str_Sql :=
   'select UNION_ID,UNION_NAME,1 as CODE_ID from PUB_UNION_INFO where COMM not in (''12'',''02'') '+
   'union all '+
-  'select '''+IntToStr(Global.TENANT_ID)+''' as UNION_ID,''企业卡'' as UNION_NAME,0 as CODE_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID);
+  'select ''#'' as UNION_ID,''企业卡'' as UNION_NAME,0 as CODE_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID);
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := Str_Sql;

@@ -2295,18 +2295,10 @@ end;
 procedure TfrmGoodsInfo.PriceGridKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
-  if Key=#13 then
-  begin
-    //会车进行计算
-    if trim(PriceGrid.Columns[PriceGrid.Col].FieldName)='PROFIT_RATE' then  //在折扣率列
-      CALC_MenberProfitPrice(self.CdsMemberPrice,0)
-    else if trim(PriceGrid.Columns[PriceGrid.Col].FieldName)='NEW_OUTPRICE' then  //在折扣率列
-      CALC_MenberProfitPrice(self.CdsMemberPrice,1);
-    if CdsMemberPrice.State<>dsEdit then CdsMemberPrice.Edit;
-    CdsMemberPrice.Post;
-    if PriceGrid.Col<PriceGrid.Columns.Count-1 then PriceGrid.Col:= PriceGrid.Col + 1; //跳下一列
-  end else
-    OnGridKeyPress(Sender,Key); 
+  if Key=#13 then  //会车进行计算
+    if PriceGrid.Col<PriceGrid.Columns.Count-1 then PriceGrid.Col:= PriceGrid.Col + 1 //跳下一列
+  else
+    OnGridKeyPress(Sender,Key);
 end;
 
 procedure TfrmGoodsInfo.edtCALC_UNITSPropertiesChange(Sender: TObject);
@@ -2468,16 +2460,13 @@ procedure TfrmGoodsInfo.WriteMemberPrice(GODS_ID: String); //写如会员表
 var
   tmp: TZQuery;
   CurObj: TRecord_;
-  StrmData: TStream;
   NewOutPrice, PROFIT_RATE: Real;
 begin
   if not CdsMemberPrice.Active then Exit;
   try
     tmp:=TZQuery.Create(nil);
+    tmp.Data:=CdsMemberPrice.Data;  //直接传Data包
     CurObj:=TRecord_.Create;
-    StrmData:=TMemoryStream.Create;
-    CdsMemberPrice.SaveToStream(StrmData);
-    tmp.LoadFromStream(StrmData);
     if tmp.Active then
     begin
       //第一步: 先删除记录
@@ -2500,13 +2489,15 @@ begin
           CurObj.FieldByName('SHOP_ID').AsString:=shopGlobal.SHOP_ID;       //门店ID
           CurObj.FieldByName('GODS_ID').AsString:=GODS_ID;                  //货物ID
           CurObj.FieldByName('PRICE_METHOD').AsString:='1';                 //定价方式
-          if CurObj.fieldbyName('NEW_OUTPRICE').AsFloat<>0 then
+          if (CurObj.fieldbyName('NEW_OUTPRICE').AsFloat=0) and (PROFIT_RATE>0) and (NewOutPrice>0)  then
             CurObj.FieldByName('NEW_OUTPRICE').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE,Deci);
-          if (CurObj.fieldbyName('NEW_OUTPRICE1').AsFloat<>0) and (StrToFloatDef(edtSMALLTO_CALC.Text,0)>0) then
-            CurObj.FieldByName('NEW_OUTPRICE1').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*(StrToFloatDef(edtSMALLTO_CALC.Text,0)),Deci);
-          if (CurObj.fieldbyName('NEW_OUTPRICE2').AsFloat<>0) and (StrToFloatDef(edtBIG_UNITS.Text,0)>0) then
-            CurObj.FieldByName('NEW_OUTPRICE2').AsFloat:=ConvertToFight(NewOutPrice*PROFIT_RATE*(StrToFloatDef(edtBIGTO_CALC.Text,0)),Deci);
-          CdsMemberPrice.Append;
+          if (StrToFloatDef(edtSMALLTO_CALC.Text,0)>0) and (CurObj.FieldByName('NEW_OUTPRICE').AsFloat>0) then
+            CurObj.FieldByName('NEW_OUTPRICE1').AsFloat:=ConvertToFight(CurObj.fieldbyName('NEW_OUTPRICE').AsFloat*(StrToFloatDef(edtSMALLTO_CALC.Text,0)),Deci);
+          if (StrToFloatDef(edtBIGTO_CALC.Text,0)>0) and (CurObj.FieldByName('NEW_OUTPRICE').AsFloat>0) then
+            CurObj.FieldByName('NEW_OUTPRICE2').AsFloat:=ConvertToFight(CurObj.fieldbyName('NEW_OUTPRICE').AsFloat*(StrToFloatDef(edtBIGTO_CALC.Text,0)),Deci);
+          //重新写入数据集
+          if CdsMemberPrice.IsEmpty then CdsMemberPrice.Edit
+          else CdsMemberPrice.Append;
           CurObj.WriteToDataSet(CdsMemberPrice);
           CdsMemberPrice.Post;
         end;

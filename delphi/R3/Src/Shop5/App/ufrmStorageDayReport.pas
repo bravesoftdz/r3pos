@@ -612,8 +612,12 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
       end;
     end;
-  //商品指标:
 
+  //门店条件
+  if (fndP4_SHOP_ID.AsString<>'') then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
+
+  //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin
       case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -653,7 +657,7 @@ begin
       ' from '+
        '(SELECT '+
        ' A.TENANT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
-       ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
+       ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
        ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
@@ -681,7 +685,7 @@ begin
       'SELECT '+
       ' A.TENANT_ID '+
       ',A.GODS_ID '+
-      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,CALC_UNITS as UNIT_ID '+
+      ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID  '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_PRC '+
       ',sum(BAL_CST) as BAL_CST '+

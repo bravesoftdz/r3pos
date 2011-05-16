@@ -336,6 +336,7 @@ begin
           end;
         end;
       end;
+      if ChangeCount>0 then Break; //检测到改变数量>0则退出 
       CdsStateInfo.Next;
     end;
   finally

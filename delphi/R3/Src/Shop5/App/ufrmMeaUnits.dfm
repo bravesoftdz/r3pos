@@ -1,6 +1,6 @@
 inherited frmMeaUnits: TfrmMeaUnits
-  Left = 799
-  Top = 190
+  Left = 793
+  Top = 192
   Caption = #35745#37327#21333#20301
   ClientHeight = 350
   ClientWidth = 349
@@ -41,6 +41,7 @@ inherited frmMeaUnits: TfrmMeaUnits
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
             FrozenCols = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
             PopupMenu = PopupMenu1

@@ -1,27 +1,27 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
-  Left = 210
-  Top = 131
+  Left = 165
+  Top = 0
   Width = 836
-  Height = 607
+  Height = 560
   Caption = #38144#21806#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 820
-    Height = 533
+    Height = 486
     inherited RzPanel2: TRzPanel
       Width = 810
-      Height = 523
+      Height = 476
       inherited RzPage: TRzPageControl
         Width = 804
-        Height = 517
+        Height = 470
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 802
-            Height = 490
+            Height = 443
             inherited RzPanel1: TRzPanel
               Width = 792
               Height = 121
@@ -313,7 +313,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 126
               Width = 792
-              Height = 359
+              Height = 312
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]

@@ -55,6 +55,8 @@ type
     FCodeId: string;
     procedure SetCodeId(const Value: string);
     function  CheckCanExport: boolean; override;
+    function GetfrfReport:TfrReport;
+    function FindColumn(FieldName:string):TColumnEh;
   public
     { Public declarations }
     IsEnd: boolean;
@@ -426,12 +428,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfChangeOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),GetfrfReport);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),frfChangeOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),GetfrfReport);
            end;
       finally
          free;
@@ -458,12 +460,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfChangeOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),GetfrfReport,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),frfChangeOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),GetfrfReport,nil,true);
            end;
       finally
          free;
@@ -503,6 +505,19 @@ begin
     rs.Free;
   end;
   Open('');
+  GetfrfReport.Name := 'frfChangeOrder'+Value;
+  if Value='2' then
+     begin
+       RzLabel6.Caption := '领 用 人';
+       FindColumn('DUTY_USER_TEXT').Title.Caption := '领用人';
+       FindColumn('DEPT_NAME').Title.Caption := '领用部门';
+     end
+  else
+     begin
+       RzLabel6.Caption := '经 手 人';
+       FindColumn('DUTY_USER_TEXT').Title.Caption := '经手人';
+       FindColumn('DEPT_NAME').Title.Caption := '损益部门';
+     end;
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1DblClick(Sender: TObject);
@@ -567,6 +582,37 @@ begin
     result:=ShopGlobal.GetChkRight('14300001',7)
   else if trim(CodeId)='2' then
     result:=ShopGlobal.GetChkRight('14200001',7);
+end;
+
+function TfrmChangeOrderList.GetfrfReport: TfrReport;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to self.ComponentCount -1 do
+    begin
+      if self.Components[i] is TfrReport then
+         begin
+           result := TfrReport(Components[i]);
+           break;
+         end;
+    end;
+  if result = nil then Raise Exception.Create('没找到报表'); 
+end;
+
+function TfrmChangeOrderList.FindColumn(FieldName: string): TColumnEh;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGridEh1.Columns.Count -1 do
+    begin
+      if lowercase(DBGridEh1.Columns[i].FieldName) = lowercase(FieldName) then
+        begin
+          result := DBGridEh1.Columns[i];
+          Break;
+        end;
+    end;
 end;
 
 end.

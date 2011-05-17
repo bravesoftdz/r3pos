@@ -32,6 +32,12 @@ type
     cdsDetail: TZQuery;
     Label4: TLabel;
     edtDEPT_ID: TzrComboBoxList;
+    Label12: TLabel;
+    Label15: TLabel;
+    edtSEND_ADDR: TcxTextEdit;
+    edtTELEPHONE: TcxTextEdit;
+    Label16: TLabel;
+    edtLINKMAN: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -527,9 +533,16 @@ begin
 end;
 
 procedure TfrmChangeOrder.edtDUTY_USERSaveValue(Sender: TObject);
+var
+  us:TZQuery;
 begin
   inherited;
   if edtDUTY_USER.Text<>'' then TabSheet.Caption := edtDUTY_USER.Text;
+  us := Global.GetZQueryFromName('CA_USERS');
+  edtDEPT_ID.KeyValue := us.FieldbyName('DEPT_ID').AsString;
+  if edtDEPT_ID.DataSet.Locate('DEPT_ID',edtDEPT_ID.AsString,[]) then
+     edtDEPT_ID.Text := edtDEPT_ID.DataSet.FieldbyName('DEPT_NAME').AsString;
+  
 end;
 
 procedure TfrmChangeOrder.edtCHANGE_CODEPropertiesChange(Sender: TObject);
@@ -544,6 +557,16 @@ begin
   if edtCHANGE_CODE.Properties.Items.Count > 0 then
      edtCHANGE_CODE.ItemIndex := TdsItems.FindItems(edtCHANGE_CODE.Properties.Items,'CODE_ID',CodeId);
   Caption := edtCHANGE_CODE.Text + '单';
+  if Value='2' then
+     begin
+       Label1.Caption := '领用人';
+       Label4.Caption := '领用部门';
+     end
+  else
+     begin
+       Label1.Caption := '经手人';
+       Label4.Caption := '损益部门';
+     end;
 end;
 
 procedure TfrmChangeOrder.fndGODS_IDSaveValue(Sender: TObject);

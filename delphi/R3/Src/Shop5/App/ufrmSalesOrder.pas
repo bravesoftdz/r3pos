@@ -735,7 +735,7 @@ end;
 
 procedure TfrmSalesOrder.edtCLIENT_IDSaveValue(Sender: TObject);
 var
-  rs:TZQuery;
+  rs,tmp:TZQuery;
 begin
   inherited;
   if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused  and ShopGlobal.GetChkRight('33300001',2) then
@@ -753,14 +753,19 @@ begin
    AObj.FieldbyName('UNION_ID').asString := '#';
    if rs.FieldbyName('FLAG').AsInteger = 0 then
       begin
-        rs.Close;
-        rs.SQL.Text := 'select RECV_ADDR,RECV_LINKMAN,RECV_TELE from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
-        rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-        Factor.Open(rs);
-        edtTELEPHONE.Text := rs.FieldbyName('RECV_TELE').AsString;
-        edtLINKMAN.Text := rs.FieldbyName('RECV_LINKMAN').AsString;
-        edtSEND_ADDR.Text := rs.FieldbyName('RECV_ADDR').AsString;
+        tmp := TZQuery.Create(nil);
+        try
+          tmp.Close;
+          tmp.SQL.Text := 'select RECV_ADDR,RECV_LINKMAN,RECV_TELE from PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
+          tmp.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          tmp.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+          Factor.Open(tmp);
+          edtTELEPHONE.Text := tmp.FieldbyName('RECV_TELE').AsString;
+          edtLINKMAN.Text := tmp.FieldbyName('RECV_LINKMAN').AsString;
+          edtSEND_ADDR.Text := tmp.FieldbyName('RECV_ADDR').AsString;
+        finally
+          tmp.free;
+        end;
       end;
    Locked := true;
    try

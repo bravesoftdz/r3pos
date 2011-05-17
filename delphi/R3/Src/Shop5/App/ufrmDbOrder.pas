@@ -40,6 +40,12 @@ type
     edtCLIENT_ID: TzrComboBoxList;
     btnOk: TRzBitBtn;
     actOK: TAction;
+    Label12: TLabel;
+    Label15: TLabel;
+    edtSEND_ADDR: TcxTextEdit;
+    edtTELEPHONE: TcxTextEdit;
+    Label16: TLabel;
+    edtLINKMAN: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -591,7 +597,7 @@ begin
     if not rs.IsEmpty and rs.Locate('SHOP_ID',edtSHOP_ID.AsString,[]) then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
          else
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
             fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
@@ -603,7 +609,7 @@ begin
     if not rs.IsEmpty and rs.Locate('SHOP_ID',edtCLIENT_ID.AsString,[]) then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY1_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/rs.FieldbyName('BIGTO_CALC').AsFloat)
+            fndMY1_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
          else
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
             fndMY1_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
@@ -662,10 +668,21 @@ begin
 end;
 
 procedure TfrmDbOrder.edtCLIENT_IDSaveValue(Sender: TObject);
+var
+  rs:TZQuery;
 begin
   inherited;
   ShowInfo;
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select ADDRESS,LINKMAN,TELEPHONE from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+edtCLIENT_ID.AsString+'''';
+    Factor.Open(rs);
+    edtSEND_ADDR.Text := rs.FieldbyName('ADDRESS').AsString;
+    edtLINKMAN.Text := rs.FieldbyName('LINKMAN').AsString;
+    edtTELEPHONE.Text := rs.FieldbyName('TELEPHONE').AsString;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmDbOrder.UnitToCalc(UNIT_ID: string);

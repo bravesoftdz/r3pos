@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 37
-  Top = 123
+  Left = 189
+  Top = 131
   Width = 1073
   Height = 604
   Caption = #21830#21697#24211#23384
@@ -17,6 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 1041
         Height = 514
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -78,33 +80,11 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Align = alClient
                   Caption = 'Panel1'
                   TabOrder = 0
-                  object stbPanel: TPanel
-                    Left = 1
-                    Top = 384
-                    Width = 847
-                    Height = 24
-                    Align = alBottom
-                    BevelOuter = bvNone
-                    Color = clWhite
-                    Font.Charset = GB2312_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -12
-                    Font.Name = #23435#20307
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                    TabOrder = 0
-                    object Label1: TLabel
-                      Left = 4
-                      Top = 8
-                      Width = 7
-                      Height = 12
-                    end
-                  end
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
                     Width = 847
-                    Height = 383
+                    Height = 407
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
                     DataSource = DsStorage
@@ -122,7 +102,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                     RowHeight = 23
                     SumList.Active = True
-                    TabOrder = 1
+                    TabOrder = 0
                     TitleFont.Charset = GB2312_CHARSET
                     TitleFont.Color = clWindowText
                     TitleFont.Height = -12
@@ -191,7 +171,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #21333#20301
-                        Width = 40
+                        Width = 26
                       end
                       item
                         EditButtons = <>
@@ -631,7 +611,6 @@ inherited frmStorageTracking: TfrmStorageTracking
           end
         end
         object TabSheet2: TRzTabSheet
-          TabVisible = False
           Caption = #34917#36135#38656#27714
           object RzPanel8: TRzPanel
             Left = 0
@@ -655,7 +634,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
-              object RzTreeView1: TRzTreeView
+              object rzP2_Tree: TRzTreeView
                 Left = 0
                 Top = 0
                 Width = 177
@@ -738,6 +717,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
+                  DataSource = dsdemand
                   Flat = True
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
@@ -763,8 +743,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = GridDrawColumnCell
-                  OnGetCellParams = GridGetCellParams
+                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnGetCellParams = DBGridEh1GetCellParams
                   Columns = <
                     item
                       Checkboxes = True
@@ -821,21 +801,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #21333#20301
-                      Width = 40
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PROPERTY_01_TEXT'
-                      Footers = <>
-                      Title.Caption = #23610#30721
-                      Width = 50
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PROPERTY_02_TEXT'
-                      Footers = <>
-                      Title.Caption = #39068#33394
-                      Width = 50
+                      Width = 26
                     end
                     item
                       Alignment = taRightJustify
@@ -848,31 +814,47 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #24211#23384#37327
-                      Width = 60
+                      Width = 58
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'ROAD_AMT'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #22312#36884#37327
+                      Width = 55
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'UPPER_AMOUNT'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21512#29702#24211#23384
                       Width = 57
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'DAY_SALE_AMT'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26085#22343#38144#37327
-                      Width = 60
+                      Width = 56
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'NEAR_SALE_AMT'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24403#22825#38144#37327
-                      Width = 63
+                      Title.Caption = #36817#26399#38144#37327
+                      Width = 58
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'STOCK_AMT'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #34917#36135#37327
-                      Width = 61
+                      Title.Caption = #24314#35758#34917#36135#37327
+                      Width = 65
                     end
                     item
                       Alignment = taRightJustify
@@ -883,7 +865,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footer.DisplayFormat = '#0.00#'
                       Footers = <>
                       Title.Caption = #26368#26032#36827#20215
-                      Width = 66
+                      Width = 61
                     end
                     item
                       Alignment = taRightJustify
@@ -1028,7 +1010,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object cxComboBox1: TcxComboBox
+                object edtP2_UNIT_ID: TcxComboBox
                   Left = 524
                   Top = 38
                   Width = 101
@@ -1043,7 +1025,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #21253#35013'2')
                   TabOrder = 1
                 end
-                object cxComboBox2: TcxComboBox
+                object edtP2_Goods_Type: TcxComboBox
                   Left = 62
                   Top = 38
                   Width = 73
@@ -1051,10 +1033,10 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   ParentFont = False
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = edtGoods_TypePropertiesChange
+                  Properties.OnChange = edtP2_Goods_TypePropertiesChange
                   TabOrder = 2
                 end
-                object zrComboBoxList1: TzrComboBoxList
+                object edtP2_Goods_ID: TzrComboBoxList
                   Tag = -1
                   Left = 136
                   Top = 38
@@ -1090,7 +1072,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList2: TzrComboBoxList
+                object edtP2_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 315
                   Top = 9
@@ -1127,7 +1109,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList3: TzrComboBoxList
+                object edtP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 136
                   Top = 9
@@ -1164,7 +1146,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox3: TcxComboBox
+                object edtP2_SHOP_TYPE: TcxComboBox
                   Left = 62
                   Top = 9
                   Width = 73
@@ -1175,10 +1157,10 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  Properties.OnChange = edtSHOP_TYPEPropertiesChange
+                  Properties.OnChange = edtP2_SHOP_TYPEPropertiesChange
                   TabOrder = 6
                 end
-                object zrComboBoxList4: TzrComboBoxList
+                object edtP2_GoodsName: TzrComboBoxList
                   Left = 315
                   Top = 38
                   Width = 149
@@ -1233,7 +1215,6 @@ inherited frmStorageTracking: TfrmStorageTracking
           end
         end
         object TabSheet3: TRzTabSheet
-          TabVisible = False
           Caption = #23384#38144#27604#30417#25511
           object RzPanel13: TRzPanel
             Left = 0
@@ -1257,7 +1238,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               Align = alLeft
               BorderOuter = fsNone
               TabOrder = 0
-              object RzTreeView2: TRzTreeView
+              object rzP3_Tree: TRzTreeView
                 Left = 0
                 Top = 0
                 Width = 177
@@ -1340,6 +1321,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
+                  DataSource = dsRate
                   Flat = True
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
@@ -1365,8 +1347,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = GridDrawColumnCell
-                  OnGetCellParams = GridGetCellParams
+                  OnDrawColumnCell = DBGridEh2DrawColumnCell
+                  OnGetCellParams = DBGridEh2GetCellParams
                   Columns = <
                     item
                       Checkboxes = True
@@ -1423,21 +1405,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #21333#20301
-                      Width = 40
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PROPERTY_01_TEXT'
-                      Footers = <>
-                      Title.Caption = #23610#30721
-                      Width = 50
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'PROPERTY_02_TEXT'
-                      Footers = <>
-                      Title.Caption = #39068#33394
-                      Width = 50
+                      Width = 26
                     end
                     item
                       Alignment = taRightJustify
@@ -1450,44 +1418,43 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #24211#23384#37327
-                      Width = 60
+                      Width = 58
                     end
                     item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00#'
                       EditButtons = <>
-                      FieldName = 'NEW_OUTPRICE'
-                      Footer.Alignment = taRightJustify
-                      Footer.DisplayFormat = '#0.00#'
+                      FieldName = 'MTH_SALE_AMT'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24403#21069#21806#20215
-                      Width = 66
+                      Title.Caption = #24403#26376#38144#37327
+                      Width = 60
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'SALE_MNY'
+                      FieldName = 'RATE'
                       Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38144#21806#37329#39069
-                      Width = 67
+                      Title.Caption = #23384#38144#27604
+                      Width = 46
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'SHOP_NAME'
+                      FieldName = 'LOWER_RATE'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #38376#24215#21517#31216
-                      Width = 83
+                      Title.Caption = #23384#38144#27604#19979#38480
+                      Width = 44
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'BATCH_NO'
+                      FieldName = 'UPPER_RATE'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25209#21495
-                      Width = 102
+                      Title.Caption = #23384#38144#27604#19978#38480
+                      Width = 44
                     end>
                 end
               end
@@ -1593,19 +1560,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Font.Style = []
                   ParentFont = False
                 end
-                object Label18: TLabel
-                  Left = 472
-                  Top = 13
-                  Width = 48
-                  Height = 12
-                  Caption = #24211#23384#25968#37327
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clWindowText
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
                 object RzBitBtn2: TRzBitBtn
                   Left = 638
                   Top = 36
@@ -1633,7 +1587,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object cxComboBox5: TcxComboBox
+                object edtP3_UNIT_ID: TcxComboBox
                   Left = 524
                   Top = 38
                   Width = 101
@@ -1648,7 +1602,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #21253#35013'2')
                   TabOrder = 1
                 end
-                object cxComboBox6: TcxComboBox
+                object edtP3_Goods_Type: TcxComboBox
                   Left = 62
                   Top = 38
                   Width = 73
@@ -1656,10 +1610,10 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   ParentFont = False
                   Properties.DropDownListStyle = lsEditFixedList
-                  Properties.OnChange = edtGoods_TypePropertiesChange
+                  Properties.OnChange = edtP3_Goods_TypePropertiesChange
                   TabOrder = 2
                 end
-                object zrComboBoxList5: TzrComboBoxList
+                object edtP3_Goods_ID: TzrComboBoxList
                   Tag = -1
                   Left = 136
                   Top = 38
@@ -1695,7 +1649,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList6: TzrComboBoxList
+                object edtP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 315
                   Top = 9
@@ -1732,7 +1686,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object zrComboBoxList7: TzrComboBoxList
+                object edtP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 136
                   Top = 9
@@ -1769,7 +1723,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object cxComboBox7: TcxComboBox
+                object edtP3_SHOP_TYPE: TcxComboBox
                   Left = 62
                   Top = 9
                   Width = 73
@@ -1780,10 +1734,10 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  Properties.OnChange = edtSHOP_TYPEPropertiesChange
+                  Properties.OnChange = edtP3_SHOP_TYPEPropertiesChange
                   TabOrder = 6
                 end
-                object zrComboBoxList8: TzrComboBoxList
+                object edtP3_GoodsName: TzrComboBoxList
                   Left = 315
                   Top = 38
                   Width = 149
@@ -1832,22 +1786,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
-                end
-                object cxComboBox8: TcxComboBox
-                  Left = 524
-                  Top = 9
-                  Width = 101
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  ParentFont = False
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20840#37096
-                    #19981#20026#38646
-                    #22823#20110#38646
-                    #31561#20110#38646
-                    #23567#20110#38646)
-                  TabOrder = 8
                 end
               end
             end
@@ -1945,7 +1883,6 @@ inherited frmStorageTracking: TfrmStorageTracking
   end
   object CdsStorage: TZQuery
     FieldDefs = <>
-    AfterScroll = CdsStorageAfterScroll
     CachedUpdates = True
     Params = <>
     Left = 326
@@ -1960,7 +1897,7 @@ inherited frmStorageTracking: TfrmStorageTracking
     Options = [pghFitGridToPageWidth]
     Page.BottomMargin = 2.000000000000000000
     Page.LeftMargin = 2.000000000000000000
-    Page.RightMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
     Page.TopMargin = 2.000000000000000000
     PageFooter.Font.Charset = DEFAULT_CHARSET
     PageFooter.Font.Color = clWindowText
@@ -1990,5 +1927,29 @@ inherited frmStorageTracking: TfrmStorageTracking
       635C2765353B7D7D0D0A5C766965776B696E64345C7563315C706172645C7172
       5C6C616E67323035325C66305C667332305C2762345C2766325C2764335C2761
       315C2763615C2762315C2762635C2765340D0A5C706172207D0D0A00}
+  end
+  object cdsDemand: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 326
+    Top = 378
+  end
+  object dsdemand: TDataSource
+    DataSet = cdsDemand
+    Left = 295
+    Top = 378
+  end
+  object cdsRate: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 326
+    Top = 346
+  end
+  object dsRate: TDataSource
+    DataSet = cdsRate
+    Left = 295
+    Top = 346
   end
 end

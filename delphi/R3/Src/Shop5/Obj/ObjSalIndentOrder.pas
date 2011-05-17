@@ -338,7 +338,7 @@ begin
   SelectSQL.Text :=
      ParseSQL(iDbType,
       'select s.*,round(AMOUNT*APRICE,2) as AMONEY,round(AMOUNT*APRICE,2) as CALC_MONEY,round(AMOUNT*ORG_PRICE,2)-round(AMOUNT*APRICE,2) as AGIO_MONEY from( '+
-      'select j.SEQNO,j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.BOM_ID,j.LOCUS_NO,j.UNIT_ID,j.ORG_PRICE,j.POLICY_TYPE,j.IS_PRESENT,j.APRICE,j.AGIO_RATE,'+
+      'select j.TENANT_ID,j.SHOP_ID,j.INDE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.BOM_ID,j.LOCUS_NO,j.UNIT_ID,j.ORG_PRICE,j.POLICY_TYPE,j.IS_PRESENT,j.APRICE,j.AGIO_RATE,'+
       'case when j.CALC_AMOUNT=0 then 0 else (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0)) / (cast(j.CALC_AMOUNT/(j.AMOUNT*1.0) as decimal(18,3))*1.0) end as AMOUNT,isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0) as CALC_AMOUNT,'+
       'j.HAS_INTEGRAL,j.REMARK,b.GODS_NAME,b.GODS_CODE from SAL_INDENTDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
       'where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID and (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0))>0 ) s order by SEQNO');

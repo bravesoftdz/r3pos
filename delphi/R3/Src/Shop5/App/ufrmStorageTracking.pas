@@ -20,8 +20,6 @@ type
     rzTree: TRzTreeView;
     RzPanel6: TRzPanel;
     Panel1: TPanel;
-    stbPanel: TPanel;
-    Label1: TLabel;
     Grid: TDBGridEh;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
@@ -54,7 +52,7 @@ type
     RzPanel8: TRzPanel;
     Splitter2: TSplitter;
     RzPanel10: TRzPanel;
-    RzTreeView1: TRzTreeView;
+    rzP2_Tree: TRzTreeView;
     RzPanel11: TRzPanel;
     Panel4: TPanel;
     Panel5: TPanel;
@@ -71,22 +69,21 @@ type
     Label8: TLabel;
     Label9: TLabel;
     RzBitBtn1: TRzBitBtn;
-    cxComboBox1: TcxComboBox;
-    cxComboBox2: TcxComboBox;
-    zrComboBoxList1: TzrComboBoxList;
-    zrComboBoxList2: TzrComboBoxList;
-    zrComboBoxList3: TzrComboBoxList;
-    cxComboBox3: TcxComboBox;
-    zrComboBoxList4: TzrComboBoxList;
+    edtP2_UNIT_ID: TcxComboBox;
+    edtP2_Goods_Type: TcxComboBox;
+    edtP2_Goods_ID: TzrComboBoxList;
+    edtP2_SHOP_ID: TzrComboBoxList;
+    edtP2_SHOP_VALUE: TzrComboBoxList;
+    edtP2_SHOP_TYPE: TcxComboBox;
+    edtP2_GoodsName: TzrComboBoxList;
     RzPanel13: TRzPanel;
     Splitter3: TSplitter;
     RzPanel14: TRzPanel;
-    RzTreeView2: TRzTreeView;
+    rzP3_Tree: TRzTreeView;
     RzPanel15: TRzPanel;
     Panel8: TPanel;
     Panel9: TPanel;
     Label11: TLabel;
-    DBGridEh2: TDBGridEh;
     RzPanel16: TRzPanel;
     Panel10: TPanel;
     Panel11: TPanel;
@@ -95,18 +92,21 @@ type
     Label15: TLabel;
     Label16: TLabel;
     Label17: TLabel;
-    Label18: TLabel;
     RzBitBtn2: TRzBitBtn;
-    cxComboBox5: TcxComboBox;
-    cxComboBox6: TcxComboBox;
-    zrComboBoxList5: TzrComboBoxList;
-    zrComboBoxList6: TzrComboBoxList;
-    zrComboBoxList7: TzrComboBoxList;
-    cxComboBox7: TcxComboBox;
-    zrComboBoxList8: TzrComboBoxList;
-    cxComboBox8: TcxComboBox;
+    edtP3_UNIT_ID: TcxComboBox;
+    edtP3_Goods_Type: TcxComboBox;
+    edtP3_Goods_ID: TzrComboBoxList;
+    edtP3_SHOP_ID: TzrComboBoxList;
+    edtP3_SHOP_VALUE: TzrComboBoxList;
+    edtP3_SHOP_TYPE: TcxComboBox;
+    edtP3_GoodsName: TzrComboBoxList;
     RzStatusPane1: TRzStatusPane;
     RzStatusPane2: TRzStatusPane;
+    cdsDemand: TZQuery;
+    dsdemand: TDataSource;
+    DBGridEh2: TDBGridEh;
+    cdsRate: TZQuery;
+    dsRate: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -119,15 +119,25 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure GridGetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
-    procedure CdsStorageAfterScroll(DataSet: TDataSet);
     procedure actPreviewExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh2GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure edtP2_Goods_TypePropertiesChange(Sender: TObject);
+    procedure edtP3_Goods_TypePropertiesChange(Sender: TObject);
+    procedure edtP2_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure edtP3_SHOP_TYPEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     IsEnd: boolean;
     MaxId:string;
-    procedure GetNo;
-    procedure LoadTree;
+    procedure LoadTree(Tree:TRzTreeView);
     procedure InitGrid;
     procedure PrintView;
     function FormatString(TextStr:String;SpaceNum:Integer):String;
@@ -136,10 +146,14 @@ type
     function TransUnit(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function EncodeSql(ID:String):String;
+    function EncodeSql2(ID:String):String;
+    function EncodeSql3(ID:String):String;
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
-    procedure AddGoodsIDItems;
+    procedure AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
     procedure Open(ID:String);
-    procedure Shop_Type_Change;
+    procedure Open2(ID:String);
+    procedure Open3(ID:String);
+    procedure Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
   public
     { Public declarations }
   end;
@@ -179,6 +193,22 @@ begin
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
 
+  edtP2_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtP2_GoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtP2_UNIT_ID.ItemIndex := 0;
+  edtP2_Goods_Type.ItemIndex := 0;
+  edtP2_SHOP_TYPE.ItemIndex := 0;
+  edtP2_SHOP_ID.KeyValue := Global.SHOP_ID;
+  edtP2_SHOP_ID.Text := Global.SHOP_NAME;
+
+  edtP3_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtP3_GoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtP3_UNIT_ID.ItemIndex := 0;
+  edtP3_Goods_Type.ItemIndex := 0;
+  edtP3_SHOP_TYPE.ItemIndex := 0;
+  edtP3_SHOP_ID.KeyValue := Global.SHOP_ID;
+  edtP3_SHOP_ID.Text := Global.SHOP_NAME;
+
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   Column := FindColumn(Grid,'UNIT_ID');
   rs.First;
@@ -188,8 +218,28 @@ begin
       Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
       rs.Next;
     end;
-    
-  rs := TZQuery.Create(nil);
+
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  Column := FindColumn(DBGridEh1,'UNIT_ID');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      rs.Next;
+    end;
+
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  Column := FindColumn(DBGridEh2,'UNIT_ID');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      rs.Next;
+    end;
+
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select REGION_ID from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
     Factor.Open(rs);
@@ -200,16 +250,18 @@ begin
       end;
   finally
     rs.Free;
-  end;
-  LoadTree;
+  end;   }
+  LoadTree(rzTree);
+  LoadTree(rzP2_Tree);
+  LoadTree(rzP3_Tree);
 end;
 
-procedure TfrmStorageTracking.LoadTree;
+procedure TfrmStorageTracking.LoadTree(Tree:TRzTreeView);
 var rs:TZQuery;
     i,j:Integer;
     Aobj:TRecord_;
 begin
-  ClearTree(rzTree);
+  ClearTree(Tree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   rs.SortedFields := 'RELATION_ID';
   j:=-1;
@@ -222,18 +274,18 @@ begin
           Aobj.ReadFromDataSet(rs);
           Aobj.FieldByName('LEVEL_ID').AsString := '';
           Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
-          rzTree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+          Tree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
           j := Aobj.FieldbyName('RELATION_ID').AsInteger;
         end;
       rs.Next;
     end;
-  for i:=rzTree.Items.Count-1 downto 0 do
+  for i:=Tree.Items.Count-1 downto 0 do
     begin
       rs.Filtered := False;
-      rs.Filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+      rs.Filter := 'RELATION_ID='+TRecord_(Tree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
       rs.Filtered := True;
       rs.SortedFields := 'LEVEL_ID';
-      CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+      CreateLevelTree(rs,Tree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',Tree.Items[i]);
     end;
 end;
 
@@ -242,8 +294,10 @@ begin
   inherited;
   RzPage.ActivePageIndex := 0;
   edtSTOR_AMT.ItemIndex := 0;
-  AddGoodTypeItems(edtGoods_Type);
   TDbGridEhSort.InitForm(Self);
+  AddGoodTypeItems(edtGoods_Type);
+  AddGoodTypeItems(edtP2_Goods_Type);
+  AddGoodTypeItems(edtP3_Goods_Type);
   InitGrid;
   if ShopGlobal.GetVersionFlag <> 1 then
     begin
@@ -258,6 +312,25 @@ begin
     SetEditStyle(dsBrowse,edtSHOP_ID.Style);
     edtSHOP_ID.Properties.ReadOnly := True;
   end;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    edtP2_SHOP_ID.Properties.ReadOnly := False;
+    edtP2_SHOP_ID.KeyValue := Global.SHOP_ID;
+    edtP2_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,edtP2_SHOP_ID.Style);
+    edtP2_SHOP_ID.Properties.ReadOnly := True;
+  end;
+
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    edtP3_SHOP_ID.Properties.ReadOnly := False;
+    edtP3_SHOP_ID.KeyValue := Global.SHOP_ID;
+    edtP3_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,edtP3_SHOP_ID.Style);
+    edtP3_SHOP_ID.Properties.ReadOnly := True;
+  end;
+
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -280,7 +353,7 @@ begin
     0: StrJoin := '+';
     1,4,5: StrJoin := '||';
   end;
-  StrWhere := ' and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
+  StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
   if ID <> '' then
     StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
   if edtSHOP_TYPE.ItemIndex = 0 then
@@ -341,11 +414,14 @@ begin
   4: StrWhere := StrWhere + ' and A.AMOUNT<0';
   end;
 
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
+
   StrSql :=
-  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+'*1.0) as AMOUNT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
-  ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+',C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.LEVEL_ID,C.RELATION_ID'+
-  ' from STO_STORAGE A,CA_SHOP_INFO B,VIW_GOODSPRICE_SORTEXT C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
-  ' and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,D.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
+  ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+' '+
+  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+  ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
+  ' '+StrWhere;
 
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE from ('+
@@ -353,32 +429,16 @@ begin
   'select ja.*,round(ja.NEW_OUTPRICE*ja.AMOUNT,2) as SALE_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
   'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
   'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID) jc '+
-  'left outer join PUB_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.SHOP_ID,jc.GODS_CODE ';
+  
 end;
 
 procedure TfrmStorageTracking.Open(ID: String);
-var rs:TZQuery;
-    rm:TMemoryStream;
 begin
-  if not Visible then Exit;
-  if ID = '' then CdsStorage.Close;
-  CdsStorage.DisableControls;
-  rs := TZQuery.Create(nil);
-  rm := TMemoryStream.Create;
-  try
-    rs.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
-    Factor.Open(rs);
-    rs.Last;
-    MaxId := rs.FieldbyName('GODS_ID').AsString;
-    rs.SaveToStream(rm);
-    CdsStorage.AddFromStream(rm);
-    if rs.RecordCount > 600 then IsEnd := True else IsEnd := False;
-  finally
-    CdsStorage.EnableControls;
-    rs.Free;
-    rm.Free;
-  end;
+  CdsStorage.Close;
+  CdsStorage.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
+  Factor.Open(CdsStorage);
 end;
 
 procedure TfrmStorageTracking.FormKeyDown(Sender: TObject;
@@ -393,10 +453,10 @@ procedure TfrmStorageTracking.edtSHOP_TYPEPropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  Shop_Type_Change;
+  Shop_Type_Change(edtSHOP_VALUE);
 end;
 
-procedure TfrmStorageTracking.Shop_Type_Change;
+procedure TfrmStorageTracking.Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
 begin
   case edtSHOP_TYPE.ItemIndex of
     0:edtSHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
@@ -444,7 +504,7 @@ begin
   end;
 end;
 
-procedure TfrmStorageTracking.AddGoodsIDItems;
+procedure TfrmStorageTracking.AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
 var Item_Index:Integer;
 begin
   if Trim(edtGoods_ID.Text)<>'' then
@@ -489,7 +549,7 @@ procedure TfrmStorageTracking.edtGoods_TypePropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  AddGoodsIDItems;
+  AddGoodsIDItems(edtGoods_Id);
 end;
 
 function TfrmStorageTracking.TransUnit(CalcIdx: Integer;
@@ -512,7 +572,11 @@ end;
 procedure TfrmStorageTracking.actFindExecute(Sender: TObject);
 begin
   inherited;
-  Open('');
+  case rzPage.ActivePageIndex of
+  0:Open('');
+  1:Open2('');
+  2:Open3('');
+  end;
 end;
 
 procedure TfrmStorageTracking.GridDrawColumnCell(Sender: TObject;
@@ -542,22 +606,6 @@ begin
   inherited;
   if Column.FieldName = 'SEQNO' then
      Background := clBtnFace;
-end;
-
-procedure TfrmStorageTracking.CdsStorageAfterScroll(DataSet: TDataSet);
-begin
-  inherited;
-  GetNo;
-end;
-
-procedure TfrmStorageTracking.GetNo;
-var Str:String;
-begin
-  if CdsStorage.RecordCount <= 0 then
-    Str := '0'
-  else
-    Str := IntToStr(CdsStorage.RecNo);
-  stbPanel.Caption := '第'+Str+'条/共'+IntToStr(CdsStorage.RecordCount)+'条';
 end;
 
 function TfrmStorageTracking.TransPrice(CalcIdx: Integer;
@@ -629,15 +677,41 @@ end;
 procedure TfrmStorageTracking.PrintView;
 var HeaderText: String;
 begin
-  PrintDBGridEh1.PageHeader.CenterText.Text := Global.SHOP_NAME+'库存查询及跟踪预警';
+  case rzPage.ActivePageIndex of
+  0:begin
+    PrintDBGridEh1.PageHeader.CenterText.Text := '当前库存';
 
-  HeaderText := FormatString(edtSHOP_TYPE.Text+':'+edtSHOP_VALUE.Text,25);
-  HeaderText := HeaderText + FormatString(edtGoods_Type.Text+':'+edtGoods_ID.Text,25);
-  HeaderText := HeaderText + FormatString('统计单位:'+edtUNIT_ID.Text,25);
-  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
-  PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]',HeaderText]);
-  Grid.DataSource.DataSet.Filtered := False;
-  PrintDBGridEh1.DBGridEh := Grid;
+    HeaderText := FormatString(edtSHOP_TYPE.Text+':'+edtSHOP_VALUE.Text,25);
+    HeaderText := HeaderText + FormatString(edtGoods_Type.Text+':'+edtGoods_ID.Text,25);
+    HeaderText := HeaderText + FormatString('统计单位:'+edtUNIT_ID.Text,25);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]',HeaderText]);
+    Grid.DataSource.DataSet.Filtered := False;
+    PrintDBGridEh1.DBGridEh := Grid;
+  end;
+  1:begin
+    PrintDBGridEh1.PageHeader.CenterText.Text := '补货需求';
+
+    HeaderText := FormatString(edtP2_SHOP_TYPE.Text+':'+edtP2_SHOP_VALUE.Text,25);
+    HeaderText := HeaderText + FormatString(edtP2_Goods_Type.Text+':'+edtP2_Goods_ID.Text,25);
+    HeaderText := HeaderText + FormatString('统计单位:'+edtP2_UNIT_ID.Text,25);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]',HeaderText]);
+    DBGridEh1.DataSource.DataSet.Filtered := False;
+    PrintDBGridEh1.DBGridEh := DBGridEh1;
+  end;
+  2:begin
+    PrintDBGridEh1.PageHeader.CenterText.Text := '存销比监控';
+
+    HeaderText := FormatString(edtP3_SHOP_TYPE.Text+':'+edtP3_SHOP_VALUE.Text,25);
+    HeaderText := HeaderText + FormatString(edtP3_Goods_Type.Text+':'+edtP3_Goods_ID.Text,25);
+    HeaderText := HeaderText + FormatString('统计单位:'+edtP3_UNIT_ID.Text,25);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[SecondTitle]',HeaderText]);
+    DBGridEh2.DataSource.DataSet.Filtered := False;
+    PrintDBGridEh1.DBGridEh := DBGridEh2;
+  end;
+  end;
 end;
 
 function TfrmStorageTracking.FormatString(TextStr: String;
@@ -658,6 +732,312 @@ begin
         end;
       Result := TextStr + SpaceStr;
     end;
+end;
+
+function TfrmStorageTracking.EncodeSql2(ID: String): String;
+var StrSql,StrWhere,StrJoin:String;
+    Item_Index:Integer;
+begin
+  case Factor.iDbType of
+    0: StrJoin := '+';
+    1,4,5: StrJoin := '||';
+  end;
+  StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
+  if ID <> '' then
+    StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
+  if edtP2_SHOP_TYPE.ItemIndex = 0 then
+    begin
+      if edtP2_SHOP_VALUE.asString <> '' then
+         begin
+           if FnString.TrimRight(edtP2_SHOP_VALUE.asString,2)<>'00' then
+              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtP2_SHOP_VALUE.AsString+'')
+           else
+              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtP2_SHOP_VALUE.AsString)+'%');
+         end;
+    end
+  else
+    begin
+      if edtP2_SHOP_VALUE.asString <> '' then
+        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtP2_SHOP_VALUE.AsString);
+    end;
+
+  if rzP2_Tree.Selected <> nil then
+    begin
+      if rzP2_Tree.Selected.Level > 0 then
+        StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzP2_Tree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString
+      else
+        StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    end;
+  Item_Index := StrToIntDef(Trim(TRecord_(edtP2_Goods_Type.Properties.Items.Objects[edtP2_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
+  case Item_Index of
+    2:begin
+      if edtP2_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID2='+QuotedStr(edtP2_Goods_ID.AsString);
+    end;
+    3:begin
+      if edtP2_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID3='+QuotedStr(edtP2_Goods_ID.AsString);
+    end;
+    4:begin
+      if edtP2_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID4='+QuotedStr(edtP2_Goods_ID.AsString);
+    end;
+    5:begin
+      if edtP2_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID5='+QuotedStr(edtP2_Goods_ID.AsString);
+    end;
+    6:begin
+      if edtP2_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtP2_Goods_ID.AsString);
+    end;
+  end;
+  if edtP2_GoodsName.AsString<>'' then
+    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtP2_GoodsName.AsString);
+  if edtP2_SHOP_ID.AsString<>'' then
+    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtP2_SHOP_ID.AsString);
+
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
+
+  StrSql :=
+  'select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT) as AMOUNT,sum(ROAD_AMT) as ROAD_AMT from ('+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,D.AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT '+
+  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+  ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
+  ' '+StrWhere+' ) j group by TENANT_ID,SHOP_ID,GODS_ID';
+
+  StrSql :=
+  'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtUNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,sum(ROAD_AMT) as ROAD_AMT,max(F.NEW_INPRICE*('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+'*1.0)) as NEW_INPRICE,'+
+  'sum(E.LOWER_AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as LOWER_AMOUNT,'+
+  'sum(E.UPPER_AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as UPPER_AMOUNT,'+
+  'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as NEAR_SALE_AMT,'+
+  'sum(E.DAY_SALE_AMT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as DAY_SALE_AMT '+
+  'from ('+StrSql+') j1 left outer join VIW_GOODSINFO F on j1.TENANT_ID=F.TENANT_ID and j1.GODS_ID=F.GODS_ID left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
+  'group by j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE';
+
+  Result :=
+  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,'+
+  'case when isnull(AMOUNT,0)+isnull(ROAD_AMT,0)<isnull(UPPER_AMOUNT,0) then isnull(UPPER_AMOUNT,0)-(isnull(AMOUNT,0)+isnull(ROAD_AMT,0)) else 0 end as STOCK_AMT,'+
+  'case when isnull(AMOUNT,0)+isnull(ROAD_AMT,0)<isnull(UPPER_AMOUNT,0) then isnull(UPPER_AMOUNT,0)-(isnull(AMOUNT,0)+isnull(ROAD_AMT,0)) else 0 end*NEW_INPRICE as STOCK_MNY '+
+  'from ('+StrSql+') jc '+
+  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'order by jc.GODS_CODE ';
+
+end;
+
+procedure TfrmStorageTracking.Open2(ID: String);
+begin
+  if not Visible then Exit;
+  cdsDemand.Close;
+  cdsDemand.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql2(ID));
+  Factor.Open(cdsDemand);
+end;
+
+procedure TfrmStorageTracking.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsDemand.RecNo)),length(Inttostr(cdsDemand.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+end;
+
+procedure TfrmStorageTracking.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if Column.FieldName = 'SEQNO' then
+     Background := clBtnFace;
+  if (cdsDemand.FieldByName('LOWER_AMOUNT').AsFloat>0)
+     and
+     (cdsDemand.FieldByName('LOWER_AMOUNT').AsFloat>(cdsDemand.FieldByName('AMOUNT').AsFloat+cdsDemand.FieldByName('ROAD_AMT').AsFloat))
+  then
+     AFont.Color := RzStatusPane3.Color;
+  if (cdsDemand.FieldByName('UPPER_AMOUNT').AsFloat>0)
+     and
+     (cdsDemand.FieldByName('UPPER_AMOUNT').AsFloat<(cdsDemand.FieldByName('AMOUNT').AsFloat+cdsDemand.FieldByName('ROAD_AMT').AsFloat))
+  then
+     AFont.Color := RzStatusPane4.Color;
+
+end;
+
+function TfrmStorageTracking.EncodeSql3(ID: String): String;
+var StrSql,StrWhere,StrJoin:String;
+    Item_Index:Integer;
+begin
+  case Factor.iDbType of
+    0: StrJoin := '+';
+    1,4,5: StrJoin := '||';
+  end;
+  StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
+  if ID <> '' then
+    StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
+  if edtP3_SHOP_TYPE.ItemIndex = 0 then
+    begin
+      if edtP3_SHOP_VALUE.asString <> '' then
+         begin
+           if FnString.TrimRight(edtP3_SHOP_VALUE.asString,2)<>'00' then
+              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtP3_SHOP_VALUE.AsString+'')
+           else
+              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtP3_SHOP_VALUE.AsString)+'%');
+         end;
+    end
+  else
+    begin
+      if edtP3_SHOP_VALUE.asString <> '' then
+        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtP3_SHOP_VALUE.AsString);
+    end;
+
+  if rzP3_Tree.Selected <> nil then
+    begin
+      if rzP3_Tree.Selected.Level > 0 then
+        StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzP3_Tree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString
+      else
+        StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    end;
+  Item_Index := StrToIntDef(Trim(TRecord_(edtP3_Goods_Type.Properties.Items.Objects[edtP3_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
+  case Item_Index of
+    2:begin
+      if edtP3_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID2='+QuotedStr(edtP3_Goods_ID.AsString);
+    end;
+    3:begin
+      if edtP3_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID3='+QuotedStr(edtP3_Goods_ID.AsString);
+    end;
+    4:begin
+      if edtP3_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID4='+QuotedStr(edtP3_Goods_ID.AsString);
+    end;
+    5:begin
+      if edtP3_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID5='+QuotedStr(edtP3_Goods_ID.AsString);
+    end;
+    6:begin
+      if edtP3_Goods_ID.Text <> '' then
+        StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtP3_Goods_ID.AsString);
+    end;
+  end;
+  if edtP3_GoodsName.AsString<>'' then
+    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtP3_GoodsName.AsString);
+  if edtP3_SHOP_ID.AsString<>'' then
+    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtP3_SHOP_ID.AsString);
+
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
+
+  StrSql :=
+  'select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT) as AMOUNT from ('+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.AMOUNT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT '+
+  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+  ' '+StrWhere+' ) j group by TENANT_ID,SHOP_ID,GODS_ID';
+
+  StrSql :=
+  'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtP3_UNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,'+
+  'max(E.LOWER_RATE) as LOWER_RATE,'+
+  'max(E.UPPER_RATE) as UPPER_RATE,'+
+  'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as NEAR_SALE_AMT,'+
+  'sum(E.DAY_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as DAY_SALE_AMT,'+
+  'sum(E.MTH_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as MTH_SALE_AMT '+
+  'from ('+StrSql+') j1 left outer join VIW_GOODSINFO F on j1.TENANT_ID=F.TENANT_ID and j1.GODS_ID=F.GODS_ID left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
+  'group by j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE';
+
+  Result :=
+  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,'+
+  'case when isnull(AMOUNT,0)<>0 then cast(isnull(AMOUNT,0) as decimal(18,3))/cast(isnull(MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
+  'from ('+StrSql+') jc '+
+  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'order by jc.GODS_CODE ';
+
+end;
+
+procedure TfrmStorageTracking.Open3(ID: String);
+begin
+  if not Visible then Exit;
+  cdsRate.Close;
+  cdsRate.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql3(ID));
+  Factor.Open(cdsRate);
+end;
+
+procedure TfrmStorageTracking.DBGridEh2DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col, DBGridEh2.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh2.Focused) then
+  begin
+    DBGridEh2.Canvas.Brush.Color := clAqua;
+  end;
+  
+  DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh2.canvas.FillRect(ARect);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsRate.RecNo)),length(Inttostr(cdsRate.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+end;
+
+procedure TfrmStorageTracking.DBGridEh2GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if Column.FieldName = 'SEQNO' then
+     Background := clBtnFace;
+  if (cdsRate.FieldByName('LOWER_RATE').AsFloat>0)
+     and
+     (cdsRate.FieldByName('LOWER_RATE').AsFloat>(cdsRate.FieldByName('RATE').AsFloat))
+  then
+     AFont.Color := RzStatusPane3.Color;
+  if (cdsRate.FieldByName('UPPER_RATE').AsFloat>0)
+     and
+     (cdsRate.FieldByName('UPPER_RATE').AsFloat<(cdsRate.FieldByName('RATE').AsFloat))
+  then
+     AFont.Color := RzStatusPane4.Color;
+
+end;
+
+procedure TfrmStorageTracking.edtP2_Goods_TypePropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  AddGoodsIDItems(edtP2_Goods_Id);
+
+end;
+
+procedure TfrmStorageTracking.edtP3_Goods_TypePropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  AddGoodsIDItems(edtP3_Goods_Id);
+
+end;
+
+procedure TfrmStorageTracking.edtP2_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  Shop_Type_Change(edtP2_SHOP_VALUE);
+end;
+
+procedure TfrmStorageTracking.edtP3_SHOP_TYPEPropertiesChange(
+  Sender: TObject);
+begin
+  inherited;
+  Shop_Type_Change(edtP3_SHOP_VALUE);
+
 end;
 
 end.

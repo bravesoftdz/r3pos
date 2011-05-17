@@ -25,7 +25,7 @@ type
     fndSALES_ID: TcxTextEdit;
     fndSTATUS: TcxRadioGroup;
     actReport: TAction;
-    frfDBOrder: TfrReport;
+    frfDbOrder: TfrReport;
     Label40: TLabel;
     ToolButton17: TToolButton;
     Label1: TLabel;
@@ -42,7 +42,7 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure frfDBOrderUserFunction(const Name: String; p1, p2,
+    procedure frfDbOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -51,7 +51,7 @@ type
     procedure actfrmRecvOrderExecute(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure frfDBOrderGetValue(const ParName: String;
+    procedure frfDbOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
     { Private declarations }
@@ -359,8 +359,8 @@ begin
    'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT '+
    'from ('+
    'select jn.*,n.STOCK_USER_TEXT as STOCK_USER_TEXT from ( '+
-   'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
-   'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
+//   'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
+//   'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
    'select jk.*,k.UNIT_NAME from ('+
    'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
    'select ji.*,i.SIZE_NAME as PROPERTY_01_TEXT from ('+
@@ -370,14 +370,14 @@ begin
    'select je.*,e.CODE_NAME as INVOICE_FLAG_TEXT from ('+
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
-   'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
+   'select jb.*,b.SHOP_NAME as CLIENT_NAME,b.SEQ_NO as CLIENT_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE as MOVE_TELE,b.LINKMAN,b.FAXES as CLIENT_FAXES from ('+
    'select A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,'+
    'A.PAY_E,A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_TYPE,A.SALES_STYLE,'+
    'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,'+
    'B.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from SAL_SALESORDER A,SAL_SALESDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' ) jb '+
-   'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+   'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.SHOP_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INVOICE_FLAG'') e on je.INVOICE_FLAG=e.CODE_ID ) jf '+
@@ -386,14 +386,14 @@ begin
    'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
    'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
-   'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
+   'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jn  '+
+//   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
+//   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
    'left outer join (select n1.TENANT_ID,n1.STOCK_ID,n2.USER_NAME as STOCK_USER_TEXT from STK_STOCKORDER n1,VIW_USERS n2 where n1.TENANT_ID=n2.TENANT_ID and n1.GUIDE_USER=n2.USER_ID and n1.TENANT_ID='+tenantid+' and n1.STOCK_ID='''+id+''' and STOCK_TYPE=2 ) n on jn.TENANT_ID=n.TENANT_ID and jn.SALES_ID=n.STOCK_ID '+
    ') j order by SEQNO ';
 end;
 
-procedure TfrmDbOrderList.frfDBOrderUserFunction(const Name: String;
+procedure TfrmDbOrderList.frfDbOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -572,7 +572,7 @@ begin
 
 end;
 
-procedure TfrmDbOrderList.frfDBOrderGetValue(const ParName: String;
+procedure TfrmDbOrderList.frfDbOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

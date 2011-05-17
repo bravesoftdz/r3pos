@@ -1,6 +1,6 @@
 inherited frmDbOrder: TfrmDbOrder
-  Left = 100
-  Top = 11
+  Left = 210
+  Top = 216
   Width = 885
   Height = 552
   Caption = #35843#25320#21333
@@ -11,10 +11,10 @@ inherited frmDbOrder: TfrmDbOrder
     Height = 514
     inherited RzPanel2: TRzPanel
       Width = 859
-      Height = 98
+      Height = 116
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
-        Left = 418
+        Left = 579
         Top = 9
         Width = 48
         Height = 12
@@ -23,7 +23,7 @@ inherited frmDbOrder: TfrmDbOrder
       end
       object lblCLIENT_ID: TLabel [1]
         Left = 195
-        Top = 9
+        Top = 30
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -31,46 +31,70 @@ inherited frmDbOrder: TfrmDbOrder
       end
       object Label2: TLabel [2]
         Left = 195
-        Top = 72
+        Top = 93
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #22791'    '#27880
       end
       object Label6: TLabel [3]
-        Left = 207
-        Top = 51
+        Left = 431
+        Top = 8
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #36865#36135#21592
+        Caption = #21457#36135#20154
       end
       object Label40: TLabel [4]
         Left = 195
-        Top = 30
+        Top = 8
         Width = 48
         Height = 12
         Caption = #35843#20986#38376#24215
       end
       object Label13: TLabel [5]
-        Left = 419
-        Top = 30
+        Left = 580
+        Top = 31
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #21040#36135#26085#26399
       end
       object Label3: TLabel [6]
-        Left = 431
+        Left = 581
+        Top = 52
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #25910' '#36135' '#20154
+      end
+      object Label12: TLabel [7]
+        Left = 195
+        Top = 72
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #25910#36135#22320#22336
+      end
+      object Label15: TLabel [8]
+        Left = 195
         Top = 51
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32852#31995#30005#35805
+      end
+      object Label16: TLabel [9]
+        Left = 431
+        Top = 29
         Width = 36
         Height = 12
         Alignment = taRightJustify
-        Caption = #25910#36135#20154
+        Caption = #32852#31995#20154
       end
       inherited RzPanel4: TRzPanel
         Height = 83
-        TabOrder = 5
+        TabOrder = 7
         inherited Shape1: TShape
           Top = 33
         end
@@ -89,25 +113,25 @@ inherited frmDbOrder: TfrmDbOrder
         end
       end
       object edtSALES_DATE: TcxDateEdit
-        Left = 475
+        Left = 636
         Top = 5
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 3
+        TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
         Left = 251
-        Top = 68
+        Top = 89
         Width = 313
         Height = 20
-        TabOrder = 2
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGUIDE_USER: TzrComboBoxList
-        Left = 251
-        Top = 47
-        Width = 116
+        Left = 475
+        Top = 4
+        Width = 89
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -147,7 +171,7 @@ inherited frmDbOrder: TfrmDbOrder
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 251
-        Top = 26
+        Top = 4
         Width = 158
         Height = 20
         Properties.AutoSelect = False
@@ -188,16 +212,16 @@ inherited frmDbOrder: TfrmDbOrder
         MultiSelect = False
       end
       object edtPLAN_DATE: TcxDateEdit
-        Left = 475
-        Top = 26
+        Left = 636
+        Top = 27
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 4
+        TabOrder = 6
       end
       object edtSTOCK_USER: TzrComboBoxList
-        Left = 475
-        Top = 47
+        Left = 636
+        Top = 48
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -206,7 +230,7 @@ inherited frmDbOrder: TfrmDbOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -238,7 +262,7 @@ inherited frmDbOrder: TfrmDbOrder
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 251
-        Top = 5
+        Top = 26
         Width = 158
         Height = 20
         Properties.AutoSelect = False
@@ -247,7 +271,7 @@ inherited frmDbOrder: TfrmDbOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 7
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -275,14 +299,14 @@ inherited frmDbOrder: TfrmDbOrder
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
-        OnSaveValue = edtSHOP_IDSaveValue
+        OnSaveValue = edtCLIENT_IDSaveValue
         MultiSelect = False
       end
       object btnOk: TRzBitBtn
-        Left = 610
-        Top = 26
-        Width = 67
-        Height = 42
+        Left = 636
+        Top = 73
+        Width = 69
+        Height = 28
         Action = actOK
         Caption = #21040#36135#30830#35748
         Color = clSilver
@@ -303,6 +327,30 @@ inherited frmDbOrder: TfrmDbOrder
         ThemeAware = False
         NumGlyphs = 2
         Spacing = 5
+      end
+      object edtSEND_ADDR: TcxTextEdit
+        Left = 251
+        Top = 68
+        Width = 313
+        Height = 20
+        TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtTELEPHONE: TcxTextEdit
+        Left = 251
+        Top = 47
+        Width = 313
+        Height = 20
+        TabOrder = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtLINKMAN: TcxTextEdit
+        Left = 475
+        Top = 25
+        Width = 89
+        Height = 20
+        TabOrder = 11
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited RzPanel3: TRzPanel
@@ -402,9 +450,9 @@ inherited frmDbOrder: TfrmDbOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 136
+      Top = 154
       Width = 859
-      Height = 274
+      Height = 256
       TabOrder = 3
       Columns = <
         item
@@ -525,7 +573,7 @@ inherited frmDbOrder: TfrmDbOrder
       Top = 203
     end
     inherited pnlBarCode: TRzPanel
-      Top = 103
+      Top = 121
       Width = 859
     end
     inherited stbHint: TRzPanel

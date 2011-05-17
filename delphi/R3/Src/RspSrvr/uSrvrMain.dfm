@@ -841,6 +841,12 @@ object SocketForm: TSocketForm
     object N2: TMenuItem
       Action = actfrmDeleteDb
     end
+    object N12: TMenuItem
+      Caption = '-'
+    end
+    object N13: TMenuItem
+      Caption = #21021#22987#21270#25968#25454#24211
+    end
   end
   object pupTask: TPopupMenu
     Left = 184

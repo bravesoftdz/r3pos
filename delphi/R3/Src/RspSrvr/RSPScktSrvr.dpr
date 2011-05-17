@@ -124,7 +124,7 @@ begin
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-    SvcMgr.Application.Run;
+  SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

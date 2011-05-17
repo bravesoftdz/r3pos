@@ -1,5 +1,5 @@
 inherited frameMDForm: TframeMDForm
-  Left = 367
+  Left = 369
   Caption = #29238#23376#31383#20307#27169#29256
   Menu = nil
   OldCreateOrder = True

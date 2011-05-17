@@ -1,5 +1,5 @@
 inherited frmSalesOrder: TfrmSalesOrder
-  Left = 173
+  Left = 175
   Top = 11
   Width = 796
   Height = 552

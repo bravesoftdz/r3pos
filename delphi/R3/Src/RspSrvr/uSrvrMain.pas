@@ -130,6 +130,8 @@ type
     ZSQLMonitor1: TZSQLMonitor;
     Panel2: TPanel;
     chkDebug: TCheckBox;
+    N12: TMenuItem;
+    N13: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);

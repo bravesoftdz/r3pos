@@ -468,12 +468,15 @@ begin
     end;
 
     //设置颜色组、尺码组列是否显示
-    if self.Components[i] is TDBGridEh then
+    if Components[i] is TDBGridEh then
     begin
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
       if Column<>nil then Column.Visible := (CLVersion='FIG');
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
       if Column<>nil then Column.Visible := (CLVersion='FIG');
+      //DBGridEh设置为多表头
+      if not TDBGridEh(Components[i]).UseMultiTitle then
+        TDBGridEh(Components[i]).UseMultiTitle:=true;
     end;
   end;
   if Width <= 1024 then PanelColumnS.Visible := false;

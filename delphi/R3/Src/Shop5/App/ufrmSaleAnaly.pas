@@ -7,8 +7,8 @@ uses
   Dialogs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ActnList, Menus,
   ComCtrls, ToolWin, StdCtrls, RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxEdit, 
   RzButton, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar, cxControls,
-  cxContainer, cxTextEdit, cxMaskEdit, uframeBaseAnalyReport, TeEngine,
-  Series, TeeProcs, Chart, cxMemo, cxRadioGroup,ZBase, uframeBaseAnaly;
+  cxContainer, cxTextEdit, cxMaskEdit, uframeBaseAnaly, TeEngine,
+  Series, TeeProcs, Chart, cxMemo, cxRadioGroup,ZBase;
 
 type
   TfrmSaleAnaly = class(TframeBaseAnaly)

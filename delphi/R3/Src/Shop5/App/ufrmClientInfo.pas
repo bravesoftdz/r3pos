@@ -203,17 +203,17 @@ end;
 
 procedure TfrmClientInfo.Save;
   procedure UpdateToGlobal(AObj:TRecord_);
-  var Tmp:TZQuery;
+  var rs:TZQuery;
   begin
-    Tmp := Global.GetZQueryFromName('PUB_CUSTOMER');
-    if (not Tmp.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[])) then
-       Tmp.Append
+    rs := Global.GetZQueryFromName('PUB_CUSTOMER');
+    if (not rs.Locate('CLIENT_ID',AObj.FieldByName('CLIENT_ID').AsString,[])) then
+       rs.Append
     else
-       Tmp.Edit;
-    AObj.WriteToDataSet(Tmp,false);
-    Tmp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
-    Tmp.FieldByName('TAX_RATE').AsString := '0';
-    Tmp.Post;
+       rs.Edit;
+    AObj.WriteToDataSet(rs,false);
+    rs.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
+    rs.FieldByName('TAX_RATE').AsString := '0';
+    rs.Post;
   end;
 var tmp:TZQuery;
 j:integer;
@@ -279,22 +279,42 @@ begin
       raise  Exception.Create('客户编号已经存在，不能重复！');
     end;
   end;
-  if dbState = dsInsert then
-  begin
-    AObj.FieldbyName('CLIENT_ID').AsString := TSequence.NewId;
-    Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
-    Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
-    Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Aobj.FieldByName('CLIENT_TYPE').AsString  := '2';
-    Aobj.FieldByName('IC_INFO').AsString := '企业卡';
-    Aobj.FieldByName('UNION_ID').AsString := '#';
-    Aobj.FieldByName('IC_STATUS').AsString := '0';
-    Aobj.FieldByName('IC_TYPE').AsString := '0';
-  end;
+  
   WriteTo(Aobj);
+  if dbState = dsInsert then
+    begin
+      AObj.FieldbyName('CLIENT_ID').AsString := TSequence.NewId;
+      Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
+      Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+      Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Aobj.FieldByName('CLIENT_TYPE').AsString  := '2';
+      Aobj.FieldByName('IC_INFO').AsString := '企业卡';
+      Aobj.FieldByName('UNION_ID').AsString := '#';
+      Aobj.FieldByName('IC_STATUS').AsString := '0';
+      Aobj.FieldByName('IC_TYPE').AsString := '0';
+    end
+  else
+    begin
+      if Aobj.FieldByName('CREA_USER').AsString = '' then
+        Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
+      if Aobj.FieldByName('CREA_DATE').AsString = '' then
+        Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Global.SysDate);
+      if Aobj.FieldByName('TENANT_ID').AsString = '' then
+        Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      if Aobj.FieldByName('CLIENT_TYPE').AsString = '' then
+        Aobj.FieldByName('CLIENT_TYPE').AsString  := '2';
+      if Aobj.FieldByName('IC_INFO').AsString = '' then
+        Aobj.FieldByName('IC_INFO').AsString := '企业卡';
+      if Aobj.FieldByName('UNION_ID').AsString = '' then
+        Aobj.FieldByName('UNION_ID').AsString := '#';
+      if Aobj.FieldByName('IC_STATUS').AsString = '' then
+        Aobj.FieldByName('IC_STATUS').AsString := '0';
+      if Aobj.FieldByName('IC_TYPE').AsString = '' then
+        Aobj.FieldByName('IC_TYPE').AsString := '0';
+    end;
 
   if (AObj.FieldbyName('CLIENT_CODE').AsString='') or (AObj.FieldbyName('CLIENT_CODE').AsString='自动编号..') then
-    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+    AObj.FieldbyName('CLIENT_CODE').AsString :=FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CLIENT_CODE').AsString;
   //判断档案是否有修改
   if not IsEdit(Aobj,cdsTable) then Exit;

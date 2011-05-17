@@ -448,7 +448,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #25910#20214#20154
+            Caption = #36865#36135#20154
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -463,7 +463,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #37038#25919#22320#22336
+            Caption = #36865#36135#22320#22336
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -478,7 +478,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #30005#35805'/'#25163#26426
+            Caption = #25910#36135#20154#25163#26426
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -493,7 +493,7 @@ inherited frmClientInfo: TfrmClientInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #30005#35805'/'#25163#26426
+            Caption = #36865#36135#20154#25163#26426
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12

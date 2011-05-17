@@ -139,9 +139,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
-      ActivePage = TabSheet2
+      ActivePage = TabSheet6
       Align = alBottom
-      TabIndex = 2
+      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -388,7 +388,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             OnKeyPress = cmbINTEGRALKeyPress
           end
           object edtACCU_INTEGRAL: TcxTextEdit
-            Left = 346
+            Left = 347
             Top = 30
             Width = 121
             Height = 20
@@ -966,7 +966,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #25340#38899#30721#13' '
+        Caption = #25340#38899#30721#13
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12

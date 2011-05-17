@@ -241,26 +241,26 @@ procedure TfrmCustomerInfo.Save;
  procedure UpdateToGlobal(AObj:TRecord_);
    var Temp:TZQuery;
    begin
-      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
-      Temp.Filtered := false;
-      if not Temp.Locate('CLIENT_ID',AObj.FieldByName('CUST_ID').AsString,[]) then
-         Temp.Append
-      else
-         Temp.Edit;
-      Temp.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
-      Temp.FieldByName('LICENSE_CODE').AsString := AObj.FieldbyName('ID_NUMBER').AsString;
-      Temp.FieldByName('CLIENT_CODE').AsString := AObj.FieldbyName('CUST_CODE').AsString;
-      Temp.FieldByName('CLIENT_NAME').AsString := AObj.FieldbyName('CUST_NAME').AsString;
-      Temp.FieldByName('LINKMAN').AsString := AObj.FieldbyName('CUST_NAME').AsString;
-      Temp.FieldByName('CLIENT_SPELL').AsString := AObj.FieldbyName('CUST_SPELL').AsString;
-      Temp.FieldByName('ADDRESS').AsString := AObj.FieldbyName('FAMI_ADDR').AsString;
-      Temp.FieldByName('TELEPHONE2').AsString := AObj.FieldbyName('MOVE_TELE').AsString;
-      Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
-      Temp.FieldByName('SETTLE_CODE').AsString := '#';
-      Temp.FieldByName('INVOICE_FLAG').AsString := '0';
-      Temp.FieldByName('TAX_RATE').AsString := '0';
-      Temp.FieldByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
-      Temp.Post;
+    Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
+    Temp.Filtered := false;
+    if not Temp.Locate('CLIENT_ID',AObj.FieldByName('CUST_ID').AsString,[]) then
+       Temp.Append
+    else
+       Temp.Edit;
+    Temp.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+    Temp.FieldByName('LICENSE_CODE').AsString := AObj.FieldbyName('ID_NUMBER').AsString;
+    Temp.FieldByName('CLIENT_CODE').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+    Temp.FieldByName('CLIENT_NAME').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+    Temp.FieldByName('LINKMAN').AsString := AObj.FieldbyName('CUST_NAME').AsString;
+    Temp.FieldByName('CLIENT_SPELL').AsString := AObj.FieldbyName('CUST_SPELL').AsString;
+    Temp.FieldByName('ADDRESS').AsString := AObj.FieldbyName('FAMI_ADDR').AsString;
+    Temp.FieldByName('TELEPHONE2').AsString := AObj.FieldbyName('MOVE_TELE').AsString;
+    Temp.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
+    Temp.FieldByName('SETTLE_CODE').AsString := '#';
+    Temp.FieldByName('INVOICE_FLAG').AsString := '0';
+    Temp.FieldByName('TAX_RATE').AsString := '0';
+    Temp.FieldByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
+    Temp.Post;
    end;
 var tmp,temp,temp1,tmp1:TZQuery;
     j:integer;
@@ -378,7 +378,7 @@ begin
        Aobj.FieldByName('IC_TYPE').AsString := '0';
      end;
   if (AObj.FieldbyName('CUST_CODE').AsString='') or (AObj.FieldbyName('CUST_CODE').AsString='×Ô¶¯±àºÅ..') then
-     AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+     AObj.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
   Aobj.FieldByName('IC_CARDNO').AsString := AObj.FieldbyName('CUST_CODE').AsString;
   cdsCustomerExt.First;
   while not cdsCustomerExt.Eof do

@@ -501,7 +501,7 @@ begin
      else
         strWhere:=strWhere+' and C.RELATION_ID='''+srid2+''' ';
     end;
-    if trim(sid1)<>'' then
+    if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
     GoodTab:='VIW_GOODSINFO';

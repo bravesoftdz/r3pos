@@ -351,6 +351,7 @@ function GetSysDateFormat(iDbType:integer):string;
 begin
   case iDbType of
    0:Result := 'convert(varchar(19),getdate(),120)';
+   1:Result := 'TO_CHAR(SYSDATE,''YYYY-MM-DD HH24:MI:SS'')';
    3:Result := 'format(now(),''YYYY-MM-DD HH:NN:SS'')';
    4:Result := 'TO_CHAR(CURRENT TIMESTAMP,''YYYY-MM-DD HH24:MI:SS'')';
    5:Result := 'strftime(''%Y-%m-%d %H:%M:%S'',''now'',''localtime'')';
@@ -361,6 +362,7 @@ function  GetTimeStamp(iDbType:Integer):string;
 begin
   case iDbType of
    0:Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+   1:Result := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
    4:result := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
    5:result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';

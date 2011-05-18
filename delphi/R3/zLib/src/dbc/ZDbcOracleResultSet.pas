@@ -242,7 +242,7 @@ begin
             @CurrentVar.Scale, nil, OCI_ATTR_SCALE, FErrorHandle);
 //          zhangsr modify 20110518
 //          if (CurrentVar.Scale = 0) and (CurrentVar.Precision = 0) then
-          if (CurrentVar.Scale = 0) then
+          if (CurrentVar.Scale = 0) or (CurrentVar.Scale > 36) then
           begin
             if CurrentVar.Precision = 0 then
               CurrentVar.ColType := stLong

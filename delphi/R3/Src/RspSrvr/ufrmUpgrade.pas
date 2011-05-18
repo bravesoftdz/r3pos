@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmTenant, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   ActnList, Menus, cxMaskEdit, cxButtonEdit, zrComboBoxList, ExtCtrls,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, RzLabel, StdCtrls,
-  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp, TlHelp32;
+  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp, TlHelp32,ShellApi;
 
 type
   TfrmUpgrade = class(TfrmTenant)
@@ -270,6 +270,8 @@ begin
   isStop := false;
   while not isStop and QueryService('RSPScktSrvr') do Application.ProcessMessages;
 
+  sleep(1000);
+
   if CheckExeFile('RSPScktSrvr.exe') then Raise Exception.Create('服务程序正在运行,请先关闭应用后再升级..');
 
   CaFactory.RspFlag := 1;
@@ -314,8 +316,10 @@ begin
     Label27.Update;
     stp4.Font.Style := [fsBold];
     dbUpgrade(dbid);
-    StartService('RSPScktSrvr');
-    MessageBox(Handle,'安装升级执行完毕，点确认后退出','友情提示...',MB_OK+MB_ICONQUESTION);
+    if MessageBox(Handle,'安装升级执行完毕，是否立即运行服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+    begin
+       if not StartService('RSPScktSrvr') then ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'RSPScktSrvr.exe'),nil,nil,0);
+    end;
     Close;
   finally
     btnInstall.Enabled := true;

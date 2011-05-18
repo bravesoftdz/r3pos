@@ -156,7 +156,7 @@ begin
   case cbDbType.ItemIndex of
   0:
   begin
-    lbDBName.Left :=67;
+//    lbDBName.Left :=67;
     edtDbName.Visible := True;
     edtDBDir.Visible := False;
     lbDBName.Caption :='数据库服务器：';
@@ -166,13 +166,13 @@ begin
     edtDbName.Visible := True;
     edtDBDir.Visible := False;
     edtDBDir.Clear;
-    lbDBName.Left :=85;
+//    lbDBName.Left :=85;
     lbDBName.Caption := '主机名称：';
-    lbDBBaseName.Caption :='SID：';
+    lbDBBaseName.Caption :='服务名(TNS)：';
   end;
   2:
   begin
-    lbDBName.Left :=67;
+//    lbDBName.Left :=67;
     edtDBDir.Visible := True;
     edtDbName.Visible := False;
     lbDBName.Caption :='数据库服务器：';
@@ -183,11 +183,11 @@ begin
     edtDBDir.Clear;
     edtDbName.Visible := True;
     edtDbDir.Visible := False;
-    lbDBName.Left :=67;
+//    lbDBName.Left :=67;
     lbDBName.Caption :='DB2数据名称：';
   end;
   else begin
-    lbDBName.Left :=67;
+//    lbDBName.Left :=67;
     edtDbName.Visible := True;
     //cxBedit.Visible := False;
     edtDBDir.Visible := true;

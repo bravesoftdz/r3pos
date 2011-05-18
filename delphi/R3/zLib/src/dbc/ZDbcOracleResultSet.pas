@@ -240,11 +240,12 @@ begin
             @CurrentVar.Precision, nil, OCI_ATTR_PRECISION, FErrorHandle);
           FPlainDriver.AttrGet(CurrentVar.Handle, OCI_DTYPE_PARAM,
             @CurrentVar.Scale, nil, OCI_ATTR_SCALE, FErrorHandle);
-
-          if (CurrentVar.Scale = 0) and (CurrentVar.Precision <> 0) then
+//          zhangsr modify 20110518
+//          if (CurrentVar.Scale = 0) and (CurrentVar.Precision = 0) then
+          if (CurrentVar.Scale = 0) then
           begin
             if CurrentVar.Precision = 0 then
-              CurrentVar.ColType := stInteger
+              CurrentVar.ColType := stLong
             else if CurrentVar.Precision <= 2 then
               CurrentVar.ColType := stByte
             else if CurrentVar.Precision <= 4 then

@@ -203,6 +203,8 @@ begin
       if (
           ((iDbType = 0) and (uppercase(ExtractFileExt(FList[i]))='.MSSQL'))
          or
+          ((iDbType = 1) and (uppercase(ExtractFileExt(FList[i]))='.ORACLE'))
+         or
           ((iDbType = 3) and (uppercase(ExtractFileExt(FList[i]))='.ACCESS'))
          or
           ((iDbType = 4) and (uppercase(ExtractFileExt(FList[i]))='.DB2'))

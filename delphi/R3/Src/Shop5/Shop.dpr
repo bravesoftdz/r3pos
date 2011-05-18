@@ -216,7 +216,8 @@ uses
   ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   ObjDefineGodsState in 'Obj\ObjDefineGodsState.pas',
   ufrmClearData in 'App\ufrmClearData.pas' {frmClearData},
-  ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking};
+  ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
+  ufrmLossCard in 'App\ufrmLossCard.pas' {frmLossCard};
 
 {$R *.res}
 var
@@ -225,7 +226,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.8';
+  DBVersion := '1.0.0.9';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

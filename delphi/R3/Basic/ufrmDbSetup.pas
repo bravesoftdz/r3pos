@@ -167,8 +167,8 @@ begin
     edtDBDir.Visible := False;
     edtDBDir.Clear;
     lbDBName.Left :=85;
-    lbDBName.Caption := '服务器SID：';
-    lbDBBaseName.Caption :='连接驱动名：';
+    lbDBName.Caption := '主机名称：';
+    lbDBBaseName.Caption :='SID：';
   end;
   2:
   begin

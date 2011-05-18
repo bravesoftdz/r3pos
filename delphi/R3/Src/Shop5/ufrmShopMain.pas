@@ -1315,6 +1315,7 @@ begin
     Params.Free;
   end;
 end;
+var RspComVersion:string;
 begin
   frmLogo.Show;
   try
@@ -1345,7 +1346,8 @@ begin
                with TCreateDbFactory.Create do
                begin
                  try
-                    if CheckVersion(DBVersion,Global.RemoteFactory) then
+                    RspComVersion := Factor.ExecProc('TGetComVersion');
+                    if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
                     begin
                       if ShopGlobal.ONLVersion then
                          begin
@@ -3381,6 +3383,7 @@ end;
 function TfrmShopMain.ConnectToSrvr: boolean;
 var
   rs:TZQuery;
+  rspComVersion:string;
 begin
   frmLogo.Show;
   try
@@ -3404,7 +3407,8 @@ begin
    with TCreateDbFactory.Create do
    begin
      try
-        if CheckVersion(DBVersion,Global.RemoteFactory) then
+        RspComVersion := Factor.ExecProc('TGetComVersion');
+        if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
         begin
            MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
            result := false;

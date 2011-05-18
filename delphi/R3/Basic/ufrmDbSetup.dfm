@@ -393,6 +393,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 5
           Width = 72
           Height = 12
+          Alignment = taRightJustify
           Caption = #25968#25454#24211#31867#22411#65306
         end
         object lbDBName: TLabel
@@ -400,6 +401,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 26
           Width = 66
           Height = 12
+          Alignment = taRightJustify
           Caption = #26381#21153#22120'SID'#65306
         end
         object lbDBBaseName: TLabel
@@ -407,6 +409,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 47
           Width = 72
           Height = 12
+          Alignment = taRightJustify
           Caption = #25968#25454#24211#21517#31216#65306
         end
         object lblUser: TLabel
@@ -414,6 +417,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 68
           Width = 60
           Height = 12
+          Alignment = taRightJustify
           Caption = #29992#25143#24080#21495#65306
         end
         object lblUserPW: TLabel
@@ -421,6 +425,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 89
           Width = 60
           Height = 12
+          Alignment = taRightJustify
           Caption = #29992#25143#21475#20196#65306
         end
         object lblAccountName: TLabel
@@ -428,6 +433,7 @@ object frmDBSetup: TfrmDBSetup
           Top = 109
           Width = 72
           Height = 12
+          Alignment = taRightJustify
           Caption = #25968#25454#24211'ID'#21495#65306
         end
         object Label4: TLabel

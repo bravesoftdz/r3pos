@@ -52,8 +52,12 @@ TGetLastUpdateStatus=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
+TGetComVersion=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
 const
-  ComVersion='5.0.0.1';
+  ComVersion='3.0.1.13';
 var
   FldXdict:TZReadonlyQuery;
   SyncTimeStamp,LastUpdateTimeStamp:Int64;
@@ -729,10 +733,20 @@ begin
   result := true;
 end;
 
+{ TCheckComVersion }
+
+function TGetComVersion.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+begin
+  Msg := ComVersion;
+  result := true;
+end;
+
 initialization
   RegisterClass(TGetXDictInfo);
   RegisterClass(TGetSyncTimeStamp);
   RegisterClass(TGetLastUpdateStatus);
+  RegisterClass(TGetComVersion);
   FldXdict := nil;
   LastUpdateTimeStamp := 0;
 finalization
@@ -741,4 +755,5 @@ finalization
   UnRegisterClass(TGetXDictInfo);
   UnRegisterClass(TGetSyncTimeStamp);
   UnRegisterClass(TGetLastUpdateStatus);
+  UnRegisterClass(TGetComVersion);
 end.

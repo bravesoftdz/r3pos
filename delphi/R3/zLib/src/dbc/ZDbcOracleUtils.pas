@@ -580,9 +580,9 @@ begin
     Result := stAsciiStream
   else if StartsWith(TypeName, 'TIMESTAMP') then
     Result := stTimestamp
-  else if TypeName = 'NUMBER' then
-  begin
-    if Precision = 0 then
+  else if (TypeName = 'NUMBER') or (TypeName = 'DECIMAL') then
+  begin                              
+    if (Precision = 0) then
     begin
       if Size = 0 then
         Result := stLong

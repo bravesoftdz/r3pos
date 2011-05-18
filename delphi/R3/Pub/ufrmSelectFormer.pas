@@ -51,7 +51,7 @@ begin
         if (sr.Attr and FileAttrs) = sr.Attr then
         begin
           s := ExtractFileName(sr.Name);
-          if copy(s,1,length(filename)+1)=filename+'_' then
+          if lowercase(copy(s,1,length(filename)+1))=lowercase(filename+'_') then
           begin
             if w >= frfGrid.RowCount then frfGrid.RowCount := frfGrid.RowCount + 1;
             frfGrid.Cells[0,w] := copy(s,length(filename)+2,255);

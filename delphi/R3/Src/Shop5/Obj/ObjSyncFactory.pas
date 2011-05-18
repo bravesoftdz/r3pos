@@ -580,6 +580,11 @@ begin
            Comm[1] := '1';
            ZQuery.Params[i].AsString := Comm;
          end;
+      if (i=(TIME_STAMPIdx-1)) then
+         begin
+           if ZQuery.Params[i].Value>999999999999999 then
+              ZQuery.Params[i].Value := 5497000;
+         end;
       if WasNull then ZQuery.Params[i].Value := null;
     end;
 end;

@@ -536,8 +536,6 @@ var
 begin
   myDate := cDate;
   if (calc_flag=2) then myDate := bDate;
-  SQL := 'delete from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
   SQL :=
     'insert into '+tempTableName+'('+
     'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -931,7 +929,8 @@ var
 begin
   case Factor.iDbType of
   0:tempTableName := '#TMP_GOODS_DAYS';
-  1,5:begin tempTableName := 'TMP_GOODS_DAYS';exit;end;
+  5:begin tempTableName := 'TMP_GOODS_DAYS';exit;end;
+  1:begin tempTableName := 'TMP_GOODS_DAYS';end;
   4:tempTableName := 'session.TMP_GOODS_DAYS';
   end;
   case Factor.iDbType of
@@ -1065,8 +1064,11 @@ begin
   ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE '
   end;
   end;
-  Factor.ExecSQL(SQL);
-  if Factor.iDbType=0 then Factor.ExecSQL('truncate table '+tempTableName);
+  if Factor.iDbType in [0,4] then Factor.ExecSQL(SQL);
+  case Factor.iDbType of
+  0,1:Factor.ExecSQL('truncate table '+tempTableName);
+  5:Factor.ExecSQL('delete from '+tempTableName);
+  end;
 end;
 
 procedure TfrmCostCalc.CalcAcctMth;

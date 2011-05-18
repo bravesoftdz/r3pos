@@ -1096,7 +1096,7 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if rs.FieldbyName('LEVEL').AsInteger =3 then
+      if rs.FieldbyName('LEVEL_NUM').AsInteger =3 then
          begin
            if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
            begin
@@ -1124,7 +1124,7 @@ begin
   CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
-      if CA_MODULE.FieldbyName('LEVEL').AsInteger =1 then
+      if CA_MODULE.FieldbyName('LEVEL_NUM').AsInteger =1 then
       begin
         case strtoint(copy(CA_MODULE.Fields[0].asString,1,1)) of
         1:begin
@@ -1187,7 +1187,7 @@ begin
      begin
        CA_MODULE.Filtered := false;
        CA_MODULE.Close;
-       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
+       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL_NUM from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
        Factor.Open(CA_MODULE);
        CreatePageMenu;
      end;
@@ -1201,7 +1201,7 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if rs.FieldbyName('LEVEL').AsInteger =2 then
+      if rs.FieldbyName('LEVEL_NUM').AsInteger =2 then
          begin
            g := TrzGroup.Create(RzGroupBar1);
            g.Caption := rs.FieldbyName('MODU_NAME').AsString;
@@ -1216,7 +1216,7 @@ begin
            // if r>3 then g.Close;
          end
       else
-      if rs.FieldbyName('LEVEL').AsInteger =3 then
+      if rs.FieldbyName('LEVEL_NUM').AsInteger =3 then
          begin
            if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
            begin

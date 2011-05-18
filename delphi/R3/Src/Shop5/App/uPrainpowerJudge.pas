@@ -160,7 +160,7 @@ begin
     ' from MSC_INVEST_LIST a left join MSC_QUESTION b on a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID '+
     ' where a.TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and a.SHOP_ID='''+ShopGlobal.SHOP_ID+''' and a.QUESTION_ANSWER_STATUS=2';
 
-    Str_Sql := 'select * from( '+ParseSQL(Factor.iDbType,Sql)+' ) as j order by sFlag ';
+    Str_Sql := 'select * from( '+ParseSQL(Factor.iDbType,Sql)+' ) j order by sFlag ';
   finally
     rs.Free;
   end;

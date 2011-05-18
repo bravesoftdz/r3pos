@@ -335,6 +335,8 @@ type
     actfrmRecvForDay: TAction;
     actfrmImpeach: TAction;
     actfrmClearData: TAction;
+    actfrmSaleAnaly: TAction;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -445,6 +447,7 @@ type
     procedure rzUserInfoClick(Sender: TObject);
     procedure actfrmImpeachExecute(Sender: TObject);
     procedure actfrmClearDataExecute(Sender: TObject);
+    procedure actfrmSaleAnalyExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -507,7 +510,7 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -3441,6 +3444,27 @@ begin
   SFVersion := '.ONL';
   CLVersion := ParamStr(5);
   result := true;
+end;
+
+procedure TfrmShopMain.actfrmSaleAnalyExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSaleAnaly);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleAnaly.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

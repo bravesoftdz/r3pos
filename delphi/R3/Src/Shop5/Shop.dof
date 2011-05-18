@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=D:\r3
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
@@ -134,11 +134,6 @@ OriginalFilename=
 ProductName=R3
 ProductVersion=3.0.0.0
 Comments=
-[HistoryLists\hlConditionals]
-Count=3
-Item0=RELEASE
-Item1=DEBUG;RELEASE
-Item2=DEBUG
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
@@ -146,18 +141,11 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 Count=1
 Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
 [HistoryLists\hlUnitOutputDirectory]
-Count=2
+Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp
-Item1=C:\Program Files\Developer Express Inc\ExpressEditors Library 4\Delphi 7\Lib
 [HistoryLists\hlOutputDirectorry]
-Count=7
+Count=1
 Item0=D:\r3
-Item1=D:\Delphi\R3\Src\TestDemo\TestDemo\Fujian
-Item2=D:\r3 sadfadfads
-Item3=D:\r3sadfadfads
-Item4=D:\Delphi\R3\Src
-Item5=D:\Delphi\R3\20110314\2003BR3V5
-Item6=D:\Delphi\Shop5\Shop5
 [HistoryLists\hlDCPOutput]
 Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp

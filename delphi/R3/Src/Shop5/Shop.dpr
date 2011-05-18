@@ -166,7 +166,6 @@ uses
   ufrmRecvDayReport in 'App\ufrmRecvDayReport.pas' {frmRecvDayReport},
   ufrmRecvAbleReport in 'App\ufrmRecvAbleReport.pas' {frmRecvAbleReport},
   ufrmPayAbleReport in 'App\ufrmPayAbleReport.pas' {frmPayAbleReport},
-  ufrmSalesAnly in 'App\ufrmSalesAnly.pas' {frmSalesAnly},
   ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder},
   ufrmDbDayReport in 'App\ufrmDbDayReport.pas' {frmDbDayReport},
   ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport},
@@ -217,7 +216,9 @@ uses
   ObjDefineGodsState in 'Obj\ObjDefineGodsState.pas',
   ufrmClearData in 'App\ufrmClearData.pas' {frmClearData},
   ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
-  ufrmLossCard in 'App\ufrmLossCard.pas' {frmLossCard};
+  ufrmLossCard in 'App\ufrmLossCard.pas' {frmLossCard},
+  uframeBaseAnaly in 'Frame\uframeBaseAnaly.pas' {frameBaseAnaly},
+  ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas';
 
 {$R *.res}
 var

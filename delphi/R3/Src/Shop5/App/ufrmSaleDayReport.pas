@@ -379,7 +379,7 @@ begin
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid1+' ';
      else
@@ -388,7 +388,7 @@ begin
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //2011.05.11 Add 商品名称:
   if trim(fndP1_GODS_ID.AsString)<>'' then
@@ -429,7 +429,8 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.DEPT_ID';
 
   Result := ParseSQL(Factor.iDbType,
@@ -495,7 +496,7 @@ begin
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid2+' ';
      else
@@ -504,7 +505,7 @@ begin
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
@@ -548,7 +549,8 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
@@ -673,7 +675,7 @@ begin
   //商品分类:
   if (trim(fndP3_SORT_ID.Text)<>'') and (trim(srid3)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid3+' ';
      else
@@ -682,7 +684,7 @@ begin
     if trim(sid3)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid3+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //2011.05.11 Add 部门名称:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
@@ -726,7 +728,8 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
@@ -790,12 +793,12 @@ begin
   //商品分类:
   case TRecord_(fndP4_REPORT_FLAG.Properties.Items.Objects[fndP4_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
    1:begin
-      GoodTab:='VIW_GOODSINFO_SORTEXT';
+      GoodTab:='VIW_GOODSPRICE_SORTEXT';
       lv := ',C.LEVEL_ID';
      end;
    else
-     GoodTab:='VIW_GOODSINFO';
-  end;
+    GoodTab:='VIW_GOODSPRICE';
+   end;
 
   //2011.05.11 Add 部门名称:
   if trim(fndP4_DEPT_ID.AsString)<>'' then
@@ -833,7 +836,8 @@ begin
     ',sum(SALE_PRF) as SALE_PRF '+   //毛利
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP4_REPORT_FLAG.Properties.Items.Objects[fndP4_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -973,7 +977,7 @@ begin
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'')  and (trim(srid5)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid5+' ';
      else
@@ -982,7 +986,7 @@ begin
     if trim(sid5)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1019,7 +1023,8 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=
@@ -1084,7 +1089,7 @@ begin
   //商品分类:
   if (trim(fndP6_SORT_ID.Text)<>'') and (trim(srid6)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid6+' ';
      else
@@ -1093,7 +1098,7 @@ begin
     if trim(sid6)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid6+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //2011.05.11 Add 部门名称:
   if trim(fndP6_DEPT_ID.AsString)<>'' then
@@ -1138,7 +1143,8 @@ begin
     ',(case when A.NOTAX_MONEY<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.NOTAX_MONEY as decimal(18,3)) else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
     ',(case when A.NOTAX_MONEY*A.AMOUNT<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/A.AMOUNT else 0 end) as AVG_PROFIT'+    //--单位毛利
     ',B.SHOP_NAME '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 
   Result := ParseSQL(Factor.iDbType,
     'select j.* '+

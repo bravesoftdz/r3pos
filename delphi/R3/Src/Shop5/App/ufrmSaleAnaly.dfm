@@ -443,11 +443,6 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Height = 163
                     Align = alClient
                     Properties.ReadOnly = True
-                    Style.Font.Charset = GB2312_CHARSET
-                    Style.Font.Color = clWindowText
-                    Style.Font.Height = -12
-                    Style.Font.Name = #23435#20307
-                    Style.Font.Style = []
                     TabOrder = 0
                   end
                   object RzTool: TRzPanel

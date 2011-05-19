@@ -332,7 +332,7 @@ begin
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
      else
@@ -341,7 +341,7 @@ begin
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -371,7 +371,7 @@ begin
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
 
   //关联行政区域
@@ -481,7 +481,7 @@ begin
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'')  and (trim(srid2)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
      else
@@ -490,7 +490,7 @@ begin
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';    
+    GoodTab:='VIW_GOODSPRICE';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -519,7 +519,8 @@ begin
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.SHOP_ID';
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -576,11 +577,11 @@ begin
   //商品分类:
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:begin
-      GoodTab:='VIW_GOODSINFO_SORTEXT';
+      GoodTab:='VIW_GOODSPRICE_SORTEXT';
       lv := ',C.LEVEL_ID';
     end;
   else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
   end;
 
   //取日结帐最大日期:
@@ -610,7 +611,8 @@ begin
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -729,7 +731,7 @@ begin
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
      else
@@ -738,7 +740,7 @@ begin
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -766,7 +768,8 @@ begin
     ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=
@@ -829,7 +832,7 @@ begin
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid5+' ';
      else
@@ -838,7 +841,7 @@ begin
     if trim(sid5)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   strSql :=
     'SELECT '+
@@ -864,7 +867,8 @@ begin
     ',-A.COST_MONEY as COST_MONEY '+           //--成本金额
     ',-(A.RTL_MONEY-A.COST_MONEY) as PROFIT_MONEY '+                   //--差额毛利
     ',B.SHOP_NAME '+
-    'from VIW_CHANGEDATA A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+    'from VIW_CHANGEDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 
   strSql :=
     'select j.* '+

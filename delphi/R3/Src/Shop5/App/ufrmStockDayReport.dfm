@@ -14,10 +14,10 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1378,9 +1378,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 287
+                  Left = 289
                   Top = 58
-                  Width = 50
+                  Width = 48
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #21830#21697#20998#31867
@@ -1393,9 +1393,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 287
+                  Left = 289
                   Top = 79
-                  Width = 50
+                  Width = 48
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #26174#31034#21333#20301

@@ -116,8 +116,11 @@ begin
   if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
      (not (gdFocused in State) or not Column.Grid.Focused) then
   begin
-    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
-  end;
+    DBGridEh1.Canvas.Font.Style :=[fsBold];
+    DBGridEh1.Canvas.Brush.Color := clAqua;   //选中颜色状态
+  end else
+    DBGridEh1.Canvas.Font.Style :=[];
+
   Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
   if Column.FieldName = 'SEQNO' then
@@ -143,6 +146,7 @@ end;
 
 procedure TfrmDownStockOrder.OpenIndeOrderList;
 var
+  whereCnd,
   UseDate: string; //启用日期
   Rs: TZQuery;
   vParam: TftParamList;
@@ -166,8 +170,34 @@ begin
     vParam.ParamByName('SHOP_ID').AsString:=Global.SHOP_ID;
     vParam.ParamByName('USING_DATE').AsString:=UseDate;
     Global.RemoteFactory.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
+    //根据取出单据号。过滤查询本地库
+    whereCnd:='';
+    CdsTable.First;
+    while not CdsTable.Eof do
+    begin
+      if whereCnd='' then
+        whereCnd:=''''+CdsTable.fieldbyName('INDE_ID').AsString+''' ' 
+      else
+        whereCnd:=whereCnd+','''+CdsTable.fieldbyName('INDE_ID').AsString+''' ';
+      CdsTable.Next;
+    end;
+    
+    Rs:=TZQuery.Create(nil);
+    Rs.Close;
+    Rs.SQL.Text:='select COMM_ID from STK_STOCKORDER where COMM_ID in ('+whereCnd+') ';
+    Factor.Open(Rs);
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      if CdsTable.Locate('INDE_ID',trim(Rs.fieldbyName('COMM_ID').AsString),[]) then
+        CdsTable.Delete;
+      Rs.Next;
+    end;
+    CdsTable.First;
   finally
+    CdsTable.EnableControls;
     vParam.Free;
+    Rs.Free;
   end;
 end;
 

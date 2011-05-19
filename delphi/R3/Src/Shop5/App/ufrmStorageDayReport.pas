@@ -251,7 +251,7 @@ begin
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
      else
@@ -260,7 +260,7 @@ begin
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //日期条件
@@ -281,7 +281,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,REGION_ID ';
     Result :=  ParseSQL(Factor.iDbType,
       'select j.* '+
@@ -392,7 +392,7 @@ begin
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
      else
@@ -401,7 +401,7 @@ begin
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');    
   //日期条件
@@ -422,7 +422,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,SHOP_ID ';
     Result :=  ParseSQL(Factor.iDbType,
       'select j.* '+
@@ -452,9 +452,10 @@ begin
     strSql :=
       'select j.TENANT_ID'+
       ',j.SHOP_ID '+
-      ',j.SHOP_ID '+
-      ',j.SHOP_ID '+
-      ',j.SHOP_ID '+
+      ',j.BAL_AMT '+
+      ',j.BAL_PRC '+
+      ',j.BAL_OUTPRC '+
+      ',j.BAL_RTL '+    
       ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME '+
       ' from ('+strSql+') j '+
       ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO';
@@ -494,13 +495,14 @@ begin
   //商品分类:
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:begin
-      GoodTab:='VIW_GOODSINFO_SORTEXT';
+      GoodTab:='VIW_GOODSPRICE_SORTEXT';
       lv := ',C.LEVEL_ID';
       lv1 := ',LEVEL_ID';
     end;
   else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
   end;
+
 
   //单位换算
   UnitCalc:=GetUnitTO_CALC(fndP3_UNIT_ID.ItemIndex,'C');
@@ -521,7 +523,7 @@ begin
        ',AMONEY as BAL_CST '+                 //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
   end else
   if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:
@@ -631,7 +633,7 @@ begin
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
      else
@@ -640,7 +642,7 @@ begin
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   //日期条件
@@ -662,7 +664,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
 
     strSql :=
@@ -692,14 +694,16 @@ begin
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-      'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,CALC_UNITS ';
+      'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
 
     strSql :=
-      'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-      'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-      'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-      ' order by j.GODS_CODE ';
+      'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from '+
+      ' ('+strSql+') j '+
+      ' left outer join '+
+      ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+      '   on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+      ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+      '  order by j.GODS_CODE ';
      
      result:=ParseSQL(Factor.iDbType, strSql);
   end;

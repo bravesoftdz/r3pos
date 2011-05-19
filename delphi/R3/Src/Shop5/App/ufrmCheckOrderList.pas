@@ -75,15 +75,20 @@ uses
 { TfrmStockOrderList }
 
 function TfrmCheckOrderList.EncodeSQL(id: string): string;
-var str,w:string;
+var str,w,RowNum:string;
 begin
+  RowNum:='';
+  if Factor.iDbType=1 then
+    RowNum:='ROWNUM,';
   w := 'where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE>=:BEG_DATE and CREA_DATE<=:END_DATE ';
   if fndCHECK_EMPL.AsString <> '' then
      w := w +' and CREA_USER=:CREA_USER ';
   if trim(fndPRINT_DATE.Text) <> '' then
   begin
     case Factor.iDbType of
-      0,3,5: w := w +' and Cast(PRINT_DATE as varchar(16)) like ''%'+trim(fndPRINT_DATE.Text)+'''';
+      0,1,5:
+         w := w +' and Cast(PRINT_DATE as varchar(16)) like ''%'+trim(fndPRINT_DATE.Text)+'''';
+      3: w := w +' and STR(PRINT_DATE) like ''%'+trim(fndPRINT_DATE.Text)+'''';
       4: w := w +' and to_char(PRINT_DATE) like ''%'+trim(fndPRINT_DATE.Text)+'''';
     end;
   end;
@@ -97,12 +102,12 @@ begin
     w := w +' and PRINT_DATE>'+id+' ';
 
   str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+'';
-  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
+  str:='select '+RowNum+'jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
        ' left outer join VIW_USERS b on b.TENANT_ID=:TENANT_ID and jb.CREA_USER=b.USER_ID '+
        ' left outer join VIW_USERS c on c.TENANT_ID=:TENANT_ID and jb.CHK_USER=c.USER_ID ';
   case Factor.iDbType of
    0,3: result:='select top 600 * from ('+str+') as tmp order by PRINT_DATE ';
-   1: result:=' ';
+   1: result:='select * from ('+str+' order by jb.PRINT_DATE) where ROWNUM<=600 order by PRINT_DATE';
    4: result:='select tp.* from ('+str+' order by jb.PRINT_DATE) tp fetch first 600 rows only ';
    5: result:='select * from ('+str+') as tmp order by PRINT_DATE limit 600 ';
   end;

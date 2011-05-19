@@ -268,7 +268,7 @@ begin
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then   //and (trim(sid1)<>'') 
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
      else
@@ -277,7 +277,7 @@ begin
     if  trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //检测是否计算
   CheckCalc(strtoInt(P1_D1.asString),StrtoInt(P1_D2.asString));
@@ -321,7 +321,7 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     ' group by A.TENANT_ID,B.REGION_ID';
 
   strSql :=
@@ -415,17 +415,16 @@ begin
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid2+' ';
      else
         strWhere := strWhere+' and C.RELATION_ID='''+srid2+''' ';
     end;
-
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='VIW_GOODSPRICE';
 
   //检测是否计算
   CheckCalc(strtoInt(P2_D1.asString),StrtoInt(P2_D2.asString));
@@ -468,7 +467,8 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
-    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID';
 
   strSql :=
@@ -518,11 +518,11 @@ begin
   //商品分类:
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:begin
-      GoodTab:='VIW_GOODSINFO_SORTEXT';
+      GoodTab:='VIW_GOODSPRICE_SORTEXT';
       lv := ',C.LEVEL_ID';
     end;
   else
-  GoodTab:='VIW_GOODSINFO';
+  GoodTab:='VIW_GOODSPRICE';
   end;
   //检测是否计算
   CheckCalc(strtoInt(P3_D1.asString),StrtoInt(P3_D2.asString));
@@ -565,7 +565,7 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -753,7 +753,7 @@ begin
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
     case Factor.iDbType of
      4: strWhere := strWhere+' and C.RELATION_ID='+srid4+' ';
      else
@@ -762,8 +762,8 @@ begin
     if trim(sid4)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid4+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
-
+    GoodTab:='VIW_GOODSPRICE';
+    
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
     begin
@@ -811,7 +811,8 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
-    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=

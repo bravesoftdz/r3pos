@@ -223,8 +223,9 @@ begin
   inherited;
   case iDbType of
    0,3:SelectSQL.Text :='select top 1 PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc ';
-   4:SelectSQL.Text := 'select * from (select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc) tp fetch first 1 rows only';
-   5:SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc DESC limit 1';
+   1: SelectSQL.Text := 'select * from (select ROWNUM,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc) where ROWNUM<2 ';
+   4: SelectSQL.Text := 'select * from (select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc) tp fetch first 1 rows only';
+   5: SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc DESC limit 1';
   end;
 end;
 
@@ -235,6 +236,7 @@ begin
   inherited;
   case iDbType of
    0,3:SelectSQL.Text :='select top 1 PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE';
+   1:SelectSQL.Text := 'select * from (select ROWNUM,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE<:PRINT_DATE order by PRINT_DATE desc) where ROWNUM<2 ';
    4:SelectSQL.Text := 'select * from (select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE) tp fetch first 1 rows only';
    5:SelectSQL.Text := 'select PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and PRINT_DATE>:PRINT_DATE order by PRINT_DATE limit 1';
   end;
@@ -414,7 +416,8 @@ begin
   result:=trim(FieldName);
   case AGlobal.iDbType of
    0,5: result:='cast('+FieldName+' as varchar)';
-   4:   result:='trim(char('+FieldName+'))';
+   1: result:='cast('+FieldName+' as varchar(10))';
+   4: result:='trim(char('+FieldName+'))';
   end;
 end;
 

@@ -265,6 +265,8 @@ begin
     result:=' '+JoinCnd+ReStr;
 end;
 
+ 
+
 {=== 2011.02.26 生成分段取数据SQL语句[默认: 600笔] ===}
 function GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: string; RCount: string='600'): string;
 begin

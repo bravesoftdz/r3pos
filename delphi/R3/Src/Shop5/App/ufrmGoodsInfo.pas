@@ -2580,7 +2580,6 @@ begin
       r := 0
     else
        r := StrtoFloatDef(Text,0);
-    if r>999999 then Raise Exception.Create('输入的数值不能100，无效');
   except
     on E:Exception do
       begin
@@ -2590,6 +2589,7 @@ begin
         Exit;
       end;
   end;
+  if r>999999999 then Raise Exception.Create('输入的数值不能100，无效');
 
   if (VarIsNull(Value)) then r:=0 else r:=Value;
 

@@ -112,6 +112,13 @@ type
     edtSAL_AUTO_CHK: TcxCheckBox;
     chkLOCUS_NO_MT: TcxCheckBox;
     chkBankCode: TcxCheckBox;
+    GroupBox9: TGroupBox;
+    Label19: TLabel;
+    Label20: TLabel;
+    edtSAFE_DAY: TcxSpinEdit;
+    Label23: TLabel;
+    edtDAY_SALE_STAND: TcxSpinEdit;
+    Label25: TLabel;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -225,7 +232,12 @@ begin
             BirthDays.Value := StrToIntDef(Value, 0);
           end;
       end;
-      
+
+    if Define = 'SAFE_DAY' then
+      begin
+        edtSAFE_DAY.Value := StrToIntDef(Value, 7);
+      end;
+
     if Define = 'CUSTCONTINU' then
     begin
       if StrToInt(Value) < 0 then
@@ -434,6 +446,7 @@ begin
   else
     SetValue('DUPBARCODE', '0');
   SetValue('RECK_DAY', edtRECK_DAY.Text);
+  SetValue('SAFE_DAY', edtSAFE_DAY.Value);
   if IsBirthDay.Checked then
     SetValue('BIRTHDAY', BirthDays.Value)
   else
@@ -690,6 +703,9 @@ begin
   edtSTK_AUTO_CHK.Checked := true;
   edtSAL_AUTO_CHK.Checked := true;
   chkBankCode.Checked := false;
+
+
+  edtSAFE_DAY.Value := 7;
 end;
 
 end.

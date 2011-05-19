@@ -535,7 +535,7 @@ begin
   try
     Params := TftParamList.Create(nil);
     try
-      if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+      if Db_CloseDay.FieldByName('CHK_DATE').AsString = '' then
         begin
           try
             Factor.ExecSQL('update RCK_DAYS_CLOSE set CHK_DATE='''+FormatDateTime('YYYY-MM-DD',Date)+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and CREA_DATE='+Db_CloseDay.FieldbyName('CREA_DATE').AsString);
@@ -604,11 +604,12 @@ begin
   try
     Params := TftParamList.Create(nil);
     try
-      if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+      if Db_CloseMonth.FieldByName('CHK_DATE').AsString = '' then
         begin
           try
             Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE='''+formatDatetime('YYYY-MM-DD',date())+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '∆˙…Û';
+            Msg := '‘¬Ω·’À…Û∫ÀÕÍ±œ';
           Except
             actAudit.Caption := '…Û∫À';
           end;
@@ -618,6 +619,7 @@ begin
           try
             Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '…Û∫À';
+            Msg := '‘¬Ω·’À∆˙…ÛÕÍ±œ';
           Except
             actAudit.Caption := '∆˙…Û';
           end;

@@ -771,12 +771,12 @@ begin
   begin
     try
       if Text='' then r := 0 else r := StrtoFloat(Text);
-      if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
     except
       Text := TColumnEh(Sender).Field.AsString;
       Value := TColumnEh(Sender).Field.asFloat;
       Raise Exception.Create('输入无效数值型');
     end;
+    if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
     TColumnEh(Sender).Field.asFloat := r;
     AMountToCalc(r);
     //2011.02.22关闭　盘点不需要原用多个单位计算

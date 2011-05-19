@@ -1797,67 +1797,72 @@ inherited frmStorageTracking: TfrmStorageTracking
   inherited RzPanel4: TRzPanel
     Width = 1057
     inherited Image1: TImage
-      Left = 208
-      Width = 829
+      Left = 251
+      Width = 786
     end
     inherited Image3: TImage
-      Left = 208
-      Width = 829
+      Left = 251
+      Width = 786
     end
     inherited Image14: TImage
       Left = 1037
     end
     inherited rzPanel5: TPanel
-      Left = 208
+      Left = 251
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#24211#23384#26597#35810
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 188
+      Width = 231
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 188
+          MinHeight = 231
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 188
+        Width = 231
         ButtonWidth = 43
-        object ToolButton4: TToolButton
+        object ToolButton7: TToolButton
           Left = 0
+          Top = 0
+          Action = actfrmCalc
+        end
+        object ToolButton4: TToolButton
+          Left = 43
           Top = 0
           Action = actFind
         end
         object ToolButton5: TToolButton
-          Left = 43
+          Left = 86
           Top = 0
           Width = 8
           ImageIndex = 14
           Style = tbsDivider
         end
         object ToolButton1: TToolButton
-          Left = 51
+          Left = 94
           Top = 0
           Action = actPrint
         end
         object ToolButton3: TToolButton
-          Left = 94
+          Left = 137
           Top = 0
           Action = actPreview
         end
         object ToolButton6: TToolButton
-          Left = 137
+          Left = 180
           Top = 0
           Width = 8
           ImageIndex = 14
           Style = tbsDivider
         end
         object ToolButton2: TToolButton
-          Left = 145
+          Left = 188
           Top = 0
           Action = actExit
         end
@@ -1879,6 +1884,11 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
     inherited actFind: TAction
       OnExecute = actFindExecute
+    end
+    object actfrmCalc: TAction
+      Caption = #27979#31639
+      ImageIndex = 36
+      OnExecute = actfrmCalcExecute
     end
   end
   object CdsStorage: TZQuery

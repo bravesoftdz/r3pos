@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 426
-    Height = 253
-    ActivePage = tabStock
+    Width = 418
+    Height = 242
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -165,8 +165,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -280,7 +280,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #24453#23457#26680#21333#25454#25552#37266
+        Properties.Caption = #23457#21333#29366#24577#25552#37266
         TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
@@ -867,12 +867,68 @@ inherited frmSysDefine: TfrmSysDefine
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
+      object GroupBox9: TGroupBox
+        Left = 216
+        Top = 17
+        Width = 177
+        Height = 105
+        Caption = #24211#23384#30417#25511#36873#39033
+        TabOrder = 4
+        object Label19: TLabel
+          Left = 23
+          Top = 31
+          Width = 48
+          Height = 12
+          Caption = #23433#20840#22825#25968
+        end
+        object Label20: TLabel
+          Left = 127
+          Top = 31
+          Width = 12
+          Height = 12
+          Caption = #22825
+        end
+        object Label23: TLabel
+          Left = 10
+          Top = 61
+          Width = 60
+          Height = 12
+          Caption = #26085#22343#38144#37327#25353
+        end
+        object Label25: TLabel
+          Left = 129
+          Top = 61
+          Width = 36
+          Height = 12
+          Caption = #22825#27979#31639
+        end
+        object edtSAFE_DAY: TcxSpinEdit
+          Left = 75
+          Top = 27
+          Width = 50
+          Height = 20
+          Properties.MaxValue = 100.000000000000000000
+          TabOrder = 0
+          Value = 7
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        end
+        object edtDAY_SALE_STAND: TcxSpinEdit
+          Left = 75
+          Top = 57
+          Width = 50
+          Height = 20
+          Properties.MaxValue = 999999.000000000000000000
+          TabOrder = 1
+          Value = 90
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        end
+      end
     end
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 426
+    Top = 242
+    Width = 418
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
@@ -903,12 +959,11 @@ inherited frmSysDefine: TfrmSysDefine
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 224
-    Top = 80
+    Top = 112
   end
   inherited actList: TActionList
-    Left = 192
-    Top = 80
+    Left = 160
+    Top = 48
     object acComfir: TAction
       Caption = #30830#23450'(&O)'
       OnExecute = acComfirExecute

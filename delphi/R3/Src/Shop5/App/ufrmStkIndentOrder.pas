@@ -397,12 +397,12 @@ begin
              r := 0
           else
              r := StrtoFloat(Text);
-          if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
         except
           Text := TColumnEh(Sender).Field.AsString;
           Value := TColumnEh(Sender).Field.asFloat;
           Raise Exception.Create('输入无效数值型');
         end;
+        if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
         AMountToCalc(r);
      end;
@@ -437,12 +437,12 @@ begin
        r := 0
     else
        r := StrtoFloat(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
   except
     Text := TColumnEh(Sender).Field.AsString;
     Value := TColumnEh(Sender).Field.asFloat;
     Raise Exception.Create('输入无效数值型');
   end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
   AMoneyToCalc(r);
 end;
@@ -456,12 +456,12 @@ begin
        r := 0
     else
        r := StrtoFloat(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
   except
     Text := TColumnEh(Sender).Field.AsString;
     Value := TColumnEh(Sender).Field.asFloat;
     Raise Exception.Create('输入无效数值型');
   end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
   PriceToCalc(r);
 end;

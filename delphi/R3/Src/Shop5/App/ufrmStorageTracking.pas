@@ -107,6 +107,8 @@ type
     DBGridEh2: TDBGridEh;
     cdsRate: TZQuery;
     dsRate: TDataSource;
+    actfrmCalc: TAction;
+    ToolButton7: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -133,6 +135,7 @@ type
     procedure edtP3_Goods_TypePropertiesChange(Sender: TObject);
     procedure edtP2_SHOP_TYPEPropertiesChange(Sender: TObject);
     procedure edtP3_SHOP_TYPEPropertiesChange(Sender: TObject);
+    procedure actfrmCalcExecute(Sender: TObject);
   private
     { Private declarations }
     IsEnd: boolean;
@@ -161,7 +164,7 @@ type
 
 implementation
 uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,
-  ObjCommon,ufrmBasic, Math;
+  ObjCommon,ufrmBasic, Math, ufrmCostCalc;
 {$R *.dfm}
 
 { TfrmStorageTrackingWarning }
@@ -1038,6 +1041,12 @@ begin
   inherited;
   Shop_Type_Change(edtP3_SHOP_VALUE);
 
+end;
+
+procedure TfrmStorageTracking.actfrmCalcExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmCostCalc.CalcAnalyLister(self);
 end;
 
 end.

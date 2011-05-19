@@ -91,6 +91,10 @@ CREATE TABLE [PUB_GOODSINFOEXT] (
 	[UPPER_RATE] [decimal](18, 3) NULL ,
         --日均销量
 	[DAY_SALE_AMT] [decimal](18, 3) NULL ,
+        --最近安全天数内的
+	[NEAR_SALE_AMT] [decimal](18, 3) NULL ,
+        --当月的销量
+	[MTH_SALE_AMT] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_PUB_GOODSINFOEXT_COMM] DEFAULT ('00'),
         --更新时间 从2011-01-01开始的秒数
@@ -99,7 +103,40 @@ CREATE TABLE [PUB_GOODSINFOEXT] (
 );
 CREATE INDEX IX_PUB_GOODSINFOEXT_TENANT_ID ON PUB_GOODSINFOEXT(TENANT_ID);
 CREATE INDEX IX_PUB_GOODSINFOEXT_TIME_STAMP ON PUB_GOODSINFOEXT(TENANT_ID,TIME_STAMP);
-              
+  
+  
+--商品门店扩展表
+CREATE TABLE [PUB_GOODS_INSHOP] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --货号编码
+	[GODS_ID] [char] (36) NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --安全库存
+	[LOWER_AMOUNT] [decimal](18, 3) NULL ,
+        --上限库存
+	[UPPER_AMOUNT] [decimal](18, 3) NULL ,
+        --最低存销比
+	[LOWER_RATE] [decimal](18, 3) NULL ,
+        --最高存销比
+	[UPPER_RATE] [decimal](18, 3) NULL ,
+        --日均销量
+	[DAY_SALE_AMT] [decimal](18, 3) NULL ,
+        --最近安全天数内的销量
+	[NEAR_SALE_AMT] [decimal](18, 3) NULL ,
+        --当月的销量
+	[MTH_SALE_AMT] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [PUB_GOODS_INSHOP_COMM] DEFAULT ('00'),
+        --更新时间 从2011-01-01开始的秒数
+  [TIME_STAMP] bigint NOT NULL,
+  CONSTRAINT [PK_PUB_G_INSHOP] PRIMARY KEY (TENANT_ID,GODS_ID,SHOP_ID)
+);
+CREATE INDEX IX_PUB_G_INSHOP_TENANT_ID ON PUB_GOODS_INSHOP(TENANT_ID);
+CREATE INDEX IX_PUB_G_INSHOP_GODS_ID ON PUB_GOODS_INSHOP(TENANT_ID,GODS_ID);
+CREATE INDEX IX_PUB_G_INSHOP_TIME_STAMP ON PUB_GOODS_INSHOP(TENANT_ID,TIME_STAMP);
+               
 --变价记录
 CREATE TABLE [LOG_PRICING_INFO] (
         --行号ID
@@ -176,6 +213,10 @@ CREATE TABLE [STO_STORAGE] (
 	[UPPER_RATE] [decimal](18, 3) NULL ,
         --日均销量
 	[DAY_SALE_AMT] [decimal](18, 3) NULL ,
+        --最近安全天数内的
+	[NEAR_SALE_AMT] [decimal](18, 3) NULL ,
+        --当月的销量
+	[MTH_SALE_AMT] [decimal](18, 3) NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_STO_STORAGE_COMM] DEFAULT ('00'),
         --时间戳 从2011-01-01开始的秒数
@@ -753,6 +794,12 @@ CREATE TABLE [STO_CHANGEORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+        --联系人
+	[LINKMAN] [varchar] (20) NULL ,
+        --联系电话
+	[TELEPHONE] [varchar] (30) NULL ,
+        --送货地址
+	[SEND_ADDR] [varchar] (255) NULL ,
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
         --通讯标志

@@ -81,7 +81,7 @@ begin
        ' left join (select PROM_ID,count(*) as ShopSum From SAL_PROM_SHOP where TENANT_ID=:TENANT_ID Group by PROM_ID)C on A.PROM_ID=C.PROM_ID ';
   case Factor.iDbType of
    0,3:result:='select top 600 A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID';
-   1:  result:='select * from (select ROWNUM,A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From '+viwName+' order by A.PROM_ID) where ROWNUM<=600 order by ROWNUM ';
+   1:  result:='select * from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From '+viwName+' order by A.PROM_ID) where ROWNUM<=600 order by ROWNUM ';
    4:  result:='select tp.* from (select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum from '+viwName+' order by A.PROM_ID) tp fetch first 600  rows only ';
    5:  result:='select A.*,B.GoodSum as GoodSum,C.ShopSum as ShopSum From ('+viwName+') order by A.PROM_ID LIMIT 600 ';
   end;

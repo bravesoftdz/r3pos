@@ -814,7 +814,66 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
+  if fndP6_DBIN.Checked then //调入单 
+  begin
+    //月份日期:
+    if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
+      strWhere:=strWhere+' and A.STOCK_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+    else if P5_D1.Date<P5_D2.Date then
+      strWhere:=strWhere+' and A.STOCK_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.STOCK_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
+    //门店条件:
+    if fndP5_SHOP_ID.AsString<>'' then
+      strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
 
+     strSql :=
+      'SELECT '+
+      ' A.TENANT_ID '+
+      ',A.GLIDE_NO '+
+      ',A.STOCK_ID '+
+      ',A.GODS_ID '+
+      ',A.BATCH_NO '+
+      ',A.LOCUS_NO '+
+      ',A.UNIT_ID '+
+      ',A.STOCK_DATE as MOVE_DATE '+
+      ',A.PROPERTY_01 '+
+      ',A.PROPERTY_02 '+
+      ',A.IS_PRESENT '+
+      ',A.CREA_DATE '+
+      ',A.CREA_USER '+
+      ',A.CLIENT_ID  '+    //调出门店
+      ',A.SHOP_ID  '+      //调入门店
+      ',A.GUIDE_USER '+     //导购员
+      ',A.AMOUNT as DB_AMT '+      //数量
+      ',A.APRICE as DB_PRC '+      //单价
+      ',A.RTL_MONEY as DB_RTL '+   //零售金额
+      ',A.COST_MONEY as DB_CST '+  //成本
+      ',B.SHOP_NAME  '+             //调入门店
+      ',A.STOCK_DATE as PLAN_DATE '+   //到货日期
+      ',A.GUIDE_USER as SEND_USER '+   //发货人
+      ',C.BARCODE as BARCODE '+
+      ',C.GODS_CODE as GODS_CODE '+
+      ',C.GODS_NAME as GODS_NAME '+   //关联商品表
+      'from VIW_MOVEINDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+      ' '+ strWhere + ' ';
+
+  strSql :=
+    'select j.* '+
+    ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
+    ',u.UNIT_NAME as UNIT_NAME '+
+    ',c.SHOP_NAME as OUTSHOP_NAME '+
+    ',d.USER_NAME as GUIDE_USER_TEXT '+
+    ',e.USER_NAME as CREA_USER_TEXT '+
+    ',f.USER_NAME as SEND_USER_TEXT '+
+    'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
+    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+    'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
+    'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
+    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+    'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
+    ' order by j.MOVE_DATE,j.GODS_CODE';
+  end else
   if fndP6_DBOUT.Checked then //调出单
   begin
     //月份日期:
@@ -848,16 +907,23 @@ begin
       ',A.APRICE as DB_PRC '+      //单价
       ',A.RTL_MONEY as DB_RTL '+   //零售金额
       ',A.COST_MONEY as DB_CST '+  //成本
-      ',B.SHOP_NAME as OUTSHOP_NAME '+             //调出门店
-      ',D.STOCK_DATE as PLAN_DATE '+   //到货日期
+      ',B.SHOP_NAME as OUTSHOP_NAME '+             //调出门店  
       ',A.GUIDE_USER as SEND_USER '+   //发货人
       ',C.BARCODE as BARCODE '+
       ',C.GODS_CODE as GODS_CODE '+
-      ',C.GODS_NAME as GODS_NAME '+   //关联商品表
-      'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C,STK_STOCKORDER D '+
+      ',C.GODS_NAME as GODS_NAME '+   //关联商品表  SAL_SALESORDER
+      'from VIW_MOVEOUTDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
-      ' and A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.STOCK_ID  '+
       ' '+ strWhere + ' ';
+
+   strSql :=
+      'select M.* '+
+      ',D.STOCK_DATE as PLAN_DATE '+   //到货日期;
+      'from ('+strSql+') M  '+
+      'left outer join '+
+      ' (select TENANT_ID,STOCK_ID,STOCK_DATE from STK_STOCKORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and STOCK_TYPE=2)D '+
+      ' on M.TENANT_ID=D.TENANT_ID and M.SALES_ID=D.STOCK_ID  ';
+
     strSql :=
       'select j.* '+
       ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
@@ -874,66 +940,6 @@ begin
       'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
       'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
       ' order by j.MOVE_DATE,j.GODS_CODE';
-  end else
-  begin
-    //月份日期:
-    if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
-      strWhere:=strWhere+' and A.STOCK_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
-    else if P5_D1.Date<P5_D2.Date then
-      strWhere:=strWhere+' and A.STOCK_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.STOCK_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' ';
-    //门店条件:
-    if fndP5_SHOP_ID.AsString<>'' then
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
-
-     strSql :=
-      'SELECT '+
-      ' A.TENANT_ID '+
-      ',A.GLIDE_NO '+
-      ',A.STOCK_ID '+
-      ',A.GODS_ID '+
-      ',A.BATCH_NO '+
-      ',A.LOCUS_NO '+
-      ',A.UNIT_ID '+
-      ',A.STOCK_DATE as MOVE_DATE '+
-      ',A.PROPERTY_01 '+
-      ',A.PROPERTY_02 '+
-      ',A.IS_PRESENT '+
-      ',A.CREA_DATE '+
-      ',A.CREA_USER '+
-      ',A.CLIENT_ID  '+    //调出门店
-      ',A.SHOP_ID  '+      //调入门店
-      ',D.GUIDE_USER '+     //导购员
-      ',A.AMOUNT as DB_AMT '+      //数量
-      ',A.APRICE as DB_PRC '+      //单价
-      ',A.RTL_MONEY as DB_RTL '+   //零售金额
-      ',A.COST_MONEY as DB_CST '+  //成本
-      ',B.SHOP_NAME  '+             //调入门店
-      ',A.STOCK_DATE as PLAN_DATE '+   //到货日期
-      ',A.GUIDE_USER as SEND_USER '+   //发货人
-      ',C.BARCODE as BARCODE '+
-      ',C.GODS_CODE as GODS_CODE '+
-      ',C.GODS_NAME as GODS_NAME '+   //关联商品表
-      'from VIW_MOVEINDATA A,CA_SHOP_INFO B,'+GoodTab+' C,SAL_SALESORDER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-      ' and A.TENANT_ID=D.TENANT_ID and A.STOCK_ID=D.SALES_ID  '+
-      ' '+ strWhere + ' ';
-
-  strSql :=
-    'select j.* '+
-    ',isnull(B.BARCODE,j.BARCODE) as BARCODE '+
-    ',u.UNIT_NAME as UNIT_NAME '+
-    ',c.SHOP_NAME as OUTSHOP_NAME '+
-    ',d.USER_NAME as GUIDE_USER_TEXT '+
-    ',e.USER_NAME as CREA_USER_TEXT '+
-    ',f.USER_NAME as SEND_USER_TEXT '+
-    'from ('+strSql+') j '+           //2011.04.02 Add 过滤条码的类型
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    'left outer join CA_SHOP_INFO c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.SHOP_ID '+
-    'left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
-    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
-    'left outer join VIW_USERS f on j.TENANT_ID=f.TENANT_ID and j.SEND_USER=f.USER_ID '+
-    ' order by j.MOVE_DATE,j.GODS_CODE';
   end;
 
   Result := ParseSQL(Factor.iDbType,strSql);

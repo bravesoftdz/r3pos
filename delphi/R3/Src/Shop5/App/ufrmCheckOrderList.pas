@@ -77,9 +77,6 @@ uses
 function TfrmCheckOrderList.EncodeSQL(id: string): string;
 var str,w,RowNum:string;
 begin
-  RowNum:='';
-  if Factor.iDbType=1 then
-    RowNum:='ROWNUM,';
   w := 'where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE>=:BEG_DATE and CREA_DATE<=:END_DATE ';
   if fndCHECK_EMPL.AsString <> '' then
      w := w +' and CREA_USER=:CREA_USER ';
@@ -102,7 +99,7 @@ begin
     w := w +' and PRINT_DATE>'+id+' ';
 
   str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+'';
-  str:='select '+RowNum+'jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
+  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
        ' left outer join VIW_USERS b on b.TENANT_ID=:TENANT_ID and jb.CREA_USER=b.USER_ID '+
        ' left outer join VIW_USERS c on c.TENANT_ID=:TENANT_ID and jb.CHK_USER=c.USER_ID ';
   case Factor.iDbType of

@@ -57,13 +57,13 @@ alter table PUB_CLIENTINFO add TAX_NO varchar2(30);
 --扫码出库
 CREATE TABLE SAL_LOCUS_FORSALE(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID NUMBER(9,0) NOT NULL ,
         --门店代码
 	SHOP_ID varchar2(13) NOT NULL ,
         --销售单号
 	SALES_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO NUMBER(9,0) NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
@@ -73,7 +73,7 @@ CREATE TABLE SAL_LOCUS_FORSALE(
         --批号
 	BATCH_NO varchar2(36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE NUMBER(9,0) NOT NULL ,
         --物流跟踪号
 	LOCUS_NO varchar2(36) NOT NULL ,
         --单位
@@ -90,7 +90,7 @@ CREATE TABLE SAL_LOCUS_FORSALE(
         --通讯标志
 	COMM varchar2(2) DEFAULT '00' NOT NULL,
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP NUMBER(22,0) NOT NULL,
 	
 	CONSTRAINT PK_SAL_LS_FORSALE PRIMARY KEY  
 	(
@@ -103,13 +103,13 @@ CREATE TABLE SAL_LOCUS_FORSALE(
 --扫码出库<领用，损益等的出库>
 CREATE TABLE STO_LOCUS_FORCHAG(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID NUMBER(9,0) NOT NULL ,
         --门店代码
 	SHOP_ID varchar2(13) NOT NULL ,
         --调整单号
 	CHANGE_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO NUMBER(9,0) NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
@@ -119,7 +119,7 @@ CREATE TABLE STO_LOCUS_FORCHAG(
         --批号
 	BATCH_NO varchar2(36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE NUMBER(9,0) NOT NULL ,
         --物流跟踪号
 	LOCUS_NO varchar2(36) NOT NULL ,
         --单位
@@ -136,7 +136,7 @@ CREATE TABLE STO_LOCUS_FORCHAG(
         --通讯标志
 	COMM varchar2(2) DEFAULT '00' NOT NULL,
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP NUMBER(22,0) NOT NULL,
 	
 	CONSTRAINT PK_STO_LS_FORCHAG PRIMARY KEY  
 	(
@@ -150,13 +150,13 @@ CREATE TABLE STO_LOCUS_FORCHAG(
 --扫码入库
 CREATE TABLE STK_LOCUS_FORSTCK(
         --企业代码
-	TENANT_ID NUMBER NOT NULL ,
+	TENANT_ID NUMBER(9,0) NOT NULL ,
         --门店代码
 	SHOP_ID varchar2(13) NOT NULL ,
         --销售单号
 	STOCK_ID char (36) NOT NULL ,
         --序号
-	SEQNO NUMBER NOT NULL ,
+	SEQNO NUMBER(9,0) NOT NULL ,
         --货品
 	GODS_ID char (36) NOT NULL ,
         --尺码<不分时用 # 号>
@@ -166,7 +166,7 @@ CREATE TABLE STK_LOCUS_FORSTCK(
         --批号
 	BATCH_NO varchar2(36) NOT NULL ,
         --扫码日期
-	LOCUS_DATE NUMBER NOT NULL ,
+	LOCUS_DATE NUMBER(9,0) NOT NULL ,
         --物流跟踪号
 	LOCUS_NO varchar2(36) NOT NULL ,
         --单位
@@ -183,7 +183,7 @@ CREATE TABLE STK_LOCUS_FORSTCK(
         --通讯标志
 	COMM varchar2(2) DEFAULT '00' NOT NULL,
         --时间戳 当前系统日期*86400000
-  TIME_STAMP NUMBER NOT NULL,
+  TIME_STAMP NUMBER(22,0) NOT NULL,
 	
 	CONSTRAINT PK_STK_LS_FORSTCK PRIMARY KEY  
 	(

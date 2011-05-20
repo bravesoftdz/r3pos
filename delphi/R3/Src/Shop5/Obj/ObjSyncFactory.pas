@@ -931,9 +931,18 @@ begin
      try
        rs.SQL.Text :=
          'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-       + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
+       + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and ABLE_TYPE=:ABLE_TYPE';
        CopyToParams(rs.Params);
        rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
+       if FieldbyName('STOCK_TYPE').asString='1' then
+          begin
+            rs.ParambyName('ABLE_TYPE').AsString := '4';
+          end
+       else
+       if FieldbyName('STOCK_TYPE').asString='3' then
+          begin
+            rs.ParambyName('ABLE_TYPE').AsString := '5';
+          end;
        AGlobal.ExecQuery(rs);
      finally
        rs.Free;
@@ -1152,9 +1161,17 @@ begin
        try
          rs.SQL.Text :=
            'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-         + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
+         + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and RECV_TYPE=:RECV_TYPE';
          CopyToParams(rs.Params);
          rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
+         case FieldbyName('SALES_TYPE').AsInteger of
+         1,4: begin
+              rs.ParambyName('RECV_TYPE').AsString := '1';
+            end;
+         3:   begin
+              rs.ParambyName('RECV_TYPE').AsString := '2';
+            end;
+         end;
          AGlobal.ExecQuery(rs);
        finally
          rs.Free;
@@ -1517,7 +1534,7 @@ begin
    try
      rs.SQL.Text :=
        'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-     + 'where TENANT_ID=:TENANT_ID and STOCK_ID=:INDE_ID';
+     + 'where TENANT_ID=:TENANT_ID and STOCK_ID=:INDE_ID and ABLE_TYPE=''6''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
    finally
@@ -1714,7 +1731,7 @@ begin
    try
      rs.SQL.Text :=
        'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
-     + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID';
+     + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID and RECV_TYPE=''3''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
    finally

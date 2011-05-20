@@ -5,7 +5,7 @@ inherited frmPosMain: TfrmPosMain
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
   ClientHeight = 570
-  ClientWidth = 802
+  ClientWidth = 800
   Color = clBlack
   OldCreateOrder = True
   Position = poDesigned
@@ -18,7 +18,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel3: TRzPanel [0]
     Left = 0
     Top = 275
-    Width = 802
+    Width = 800
     Height = 199
     Align = alBottom
     BorderOuter = fsFlat
@@ -30,7 +30,7 @@ inherited frmPosMain: TfrmPosMain
     object RzPanel2: TRzPanel
       Left = 1
       Top = 0
-      Width = 800
+      Width = 798
       Height = 198
       Align = alClient
       BorderOuter = fsNone
@@ -555,7 +555,7 @@ inherited frmPosMain: TfrmPosMain
       object RzGroupBox1: TRzGroupBox
         Left = 410
         Top = 5
-        Width = 385
+        Width = 383
         Height = 188
         Align = alClient
         Caption = #25805#20316
@@ -720,7 +720,7 @@ inherited frmPosMain: TfrmPosMain
         object pnlBarCode: TRzPanel
           Left = 1
           Top = 150
-          Width = 383
+          Width = 381
           Height = 37
           Align = alBottom
           BorderOuter = fsFlat
@@ -831,7 +831,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel6: TRzPanel [1]
     Left = 0
     Top = 26
-    Width = 802
+    Width = 800
     Height = 249
     Align = alClient
     BorderOuter = fsFlat
@@ -842,7 +842,7 @@ inherited frmPosMain: TfrmPosMain
     object DBGridEh1: TDBGridEh
       Left = 1
       Top = 1
-      Width = 800
+      Width = 798
       Height = 248
       Align = alClient
       AllowedOperations = [alopUpdateEh]
@@ -1006,7 +1006,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel7: TRzPanel [2]
     Left = 0
     Top = 0
-    Width = 802
+    Width = 800
     Height = 26
     Align = alTop
     BorderOuter = fsFlat
@@ -1033,7 +1033,7 @@ inherited frmPosMain: TfrmPosMain
     object RzStatusPane2: TRzStatusPane
       Left = 101
       Top = 1
-      Width = 606
+      Width = 604
       Height = 25
       Align = alClient
       Color = 8404992
@@ -1047,7 +1047,7 @@ inherited frmPosMain: TfrmPosMain
       Alignment = taCenter
     end
     object RzStatusPane5: TRzStatusPane
-      Left = 754
+      Left = 752
       Top = 1
       Width = 47
       Height = 25
@@ -1066,7 +1066,7 @@ inherited frmPosMain: TfrmPosMain
       Caption = #36864#20986
     end
     object RzStatusPane7: TRzStatusPane
-      Left = 707
+      Left = 705
       Top = 1
       Width = 47
       Height = 25
@@ -1088,7 +1088,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel8: TRzPanel [3]
     Left = 0
     Top = 544
-    Width = 802
+    Width = 800
     Height = 26
     Align = alBottom
     BorderOuter = fsFlat
@@ -1099,7 +1099,7 @@ inherited frmPosMain: TfrmPosMain
     object lblHint: TRzStatusPane
       Left = 201
       Top = 0
-      Width = 484
+      Width = 482
       Height = 25
       Align = alClient
       Color = 8404992
@@ -1145,7 +1145,7 @@ inherited frmPosMain: TfrmPosMain
       Caption = #25346#21333#25968':5'#21333
     end
     object RzClockStatus1: TRzClockStatus
-      Left = 685
+      Left = 683
       Top = 0
       Width = 116
       Height = 25
@@ -1163,7 +1163,7 @@ inherited frmPosMain: TfrmPosMain
   object rzHelp: TRzPanel [4]
     Left = 0
     Top = 474
-    Width = 802
+    Width = 800
     Height = 70
     Align = alBottom
     BorderOuter = fsFlat

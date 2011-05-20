@@ -255,13 +255,13 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('SALES_ID').AsOldString+'''';
+         rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('SALES_ID').AsOldString+''' and RECV_TYPE=''2''';
          AGlobal.Open(rs);
          if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的退货单不能修改...');
        finally
          rs.Free;
        end;
-       AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID',self);
+       AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and RECV_TYPE=''2''',self);
      end;
 {
   if (FieldbyName('PAY_C').AsOldFloat <> 0) and (FieldbyName('IC_CARDNO').AsOldString<>'') then

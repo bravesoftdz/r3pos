@@ -17,6 +17,8 @@ function  GetBatchSQL(iDbType:Integer; ViewSQL, SortField: string; SortType: str
 //取时间的SQL
 function  GetTimeStamp(iDbType:Integer):string;
 function GetSysDateFormat(iDbType:integer):string;
+//得到两个日期之间的天数
+function GetDayDiff(iDbType:integer;B,E:string):string;
 //检查date 是否在可修改区间内,库存有关的
 function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
 //检查date 是否在结账区间内,库存无关的
@@ -194,7 +196,15 @@ begin  //SYSBASE数据库的字符连接符号: + 和 ||均可
    else result:='+';
   end; 
 end;
-
+function GetDayDiff(iDbType:Integer;B,E:string):string;
+begin
+  case iDbType of
+  0:result := '(convert(datetime,convert(varchar,'+E+'),112)-convert(datetime,convert(varchar,'+B+'),112)+1)';
+  1:result := '(to_date(to_char('+E+'),''YYYYMMDD'')-to_date(to_char('+B+'),''YYYYMMDD'')+1)';
+  4:result := 'JULIAN_DAY(substr(trim(char('+E+')),1,4)||''-''||substr(trim(char('+E+')),5,2)||''-''||substr(trim(char('+E+')),7,2) ) - JULIAN_DAY( substr(trim(char('+B+')),1,4)||''-''||substr(trim(char('+B+')),5,2)||''-''||substr(trim(char('+B+')),7,2) )';
+  5:result := 'JULIAN_DAY(substr('+E+',1,4)||''-''||substr('+E+',5,2)||''-''||substr('+E+',7,2) ) - JULIAN_DAY( substr('+B+',1,4)||''-''||substr('+B+',5,2)||''-''||substr('+B+',7,2) )';
+  end;
+end;
 {====== 2011.02.25 Add 单个字段模糊查询  ======}
 //FieldName: 关键字段;   KeyValue: 关键值（参数或实际值） ；IsParam: 是否是传递参数或实际值
 //JoinCnd 返回查询条件时：是否加条件关系: 如: and | or
@@ -472,7 +482,7 @@ var Temp:TZQuery;
 begin
   Result := False;
   if pDate>formatDatetime('YYYYMMDD',date+7) then Raise Exception.Create('只能开一周以内的单据，请检查是否日期有错...');
-  if timestamp='' then timestamp := '9223372036854775800';
+  if (timestamp='') or (timestamp='0') then timestamp := '9223372036854775800';
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=

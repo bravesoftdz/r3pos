@@ -156,7 +156,6 @@ type
     procedure UpdateTimerTimer(Sender: TObject);
     procedure RegisteredActionExecute(Sender: TObject);
     procedure AllowXMLExecute(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure edtKeepAliveClick(Sender: TObject);
     procedure mnuMgrClick(Sender: TObject);
     procedure actfrmAddDbExecute(Sender: TObject);
@@ -775,14 +774,6 @@ begin
   s := LogFile.ReadLogFile;
   if s<>'' then
      Memo1.Lines.Add(s); 
-end;
-
-procedure TSocketForm.Timer1Timer(Sender: TObject);
-begin
-  if SystemShutDown then Exit;
-  if FormatDatetime('HH:NN',now())='23:00' then
-     begin
-     end;
 end;
 
 function TSocketForm.GetSelectedSocket: Pointer;

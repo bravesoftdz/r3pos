@@ -7,83 +7,107 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 819
-    Height = 496
+    Width = 811
+    Height = 485
     inherited RzPanel2: TRzPanel
-      Width = 809
-      Height = 97
+      Width = 801
+      Height = 117
       Enabled = False
       TabStop = True
-      object lblSTOCK_DATE: TLabel [0]
-        Left = 418
-        Top = 9
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #35843#20986#26085#26399
-      end
-      object lblCLIENT_ID: TLabel [1]
-        Left = 195
-        Top = 9
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #35843#20837#38376#24215
-      end
-      object Label2: TLabel [2]
-        Left = 195
+      object Label9: TLabel [0]
+        Left = 579
         Top = 72
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #22791'    '#27880
-      end
-      object Label1: TLabel [3]
-        Left = 207
-        Top = 51
-        Width = 36
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #36865#36135#21592
-      end
-      object Label40: TLabel [4]
-        Left = 195
-        Top = 30
-        Width = 48
-        Height = 12
-        Caption = #35843#20986#38376#24215
-      end
-      object Label3: TLabel [5]
-        Left = 419
-        Top = 30
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #21040#36135#26085#26399
-      end
-      object Label8: TLabel [6]
-        Left = 431
-        Top = 51
-        Width = 36
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #39564#36135#21592
-      end
-      object Label9: TLabel [7]
-        Left = 610
-        Top = 50
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #23457#26680#26085#26399
       end
-      object Label12: TLabel [8]
-        Left = 610
-        Top = 71
+      object Label12: TLabel [1]
+        Left = 579
+        Top = 93
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #23457#26680#29992#25143
+      end
+      object lblSTOCK_DATE: TLabel [2]
+        Left = 579
+        Top = 8
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #35843#20986#26085#26399
+      end
+      object lblCLIENT_ID: TLabel [3]
+        Left = 195
+        Top = 29
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #35843#20837#38376#24215
+      end
+      object Label2: TLabel [4]
+        Left = 195
+        Top = 93
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #22791'    '#27880
+      end
+      object Label1: TLabel [5]
+        Left = 431
+        Top = 8
+        Width = 36
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21457#36135#20154
+      end
+      object Label40: TLabel [6]
+        Left = 195
+        Top = 8
+        Width = 48
+        Height = 12
+        Caption = #35843#20986#38376#24215
+      end
+      object Label3: TLabel [7]
+        Left = 580
+        Top = 29
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21040#36135#26085#26399
+      end
+      object Label8: TLabel [8]
+        Left = 581
+        Top = 51
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #25910' '#36135' '#20154
+      end
+      object Label15: TLabel [9]
+        Left = 195
+        Top = 72
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #25910#36135#22320#22336
+      end
+      object Label16: TLabel [10]
+        Left = 195
+        Top = 51
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32852#31995#30005#35805
+      end
+      object Label17: TLabel [11]
+        Left = 431
+        Top = 29
+        Width = 36
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32852#31995#20154
       end
       inherited RzPanel4: TRzPanel
         Top = 5
@@ -105,26 +129,44 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
           Enabled = False
         end
       end
-      object edtSALES_DATE: TcxDateEdit
-        Left = 475
-        Top = 5
+      object edtCHK_DATE: TcxTextEdit
+        Tag = 1
+        Left = 636
+        Top = 68
         Width = 121
         Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtREMARK: TcxTextEdit
-        Left = 251
-        Top = 68
-        Width = 313
+      object edtCHK_USER_TEXT: TcxTextEdit
+        Tag = 1
+        Left = 636
+        Top = 89
+        Width = 121
         Height = 20
         TabOrder = 2
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtGUIDE_USER: TzrComboBoxList
+      object edtSALES_DATE: TcxDateEdit
+        Left = 636
+        Top = 4
+        Width = 121
+        Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        TabOrder = 3
+      end
+      object edtREMARK: TcxTextEdit
         Left = 251
-        Top = 47
-        Width = 116
+        Top = 89
+        Width = 313
+        Height = 20
+        TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtGUIDE_USER: TzrComboBoxList
+        Left = 475
+        Top = 4
+        Width = 89
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -132,7 +174,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 3
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -164,7 +206,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 251
-        Top = 26
+        Top = 4
         Width = 158
         Height = 20
         Properties.AutoSelect = False
@@ -173,7 +215,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 4
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -204,15 +246,15 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
         MultiSelect = False
       end
       object edtPLAN_DATE: TcxDateEdit
-        Left = 475
-        Top = 26
+        Left = 636
+        Top = 25
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 5
+        TabOrder = 7
       end
       object edtSTOCK_USER: TzrComboBoxList
-        Left = 475
+        Left = 636
         Top = 47
         Width = 121
         Height = 20
@@ -222,7 +264,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 6
+        TabOrder = 8
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -254,7 +296,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 251
-        Top = 5
+        Top = 25
         Width = 158
         Height = 20
         Properties.AutoSelect = False
@@ -263,8 +305,7 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        Properties.OnChange = edtCLIENT_IDPropertiesChange
-        TabOrder = 7
+        TabOrder = 9
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -294,28 +335,34 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object edtCHK_DATE: TcxTextEdit
-        Tag = 1
-        Left = 667
-        Top = 45
-        Width = 121
+      object edtSEND_ADDR: TcxTextEdit
+        Left = 251
+        Top = 68
+        Width = 313
         Height = 20
-        TabOrder = 8
+        TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtCHK_USER_TEXT: TcxTextEdit
-        Tag = 1
-        Left = 667
-        Top = 66
-        Width = 121
+      object edtTELEPHONE: TcxTextEdit
+        Left = 251
+        Top = 47
+        Width = 313
         Height = 20
-        TabOrder = 9
+        TabOrder = 11
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtLINKMAN: TcxTextEdit
+        Left = 475
+        Top = 25
+        Width = 89
+        Height = 20
+        TabOrder = 12
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 387
-      Width = 809
+      Top = 376
+      Width = 801
       Height = 61
       TabOrder = 2
       object Label4: TLabel
@@ -466,9 +513,9 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 136
-      Width = 809
-      Height = 251
+      Top = 156
+      Width = 801
+      Height = 220
       Color = clWhite
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
@@ -574,17 +621,17 @@ inherited frmDbLocusOrder: TfrmDbLocusOrder
       Top = 171
     end
     inherited pnlBarCode: TRzPanel
-      Top = 102
-      Width = 809
+      Top = 122
+      Width = 801
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 448
-      Width = 809
+      Top = 437
+      Width = 801
     end
     inherited rzHelp: TRzPanel
-      Top = 472
-      Width = 809
+      Top = 461
+      Width = 801
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

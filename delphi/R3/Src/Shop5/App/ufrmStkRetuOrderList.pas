@@ -98,14 +98,17 @@ begin
   if id<>'' then
      w := w +' and A.STOCK_ID>'''+id+'''';
   result :=
-     'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,-A.STOCK_AMT as AMOUNT,-A.STOCK_MNY as AMONEY '+
+     'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,-A.STOCK_AMT as AMOUNT,-A.STOCK_MNY as AMONEY,''5'' as ABLE_TYPE '+
      'from STK_STOCKORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
-  result := 'select jc.*,-c.PAYM_MNY as PAYM_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID';
+  result := 'select jc.*,-c.PAYM_MNY as PAYM_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID and jc.ABLE_TYPE=c.ABLE_TYPE';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by STOCK_ID';
+  1:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by STOCK_ID) where ROWNUM<=600';
   4:result :=
        'select * from ('+
        'select * from ('+result+') j order by STOCK_ID) tp fetch first 600  rows only';

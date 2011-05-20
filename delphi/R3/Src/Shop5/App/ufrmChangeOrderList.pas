@@ -99,6 +99,9 @@ begin
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID';
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by CHANGE_ID';
+  1:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by CHANGE_ID) where ROWNUM<=600';
   4:result :=
        'select * from ('+
        'select * from ('+result+') j order by CHANGE_ID) tp fetch first 600  rows only';

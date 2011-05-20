@@ -153,13 +153,13 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and STOCK_ID='''+FieldbyName('INDE_ID').AsOldString+'''';
+         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and STOCK_ID='''+FieldbyName('INDE_ID').AsOldString+''' and ABLE_TYPE=''6''';
          AGlobal.Open(rs);
          if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经付款的订货单不能修改...'); 
        finally
          rs.Free;
        end;
-       AGlobal.ExecSQL('delete from ACC_PAYABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and STOCK_ID='''+FieldbyName('INDE_ID').AsOldString+'''');
+       AGlobal.ExecSQL('delete from ACC_PAYABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and STOCK_ID='''+FieldbyName('INDE_ID').AsOldString+''' and ABLE_TYPE=''6''');
      end;
   result := true;
 end;

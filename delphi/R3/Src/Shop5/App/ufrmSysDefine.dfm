@@ -871,7 +871,7 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 216
         Top = 17
         Width = 177
-        Height = 105
+        Height = 106
         Caption = #24211#23384#30417#25511#36873#39033
         TabOrder = 4
         object Label19: TLabel
@@ -908,6 +908,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 50
           Height = 20
           Properties.MaxValue = 100.000000000000000000
+          Properties.MinValue = 1.000000000000000000
           TabOrder = 0
           Value = 7
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -918,6 +919,7 @@ inherited frmSysDefine: TfrmSysDefine
           Width = 50
           Height = 20
           Properties.MaxValue = 999999.000000000000000000
+          Properties.MinValue = 1.000000000000000000
           TabOrder = 1
           Value = 90
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

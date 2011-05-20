@@ -1180,7 +1180,8 @@ end;
 
 procedure TfrmPosMain.AddFromDialog(AObj: TRecord_);
 begin
-  AddRecord(AObj,AObj.FieldbyName('UNIT_ID').AsString,'#','#',True);
+  if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"'); 
+  AddRecord(AObj,basInfo.FieldbyName('CALC_UNITS').AsString,'#','#',True);
   if not PropertyEnabled then
      WriteAmount(1,true)
   else
@@ -2411,7 +2412,7 @@ var
 begin
   inherited;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
+  if cdsTable.Changed and not cdsTable.IsEmpty then
      begin
        Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
      end;
@@ -2445,7 +2446,7 @@ var
 begin
   inherited;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
+  if cdsTable.Changed and not cdsTable.IsEmpty then
      begin
        Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
      end;
@@ -2476,7 +2477,7 @@ procedure TfrmPosMain.actAuditExecute(Sender: TObject);
 begin
   inherited;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
+  if cdsTable.Changed and not cdsTable.IsEmpty then
      begin
        Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
      end;
@@ -2595,7 +2596,7 @@ begin
        Exit;
      end;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
+  if cdsTable.Changed and not cdsTable.IsEmpty then
      begin
        Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
      end;
@@ -3034,7 +3035,7 @@ var
   mm:TMemoryStream;
 begin
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then Raise Exception.Create('请先结帐当前单据,再执行取单操作...');
+  if cdsTable.Changed and not cdsTable.IsEmpty then Raise Exception.Create('请先结帐当前单据,再执行取单操作...');
   with TfrmHangUpFile.Create(self) do
     begin
       try
@@ -3100,7 +3101,7 @@ procedure TfrmPosMain.FormCloseQuery(Sender: TObject;
 begin
   inherited;
   if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Modified and not cdsTable.IsEmpty then
+  if cdsTable.Changed and not cdsTable.IsEmpty then
      begin
        CanClose := false;
        MessageBox(Handle,'当前单据没有结帐，请结帐后再关闭电子收款机',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
@@ -3503,6 +3504,11 @@ end;
 procedure TfrmPosMain.RzStatusPane5Click(Sender: TObject);
 begin
   inherited;
+  if cdsTable.Changed and not cdsTable.IsEmpty then
+     begin
+       MessageBox(Handle,'当前单据没有结帐，请结帐后再关闭电子收款机',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   case TfrmCloseForDay.ShowClDy(self) of
     1:Close;
     2:Close;

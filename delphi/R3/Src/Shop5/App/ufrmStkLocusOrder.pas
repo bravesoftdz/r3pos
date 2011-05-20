@@ -627,7 +627,10 @@ begin
     begin
       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
       if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then
-         edtTable.Prior else begin result := true;break;end;
+         begin
+           edtTable.Prior;
+           if edtTable.Bof then Exit;
+         end else begin result := true;break;end;
     end;
 end;
 

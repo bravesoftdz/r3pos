@@ -11,16 +11,22 @@ TZLogFilePool=class
     FThreadLock:TRTLCriticalSection;
     FDefaultPath: string;
     F:TextFile;
+    Ffilename: string;
     procedure Enter;
     procedure Leave;
     procedure SetDefaultPath(const Value: string);
+    procedure Setfilename(const Value: string);
+  protected
+    procedure OpenLogFile;
+    procedure CloseLogFile;
   public
     procedure Clear;
     procedure AddLogFile(InfoType: Integer;Information:WideString;InfoSource:Widestring='';Operation:Widestring='';InfoID:Integer=-1;ComputerName:WideString='');
     function ReadLogFile:string;
     constructor Create;
     destructor Destroy; override;
-    property  DefaultPath:string read FDefaultPath write SetDefaultPath;
+    property DefaultPath:string read FDefaultPath write SetDefaultPath;
+    property filename:string read Ffilename write Setfilename;
   end;
 var LogFile:TZLogFilePool;
 implementation
@@ -31,8 +37,9 @@ procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:WideString;Info
 begin
    Enter;
    try
-     if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
-        Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
+     //if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
+     OpenLogFile;
+     Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
      if MainFormHandle>0 then
         begin
           Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
@@ -54,15 +61,22 @@ begin
   end;
 end;
 
+procedure TZLogFilePool.CloseLogFile;
+begin
+  if FileName<>'' then CloseFile(F);
+  FileName := '';
+end;
+
 constructor TZLogFilePool.Create;
 begin
   DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
-  ForceDirectories(DefaultPath+'debug');
-  if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
-  begin
-    AssignFile(F,DefaultPath+'debug\debug.txt');
-    rewrite(f);
-  end;
+  ForceDirectories(DefaultPath+'log');
+//  if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
+//  begin
+//    AssignFile(F,DefaultPath+'debug\debug.txt');
+//    rewrite(f);
+//  end;
+  OpenLogFile;
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;
@@ -72,8 +86,9 @@ begin
   Enter;
   try
     inherited;
-    if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
-       CloseFile(F);
+//    if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
+//       CloseFile(F);
+    CloseLogFile;
     LogFile := nil;
   finally
     Leave;
@@ -89,6 +104,17 @@ end;
 procedure TZLogFilePool.Leave;
 begin
   LeaveCriticalSection(FThreadLock);
+end;
+
+procedure TZLogFilePool.OpenLogFile;
+var
+  myFile:string;
+begin
+  myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
+  if myFile=FileName then Exit else CloseLogFile;
+  AssignFile(F,myFile);
+  if FileExists(myFile) then Append(F) else rewrite(F);
+  FileName := myFile;
 end;
 
 function TZLogFilePool.ReadLogFile: string;
@@ -109,6 +135,11 @@ end;
 procedure TZLogFilePool.SetDefaultPath(const Value: string);
 begin
   FDefaultPath := Value;
+end;
+
+procedure TZLogFilePool.Setfilename(const Value: string);
+begin
+  Ffilename := Value;
 end;
 
 initialization

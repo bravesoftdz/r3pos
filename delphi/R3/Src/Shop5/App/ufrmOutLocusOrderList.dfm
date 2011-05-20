@@ -1,9 +1,9 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 125
-  Top = 152
+  Left = 205
+  Top = 142
   Width = 868
   Height = 575
-  Caption = #25195#30721#20986#24211
+  Caption = #21457#36135#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -16,6 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 836
         Height = 485
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -121,10 +123,10 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#21457#36135
                   end
                   item
-                    Caption = #24050#25195#30721
+                    Caption = #24050#21457#36135
                   end>
                 TabOrder = 0
                 Caption = ''
@@ -541,10 +543,10 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#21457#36135
                   end
                   item
-                    Caption = #24050#25195#30721
+                    Caption = #24050#21457#36135
                   end>
                 TabOrder = 3
                 Caption = ''
@@ -653,7 +655,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
               FrozenCols = 1
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               ReadOnly = True
               RowHeight = 20
               TabOrder = 1
@@ -775,7 +777,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
         end
         object TabSheet3: TRzTabSheet
           Color = clWindow
-          Caption = #35843#25972#21333#26597#35810
+          Caption = #39046#29992#21333#26597#35810
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -803,7 +805,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #35843#25972#26085#26399
+                Caption = #39046#29992#26085#26399
               end
               object RzLabel10: TRzLabel
                 Left = 200
@@ -912,10 +914,10 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#21457#36135
                   end
                   item
-                    Caption = #24050#25195#30721
+                    Caption = #24050#21457#36135
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -1023,7 +1025,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
               FrozenCols = 1
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               ReadOnly = True
               RowHeight = 20
               TabOrder = 1
@@ -1065,7 +1067,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'CHANGE_DATE'
                   Footers = <>
-                  Title.Caption = #35843#25972#26085#26399
+                  Title.Caption = #39046#29992#26085#26399
                   Width = 72
                 end
                 item
@@ -1358,10 +1360,10 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#21457#36135
                   end
                   item
-                    Caption = #24050#25195#30721
+                    Caption = #24050#21457#36135
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -1629,13 +1631,19 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
   end
   inherited actList: TActionList
     inherited actNew: TAction
-      Caption = #25195#30721
+      Caption = #21457#36135
     end
     inherited actDelete: TAction
       Caption = #37325#25195
     end
     inherited actEdit: TAction
       Visible = False
+    end
+    inherited actSave: TAction
+      Caption = #23436#25104
+    end
+    inherited actCancel: TAction
+      Caption = #25764#28040
     end
     inherited actPrint: TAction
       Visible = False
@@ -1647,6 +1655,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       OnExecute = actInfoExecute
     end
     inherited actAudit: TAction
+      Caption = #23436#25104
       Visible = False
     end
   end

@@ -237,6 +237,10 @@ begin
       begin
         edtSAFE_DAY.Value := StrToIntDef(Value, 7);
       end;
+    if Define = 'DAY_SALE_STAND' then
+      begin
+        edtDAY_SALE_STAND.Value := StrToIntDef(Value, 90);
+      end;
 
     if Define = 'CUSTCONTINU' then
     begin
@@ -447,6 +451,7 @@ begin
     SetValue('DUPBARCODE', '0');
   SetValue('RECK_DAY', edtRECK_DAY.Text);
   SetValue('SAFE_DAY', edtSAFE_DAY.Value);
+  SetValue('DAY_SALE_STAND', edtDAY_SALE_STAND.Value);
   if IsBirthDay.Checked then
     SetValue('BIRTHDAY', BirthDays.Value)
   else
@@ -706,6 +711,7 @@ begin
 
 
   edtSAFE_DAY.Value := 7;
+  edtDAY_SALE_STAND.Value := 90;
 end;
 
 end.

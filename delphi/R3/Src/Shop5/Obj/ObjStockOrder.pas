@@ -279,7 +279,7 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID';
+         rs.SQL.Text := 'select PAYM_MNY from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID and ABLE_TYPE=''5''';
          rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
          rs.ParamByName('STOCK_ID').AsString := FieldbyName('STOCK_ID').AsOldString;
          AGlobal.Open(rs);
@@ -287,7 +287,7 @@ begin
        finally
          rs.Free;
        end;
-       AGlobal.ExecSQL('delete from ACC_PAYABLE_INFO where STOCK_ID=:OLD_STOCK_ID and TENANT_ID=:OLD_TENANT_ID',self);
+       AGlobal.ExecSQL('delete from ACC_PAYABLE_INFO where STOCK_ID=:OLD_STOCK_ID and TENANT_ID=:OLD_TENANT_ID and ABLE_TYPE=''4''',self);
      end;
 //  if not lock then
 //     WriteLogInfo(AGlobal,FieldbyName('CREA_USER').AsString,2,'400018','É¾³ý¡¾µ¥ºÅ'+FieldbyName('GLIDE_NO').asString+'¡¿',EncodeLogInfo(self,'STK_STOCKORDER',usDeleted));

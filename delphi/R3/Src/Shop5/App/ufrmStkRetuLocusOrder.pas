@@ -123,7 +123,7 @@ procedure TfrmStkRetuLocusOrder.EditOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经批码的单据不能重复操作');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能发货.');
   edtInput.Properties.ReadOnly := false;
   edtInput.Style.Color := clWhite;
   if Visible and edtInput.CanFocus then edtInput.SetFocus;
@@ -134,11 +134,20 @@ procedure TfrmStkRetuLocusOrder.NewOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经审核的单据不能再扫码了');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能发货.');
   edtInput.Properties.ReadOnly := false;
   edtInput.Style.Color := clWhite;
   if Visible and edtInput.CanFocus then edtInput.SetFocus;
-  if not NextLocusNo(-1) then MessageBox(Handle,'当前选中的单据没有需要扫码的商品','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if not NextLocusNo(-1) then
+     begin
+       pnlBarCode.Visible := false;
+//       actDelete.Enabled := false;
+     end
+  else
+     begin
+       pnlBarCode.Visible := true;
+//       ActDelete.Enabled := true;
+     end;
   dbState := dsEdit;
 end;
 
@@ -398,6 +407,12 @@ begin
         cdsLocusNo.Post;
         MessageBeep(0);
         Calc;
+        if edtTable.FieldbyName('BAL_AMT').asFloat<0 then
+           begin
+              windows.beep(2000,500);
+              lblHint.Caption := '当前商品已经扫码完毕了。';
+           end
+        else
         lblHint.Caption := '扫码成功,数量:'+edtTable.FieldbyName('LOCUS_AMT').asString;
      end else
         begin
@@ -627,7 +642,10 @@ begin
     begin
       if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
       if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then
-         edtTable.Prior else begin result := true;break;end;
+         begin
+           edtTable.Prior;
+           if edtTable.Bof then Exit;
+         end else begin result := true;break;end;
     end;
 end;
 

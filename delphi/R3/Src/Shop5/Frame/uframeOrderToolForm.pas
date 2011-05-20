@@ -220,7 +220,7 @@ begin
               or
               TframeOrderForm(rzPage.Pages[i].Data).IsNull
               or
-              not TframeOrderForm(rzPage.Pages[i].Data).edtTable.Modified
+              not TframeOrderForm(rzPage.Pages[i].Data).edtTable.Changed
            then
               begin
                 TframeOrderForm(rzPage.Pages[i].Data).Free;
@@ -382,12 +382,12 @@ begin
           actAudit.Caption := '∆˙…Û'
        else
           actAudit.Caption := '…Û∫À';
-       ToolButton1.Visible := true;
+       ToolButton1.Enabled := true;
      end
   else
      begin
        actAudit.Caption := '…Û∫À';
-       ToolButton1.Visible := false;
+       ToolButton1.Enabled := false;
        actAudit.Enabled := false;
      end;
 end;

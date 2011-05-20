@@ -17,8 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 1041
         Height = 514
-        ActivePage = TabSheet3
-        TabIndex = 2
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -817,6 +817,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'ROAD_AMT'
                       Footer.ValueType = fvtSum
@@ -825,6 +827,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 55
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'UPPER_AMOUNT'
                       Footer.ValueType = fvtSum
@@ -833,6 +837,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 57
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DAY_SALE_AMT'
                       Footer.ValueType = fvtSum
@@ -841,6 +847,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 56
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'NEAR_SALE_AMT'
                       Footer.ValueType = fvtSum
@@ -849,6 +857,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
                       Footer.ValueType = fvtSum
@@ -1421,6 +1431,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'MTH_SALE_AMT'
                       Footer.ValueType = fvtSum
@@ -1441,6 +1453,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 46
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'LOWER_RATE'
                       Footer.ValueType = fvtSum
@@ -1449,6 +1462,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 44
                     end
                     item
+                      Alignment = taRightJustify
                       EditButtons = <>
                       FieldName = 'UPPER_RATE'
                       Footer.ValueType = fvtSum

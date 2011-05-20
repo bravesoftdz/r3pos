@@ -167,16 +167,15 @@ begin
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w1 := ' where LOCUS_USER is null';
-       2:w1 := ' where LOCUS_USER is not null';
+       1:w :=w +' and LOCUS_STATUS=''1''';
+       2:w :=w +' and LOCUS_STATUS=''3''';
        end;
      end;
   if id<>'' then
      w := w +' and A.SALES_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
-            'max(A.SALE_AMT) as AMOUNT,max(B.LOCUS_DATE) as LOCUS_DATE,max(B.CREA_USER) as LOCUS_USER,sum(B.AMOUNT) as LOCUS_AMT '+
-            'from SAL_SALESORDER A left outer join SAL_LOCUS_FORSALE B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+w+' group by A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,'+
-            'A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE';
+            'A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT '+
+            'from SAL_SALESORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.RECV_MNY,c.RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SALES_ID=c.SALES_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
@@ -184,6 +183,9 @@ begin
   result := 'select jf.*,f.USER_NAME as LOCUS_USER_TEXT from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.LOCUS_USER=f.USER_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by SALES_ID';
+  1:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by SALES_ID) where ROWNUM<=600';
   4:result :=
        'select * from ('+
        'select * from ('+result+') j order by SALES_ID) tp fetch first 600  rows only';
@@ -765,7 +767,7 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL3(id: string): string;
 var w,w1:string;
 begin
-  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHK_DATE is not null and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
+  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and CHANGE_CODE>''1'' and A.CHK_DATE is not null and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
   if fndP3_DUTY_USER.AsString <> '' then
      w := w +' and A.DUTY_USER=:DUTY_USER';
   if trim(fndP3_CHANGE_ID.Text) <> '' then

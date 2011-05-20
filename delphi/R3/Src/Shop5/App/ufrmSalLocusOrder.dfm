@@ -713,8 +713,8 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
         end>
     end
     inherited fndGODS_ID: TzrComboBoxList
-      Left = 328
-      Top = 171
+      Left = 216
+      Top = 235
     end
     inherited pnlBarCode: TRzPanel
       Top = 144

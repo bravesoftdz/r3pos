@@ -139,10 +139,10 @@ begin
      begin
        rs := TZQuery.Create(nil);
        try
-         rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+'''';
+         rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+''' and RECV_TYPE=''3''';
          AGlobal.Open(rs);
          if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的订货单不能修改...');
-         AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+'''');
+         AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+''' and RECV_TYPE=''3''');
        finally
          rs.Free;
        end;

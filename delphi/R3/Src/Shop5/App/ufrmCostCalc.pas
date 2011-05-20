@@ -1586,10 +1586,12 @@ end;
 procedure TfrmCostCalc.CalcAnaly;
 var
   SQL:string;
-  safe:integer;
+  safe,daySale:integer;
+  rs:TZQuery;
 begin
   RzProgressBar1.Percent := 0;
   safe := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
+  daySale := StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
   SQL :=
     'insert into PUB_GOODS_INSHOP(TENANT_ID,GODS_ID,SHOP_ID,COMM,TIME_STAMP)'+
     'select TENANT_ID,GODS_ID,SHOP_ID,''00'','+GetTimeStamp(Factor.iDbType)+' from VIW_GOODSPRICE A where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '+
@@ -1603,13 +1605,26 @@ begin
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
   RzProgressBar1.Percent := 20;
-  //日均销量
-  SQL :=
-    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where SALES_DATE>='+formatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
-    ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
-    'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-  Factor.ExecSQL(SQL);
-  RzProgressBar1.Percent := 20;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TENANT_ID,GODS_ID,SHOP_ID,sum(CALC_AMOUNT) as AMOUNT,max(SALES_DATE) as EDate,min(SALES_DATE) as BDate from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' group by TENANT_ID,GODS_ID,SHOP_ID';
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        
+        rs.Next;
+      end;
+    //日均销量测算
+    SQL :=
+      'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)/'+inttostr(daySale)+'.0,3) from VIW_SALESDATA where SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+      ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+      'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    Factor.ExecSQL(SQL);
+  finally
+    rs.Free;
+  end;
+  RzProgressBar1.Percent := 30;
 end;
 
 class function TfrmCostCalc.CalcAnalyLister(Owner: TForm): boolean;

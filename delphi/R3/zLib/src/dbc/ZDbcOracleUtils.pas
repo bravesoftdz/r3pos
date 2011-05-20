@@ -582,7 +582,7 @@ begin
     Result := stTimestamp
   else if (TypeName = 'NUMBER') or (TypeName = 'DECIMAL') then
   begin                              
-    if (Precision = 0) then
+    if (Precision = 0) and (Size <> 0) then
     begin
       if Size = 0 then
         Result := stLong

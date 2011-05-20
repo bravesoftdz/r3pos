@@ -241,8 +241,7 @@ begin
           FPlainDriver.AttrGet(CurrentVar.Handle, OCI_DTYPE_PARAM,
             @CurrentVar.Scale, nil, OCI_ATTR_SCALE, FErrorHandle);
 //          zhangsr modify 20110518
-//          if (CurrentVar.Scale = 0) and (CurrentVar.Precision = 0) then
-          if (CurrentVar.Scale = 0) or (CurrentVar.Scale > 36) then
+          if (CurrentVar.Scale = 0) and (CurrentVar.Precision <> 0)  then
           begin
             if CurrentVar.Precision = 0 then
               CurrentVar.ColType := stLong

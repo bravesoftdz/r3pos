@@ -554,11 +554,11 @@ begin
        end;
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_CST) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
-          ',sum(BAL_CST) as BAL_CST '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-          ',sum(BAL_RTL) as BAL_RTL '+
+          ' sum(nvl(BAL_AMT,0)) as BAL_AMT '+
+          ',case when sum(nvl(BAL_AMT,0))<>0 then cast(sum(nvl(BAL_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',sum(nvl(BAL_CST,0)) as BAL_CST '+
+          ',case when sum(nvl(BAL_AMT,0))<>0 then cast(sum(nvl(BAL_RTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
+          ',sum(nvl(BAL_RTL,0)) as BAL_RTL '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+

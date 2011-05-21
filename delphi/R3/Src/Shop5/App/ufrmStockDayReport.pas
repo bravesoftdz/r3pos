@@ -634,15 +634,15 @@ begin
 
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          ' sum(STOCK_AMT) as STOCK_AMT '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_TTL) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as STOCK_PRC '+
-          ',sum(STOCK_TTL) as STOCK_TTL '+
-          ',sum(STOCK_MNY) as STOCK_MNY '+
-          ',sum(STOCK_TAX) as STOCK_TAX '+
-          ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',case when sum(STOCK_TTL)<>0 then cast(sum(STOCK_TTL)-sum(STOCK_AGO) as decimal(18,3))*100.00/cast(sum(STOCK_TTL) as decimal(18,3)) else 0 end as STOCK_RATE '+
-          ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT) as decimal(18,3)) else 0 end as AVG_AGIO '+
-          ',sum(STOCK_AGO) as STOCK_AGO '+
+          ' sum(nvl(STOCK_AMT,0)) as STOCK_AMT '+
+          ',case when sum(nvl(STOCK_AMT,0))<>0 then cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as STOCK_PRC '+
+          ',sum(nvl(STOCK_TTL,0)) as STOCK_TTL '+
+          ',sum(nvl(STOCK_MNY,0)) as STOCK_MNY '+
+          ',sum(nvl(STOCK_TAX,0)) as STOCK_TAX '+
+          ',sum(nvl(STOCK_RTL,0)) as STOCK_RTL '+
+          ',case when sum(nvl(STOCK_TTL,0))<>0 then cast(sum(nvl(STOCK_TTL,0))-sum(nvl(STOCK_AGO,0)) as decimal(18,3))*100.00/cast(sum(nvl(STOCK_TTL,0)) as decimal(18,3)) else 0 end as STOCK_RATE '+
+          ',case when sum(nvl(STOCK_AMT,0))<>0 then cast(sum(nvl(STOCK_AGO,0)) as decimal(18,3))*1.00/cast(sum(nvl(STOCK_AMT,0)) as decimal(18,3)) else 0 end as AVG_AGIO '+
+          ',sum(nvl(STOCK_AGO,0)) as STOCK_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+

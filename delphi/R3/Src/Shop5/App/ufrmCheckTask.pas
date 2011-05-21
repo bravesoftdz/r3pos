@@ -91,7 +91,7 @@ begin
        'union all '+
        'select count(*) as Resum from STK_STOCKORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and STOCK_DATE>:BillDate '+
        'union all '+
-       'select count(*) as Resum from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and  CHANGE_DATE>:BillDate) as tmp';
+       'select count(*) as Resum from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and  CHANGE_DATE>:BillDate)tmp';
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
      if Temp.Params.FindParam('SHOP_ID')<>nil then Temp.ParamByName('SHOP_ID').AsString:=SHOP_ID;
      if Temp.Params.FindParam('BillDate')<>nil then Temp.ParamByName('BillDate').AsInteger:=StrToInt(formatDatetime('YYYYMMDD',date()));

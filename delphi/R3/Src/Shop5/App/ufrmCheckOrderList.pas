@@ -103,10 +103,10 @@ begin
        ' left outer join VIW_USERS b on b.TENANT_ID=:TENANT_ID and jb.CREA_USER=b.USER_ID '+
        ' left outer join VIW_USERS c on c.TENANT_ID=:TENANT_ID and jb.CHK_USER=c.USER_ID ';
   case Factor.iDbType of
-   0,3: result:='select top 600 * from ('+str+') as tmp order by PRINT_DATE ';
+   0,3: result:='select top 600 * from ('+str+') tmp order by PRINT_DATE ';
    1: result:='select * from ('+str+' order by jb.PRINT_DATE) where ROWNUM<=600 order by PRINT_DATE';
    4: result:='select tp.* from ('+str+' order by jb.PRINT_DATE) tp fetch first 600 rows only ';
-   5: result:='select * from ('+str+') as tmp order by PRINT_DATE limit 600 ';
+   5: result:='select * from ('+str+') tmp order by PRINT_DATE limit 600 ';
   end;
 end;
 

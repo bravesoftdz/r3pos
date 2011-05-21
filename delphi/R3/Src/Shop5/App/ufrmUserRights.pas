@@ -133,19 +133,10 @@ var
 begin
   try
     RsRight:=TZQuery.Create(nil);
-    case Factor.iDbType of
-     0,4,5:
-      begin //SQLITE环境下通过，Ms SQL Server语法一样
-        Str:='select MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
-          ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(ROLE_IDS,',',''',''',[rfReplaceAll])+''') '+
-          ' union all '+
-          ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
-      end;
-     1:
-      begin
-        Str:='';
-      end;
-    end;
+    Str:='select MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and '+
+      ' R.ROLE_ID=B.ROLE_ID and R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(ROLE_IDS,',',''',''',[rfReplaceAll])+''') '+
+      ' union all '+
+      ' select MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID ';
     RsRight.Close;
     RsRight.SQL.Text:=Str;
     if RsRight.Params.FindParam('TENANT_ID')<>nil then

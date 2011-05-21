@@ -175,7 +175,7 @@ begin
       w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or BARCODE like ''%'''+sc+':KEYVALUE )';
      end;
   case Factor.iDbType of
-  0:
+  0,3:
    result :=
      'select top 600 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
@@ -183,6 +183,15 @@ begin
      ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID';
+  1:
+   result :=
+     'select * from '+
+     '(select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
+     ' where l.GODS_ID=r.GODS_ID '+
+     ' order by l.GODS_ID) where ROWNUM<=600 order by ROWNUM';
   4:
   result :=
      'select tp.* from ('+

@@ -849,17 +849,17 @@ begin
        end;
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          ' sum(SALE_AMT) as SALE_AMT '+
-          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_TTL) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRC '+
-          ',sum(SALE_TTL) as SALE_TTL '+
-          ',sum(SALE_MNY) as SALE_MNY '+
-          ',sum(SALE_TAX) as SALE_TAX '+
-          ',sum(SALE_RTL) as SALE_RTL '+
-          ',sum(SALE_PRF) as SALE_ALLPRF '+   //Ã«Àû
-          ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
-          ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT) as decimal(18,3)) else 0 end as SALE_PRF '+
-          ',sum(SALE_CST) as SALE_CST '+
-          ',sum(SALE_AGO) as SALE_AGO '+
+          ' sum(nvl(SALE_AMT,0)) as SALE_AMT '+
+          ',case when sum(nvl(SALE_AMT,0))<>0 then cast(sum(nvl(SALE_TTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRC '+
+          ',sum(nvl(SALE_TTL,0)) as SALE_TTL '+
+          ',sum(nvl(SALE_MNY,0)) as SALE_MNY '+
+          ',sum(nvl(SALE_TAX,0)) as SALE_TAX '+
+          ',sum(nvl(SALE_RTL,0)) as SALE_RTL '+
+          ',sum(nvl(SALE_PRF,0)) as SALE_ALLPRF '+   //Ã«Àû
+          ',case when sum(nvl(SALE_MNY,0))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*100.00/cast(sum(nvl(SALE_MNY,0)) as decimal(18,3)) else 0 end as SALE_RATE '+
+          ',case when sum(nvl(SALE_AMT,0))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*1.00/cast(sum(nvl(SALE_AMT,0)) as decimal(18,3)) else 0 end as SALE_PRF '+
+          ',sum(nvl(SALE_CST,0)) as SALE_CST '+
+          ',sum(nvl(SALE_AGO,0)) as SALE_AGO '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
@@ -1503,6 +1503,7 @@ end;
 
 procedure TfrmSaleDayReport.SetRzPageActivePage(IsGroupReport: Boolean);
 var
+  i: integer;
   IsVisble: Boolean;
   Rs: TZQuery;
 begin
@@ -1523,10 +1524,11 @@ begin
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := IsVisble;
   rzPage.Pages[2].TabVisible := IsVisble;
-  if rzPage.Pages[0].TabVisible then rzPage.ActivePageIndex:=0
-  else if rzPage.Pages[1].TabVisible then rzPage.ActivePageIndex:=1
-  else if rzPage.Pages[2].TabVisible then rzPage.ActivePageIndex:=2
-  else if rzPage.Pages[3].TabVisible then rzPage.ActivePageIndex:=3;
+  for i:=0 to rzPage.PageCount-1 do
+  begin
+    if rzPage.Pages[i].TabVisible then
+      rzPage.ActivePageIndex:=i;
+  end; 
 end;
 
 procedure TfrmSaleDayReport.fndP6_SORT_IDPropertiesButtonClick(

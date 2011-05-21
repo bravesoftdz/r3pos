@@ -603,14 +603,14 @@ begin
        end;    
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          ' sum(DBIN_AMT) as DBIN_AMT '+
-          ',sum(DBIN_CST) as DBIN_CST '+
-          ',case when sum(DBIN_AMT)<>0 then cast(sum(DBIN_CST) as decimal(18,3))*1.00/cast(sum(DBIN_AMT) as decimal(18,3)) else 0 end as DBIN_PRC '+
-          ',sum(DBIN_RTL) as DBIN_RTL '+
-          ',sum(DBOUT_AMT) as DBOUT_AMT '+
-          ',sum(DBOUT_CST) as DBOUT_CST '+
-          ',sum(DBOUT_RTL) as DBOUT_RTL '+  
-          ',case when sum(DBOUT_AMT)<>0 then cast(sum(DBOUT_CST) as decimal(18,3))*1.00/cast(sum(DBOUT_AMT) as decimal(18,3)) else 0 end as DBOUT_PRC '+
+          ' sum(nvl(DBIN_AMT,0)) as DBIN_AMT '+
+          ',sum(nvl(DBIN_CST,0)) as DBIN_CST '+
+          ',case when sum(nvl(DBIN_AMT,0))<>0 then cast(sum(nvl(DBIN_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBIN_AMT,0)) as decimal(18,3)) else 0 end as DBIN_PRC '+
+          ',sum(nvl(DBIN_RTL,0)) as DBIN_RTL '+
+          ',sum(nvl(DBOUT_AMT,0)) as DBOUT_AMT '+
+          ',sum(nvl(DBOUT_CST,0)) as DBOUT_CST '+
+          ',sum(nvl(DBOUT_RTL,0)) as DBOUT_RTL '+  
+          ',case when sum(nvl(DBOUT_AMT,0))<>0 then cast(sum(nvl(DBOUT_CST,0)) as decimal(18,3))*1.00/cast(sum(nvl(DBOUT_AMT,0)) as decimal(18,3)) else 0 end as DBOUT_PRC '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+

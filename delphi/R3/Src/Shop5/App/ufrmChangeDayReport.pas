@@ -625,11 +625,11 @@ begin
        
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else 0 end as APRICE '+  //--均价
-          ',sum(AMONEY) as AMONEY '+      //--可销售额
-          ',sum(COST_MONEY) as COST_MONEY '+  //--进货成本
-          ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
+          ' sum(nvl(AMOUNT,0)) as AMOUNT '+      //数量
+          ',case when sum(nvl(AMOUNT,0))<>0 then sum(nvl(AMONEY,0))/sum(nvl(AMOUNT,0)) else 0 end as APRICE '+  //--均价
+          ',sum(nvl(AMONEY,0)) as AMONEY '+      //--可销售额
+          ',sum(nvl(COST_MONEY,0)) as COST_MONEY '+  //--进货成本
+          ',sum(nvl(AMONEY,0))-sum(nvl(COST_MONEY,0)) as PROFIT_MONEY '+  //差额毛利
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID  '+
           'from ('+

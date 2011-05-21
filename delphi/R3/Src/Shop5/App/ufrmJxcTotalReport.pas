@@ -578,40 +578,40 @@ begin
 
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
-          'sum(ORG_AMT) as ORG_AMT '+
-          ',sum(ORG_RTL) as ORG_RTL '+
-          ',sum(ORG_CST) as ORG_CST '+
-          ',sum(STOCK_AMT) as STOCK_AMT '+
-          ',sum(STOCK_MNY) as STOCK_MNY '+
-          ',sum(STOCK_TAX) as STOCK_TAX '+
-          ',sum(STOCK_RTL) as STOCK_RTL '+
-          ',sum(STOCK_TTL) as STOCK_TTL '+
-          ',sum(SALE_AMT) as SALE_AMT '+
-          ',sum(SALE_RTL) as SALE_RTL '+
-          ',sum(SALE_MNY) as SALE_MNY '+
-          ',sum(SALE_TAX) as SALE_TAX '+
-          ',sum(SALE_TTL) as SALE_TTL '+
-          ',sum(SALE_CST) as SALE_CST '+
-          ',sum(SALE_PRF) as SALE_PRF '+
-          ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
-          ',sum(DBIN_AMT) as DBIN_AMT '+
-          ',sum(DBIN_CST) as DBIN_CST '+
-          ',sum(DBOUT_AMT) as DBOUT_AMT '+
-          ',sum(DBOUT_CST) as DBOUT_CST '+
-          ',sum(CHANGE1_AMT) as CHANGE1_AMT '+
-          ',sum(CHANGE1_CST) as CHANGE1_CST '+
-          ',sum(CHANGE2_AMT) as CHANGE2_AMT '+
-          ',sum(CHANGE2_CST) as CHANGE2_CST '+
-          ',sum(CHANGE3_AMT) as CHANGE3_AMT '+
-          ',sum(CHANGE3_CST) as CHANGE3_CST '+
-          ',sum(CHANGE4_AMT) as CHANGE4_AMT '+
-          ',sum(CHANGE4_CST) as CHANGE4_CST '+
-          ',sum(CHANGE5_AMT) as CHANGE5_AMT '+
-          ',sum(CHANGE5_CST) as CHANGE5_CST '+
-          ',sum(BAL_AMT) as BAL_AMT '+
-          ',sum(BAL_MNY) as BAL_MNY '+
-          ',sum(BAL_RTL) as BAL_RTL '+
-          ',sum(BAL_CST) as BAL_CST '+
+          'sum(nvl(ORG_AMT,0)) as ORG_AMT '+
+          ',sum(nvl(ORG_RTL,0)) as ORG_RTL '+
+          ',sum(nvl(ORG_CST,0)) as ORG_CST '+
+          ',sum(nvl(STOCK_AMT,0)) as STOCK_AMT '+
+          ',sum(nvl(STOCK_MNY,0)) as STOCK_MNY '+
+          ',sum(nvl(STOCK_TAX,0)) as STOCK_TAX '+
+          ',sum(nvl(STOCK_RTL,0)) as STOCK_RTL '+
+          ',sum(nvl(STOCK_TTL,0)) as STOCK_TTL '+
+          ',sum(nvl(SALE_AMT,0)) as SALE_AMT '+
+          ',sum(nvl(SALE_RTL,0)) as SALE_RTL '+
+          ',sum(nvl(SALE_MNY,0)) as SALE_MNY '+
+          ',sum(nvl(SALE_TAX,0)) as SALE_TAX '+
+          ',sum(nvl(SALE_TTL,0)) as SALE_TTL '+
+          ',sum(nvl(SALE_CST,0)) as SALE_CST '+
+          ',sum(nvl(SALE_PRF,0)) as SALE_PRF '+
+          ',case when sum(nvl(SALE_CST,0))<>0 then cast(sum(nvl(SALE_PRF,0)) as decimal(18,3))*100.00/cast(sum(nvl(SALE_CST,0)) as decimal(18,3)) else 0 end SALE_RATE '+
+          ',sum(nvl(DBIN_AMT,0)) as DBIN_AMT '+
+          ',sum(nvl(DBIN_CST,0)) as DBIN_CST '+
+          ',sum(nvl(DBOUT_AMT,0)) as DBOUT_AMT '+
+          ',sum(nvl(DBOUT_CST,0)) as DBOUT_CST '+
+          ',sum(nvl(CHANGE1_AMT,0)) as CHANGE1_AMT '+
+          ',sum(nvl(CHANGE1_CST,0)) as CHANGE1_CST '+
+          ',sum(nvl(CHANGE2_AMT,0)) as CHANGE2_AMT '+
+          ',sum(nvl(CHANGE2_CST,0)) as CHANGE2_CST '+
+          ',sum(nvl(CHANGE3_AMT,0)) as CHANGE3_AMT '+
+          ',sum(nvl(CHANGE3_CST,0)) as CHANGE3_CST '+
+          ',sum(nvl(CHANGE4_AMT,0)) as CHANGE4_AMT '+
+          ',sum(nvl(CHANGE4_CST,0)) as CHANGE4_CST '+
+          ',sum(nvl(CHANGE5_AMT,0)) as CHANGE5_AMT '+
+          ',sum(nvl(CHANGE5_CST,0)) as CHANGE5_CST '+
+          ',sum(nvl(BAL_AMT,0)) as BAL_AMT '+
+          ',sum(nvl(BAL_MNY,0)) as BAL_MNY '+
+          ',sum(nvl(BAL_RTL,0)) as BAL_RTL '+
+          ',sum(nvl(BAL_CST,0)) as BAL_CST '+
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+

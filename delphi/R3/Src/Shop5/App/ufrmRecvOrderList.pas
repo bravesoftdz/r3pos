@@ -381,6 +381,7 @@ begin
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
+  1:result := 'select * from ('+strSql+' order by ABLE_ID) where ROWNUM<=600 order by ROWNUM';
   4:result :=
        'select * from ('+
        'select * from ('+strSql+') j order by ABLE_ID) tp fetch first 600  rows only';
@@ -433,6 +434,7 @@ begin
            'left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.CHK_USER=h.USER_ID';
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by RECV_ID';
+  1:result := 'select * from ('+strSql+' order by RECV_ID) where ROWNUM<=600 order by ROWNUM';
   4:result :=
        'select * from ('+
        'select * from ('+strSql+') j order by RECV_ID) tp fetch first 600  rows only';

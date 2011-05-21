@@ -9,14 +9,14 @@ inherited frmRecvPosList: TfrmRecvPosList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 526
+    Width = 900
+    Height = 537
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 516
+      Width = 890
+      Height = 527
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 510
+        Width = 884
+        Height = 521
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
@@ -24,13 +24,13 @@ inherited frmRecvPosList: TfrmRecvPosList
         inherited TabSheet1: TRzTabSheet
           Caption = #32467#36134#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -218,16 +218,16 @@ inherited frmRecvPosList: TfrmRecvPosList
             object Panel1: TPanel
               Left = 6
               Top = 90
-              Width = 862
-              Height = 387
+              Width = 870
+              Height = 398
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 385
+                Width = 868
+                Height = 396
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -363,8 +363,8 @@ inherited frmRecvPosList: TfrmRecvPosList
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -373,7 +373,7 @@ inherited frmRecvPosList: TfrmRecvPosList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -749,16 +749,16 @@ inherited frmRecvPosList: TfrmRecvPosList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 862
-              Height = 348
+              Width = 870
+              Height = 359
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 346
+                Width = 868
+                Height = 357
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -906,17 +906,17 @@ inherited frmRecvPosList: TfrmRecvPosList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image3: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited rzPanel5: TPanel
       Left = 374
@@ -1042,7 +1042,7 @@ inherited frmRecvPosList: TfrmRecvPosList
     Left = 176
     Top = 233
     ReportForm = {
-      1800000073190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000006C190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1245,7 +1245,7 @@ inherited frmRecvPosList: TfrmRecvPosList
       00FEFEFF060000000A00205661726961626C6573000000000200736C00140063
       64735F436867426F64792E22534C30303030220002006A650014006364735F43
       6867426F64792E224A4530303030220004006B68796800000000040079687A68
-      000000000200647A000000000000000000000000FDFF0100000000}
+      000000000200647A000000000000000000000000}
   end
   object cdsList: TZQuery
     FieldDefs = <>

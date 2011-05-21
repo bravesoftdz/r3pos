@@ -118,7 +118,7 @@ begin
           n := 0;
         end;
 
-      Str := 'update PUB_IC_INFO set CLIENT_ID=:CLIENT_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,'+
+      Str := 'update PUB_IC_INFO set CLIENT_ID=:CLIENT_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:IC_CARDNO,'+
           'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
           GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO=:OLD_CLIENT_CODE and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
       n := AGlobal.ExecSQL(Str,Self);

@@ -50,6 +50,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TSalRetuForLocusNoHeader=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
   TSalRetuForLocusNo=class(TZFactory)
   private
   public
@@ -434,10 +439,10 @@ begin
                ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESORDER(TENANT_ID,SHOP_ID,DEPT_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,IC_CARDNO,UNION_ID,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,ADVA_MNY,PAY_A,PAY_B,PAY_C,'+
-      'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,BARTER_INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE) '
+      'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,BARTER_INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,LOCUS_STATUS) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:SALES_ID,:GLIDE_NO,:SALES_DATE,:SALES_TYPE,:IC_CARDNO,:UNION_ID,:PLAN_DATE,:CLIENT_ID,:GUIDE_USER,:CHK_DATE,:CHK_USER,:FROM_ID,'+
       ':FIG_ID,- :SALE_AMT,- :SALE_MNY,:CASH_MNY,:PAY_ZERO,- :PAY_DIBS,- :ADVA_MNY,- :PAY_A,- :PAY_B,- :PAY_C,- :PAY_D,'+
-      '- :PAY_E,- :PAY_F,- :PAY_G,- :PAY_H,- :PAY_I,- :PAY_J,- :INTEGRAL,- :BARTER_INTEGRAL,:REMARK,:INVOICE_FLAG,:TAX_RATE,''00'','+GetSysDateFormat(iDbType)+',:CREA_USER,'+GetTimeStamp(iDbType)+',:LINKMAN,:TELEPHONE,:SEND_ADDR,:SALES_STYLE)';
+      '- :PAY_E,- :PAY_F,- :PAY_G,- :PAY_H,- :PAY_I,- :PAY_J,- :INTEGRAL,- :BARTER_INTEGRAL,:REMARK,:INVOICE_FLAG,:TAX_RATE,''00'','+GetSysDateFormat(iDbType)+',:CREA_USER,'+GetTimeStamp(iDbType)+',:LINKMAN,:TELEPHONE,:SEND_ADDR,:SALES_STYLE,''2'')';
   InsertSQL.Text := Str;
   Str := 'update SAL_SALESORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,SALES_ID=:SALES_ID,GLIDE_NO=:GLIDE_NO,SALES_DATE=:SALES_DATE,PLAN_DATE=:PLAN_DATE,SALES_TYPE=:SALES_TYPE,CLIENT_ID=:CLIENT_ID,'+
          'GUIDE_USER=:GUIDE_USER,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,FROM_ID=:FROM_ID,FIG_ID=:FIG_ID,SALE_AMT=- :SALE_AMT,SALE_MNY=- :SALE_MNY,CASH_MNY=:CASH_MNY,PAY_ZERO=:PAY_ZERO,PAY_DIBS=- :PAY_DIBS,PAY_A=- :PAY_A,PAY_B=- :PAY_B,'+
@@ -564,6 +569,40 @@ begin
   DeleteSQL.Text := str;
 end;
 
+{ TSalRetuForLocusNoHeader }
+
+procedure TSalRetuForLocusNoHeader.InitClass;
+var Str:string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select jh.*,h.DEPT_NAME as DEPT_ID_TEXT from ('+
+               'select jg.*,g.GLIDE_NO as SAL_GLIDE_NO from ('+
+               'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
+               'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
+               'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+               'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+
+               'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT,b.PRICE_ID,b.INTEGRAL as ACCU_INTEGRAL,b.BALANCE,b.CLIENT_CODE from '+
+               '(select TENANT_ID,SHOP_ID,DEPT_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,-SALE_AMT as SALE_AMT,-SALE_MNY as SALE_MNY,CASH_MNY,PAY_ZERO,-PAY_DIBS as PAY_DIBS,'+
+               '-ADVA_MNY as ADVA_MNY,-PAY_A as PAY_A,-PAY_B as PAY_B,-PAY_C as PAY_C,-PAY_D as PAY_D,-PAY_E as PAY_E,-PAY_F as PAY_F,-PAY_G as PAY_G,-PAY_H as PAY_H,-PAY_I as PAY_I,-PAY_J as PAY_J,-INTEGRAL as INTEGRAL,-BARTER_INTEGRAL as BARTER_INTEGRAL,'+
+               'LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,-LOCUS_AMT as LOCUS_AMT,'+
+               'REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,IC_CARDNO,UNION_ID,COMM,CREA_DATE,CREA_USER,'+
+               'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
+               ' left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+               ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd '+
+               ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
+               ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
+               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID ) jg '+
+               ' left outer join SAL_SALESORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.SALES_ID ) jh '+
+               ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
+  Str :=
+      'update SAL_SALESORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=- :LOCUS_AMT,'
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID';
+  UpdateSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TSalRetuOrder);
   RegisterClass(TSalRetuData);
@@ -571,6 +610,7 @@ initialization
   RegisterClass(TSalRetuOrderUnAudit);
   RegisterClass(TSalRetuOrderGetPrior);
   RegisterClass(TSalRetuOrderGetNext);
+  RegisterClass(TSalRetuForLocusNoHeader);
   RegisterClass(TSalRetuForLocusNo);
 finalization
   UnRegisterClass(TSalRetuOrder);
@@ -579,5 +619,6 @@ finalization
   UnRegisterClass(TSalRetuOrderUnAudit);
   UnRegisterClass(TSalRetuOrderGetPrior);
   UnRegisterClass(TSalRetuOrderGetNext);
+  UnRegisterClass(TSalRetuForLocusNoHeader);
   UnRegisterClass(TSalRetuForLocusNo);
 end.

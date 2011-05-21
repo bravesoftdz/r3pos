@@ -689,16 +689,15 @@ begin
   if fndP2_STATUS.ItemIndex > 0 then
      begin
        case fndP2_STATUS.ItemIndex of
-       1:w1 := ' where LOCUS_USER is null';
-       2:w1 := ' where LOCUS_USER is not null';
+       1:w :=w +' and LOCUS_STATUS=''1''';
+       2:w :=w +' and LOCUS_STATUS=''3''';
        end;
      end;
   if id<>'' then
      w := w +' and A.SALES_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
-            'max(A.SALE_AMT) as AMOUNT,max(B.LOCUS_DATE) as LOCUS_DATE,max(B.CREA_USER) as LOCUS_USER,sum(B.AMOUNT) as LOCUS_AMT '+
-            'from SAL_SALESORDER A left outer join SAL_LOCUS_FORSALE B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+w+' '+
-            'group by A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE';
+            'A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT '+
+            'from SAL_SALESORDER A '+w+' ';
   result := 'select ja.*,a.SHOP_NAME as CLIENT_NAME from ('+result+') ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.SHOP_ID';
   result := 'select jc.*,c.SHOP_NAME as SHOP_NAME from ('+result+') jc left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
@@ -774,17 +773,16 @@ begin
      w := w +' and A.GLIDE_NO like ''%'+trim(fndP3_CHANGE_ID.Text)+'''';
   if fndP3_STATUS.ItemIndex > 0 then
      begin
-       if fndP3_STATUS.ItemIndex=1 then
-          w1 := ' where A.LOCUS_DATE is null'
-       else
-          w1 := ' where A.LOCUS_DATE is not null';
+       case fndP3_STATUS.ItemIndex of
+       1:w :=w +' and LOCUS_STATUS=''1''';
+       2:w :=w +' and LOCUS_STATUS=''3''';
+       end;
      end;
   if id<>'' then
      w := w +' and A.CHANGE_ID>'''+id+'''';
   result := 'select A.CHANGE_ID,A.CHANGE_DATE,A.GLIDE_NO,A.CHANGE_TYPE,A.REMARK,A.DUTY_USER,A.CHANGE_CODE,A.TENANT_ID,A.DEPT_ID,A.SHOP_ID,A.CREA_DATE,A.CREA_USER,'+
-            'max(A.CHANGE_AMT) as AMOUNT,max(B.LOCUS_DATE) as LOCUS_DATE,max(B.CREA_USER) as LOCUS_USER,sum(B.AMOUNT) as LOCUS_AMT '+
-            'from STO_CHANGEORDER A left outer join STO_LOCUS_FORCHAG B on A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID  '+w +
-            ' group by A.CHANGE_ID,A.CHANGE_DATE,A.GLIDE_NO,A.CHANGE_TYPE,A.REMARK,A.DUTY_USER,A.CHANGE_CODE,A.TENANT_ID,A.DEPT_ID,A.SHOP_ID,A.CREA_DATE,A.CREA_USER';
+            'A.CHANGE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT '+
+            'from STO_CHANGEORDER A  '+w + ' ';
   result := 'select ja.*,a.DEPT_NAME from ('+result+') ja left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID';
   result := 'select jb.*,b.USER_NAME as DUTY_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DUTY_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID';
@@ -882,17 +880,16 @@ begin
   if fndP4_STATUS.ItemIndex > 0 then
      begin
        case fndP4_STATUS.ItemIndex of
-       1:w1 := ' where LOCUS_USER is null';
-       2:w1 := ' where LOCUS_USER is not null';
+       1:w :=w +' and LOCUS_STATUS=''1''';
+       2:w :=w +' and LOCUS_STATUS=''3''';
        end;
      end;
   if id<>'' then
      w := w +' and A.STOCK_ID>'''+id+'''';
   result :=
      'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,'+
-     'max(-A.STOCK_AMT) as AMOUNT,max(B.LOCUS_DATE) as LOCUS_DATE,max(B.CREA_USER) as LOCUS_USER,sum(-B.AMOUNT) as LOCUS_AMT '+
-     'from STK_STOCKORDER A left outer join STK_LOCUS_FORSTCK B on A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID '+w+
-     ' group by A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID';
+     '-A.STOCK_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,-A.LOCUS_AMT as LOCUS_AMT '+
+     'from STK_STOCKORDER A '+w+'';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';

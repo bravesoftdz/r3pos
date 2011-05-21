@@ -48,6 +48,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TChangeForLocusNoHeader=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
   TChangeForLocusNo=class(TZFactory)
   private
   public
@@ -472,6 +477,32 @@ begin
   DeleteSQL.Text := str;
 end;
 
+{ TChangeForLocusNoHeader }
+
+procedure TChangeForLocusNoHeader.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select jf.*,f.DEPT_NAME as DEPT_ID_TEXT from ('+
+               'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+
+               'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+               'select jc.*,c.USER_NAME as DUTY_USER_TEXT from ('+
+               ' select CHANGE_ID,TENANT_ID,SHOP_ID,GLIDE_NO,CHANGE_DATE,DEPT_ID,CHANGE_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CHANGE_AMT,CHANGE_MNY,CREA_USER,COMM,'+
+               ' TIME_STAMP,LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID) jc '+
+               ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.DUTY_USER=c.USER_ID ) jd '+
+               ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID) je '+
+               ' left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID) jf '+
+               ' left outer join CA_DEPT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.DEPT_ID=f.DEPT_ID';
+  Str :=
+      'update STO_CHANGEORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,'
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID';
+  UpdateSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TChangeOrder);
   RegisterClass(TChangeData);
@@ -480,6 +511,7 @@ initialization
   RegisterClass(TChangeOrderAudit);
   RegisterClass(TChangeOrderUnAudit);
   RegisterClass(TChangeForLocusNo);
+  RegisterClass(TChangeForLocusNoHeader);
 finalization
   UnRegisterClass(TChangeOrder);
   UnRegisterClass(TChangeData);
@@ -488,4 +520,5 @@ finalization
   UnRegisterClass(TChangeOrderAudit);
   UnRegisterClass(TChangeOrderUnAudit);
   UnRegisterClass(TChangeForLocusNo);
+  UnRegisterClass(TChangeForLocusNoHeader);
 end.

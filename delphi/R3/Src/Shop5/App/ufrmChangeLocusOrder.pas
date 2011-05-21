@@ -161,7 +161,7 @@ begin
     Params.ParamByName('CHANGE_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TChangeOrder',Params);
+      Factor.AddBatch(cdsHeader,'TChangeForLocusNoHeader',Params);
       Factor.AddBatch(cdsDetail,'TChangeData',Params);
       Factor.AddBatch(cdsLocusNo,'TChangeForLocusNo',Params);
       Factor.OpenBatch;
@@ -216,7 +216,21 @@ begin
       cdsLocusNo.FieldByName('SEQNO').AsInteger := r;
       cdsLocusNo.Next;
     end;
-  Factor.UpdateBatch(cdsLocusNo,'TChangeForLocusNo');
+  cdsHeader.Edit;
+  cdsHeader.FieldbyName('LOCUS_STATUS').AsString := '3';
+  cdsHeader.FieldbyName('LOCUS_USER').AsString := Global.UserID;
+  cdsHeader.FieldbyName('LOCUS_DATE').AsString := formatDatetime('YYYY-MM-DD',Date());
+  cdsHeader.FieldbyName('LOCUS_AMT').AsInteger := r;
+  cdsHeader.Post;
+  Factor.BeginBatch;
+  try
+    Factor.AddBatch(cdsHeader,'TChangeForLocusNoHeader',nil);
+    Factor.AddBatch(cdsLocusNo,'TChangeForLocusNo',nil);
+    Factor.CommitBatch;
+  except
+    Factor.CancelBatch;
+    Raise;
+  end;
   dbState := dsBrowse;
 end;
 

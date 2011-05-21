@@ -117,7 +117,7 @@ begin
   if dbState = dsBrowse then Raise Exception.Create('不在扫码状态不能操作此功能.');
 
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经批码的单据不能重复操作');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能发货.');
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
   if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then MessageBox(Handle,'当前选中的商品没有启动物流跟踪码','友情提示..',MB_OK+MB_ICONINFORMATION);
@@ -173,7 +173,7 @@ begin
     Params.ParamByName('SALES_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TSalesOrder',Params);
+      Factor.AddBatch(cdsHeader,'TSalesForLocusNoHeader',Params);
       Factor.AddBatch(cdsDetail,'TSalesData',Params);
       Factor.AddBatch(cdsLocusNo,'TSalesForLocusNo',Params);
       Factor.OpenBatch;

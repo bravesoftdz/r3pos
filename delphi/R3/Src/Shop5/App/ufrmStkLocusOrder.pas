@@ -154,7 +154,7 @@ begin
     Params.ParamByName('STOCK_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TStockOrder',Params);
+      Factor.AddBatch(cdsHeader,'TStockForLocusNoHeader',Params);
       Factor.AddBatch(cdsDetail,'TStockData',Params);
       Factor.AddBatch(cdsLocusNo,'TStockForLocusNo',Params);
       Factor.OpenBatch;
@@ -208,7 +208,21 @@ begin
       cdsLocusNo.FieldByName('SEQNO').AsInteger := r;
       cdsLocusNo.Next;
     end;
-  Factor.UpdateBatch(cdsLocusNo,'TStockForLocusNo');
+  cdsHeader.Edit;
+  cdsHeader.FieldbyName('LOCUS_STATUS').AsString := '3';
+  cdsHeader.FieldbyName('LOCUS_USER').AsString := Global.UserID;
+  cdsHeader.FieldbyName('LOCUS_DATE').AsString := formatDatetime('YYYY-MM-DD',Date());
+  cdsHeader.FieldbyName('LOCUS_AMT').AsInteger := r;
+  cdsHeader.Post;
+  Factor.BeginBatch;
+  try
+    Factor.AddBatch(cdsHeader,'TStockForLocusNoHeader',nil);
+    Factor.AddBatch(cdsLocusNo,'TStockForLocusNo',nil);
+    Factor.CommitBatch;
+  except
+    Factor.CancelBatch;
+    Raise;
+  end;
   dbState := dsBrowse;
 end;
 

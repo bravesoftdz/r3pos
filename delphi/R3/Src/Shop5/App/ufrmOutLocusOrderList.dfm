@@ -16,8 +16,6 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 836
         Height = 485
-        ActivePage = TabSheet3
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -358,7 +356,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #36827#36135#25968#37327
+                  Title.Caption = #38144#36135#25968#37327
                   Width = 57
                 end
                 item
@@ -372,13 +370,13 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_DATE'
                   Footers = <>
-                  Title.Caption = #25195#30721#26085#26399
+                  Title.Caption = #21457#36135#26085#26399
                 end
                 item
                   EditButtons = <>
                   FieldName = 'LOCUS_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #25195#30721#20154
+                  Title.Caption = #21457#36135#20154
                 end
                 item
                   EditButtons = <>
@@ -728,14 +726,14 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_DATE'
                   Footers = <>
-                  Title.Caption = #25195#30721#26085#26399
+                  Title.Caption = #21457#36135#26085#26399
                   Width = 70
                 end
                 item
                   EditButtons = <>
                   FieldName = 'LOCUS_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #25195#30721#20154
+                  Title.Caption = #21457#36135#20154
                   Width = 60
                 end
                 item
@@ -1095,7 +1093,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #24320#21333#25968#37327
+                  Title.Caption = #39046#29992#25968#37327
                   Width = 65
                 end
                 item
@@ -1110,14 +1108,14 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_DATE'
                   Footers = <>
-                  Title.Caption = #25195#30721#26085#26399
+                  Title.Caption = #21457#36135#26085#26399
                   Width = 70
                 end
                 item
                   EditButtons = <>
                   FieldName = 'LOCUS_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #25195#30721#20154
+                  Title.Caption = #21457#36135#20154
                   Width = 54
                 end
                 item
@@ -1542,13 +1540,13 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_DATE'
                   Footers = <>
-                  Title.Caption = #25195#30721#26085#26399
+                  Title.Caption = #21457#36135#26085#26399
                 end
                 item
                   EditButtons = <>
                   FieldName = 'LOCUS_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #25195#30721#20154
+                  Title.Caption = #21457#36135#20154
                 end
                 item
                   EditButtons = <>

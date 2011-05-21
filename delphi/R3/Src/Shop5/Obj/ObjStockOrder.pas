@@ -50,6 +50,11 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TStockForLocusNoHeader=class(TZFactory)
+  private
+  public
+    procedure InitClass;override;
+  end;
   TStockForLocusNo=class(TZFactory)
   private
   public
@@ -592,6 +597,38 @@ begin
   DeleteSQL.Text := str;
 end;
 
+{ TStockForLocusNoHeader }
+
+procedure TStockForLocusNoHeader.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select jh.*,h.DEPT_NAME as DEPT_ID_TEXT from ('+
+               'select jg.*,g.GLIDE_NO as INDE_GLIDE_NO from ('+
+               'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+               'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
+               'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+               'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
+               'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
+               '(select TENANT_ID,SHOP_ID,DEPT_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
+               'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID,LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
+               ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+               ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
+               ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
+               ' left outer join CA_SHOP_INFO e on  je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
+               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+               ' left outer join STK_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID ) jh '+
+               ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
+  Str :=
+      'update STK_STOCKORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,'
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID';
+  UpdateSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TStockOrder);
   RegisterClass(TStockData);
@@ -600,6 +637,7 @@ initialization
   RegisterClass(TStockOrderAudit);
   RegisterClass(TStockOrderUnAudit);
   RegisterClass(TStockForLocusNo);
+  RegisterClass(TStockForLocusNoHeader);
 finalization
   UnRegisterClass(TStockOrder);
   UnRegisterClass(TStockData);
@@ -608,4 +646,5 @@ finalization
   UnRegisterClass(TStockOrderAudit);
   UnRegisterClass(TStockOrderUnAudit);
   UnRegisterClass(TStockForLocusNo);
+  UnRegisterClass(TStockForLocusNoHeader);
 end.

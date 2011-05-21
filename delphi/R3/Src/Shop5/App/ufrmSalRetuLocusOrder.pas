@@ -164,7 +164,7 @@ begin
     Params.ParamByName('SALES_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TSalRetuOrder',Params);
+      Factor.AddBatch(cdsHeader,'TSalRetuForLocusNoHeader',Params);
       Factor.AddBatch(cdsDetail,'TSalRetuData',Params);
       Factor.AddBatch(cdsLocusNo,'TSalRetuForLocusNo',Params);
       Factor.OpenBatch;
@@ -219,10 +219,24 @@ begin
       cdsLocusNo.FieldByName('SEQNO').AsInteger := r;
       cdsLocusNo.Next;
     end;
+  cdsHeader.Edit;
+  cdsHeader.FieldbyName('LOCUS_STATUS').AsString := '3';
+  cdsHeader.FieldbyName('LOCUS_USER').AsString := Global.UserID;
+  cdsHeader.FieldbyName('LOCUS_DATE').AsString := formatDatetime('YYYY-MM-DD',Date());
+  cdsHeader.FieldbyName('LOCUS_AMT').AsInteger := r;
+  cdsHeader.Post;
   Params := TftParamList.Create(nil);
   try
-    Params.ParambyName('SALES_TYPE').asInteger := cdsHeader.FieldbyName('SALES_TYPE').asInteger;
-    Factor.UpdateBatch(cdsLocusNo,'TSalRetuForLocusNo',Params);
+    Factor.BeginBatch;
+    try
+      Params.ParambyName('SALES_TYPE').asInteger := cdsHeader.FieldbyName('SALES_TYPE').asInteger;
+      Factor.AddBatch(cdsHeader,'TSalRetuForLocusNoHeader',Params);
+      Factor.AddBatch(cdsLocusNo,'TSalRetuForLocusNo',Params);
+      Factor.CommitBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
   finally
     Params.free;
   end;

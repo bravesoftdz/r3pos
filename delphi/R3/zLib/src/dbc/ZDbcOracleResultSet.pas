@@ -900,7 +900,7 @@ begin
     Status := FPlainDriver.StmtFetch(FStmtHandle, FErrorHandle,
       1, OCI_FETCH_NEXT, OCI_DEFAULT);
   end;
-  if not (Status in [OCI_SUCCESS, OCI_NO_DATA]) then
+  if not (Status in [OCI_SUCCESS, OCI_NO_DATA,OCI_SUCCESS_WITH_INFO]) then  //zhangsr add OCI_SUCCESS_WITH_INFO
     CheckOracleError(FPlainDriver, FErrorHandle, Status, lcOther, 'FETCH ROW');
 
   if Status = OCI_SUCCESS then

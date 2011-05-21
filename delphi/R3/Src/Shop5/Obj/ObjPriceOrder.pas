@@ -180,7 +180,7 @@ begin
     ' from SAL_PRICEDATA j '+
     ' left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
     //' left outer join VIW_GOODSPRICE c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
-    'where j.TENANT_ID=:TENANT_ID and j.PROM_ID=:PROM_ID) as tmp order by SEQNO ';
+    'where j.TENANT_ID=:TENANT_ID and j.PROM_ID=:PROM_ID) tmp order by SEQNO ';
     
   Str:='Insert Into SAL_PRICEDATA(PROM_ID,TENANT_ID,SEQNO,GODS_ID,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,RATE_OFF,AGIO_RATE,ISINTEGRAL) '+
     ' Values (:PROM_ID,:TENANT_ID,:SEQNO,:GODS_ID,:OUT_PRICE,:OUT_PRICE1,:OUT_PRICE2,:RATE_OFF,:AGIO_RATE,:ISINTEGRAL)';
@@ -230,7 +230,7 @@ begin
   inherited;
   case iDbType of
   0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc';
-  1:SelectSQL.Text := 'select * from (select ROWNUM,PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) where ROWNUM<2 ';
+  1:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) where ROWNUM<2 ';
   4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO desc) tp fetch first 1 rows only';
   5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC limit 1';
   end;
@@ -243,7 +243,7 @@ begin
   inherited;
   case iDbType of
    0,3:SelectSQL.Text := 'select top 1 PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
-   1:SelectSQL.Text := 'select * from (select ROWNUM,PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) where ROWNUM<2 ';
+   1:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) where ROWNUM<2 ';
    4:SelectSQL.Text := 'select * from (select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
    5:SelectSQL.Text := 'select PROM_ID from SAL_PRICEORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
   end;

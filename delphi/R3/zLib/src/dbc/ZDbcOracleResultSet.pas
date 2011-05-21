@@ -903,7 +903,7 @@ begin
   if not (Status in [OCI_SUCCESS, OCI_NO_DATA,OCI_SUCCESS_WITH_INFO]) then  //zhangsr add OCI_SUCCESS_WITH_INFO
     CheckOracleError(FPlainDriver, FErrorHandle, Status, lcOther, 'FETCH ROW');
 
-  if Status = OCI_SUCCESS then
+  if Status in [OCI_SUCCESS,OCI_SUCCESS_WITH_INFO] then //zhangsr add OCI_SUCCESS_WITH_INFO
   begin
     RowNo := RowNo + 1;
     if LastRowNo < RowNo then

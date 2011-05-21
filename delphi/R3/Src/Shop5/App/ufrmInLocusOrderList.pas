@@ -131,6 +131,7 @@ begin
   result := 'select jf.*,f.USER_NAME as LOCUS_USER_TEXT from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.LOCUS_USER=f.USER_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by STOCK_ID';
+  1:result := 'select * from ('+result+' order by STOCK_ID) where ROWNUM<=600 ';
   4:result :=
        'select * from ('+
        'select * from ('+result+') j order by STOCK_ID) tp fetch first 600  rows only';
@@ -581,6 +582,7 @@ begin
   result := 'select jf.*,f.USER_NAME as LOCUS_USER_TEXT from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.LOCUS_USER=f.USER_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by SALES_ID';
+  1:result := 'select top 600 * from ('+result+' order by SALES_ID) where ROWNUM<=600';
   4:result :=
        'select * from ('+
        'select * from ('+result+') j order by SALES_ID) tp fetch first 600  rows only';

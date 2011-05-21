@@ -1527,7 +1527,10 @@ begin
   for i:=0 to rzPage.PageCount-1 do
   begin
     if rzPage.Pages[i].TabVisible then
+    begin
       rzPage.ActivePageIndex:=i;
+      break;
+    end;
   end; 
 end;
 

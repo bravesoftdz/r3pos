@@ -517,6 +517,10 @@ inherited frmClient: TfrmClient
       ShortCut = 16452
       OnClick = N3Click
     end
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20837
+      OnClick = Excel1Click
+    end
   end
   object Cds_Client: TZQuery
     SortedFields = 'CLIENT_CODE'

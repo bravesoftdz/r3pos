@@ -1,6 +1,6 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 198
-  Top = 196
+  Left = 292
+  Top = 160
   Width = 805
   Height = 534
   Caption = #20250#21592#26723#26696#31649#29702
@@ -765,6 +765,10 @@ inherited frmCustomer: TfrmCustomer
       Caption = #26597#35810#25152#26377
       OnClick = N6Click
     end
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20837'...'
+      OnClick = Excel1Click
+    end
   end
   object PopupMenu2: TPopupMenu
     Left = 726
@@ -851,5 +855,13 @@ inherited frmCustomer: TfrmCustomer
       Caption = #31215#20998#20817#25442
       OnClick = N15Click
     end
+  end
+  object cdsTable: TZQuery
+    FieldDefs = <>
+    AfterScroll = Cds_CustomerAfterScroll
+    CachedUpdates = True
+    Params = <>
+    Left = 166
+    Top = 384
   end
 end

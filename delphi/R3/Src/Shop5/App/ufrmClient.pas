@@ -3,10 +3,10 @@ unit ufrmClient;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, uFnUtil,
   Dialogs, uframeToolForm, ActnList, Menus, ComCtrls, ToolWin, StdCtrls, RzLabel,
   RzTabs, ExtCtrls, RzPanel, DB, Grids, DBGridEh, uGlobal, cxControls, cxContainer,
-  cxEdit, cxTextEdit, RzButton, ZBase, cxMaskEdit, cxButtonEdit, zrComboBoxList,
+  cxEdit, cxTextEdit, RzButton, ZBase, cxMaskEdit, cxButtonEdit, zrComboBoxList, uDsUtil,
   FR_Class, cxDropDownEdit, PrnDbgeh, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
@@ -49,6 +49,7 @@ type
     N10: TMenuItem;
     actDeposit: TAction;
     N5: TMenuItem;
+    Excel1: TMenuItem;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -79,10 +80,11 @@ type
     procedure actDepositExecute(Sender: TObject);
     procedure actNewCardExecute(Sender: TObject);
     procedure actfrmIntegralExecute(Sender: TObject);
+    procedure Excel1Click(Sender: TObject);
   private
     sqlstring:string;
     function CheckCanExport:boolean;
-    procedure PrintView;   
+    procedure PrintView;
     { Private declarations }
   public
     { Public declarations }
@@ -91,7 +93,7 @@ type
   end;
 
 implementation
-uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmIntegralGlide,
+uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmIntegralGlide, ufrmExcelFactory,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmBasic;//,ufrmSendGsm
 {$R *.dfm}
 
@@ -614,6 +616,263 @@ procedure TfrmClient.actfrmIntegralExecute(Sender: TObject);
 begin
   inherited;
   N15Click(Sender);
+end;
+
+procedure TfrmClient.Excel1Click(Sender: TObject);
+  function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
+  var rs:TZQuery;
+  begin
+    Result := False;
+    // *******************门店********************
+    if DFieldName = 'SHOP_ID' then
+      begin
+        if Source.FieldByName(SFieldName).AsString <> '' then
+          begin
+            rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+            if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的门店代码...');
+          end
+        else
+          Raise Exception.Create('门店不能为空!');
+      end;
+
+    //*******************客户等级*****************
+    if DFieldName = 'PRICE_ID' then
+      begin
+        rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
+        if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+          begin
+            Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+            Result := True;
+          end
+        else
+          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的客户等级代码...');
+      end;
+
+    //*******************地区*****************
+    if DFieldName = 'REGION_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_REGION_INFO');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
+          end
+        else
+          Raise Exception.Create('地区不能为空!');
+      end;
+
+    //*******************客户类别*****************
+    if DFieldName = 'SORT_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的客户类别代码...');
+          end
+        else
+          begin
+            //Dest.FieldByName('SORT_ID').AsString := '#';
+            Raise Exception.Create('客户类别不能为空!');
+          end;
+      end;
+
+    //*******************结算方式*****************
+    if DFieldName = 'SETTLE_CODE' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的结算方式代码...');
+          end
+        else
+          Raise Exception.Create('结算方式不能为空!');
+      end;
+
+    //*******************开户银行*****************
+    if DFieldName = 'BANK_ID' then
+      begin
+        rs := Global.GetZQueryFromName('PUB_BANK_INFO');
+        if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+          begin
+            Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+            Result := True;
+          end
+        else
+          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的开户银行代码...');
+      end;
+
+    //*******************发票类型*****************
+    if DFieldName = 'INVOICE_FLAG' then
+      begin
+        rs := Global.GetZQueryFromName('PUB_PARAMS');
+        if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+          begin
+            Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
+            Result := True;
+          end
+        else
+          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的发票类型代码...');
+      end;
+
+    //客户编号
+    if DFieldName = 'CLIENT_CODE' then
+      begin
+        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 20 then
+              Raise Exception.Create('客户编号就在20个字符以内!')
+            else
+              begin
+                rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+                if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                  Raise Exception.Create('当前客户编号已经存在!')
+                else
+                  begin
+                    Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end;
+          end
+        else
+          begin
+            Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+          end;
+      end;
+
+    //客户名称
+    if DFieldName = 'CLIENT_NAME' then
+      begin
+        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('客户名称就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          Raise Exception.Create('客户名称不能为空!');
+      end;
+
+    //客户拼音码
+    if DFieldName = 'CLIENT_SPELL' then
+      begin
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('客户拼音码就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          begin
+            if Trim(Source.FieldByName('CLIENT_NAME').AsString) <> '' then
+              Dest.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CLIENT_NAME').AsString),3)
+            else
+              Raise Exception.Create('客户拼音码不能为空!');
+          end;
+      end;
+  end;
+  function SaveExcel(CdsExcel:TDataSet):Boolean;
+  begin
+    CdsExcel.First;
+    while not CdsExcel.Eof do
+      begin
+        CdsExcel.Edit;
+        CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        CdsExcel.FieldByName('CLIENT_ID').AsString  := TSequence.NewId;
+        CdsExcel.FieldByName('UNION_ID').AsString := '#';
+        CdsExcel.FieldByName('CLIENT_TYPE').AsString := '2';
+        CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
+        CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
+        CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
+        CdsExcel.FieldByName('IC_STATUS').AsString := '0';
+        CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        CdsExcel.Post;
+        CdsExcel.Next;
+      end;
+    Result := Factor.UpdateBatch(CdsExcel,'TClient',nil);
+  end;
+var FieldsString,FormatString:String;
+    Params:TftParamList;
+    cdsTable,rs:TZQuery;
+begin
+  inherited;
+  Params := TftParamList.Create(nil);
+  cdsTable := TZQuery.Create(nil);
+  try
+    Params.ParamByName('CLIENT_ID').asString := '';
+    Params.ParamByName('UNION_ID').AsString := '#';
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    cdsTable.Close;
+    Factor.Open(cdsTable,'TClient',Params);
+
+    FieldsString := 'CLIENT_CODE=客户编号,CLIENT_NAME=客户名称,CLIENT_SPELL=拼音码,SORT_ID=客户类别,PRICE_ID=客户等级,REGION_ID=地区,SHOP_ID=所属门店,'+
+    'SETTLE_CODE=结算方式,LICENSE_CODE=经营许可证,ADDRESS=注册地址,POSTALCODE=邮政编码,LINKMAN=联系人,TELEPHONE3=注册电话,TELEPHONE1=电话,TELEPHONE2=手机,SEND_ADDR=送货地址,'+
+    'SEND_TELE=送货人手机,SEND_LINKMAN=送货人,RECV_ADDR=收货地址,RECV_LINKMAN=收货人,RECV_TELE=收货人手机,LEGAL_REPR=法人代表,INVO_NAME=公司全称,'+
+    'TAX_NO=税务登记证号,FAXES=传真,HOMEPAGE=网址,EMAIL=电子邮件,QQ=QQ,MSN=MSN,BANK_ID=开户银行,ACCOUNT=账号,INVOICE_FLAG=发票类型,REMARK=备注';
+
+    FormatString := '0=CLIENT_CODE,1=CLIENT_NAME,2=CLIENT_SPELL,3=SORT_ID,4=PRICE_ID,5=REGION_ID,6=SHOP_ID,'+
+    '7=SETTLE_CODE,8=LICENSE_CODE,9=ADDRESS,10=POSTALCODE,11=LINKMAN,12=TELEPHONE3,13=TELEPHONE1,14=TELEPHONE2,15=SEND_ADDR,16=SEND_TELE,'+
+    '17=SEND_LINKMAN,18=RECV_ADDR,19=RECV_LINKMAN,20=RECV_TELE,21=LEGAL_REPR,22=INVO_NAME,23=TAX_NO,24=FAXES,25=HOMEPAGE,26=EMAIL,27=QQ,28=MSN,'+
+    '29=BANK_ID,30=ACCOUNT,31=INVOICE_FLAG,32=REMARK';
+
+    TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,@SaveExcel,FormatString,1);
+    {if TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,@SaveExcel,FormatString,1) then
+      begin
+        cdsTable.First;
+        while not cdsTable.Eof do
+          begin
+            cdsTable.Edit;
+            cdsTable.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            cdsTable.FieldByName('CLIENT_ID').AsString  := TSequence.NewId;
+            cdsTable.FieldByName('UNION_ID').AsString := '#';
+            cdsTable.FieldByName('CLIENT_TYPE').AsString := '2';
+            cdsTable.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
+            cdsTable.FieldByName('CREA_USER').AsString := Global.UserID;
+            cdsTable.FieldByName('IC_INFO').AsString := '企业卡';
+            cdsTable.FieldByName('IC_STATUS').AsString := '0';
+            cdsTable.FieldByName('IC_TYPE').AsString := '0';
+            cdsTable.Post;
+            cdsTable.Next;
+          end;
+        if Factor.UpdateBatch(cdsTable,'TClient',nil) then
+          MessageBox(Handle,pchar('数据导入成功！'),pchar('友情提示...'),MB_OK)
+        else
+          raise Exception.Create('数据导入出错了');
+      end;}
+  finally
+    Params.Free;
+    cdsTable.Free;
+  end;
 end;
 
 end.

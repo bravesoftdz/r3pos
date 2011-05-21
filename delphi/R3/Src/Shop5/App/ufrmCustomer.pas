@@ -80,6 +80,8 @@ type
     N16: TMenuItem;
     N17: TMenuItem;
     actLossCard: TAction;
+    Excel1: TMenuItem;
+    cdsTable: TZQuery;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -118,6 +120,7 @@ type
     procedure N15Click(Sender: TObject);
     procedure actfrmIntegralExecute(Sender: TObject);
     procedure actLossCardExecute(Sender: TObject);
+    procedure Excel1Click(Sender: TObject);
   private
     function CheckCanExport:boolean;
     procedure PrintView;
@@ -139,7 +142,7 @@ type
 implementation
 uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord,
-     ufrmLossCard;
+     ufrmLossCard, ufrmExcelFactory;
 //  ufrmSendGsm, ufrmReNew,
 
 {$R *.dfm}
@@ -498,7 +501,6 @@ begin
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+Str_Sql+') jp order by CUST_ID';
-  1:result := 'select * from ('+Str_Sql+' order by CUST_ID) where ROWNUM<=600';
   4:result :=
        'select * from ('+
        'select * from ('+Str_Sql+') B order by CUST_ID) tp fetch first 600  rows only';
@@ -951,6 +953,36 @@ begin
     begin
       MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"挂失成功！'),pchar(Application.Title),MB_OK);
     end;
+end;
+
+procedure TfrmCustomer.Excel1Click(Sender: TObject);
+function Check(Source,Dest:TDataSet):Boolean;
+begin
+end;
+var FieldsString,FormatString:String;
+    Params:TftParamList;
+begin
+  inherited;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('CUST_ID').asString := '';
+    Params.ParamByName('UNION_ID').AsString := '#';
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(cdsTable,'TCustomer',Params);
+  finally
+    Params.Free;
+  end;
+  FieldsString := 'SHOP_ID=入会门店,CUST_CODE=会员卡号,CUST_NAME=会员名称,CUST_SPELL=拼音码,SEX=性别,EMAIL=电子邮件,OFFI_TELE=办公电话,'+
+  'FAMI_TELE=家庭电话,MOVE_TELE=移动电话,BIRTHDAY=会员生日,FAMI_ADDR=地址,POSTALCODE=邮编,ID_NUMBER=证件号码,IDN_TYPE=证件类型,SND_DATE=入会日期,'+
+  'CON_DATE=续会日期,QQ=QQ,MSN=MSN,END_DATE=有效截止日期,SORT_ID=会员类别,PRICE_ID=会员等级,REGION_ID=地区,MONTH_PAY=月收入,DEGREES=学历,'+
+  'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注';
+  
+  FormatString := '0=SHOP_ID,1=CUST_CODE,2=CUST_NAME,3=CUST_SPELL,4=SEX,5=EMAIL,6=OFFI_TELE,7=FAMI_TELE,8=MOVE_TELE,9=BIRTHDAY,10=FAMI_ADDR,'+
+  '11=POSTALCODE,12=ID_NUMBER,13=IDN_TYPE,14=SND_DATE,15=CON_DATE,16=QQ,17=MSN,18=END_DATE,19=SORT_ID,20=PRICE_ID,21=REGION_ID,22=MONTH_PAY,'+
+  '23=DEGREES,24=OCCUPATION,25=JOBUNIT,26=REMARK';
+  {if TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,FormatString,2) then
+    begin
+    end;}
 end;
 
 end.

@@ -208,7 +208,7 @@ begin
             'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600 order by ROWNUM';
+            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600';
    4:
      result := 'select tp.* from ('+
             'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+

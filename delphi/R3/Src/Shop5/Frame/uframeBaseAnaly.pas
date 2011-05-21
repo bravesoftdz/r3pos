@@ -520,7 +520,7 @@ function TframeBaseAnaly.IntToVarchar(FieldName: string): string;
 begin
   result:=trim(FieldName);
   case Factor.iDbType of
-   0,5: result:='cast('+FieldName+' as varchar)';
+   0,1,5: result:='cast('+FieldName+' as varchar(36))';
    4:   result:='trim(char('+FieldName+'))';
   end;
 end;

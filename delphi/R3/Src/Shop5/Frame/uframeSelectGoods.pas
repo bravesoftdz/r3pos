@@ -166,19 +166,18 @@ end;
 
 function TframeSelectGoods.EncodeSQL(id: string): string;
 var
-  w:string;
-  sc:string;
+  w,sc:string;
 begin
   case Factor.iDbType of
-  0:sc := '+';
-  1,4,5: sc := '||';
+   0: sc := '+';
+   1,4,5: sc := '||';
   end;
   w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then
-     begin
-      if w<>'' then w := w + ' and ';
-      w := w + 'j.GODS_ID>:MAXID';
-     end;
+  begin
+    if w<>'' then w := w + ' and ';
+    w := w + 'j.GODS_ID>:MAXID';
+  end;
   if (rzTree.Selected<>nil) and (rzTree.Selected.Data<>nil) then //and (rzTree.Selected.Level>0) 
      begin
       if w<>'' then w := w + ' and ';
@@ -199,19 +198,25 @@ begin
       w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or (Exists(select GODS_ID from VIW_BARCODE br where br.TENANT_ID=j.TENANT_ID and br.GODS_ID=j.GODS_ID and br.BARCODE like ''%'''+sc+':KEYVALUE )) )';
      end;
   case Factor.iDbType of
-  0:
-  result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+   0:
+     result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
-  4:
-  result := 'select tp.* from ('+
+   1:
+     result := 'select * from ('+
+            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'left outer join '+
+            '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
+            'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600 order by ROWNUM';
+   4:
+     result := 'select tp.* from ('+
             'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
-  5:
-  result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+   5:
+     result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';

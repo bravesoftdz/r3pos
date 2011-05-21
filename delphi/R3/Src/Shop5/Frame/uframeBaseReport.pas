@@ -1072,8 +1072,11 @@ function TframeBaseReport.IntToVarchar(FieldName: string): string;
 begin
   result:=trim(FieldName);
   case Factor.iDbType of
-   0,5: result:='cast('+FieldName+' as varchar)';
-   4:   result:='trim(char('+FieldName+'))';
+   0,5:
+      result:='cast('+FieldName+' as varchar)';
+   1: result:='cast('+FieldName+' as varchar(30))';
+   3: result:='str('+FieldName+')';
+   4: result:='trim(char('+FieldName+'))';
   end;
 end;
 

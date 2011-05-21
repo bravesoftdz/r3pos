@@ -250,7 +250,7 @@ begin
 
   if edtCLIENT_NAME.Text<>cdsTable.FieldByName('CLIENT_NAME').AsString  then
     begin
-      tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+      tmp:=Global.GetZQueryFromName('PUB_CUSTOMER');
       if tmp.Locate('CLIENT_NAME',Trim(edtCLIENT_NAME.Text),[]) then
         begin
           if tmp.FieldByName('CLIENT_ID').AsString<>cdsTable.FieldByName('CLIENT_ID').AsString then
@@ -263,23 +263,26 @@ begin
 
   if dbState=dsEdit then
   begin
-    tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
-    if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) and (tmp.FieldByName('CLIENT_ID').AsString<>AObj.FieldByName('CLIENT_ID').AsString) then
+    tmp:=Global.GetZQueryFromName('PUB_CUSTOMER');
+    if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[])  then
     begin
-      if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
-      raise  Exception.Create('客户编号已经存在，不能重复！');
+      if (tmp.FieldByName('CLIENT_ID').AsString<>AObj.FieldByName('CLIENT_ID').AsString) then
+        begin
+          if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
+          raise  Exception.Create('客户编号已经存在，不能重复！');
+        end;
     end;
   end;
   if dbState=dsInsert then
   begin
-    tmp:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+    tmp:=Global.GetZQueryFromName('PUB_CUSTOMER');
     if tmp.Locate('CLIENT_CODE',Trim(edtCLIENT_CODE.Text),[]) then
     begin
       if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
       raise  Exception.Create('客户编号已经存在，不能重复！');
     end;
   end;
-  
+
   WriteTo(Aobj);
   if dbState = dsInsert then
     begin

@@ -171,6 +171,7 @@ begin
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by IORO_ID';
+  1:result := 'select * from ('+strSql+' order by IORO_ID) where ROWNUM<=600 order by ROWNUM';
   4:result :=
        'select * from ('+
        'select * from ('+strSql+') j order by IORO_ID) tp fetch first 600  rows only';

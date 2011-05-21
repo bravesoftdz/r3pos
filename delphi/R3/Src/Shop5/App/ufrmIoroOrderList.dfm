@@ -8,25 +8,25 @@ inherited frmIoroOrderList: TfrmIoroOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 802
-    Height = 495
+    Width = 810
+    Height = 506
     inherited RzPanel2: TRzPanel
-      Width = 792
-      Height = 485
+      Width = 800
+      Height = 496
       inherited RzPage: TRzPageControl
-        Width = 786
-        Height = 479
+        Width = 794
+        Height = 490
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#20837#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 784
-            Height = 452
+            Width = 792
+            Height = 463
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 772
+              Width = 780
               Height = 97
               Align = alTop
               BorderOuter = fsNone
@@ -293,16 +293,16 @@ inherited frmIoroOrderList: TfrmIoroOrderList
             object Panel1: TPanel
               Left = 6
               Top = 103
-              Width = 772
-              Height = 343
+              Width = 780
+              Height = 354
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 770
-                Height = 341
+                Width = 778
+                Height = 352
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -426,17 +426,17 @@ inherited frmIoroOrderList: TfrmIoroOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 802
+    Width = 810
     inherited Image1: TImage
       Left = 374
-      Width = 408
+      Width = 416
     end
     inherited Image3: TImage
       Left = 374
-      Width = 408
+      Width = 416
     end
     inherited Image14: TImage
-      Left = 782
+      Left = 790
     end
     inherited rzPanel5: TPanel
       Left = 374
@@ -558,7 +558,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
     Left = 176
     Top = 185
     ReportForm = {
-      1800000044190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000003D190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -760,7 +760,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000FDFF0100000000}
+      0000000000}
   end
   object PrintDBGridEh1: TPrintDBGridEh
     DBGridEh = DBGridEh1

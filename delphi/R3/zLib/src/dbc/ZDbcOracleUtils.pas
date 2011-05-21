@@ -637,8 +637,8 @@ begin
   case Status of
     OCI_SUCCESS:
       Exit;
-    OCI_SUCCESS_WITH_INFO:
-      ErrorMessage := 'OCI_SUCCESS_WITH_INFO';
+    OCI_SUCCESS_WITH_INFO:Exit;
+//      ErrorMessage := 'OCI_SUCCESS_WITH_INFO';
     OCI_NEED_DATA:
       ErrorMessage := 'OCI_NEED_DATA';
     OCI_NO_DATA:

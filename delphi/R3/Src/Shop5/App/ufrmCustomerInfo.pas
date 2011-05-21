@@ -326,6 +326,7 @@ begin
     tmp1.Close;
     case Factor.iDbType of
       0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
+      1:tmp1.SQL.Text:='select * from (select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc) where ROWNUM<2 ';
       4:tmp1.SQL.Text := 'select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc fetch first 600 rows only';
       5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
     end;

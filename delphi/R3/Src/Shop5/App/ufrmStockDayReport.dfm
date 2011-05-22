@@ -14,10 +14,10 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
-        ActivePage = TabSheet4
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1243,6 +1243,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'STOCK_AMT'
+                      Footer.DisplayFormat = '#0.###'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#25968#37327
                       Width = 63
@@ -1261,6 +1263,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#36135#37329#39069
                       Width = 84
@@ -1270,6 +1274,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #36827#39033#31246#39069
                       Width = 82
@@ -1279,6 +1285,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -1288,6 +1296,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_RTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38646#21806#37329#39069
                       Width = 80
@@ -1306,6 +1316,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'STOCK_AGO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35753#21033#37329#39069
                       Width = 80
@@ -1315,6 +1327,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'AVG_AGIO'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21333#20301#21033#28070
                       Width = 67

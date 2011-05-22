@@ -15,8 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 543
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1045,6 +1047,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
+                      Footer.DisplayFormat = '#0.###'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25968#37327
                       Width = 100
@@ -1063,6 +1067,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #24211#23384#25104#26412
                       Width = 97
@@ -1081,6 +1087,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BAL_RTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 97

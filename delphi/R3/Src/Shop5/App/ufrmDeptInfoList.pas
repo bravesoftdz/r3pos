@@ -190,7 +190,7 @@ begin
       TRecord_(rzNode.Data).Free;
       rzNode.Delete;
     end;
-    // cdsBrowser.Delete;  {Tree删除后触发到Open数据，不需要Delete操作}
+    cdsBrowser.Delete;  
   end;
 end;
 

@@ -150,6 +150,9 @@ type
     function GetRowType:integer;override;
   end;
 
+const
+  ArySumField: Array[0..2] of string=('BAL_AMT','BAL_CST','BAL_RTL');
+
 implementation
 
 uses
@@ -350,6 +353,7 @@ begin
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
+        Do_REPORT_FLAGFooterSum(fndP3_REPORT_FLAG, adoReport3, ArySumField);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
@@ -538,7 +542,7 @@ begin
       ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',sum(BAL_RTL) as BAL_RTL '+
+      ',sum(BAL_RTL) as BAL_RTL '+    
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
@@ -562,21 +566,23 @@ begin
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
-          'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
-          'union all '+            
-          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
+          'select 2 as A,RELATION_ID,SORT_ID,SORT_NAME,isnull(LEVEL_ID,'' '') as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
+          'union all '+
+          'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
           ' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
-          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
+          ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME '+
+          ' order by j.RELATION_ID,j.A,j.LEVEL_ID'
        );
       end;
     3:begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_TTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
           ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-          ',sum(BAL_RTL) as BAL_RTL '+
+          ',sum(BAL_RTL) as BAL_RTL '+  
           ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
@@ -585,7 +591,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(BAL_AMT) as BAL_AMT '+
-          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_TTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
+          ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
           ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(BAL_RTL) as BAL_RTL '+
@@ -982,12 +988,28 @@ begin
 end;
 
 procedure TfrmStorageDayReport.DBGridEh3GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  i: integer;
+  FName: string;
 begin
   inherited;
-  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔'
+  else
+  begin
+    if (SumRecord.Count>0) and (SumRecord.FindField(Column.FieldName)<>nil) then //字段数大于0 自己累计
+    begin
+      for i:=Low(ArySumField) to High(ArySumField) do
+      begin
+        FName:=trim(ArySumField[i]);
+        if UpperCase(Column.FieldName)=UpperCase(FName) then
+        begin
+          Text:=FormatFloat(Column.DisplayFormat,SumRecord.fieldbyName(FName).AsFloat);
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmStorageDayReport.DBGridEh4GetFooterParams(Sender: TObject;

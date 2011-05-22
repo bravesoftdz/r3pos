@@ -242,8 +242,13 @@ type
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
   end;
 
+const
+  ArySumField: Array[0..5] of string=('SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF');
+  
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
+
+uses
+  uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
 {$R *.dfm}
 
 procedure TfrmSaleDayReport.FormCreate(Sender: TObject);
@@ -598,6 +603,7 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        Do_REPORT_FLAGFooterSum(fndP4_REPORT_FLAG, adoReport4, ArySumField);
       end;
     4: begin //按商品汇总表
         if adoReport5.Active then adoReport5.Close;
@@ -863,12 +869,13 @@ begin
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
-          'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
+          'select 2 as A,RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
           'union all '+
-          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID') +' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
+          'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID') +' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
           ' and SORT_TYPE=1 and COMM not in (''02'',''12'') ) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
-          ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME '+
+          ' order by j.RELATION_ID,j.A,j.LEVEL_ID'
        );
       end;
     3:begin
@@ -1367,9 +1374,26 @@ procedure TfrmSaleDayReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  i: integer;
+  FName: string;
 begin
   inherited;
-  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔'
+  else
+  begin
+    if (SumRecord.Count>0) and (SumRecord.FindField(Column.FieldName)<>nil) then //字段数大于0 自己累计
+    begin
+      for i:=Low(ArySumField) to High(ArySumField) do
+      begin
+        FName:=trim(ArySumField[i]);
+        if UpperCase(Column.FieldName)=UpperCase(FName) then
+        begin
+          Text:=FormatFloat(Column.DisplayFormat,SumRecord.fieldbyName(FName).AsFloat);
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmSaleDayReport.DBGridEh2GetFooterParams(Sender: TObject;
@@ -1469,8 +1493,7 @@ begin
   actFindExecute(nil);
 end;
 
-procedure TfrmSaleDayReport.fndP5_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmSaleDayReport.fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   sid5 := '';
@@ -1478,16 +1501,14 @@ begin
   fndP5_SORT_ID.Text := '';
 end;
 
-procedure TfrmSaleDayReport.fndP3_SORT_IDPropertiesButtonClick(
-  Sender: TObject; AButtonIndex: Integer);
+procedure TfrmSaleDayReport.fndP3_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 begin
   inherited;
   if SelectGoodSortType(sid3,srid3,SortName) then
     fndP3_SORT_ID.Text:=SortName;
 end;
 
-procedure TfrmSaleDayReport.fndP3_SORT_IDKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TfrmSaleDayReport.fndP3_SORT_IDKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   sid3 := '';

@@ -151,8 +151,15 @@ type
     function  GetRowType:integer;override;
   end;
 
+const
+ ArySumField: Array[0..20] of string=('ORG_AMT','ORG_CST','ORG_RTL','STOCK_AMT','STOCK_TTL','STOCK_MNY','STOCK_TAX','SALE_AMT','SALE_TTL','SALE_MNY',
+                                      'SALE_TAX','SALE_CST','SALE_PRF','SALE_RATE','DBIN_AMT','DBIN_CST','DBOUT_AMT','DBOUT_CST','BAL_AMT','BAL_CST','BAL_RTL');
+  
 implementation
-uses uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort, ufrmCostCalc, uShopUtil;
+
+uses
+  uShopGlobal, uFnUtil, uGlobal, uCtrlUtil, ufrmSelectGoodSort, ufrmCostCalc, uShopUtil;
+
 {$R *.dfm}
 
 procedure TfrmJxcTotalReport.FormCreate(Sender: TObject);
@@ -362,6 +369,7 @@ begin
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
+        Do_REPORT_FLAGFooterSum(fndP3_REPORT_FLAG, adoReport3, ArySumField);
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
@@ -615,11 +623,11 @@ begin
           ',j.LEVEL_ID as LEVEL_ID '+
           ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
-          'select RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'') '+
+          'select 2 as A,RELATION_ID,SORT_ID,SORT_NAME,LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'') '+
           'union all '+
-          'select distinct RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
+          'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
-          ' group by j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.LEVEL_ID'
+          ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.A,sj.LEVEL_ID'
        );
       end;
     3:begin
@@ -1152,8 +1160,7 @@ begin
   end;
 end;
 
-procedure TfrmJxcTotalReport.fndP3_REPORT_FLAGPropertiesChange(
-  Sender: TObject);
+procedure TfrmJxcTotalReport.fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);
 begin
   inherited;
   Do_REPORT_FLAGOnChange(Sender,DBGridEh3);
@@ -1193,12 +1200,29 @@ begin
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh3GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  i: integer;
+  FName: string;
 begin
   inherited;
-  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔'
+  else
+  begin
+    if (SumRecord.Count>0) and (SumRecord.FindField(Column.FieldName)<>nil) then //字段数大于0 自己累计
+    begin
+      for i:=Low(ArySumField) to High(ArySumField) do
+      begin
+        FName:=trim(ArySumField[i]);
+        if UpperCase(Column.FieldName)=UpperCase(FName) then
+        begin
+          Text:=FormatFloat(Column.DisplayFormat,SumRecord.fieldbyName(FName).AsFloat);
+        end;
+      end;
+    end;
+  end;
+   
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh4GetFooterParams(Sender: TObject;

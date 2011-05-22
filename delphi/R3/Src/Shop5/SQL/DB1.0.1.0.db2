@@ -37,4 +37,4 @@ update SAL_SALESORDER set LOCUS_STATUS='3',LOCUS_AMT=SALE_AMT,LOCUS_USER='system
 update CA_MODULE set MODU_NAME='收货单' where MODU_ID='14600001';
 update CA_MODULE set MODU_NAME='发货单' where MODU_ID='14700001';
 
-update SYS_SYNC_CTRL set SHOP_ID='#' where SHOP_ID is null or SHOP='';
+update SYS_SYNC_CTRL set SHOP_ID='#' where SHOP_ID is null or SHOP_ID='';

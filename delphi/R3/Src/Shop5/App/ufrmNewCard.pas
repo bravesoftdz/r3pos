@@ -48,7 +48,7 @@ type
     procedure Save;
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property ShowModel:Integer read FShowModel write SetShowModel;
-    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer):boolean;
+    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer;var CUSTCODE:String):boolean;
     class function GetSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;var CardNo,PWD:String;Model:integer):boolean;
     { Public declarations }
   end;
@@ -177,7 +177,7 @@ begin
     if ShowModel = 0 then
       edtUNION_ID.Enabled := False;
 
-    if cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1] then
+    if (cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1]) and (cdsTable.FieldbyName('IC_CARDNO').AsString <> '') then
       btnOk.Enabled := False
     else
       btnOk.Enabled := True;
@@ -194,7 +194,7 @@ begin
 end;
 
 class function TfrmNewCard.SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME: string;
-  Model:integer): boolean;
+  Model:integer;var CUSTCODE:String): boolean;
 begin
   with TfrmNewCard.Create(Owner) do
     begin
@@ -205,6 +205,8 @@ begin
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
         //Open(Cust_Id,UNION_ID);
         Result := ShowModal = mrOk;
+        if Result then
+          CUSTCODE := Trim(edtIC_CARDNO.Text);
       finally
         Free;
       end;
@@ -245,6 +247,12 @@ begin
       cdsTable.FieldByName('IC_STATUS').AsString := '0';
       cdsTable.FieldByName('IC_TYPE').AsString := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('CODE_ID').AsString;
       cdsTable.Post;
+    end;
+  if cdsTable.FieldByName('UNION_ID').AsString = '#' then
+    begin
+    end
+  else
+    begin
     end;
   if not Factor.UpdateBatch(cdsTable,'TNewCard') then
     Raise Exception.Create('·¢¿¨Ê§°Ü!');

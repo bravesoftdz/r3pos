@@ -639,19 +639,30 @@ begin
 end;
 
 procedure TfrmCustomer.actNewCardExecute(Sender: TObject);
+ procedure UpdateToGlobal(IC:string;ID:string);
+   var Temp:TZQuery;
+   begin
+      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
+      Temp.Filtered := false;
+      if not Temp.Locate('CLIENT_ID',ID,[]) then
+         Temp.Append
+      else
+         Temp.Edit;
+      Temp.FieldByName('IC_CARDNO').AsString:=IC;
+      Temp.Post;
+   end;
 var  card:string;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
   //if Cds_Customer.FieldByName('IC_CARDNO').AsString<>'' then Raise Exception.Create('此会员已经有储值卡！');
 
-  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1) then
+  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1,card) then
     begin
-      {Cds_Customer.Edit;
-      Cds_Customer.FieldByName('IC_CARDNO').AsString:=card;
-      Cds_Customer.FieldByName('BALANCE').AsString:='0';
+      Cds_Customer.Edit;
+      Cds_Customer.FieldByName('CUST_CODE').AsString:=card;
       Cds_Customer.Post;
-      UpdateToGlobal(card,Cds_Customer.FieldByName('CUST_ID').AsString);}
+      UpdateToGlobal(card,Cds_Customer.FieldByName('CUST_ID').AsString);
       MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
     end;
 end;
@@ -1120,6 +1131,23 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
   end;
   function SaveExcel(CdsExcel:TDataSet):Boolean;
   begin
+    CdsExcel.First;
+    while not CdsExcel.Eof do
+      begin
+        CdsExcel.Edit;
+        CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        CdsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
+        CdsExcel.FieldByName('UNION_ID').AsString := '#';
+        CdsExcel.FieldByName('CLIENT_TYPE').AsString := '2';
+        CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
+        CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
+        CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
+        CdsExcel.FieldByName('IC_STATUS').AsString := '0';
+        CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        CdsExcel.Post;
+        CdsExcel.Next;
+      end;
+    Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil);
   end;
 var FieldsString,FormatString:String;
     Params:TftParamList;

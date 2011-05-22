@@ -68,6 +68,7 @@ begin
   if StrToFloatDef(edtBALANCE.Text,0)>0 then Raise Exception.Create('卡上有余额,不能注销,请先退款！');
   cdsTable.Edit;
   cdsTable.FieldByName('IC_STATUS').AsString := '9';
+  cdsTable.FieldbyName('IC_INFO').AsString := edtIC_INFO.Text;   
   cdsTable.Post;
   Factor.UpdateBatch(cdsTable,'TNewCard');
   ModalResult:=MROK;
@@ -108,10 +109,8 @@ end;
 
 procedure TfrmCancelCard.Open(CUST_ID, UNION_ID: String);
 var Param:TftParamList;
-    rs:TZQuery;
 begin
   Param := TftParamList.Create;
-  rs := TZQuery.Create(nil);
   try
     Param.ParamByName('CLIENT_ID').AsString := CUST_ID;
     if Length(UNION_ID) > 20 then
@@ -130,13 +129,18 @@ begin
 
     edtCLIENT_NAME.Enabled := False;
     edtIC_CARDNO.Enabled := False;
-    if cdsTable.FieldByName('IC_STATUS').AsString = '9' then
+    if (cdsTable.FieldByName('IC_STATUS').AsString = '9') then
       Btn_Save.Enabled := False
     else
-      Btn_Save.Enabled := True;
+      begin
+        if cdsTable.FieldbyName('IC_CARDNO').AsString <> '' then
+          Btn_Save.Enabled := True
+        else
+          Btn_Save.Enabled := False;
+      end;
+
   finally
     Param.Free;
-    rs.Free;
   end;
 end;
 
@@ -178,6 +182,7 @@ begin
   inherited;
   UnionId := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldbyName('UNION_ID').AsString;
   Open(Cust_Id,UnionId);
+  //edtIC_INFO.Text := edtUNION_ID.Text;
 end;
 
 end.

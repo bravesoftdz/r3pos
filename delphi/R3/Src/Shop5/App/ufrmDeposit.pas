@@ -192,27 +192,24 @@ begin
 end;
 
 procedure TfrmDeposit.InitCmb;
-var Str:String;
-    rs:TZQuery;
+var rs:TZQuery;
     Aobj_Pay:TRecord_;
 begin
-  Str := ' select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE = ''1'' and CODE_ID not in (''C'',''D'',''G'') ';
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text := Str;
-    Factor.Open(rs);
-    rs.First;
-    while not rs.Eof do
-      begin
-        Aobj_Pay := TRecord_.Create;
-        Aobj_Pay.ReadFromDataSet(rs);
-        edtPAY_CASH.Properties.Items.AddObject(rs.FieldbyName('CODE_NAME').AsString,Aobj_Pay);
-        rs.Next;
-      end;
-  finally
-    rs.Free;
-  end;
+  rs := Global.GetZQueryFromName('PUB_PAYMENT');
+
+  rs.First;
+  while not rs.Eof do
+    begin
+      if (rs.FieldByName('CODE_ID').AsString = 'C') or (rs.FieldByName('CODE_ID').AsString = 'D') or (rs.FieldByName('CODE_ID').AsString = 'G') then
+        begin
+          rs.Next;
+          Continue;
+        end;
+      Aobj_Pay := TRecord_.Create;
+      Aobj_Pay.ReadFromDataSet(rs);
+      edtPAY_CASH.Properties.Items.AddObject(rs.FieldbyName('CODE_NAME').AsString,Aobj_Pay);
+      rs.Next;
+    end;
 end;
 
 procedure TfrmDeposit.FormDestroy(Sender: TObject);

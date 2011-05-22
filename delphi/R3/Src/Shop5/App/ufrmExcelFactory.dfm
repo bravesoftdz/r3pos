@@ -13,8 +13,8 @@ inherited frmExcelFactory: TfrmExcelFactory
   object RzPage: TRzPageControl [0]
     Left = 0
     Top = 0
-    Width = 549
-    Height = 336
+    Width = 541
+    Height = 325
     ActivePage = TabSheet5
     Align = alClient
     BoldCurrentTab = True
@@ -34,8 +34,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel2: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 539
+        Height = 303
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -43,8 +43,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          547
-          314)
+          539
+          303)
         object RzLabel1: TRzLabel
           Left = 193
           Top = 61
@@ -601,7 +601,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Caption = #27880#37322#65306'Excel '#25991#20214#20013#30340#21015#21517#26159#21542#30456#21516
         end
         object chkHeader: TcxCheckBox
-          Left = 245
+          Left = 237
           Top = 93
           Width = 110
           Height = 21
@@ -610,6 +610,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Properties.Caption = #26159#21542#21551#29992#21015#22836#21517
           State = cbsChecked
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
         object edtNum: TcxSpinEdit
           Left = 351
@@ -620,6 +621,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Properties.MinValue = 1.000000000000000000
           TabOrder = 1
           Value = 1
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           OnClick = edtNumClick
         end
         object edtFileName: TcxButtonEdit
@@ -676,6 +678,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
           FrozenCols = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           ParentFont = False
@@ -957,6 +960,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           FooterFont.Height = -12
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           ParentFont = False
@@ -1003,6 +1007,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Top = 24
           Width = 121
           Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Properties.OnChange = cdsDropColumnPropertiesChange
           TabOrder = 1
           Visible = False
@@ -1044,6 +1049,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           FooterFont.Name = #23435#20307
           FooterFont.Style = []
           FrozenCols = 2
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
           ParentFont = False
@@ -1284,8 +1290,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel4: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 539
+        Height = 303
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -1293,8 +1299,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          547
-          314)
+          539
+          303)
         object labImportInfo: TRzLabel
           Left = 271
           Top = 145
@@ -1850,14 +1856,15 @@ inherited frmExcelFactory: TfrmExcelFactory
           Properties.OnChange = chkignorePropertiesChange
           Properties.Caption = #26159#21542#24573#30053#38169#35823#25968#25454
           TabOrder = 0
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end
     end
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 336
-    Width = 549
+    Top = 325
+    Width = 541
     Height = 51
     Align = alBottom
     BevelOuter = bvNone
@@ -1920,7 +1927,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     Top = 239
   end
   object OpenDialog1: TOpenDialog
-    Filter = 'Excel'#25991#20214'|*.xls'
+    Filter = 'Excel'#25991#20214'|*.xls;*.xlsx'
     Left = 81
     Top = 200
   end

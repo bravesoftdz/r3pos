@@ -50,6 +50,14 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TStockLocusNoAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TStockLocusNoUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
   TStockForLocusNoHeader=class(TZFactory)
   private
   public
@@ -462,7 +470,7 @@ begin
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
                '(select TENANT_ID,SHOP_ID,DEPT_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
-               'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
+               'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID,LOCUS_STATUS from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
                ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -520,11 +528,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select count(*) from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
-      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and B.USING_LOCUS_NO=1 and '+
-      'not Exists(select * from STK_LOCUS_FORSTCK where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and STOCK_ID=A.STOCK_ID)';
+      'select LOCUS_STATUS from STK_STOCKORDER A where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' '+
+      ' and Exists(select * from STK_STOCKDATA B,VIW_GOODSINFO C where B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and C.USING_LOCUS_NO=1 and B.TENANT_ID=A.TENANT_ID and B.STOCK_ID=A.STOCK_ID)';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
+    if not rs.IsEmpty and (rs.Fields[0].AsString<>'3') then Raise Exception.Create('没有扫码入库完毕，不能审核..');
   finally
     rs.Free;
   end;
@@ -613,7 +620,8 @@ begin
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT from '+
                '(select TENANT_ID,SHOP_ID,DEPT_ID,STOCK_ID,GLIDE_NO,STOCK_TYPE,STOCK_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,INVOICE_FLAG,'+
-               'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID,LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
+               'STOCK_MNY,STOCK_AMT,ADVA_MNY,TAX_RATE,REMARK,COMM,CREA_DATE,CREA_USER,TIME_STAMP,COMM_ID,'+
+               'LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT,LOCUS_CHK_DATE,LOCUS_CHK_USER from STK_STOCKORDER where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID) jb '+
                ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -622,11 +630,74 @@ begin
                ' left outer join STK_INDENTORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.INDE_ID ) jh '+
                ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
   Str :=
-      'update STK_STOCKORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,'
+      'update STK_STOCKORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,LOCUS_CHK_DATE=:LOCUS_CHK_DATE,LOCUS_CHK_USER=:LOCUS_CHK_USER,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_STOCK_ID';
   UpdateSQL.Text := Str;
+end;
+
+{ TStockLocusNoAudit }
+
+function TStockLocusNoAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  Str:string;
+  n:Integer;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select LOCUS_STATUS from STK_STOCKORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsString<>'3' then Raise Exception.Create('没有收货完毕，不能审核..');
+  finally
+    rs.Free;
+  end;
+  try
+    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE='''+Params.FindParam('LOCUS_CHK_DATE').asString+''',LOCUS_CHK_USER='''+Params.FindParam('LOCUS_CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and LOCUS_CHK_DATE IS NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    Result := true;
+    Msg := '审核单据成功';
+  except
+    on E:Exception do
+      begin
+        Result := false;
+        Msg := '审核错误'+E.Message;
+      end;
+  end;
+end;
+
+{ TStockLocusNoUnAudit }
+
+function TStockLocusNoUnAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+begin
+   try
+    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('STOCK_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    MSG := '反审核单据成功。';
+    Result := True;
+  except
+    on E:Exception do
+       begin
+         Result := False;
+         Msg := '反审核错误:'+E.Message;
+       end;
+  end;
 end;
 
 initialization
@@ -638,6 +709,8 @@ initialization
   RegisterClass(TStockOrderUnAudit);
   RegisterClass(TStockForLocusNo);
   RegisterClass(TStockForLocusNoHeader);
+  RegisterClass(TStockLocusNoAudit);
+  RegisterClass(TStockLocusNoUnAudit);
 finalization
   UnRegisterClass(TStockOrder);
   UnRegisterClass(TStockData);
@@ -647,4 +720,6 @@ finalization
   UnRegisterClass(TStockOrderUnAudit);
   UnRegisterClass(TStockForLocusNo);
   UnRegisterClass(TStockForLocusNoHeader);
+  UnRegisterClass(TStockLocusNoAudit);
+  UnRegisterClass(TStockLocusNoUnAudit);
 end.

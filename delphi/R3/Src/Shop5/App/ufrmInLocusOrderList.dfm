@@ -1,6 +1,6 @@
 inherited frmInLocusOrderList: TfrmInLocusOrderList
-  Left = 278
-  Top = 145
+  Left = 226
+  Top = 207
   Width = 868
   Height = 575
   Caption = #25910#36135#21333
@@ -891,7 +891,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
       Caption = #25910#36135
     end
     inherited actDelete: TAction
-      Caption = #37325#25195
+      Caption = #25195#30721
     end
     inherited actEdit: TAction
       Visible = False
@@ -910,9 +910,6 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
     end
     inherited actInfo: TAction
       OnExecute = actInfoExecute
-    end
-    inherited actAudit: TAction
-      Visible = False
     end
   end
   inherited cdsList: TZQuery

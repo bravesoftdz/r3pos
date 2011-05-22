@@ -1453,6 +1453,7 @@ function TCaFactory.GetSynTimeStamp(tbName, SHOP_ID: string): int64;
 var
   rs:TZQuery;
 begin
+  if SHOP_ID='' then SHOP_ID:='#';
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
@@ -1471,6 +1472,7 @@ procedure TCaFactory.SetSynTimeStamp(tbName: string; _TimeStamp: int64;
 var
   r:integer;
 begin
+  if SHOP_ID='' then SHOP_ID:='#';
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
   if r=0 then
      Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');

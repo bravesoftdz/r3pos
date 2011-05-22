@@ -1632,7 +1632,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       Caption = #21457#36135
     end
     inherited actDelete: TAction
-      Caption = #37325#25195
+      Caption = #25195#30721
     end
     inherited actEdit: TAction
       Visible = False
@@ -1651,10 +1651,6 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     end
     inherited actInfo: TAction
       OnExecute = actInfoExecute
-    end
-    inherited actAudit: TAction
-      Caption = #23436#25104
-      Visible = False
     end
   end
   inherited cdsList: TZQuery

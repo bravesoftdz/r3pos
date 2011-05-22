@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = TabSheet4
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -550,7 +550,8 @@ inherited frmSysDefine: TfrmSysDefine
           #22235#33293#20116#20837
           #22235#36827#20116#12289#20061#36827#21313
           #30452#25509#33293#21435#23567#25968#20301
-          #22235#33293#20445#20116#20845#20837)
+          #22235#33293#20445#20116#20845#20837
+          #26377#23567#25968#21017#36827#20301)
         TabOrder = 1
       end
       object GroupBox3: TGroupBox

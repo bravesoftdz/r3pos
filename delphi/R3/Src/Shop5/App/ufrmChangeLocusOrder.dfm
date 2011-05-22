@@ -11,12 +11,12 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
     Height = 497
     inherited RzPanel2: TRzPanel
       Width = 801
-      Height = 97
+      Height = 119
       Enabled = False
       TabStop = True
       object Label9: TLabel [0]
         Left = 567
-        Top = 33
+        Top = 54
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -24,7 +24,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
       end
       object Label12: TLabel [1]
         Left = 567
-        Top = 57
+        Top = 75
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -38,39 +38,63 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
         Caption = #24320#21333#26085#26399
       end
       object Label1: TLabel [3]
-        Left = 390
-        Top = 10
+        Left = 567
+        Top = 31
         Width = 48
         Height = 12
         Caption = #35843#25972#31867#22411
       end
-      object Label2: TLabel [4]
-        Left = 400
-        Top = 33
-        Width = 36
-        Height = 12
-        Caption = #32463#25163#20154
-      end
-      object Label3: TLabel [5]
-        Left = 195
-        Top = 57
-        Width = 48
-        Height = 12
-        Caption = #22791'    '#27880
-      end
-      object Label40: TLabel [6]
+      object Label40: TLabel [4]
         Left = 194
         Top = 9
         Width = 48
         Height = 12
         Caption = #38376#24215#21517#31216
       end
-      object Label8: TLabel [7]
+      object Label8: TLabel [5]
         Left = 194
-        Top = 33
+        Top = 31
         Width = 48
         Height = 12
         Caption = #25152#23646#37096#38376
+      end
+      object Label2: TLabel [6]
+        Left = 195
+        Top = 94
+        Width = 48
+        Height = 12
+        Caption = #22791'    '#27880
+      end
+      object Label3: TLabel [7]
+        Left = 195
+        Top = 74
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #25910#36135#22320#22336
+      end
+      object Label15: TLabel [8]
+        Left = 195
+        Top = 53
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32852#31995#30005#35805
+      end
+      object Label16: TLabel [9]
+        Left = 401
+        Top = 31
+        Width = 36
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32852#31995#20154
+      end
+      object Label17: TLabel [10]
+        Left = 400
+        Top = 9
+        Width = 36
+        Height = 12
+        Caption = #32463#25163#20154
       end
       inherited RzPanel4: TRzPanel
         Top = 5
@@ -92,19 +116,19 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
           Enabled = False
         end
       end
-      object edtCHK_DATE: TcxTextEdit
+      object edtLOCUS_CHK_DATE: TcxTextEdit
         Tag = 1
         Left = 624
-        Top = 29
+        Top = 49
         Width = 121
         Height = 20
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtCHK_USER_TEXT: TcxTextEdit
+      object edtLOCUS_CHK_USER_TEXT: TcxTextEdit
         Tag = 1
         Left = 624
-        Top = 53
+        Top = 71
         Width = 121
         Height = 20
         TabOrder = 2
@@ -118,64 +142,15 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 3
       end
-      object edtREMARK: TcxTextEdit
-        Left = 250
-        Top = 53
-        Width = 287
-        Height = 20
-        TabOrder = 4
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtDUTY_USER: TzrComboBoxList
-        Left = 445
-        Top = 29
-        Width = 92
-        Height = 20
-        Properties.AutoSelect = False
-        Properties.Buttons = <
-          item
-            Default = True
-          end>
-        Properties.ReadOnly = True
-        TabOrder = 5
-        InGrid = False
-        KeyValue = Null
-        FilterFields = 'ACCOUNT;USER_NAME'
-        KeyField = 'USER_ID'
-        ListField = 'USER_NAME'
-        Columns = <
-          item
-            EditButtons = <>
-            FieldName = 'ACCOUNT'
-            Footers = <>
-            Title.Caption = #24080#21495
-          end
-          item
-            EditButtons = <>
-            FieldName = 'USER_NAME'
-            Footers = <>
-            Title.Caption = #22995#21517
-            Width = 130
-          end>
-        DropWidth = 180
-        DropHeight = 150
-        ShowTitle = True
-        AutoFitColWidth = True
-        ShowButton = True
-        LocateStyle = lsDark
-        Buttons = [zbNew]
-        DropListStyle = lsFixed
-        MultiSelect = False
-      end
       object edtCHANGE_CODE: TcxComboBox
-        Left = 445
-        Top = 6
-        Width = 92
+        Left = 624
+        Top = 27
+        Width = 121
         Height = 20
         Enabled = False
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 6
+        TabOrder = 4
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 250
@@ -188,7 +163,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 7
+        TabOrder = 5
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -220,7 +195,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
       end
       object edtDEPT_ID: TzrComboBoxList
         Left = 250
-        Top = 29
+        Top = 27
         Width = 121
         Height = 20
         Properties.AutoSelect = False
@@ -229,7 +204,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 8
+        TabOrder = 6
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -249,6 +224,83 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
         ShowButton = False
         LocateStyle = lsDark
         Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
+      object edtREMARK: TcxTextEdit
+        Tag = 1
+        Left = 250
+        Top = 91
+        Width = 287
+        Height = 20
+        TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtSEND_ADDR: TcxTextEdit
+        Tag = 1
+        Left = 250
+        Top = 70
+        Width = 287
+        Height = 20
+        TabOrder = 8
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtTELEPHONE: TcxTextEdit
+        Tag = 1
+        Left = 250
+        Top = 49
+        Width = 287
+        Height = 20
+        TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtLINKMAN: TcxTextEdit
+        Tag = 1
+        Left = 445
+        Top = 27
+        Width = 92
+        Height = 20
+        TabOrder = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtDUTY_USER: TzrComboBoxList
+        Left = 445
+        Top = 5
+        Width = 92
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = True
+        TabOrder = 11
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'ACCOUNT;USER_NAME'
+        KeyField = 'USER_ID'
+        ListField = 'USER_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'ACCOUNT'
+            Footers = <>
+            Title.Caption = #24080#21495
+          end
+          item
+            EditButtons = <>
+            FieldName = 'USER_NAME'
+            Footers = <>
+            Title.Caption = #22995#21517
+            Width = 130
+          end>
+        DropWidth = 180
+        DropHeight = 150
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbNew]
         DropListStyle = lsFixed
         MultiSelect = False
       end
@@ -406,12 +458,11 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 136
+      Top = 158
       Width = 801
-      Height = 252
+      Height = 230
       Color = clWhite
       TabOrder = 3
-      OnCellClick = DBGridEh1CellClick
       OnKeyDown = nil
       OnKeyPress = nil
       OnMouseDown = nil
@@ -478,7 +529,6 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
           Footers = <>
           Title.Caption = #25195#30721#25968#37327
           Width = 60
-          OnEditButtonClick = DBGridEh1Columns6EditButtonClick
         end
         item
           EditButtons = <>
@@ -514,7 +564,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
       Top = 171
     end
     inherited pnlBarCode: TRzPanel
-      Top = 102
+      Top = 124
       Width = 801
       Height = 34
     end

@@ -62,6 +62,7 @@ type
     FCodeId: string;
     procedure SetCodeId(const Value: string);
     procedure ShowInfo;
+    procedure SetdbState(const Value: TDataSetState); override;
   public
     { Public declarations }
     function CheckInput:boolean;override;
@@ -294,13 +295,13 @@ begin
     end;
     edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('CHANGE_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').asString;
-    dbState := dsBrowse;
   finally
     Params.Free;
   end;
@@ -504,7 +505,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -524,12 +525,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmChangeOrder.edtDUTY_USERSaveValue(Sender: TObject);
@@ -667,6 +670,19 @@ end;
 function TfrmChangeOrder.CheckInput: boolean;
 begin
   result := pos(inttostr(InputFlag),'0789')>0;
+end;
+
+procedure TfrmChangeOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+  if cdsHeader.Active and (Value=dsBrowse) then
+  begin
+    if AObj.FieldbyName('LOCUS_STATUS').AsString='3' then
+       lblState.Caption := lblState.Caption + ' / 已发货'
+    else
+       lblState.Caption := lblState.Caption + ' / 未发货';
+  end;
+
 end;
 
 end.

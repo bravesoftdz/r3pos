@@ -279,8 +279,9 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-  edtSHOP_ID.Properties.ReadOnly := False;    
+    edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     ReadFromObject(AObj,self);
     ReadHeader;
     ReadFrom(cdsDetail);
@@ -295,7 +296,6 @@ begin
               TabSheet.Caption := gid;
             end;
        end;
-    dbState := dsBrowse;
   finally
     Params.Free;
   end;
@@ -488,7 +488,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -508,12 +508,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmDbOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
@@ -648,6 +650,13 @@ procedure TfrmDbOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   actOK.Visible := (Value = dsBrowse) and cdsHeader.Active and (cdsHeader.FieldByName('PLAN_DATE').AsString = ''); 
+  if cdsHeader.Active and (Value=dsBrowse) then
+  begin
+    if AObj.FieldbyName('LOCUS_STATUS').AsString='3' then
+       lblState.Caption := lblState.Caption + ' / 已发货'
+    else
+       lblState.Caption := lblState.Caption + ' / 未发货';
+  end;
 end;
 
 procedure TfrmDbOrder.actCustomerExecute(Sender: TObject);

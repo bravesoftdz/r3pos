@@ -763,7 +763,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -783,12 +783,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmSalIndentOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;

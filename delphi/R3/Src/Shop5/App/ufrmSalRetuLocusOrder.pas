@@ -58,8 +58,8 @@ type
     edtDEPT_ID: TzrComboBoxList;
     Label1: TLabel;
     Label9: TLabel;
-    edtCHK_DATE: TcxTextEdit;
-    edtCHK_USER_TEXT: TcxTextEdit;
+    edtLOCUS_CHK_DATE: TcxTextEdit;
+    edtLOCUS_CHK_USER_TEXT: TcxTextEdit;
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns4EditButtonClick(Sender: TObject;
       var Handled: Boolean);
@@ -70,11 +70,8 @@ type
     procedure cdsLocusNoFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
-    procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure edtInputKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure DBGridEh1Columns6EditButtonClick(Sender: TObject;
-      var Handled: Boolean);
     procedure DBGridEh1DblClick(Sender: TObject);
   private
     { Private declarations }
@@ -86,11 +83,12 @@ type
   public
     { Public declarations }
     function  Calc:real;
+    function  CalcCurr:real;
     procedure ReadFrom(DataSet:TDataSet);override;
     function PriorLocusNo:boolean;
     function NextLocusNo(flag:integer=0):boolean;
     //输入跟踪号
-    function GodsToLocusNo(id:string):boolean;
+    function GodsToLocusNo(id:string):boolean;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -114,41 +112,53 @@ var
   bs:TZQuery;
 begin
   inherited;
-  if dbState = dsBrowse then Raise Exception.Create('不在扫码状态不能操作此功能.');
-
+  if dbState = dsBrowse then Raise Exception.Create('不在收货状态不能操作此功能.');
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经批码的单据不能重复操作');
+  if IsAudit then Raise Exception.Create('已经审核的单据不能再扫码.');
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-  if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then MessageBox(Handle,'当前选中的商品没有启动物流跟踪码','友情提示..',MB_OK+MB_ICONINFORMATION);
-  if MessageBox(Handle,'是否清除当前商品已扫物流码？','友情提示...',MB_YESNO+MB_ICONINFORMATION)<>6 then Exit;
-  cdsLocusNo.Filtered := false;
-  cdsLocusNo.Filtered := true;
-  cdsLocusNo.First;
-  while not cdsLocusNo.Eof do cdsLocusNo.Delete;
-  Calc;
+  if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then
+     begin
+       MessageBox(Handle,'当前选中的商品没有启动物流跟踪码','友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  with TfrmLocusNoProperty.Create(self) do
+     begin
+       try
+         cdsLocusNo.Filtered := false;
+         cdsLocusNo.Filtered := true;
+         dbState := self.dbState;
+         DataSet := cdsLocusNo;
+         Form := self;
+         Wait := round(FnNumber.ConvertToFight(self.edtTable.FieldbyName('AMOUNT').asFloat,4,0));
+         ShowModal;
+         if dbState <> dsBrowse then
+            Calc;
+       finally
+         free;
+       end;
+     end;
 end;
 
 procedure TfrmSalRetuLocusOrder.EditOrder;
 begin
   inherited;
-  if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经批码的单据不能重复操作');
-  edtInput.Properties.ReadOnly := false;
-  edtInput.Style.Color := clWhite;
-  if Visible and edtInput.CanFocus then edtInput.SetFocus;
-  if not NextLocusNo then MessageBox(Handle,'当前选中的单据没有需要扫码的商品','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmSalRetuLocusOrder.NewOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经审核的单据不能再扫码了');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能收货.');
   edtInput.Properties.ReadOnly := false;
   edtInput.Style.Color := clWhite;
   if Visible and edtInput.CanFocus then edtInput.SetFocus;
-  if not NextLocusNo(-1) then MessageBox(Handle,'当前选中的单据没有需要扫码的商品','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if not NextLocusNo(-1) then
+     begin
+     end
+  else
+     begin
+     end;
   dbState := dsEdit;
 end;
 
@@ -176,7 +186,7 @@ begin
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
-    IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
+    IsAudit := (AObj.FieldbyName('LOCUS_CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('SALES_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
@@ -336,13 +346,22 @@ begin
   if dbState <> dsBrowse then SaveOrder;
   if IsAudit then
      begin
-//       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
-       if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前退货单执行弃审');
+        edtTable.DisableControls;
+        try
+          edtTable.First;
+          while not edtTable.Eof do
+            begin
+              if edtTable.FieldbyName('BAL_AMT').AsInteger <>0 then Raise Exception.Create('当前商品扫码数据不正确，请核对后再审核');
+              edtTable.Next;
+            end;
+        finally
+          edtTable.EnableControls;
+        end;
+       if cdsHeader.FieldByName('LOCUS_CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前退货单执行弃审');
        if MessageBox(Handle,'确认弃审当前退货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
   else
      begin
-//       if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
        if MessageBox(Handle,'确认审核当前退货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
@@ -350,12 +369,12 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       Params.ParamByName('SALES_ID').asString := cdsHeader.FieldbyName('SALES_ID').AsString;
-      Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
-      Params.ParamByName('CHK_USER').asString := Global.UserID;
+      Params.ParamByName('LOCUS_CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+      Params.ParamByName('LOCUS_CHK_USER').asString := Global.UserID;
       if not IsAudit then
-         Msg := Factor.ExecProc('TSalesOrderAudit',Params)
+         Msg := Factor.ExecProc('TSalRetuLocusNoAudit',Params)
       else
-         Msg := Factor.ExecProc('TSalesOrderUnAudit',Params) ;
+         Msg := Factor.ExecProc('TSalRetuLocusNoUnAudit',Params) ;
     finally
        Params.free;
     end;
@@ -363,21 +382,21 @@ begin
     IsAudit := not IsAudit;
     if IsAudit then
        begin
-         edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
-         edtCHK_USER_TEXT.Text := Global.UserName;
-         AObj.FieldByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
-         AObj.FieldByName('CHK_USER').AsString := Global.UserID;
+         edtLOCUS_CHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+         edtLOCUS_CHK_USER_TEXT.Text := Global.UserName;
+         AObj.FieldByName('LOCUS_CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
+         AObj.FieldByName('LOCUS_CHK_USER').AsString := Global.UserID;
        end
     else
        begin
-         edtCHK_DATE.Text := '';
-         edtCHK_USER_TEXT.Text := '';
-         AObj.FieldByName('CHK_DATE').AsString := '';
-         AObj.FieldByName('CHK_USER').AsString := '';
+         edtLOCUS_CHK_DATE.Text := '';
+         edtLOCUS_CHK_USER_TEXT.Text := '';
+         AObj.FieldByName('LOCUS_CHK_DATE').AsString := '';
+         AObj.FieldByName('LOCUS_CHK_USER').AsString := '';
        end;
     cdsHeader.Edit;
-    cdsHeader.FieldByName('CHK_DATE').AsString := AObj.FieldByName('CHK_DATE').AsString;
-    cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
+    cdsHeader.FieldByName('LOCUS_CHK_DATE').AsString := AObj.FieldByName('LOCUS_CHK_DATE').AsString;
+    cdsHeader.FieldByName('LOCUS_CHK_USER').AsString := AObj.FieldByName('LOCUS_CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
   except
@@ -444,9 +463,17 @@ begin
         cdsLocusNo.FieldByName('CALC_AMOUNT').AsFloat := 1*sr;
         cdsLocusNo.FieldByName('LOCUS_NO').AsString := id;
         cdsLocusNo.Post;
-        MessageBeep(0);
-        Calc;
-        lblHint.Caption := '扫码成功,数量:'+edtTable.FieldbyName('LOCUS_AMT').asString;
+        CalcCurr;
+        if edtTable.FieldbyName('BAL_AMT').asFloat<0 then
+           begin
+              windows.beep(2000,500);
+              lblHint.Caption := '当前商品已经扫码完毕了。';
+           end
+        else
+           begin
+             lblHint.Caption := '扫码成功,数量:'+edtTable.FieldbyName('LOCUS_AMT').asString;
+             MessageBeep(0);
+           end;
      end else
         begin
           windows.beep(2000,500);
@@ -575,28 +602,6 @@ begin
     end;
 end;
 
-procedure TfrmSalRetuLocusOrder.DBGridEh1CellClick(Column: TColumnEh);
-begin
-//  inherited;
-  if Column.FieldName='LOCUS_AMT' then
-     begin
-       with TfrmLocusNoProperty.Create(self) do
-         begin
-           try
-             cdsLocusNo.Filtered := false;
-             cdsLocusNo.Filtered := true;
-             dbState := self.dbState;
-             DataSet := cdsLocusNo;
-             ShowModal;
-             if dbState <> dsBrowse then
-                Calc;
-           finally
-             free;
-           end;
-         end;
-     end;
-end;
-
 function TfrmSalRetuLocusOrder.NextLocusNo(flag:integer=0):boolean;
 var
   bs:TZQuery;
@@ -645,13 +650,6 @@ begin
      end;
 end;
 
-procedure TfrmSalRetuLocusOrder.DBGridEh1Columns6EditButtonClick(
-  Sender: TObject; var Handled: Boolean);
-begin
-  inherited;
-  DBGridEh1CellClick(DBGridEh1.FieldColumns['LOCUS_AMT']);
-end;
-
 procedure TfrmSalRetuLocusOrder.SetInputFlag(const Value: integer);
 begin
   inherited SetInputFlag(7);
@@ -661,7 +659,7 @@ end;
 procedure TfrmSalRetuLocusOrder.DBGridEh1DblClick(Sender: TObject);
 begin
 //  inherited;
-
+  DeleteOrder;
 end;
 
 function TfrmSalRetuLocusOrder.PriorLocusNo: boolean;
@@ -680,6 +678,17 @@ begin
            if edtTable.Bof then Exit;
          end else begin result := true;break;end;
     end;
+end;
+
+function TfrmSalRetuLocusOrder.CalcCurr: real;
+var
+  amt:integer;
+begin
+  amt := cdsLocusNo.RecordCount;
+  edtTable.Edit;
+  edtTable.FieldByName('BAL_AMT').asFloat := edtTable.FieldbyName('AMOUNT').AsFloat-amt;
+  edtTable.FieldByName('LOCUS_AMT').asFloat := amt;
+  edtTable.Post;
 end;
 
 end.

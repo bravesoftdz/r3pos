@@ -79,6 +79,8 @@ type
     //开始基础数据
     procedure SyncBasic(gbl:boolean=true);
 
+    //检测服务端是否没有数据？
+    function CheckRemeteData:boolean;
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property SyncComm:boolean read FSyncComm write SetSyncComm;
@@ -107,6 +109,21 @@ begin
     result := (LocalVersion=RemoteVersion);
   finally
     rs.Free;
+  end;
+end;
+
+function TSyncFactory.CheckRemeteData: boolean;
+var
+  rs:TZQuery;
+begin
+  if not SyncComm then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.RemoteFactory.Open(rs);
+    result := not rs.IsEmpty; 
+  finally
+    rs.free;
   end;
 end;
 
@@ -164,6 +181,7 @@ function TSyncFactory.GetSynTimeStamp(tbName: string;SHOP_ID:string='#'): int64;
 var
   rs:TZQuery;
 begin
+  if SHOP_ID='' then SHOP_ID:='#';
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
@@ -171,7 +189,7 @@ begin
     rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
     rs.ParamByName('TABLE_NAME').AsString := tbName;
     Global.LocalFactory.Open(rs);
-    if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
+    if rs.IsEmpty or not SyncComm then result := 0 else result := rs.Fields[0].Value;
   finally
     rs.Free;
   end;
@@ -353,6 +371,7 @@ begin
   n^.KeyFlag := 1;
   n^.tbtitle := '会员档案';
   FList.Add(n);
+  
   new(n);
   n^.tbname := 'PUB_IC_INFO';
   n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
@@ -408,27 +427,11 @@ begin
   FList.Add(n);
 
   new(n);
-  n^.tbname := 'STK_LOCUS_FORSTCK';
-  n^.keyFields := 'TENANT_ID;STOCK_ID;SEQNO';
-  n^.synFlag := 23;
-  n^.tbtitle := '扫码入库';
-  n^.KeyFlag := 0;
-  FList.Add(n);
-
-  new(n);
   n^.tbname := 'SAL_SALESORDER';
   n^.keyFields := 'TENANT_ID;SALES_ID';
   n^.synFlag := 6;
   n^.KeyFlag := 0;
   n^.tbtitle := '出库单据';
-  FList.Add(n);
-
-  new(n);
-  n^.tbname := 'SAL_LOCUS_FORSALE';
-  n^.keyFields := 'TENANT_ID;SALES_ID;SEQNO';
-  n^.synFlag := 24;
-  n^.tbtitle := '扫码出库';
-  n^.KeyFlag := 0;
   FList.Add(n);
 
   new(n);
@@ -439,14 +442,6 @@ begin
   n^.tbtitle := '存货单据';
   FList.Add(n);
 
-  new(n);
-  n^.tbname := 'STO_LOCUS_FORCHAG';
-  n^.keyFields := 'TENANT_ID;CHANGE_ID;SEQNO';
-  n^.synFlag := 25;
-  n^.tbtitle := '扫码库存';
-  n^.KeyFlag := 0;
-  FList.Add(n);
-  
   new(n);
   n^.tbname := 'STK_INDENTORDER';
   n^.keyFields := 'TENANT_ID;INDE_ID';
@@ -566,6 +561,7 @@ procedure TSyncFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64;SHOP_ID:
 var
   r:integer;
 begin
+  if SHOP_ID='' then SHOP_ID:='#';
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then
      Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
@@ -595,6 +591,7 @@ begin
         Raise;
       end;
   end;
+  SyncComm := CheckRemeteData;
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
@@ -618,9 +615,6 @@ begin
       17:SyncCloseForDay(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      23:SyncLocusForStck(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      24:SyncLocusForSale(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      25:SyncLocusForChag(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -634,6 +628,7 @@ procedure TSyncFactory.SyncBasic(gbl:boolean=true);
 var
   i:integer;
 begin
+  SyncComm := CheckRemeteData;
   frmLogo.Show;
   try
   SyncTimeStamp := CaFactory.TimeStamp;
@@ -661,7 +656,7 @@ end;
 procedure TSyncFactory.SyncChangeOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
-  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+  ls,cs_h,cs_d,cs_l,rs_h,rs_d,rs_l:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -674,6 +669,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
@@ -683,14 +680,17 @@ begin
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncChangeOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncChangeData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForChagData',Params);
            Global.RemoteFactory.OpenBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -699,11 +699,13 @@ begin
 
          cs_h.SyncDelta := rs_h.SyncDelta;
          cs_d.SyncDelta := rs_d.SyncDelta;
+         cs_l.SyncDelta := rs_l.SyncDelta;
 
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncChangeOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncChangeData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForChagData',Params);
            Global.LocalFactory.CommitBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -718,6 +720,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 
   //下传
@@ -726,6 +730,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
@@ -734,14 +740,17 @@ begin
        begin
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncChangeOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncChangeData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForChagData',Params);
            Global.LocalFactory.OpenBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -750,11 +759,13 @@ begin
 
          rs_h.SyncDelta := cs_h.SyncDelta;
          rs_d.SyncDelta := cs_d.SyncDelta;
+         rs_l.SyncDelta := cs_l.SyncDelta;
 
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncChangeOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncChangeData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForChagData',Params);
            Global.RemoteFactory.CommitBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -770,6 +781,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 end;
 
@@ -2042,7 +2055,7 @@ end;
 procedure TSyncFactory.SyncSalesOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
-  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+  ls,cs_h,cs_d,cs_l,rs_h,rs_d,rs_l:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -2055,6 +2068,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
@@ -2064,14 +2079,17 @@ begin
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncSalesOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncSalesData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForSaleData',Params);
            Global.RemoteFactory.OpenBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -2080,11 +2098,13 @@ begin
 
          cs_h.SyncDelta := rs_h.SyncDelta;
          cs_d.SyncDelta := rs_d.SyncDelta;
+         cs_l.SyncDelta := rs_l.SyncDelta;
 
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncSalesOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncSalesData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForSaleData',Params);
            Global.LocalFactory.CommitBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -2099,6 +2119,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 
   //下传
@@ -2107,6 +2129,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
@@ -2115,14 +2139,17 @@ begin
        begin
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncSalesOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncSalesData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForSaleData',Params);
            Global.LocalFactory.OpenBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -2131,11 +2158,13 @@ begin
 
          rs_h.SyncDelta := cs_h.SyncDelta;
          rs_d.SyncDelta := cs_d.SyncDelta;
+         rs_l.SyncDelta := cs_l.SyncDelta;
 
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncSalesOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncSalesData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForSaleData',Params);
            Global.RemoteFactory.CommitBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -2151,6 +2180,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 end;
 
@@ -2272,7 +2303,6 @@ end;
 procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0);
 var
   cs,rs:TZQuery;
-  Downed:boolean;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -2294,7 +2324,6 @@ begin
     SetTicket;
     cs.SyncDelta := rs.SyncDelta;
     Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
-    Downed := (rs.RecordCount>0); 
     LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     rs.Free;
@@ -2303,7 +2332,7 @@ begin
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try
-    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm and Downed;
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     //上传本机数据
     cs.Close;
     rs.Close;
@@ -2451,7 +2480,7 @@ end;
 
 procedure TSyncFactory.SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
 var
-  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+  ls,cs_h,cs_d,cs_l,rs_h,rs_d,rs_l:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -2464,6 +2493,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
@@ -2473,14 +2504,17 @@ begin
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncStockOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncStockData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForStckData',Params);
            Global.RemoteFactory.OpenBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -2489,11 +2523,13 @@ begin
 
          cs_h.SyncDelta := rs_h.SyncDelta;
          cs_d.SyncDelta := rs_d.SyncDelta;
+         cs_l.SyncDelta := rs_l.SyncDelta;
 
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncStockOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncStockData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForStckData',Params);
            Global.LocalFactory.CommitBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -2508,6 +2544,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 
   //下传
@@ -2516,6 +2554,8 @@ begin
   rs_h := TZQuery.Create(nil);
   cs_d := TZQuery.Create(nil);
   rs_d := TZQuery.Create(nil);
+  cs_l := TZQuery.Create(nil);
+  rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
@@ -2524,14 +2564,17 @@ begin
        begin
          cs_h.Close;
          cs_d.Close;
+         cs_l.Close;
          rs_h.Close;
          rs_d.Close;
+         rs_l.Close;
 
          Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncStockOrder',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncStockData',Params);
+           Global.LocalFactory.AddBatch(cs_l,'TSyncLocusForStckData',Params);
            Global.LocalFactory.OpenBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -2540,11 +2583,13 @@ begin
 
          rs_h.SyncDelta := cs_h.SyncDelta;
          rs_d.SyncDelta := cs_d.SyncDelta;
+         rs_l.SyncDelta := cs_l.SyncDelta;
 
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncStockOrder',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncStockData',Params);
+           Global.RemoteFactory.AddBatch(rs_l,'TSyncLocusForStckData',Params);
            Global.RemoteFactory.CommitBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -2560,6 +2605,8 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+    rs_l.Free;
+    cs_l.Free;
   end;
 end;
 

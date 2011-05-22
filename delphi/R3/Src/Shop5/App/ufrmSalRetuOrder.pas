@@ -367,9 +367,9 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
-    edtSHOP_ID.Properties.ReadOnly := False;  
+    edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     ReadFromObject(AObj,self);
     edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
@@ -819,7 +819,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -839,12 +839,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmSalRetuOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
@@ -855,122 +857,8 @@ begin
 end;
 
 function TfrmSalRetuOrder.ConvertToFight(value: Currency; deci: Integer): Currency;
-var s:string;
-  n,w:integer;
-  jw:Currency;
 begin
-  if CarryRule=0 then
-  begin
-    if Deci=0 then
-       s := FormatFloat('#0',value);
-    if Deci=1 then
-       s := FormatFloat('#0.0',value);
-    if Deci=2 then
-       s := FormatFloat('#0.00',value);
-    if Deci=3 then
-       s := FormatFloat('#0.000',value);
-    result := StrtoFloat(s);
-    exit;
-  end;
-  if CarryRule=2 then
-  begin
-    if Deci=0 then
-       result := Trunc(value);
-    if Deci=1 then
-       result := Trunc(value*10)/10;
-    if Deci=2 then
-       result := Trunc(value*100)/100;
-    if Deci=3 then
-       result := Trunc(value*1000)/1000;
-    exit;
-  end;
-  if CarryRule=1 then
-  begin
-    if Deci=0 then
-      s := FormatFloat('#0',value);
-    if Deci=1 then
-      s := FormatFloat('#0.0',value);
-    if Deci=2 then
-      s := FormatFloat('#0.00',value);
-    if Deci=3 then
-      s := FormatFloat('#0.000',value);
-    n := length(s);
-    if StrtoInt(s[n]) in [1..4] then
-       begin
-         s[n] := '5';
-         Result := StrtoFloat(s);
-       end
-    else
-    if StrtoInt(s[n]) in [6..9] then
-       begin
-         s[n] := '0';
-         if Deci=0 then
-           jw := 10;
-         if Deci=1 then
-           jw := 1;
-         if Deci=2 then
-           jw := 0.1;
-         if Deci=3 then
-           jw := 0.01;
-         Result := StrtoFloat(s)+jw;
-       end
-    else
-       Result := StrtoFloat(s);
-  end;
-  if CarryRule=3 then
-  begin
-    if Deci=0 then
-      s := FormatFloat('#0',value);
-    if Deci=1 then
-      s := FormatFloat('#0.0',value);
-    if Deci=2 then
-      s := FormatFloat('#0.00',value);
-    if Deci=3 then
-      s := FormatFloat('#0.000',value);
-    n := length(s);
-    if StrtoInt(s[n]) in [1..4] then
-       begin
-         s[n] := '0';
-         Result := StrtoFloat(s);
-       end
-    else
-    if StrtoInt(s[n]) in [6..9] then
-       begin
-         s[n] := '0';
-         if Deci=0 then
-           jw := 10;
-         if Deci=1 then
-           jw := 1;
-         if Deci=2 then
-           jw := 0.1;
-         if Deci=3 then
-           jw := 0.01;
-         Result := StrtoFloat(s)+jw;
-       end
-    else
-       Result := StrtoFloat(s);
-  end;
-  if CarryRule=4 then
-  begin
-    if Deci=0 then
-       result := Trunc(value);
-    if Deci=1 then
-       result := Trunc(value*10)/10;
-    if Deci=2 then
-       result := Trunc(value*100)/100;
-    if Deci=3 then
-       result := Trunc(value*1000)/1000;
-    if Value>Result then
-       begin
-         case Deci of
-         0:result := result + 1;
-         1:result := result + 0.1;
-         2:result := result + 0.01;
-         3:result := result + 0.001;
-         end;
-       end;
-    exit;
-  end;
+  result := FnNumber.ConvertToFight(value,CarryRule,deci);
 end;
 
 procedure TfrmSalRetuOrder.fndGODS_IDAddClick(Sender: TObject);
@@ -1401,6 +1289,13 @@ begin
   inherited;
   edtSHOP_ID.Properties.ReadOnly := (Value<>dsInsert);
   if edtSHOP_ID.Properties.ReadOnly then SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+  if cdsHeader.Active and (Value=dsBrowse) then
+  begin
+    if AObj.FieldbyName('LOCUS_STATUS').AsString='3' then
+       lblState.Caption := lblState.Caption + ' / 已收货'
+    else
+       lblState.Caption := lblState.Caption + ' / 未收货';
+  end;
 end;
 
 procedure TfrmSalRetuOrder.actCustomerExecute(Sender: TObject);

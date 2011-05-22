@@ -377,9 +377,9 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     ReadFromObject(AObj,self);
     edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
@@ -428,7 +428,7 @@ begin
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   Calc;
-  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.'); 
+  if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
   AObj.FieldByName('CASH_MNY').AsFloat := 0;
@@ -452,7 +452,7 @@ begin
      end;
   //结算对话框
   //if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
-  //end 
+  //end
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
@@ -829,7 +829,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -849,12 +849,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmSalesOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
@@ -1298,6 +1300,13 @@ begin
   inherited;
   edtSHOP_ID.Properties.ReadOnly := (Value<>dsInsert);
   if edtSHOP_ID.Properties.ReadOnly then SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+  if cdsHeader.Active and (Value=dsBrowse) then
+  begin
+    if AObj.FieldbyName('LOCUS_STATUS').AsString='3' then
+       lblState.Caption := lblState.Caption + ' / 已发货'
+    else
+       lblState.Caption := lblState.Caption + ' / 未发货';
+  end;
 end;
 
 procedure TfrmSalesOrder.actCustomerExecute(Sender: TObject);

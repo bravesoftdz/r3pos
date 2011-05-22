@@ -1,6 +1,6 @@
 inherited frmStkLocusOrder: TfrmStkLocusOrder
-  Left = 195
-  Top = 49
+  Left = 234
+  Top = 208
   Width = 786
   Height = 523
   Caption = #36827#36135#21333
@@ -322,7 +322,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object edtCHK_DATE: TcxTextEdit
+      object edtLOCUS_CHK_DATE: TcxTextEdit
         Tag = 1
         Left = 623
         Top = 47
@@ -331,7 +331,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
         TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtCHK_USER_TEXT: TcxTextEdit
+      object edtLOCUS_CHK_USER_TEXT: TcxTextEdit
         Tag = 1
         Left = 623
         Top = 68
@@ -499,7 +499,6 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
       Height = 237
       Color = clWhite
       TabOrder = 3
-      OnCellClick = DBGridEh1CellClick
       OnKeyDown = nil
       OnKeyPress = nil
       OnMouseDown = nil
@@ -566,7 +565,6 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
           Footers = <>
           Title.Caption = #25195#30721#25968#37327
           Width = 60
-          OnEditButtonClick = DBGridEh1Columns6EditButtonClick
         end
         item
           EditButtons = <>
@@ -605,6 +603,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
       Top = 105
       Width = 760
       Height = 34
+      Visible = False
     end
     inherited stbHint: TRzPanel
       Top = 437

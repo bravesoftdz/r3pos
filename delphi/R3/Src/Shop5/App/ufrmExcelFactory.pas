@@ -203,7 +203,7 @@ function CheckNull(V:array of string):Boolean;
 var i:integer;
 begin
   result := true;
-  for i:=1 to 3 do
+  for i:=0 to 3 do
     result := result and (trim(V[i])='');
 end;
 var Excel: Variant;
@@ -426,13 +426,18 @@ begin
     end
   else if RzPage.ActivePageIndex = 4 then
     begin
-      if Save(DataSet) then
-        begin
-          MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
-          ModalResult := mrOk;
-        end
+      if Assigned(Save) then
+      begin
+        if Save(DataSet) then
+          begin
+            MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
+            ModalResult := mrOk;
+          end
+        else
+          MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
+      end
       else
-        MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
+        ModalResult := mrOk;
     end;
   //RzPageChange(nil);
 end;

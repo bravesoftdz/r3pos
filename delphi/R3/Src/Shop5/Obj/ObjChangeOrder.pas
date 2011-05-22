@@ -48,6 +48,14 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TChangeLocusNoAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TChangeLocusNoUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
   TChangeForLocusNoHeader=class(TZFactory)
   private
   public
@@ -333,7 +341,7 @@ begin
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as DUTY_USER_TEXT from ('+
                ' select CHANGE_ID,TENANT_ID,SHOP_ID,GLIDE_NO,CHANGE_DATE,DEPT_ID,CHANGE_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CHANGE_AMT,CHANGE_MNY,CREA_USER,COMM,'+
-               ' TIME_STAMP from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID) jc '+
+               ' TIME_STAMP,LOCUS_STATUS from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.DUTY_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID) je '+
                ' left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID) jf '+
@@ -394,7 +402,7 @@ begin
       'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and B.USING_LOCUS_NO=1 and '+
       'not Exists(select * from STO_LOCUS_FORCHAG where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and CHANGE_ID=A.CHANGE_ID)';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
+    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');
   finally
     rs.Free;
   end;  }
@@ -428,9 +436,9 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select count(*) from STO_LOCUS_FORCHAG where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+'''';
+      'select LOCUS_STATUS from STO_CHANGEORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+'''';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
+    if rs.Fields[0].AsString='3' then Raise Exception.Create('已经扫码出库完毕，不能弃核..');
   finally
     rs.Free;
   end;
@@ -490,17 +498,81 @@ begin
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as DUTY_USER_TEXT from ('+
                ' select CHANGE_ID,TENANT_ID,SHOP_ID,GLIDE_NO,CHANGE_DATE,DEPT_ID,CHANGE_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,CHANGE_CODE,DUTY_USER,REMARK,CHK_USER,CHK_DATE,FROM_ID,CREA_DATE,CHANGE_AMT,CHANGE_MNY,CREA_USER,COMM,'+
-               ' TIME_STAMP,LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID) jc '+
+               ' TIME_STAMP,LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,LOCUS_AMT,LOCUS_CHK_DATE,LOCUS_CHK_USER from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.DUTY_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID) je '+
                ' left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID) jf '+
                ' left outer join CA_DEPT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.DEPT_ID=f.DEPT_ID';
   Str :=
-      'update STO_CHANGEORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,'
+      'update STO_CHANGEORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,LOCUS_CHK_DATE=:LOCUS_CHK_DATE,LOCUS_CHK_USER=:LOCUS_CHK_USER,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where TENANT_ID=:OLD_TENANT_ID and CHANGE_ID=:OLD_CHANGE_ID';
   UpdateSQL.Text := Str;
+end;
+
+{ TChangeLocusNoAudit }
+
+function TChangeLocusNoAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+    Temp:TZQuery;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select LOCUS_STATUS from STO_CHANGEORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsString<>'3' then Raise Exception.Create('没有发货完毕，不能审核..');
+  finally
+    rs.Free;
+  end;
+  try
+    Str := 'update STO_CHANGEORDER set LOCUS_CHK_DATE='''+Params.FindParam('LOCUS_CHK_DATE').asString+''',LOCUS_CHK_USER='''+Params.FindParam('LOCUS_CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and LOCUS_CHK_DATE IS NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    Result := true;
+    Msg := '审核单据成功';
+  except
+    on E:Exception do
+      begin
+        Result := false;
+        Msg := '审核错误'+E.Message;
+      end;
+  end;
+end;
+
+{ TChangeLocusNoUnAudit }
+
+function TChangeLocusNoUnAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+  rs:TZQuery;
+begin
+   try
+    Str := 'update STO_CHANGEORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and CHANGE_ID='''+Params.FindParam('CHANGE_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    MSG := '反审核单据成功。';
+    Result := True;
+  except
+    on E:Exception do
+       begin
+         Result := False;
+         Msg := '反审核错误:'+E.Message;
+       end;
+  end;
 end;
 
 initialization
@@ -512,6 +584,8 @@ initialization
   RegisterClass(TChangeOrderUnAudit);
   RegisterClass(TChangeForLocusNo);
   RegisterClass(TChangeForLocusNoHeader);
+  RegisterClass(TChangeLocusNoAudit);
+  RegisterClass(TChangeLocusNoUnAudit);
 finalization
   UnRegisterClass(TChangeOrder);
   UnRegisterClass(TChangeData);
@@ -521,4 +595,6 @@ finalization
   UnRegisterClass(TChangeOrderUnAudit);
   UnRegisterClass(TChangeForLocusNo);
   UnRegisterClass(TChangeForLocusNoHeader);
+  UnRegisterClass(TChangeLocusNoAudit);
+  UnRegisterClass(TChangeLocusNoUnAudit);
 end.

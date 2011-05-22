@@ -55,7 +55,7 @@ inherited frmDbOkDialog: TfrmDbOkDialog
       item
         Default = True
       end>
-    Properties.ReadOnly = True
+    Properties.ReadOnly = False
     TabOrder = 1
     InGrid = False
     KeyValue = Null

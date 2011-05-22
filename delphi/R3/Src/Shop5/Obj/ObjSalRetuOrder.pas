@@ -60,6 +60,14 @@ type
   public
     procedure InitClass;override;
   end;
+  TSalRetuLocusNoAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TSalRetuLocusNoUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
 
 implementation
 
@@ -429,7 +437,7 @@ begin
                '(select TENANT_ID,SHOP_ID,DEPT_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,-SALE_AMT as SALE_AMT,-SALE_MNY as SALE_MNY,CASH_MNY,PAY_ZERO,-PAY_DIBS as PAY_DIBS,'+
                '-ADVA_MNY as ADVA_MNY,-PAY_A as PAY_A,-PAY_B as PAY_B,-PAY_C as PAY_C,-PAY_D as PAY_D,-PAY_E as PAY_E,-PAY_F as PAY_F,-PAY_G as PAY_G,-PAY_H as PAY_H,-PAY_I as PAY_I,-PAY_J as PAY_J,-INTEGRAL as INTEGRAL,-BARTER_INTEGRAL as BARTER_INTEGRAL,'+
                'REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,IC_CARDNO,UNION_ID,COMM,CREA_DATE,CREA_USER,'+
-               'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
+               'TIME_STAMP,LOCUS_STATUS from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
                ' left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -492,11 +500,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select count(*) from SAL_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
-      'A.TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and A.SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and B.USING_LOCUS_NO=1 and '+
-      'not Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.SALES_ID)';
+      'select LOCUS_STATUS from SAL_SALESORDER A where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' '+
+      ' and Exists(select * from SAL_SALESDATA B,VIW_GOODSINFO C where B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and C.USING_LOCUS_NO=1 and B.TENANT_ID=A.TENANT_ID and B.SALES_ID=A.SALES_ID)';
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger>0 then Raise Exception.Create('没有扫码出库完毕，不能审核..');  
+    if not rs.IsEmpty and (rs.Fields[0].AsString<>'3') then Raise Exception.Create('没有扫码入库完毕，不能审核..');
   finally
     rs.Free;
   end;
@@ -585,7 +592,7 @@ begin
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT,b.PRICE_ID,b.INTEGRAL as ACCU_INTEGRAL,b.BALANCE,b.CLIENT_CODE from '+
                '(select TENANT_ID,SHOP_ID,DEPT_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,-SALE_AMT as SALE_AMT,-SALE_MNY as SALE_MNY,CASH_MNY,PAY_ZERO,-PAY_DIBS as PAY_DIBS,'+
                '-ADVA_MNY as ADVA_MNY,-PAY_A as PAY_A,-PAY_B as PAY_B,-PAY_C as PAY_C,-PAY_D as PAY_D,-PAY_E as PAY_E,-PAY_F as PAY_F,-PAY_G as PAY_G,-PAY_H as PAY_H,-PAY_I as PAY_I,-PAY_J as PAY_J,-INTEGRAL as INTEGRAL,-BARTER_INTEGRAL as BARTER_INTEGRAL,'+
-               'LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,-LOCUS_AMT as LOCUS_AMT,'+
+               'LOCUS_STATUS,LOCUS_USER,LOCUS_DATE,-LOCUS_AMT as LOCUS_AMT,LOCUS_CHK_DATE,LOCUS_CHK_USER,'+
                'REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,IC_CARDNO,UNION_ID,COMM,CREA_DATE,CREA_USER,'+
                'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
                ' left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
@@ -596,11 +603,74 @@ begin
                ' left outer join SAL_SALESORDER g on jg.TENANT_ID=g.TENANT_ID and jg.FROM_ID=g.SALES_ID ) jh '+
                ' left outer join CA_DEPT_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.DEPT_ID=h.DEPT_ID';
   Str :=
-      'update SAL_SALESORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=- :LOCUS_AMT,'
+      'update SAL_SALESORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=- :LOCUS_AMT,LOCUS_CHK_DATE=:LOCUS_CHK_DATE,LOCUS_CHK_USER=:LOCUS_CHK_USER,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID';
   UpdateSQL.Text := Str;
+end;
+
+{ TSalRetuLocusNoUnAudit }
+
+function TSalRetuLocusNoUnAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+begin
+   try
+    Str := 'update SAL_SALESORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    MSG := '反审核单据成功。';
+    Result := True;
+  except
+    on E:Exception do
+       begin
+         Result := False;
+         Msg := '反审核错误:'+E.Message;
+       end;
+  end;
+end;
+
+{ TSalRetuLocusNoAudit }
+
+function TSalRetuLocusNoAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  Str:string;
+  n:Integer;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select LOCUS_STATUS from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsString<>'3' then Raise Exception.Create('没有收货完毕，不能审核..');
+  finally
+    rs.Free;
+  end;
+  try
+    Str := 'update SAL_SALESORDER set LOCUS_CHK_DATE='''+Params.FindParam('LOCUS_CHK_DATE').asString+''',LOCUS_CHK_USER='''+Params.FindParam('LOCUS_CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    Result := true;
+    Msg := '审核单据成功';
+  except
+    on E:Exception do
+      begin
+        Result := false;
+        Msg := '审核错误'+E.Message;
+      end;
+  end;
 end;
 
 initialization
@@ -612,6 +682,8 @@ initialization
   RegisterClass(TSalRetuOrderGetNext);
   RegisterClass(TSalRetuForLocusNoHeader);
   RegisterClass(TSalRetuForLocusNo);
+  RegisterClass(TSalRetuLocusNoAudit);
+  RegisterClass(TSalRetuLocusNoUnAudit);
 finalization
   UnRegisterClass(TSalRetuOrder);
   UnRegisterClass(TSalRetuData);
@@ -621,4 +693,6 @@ finalization
   UnRegisterClass(TSalRetuOrderGetNext);
   UnRegisterClass(TSalRetuForLocusNoHeader);
   UnRegisterClass(TSalRetuForLocusNo);
+  UnRegisterClass(TSalRetuLocusNoAudit);
+  UnRegisterClass(TSalRetuLocusNoUnAudit);
 end.

@@ -437,7 +437,7 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object edtCHK_DATE: TcxTextEdit
+      object edtLOCUS_CHK_DATE: TcxTextEdit
         Tag = 1
         Left = 619
         Top = 90
@@ -446,7 +446,7 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
         TabOrder = 13
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtCHK_USER_TEXT: TcxTextEdit
+      object edtLOCUS_CHK_USER_TEXT: TcxTextEdit
         Tag = 1
         Left = 619
         Top = 111
@@ -614,7 +614,6 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
       Height = 198
       Color = clWhite
       TabOrder = 3
-      OnCellClick = DBGridEh1CellClick
       OnKeyDown = nil
       OnKeyPress = nil
       OnMouseDown = nil
@@ -681,7 +680,6 @@ inherited frmSalRetuLocusOrder: TfrmSalRetuLocusOrder
           Footers = <>
           Title.Caption = #25195#30721#25968#37327
           Width = 60
-          OnEditButtonClick = DBGridEh1Columns6EditButtonClick
         end
         item
           EditButtons = <>

@@ -198,6 +198,7 @@ inherited frmBatchPmdPrice: TfrmBatchPmdPrice
       Height = 20
       TabOrder = 1
       Value = 100
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
     object edtCUS_RATE: TcxSpinEdit
       Left = 106
@@ -206,12 +207,14 @@ inherited frmBatchPmdPrice: TfrmBatchPmdPrice
       Height = 20
       TabOrder = 3
       Value = 100
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
     object fndGODS_FLAG1: TcxComboBox
       Left = 72
       Top = 23
       Width = 121
       Height = 20
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.Items.Strings = (
         #25353#20998#31867#20419#38144
         #25353#21697#29260#20419#38144
@@ -224,6 +227,7 @@ inherited frmBatchPmdPrice: TfrmBatchPmdPrice
       Top = 102
       Width = 63
       Height = 20
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.OnChange = fndGODS_FLAGPropertiesChange
       TabOrder = 2
     end
@@ -235,6 +239,7 @@ inherited frmBatchPmdPrice: TfrmBatchPmdPrice
       Properties.DisplayUnchecked = 'False'
       Properties.Caption = #25171#21246#26102#20419#38144#21830#21697#20063#21442#19982#31215#20998
       TabOrder = 4
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
   end
   inherited mmMenu: TMainMenu

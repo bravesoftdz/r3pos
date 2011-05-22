@@ -98,6 +98,7 @@ type
     function CheckInput:boolean;override;
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
     procedure IndeFrom(id:string);
+    procedure SetdbState(const Value: TDataSetState); override;
   public
     { Public declarations }
     procedure ShowInfo;
@@ -299,9 +300,9 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     edtSHOP_ID.Properties.ReadOnly := False;
     AObj.ReadFromDataSet(cdsHeader);
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     ReadFromObject(AObj,self);
     edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
@@ -607,7 +608,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-    IsAudit := not IsAudit;
+{    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -627,12 +628,14 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
+}    
   except
     on E:Exception do
        begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
 end;
 
 procedure TfrmStockOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
@@ -1328,6 +1331,18 @@ begin
      h.Free;
      d.Free;
    end;
+end;
+
+procedure TfrmStockOrder.SetdbState(const Value: TDataSetState);
+begin
+  inherited;
+  if cdsHeader.Active and (Value=dsBrowse) then
+  begin
+    if AObj.FieldbyName('LOCUS_STATUS').AsString='3' then
+       lblState.Caption := lblState.Caption + ' / 已收货'
+    else
+       lblState.Caption := lblState.Caption + ' / 未收货';
+  end;
 end;
 
 end.

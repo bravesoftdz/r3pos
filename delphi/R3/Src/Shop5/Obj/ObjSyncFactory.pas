@@ -454,12 +454,6 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
-  //23 synFlag
-  TSyncLocusForStck=class(TZFactory)
-  public
-    //读取SelectSQL之前，通常用于处理 SelectSQL
-    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-  end;
   TSyncLocusForStckData=class(TSyncSingleTable)
   public
     //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
@@ -472,12 +466,6 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
-  //24 synFlag
-  TSyncLocusForSale=class(TZFactory)
-  public
-    //读取SelectSQL之前，通常用于处理 SelectSQL
-    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-  end;
   TSyncLocusForSaleData=class(TSyncSingleTable)
   public
     //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
@@ -490,12 +478,6 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 
-  //25 synFlag
-  TSyncLocusForChag=class(TZFactory)
-  public
-    //读取SelectSQL之前，通常用于处理 SelectSQL
-    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-  end;
   TSyncLocusForChagData=class(TSyncSingleTable)
   public
     //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
@@ -582,7 +564,7 @@ begin
          end;
       if (i=(TIME_STAMPIdx-1)) then
          begin
-           if ZQuery.Params[i].Value>999999999999999 then
+           if ZQuery.Params[i].Value>2808566734 then
               ZQuery.Params[i].Value := 5497000;
          end;
       if WasNull then ZQuery.Params[i].Value := null;
@@ -661,6 +643,8 @@ begin
     (pos('sql0803',lowercase(s))>0)
     or
     (pos('主健',s)>0)
+    or
+    (pos('关健字',s)>0)
     or
     (pos('唯一约束',s)>0);
 end;
@@ -1202,8 +1186,9 @@ begin
            Params.ParamByName('ACCU_INTEGRAL').AsInteger := rs.FieldbyName('INTEGRAL').AsInteger;
            Params.ParamByName('RULE_INTEGRAL').AsInteger := rs.FieldbyName('BARTER_INTEGRAL').AsInteger;
            AGlobal.ExecSQL(
+             ParseSQL(AGlobal.iDbType,
              'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=IsNull(RULE_INTEGRAL,0) - :RULE_INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) - :ACCU_INTEGRAL  '+
-             'where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID',Params);
+             'where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID'),Params);
          end;
       //更新积分
       InsertIntegralInfo;
@@ -3190,21 +3175,6 @@ begin
   SelectSQL.Text := Str;
 end;
 
-{ TSyncLocusForStck }
-
-function TSyncLocusForStck.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var
-  Str:string;
-begin
-  Str :=
-  'select distinct A.TENANT_ID,A.SHOP_ID,A.STOCK_ID from STK_STOCKORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
-  ' B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
-  if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
-
-  SelectSQL.Text := Str;
-end;
-
 { TSyncLocusForStckData }
 
 function TSyncLocusForStckData.BeforeDeleteRecord(
@@ -3239,21 +3209,6 @@ function TSyncLocusForStckData.BeforeUpdateRecord(
   AGlobal: IdbHelp): Boolean;
 begin
   AGlobal.ExecSQL('delete from STK_LOCUS_FORSTCK where TENANT_ID=:TENANT_ID and STOCK_ID=:STOCK_ID',Params);
-end;
-
-{ TSyncLocusForSale }
-
-function TSyncLocusForSale.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var
-  Str:string;
-begin
-  Str :=
-  'select distinct A.TENANT_ID,A.SHOP_ID,A.SALES_ID from SAL_SALESORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
-  ' B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
-  if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
-
-  SelectSQL.Text := Str;
 end;
 
 { TSyncLocusForSaleData }
@@ -3329,21 +3284,6 @@ begin
   AGlobal.ExecSQL('delete from STO_LOCUS_FORCHAG where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
 end;
 
-{ TSyncLocusForChag }
-
-function TSyncLocusForChag.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var
-  Str:string;
-begin
-  Str :=
-  'select distinct A.TENANT_ID,A.SHOP_ID,A.CHANGE_ID from STO_CHANGEORDER A,'+Params.ParambyName('TABLE_NAME').AsString+
-  ' B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and B.TIME_STAMP>:TIME_STAMP';
-  if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(B.COMM,1,1)<>''1''');
-
-  SelectSQL.Text := Str;
-end;
-
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3401,13 +3341,8 @@ initialization
   RegisterClass(TSyncCloseForDay);
   RegisterClass(TSyncCloseForDayAble);
 
-  RegisterClass(TSyncLocusForStck);
   RegisterClass(TSyncLocusForStckData);
-
-  RegisterClass(TSyncLocusForSale);
   RegisterClass(TSyncLocusForSaleData);
-
-  RegisterClass(TSyncLocusForChag);
   RegisterClass(TSyncLocusForChagData);
 finalization
   UnRegisterClass(TSyncSingleTable);
@@ -3466,12 +3401,7 @@ finalization
   UnRegisterClass(TSyncCloseForDay);
   UnRegisterClass(TSyncCloseForDayAble);
 
-  UnRegisterClass(TSyncLocusForStck);
   UnRegisterClass(TSyncLocusForStckData);
-
-  UnRegisterClass(TSyncLocusForSale);
   UnRegisterClass(TSyncLocusForSaleData);
-
-  UnRegisterClass(TSyncLocusForChag);
   UnRegisterClass(TSyncLocusForChagData);
 end.

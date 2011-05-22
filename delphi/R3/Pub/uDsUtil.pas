@@ -96,6 +96,7 @@ class function TSequence.GetTimeStamp(iDbType: Integer): string;
 begin
   case iDbType of
     0: result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    1:Result := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
     4: result := '86400*(days(current date)-days(date(''2011-01-01'')))+midnight_seconds(current timestamp)';
     5: result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
     else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';

@@ -218,7 +218,8 @@ uses
   ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
   ufrmLossCard in 'App\ufrmLossCard.pas' {frmLossCard},
   uframeBaseAnaly in 'Frame\uframeBaseAnaly.pas' {frameBaseAnaly},
-  ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas';
+  ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas',
+  ufrmExcelFactory in 'App\ufrmExcelFactory.pas' {frmExcelFactory};
 
 {$R *.res}
 var
@@ -227,7 +228,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.0.9';
+  DBVersion := '1.0.1.0';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

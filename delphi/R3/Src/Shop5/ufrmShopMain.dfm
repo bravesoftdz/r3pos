@@ -2355,14 +2355,6 @@ inherited frmShopMain: TfrmShopMain
                 end
               end
             end
-            object Button1: TButton
-              Left = 184
-              Top = 16
-              Width = 75
-              Height = 25
-              Action = actfrmSaleAnaly
-              TabOrder = 1
-            end
           end
         end
         object rzTool: TPanel

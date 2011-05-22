@@ -336,7 +336,6 @@ type
     actfrmImpeach: TAction;
     actfrmClearData: TAction;
     actfrmSaleAnaly: TAction;
-    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -1412,6 +1411,9 @@ begin
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
                CaFactory.SyncAll(1);
+               //if not SyncFactory.CheckRemeteData then
+               //   SyncFactory.SyncAll
+               //else
                SyncFactory.SyncBasic(true);
                InitTenant;
              end;
@@ -1422,6 +1424,7 @@ begin
              begin
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
+                    SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
@@ -3460,7 +3463,7 @@ begin
   Form := FindChildForm(TfrmSaleAnaly);
   if not Assigned(Form) then
      begin
-       Form := TfrmSaleAnaly.Create(self);
+       Form := TfrmSaleAnaly.Create(self);                 
        AddFrom(Form);
      end;
   Form.Show;

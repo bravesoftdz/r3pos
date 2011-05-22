@@ -165,7 +165,8 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from VIW_PAYMENT where TENAN' +
-        'T_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39')')
+        'T_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39')'
+      'order by CODE_ID')
     Params = <
       item
         DataType = ftUnknown

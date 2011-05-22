@@ -229,7 +229,7 @@ type
     //修改单价
     procedure PriceToGods(id:string);virtual;
     //输入跟踪号
-    //function GodsToLocusNo(id:string):boolean;virtual;
+    function GodsToLocusNo(id:string):boolean;virtual;
     //输入批号
     function GodsToBatchNo(id:string):boolean;virtual;
     //输入数量
@@ -3202,77 +3202,6 @@ begin
   end;
 end;
 
-{function TframeOrderForm.GodsToLocusNo(id: string):boolean;
-var
-  rs,bs:TZQuery;
-  AObj:TRecord_;
-  pt:integer;
-  r:boolean;
-begin
-  if id = '' then Raise Exception.Create('输入的物流跟踪号无效');
-  result := false;
-  rs := TZQuery.Create(nil);
-  AObj := TRecord_.Create;
-  try
-    rs.SQL.Text :=
-      'select j.* from ('+
-      'select distinct A.GODS_ID,A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.BATCH_NO,0 as IS_PRESENT,B.GODS_CODE,B.GODS_NAME,B.BARCODE from STK_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SHOP_ID='''+cid+''' and A.LOCUS_NO='''+id+''' ) j';
-    Factor.Open(rs);
-    if rs.IsEmpty and (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1') then
-       begin
-         Raise Exception.Create('无效的物流跟踪号:'+id);
-       end;
-    if rs.RecordCount > 1 then
-       begin
-         if TframeListDialog.FindDialog(self,rs.SQL.Text,'GODS_CODE=货号,GODS_NAME=商品名称,BATCH_NO=批号,BARCODE=条码',AObj) then
-            begin
-            end
-         else
-            Exit;
-       end
-    else
-    if rs.RecordCount =0 then
-       begin
-         if MessageBox(Handle,'当前物流跟踪码没有入库，是否强制手工出库？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-         bs := Global.GetZQueryFromName('PUB_GOODSINFO');
-         if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-         if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用物流跟踪码...');
-         AObj.ReadFromDataSet(edtTable);
-         AObj.FieldbyName('LOCUS_NO').asString := id;
-       end
-    else
-       begin
-         AObj.ReadFromDataSet(rs);
-       end;
-     pt := AObj.FieldbyName('IS_PRESENT').AsInteger;
-     r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO,BOM_ID',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,pt,AObj.FieldbyName('LOCUS_NO').AsString,null]),[]);
-     if not r then
-     begin
-//        inc(RowID);
-        if ((edtTable.FieldbyName('GODS_ID').asString='') and (edtTable.FieldbyName('SEQNO').asString<>''))
-           or
-           ((edtTable.FieldbyName('GODS_ID').asString=AObj.FieldbyName('GODS_ID').AsString) and (edtTable.FieldbyName('LOCUS_NO').asString=''))
-        then
-        edtTable.Edit else InitRecord;
-        edtTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
-        edtTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
-        edtTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-        edtTable.FieldByName('IS_PRESENT').asInteger := pt;
-        edtTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
-        edtTable.FieldbyName('BATCH_NO').AsString := AObj.FieldbyName('BATCH_NO').AsString;
-        edtTable.FieldbyName('LOCUS_NO').AsString := AObj.FieldbyName('LOCUS_NO').AsString;
-        edtTable.FieldbyName('BOM_ID').Value := null;
-        edtTable.FieldbyName('BARCODE').AsString := EncodeBarcode;
-        InitPrice(AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('UNIT_ID').AsString);
-     end else Raise Exception.Create('当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id);
-     WriteAmount(AObj.FieldbyName('GODS_ID').AsString,'#','#',AObj.FieldbyName('AMOUNT').asFloat,false);
-     result := false;
-  finally
-    AObj.Free;
-    rs.Free;
-  end;
-end;
-}
 procedure TframeOrderForm.GodsToAmount(id: string);
 var
   Field:TField;
@@ -3396,6 +3325,11 @@ begin
     end; }
   if not Accept then
   Accept := (pos(fndGODS_ID.Text,DataSet.FieldbyName('GODS_NAME').AsString)>0);
+end;
+
+function TframeOrderForm.GodsToLocusNo(id: string): boolean;
+begin
+
 end;
 
 end.

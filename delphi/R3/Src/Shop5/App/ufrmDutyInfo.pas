@@ -318,6 +318,8 @@ end;
 procedure TfrmDutyInfo.WriteTo(Aobj: TRecord_);
 begin
   WriteToObject(AObj,self);
+  if dbState=dsInsert then
+    edtDUTY_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DUTY_ID','CA_DUTY_INFO','000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
   Aobj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
   Aobj.FieldByName('DUTY_ID').AsString:=edtDUTY_ID.Text;
   Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID(Aobj.FieldByName('LEVEL_ID').AsString);

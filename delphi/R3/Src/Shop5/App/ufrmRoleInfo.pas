@@ -274,7 +274,10 @@ begin
   WriteToObject(AObj,self);
   Aobj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
   if dbState=dsInsert then
+  begin
+    edtROLE_ID.Text :=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'ROLE_ID','CA_ROLE_INFO','000');
     Aobj.FieldByName('ROLE_ID').AsString:=edtROLE_ID.Text;
+  end;
 end;
 
 class function TfrmRoleInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;

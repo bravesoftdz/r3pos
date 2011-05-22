@@ -332,6 +332,8 @@ end;
 procedure TfrmDeptInfo.WriteTo(Aobj: TRecord_);
 begin
   WriteToObject(AObj,self);  
+  if dbState=dsInsert then
+    edtDEPT_ID.Text:=TSequence.GetMaxID(InttoStr(ShopGlobal.TENANT_ID),Factor,'DEPT_ID','CA_DEPT_INFO','000',' TENANT_ID='+InttoStr(ShopGlobal.TENANT_ID)+' ');
   Aobj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
   Aobj.FieldByName('DEPT_ID').AsString:=edtDEPT_ID.Text;
   Aobj.FieldByName('LEVEL_ID').AsString:=GetLevelID(Aobj.FieldByName('LEVEL_ID').AsString);

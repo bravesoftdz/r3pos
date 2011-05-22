@@ -195,6 +195,7 @@ begin
     Factor.Open(tmp);
     if dbState=dsInsert then
     begin
+        edtSHOP_ID.Text := TSequence.GetMaxID(inttostr(Global.TENANT_ID),Factor,'SHOP_ID','CA_SHOP_INFO','0000','TENANT_ID='+inttostr(Global.TENANT_ID));
         if tmp.Locate('SHOP_NAME',trim(edtSHOP_NAME.Text),[]) then
         begin
           if edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;

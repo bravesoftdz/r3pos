@@ -1023,7 +1023,7 @@ begin
    Stream.Size := 0;
    Stream.Position := 0;
    WriteHeader;
-   CachedResultSet.WriteStream(Stream,Modified);
+   CachedResultSet.WriteStream(Stream,RowAccessor,Modified);
  finally
    EnableControls;
  end;

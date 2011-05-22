@@ -322,6 +322,29 @@ begin
     else
        Result := StrtoFloat(s);
   end;
+  if CarryRule=4 then
+  begin
+    if Deci=0 then
+       result := Trunc(value);
+    if Deci=1 then
+       result := Trunc(value*10)/10;
+    if Deci=2 then
+       result := Trunc(value*100)/100;
+    if Deci=3 then
+       result := Trunc(value*1000)/1000;
+    if result < value then
+       begin
+         if Deci=0 then
+           jw := 1;
+         if Deci=1 then
+           jw := 0.1;
+         if Deci=2 then
+           jw := 0.01;
+         if Deci=3 then
+           jw := 0.001;
+         Result := result+jw;
+       end;
+  end;
 end;
 
 class function FnNumber.SmallTOBig(small: real): string;

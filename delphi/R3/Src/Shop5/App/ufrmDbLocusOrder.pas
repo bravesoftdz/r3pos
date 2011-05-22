@@ -287,18 +287,19 @@ begin
                   amt := amt + cdsLocusNo.FieldbyName('AMOUNT').AsInteger;
                   cdsLocusNo.Next;
                 end;
-              sm := sm + amt;
-              wt := wt + amt;
               edtTable.Edit;
               edtTable.FieldByName('BAL_AMT').asFloat := edtTable.FieldbyName('AMOUNT').AsFloat-amt;
               edtTable.FieldByName('LOCUS_AMT').asFloat := amt;
               edtTable.Post;
+              if edtTable.FieldByName('BAL_AMT').asFloat=0 then
+                 begin
+                   pzsm := pzsm + 1
+                 end else pzwt := pzwt+1;;
+              sm := sm + edtTable.FieldbyName('LOCUS_AMT').AsFloat;
+              wt := wt + edtTable.FieldbyName('BAL_AMT').AsFloat;
            end
         else
            begin
-             pzwt := pzwt+1;
-             wt := wt + edtTable.FieldbyName('AMOUNT').AsFloat;
-             sm := sm + edtTable.FieldbyName('AMOUNT').AsFloat;
              edtTable.Edit;
              edtTable.FieldByName('BAL_AMT').asFloat := 0;
              edtTable.FieldByName('LOCUS_AMT').asFloat := 0;

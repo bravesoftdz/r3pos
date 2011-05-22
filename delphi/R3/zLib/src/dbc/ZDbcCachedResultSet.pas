@@ -110,7 +110,7 @@ type
     procedure InitRow;
 
     //zhangsenrong  2011-02-24 add
-    procedure WriteStream(Stream:TStream;Modified:boolean);
+    procedure WriteStream(Stream:TStream;Columns:TZRowAccessor;Modified:boolean);
     function ReadStream(Stream:TStream;forSync:boolean=false):integer;
   end;
 
@@ -260,7 +260,7 @@ type
     procedure MoveToInitialRow; virtual;
 
     //zhangsenrong  2011-02-24 add
-    procedure WriteStream(Stream:TStream;Modified:boolean);
+    procedure WriteStream(Stream:TStream;Columns:TZRowAccessor;Modified:boolean);
     function ReadStream(Stream:TStream;forSync:boolean=false):integer;
 
   end;
@@ -2204,7 +2204,7 @@ begin
   end;
 end;
 
-procedure TZAbstractCachedResultSet.WriteStream(Stream: TStream;Modified:boolean);
+procedure TZAbstractCachedResultSet.WriteStream(Stream: TStream;Columns:TZRowAccessor;Modified:boolean);
 procedure WriteBuffer;
 var
   s1:string;
@@ -2220,9 +2220,9 @@ var
   zIsNull:boolean;
   i,w:integer;
 begin
-  for i:=1 to RowAccessor.ColumnCount do
+  for i:=1 to Columns.ColumnCount do
      begin
-      case RowAccessor.GetColumnType(i) of
+      case Columns.GetColumnType(i) of
       stBoolean:
         begin
           s5 := GetBoolean(i);

@@ -1486,6 +1486,8 @@ begin
         edtSALES_DATE.Date := Global.SysDate;
         AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
         edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
+        edtCHK_DATE.Text := '';
+        edtCHK_USER_TEXT.Text := '';
         //if h.FieldByName('SALBILL_STATUS').AsInteger=0 then
         //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
         //else

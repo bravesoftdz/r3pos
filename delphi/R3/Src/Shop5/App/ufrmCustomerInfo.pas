@@ -101,6 +101,7 @@ type
     RzLabel12: TRzLabel;
     RzLabel33: TRzLabel;
     cdsCustomerExt: TZQuery;
+    RzLabel34: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);

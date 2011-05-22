@@ -856,12 +856,4 @@ inherited frmCustomer: TfrmCustomer
       OnClick = N15Click
     end
   end
-  object cdsTable: TZQuery
-    FieldDefs = <>
-    AfterScroll = Cds_CustomerAfterScroll
-    CachedUpdates = True
-    Params = <>
-    Left = 166
-    Top = 384
-  end
 end

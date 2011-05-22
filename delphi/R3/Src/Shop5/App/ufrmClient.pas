@@ -688,8 +688,8 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
           end
         else
           begin
-            //Dest.FieldByName('SORT_ID').AsString := '#';
-            Raise Exception.Create('客户类别不能为空!');
+            Dest.FieldByName('SORT_ID').AsString := '#';
+            //Raise Exception.Create('客户类别不能为空!');
           end;
       end;
 

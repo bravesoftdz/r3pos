@@ -1,6 +1,6 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 398
-  Top = 149
+  Left = 9
+  Top = 55
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
   ClientWidth = 535
@@ -586,6 +586,21 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Caption = #24037#20316#21333#20301
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object RzLabel34: TRzLabel
+            Left = 233
+            Top = 17
+            Width = 6
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '*'
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clMaroon
             Font.Height = -12
             Font.Name = #23435#20307
             Font.Style = []

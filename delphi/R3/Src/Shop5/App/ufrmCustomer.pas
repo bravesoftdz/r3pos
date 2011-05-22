@@ -81,7 +81,6 @@ type
     N17: TMenuItem;
     actLossCard: TAction;
     Excel1: TMenuItem;
-    cdsTable: TZQuery;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -140,7 +139,7 @@ type
   end;
 
 implementation
-uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, ufrmIntegralGlide,
+uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, uDsUtil, ufrmIntegralGlide,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord,
      ufrmLossCard, ufrmExcelFactory;
 //  ufrmSendGsm, ufrmReNew,
@@ -956,33 +955,200 @@ begin
 end;
 
 procedure TfrmCustomer.Excel1Click(Sender: TObject);
-function Check(Source,Dest:TDataSet):Boolean;
-begin
-end;
+  function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
+  var rs:TZQuery;
+  begin
+    Result := False;
+    // *******************入会门店********************
+    if DFieldName = 'SHOP_ID' then
+      begin
+        if Source.FieldByName(SFieldName).AsString <> '' then
+          begin
+            rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+            if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的门店代码...');
+          end
+        else
+          Raise Exception.Create('门店不能为空!');
+      end;
+
+    //*******************会员等级*****************
+    if DFieldName = 'PRICE_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
+            if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的会员等级代码...');
+          end
+        else
+          begin
+            Raise Exception.Create('会员等级不能为空!');
+          end;
+      end;
+
+    //*******************地区*****************
+    if DFieldName = 'REGION_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_REGION_INFO');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
+          end
+        else
+          //Raise Exception.Create('地区不能为空!');
+          Dest.FieldByName('REGION_ID').AsString := '#';
+      end;
+
+    //*******************会员类别*****************
+    if DFieldName = 'SORT_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的会员类别代码...');
+          end
+        else
+          begin
+            Dest.FieldByName('SORT_ID').AsString := '#';
+            //Raise Exception.Create('会员类别不能为空!');
+          end;
+      end;
+
+    //*******************性别*****************
+    if DFieldName = 'SEX' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 4  then
+              Raise Exception.Create('会员性别在4个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('SEX').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          Raise Exception.Create('会员性别不能为空!');
+      end;
+
+    //会员编号
+    if DFieldName = 'CUST_CODE' then
+      begin
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 20 then
+              Raise Exception.Create('会员编号就在20个字符以内!')
+            else
+              begin
+                rs := Global.GetZQueryFromName('PUB_CUSTOMER');
+                if rs.Locate('CUST_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                  Raise Exception.Create('当前会员编号已经存在!')
+                else
+                  begin
+                    Dest.FieldbyName('CUST_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end;
+          end
+        else
+          begin
+            Dest.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+          end;
+      end;
+
+    //会员名称
+    if DFieldName = 'CUST_NAME' then
+      begin
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('客户名称就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CUST_NAME').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          Raise Exception.Create('客户名称不能为空!');
+      end;
+
+    //会员拼音码
+    if DFieldName = 'CUST_SPELL' then
+      begin
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('会员拼音码就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CUST_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          begin
+            if Trim(Source.FieldByName('CUST_NAME').AsString) <> '' then
+              Dest.FieldByName('CUST_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CUST_NAME').AsString),3)
+            else
+              Raise Exception.Create('会员拼音码不能为空!');
+          end;
+      end;
+  end;
+  function SaveExcel(CdsExcel:TDataSet):Boolean;
+  begin
+  end;
 var FieldsString,FormatString:String;
     Params:TftParamList;
+    rs:TZQuery;
 begin
   inherited;
   Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
   try
     Params.ParamByName('CUST_ID').asString := '';
     Params.ParamByName('UNION_ID').AsString := '#';
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.Open(cdsTable,'TCustomer',Params);
+    Factor.Open(rs,'TCustomer',Params);
+
+    FieldsString := 'CUST_CODE=会员卡号,CUST_NAME=会员名称,CUST_SPELL=拼音码,SEX=性别,SORT_ID=会员类别,PRICE_ID=会员等级,REGION_ID=地区,'+
+    'SHOP_ID=入会门店,MOVE_TELE=移动电话,BIRTHDAY=会员生日,FAMI_ADDR=地址,POSTALCODE=邮编,ID_NUMBER=证件号码,IDN_TYPE=证件类型,SND_DATE=入会日期,'+
+    'CON_DATE=续会日期,QQ=QQ,MSN=MSN,END_DATE=有效截止日期,MONTH_PAY=月收入,DEGREES=学历,EMAIL=电子邮件,OFFI_TELE=办公电话,FAMI_TELE=家庭电话,'+
+    'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注';
+
+    FormatString := '0=CUST_CODE,1=CUST_NAME,2=CUST_SPELL,3=SEX,4=SORT_ID,5=PRICE_ID,6=REGION_ID,7=SHOP_ID,8=MOVE_TELE,9=BIRTHDAY,10=FAMI_ADDR,'+
+    '11=POSTALCODE,12=ID_NUMBER,13=IDN_TYPE,14=SND_DATE,15=CON_DATE,16=QQ,17=MSN,18=END_DATE,19=MONTH_PAY,20=DEGREES,21=EMAIL,22=OFFI_TELE,'+
+    '23=FAMI_TELE,24=OCCUPATION,25=JOBUNIT,26=REMARK';
+
+    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,FormatString,1);
+
   finally
     Params.Free;
+    rs.Free;
   end;
-  FieldsString := 'SHOP_ID=入会门店,CUST_CODE=会员卡号,CUST_NAME=会员名称,CUST_SPELL=拼音码,SEX=性别,EMAIL=电子邮件,OFFI_TELE=办公电话,'+
-  'FAMI_TELE=家庭电话,MOVE_TELE=移动电话,BIRTHDAY=会员生日,FAMI_ADDR=地址,POSTALCODE=邮编,ID_NUMBER=证件号码,IDN_TYPE=证件类型,SND_DATE=入会日期,'+
-  'CON_DATE=续会日期,QQ=QQ,MSN=MSN,END_DATE=有效截止日期,SORT_ID=会员类别,PRICE_ID=会员等级,REGION_ID=地区,MONTH_PAY=月收入,DEGREES=学历,'+
-  'OCCUPATION=职业,JOBUNIT=工作单位,REMARK=备注';
-  
-  FormatString := '0=SHOP_ID,1=CUST_CODE,2=CUST_NAME,3=CUST_SPELL,4=SEX,5=EMAIL,6=OFFI_TELE,7=FAMI_TELE,8=MOVE_TELE,9=BIRTHDAY,10=FAMI_ADDR,'+
-  '11=POSTALCODE,12=ID_NUMBER,13=IDN_TYPE,14=SND_DATE,15=CON_DATE,16=QQ,17=MSN,18=END_DATE,19=SORT_ID,20=PRICE_ID,21=REGION_ID,22=MONTH_PAY,'+
-  '23=DEGREES,24=OCCUPATION,25=JOBUNIT,26=REMARK';
-  {if TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,FormatString,2) then
-    begin
-    end;}
 end;
 
 end.

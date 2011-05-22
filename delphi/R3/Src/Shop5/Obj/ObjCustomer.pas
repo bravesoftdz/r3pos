@@ -34,7 +34,7 @@ type
   private
     procedure InitClass; override;
   public
-    //function AfterUpdateBatch(AGlobal:IdbHelp):Boolean;override;
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
   end;
   TSelectCard=class(TZFactory)
   private
@@ -291,14 +291,51 @@ begin
 end;
 
 { TNewCard }
-{
-function TNewCard.AfterUpdateBatch(AGlobal: IdbHelp): Boolean;
+
+function TNewCard.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var Tmp:TZQuery;
+    Str:String;
+    r:integer;
 begin
-  AGlobal.ExecSQL('update BAS_CUSTOMER set IC_CARDNO=:IC_CARDNO '
-   + ',COMM=' + GetCommStr(iDbType) + ','
-   + 'TIME_STAMP='+GetTimeStamp(iDbType)+' where CUST_ID=:CUST_ID ',SELF);
-  Result:=True;
-end;}
+   result := false;
+   if FieldByName('UNION_ID').AsString <> '#' then
+    Exit;
+   try
+     try
+      Tmp := TZQuery.Create(nil);
+      if FieldByName('IC_CARDNO').AsString <> '' then
+      begin
+        Tmp.Close;
+        Tmp.SQL.Text := 'select CUST_ID,CUST_CODE,COMM from PUB_CUSTOMER where CUST_CODE=:CUST_CODE and TENANT_ID=:OLD_TENANT_ID ';
+        Tmp.ParamByName('CUST_CODE').AsString := FieldbyName('IC_CARDNO').AsString;
+        Tmp.ParamByName('OLD_TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+        AGlobal.Open(Tmp);
+
+        if not Tmp.IsEmpty then
+          begin
+            if (Tmp.FieldbyName('CUST_ID').AsString <> FieldbyName('CLIENT_ID').AsString)
+               and
+               (copy(Tmp.FieldbyName('COMM').AsString,2,1)<>'2')
+            then Raise Exception.Create('此会员卡号已经存在,不能重复!');
+          end;
+
+        Str :='update PUB_CUSTOMER set CUST_CODE=:IC_CARDNO,COMM='+GetCommStr(iDbType)+
+        ',TIME_STAMP='+GetTimeStamp(iDbType)+' where CUST_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID ';
+        AGlobal.ExecSQL(Str,Self);
+
+      end;
+     finally
+      Tmp.Free;
+     end;
+   except
+     on E:Exception do
+     begin
+       result := false;
+       Raise Exception.Create('会员号:'+E.Message);
+     end;
+   end;
+   Result := True;
+end;
 
 procedure TNewCard.InitClass;
 var SQL:string;

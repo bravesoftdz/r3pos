@@ -528,34 +528,29 @@ begin
     end
   else
     begin
+      edtPriceGrade.Enabled := False;
+      edtDelete.Enabled := False;
       if ShopGlobal.GetChkRight('33200001',2) then
         begin
           dbState:=dsBrowse;
-          //DBGridEh1.ReadOnly:=True;
-          //edtPriceGrade.Enabled:=False;
-          //edtSave.Enabled:=False;
-          //edtCancel.Enabled:=False;
-          edtDelete.Enabled:=False;
-        end
-      else if ShopGlobal.GetChkRight('33200001',3) then
+          edtPriceGrade.Enabled:=True;
+        end;
+      if ShopGlobal.GetChkRight('33200001',3) then
         begin
           dbState:=dsEdit;
           //DBGridEh1.ReadOnly:=True;
-          edtPriceGrade.Enabled:=False;
+          //edtPriceGrade.Enabled:=False;
           edtSave.Enabled:=True;
-          edtCancel.Enabled:=False;
-          edtDelete.Enabled:=False;
+          //edtCancel.Enabled:=False;
+          //edtDelete.Enabled:=False;
           btnAdd.Enabled := edtSave.Enabled;
           btnDetele.Enabled := edtSave.Enabled;
-        end
-      else if ShopGlobal.GetChkRight('33200001',4) then
+        end;
+      if ShopGlobal.GetChkRight('33200001',4) then
         begin
           dbState:=dsBrowse;
-          //DBGridEh1.ReadOnly:=True;
-          edtPriceGrade.Enabled:=False;
-          //edtSave.Enabled:=False;
-          edtCancel.Enabled:=False;
-          //edtDelete.Enabled:=False;
+          //edtCancel.Enabled:=False;
+          edtDelete.Enabled:=true;
         end;
     end;
   if InFlag=1 then

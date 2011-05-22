@@ -5,6 +5,7 @@ inherited frameBaseReport: TframeBaseReport
   Height = 568
   Caption = #25253#34920#22522#31867
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 12

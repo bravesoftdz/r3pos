@@ -65,12 +65,9 @@ type
     procedure actColumnVisibleExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumnEh;  State: TGridDrawState);
-    procedure rzShowColumnsChange(Sender: TObject; Index: Integer;
-      NewState: TCheckBoxState);
-    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh;  State: TGridDrawState);
+    procedure rzShowColumnsChange(Sender: TObject; Index: Integer; NewState: TCheckBoxState);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actExportExecute(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
@@ -79,7 +76,9 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
     procedure actFilterExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    FSumRecord: TRecord_;  //汇总记录值
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品统计指标OnChange
     procedure DoRBDate(Sender: TObject);   //暂时没用
@@ -127,7 +126,7 @@ type
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
-
+    procedure Do_REPORT_FLAGFooterSum(Sender: TObject; RsGrid: TDataSet; AryFields: Array of string); //2011.05.22 Add 计算分类汇总的FooterSum
     procedure LoadFormat;override;
     procedure PrintBefore;virtual;
     function  GetRowType:integer;virtual;
@@ -139,6 +138,7 @@ type
     procedure ClearSortMark;
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
+    property  SumRecord: TRecord_ read FSumRecord;  //汇总记录值
   end;
 
 implementation
@@ -385,6 +385,9 @@ var
   Column:TColumnEh;
 begin
   inherited;
+  //汇总记录值
+  FSumRecord:=TRecord_.Create;
+
   //初始化参数:
   for i:=0 to self.ComponentCount -1 do
   begin
@@ -907,32 +910,60 @@ end;
 
 procedure TframeBaseReport.Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
 var
+  i: integer;
   Aobj: TRecord_;
   SetCol: TColumnEh;
+  SetType: TFooterValueType; //汇总数据类型
 begin
   if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
   begin
     Aobj:=TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]);
+    {
     SetCol:=FindColumn(Grid,'SORT_ID');
     if (Aobj<>nil) and (SetCol<>nil) then
     begin
       SetCol.Title.Caption:=Aobj.fieldbyName('CODE_NAME').AsString+'代码';
-      case length(SetCol.Title.Caption) of
-       1..8: SetCol.Width:=70;
-       9..12: SetCol.Width:=90;
-       13..18: SetCol.Width:=120;
-       else SetCol.Width:=160;
-      end; 
+      SetCol.Width:=90;
+      end;
     end;
+    }
+    //分类名称
     SetCol:=FindColumn(Grid,'SORT_NAME');
     if (Aobj<>nil) and (SetCol<>nil) then
     begin
       SetCol.Title.Caption:=Aobj.fieldbyName('CODE_NAME').AsString+'名称';
-      case length(SetCol.Title.Caption) of
-       1..12: SetCol.Width:=180;
-       13..20: SetCol.Width:=220;
-       else SetCol.Width:=240;
-      end; 
+      SetCol.Width:=220;
+    end;
+  end;
+end;
+
+//2011.05.22 Add 计算分类汇总的FooterSum
+procedure TframeBaseReport.Do_REPORT_FLAGFooterSum(Sender: TObject; RsGrid: TDataSet; AryFields: array of string);
+var
+  i: integer;
+  FName: string;
+begin
+  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
+  begin
+    if TRecord_(TcxComboBox(Sender).Properties.Items.Objects[TcxComboBox(Sender).ItemIndex]).FieldByName('CODE_ID').AsInteger<>1 then //分类[手工汇总]
+      FSumRecord.Clear
+    else
+    begin
+      FSumRecord.Clear;
+      FSumRecord.ReadField(RsGrid);
+      RsGrid.First;
+      while not RsGrid.Eof do
+      begin
+        if trim(RsGrid.FieldByName('LEVEL_ID').AsString)='' then
+        begin
+          for i:=Low(AryFields) to High(AryFields) do
+          begin
+            FName:=trim(AryFields[i]);
+            FSumRecord.FieldByName(FName).AsFloat:=FSumRecord.FieldByName(FName).AsFloat+RsGrid.FieldByName(FName).AsFloat;
+          end;
+        end;
+        RsGrid.Next;
+      end;
     end;
   end;
 end;
@@ -1116,6 +1147,12 @@ begin
     if SetCol<>nil then
       SetCol.Free;
   end;
+end;
+
+procedure TframeBaseReport.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  FSumRecord.Free;
 end;
 
 end.

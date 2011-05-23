@@ -48,7 +48,7 @@ type
     RB_SaleMount: TcxRadioButton;
     Label32: TLabel;
     fndP1_DEPT_ID: TzrComboBoxList;
-    Sale_UNIT: TcxComboBox;
+    fndP1_Sale_UNIT: TcxComboBox;
     Label4: TLabel;
     AnalyQry1: TZQuery;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
@@ -57,7 +57,7 @@ type
     procedure actFindExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RB_SaleMoneyClick(Sender: TObject);
-    procedure Sale_UNITPropertiesChange(Sender: TObject);
+    procedure fndP1_Sale_UNITPropertiesChange(Sender: TObject);
   private
     SortName: string; //商品分类名称
     sid1: string;      //商品分类ID
@@ -160,7 +160,7 @@ begin
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
     end;
   end;
 
@@ -243,17 +243,44 @@ procedure TfrmSaleAnaly.AddFillChat1;
      Qry.Free;
    end;
  end;
+ procedure GetWhileMinMaxValue(const Rs: TZQuery; var vMin,vMax: integer);
+ var MaxValue,MinValue: string;
+ begin
+   vMin:=0;
+   vMax:=0;
+   try
+     Rs.First;
+     MaxValue:=trim(Rs.fieldbyName('TYPE_ID').AsString);
+     MinValue:=trim(Rs.fieldbyName('TYPE_ID').AsString);
+     Rs.Next;
+     while not Rs.Eof do
+     begin
+       if MinValue>trim(Rs.fieldbyName('TYPE_ID').AsString) then
+         MinValue:=trim(Rs.fieldbyName('TYPE_ID').AsString);
+       if MaxValue<trim(Rs.fieldbyName('TYPE_ID').AsString) then
+         MaxValue:=trim(Rs.fieldbyName('TYPE_ID').AsString);
+       Rs.Next;
+     end;
+     vMin:=StrtoInt(MinValue);
+     vMax:=StrtoInt(MaxValue);
+   finally
+     Rs.First;
+   end;
+ end;
 var
-  xPoint,InStr,LefStr,MaxStr,TitleStr: string;
-  i,CalcCount,MaxLines: integer;
+  i,CalcCount,MaxLines,vMin,vMax: integer;
+  xPoint,InStr,LefStr,MaxStr,TitleStr,MnyUnit: string;
   LStrList,RStrList,StrList: TStringList;
 begin
+  MnyUnit:=trim(fndP1_Sale_UNIT.Text);
+  if fndP1_Sale_UNIT.ItemIndex=0 then CalcCount:=1 else CalcCount:=10000;
   Chart1.Series[0].Clear;
   AnalyInfo.Clear;
   if adoReport1.IsEmpty then Exit;
+  GetWhileMinMaxValue(adoReport1,vMin,vMax);
   if RB_hour.Checked then
   begin
-    for i:=0 to 23 do
+    for i:=vMin to vMax do   //只插入有数值段
     begin
       xPoint:=FormatFloat('00',i);
       if adoReport1.Locate('TYPE_ID',xPoint,[]) then
@@ -261,17 +288,13 @@ begin
         if RB_SaleMount.Checked then
           Chart1.Series[0].Add(adoReport1.Fields[1].asFloat,xPoint+'时')
         else
-        begin
-          if Sale_UNIT.ItemIndex=0 then CalcCount:=1
-          else CalcCount:=10000;
           Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint+'时');
-        end;
       end else
         Chart1.Series[0].Add(0,xPoint+'时');
     end;
   end else
   begin
-    for i:=0 to 6 do
+    for i:=vMin to vMax do
     begin
       xPoint:=GetWeekName(i,'星期');
       if adoReport1.Locate('TYPE_ID',inttostr(i),[]) then
@@ -279,40 +302,62 @@ begin
         if RB_SaleMount.Checked then
           Chart1.Series[0].Add(adoReport1.Fields[1].asFloat,xPoint)
         else
-        begin
-          if Sale_UNIT.ItemIndex=0 then CalcCount:=1
-          else CalcCount:=10000;
           Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint);
-        end;
       end else
         Chart1.Series[0].Add(0,xPoint);
     end;
   end;
   //Add Memo
   try
-  //  DayCount:=P1_D2.Date-P1_D1.Date;  //统计总天数
+    //DayCount:=P1_D2.Date-P1_D1.Date;  //统计总天数
     LStrList:=TStringList.Create;
     RStrList:=TStringList.Create;
     StrList:=TStringList.Create;
     //添加
     LStrList.Clear;
-    if RB_hour.Checked then //时段
+    if RB_hour.Checked then   //时段
       LStrList.Add('          时段              销量              销售额              ')
     else
       LStrList.Add('          星期              销量              销售额              ');
                             
-    adoReport1.First;
-    while not adoReport1.Eof do
+    //添加左侧的List
+    if RB_hour.Checked then
     begin
-      if RB_hour.Checked then TitleStr:=adoReport1.Fields[0].AsString+'时'
-      else TitleStr:=GetWeekName(adoReport1.Fields[0].AsInteger,'星期');
-
-      LStrList.Add('          '+FormateStr(TitleStr,'                  ')
-                               +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                               +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+Sale_UNIT.Text,'              '));
-      adoReport1.Next;                
+      for i:=0 to 23 do
+      begin
+        xPoint:=FormatFloat('00',i);
+        if adoReport1.Locate('TYPE_ID',xPoint,[]) then
+        begin
+          LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
+                                   +FormateStr(adoReport1.Fields[1].AsString,'                  ')
+                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'              '));
+        end else
+        begin
+          LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
+                                   +FormateStr('0','                  ')
+                                   +FormateStr('0'+MnyUnit,'              '));
+        end;
+      end;
+    end else
+    begin
+      for i:=0 to 6 do
+      begin
+        xPoint:=GetWeekName(i,'星期');
+        if adoReport1.Locate('TYPE_ID',inttostr(i),[]) then
+        begin
+          LStrList.Add('          '+FormateStr(xPoint,'                  ')
+                                   +FormateStr(adoReport1.Fields[1].AsString,'                  ')
+                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'              '));
+        end else
+        begin
+          LStrList.Add('          '+FormateStr(xPoint,'                  ')
+                                   +FormateStr('0','                  ')
+                                   +FormateStr('0'+MnyUnit,'              '));
+        end;
+      end;
     end;
 
+    //添加右侧
     AnalyQry1.Close;
     AnalyQry1.SQL.Text:=GetMarketAnalySQL(1);
     Factor.Open(AnalyQry1);
@@ -322,14 +367,14 @@ begin
     AnalyQry1.Post;
 
     RStrList.Clear;
-    RStrList.Add('营业情况('+formatDatetime('YYYY-MM-DD',P1_D1.Date)+'至'+formatDatetime('YYYY-MM-DD',P1_D2.Date)+')');
-    RStrList.Add('');
-    RStrList.Add('营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat)+'元');
+    // RStrList.Add('营业情况('+formatDatetime('YYYY-MM-DD',P1_D1.Date)+'至'+formatDatetime('YYYY-MM-DD',P1_D2.Date)+')');
+    // RStrList.Add('');
+    RStrList.Add('营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat/CalcCount)+MnyUnit);
     RStrList.Add('--------------------------------');
     if AnalyQry1.Fields[2].asInteger<>0 then
-      RStrList.Add('日均营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat/AnalyQry1.Fields[2].asInteger)+'元')
+      RStrList.Add('日均营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat/(AnalyQry1.Fields[2].asInteger*CalcCount))+MnyUnit)
     else
-      RStrList.Add('日均营业额:'+'0元');
+      RStrList.Add('日均营业额:'+'0'+MnyUnit);
     RStrList.Add('--------------------------------');
     RStrList.Add('客单数:'+inttostr(AnalyQry1.Fields[1].asInteger)+'人次');
     RStrList.Add('--------------------------------');
@@ -398,17 +443,17 @@ begin
   inherited;
   P1_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
-  Sale_UNIT.ItemIndex:=0;
+  fndP1_Sale_UNIT.ItemIndex:=0;
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
 begin
   inherited;
-  Sale_UNIT.Enabled:=RB_SaleMoney.Checked;
+  fndP1_Sale_UNIT.Enabled:=RB_SaleMoney.Checked;
   AddFillChat1;
 end;
 
-procedure TfrmSaleAnaly.Sale_UNITPropertiesChange(Sender: TObject);
+procedure TfrmSaleAnaly.fndP1_Sale_UNITPropertiesChange(Sender: TObject);
 begin
   inherited;
   AddFillChat1;

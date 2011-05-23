@@ -17,7 +17,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
         Height = 588
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #33829#38144#27010#20917
+          Caption = #32463#33829#27010#20917
           inherited RzPanel3: TRzPanel
             Width = 958
             Height = 561
@@ -488,7 +488,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       TabOrder = 1
                       OnClick = RB_SaleMoneyClick
                     end
-                    object Sale_UNIT: TcxComboBox
+                    object fndP1_Sale_UNIT: TcxComboBox
                       Left = 378
                       Top = 3
                       Width = 95
@@ -498,7 +498,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Properties.Items.Strings = (
                         #20803
                         #19975#20803)
-                      Properties.OnChange = Sale_UNITPropertiesChange
+                      Properties.OnChange = fndP1_Sale_UNITPropertiesChange
                       TabOrder = 2
                     end
                   end

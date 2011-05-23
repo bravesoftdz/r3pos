@@ -294,6 +294,7 @@ begin
       rs.SortedFields := 'LEVEL_ID';
       CreateLevelTree(rs,Tree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',Tree.Items[i]);
     end;
+  AddRoot(Tree,'所有分类');
 end;
 
 procedure TfrmStorageTracking.FormCreate(Sender: TObject);
@@ -381,9 +382,10 @@ begin
 
   if rzTree.Selected <> nil then
     begin
-      if rzTree.Selected.Level > 0 then
+      if rzTree.Selected.Level > 1 then
         StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString
       else
+      if rzTree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
@@ -770,9 +772,10 @@ begin
 
   if rzP2_Tree.Selected <> nil then
     begin
-      if rzP2_Tree.Selected.Level > 0 then
+      if rzP2_Tree.Selected.Level > 1 then
         StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzP2_Tree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString
       else
+      if rzP2_Tree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtP2_Goods_Type.Properties.Items.Objects[edtP2_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
@@ -912,9 +915,10 @@ begin
 
   if rzP3_Tree.Selected <> nil then
     begin
-      if rzP3_Tree.Selected.Level > 0 then
+      if rzP3_Tree.Selected.Level > 1 then
         StrWhere := StrWhere + ' and C.LEVEL_ID like '+QuotedStr(TRecord_(rzP3_Tree.Selected.Data).FieldbyName('LEVEL_ID').AsString)+StrJoin+'''%'' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString
       else
+      if rzP3_Tree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtP3_Goods_Type.Properties.Items.Objects[edtP3_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);

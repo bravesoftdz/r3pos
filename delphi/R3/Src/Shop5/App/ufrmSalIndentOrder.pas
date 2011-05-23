@@ -901,7 +901,7 @@ begin
         'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
-        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
         ') c on j.UNION_ID=c.UNION_ID ';
       Factor.Open(rs);
     end
@@ -913,7 +913,7 @@ begin
         'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
-        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
         ') c on j.UNION_ID=c.UNION_ID ';
       Factor.Open(rs);
       if rs.IsEmpty then
@@ -925,7 +925,7 @@ begin
             'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
-            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
+            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
             ') c on j.UNION_ID=c.UNION_ID ';
           Factor.Open(rs);
          end;

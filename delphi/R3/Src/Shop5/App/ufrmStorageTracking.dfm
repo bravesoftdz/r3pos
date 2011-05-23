@@ -17,8 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 1041
         Height = 514
-        ActivePage = TabSheet3
-        TabIndex = 2
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -203,6 +203,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       item
                         EditButtons = <>
                         FieldName = 'ROAD_AMT'
+                        Footer.ValueType = fvtSum
                         Footers = <>
                         Title.Caption = #22312#36884#37327
                         Visible = False
@@ -867,6 +868,14 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21512#29702#24211#23384
+                      Width = 57
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'LOWER_AMOUNT'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #23433#20840#24211#23384
                       Width = 57
                     end
                     item

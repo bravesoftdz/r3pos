@@ -1587,6 +1587,7 @@ procedure TfrmCostCalc.CalcAnaly;
 var
   SQL:string;
   safe,reas,daySale:integer;
+  LRate,HRate:real;
   rs:TZQuery;
 begin
   RzProgressBar1.Percent := 0;
@@ -1626,6 +1627,20 @@ begin
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
   RzProgressBar1.Percent := 50;
+  //¼ÆËã´æÏú±È
+  rs := Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+  if ShopGlobal.GetParameter('SMT_RATE')='' then
+     rs.Filter := 'SORT_TYPE=2'
+  else
+     rs.Filter := 'SORT_TYPE='+ShopGlobal.GetParameter('SMT_RATE');
+  rs.Filtered := true;
+  rs.First;
+  while not rs.Eof do
+    begin
+      
+      rs.Next;
+    end;
+  RzProgressBar1.Percent := 60;
 end;
 
 class function TfrmCostCalc.CalcAnalyLister(Owner: TForm): boolean;

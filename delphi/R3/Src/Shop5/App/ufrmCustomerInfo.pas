@@ -147,6 +147,7 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断会员档案是否有修改
     class function AddDialog(Owner:TForm;var _AObj:TRecord_):boolean;
     class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
+    class function ShowDialog(Owner:TForm;id:String):Boolean;
   end;
 
 
@@ -1000,6 +1001,20 @@ begin
           Result := Grid.Columns[i];
           Exit;
         end;
+    end;
+end;
+
+class function TfrmCustomerInfo.ShowDialog(Owner: TForm;
+  id: String): Boolean;
+begin
+  with TfrmCustomerInfo.Create(Owner) do
+    begin
+      try
+        Open(id);
+        Result := ShowModal = mrOk;
+      finally
+        Free;
+      end;
     end;
 end;
 

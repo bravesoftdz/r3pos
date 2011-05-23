@@ -856,7 +856,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       Width = 184
       Height = 20
       Properties.EchoMode = eemPassword
-      TabOrder = 0
+      TabOrder = 2
       ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
     end
     object edtUsername: TcxTextEdit
@@ -875,7 +875,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       HighlightColor = 16026986
       HotTrack = True
       HotTrackColor = 3983359
-      TabOrder = 2
+      TabOrder = 3
       OnClick = cxBtnOkClick
       Glyph.Data = {
         36060000424D3606000000000000360400002800000020000000100000000100
@@ -940,7 +940,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       HighlightColor = 16026986
       HotTrack = True
       HotTrackColor = 3983359
-      TabOrder = 3
+      TabOrder = 4
       OnClick = cxbtnCancelClick
       Glyph.Data = {
         36060000424D3606000000000000360400002800000020000000100000000100
@@ -1000,7 +1000,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       Top = 15
       Width = 184
       Height = 20
-      TabOrder = 4
+      TabOrder = 0
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
   end

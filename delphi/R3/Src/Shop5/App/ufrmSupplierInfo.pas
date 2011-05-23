@@ -122,6 +122,7 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TDataSet):Boolean;//判断单位资料是否有修改
     class function AddDialog(Owner:TForm;var AObj1:TRecord_):boolean;
     class function EditDialog(Owner:TForm;id:string;var AObj1:TRecord_):boolean;
+    class function ShowDialog(Owner:TForm;id:String):Boolean;
   end;
 
 
@@ -547,6 +548,20 @@ begin
   inherited;
   if Key = VK_RETURN then
     edtREMARK.SetFocus;
+end;
+
+class function TfrmSupplierInfo.ShowDialog(Owner: TForm;
+  id: String): Boolean;
+begin
+  with TfrmSupplierInfo.Create(Owner) do
+    begin
+      try
+        Open(id);
+        Result := ShowModal = mrOk;
+      finally
+        Free;
+      end;
+    end;
 end;
 
 end.

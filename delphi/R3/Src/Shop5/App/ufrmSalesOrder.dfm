@@ -1,6 +1,6 @@
 inherited frmSalesOrder: TfrmSalesOrder
-  Left = 175
-  Top = 11
+  Left = 230
+  Top = 189
   Width = 796
   Height = 552
   Caption = #38144#21806#21333
@@ -153,7 +153,7 @@ inherited frmSalesOrder: TfrmSalesOrder
       object edtCLIENT_ID: TzrComboBoxList
         Left = 251
         Top = 5
-        Width = 286
+        Width = 264
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -457,6 +457,32 @@ inherited frmSalesOrder: TfrmSalesOrder
         Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
+      end
+      object RzBitBtn1: TRzBitBtn
+        Left = 514
+        Top = 5
+        Width = 23
+        Height = 20
+        Caption = #35814
+        Color = clSilver
+        Enabled = False
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 15
+        TextStyle = tsRaised
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
       end
     end
     inherited RzPanel3: TRzPanel

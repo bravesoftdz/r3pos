@@ -16,6 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 836
         Height = 485
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -356,7 +358,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #38144#36135#25968#37327
+                  Title.Caption = #38144#21806#25968#37327
                   Width = 57
                 end
                 item
@@ -775,7 +777,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
         end
         object TabSheet3: TRzTabSheet
           Color = clWindow
-          Caption = #39046#29992#21333#26597#35810
+          Caption = #35843#25972#21333#26597#35810
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -803,7 +805,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #39046#29992#26085#26399
+                Caption = #35843#25972#26085#26399
               end
               object RzLabel10: TRzLabel
                 Left = 200
@@ -1059,13 +1061,14 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                     #25439#30410#21333
                     #39046#29992#21333)
                   Title.Caption = #21333#25454#31867#22411
+                  Width = 54
                 end
                 item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'CHANGE_DATE'
                   Footers = <>
-                  Title.Caption = #39046#29992#26085#26399
+                  Title.Caption = #35843#25972#26085#26399
                   Width = 72
                 end
                 item
@@ -1093,7 +1096,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'AMOUNT'
                   Footers = <>
-                  Title.Caption = #39046#29992#25968#37327
+                  Title.Caption = #35843#25972#25968#37327
                   Width = 65
                 end
                 item

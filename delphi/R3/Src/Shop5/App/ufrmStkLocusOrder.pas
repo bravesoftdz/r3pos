@@ -295,10 +295,10 @@ begin
       end;
     edtJH.Text := formatFloat('#0.0',jh);
     edtSM.Text := formatFloat('#0.0',sm);
-    edtWT.Text := formatFloat('#0.0',jh-wt);
+    edtWT.Text := formatFloat('#0.0',wt);
     edtPZJH.Text := formatFloat('#0.0',pzjh);
     edtPZSM.Text := formatFloat('#0.0',pzsm);
-    edtPZWT.Text := formatFloat('#0.0',pzjh-pzwt);
+    edtPZWT.Text := formatFloat('#0.0',pzwt);
   finally
     edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;

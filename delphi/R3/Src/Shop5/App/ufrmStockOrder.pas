@@ -1159,7 +1159,7 @@ begin
   if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
   frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
   frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
-  PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
 end;
@@ -1173,7 +1173,7 @@ begin
   if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
   frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
   frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
-  PostMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
 end;

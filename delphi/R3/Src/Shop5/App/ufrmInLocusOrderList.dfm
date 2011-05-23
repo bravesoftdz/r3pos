@@ -217,7 +217,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#25910#36135
                   end
                   item
                     Caption = #24050#25195#30721
@@ -521,10 +521,10 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                     Caption = #20840#37096
                   end
                   item
-                    Caption = #24453#25195#30721
+                    Caption = #24453#25910#36135
                   end
                   item
-                    Caption = #24050#25195#30721
+                    Caption = #24050#25910#36135
                   end>
                 TabOrder = 0
                 Caption = ''

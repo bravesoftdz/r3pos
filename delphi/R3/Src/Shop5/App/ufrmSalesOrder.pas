@@ -65,6 +65,7 @@ type
     Label3: TLabel;
     edtDEPT_ID: TzrComboBoxList;
     Label14: TLabel;
+    RzBitBtn1: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -1269,7 +1270,7 @@ begin
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
-  PostMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
 end;
@@ -1283,7 +1284,7 @@ begin
   if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
   frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
   frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
-  PostMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
 end;

@@ -1224,7 +1224,7 @@ begin
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
-  PostMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
 end;
@@ -1239,7 +1239,7 @@ begin
   if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
   frmShopMain.actfrmSalesOrderList.OnExecute(nil);
   frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
-  PostMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
 end;

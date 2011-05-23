@@ -951,18 +951,24 @@ begin
     begin
       FSumRecord.Clear;
       FSumRecord.ReadField(RsGrid);
-      RsGrid.First;
-      while not RsGrid.Eof do
-      begin
-        if trim(RsGrid.FieldByName('LEVEL_ID').AsString)='' then
+      RsGrid.DisableControls;
+      try
+        RsGrid.First;
+        while not RsGrid.Eof do
         begin
-          for i:=Low(AryFields) to High(AryFields) do
+          if trim(RsGrid.FieldByName('LEVEL_ID').AsString)='' then
           begin
-            FName:=trim(AryFields[i]);
-            FSumRecord.FieldByName(FName).AsFloat:=FSumRecord.FieldByName(FName).AsFloat+RsGrid.FieldByName(FName).AsFloat;
+            for i:=Low(AryFields) to High(AryFields) do
+            begin
+              FName:=trim(AryFields[i]);
+              FSumRecord.FieldByName(FName).AsFloat:=FSumRecord.FieldByName(FName).AsFloat+RsGrid.FieldByName(FName).AsFloat;
+            end;
           end;
+          RsGrid.Next;
         end;
-        RsGrid.Next;
+        rsGrid.First;
+      finally
+        rsGrid.EnableControls;
       end;
     end;
   end;

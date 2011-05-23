@@ -987,7 +987,7 @@ begin
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
-  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
 end;
@@ -1001,7 +1001,7 @@ begin
   if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
   frmShopMain.actfrmStockOrderList.OnExecute(nil);
   frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
-  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
+  SendMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;
 end;

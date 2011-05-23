@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -608,7 +608,7 @@ inherited frmSysDefine: TfrmSysDefine
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
-          #25910#27454#25910#31080
+          #25910#27454#25910#25454
           #26222#36890#21457#31080
           #22686#20540#31246#31080)
         TabOrder = 3
@@ -767,7 +767,7 @@ inherited frmSysDefine: TfrmSysDefine
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
-          #25910#27454#25910#31080
+          #25910#27454#25910#25454
           #26222#36890#21457#31080
           #22686#20540#31246#31080)
         TabOrder = 1

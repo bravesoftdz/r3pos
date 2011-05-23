@@ -169,9 +169,7 @@ begin
   20:result := 'TSyncCaTenant';
   21:result := 'TSyncGodsRelation';
   22:result := 'TSyncGodsInfo';
-  23:result := 'TSyncLocusForStck';
-  24:result := 'TSyncLocusForSale';
-  25:result := 'TSyncLocusForChag';
+  23:result := 'TSyncSequence';
   else
     result := 'TSyncSingleTable';
   end;
@@ -272,6 +270,13 @@ begin
   n^.synFlag := 0;
   n^.KeyFlag := 0;
   n^.tbtitle := '参数定义表';
+  FList.Add(n);
+  new(n);
+  n^.tbname := 'SYS_SEQUENCE';
+  n^.keyFields := 'TENANT_ID;SEQU_ID';
+  n^.synFlag := 23;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '序列号控制表';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_RIGHTS';
@@ -600,7 +605,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20,21,22,23:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -639,7 +644,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22:
+      0,1,2,3,4,10,20,21,22,23:
         begin
           if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
         end;

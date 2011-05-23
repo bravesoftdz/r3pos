@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = TabSheet3
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -872,40 +872,65 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 216
         Top = 17
         Width = 177
-        Height = 106
-        Caption = #24211#23384#30417#25511#36873#39033
+        Height = 136
+        Caption = #40664#35748#24211#23384#36873#39033
         TabOrder = 4
         object Label19: TLabel
           Left = 23
-          Top = 31
+          Top = 25
           Width = 48
           Height = 12
+          Alignment = taRightJustify
           Caption = #23433#20840#22825#25968
         end
         object Label20: TLabel
           Left = 127
-          Top = 31
+          Top = 25
           Width = 12
           Height = 12
           Caption = #22825
         end
         object Label23: TLabel
           Left = 10
-          Top = 61
+          Top = 74
           Width = 60
           Height = 12
+          Alignment = taRightJustify
           Caption = #26085#22343#38144#37327#25353
         end
         object Label25: TLabel
           Left = 129
-          Top = 61
+          Top = 74
           Width = 36
           Height = 12
           Caption = #22825#27979#31639
         end
+        object Label26: TLabel
+          Left = 22
+          Top = 49
+          Width = 48
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #21512#29702#22825#25968
+        end
+        object Label27: TLabel
+          Left = 127
+          Top = 49
+          Width = 12
+          Height = 12
+          Caption = #22825
+        end
+        object Label28: TLabel
+          Left = 10
+          Top = 98
+          Width = 60
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #23384#38144#27604#25351#26631
+        end
         object edtSAFE_DAY: TcxSpinEdit
           Left = 75
-          Top = 27
+          Top = 21
           Width = 50
           Height = 20
           Properties.MaxValue = 100.000000000000000000
@@ -916,7 +941,7 @@ inherited frmSysDefine: TfrmSysDefine
         end
         object edtDAY_SALE_STAND: TcxSpinEdit
           Left = 75
-          Top = 57
+          Top = 70
           Width = 50
           Height = 20
           Properties.MaxValue = 999999.000000000000000000
@@ -924,6 +949,26 @@ inherited frmSysDefine: TfrmSysDefine
           TabOrder = 1
           Value = 90
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        end
+        object edtREAS_DAY: TcxSpinEdit
+          Left = 75
+          Top = 45
+          Width = 50
+          Height = 20
+          Properties.MaxValue = 100.000000000000000000
+          Properties.MinValue = 1.000000000000000000
+          TabOrder = 2
+          Value = 14
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        end
+        object edtSMT_RATE: TcxComboBox
+          Left = 75
+          Top = 95
+          Width = 88
+          Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          Properties.DropDownListStyle = lsFixedList
+          TabOrder = 3
         end
       end
     end

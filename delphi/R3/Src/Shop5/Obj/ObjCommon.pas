@@ -199,10 +199,10 @@ end;
 function GetDayDiff(iDbType:Integer;B,E:string):string;
 begin
   case iDbType of
-  0:result := '(convert(datetime,convert(varchar,'+E+'),112)-convert(datetime,convert(varchar,'+B+'),112)+1)';
-  1:result := '(to_date(to_char('+E+'),''YYYYMMDD'')-to_date(to_char('+B+'),''YYYYMMDD'')+1)';
-  4:result := 'JULIAN_DAY(substr(trim(char('+E+')),1,4)||''-''||substr(trim(char('+E+')),5,2)||''-''||substr(trim(char('+E+')),7,2) ) - JULIAN_DAY( substr(trim(char('+B+')),1,4)||''-''||substr(trim(char('+B+')),5,2)||''-''||substr(trim(char('+B+')),7,2) )';
-  5:result := 'JULIAN_DAY(substr('+E+',1,4)||''-''||substr('+E+',5,2)||''-''||substr('+E+',7,2) ) - JULIAN_DAY( substr('+B+',1,4)||''-''||substr('+B+',5,2)||''-''||substr('+B+',7,2) )';
+  0:result := '(isnull(convert(datetime,convert(varchar,'+E+'),112)-convert(datetime,convert(varchar,'+B+'),112),0)+1)';
+  1:result := '(nvl(to_date(to_char('+E+'),''YYYYMMDD'')-to_date(to_char('+B+'),''YYYYMMDD''),0)+1)';
+  4:result := '(nvl(JULIAN_DAY(substr(trim(char('+E+')),1,4)||''-''||substr(trim(char('+E+')),5,2)||''-''||substr(trim(char('+E+')),7,2) ) - JULIAN_DAY( substr(trim(char('+B+')),1,4)||''-''||substr(trim(char('+B+')),5,2)||''-''||substr(trim(char('+B+')),7,2) ),0)+1)';
+  5:result := '(ifnull(JULIAN_DAY(substr('+E+',1,4)||''-''||substr('+E+',5,2)||''-''||substr('+E+',7,2) ) - JULIAN_DAY( substr('+B+',1,4)||''-''||substr('+B+',5,2)||''-''||substr('+B+',7,2) ),0)+1)';
   end;
 end;
 {====== 2011.02.25 Add 单个字段模糊查询  ======}

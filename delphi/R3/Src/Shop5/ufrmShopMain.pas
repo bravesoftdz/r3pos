@@ -336,6 +336,7 @@ type
     actfrmImpeach: TAction;
     actfrmClearData: TAction;
     actfrmSaleAnaly: TAction;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -3450,7 +3451,8 @@ begin
 end;
 
 procedure TfrmShopMain.actfrmSaleAnalyExecute(Sender: TObject);
-var Form:TfrmBasic;
+var
+  Form:TfrmBasic;
 begin
   inherited;
   if not Logined then

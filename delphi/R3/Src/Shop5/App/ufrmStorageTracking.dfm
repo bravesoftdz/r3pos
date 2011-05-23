@@ -17,8 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 1041
         Height = 514
-        ActivePage = TabSheet2
-        TabIndex = 1
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -690,17 +690,25 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Height = 12
                   end
                   object RzStatusPane3: TRzStatusPane
-                    Left = 6
+                    Left = 118
                     Top = 2
                     Width = 88
                     Height = 25
+                    FillColor = clMaroon
+                    ParentFillColor = False
                     Color = clYellow
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
                     ParentColor = False
+                    ParentFont = False
                     Alignment = taCenter
                     Caption = #20302#20110#19979#38480
                   end
                   object RzStatusPane4: TRzStatusPane
-                    Left = 102
+                    Left = 214
                     Top = 2
                     Width = 88
                     Height = 25
@@ -708,6 +716,24 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentColor = False
                     Alignment = taCenter
                     Caption = #39640#20110#19978#38480
+                  end
+                  object RzStatusPane5: TRzStatusPane
+                    Left = 22
+                    Top = 2
+                    Width = 88
+                    Height = 25
+                    FillColor = clPurple
+                    ParentFillColor = False
+                    Color = clYellow
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
+                    ParentColor = False
+                    ParentFont = False
+                    Alignment = taCenter
+                    Caption = #26032#21697#19978#24066
                   end
                 end
                 object DBGridEh1: TDBGridEh
@@ -827,6 +853,13 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 55
                     end
                     item
+                      EditButtons = <>
+                      FieldName = 'CAN_SALE_DAY'
+                      Footers = <>
+                      Title.Caption = #38144#21806#22825#25968
+                      Width = 32
+                    end
+                    item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.###'
                       EditButtons = <>
@@ -863,8 +896,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       FieldName = 'STOCK_AMT'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24314#35758#34917#36135#37327
-                      Width = 65
+                      Title.Caption = #24314#35758#34917#36135
+                      Width = 55
                     end
                     item
                       Alignment = taRightJustify
@@ -875,7 +908,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footer.DisplayFormat = '#0.00#'
                       Footers = <>
                       Title.Caption = #26368#26032#36827#20215
-                      Width = 61
+                      Width = 52
                     end
                     item
                       Alignment = taRightJustify
@@ -1304,17 +1337,17 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Height = 12
                   end
                   object RzStatusPane1: TRzStatusPane
-                    Left = 6
+                    Left = 118
                     Top = 2
                     Width = 88
                     Height = 25
-                    Color = clYellow
+                    Color = clMaroon
                     ParentColor = False
                     Alignment = taCenter
                     Caption = #20302#20110#19979#38480
                   end
                   object RzStatusPane2: TRzStatusPane
-                    Left = 102
+                    Left = 214
                     Top = 2
                     Width = 88
                     Height = 25
@@ -1322,6 +1355,24 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentColor = False
                     Alignment = taCenter
                     Caption = #39640#20110#19978#38480
+                  end
+                  object RzStatusPane6: TRzStatusPane
+                    Left = 22
+                    Top = 2
+                    Width = 88
+                    Height = 25
+                    FillColor = clPurple
+                    ParentFillColor = False
+                    Color = clYellow
+                    Font.Charset = GB2312_CHARSET
+                    Font.Color = clBlack
+                    Font.Height = -12
+                    Font.Name = #23435#20307
+                    Font.Style = [fsBold]
+                    ParentColor = False
+                    ParentFont = False
+                    Alignment = taCenter
+                    Caption = #26032#21697#19978#24066
                   end
                 end
                 object DBGridEh2: TDBGridEh
@@ -1439,6 +1490,21 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Footers = <>
                       Title.Caption = #24403#26376#38144#37327
                       Width = 60
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'DAY_SALE_AMT'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #26085#22343#38144#37327
+                      Width = 58
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CAN_SALE_DAY'
+                      Footers = <>
+                      Title.Caption = #38144#21806#22825#25968
+                      Width = 33
                     end
                     item
                       Alignment = taRightJustify
@@ -1811,72 +1877,77 @@ inherited frmStorageTracking: TfrmStorageTracking
   inherited RzPanel4: TRzPanel
     Width = 1057
     inherited Image1: TImage
-      Left = 251
-      Width = 786
+      Left = 294
+      Width = 743
     end
     inherited Image3: TImage
-      Left = 251
-      Width = 786
+      Left = 294
+      Width = 743
     end
     inherited Image14: TImage
       Left = 1037
     end
     inherited rzPanel5: TPanel
-      Left = 251
+      Left = 294
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#24211#23384#26597#35810
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 231
+      Width = 274
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 231
+          MinHeight = 274
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 231
+        Width = 274
         ButtonWidth = 43
-        object ToolButton7: TToolButton
+        object ToolButton8: TToolButton
           Left = 0
+          Top = 0
+          Action = actSetup
+        end
+        object ToolButton7: TToolButton
+          Left = 43
           Top = 0
           Action = actfrmCalc
         end
         object ToolButton4: TToolButton
-          Left = 43
+          Left = 86
           Top = 0
           Action = actFind
         end
         object ToolButton5: TToolButton
-          Left = 86
+          Left = 129
           Top = 0
           Width = 8
           ImageIndex = 14
           Style = tbsDivider
         end
         object ToolButton1: TToolButton
-          Left = 94
+          Left = 137
           Top = 0
           Action = actPrint
         end
         object ToolButton3: TToolButton
-          Left = 137
+          Left = 180
           Top = 0
           Action = actPreview
         end
         object ToolButton6: TToolButton
-          Left = 180
+          Left = 223
           Top = 0
           Width = 8
           ImageIndex = 14
           Style = tbsDivider
         end
         object ToolButton2: TToolButton
-          Left = 188
+          Left = 231
           Top = 0
           Action = actExit
         end
@@ -1903,6 +1974,10 @@ inherited frmStorageTracking: TfrmStorageTracking
       Caption = #27979#31639
       ImageIndex = 36
       OnExecute = actfrmCalcExecute
+    end
+    object actSetup: TAction
+      Caption = #35774#32622
+      ImageIndex = 40
     end
   end
   object CdsStorage: TZQuery

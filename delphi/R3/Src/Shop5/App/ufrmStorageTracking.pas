@@ -109,6 +109,10 @@ type
     dsRate: TDataSource;
     actfrmCalc: TAction;
     ToolButton7: TToolButton;
+    RzStatusPane5: TRzStatusPane;
+    RzStatusPane6: TRzStatusPane;
+    actSetup: TAction;
+    ToolButton8: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -819,6 +823,7 @@ begin
 
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,'+
+  'case when isnull(DAY_SALE_AMT,0)<>0 then round(isnull(AMOUNT,0)/isnull(DAY_SALE_AMT,0),1) else 0 end as CAN_SALE_DAY,'+
   'case when isnull(AMOUNT,0)+isnull(ROAD_AMT,0)<isnull(UPPER_AMOUNT,0) then isnull(UPPER_AMOUNT,0)-(isnull(AMOUNT,0)+isnull(ROAD_AMT,0)) else 0 end as STOCK_AMT,'+
   'case when isnull(AMOUNT,0)+isnull(ROAD_AMT,0)<isnull(UPPER_AMOUNT,0) then isnull(UPPER_AMOUNT,0)-(isnull(AMOUNT,0)+isnull(ROAD_AMT,0)) else 0 end*NEW_INPRICE as STOCK_MNY '+
   'from ('+StrSql+') jc '+
@@ -866,12 +871,15 @@ begin
      and
      (cdsDemand.FieldByName('LOWER_AMOUNT').AsFloat>(cdsDemand.FieldByName('AMOUNT').AsFloat+cdsDemand.FieldByName('ROAD_AMT').AsFloat))
   then
-     AFont.Color := RzStatusPane3.Color;
+     AFont.Color := RzStatusPane3.FillColor;
   if (cdsDemand.FieldByName('UPPER_AMOUNT').AsFloat>0)
      and
      (cdsDemand.FieldByName('UPPER_AMOUNT').AsFloat<(cdsDemand.FieldByName('AMOUNT').AsFloat+cdsDemand.FieldByName('ROAD_AMT').AsFloat))
   then
-     AFont.Color := RzStatusPane4.Color;
+     AFont.Color := RzStatusPane4.FillColor;
+  if (cdsDemand.FieldByName('DAY_SALE_AMT').AsFloat=0)
+  then
+     AFont.Color := RzStatusPane5.FillColor;
 
 end;
 
@@ -957,7 +965,8 @@ begin
 
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,'+
-  'case when isnull(AMOUNT,0)<>0 then cast(isnull(AMOUNT,0) as decimal(18,3))/cast(isnull(MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
+  'case when isnull(DAY_SALE_AMT,0)<>0 then round(isnull(AMOUNT,0)/isnull(DAY_SALE_AMT,0),1) else 0 end as CAN_SALE_DAY,'+
+  'case when isnull(MTH_SALE_AMT,0)<>0 then cast(isnull(AMOUNT,0) as decimal(18,3))/cast(isnull(MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
   'from ('+StrSql+') jc '+
   'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.GODS_CODE ';
@@ -1003,12 +1012,15 @@ begin
      and
      (cdsRate.FieldByName('LOWER_RATE').AsFloat>(cdsRate.FieldByName('RATE').AsFloat))
   then
-     AFont.Color := RzStatusPane3.Color;
+     AFont.Color := RzStatusPane3.FillColor;
   if (cdsRate.FieldByName('UPPER_RATE').AsFloat>0)
      and
      (cdsRate.FieldByName('UPPER_RATE').AsFloat<(cdsRate.FieldByName('RATE').AsFloat))
   then
-     AFont.Color := RzStatusPane4.Color;
+     AFont.Color := RzStatusPane4.FillColor;
+  if (cdsRate.FieldByName('DAY_SALE_AMT').AsFloat=0)
+  then
+     AFont.Color := RzStatusPane6.FillColor;
 
 end;
 

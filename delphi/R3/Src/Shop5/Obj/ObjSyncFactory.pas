@@ -489,6 +489,12 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //23
+  TSyncSequence=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3284,6 +3290,25 @@ begin
   AGlobal.ExecSQL('delete from STO_LOCUS_FORCHAG where TENANT_ID=:TENANT_ID and CHANGE_ID=:CHANGE_ID',Params);
 end;
 
+{ TSyncSequence }
+
+function TSyncSequence.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select * from SYS_SEQUENCE where TENANT_ID=:TENANT_ID and SEQU_ID=:SEQU_ID';
+    rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.Params[1].AsString := FieldbyName('SEQU_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.FieldByName('FLAG_TEXT').AsString>FieldbyName('FLAG_TEXT').AsString then Exit;
+    if rs.FieldByName('SEQU_NO').AsInteger>FieldbyName('SEQU_NO').AsInteger then Exit;
+    result := inherited BeforeInsertRecord(AGlobal);
+  finally
+    rs.Free;
+  end;
+end;
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3344,6 +3369,7 @@ initialization
   RegisterClass(TSyncLocusForStckData);
   RegisterClass(TSyncLocusForSaleData);
   RegisterClass(TSyncLocusForChagData);
+  RegisterClass(TSyncSequence);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
@@ -3404,4 +3430,5 @@ finalization
   UnRegisterClass(TSyncLocusForStckData);
   UnRegisterClass(TSyncLocusForSaleData);
   UnRegisterClass(TSyncLocusForChagData);
+  UnRegisterClass(TSyncSequence);
 end.

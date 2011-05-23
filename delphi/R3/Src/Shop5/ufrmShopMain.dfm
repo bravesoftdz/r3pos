@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 0
-  Top = 158
+  Left = 165
+  Top = 159
   Width = 701
   Height = 535
   Caption = ''
@@ -2354,6 +2354,14 @@ inherited frmShopMain: TfrmShopMain
                   OnClick = RzBmpButton4Click
                 end
               end
+            end
+            object Button1: TButton
+              Left = 88
+              Top = 24
+              Width = 75
+              Height = 25
+              Action = actfrmSaleAnaly
+              TabOrder = 1
             end
           end
         end

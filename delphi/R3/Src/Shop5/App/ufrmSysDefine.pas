@@ -119,6 +119,11 @@ type
     Label23: TLabel;
     edtDAY_SALE_STAND: TcxSpinEdit;
     Label25: TLabel;
+    Label26: TLabel;
+    edtREAS_DAY: TcxSpinEdit;
+    Label27: TLabel;
+    Label28: TLabel;
+    edtSMT_RATE: TcxComboBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -236,6 +241,10 @@ begin
     if Define = 'SAFE_DAY' then
       begin
         edtSAFE_DAY.Value := StrToIntDef(Value, 7);
+      end;
+    if Define = 'REAS_DAY' then
+      begin
+        edtREAS_DAY.Value := StrToIntDef(Value, 14);
       end;
     if Define = 'DAY_SALE_STAND' then
       begin
@@ -393,6 +402,11 @@ begin
       edtINPUT_MODE.ItemIndex := StrtoIntDef(value,0);
     end;
 
+    if Define = 'SMT_RATE' then
+    begin
+      edtSMT_RATE.ItemIndex := TdsItems.FindItems(edtSMT_RATE.Properties.Items,'CODE_ID',Value); 
+    end;
+
     if Define= 'GUIDE_USER' then
     begin
       if Value = '0' then
@@ -451,6 +465,7 @@ begin
     SetValue('DUPBARCODE', '0');
   SetValue('RECK_DAY', edtRECK_DAY.Text);
   SetValue('SAFE_DAY', edtSAFE_DAY.Value);
+  SetValue('REAS_DAY', edtREAS_DAY.Value);
   SetValue('DAY_SALE_STAND', edtDAY_SALE_STAND.Value);
   if IsBirthDay.Checked then
     SetValue('BIRTHDAY', BirthDays.Value)
@@ -519,6 +534,10 @@ begin
      SetValue('CARRYRULE', inttostr(0))
   else
      SetValue('CARRYRULE', inttostr(edtCARRYRULE.ItemIndex));
+  if edtSMT_RATE.ItemIndex = -1 then
+     SetValue('SMT_RATE', '')
+  else
+     SetValue('SMT_RATE',TRecord_(edtSMT_RATE.Properties.Items.Objects[edtSMT_RATE.ItemIndex]).FieldbyName('CODE_ID').AsString);
   if edtINPUT_MODE.ItemIndex = -1 then
      SetValue('INPUT_MODE', inttostr(0))
   else
@@ -688,6 +707,8 @@ begin
 end;
 
 procedure TfrmSysDefine.FormCreate(Sender: TObject);
+var
+  rs:TZQuery;
 begin
   inherited;
   edtCALC_FLAG.ItemIndex := 0;
@@ -711,7 +732,11 @@ begin
 
 
   edtSAFE_DAY.Value := 7;
+  edtREAS_DAY.Value := 14;
   edtDAY_SALE_STAND.Value := 90;
+  rs := Global.GetZQueryFromName('PUB_STAT_INFO');
+  TdsItems.AddDataSetToItems(rs,edtSMT_RATE.Properties.Items,'CODE_NAME'); 
+  edtSMT_RATE.ItemIndex := 1;
 end;
 
 end.

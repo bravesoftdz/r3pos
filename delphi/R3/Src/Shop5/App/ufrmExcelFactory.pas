@@ -14,6 +14,7 @@ uses
 type
   TExeclFactoryCheck=function(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
   TExeclFactorySave=function(CdsTable:TDataSet):Boolean;
+  TExeclFactoryFindColumn=function(CdsCol:TDataSet):Boolean;
   TfrmExcelFactory = class(TfrmBasic)
     RzPage: TRzPageControl;
     TabSheet1: TRzTabSheet;
@@ -92,12 +93,13 @@ type
     { Public declarations }
     Proc:TExeclFactoryCheck;
     Save:TExeclFactorySave;
+    FindCdsColumn:TExeclFactoryFindColumn;
     vList:TStringList;
     mxCol,ErrorSum:Integer;
     FilePath: String;
     function Execute(DataSet:TDataSet):Boolean;virtual;
     procedure OpenExecl(FileName:string);
-    class function ExcelFactory(_DataSet:TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;Formats:string='';vStartRow:Integer=1):Boolean;
+    class function ExcelFactory(_DataSet:TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';vStartRow:Integer=1):Boolean;
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property StartRow:Integer read FStartRow write SetStartRow;
   end;
@@ -106,7 +108,7 @@ implementation
 
 {$R *.dfm}
 
-class function TfrmExcelFactory.ExcelFactory(_DataSet: TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;Formats:string='';vStartRow:Integer=1): Boolean;
+class function TfrmExcelFactory.ExcelFactory(_DataSet: TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';vStartRow:Integer=1): Boolean;
 begin
   with TfrmExcelFactory.Create(Application.MainForm) do
     begin
@@ -115,6 +117,7 @@ begin
         StartRow := vStartRow;
         Proc := CheckProc;
         Save := SaveFun;
+        FindCdsColumn := FindC;
         DecodeFields(Fields);
         DecodeFormats(Formats);
         result := (ShowModal=MROK);
@@ -258,9 +261,18 @@ begin
   inherited;
   if rzPage.ActivePageIndex = 4 then
      begin
-       rzPage.ActivePageIndex := 3;
-       RzBitBtn1.Caption := '下一步';
-       RzBitBtn1.Enabled := True;
+       if ErrorSum = 0 then
+         begin
+           rzPage.ActivePageIndex := 2;
+           RzBitBtn1.Caption := '立即执行';
+           RzBitBtn1.Enabled := True;
+         end
+       else
+         begin
+           rzPage.ActivePageIndex := 3;
+           RzBitBtn1.Caption := '下一步';
+           RzBitBtn1.Enabled := True;
+         end;
      end
   else if rzPage.ActivePageIndex = 3 then
      begin
@@ -405,10 +417,19 @@ begin
     end
   else if rzPage.ActivePageIndex = 2 then
     begin
-      rzPage.ActivePageIndex := 3;
-      RzBitBtn1.Caption := '下一步';
       if not DataSet.Active then Exit;
       if not Execute(DataSet) then Exit;
+      if ErrorSum = 0 then
+        begin
+          RzBitBtn1.Caption := '提交';
+          rzPage.ActivePageIndex := 4;
+          chkignore.Visible := False;
+        end
+      else
+        begin
+          RzBitBtn1.Caption := '下一步';
+          rzPage.ActivePageIndex := 3;
+        end;
     end
   else if rzPage.ActivePageIndex = 3 then
     begin
@@ -426,18 +447,24 @@ begin
     end
   else if RzPage.ActivePageIndex = 4 then
     begin
-      if Assigned(Save) then
+      if Assigned(FindCdsColumn) then
       begin
-        if Save(DataSet) then
+        if FindCdsColumn(cdsColumn) then
+        begin
+          if Assigned(Save) then
           begin
-            MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
-            ModalResult := mrOk;
+            if Save(DataSet) then
+              begin
+                MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
+                ModalResult := mrOk;
+              end
+            else
+              MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
           end
-        else
-          MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
-      end
-      else
-        ModalResult := mrOk;
+          else
+            ModalResult := mrOk;
+        end;
+      end;
     end;
   //RzPageChange(nil);
 end;

@@ -988,8 +988,8 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
           Raise Exception.Create('门店不能为空!');
       end;
 
-    //*******************会员等级*****************
-    if DFieldName = 'PRICE_ID' then
+    // *******************会员等级*****************
+    if DFieldName = 'PRICE_ID' then 
       begin
         if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
           begin
@@ -1009,7 +1009,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
       end;
 
     //*******************地区*****************
-    if DFieldName = 'REGION_ID' then
+    if DFieldName = 'REGION_ID' then   
       begin
         if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
           begin
@@ -1066,7 +1066,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
       end;
 
     //会员编号
-    if DFieldName = 'CUST_CODE' then
+    if DFieldName = 'CUST_CODE' then    
       begin
         if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
@@ -1075,7 +1075,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
             else
               begin
                 rs := Global.GetZQueryFromName('PUB_CUSTOMER');
-                if rs.Locate('CUST_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
                   Raise Exception.Create('当前会员编号已经存在!')
                 else
                   begin
@@ -1091,7 +1091,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
       end;
 
     //会员名称
-    if DFieldName = 'CUST_NAME' then
+    if DFieldName = 'CUST_NAME' then    
       begin
         if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
@@ -1149,6 +1149,29 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
       end;
     Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil);
   end;
+  function FindColumn(CdsCol:TDataSet):Boolean;
+  begin
+    if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少门店字段!');
+      end;
+    if not CdsCol.Locate('FieldName','PRICE_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少等级字段!');
+      end;
+    if not CdsCol.Locate('FieldName','SEX',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少性别字段!');
+      end;
+    if not CdsCol.Locate('FieldName','CUST_NAME',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少会员名称字段!');
+      end;
+  end;
 var FieldsString,FormatString:String;
     Params:TftParamList;
     rs:TZQuery;
@@ -1171,7 +1194,7 @@ begin
     '11=POSTALCODE,12=ID_NUMBER,13=IDN_TYPE,14=SND_DATE,15=CON_DATE,16=QQ,17=MSN,18=END_DATE,19=MONTH_PAY,20=DEGREES,21=EMAIL,22=OFFI_TELE,'+
     '23=FAMI_TELE,24=OCCUPATION,25=JOBUNIT,26=REMARK';
 
-    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,FormatString,1);
+    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
 
   finally
     Params.Free;

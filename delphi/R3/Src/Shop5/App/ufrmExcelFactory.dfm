@@ -1,6 +1,6 @@
 inherited frmExcelFactory: TfrmExcelFactory
-  Left = 341
-  Top = 158
+  Left = 409
+  Top = 161
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Excel'#23548#20837#22522#31867
   Color = clWhite
@@ -13,9 +13,9 @@ inherited frmExcelFactory: TfrmExcelFactory
   object RzPage: TRzPageControl [0]
     Left = 0
     Top = 0
-    Width = 541
-    Height = 325
-    ActivePage = TabSheet5
+    Width = 549
+    Height = 336
+    ActivePage = TabSheet1
     Align = alClient
     BoldCurrentTab = True
     FlatColor = clWhite
@@ -25,7 +25,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     TabColors.HighlightBar = clMoneyGreen
     TabColors.Shadow = 12947783
     TabHeight = 20
-    TabIndex = 4
+    TabIndex = 1
     TabOrder = 0
     FixedDimension = 20
     object TabSheet3: TRzTabSheet
@@ -34,8 +34,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel2: TRzPanel
         Left = 0
         Top = 0
-        Width = 539
-        Height = 303
+        Width = 547
+        Height = 314
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -43,8 +43,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          539
-          303)
+          547
+          314)
         object RzLabel1: TRzLabel
           Left = 193
           Top = 61
@@ -601,7 +601,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Caption = #27880#37322#65306'Excel '#25991#20214#20013#30340#21015#21517#26159#21542#30456#21516
         end
         object chkHeader: TcxCheckBox
-          Left = 237
+          Left = 245
           Top = 93
           Width = 110
           Height = 21
@@ -903,13 +903,6 @@ inherited frmExcelFactory: TfrmExcelFactory
               EditButtons = <>
               FieldName = 'AI'
               Footers = <>
-            end
-            item
-              EditButtons = <>
-              FieldName = 'Msg'
-              Footers = <>
-              Title.Caption = #21451#24773#25552#31034
-              Width = 164
             end>
         end
       end
@@ -1072,6 +1065,13 @@ inherited frmExcelFactory: TfrmExcelFactory
               FieldName = 'ID'
               Footers = <>
               Width = 24
+            end
+            item
+              EditButtons = <>
+              FieldName = 'Msg'
+              Footers = <>
+              Title.Caption = #38169#35823#25552#31034
+              Width = 164
             end
             item
               EditButtons = <>
@@ -1273,13 +1273,6 @@ inherited frmExcelFactory: TfrmExcelFactory
               EditButtons = <>
               FieldName = 'AI'
               Footers = <>
-            end
-            item
-              EditButtons = <>
-              FieldName = 'Msg'
-              Footers = <>
-              Title.Caption = #21451#24773#25552#31034
-              Width = 164
             end>
         end
       end
@@ -1290,8 +1283,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel4: TRzPanel
         Left = 0
         Top = 0
-        Width = 539
-        Height = 303
+        Width = 547
+        Height = 314
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -1299,8 +1292,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          539
-          303)
+          547
+          314)
         object labImportInfo: TRzLabel
           Left = 271
           Top = 145
@@ -1863,8 +1856,8 @@ inherited frmExcelFactory: TfrmExcelFactory
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 325
-    Width = 541
+    Top = 336
+    Width = 549
     Height = 51
     Align = alBottom
     BevelOuter = bvNone

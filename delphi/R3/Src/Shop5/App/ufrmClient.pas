@@ -669,7 +669,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
               Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
           end
         else
-          Raise Exception.Create('地区不能为空!');
+          Dest.FieldByName('REGION_ID').AsString := '#';
       end;
 
     //*******************客户类别*****************
@@ -821,6 +821,29 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
       end;
     Result := Factor.UpdateBatch(CdsExcel,'TClient',nil);
   end;
+  function FindColumn(CdsCol:TDataSet):Boolean;
+  begin
+    if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少门店字段!');
+      end;
+    if not CdsCol.Locate('FieldName','PRICE_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少等级字段!');
+      end;
+    if not CdsCol.Locate('FieldName','SETTLE_CODE',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少结算方式字段!');
+      end;
+    if not CdsCol.Locate('FieldName','CUST_NAME',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少客户名称字段!');
+      end;
+  end;
 var FieldsString,FormatString:String;
     Params:TftParamList;
     cdsTable,rs:TZQuery;
@@ -845,30 +868,8 @@ begin
     '17=SEND_LINKMAN,18=RECV_ADDR,19=RECV_LINKMAN,20=RECV_TELE,21=LEGAL_REPR,22=INVO_NAME,23=TAX_NO,24=FAXES,25=HOMEPAGE,26=EMAIL,27=QQ,28=MSN,'+
     '29=BANK_ID,30=ACCOUNT,31=INVOICE_FLAG,32=REMARK';
 
-    TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,@SaveExcel,FormatString,1);
-    {if TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,@SaveExcel,FormatString,1) then
-      begin
-        cdsTable.First;
-        while not cdsTable.Eof do
-          begin
-            cdsTable.Edit;
-            cdsTable.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-            cdsTable.FieldByName('CLIENT_ID').AsString  := TSequence.NewId;
-            cdsTable.FieldByName('UNION_ID').AsString := '#';
-            cdsTable.FieldByName('CLIENT_TYPE').AsString := '2';
-            cdsTable.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
-            cdsTable.FieldByName('CREA_USER').AsString := Global.UserID;
-            cdsTable.FieldByName('IC_INFO').AsString := '企业卡';
-            cdsTable.FieldByName('IC_STATUS').AsString := '0';
-            cdsTable.FieldByName('IC_TYPE').AsString := '0';
-            cdsTable.Post;
-            cdsTable.Next;
-          end;
-        if Factor.UpdateBatch(cdsTable,'TClient',nil) then
-          MessageBox(Handle,pchar('数据导入成功！'),pchar('友情提示...'),MB_OK)
-        else
-          raise Exception.Create('数据导入出错了');
-      end;}
+    TfrmExcelFactory.ExcelFactory(cdsTable,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
+
   finally
     Params.Free;
     cdsTable.Free;

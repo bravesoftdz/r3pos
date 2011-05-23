@@ -1056,10 +1056,11 @@ procedure TfrmStkRetuOrder.RzBitBtn1Click(Sender: TObject);
 var Flag:Integer;
 begin
   inherited;
+  if Trim(edtCLIENT_ID.Text) = '' then Exit;
   Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
   case Flag of
     0:begin
-      TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+      TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
     end;
     1:begin
     end;

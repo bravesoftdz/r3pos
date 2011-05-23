@@ -1368,15 +1368,16 @@ procedure TfrmSalIndentOrder.RzBitBtn1Click(Sender: TObject);
 var Flag:Integer;
 begin
   inherited;
+  if Trim(edtCLIENT_ID.Text) = '' then Exit;
   Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
   case Flag of
     0:begin
-      TfrmClientInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+      TfrmClientInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
     end;
     1:begin
     end;
     2:begin
-      TfrmCustomerInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+      TfrmCustomerInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
     end;
     3:begin
     end;

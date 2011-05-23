@@ -115,14 +115,14 @@ type
     GroupBox9: TGroupBox;
     Label19: TLabel;
     Label20: TLabel;
-    edtSAFE_DAY: TcxSpinEdit;
     Label23: TLabel;
-    edtDAY_SALE_STAND: TcxSpinEdit;
     Label25: TLabel;
     Label26: TLabel;
-    edtREAS_DAY: TcxSpinEdit;
     Label27: TLabel;
     Label28: TLabel;
+    edtSAFE_DAY: TcxSpinEdit;
+    edtDAY_SALE_STAND: TcxSpinEdit;
+    edtREAS_DAY: TcxSpinEdit;
     edtSMT_RATE: TcxComboBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
@@ -236,19 +236,6 @@ begin
             IsBirthDay.Checked := True;
             BirthDays.Value := StrToIntDef(Value, 0);
           end;
-      end;
-
-    if Define = 'SAFE_DAY' then
-      begin
-        edtSAFE_DAY.Value := StrToIntDef(Value, 7);
-      end;
-    if Define = 'REAS_DAY' then
-      begin
-        edtREAS_DAY.Value := StrToIntDef(Value, 14);
-      end;
-    if Define = 'DAY_SALE_STAND' then
-      begin
-        edtDAY_SALE_STAND.Value := StrToIntDef(Value, 90);
       end;
 
     if Define = 'CUSTCONTINU' then
@@ -400,11 +387,6 @@ begin
     if Define = 'INPUT_MODE' then
     begin
       edtINPUT_MODE.ItemIndex := StrtoIntDef(value,0);
-    end;
-
-    if Define = 'SMT_RATE' then
-    begin
-      edtSMT_RATE.ItemIndex := TdsItems.FindItems(edtSMT_RATE.Properties.Items,'CODE_ID',Value); 
     end;
 
     if Define= 'GUIDE_USER' then

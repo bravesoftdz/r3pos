@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 453
-  Top = 212
+  Left = 708
+  Top = 185
   Width = 434
   Height = 323
   BorderIcons = [biSystemMenu]
@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
-    ActivePage = tabBasic
+    Width = 426
+    Height = 253
+    ActivePage = TabSheet4
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -165,8 +165,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -823,8 +823,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel6: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -869,8 +869,8 @@ inherited frmSysDefine: TfrmSysDefine
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object GroupBox9: TGroupBox
-        Left = 216
-        Top = 17
+        Left = 227
+        Top = 9
         Width = 177
         Height = 136
         Caption = #40664#35748#24211#23384#36873#39033
@@ -975,8 +975,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 426
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

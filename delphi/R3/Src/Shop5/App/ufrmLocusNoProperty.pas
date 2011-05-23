@@ -249,7 +249,7 @@ end;
 begin
   inherited;
   if not DataSet.IsEmpty then Raise Exception.Create('已经存在扫码记录，不能导入');
-  TfrmExcelFactory.ExcelFactory(DataSet,'LOCUS_NO=物流跟踪码',@ImportLocusNo,nil,'0=LOCUS_NO',1);
+  TfrmExcelFactory.ExcelFactory(DataSet,'LOCUS_NO=物流跟踪码',@ImportLocusNo,nil,nil,'0=LOCUS_NO',1);
 end;
 
 end.

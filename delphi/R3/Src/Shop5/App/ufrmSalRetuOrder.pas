@@ -62,6 +62,7 @@ type
     Label3: TLabel;
     edtDEPT_ID: TzrComboBoxList;
     Label14: TLabel;
+    RzBitBtn1: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -88,6 +89,7 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure edtSAL_GLIDE_NOPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -152,7 +154,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer, ufrmShopMain, ufrmSalesOrder, ufrmFindOrder;
+   ,uframeSelectCustomer, ufrmShopMain, ufrmSalesOrder, ufrmFindOrder, ufrmCustomerInfo;
 {$R *.dfm}
 
 procedure TfrmSalRetuOrder.ReadHeader;
@@ -1452,6 +1454,25 @@ end;
 function TfrmSalRetuOrder.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('12500001',10);
+end;
+
+procedure TfrmSalRetuOrder.RzBitBtn1Click(Sender: TObject);
+var Flag:Integer;
+begin
+  inherited;
+  Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
+  case Flag of
+    0:begin
+      TfrmClientInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    1:begin
+    end;
+    2:begin
+      TfrmCustomerInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    3:begin
+    end;
+  end;
 end;
 
 end.

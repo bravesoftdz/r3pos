@@ -64,6 +64,7 @@ type
     edtDEPT_ID: TzrComboBoxList;
     Label14: TLabel;
     Label18: TLabel;
+    RzBitBtn1: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -90,6 +91,7 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actCustomerExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -153,7 +155,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmShopMain;
+   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmShopMain,ufrmCustomerInfo;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -1360,6 +1362,25 @@ end;
 function TfrmSalIndentOrder.CheckInput: boolean;
 begin
   result := not (pos(inttostr(InputFlag),'8')>0);
+end;
+
+procedure TfrmSalIndentOrder.RzBitBtn1Click(Sender: TObject);
+var Flag:Integer;
+begin
+  inherited;
+  Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
+  case Flag of
+    0:begin
+      TfrmClientInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    1:begin
+    end;
+    2:begin
+      TfrmCustomerInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    3:begin
+    end;
+  end;
 end;
 
 end.

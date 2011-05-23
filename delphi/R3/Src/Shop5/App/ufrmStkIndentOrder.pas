@@ -53,6 +53,7 @@ type
     Label4: TLabel;
     edtTAX_MONEY: TcxTextEdit;
     Label18: TLabel;
+    RzBitBtn1: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -78,6 +79,7 @@ type
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     //½áËã½ð¶î
@@ -118,8 +120,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,ufrmShopMain
-  ;
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,
+     ufrmShopInfo, ufrmShopMain;
 {$R *.dfm}
 
 procedure TfrmStkIndentOrder.CancelOrder;
@@ -1090,6 +1092,23 @@ begin
   finally
     edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;
+  end;
+end;
+
+procedure TfrmStkIndentOrder.RzBitBtn1Click(Sender: TObject);
+var Flag:Integer;
+begin
+  inherited;
+  Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
+  case Flag of
+    0:begin
+      TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    1:begin
+    end;
+    3:begin
+      //TfrmShopInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
   end;
 end;
 

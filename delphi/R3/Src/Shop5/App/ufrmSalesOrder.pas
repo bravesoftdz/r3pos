@@ -94,6 +94,7 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure edtFROM_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -159,8 +160,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalIndentOrder,
-   ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain,ufrmFindOrder;
+   ,uframeSelectCustomer,ufrmSalIndentOrder,ufrmCustomerInfo,ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain,ufrmFindOrder;
 {$R *.dfm}
 
 procedure TfrmSalesOrder.ReadHeader;
@@ -1513,6 +1513,25 @@ begin
      h.Free;
      d.Free;
    end;
+end;
+
+procedure TfrmSalesOrder.RzBitBtn1Click(Sender: TObject);
+var Flag:Integer;
+begin
+  inherited;
+  Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
+  case Flag of
+    0:begin
+      TfrmClientInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    1:begin
+    end;
+    2:begin
+      TfrmCustomerInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+    end;
+    3:begin
+    end;
+  end;
 end;
 
 end.

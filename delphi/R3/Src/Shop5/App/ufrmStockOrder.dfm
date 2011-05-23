@@ -1,16 +1,16 @@
 inherited frmStockOrder: TfrmStockOrder
-  Left = 207
-  Top = 49
+  Left = 273
+  Top = 156
   Width = 786
   Height = 523
   Caption = #36827#36135#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 770
-    Height = 485
+    Width = 778
+    Height = 496
     inherited RzPanel2: TRzPanel
-      Width = 760
+      Width = 768
       Height = 100
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -176,7 +176,7 @@ inherited frmStockOrder: TfrmStockOrder
       object edtCLIENT_ID: TzrComboBoxList
         Left = 250
         Top = 5
-        Width = 287
+        Width = 264
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -335,10 +335,36 @@ inherited frmStockOrder: TfrmStockOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
+      object RzBitBtn1: TRzBitBtn
+        Left = 514
+        Top = 5
+        Width = 23
+        Height = 20
+        Caption = #35814
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 10
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = RzBitBtn1Click
+        NumGlyphs = 2
+        Spacing = 5
+      end
     end
     inherited RzPanel3: TRzPanel
-      Top = 373
-      Width = 760
+      Top = 384
+      Width = 768
       Height = 64
       TabOrder = 2
       object Label19: TLabel
@@ -539,8 +565,8 @@ inherited frmStockOrder: TfrmStockOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 139
-      Width = 760
-      Height = 234
+      Width = 768
+      Height = 245
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <
@@ -686,16 +712,16 @@ inherited frmStockOrder: TfrmStockOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 105
-      Width = 760
+      Width = 768
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 437
-      Width = 760
+      Top = 448
+      Width = 768
     end
     inherited rzHelp: TRzPanel
-      Top = 461
-      Width = 760
+      Top = 472
+      Width = 768
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

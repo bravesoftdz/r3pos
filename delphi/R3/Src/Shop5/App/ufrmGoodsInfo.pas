@@ -198,7 +198,7 @@ type
 
     //商品分类: SORT_ID1_KeyValue
     SORT_ID1_KeyValue: string;
-
+ 
     //2011.04.26 PM 读取商品指标的属性;
     function  GetLblCaption(LblName: string): string;  //返回标签Caption
     procedure DoAddSORT_IDClick(Sender: TObject); //添加Add
@@ -2209,45 +2209,48 @@ begin
 end;
 
 procedure TfrmGoodsInfo.edtCALC_UNITSPropertiesChange(Sender: TObject);
+var
+  SetCol: TColumnEh;
 begin
   inherited;
-  PriceGrid.FieldColumns['NEW_OUTPRICE'].Visible:=(edtCALC_UNITS.KeyValue<>'');
-  if edtCALC_UNITS.KeyValue<>'' then
+  SetCol:=FindColumn(PriceGrid,'NEW_OUTPRICE');
+  if SetCol<>nil then
   begin
-    PriceGrid.FieldColumns['NEW_OUTPRICE'].Title.Caption:='计量单位('+edtCALC_UNITS.Text+')售价';
+    SetCol.Visible:=(edtCALC_UNITS.KeyValue<>'');
+    if edtCALC_UNITS.KeyValue<>'' then
+      SetCol.Title.Caption:='售价(元/'+edtCALC_UNITS.Text+')';
   end;
 end;
 
 procedure TfrmGoodsInfo.edtSMALL_UNITSPropertiesChange(Sender: TObject);
 var
-  i: integer;
+  SetCol: TColumnEh;
 begin
   inherited;
-  PriceGrid.FieldColumns['NEW_OUTPRICE1'].Visible:=(edtSMALL_UNITS.KeyValue<>'');
-  if edtSMALL_UNITS.Text<>'' then
+  SetCol:=FindColumn(PriceGrid,'NEW_OUTPRICE1');
+  if SetCol<>nil then
   begin
-    i:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE1');
-    if (i>0) and (i<PriceGrid.Columns.Count-1) then
-      PriceGrid.Columns[i].Title.Caption:='小包装('+edtSMALL_UNITS.Text+')售价';
+    SetCol.Visible:=(edtSMALL_UNITS.KeyValue<>'');
+    if edtSMALL_UNITS.Text<>'' then
+      SetCol.Title.Caption:='售价(元/'+edtSMALL_UNITS.Text+')';
   end;
 end;
 
 procedure TfrmGoodsInfo.edtBIG_UNITSPropertiesChange(Sender: TObject);
 var
-  i:integer;
+  SetCol: TColumnEh;
 begin
   inherited;
-  PriceGrid.FieldColumns['NEW_OUTPRICE2'].Visible:=(edtBIG_UNITS.KeyValue<>'');
-  if edtBIG_UNITS.Text<>'' then
+  SetCol:=FindColumn(PriceGrid,'NEW_OUTPRICE2');
+  if SetCol<>nil then
   begin
-    i:=GetColumnIdx(PriceGrid,'NEW_OUTPRICE2');
-    if (i>0) and (i<PriceGrid.Columns.Count-1) then
-      PriceGrid.Columns[i].Title.Caption:='大包装('+edtBIG_UNITS.Text+')售价';
+    SetCol.Visible:=(edtBIG_UNITS.KeyValue<>'');
+    if edtBIG_UNITS.Text<>'' then
+      SetCol.Title.Caption:='售价(元/'+edtBIG_UNITS.Text+')';
   end;
 end;
 
-// 启用物流跟踪号管制
-
+// 启用物流跟踪号管制   
 procedure TfrmGoodsInfo.CheckTabGoodPriceVisible;
 var
   Cal_UNit,Cal_UNi: Boolean;
@@ -2988,7 +2991,5 @@ begin
   if ExtBarCode.Active then
     ExtBarCode.Delete;
 end;
-
-
 
 end.

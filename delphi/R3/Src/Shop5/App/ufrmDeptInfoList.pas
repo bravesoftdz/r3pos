@@ -162,6 +162,7 @@ procedure TfrmDeptInfoList.actDeleteExecute(Sender: TObject);
  end;
 var
   i:integer;
+  DeptID: string; 
   rzNode:TTreeNode;
   Params:TftParamList;
 begin
@@ -173,9 +174,10 @@ begin
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
   begin
+    DeptID:=trim(cdsBrowser.FieldByName('DEPT_ID').AsString);
     Params:=TftParamList.Create(nil);
     try
-      Params.ParamByName('DEPT_ID').asString:=cdsBrowser.FieldByName('DEPT_ID').AsString;
+      Params.ParamByName('DEPT_ID').asString:=DeptID;
       Params.ParamByName('DEPT_NAME').asString:=cdsBrowser.FieldByName('DEPT_NAME').AsString;
       Params.ParamByName('LEVEL_ID').asString:=cdsBrowser.FieldByName('LEVEL_ID').AsString;
       Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
@@ -183,14 +185,17 @@ begin
     finally
       Params.Free;
     end;
-    UpdateToGlobal(cdsBrowser.FieldByName('DEPT_ID').AsString);
-    rzNode:=FindNode(cdsBrowser.FieldByName('DEPT_ID').AsString);
+    UpdateToGlobal(DeptID);
+    rzNode:=FindNode(DeptID);
     if rzNode<>nil then
     begin
       TRecord_(rzNode.Data).Free;
       rzNode.Delete;
     end;
-    cdsBrowser.Delete;  
+    if (cdsBrowser.Active) and (cdsBrowser.Locate('DEPT_ID',DeptID,[])) then //只有定位到才删除
+    begin
+      cdsBrowser.Delete;
+    end;
   end;
 end;
 

@@ -81,7 +81,7 @@ begin
   'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and DEFINE=:OLD_DEFINE';
   UpdateSQL.Text := Str;
 
-  Str := 'delete SYS_DEFINE where TENANT_ID=:OLD_TENANT_ID and DEFINE=:OLD_DEFINE';
+  Str := 'delete from SYS_DEFINE where TENANT_ID=:OLD_TENANT_ID and DEFINE=:OLD_DEFINE';
   DeleteSQL.Text := Str;
 end;
 

@@ -309,6 +309,18 @@ type
     procedure AuditOrder;
     procedure CancelOrder;
     procedure Open(id:string);
+    //发放会员卡
+    procedure NewCardExecute;
+    //会员卡密码修改
+    procedure PasswordExecute;
+    //会员卡充值
+    procedure DepositExecute;
+    //会员卡注销
+    procedure CancelCardExecute;
+    //会员卡退款
+    procedure ReturnExecute;
+    //会员卡挂失
+    procedure LossCardExecute;
 
     function GetCostPrice(SHOP_ID,GODS_ID,BATCH_NO:string):Currency;
 
@@ -340,8 +352,9 @@ type
 
 implementation
 uses ufrmShopMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
-     uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory,
-     ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay;
+     uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
+     ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
+     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard;
 {$R *.dfm}
 
 procedure TfrmPosMain.FormCreate(Sender: TObject);
@@ -1668,7 +1681,7 @@ begin
         'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+AObj.FieldbyName('CLIENT_ID').AsString+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
-        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
         ') c on j.UNION_ID=c.UNION_ID ';
       Factor.Open(rs);
     end
@@ -1680,7 +1693,7 @@ begin
         'and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and B.IC_CARDNO='''+id+''' and B.IC_STATUS in (''0'',''1'') and B.COMM not in (''02'',''12'') ) j left outer join '+
         '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
         ' union all '+
-        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+        ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
         ') c on j.UNION_ID=c.UNION_ID ';
       Factor.Open(rs);
       if rs.IsEmpty then
@@ -1692,7 +1705,7 @@ begin
             'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
-            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+            ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
             ') c on j.UNION_ID=c.UNION_ID ';
           Factor.Open(rs);
          end;
@@ -3424,16 +3437,93 @@ begin
 end;
 
 procedure TfrmPosMain.PopupMenu;
+var CardNo:String;
 begin
   case TfrmPosMenu.ShowMenu(self) of
-  0:Exit;
+  0:PickUp;
   1:case TfrmCloseForDay.ShowClDy(self) of
     1:Close;
     2:Close;
     end;
   2:self.WindowState := wsMinimized;
-  8:HangUp;
-  9:PickUp;
+  3:begin
+    if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+    With TfrmCustomerInfo.Create(self) do
+    begin
+      try
+        Append;
+        if ShowModal = mrOk then
+          CardNo := AObj.FieldbyName('CUST_CODE').AsString
+        else
+          CardNo := '';
+      finally
+        Free;
+      end;
+    end;
+    if CardNo <> '' then
+      WriteInfo(CardNo);
+  end;
+  4:begin
+    if AObj.FindField('CLIENT_ID')=nil then NewOrder;
+    if AObj.FieldByName('CLIENT_ID').AsString = '' then
+      begin
+        if OpenDialogCustomer('') then
+          begin
+            NewCardExecute;
+          end;
+      end
+    else
+      NewCardExecute;
+  end;
+  5:begin
+    if AObj.FindField('CLIENT_ID')=nil then NewOrder;
+    if AObj.FieldByName('CLIENT_ID').AsString = '' then
+      begin
+        if OpenDialogCustomer('') then
+          begin
+            DepositExecute;
+          end;
+      end
+    else
+      DepositExecute;
+  end;
+  6:begin
+    if AObj.FindField('CLIENT_ID')=nil then NewOrder;
+    if AObj.FieldByName('CLIENT_ID').AsString = '' then
+      begin
+        if OpenDialogCustomer('') then
+          begin
+            ReturnExecute;
+          end;
+      end
+    else
+      ReturnExecute;
+  end;
+  7:begin
+    if AObj.FindField('CLIENT_ID')=nil then NewOrder;
+    if AObj.FieldByName('CLIENT_ID').AsString = '' then
+      begin
+        if OpenDialogCustomer('') then
+          begin
+            LossCardExecute;
+          end;
+      end
+    else
+      LossCardExecute;
+  end;
+  8:begin
+    if AObj.FindField('CLIENT_ID')=nil then NewOrder;
+    if AObj.FieldByName('CLIENT_ID').AsString = '' then
+      begin
+        if OpenDialogCustomer('') then
+          begin
+            PasswordExecute;
+          end;
+      end
+    else
+      PasswordExecute;
+  end;
+  9:HangUp;
   else
     Raise Exception.Create('暂时不支持此项功能...'); 
   end;
@@ -3704,6 +3794,86 @@ procedure TfrmPosMain.Label9Click(Sender: TObject);
 begin
   inherited;
   DevFactory.OpenCashBox;
+end;
+
+procedure TfrmPosMain.CancelCardExecute;
+var CardNo,CardName:String;
+begin
+  inherited;
+  if TfrmCancelCard.SelectCard(Self,AObj.FieldbyName('CLIENT_ID').AsString,'#',CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
+    end;
+end;
+
+procedure TfrmPosMain.DepositExecute;
+var BALANCE:string;
+begin
+  inherited;
+  TfrmDeposit.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE);
+end;
+
+procedure TfrmPosMain.LossCardExecute;
+var CardNo,CardName:String;
+begin
+  inherited;
+  if TfrmLossCard.SelectCard(Self,AObj.FieldbyName('CLIENT_ID').AsString,'#',CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"挂失成功！'),pchar(Application.Title),MB_OK);
+    end;
+end;
+
+procedure TfrmPosMain.NewCardExecute;
+ procedure UpdateToGlobal(IC:string;ID:string);
+   var Temp:TZQuery;
+   begin
+      Temp := Global.GetZQueryFromName('PUB_CUSTOMER');
+      Temp.Filtered := false;
+      if not Temp.Locate('CLIENT_ID',ID,[]) then
+         Temp.Append
+      else
+         Temp.Edit;
+      Temp.FieldByName('IC_CARDNO').AsString:=IC;
+      Temp.Post;
+   end;
+var card,Union,ClientId:string;
+begin
+  inherited;
+  ClientId := AObj.FieldbyName('CLIENT_ID').AsString;
+  if TfrmNewCard.SelectSendCard(Self,ClientId,'#',AObj.FieldbyName('CLIENT_ID_TEXT').AsString,1,card,Union) then
+    begin
+      if Union = '#' then
+        begin
+          UpdateToGlobal(card,AObj.FieldbyName('CLIENT_ID').AsString);
+          MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
+        end
+      else
+        begin
+          MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
+          if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+            with TfrmCustomerInfo.Create(self) do
+              begin
+                try
+                  Edit(ClientId);
+                  ShowModal;
+                finally
+                  free;
+                end;
+              end;
+        end;
+    end;
+end;
+
+procedure TfrmPosMain.PasswordExecute;
+begin
+  TfrmPassWord.SelectCard(Self,AObj.FieldbyName('CLIENT_ID').AsString,IntToStr(Global.TENANT_ID));
+end;
+
+procedure TfrmPosMain.ReturnExecute;
+var BALANCE:String;
+begin
+  inherited;
+  TfrmReturn.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE);
 end;
 
 end.

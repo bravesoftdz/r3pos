@@ -76,7 +76,7 @@ begin
 //    AssignFile(F,DefaultPath+'debug\debug.txt');
 //    rewrite(f);
 //  end;
-  OpenLogFile;
+//  OpenLogFile;
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;

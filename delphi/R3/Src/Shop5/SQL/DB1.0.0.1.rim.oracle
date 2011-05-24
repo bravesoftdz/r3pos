@@ -6,7 +6,7 @@
 --          (2)RIM库：   A、库名：RIMDB; B、登录名：RIM_Loginname C、登陆密码：RIM_Password; D、RIM数据库服务器IP：Rim_IP   E、端口号：Rim_Port (系统默认：1521)
 --          (3)DB_R3库： A、库名：DB_R3; B、登陆名：R3_loginname  C、登陆密码：R3_Password; 
 
---创建Oracle的DBLink：RIMLINK(原理类似DB2联邦)：
+--创建Oracle的DBLink：RIMLINK(原理类似DB2联邦)：[特别说明：下面语句创建无法连接，请先在Oracle网络配置设置：]
 CREATE DATABASE LINK RIMLINK CONNECT TO RIM_loginname IDENTIFIED BY RIM_Password 
 USING '
   (DESCRIPTION =

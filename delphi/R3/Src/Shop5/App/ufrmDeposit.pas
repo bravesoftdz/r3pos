@@ -72,6 +72,12 @@ begin
           edtCUST_CODE.Text := cdsTable.FieldByName('IC_CARDNO').AsString;
           edtCUST_NAME.Text := cdsTable.FieldByName('CLIENT_NAME').AsString;
           edtBALANCE.Text := cdsTable.FieldByName('BALANCE').AsString;
+
+          if (cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1]) and (cdsTable.FieldbyName('IC_CARDNO').AsString <> '') then
+            btnOk.Enabled := True
+          else
+            btnOk.Enabled := False;
+
           edtNewBALANCE.Text:=edtBALANCE.Text;
           Params1:=TftParamlist.Create(nil);
           try

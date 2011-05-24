@@ -48,7 +48,7 @@ type
     procedure Save;
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property ShowModel:Integer read FShowModel write SetShowModel;
-    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer;var CUSTCODE:String):boolean;
+    class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer;var CUSTCODE,UN_ID:String):boolean;
     class function GetSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;var CardNo,PWD:String;Model:integer):boolean;
     { Public declarations }
   end;
@@ -194,7 +194,7 @@ begin
 end;
 
 class function TfrmNewCard.SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME: string;
-  Model:integer;var CUSTCODE:String): boolean;
+  Model:integer;var CUSTCODE,UN_ID:String): boolean;
 begin
   with TfrmNewCard.Create(Owner) do
     begin
@@ -206,7 +206,10 @@ begin
         //Open(Cust_Id,UNION_ID);
         Result := ShowModal = mrOk;
         if Result then
-          CUSTCODE := Trim(edtIC_CARDNO.Text);
+          begin
+            CUSTCODE := Trim(edtIC_CARDNO.Text);
+            UN_ID := TRecord_(edtUNION_ID.Properties.Items.Objects[edtUNION_ID.ItemIndex]).FieldByName('UNION_ID').AsString;
+          end;
       finally
         Free;
       end;

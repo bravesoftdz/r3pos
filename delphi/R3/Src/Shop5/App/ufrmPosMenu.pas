@@ -36,13 +36,14 @@ end;
 begin
   rgMenu.Cells[0,0] := space(10)+ '1.交班结账';
   rgMenu.Cells[0,1] := space(10)+ '2.窗口最小化';
-  rgMenu.Cells[0,2] := space(10)+ '3.储值卡发卡';
-  rgMenu.Cells[0,3] := space(10)+ '4.储值卡充值';
-  rgMenu.Cells[0,4] := space(10)+ '5.储值卡退款';
-  rgMenu.Cells[0,5] := space(10)+ '6.储值卡挂失';
-  rgMenu.Cells[0,6] := space(10)+ '7.储值卡密码修改';
-  rgMenu.Cells[0,7] := space(10)+ '8.挂单';
-  rgMenu.Cells[0,8] := space(10)+ '9.取单';
+  rgMenu.Cells[0,2] := space(10)+ '3.入会';
+  rgMenu.Cells[0,3] := space(10)+ '4.发卡';
+  rgMenu.Cells[0,4] := space(10)+ '5.充值';
+  rgMenu.Cells[0,5] := space(10)+ '6.退款';
+  rgMenu.Cells[0,6] := space(10)+ '7.挂失';
+  rgMenu.Cells[0,7] := space(10)+ '8.密码修改';
+  rgMenu.Cells[0,8] := space(10)+ '9.挂单';
+  rgMenu.Cells[0,9] := space(10)+ '0.取单';
 end;
 
 procedure TfrmPosMenu.FormCreate(Sender: TObject);

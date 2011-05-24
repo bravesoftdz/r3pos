@@ -1,6 +1,6 @@
 inherited frmPosMenu: TfrmPosMenu
-  Left = 393
-  Top = 212
+  Left = 723
+  Top = 183
   BorderStyle = bsNone
   Caption = #21151#33021#33756#21333
   ClientHeight = 329

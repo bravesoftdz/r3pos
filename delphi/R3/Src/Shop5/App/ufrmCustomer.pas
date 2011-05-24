@@ -651,13 +651,13 @@ procedure TfrmCustomer.actNewCardExecute(Sender: TObject);
       Temp.FieldByName('IC_CARDNO').AsString:=IC;
       Temp.Post;
    end;
-var  card:string;
+var  card,union:string;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
   //if Cds_Customer.FieldByName('IC_CARDNO').AsString<>'' then Raise Exception.Create('此会员已经有储值卡！');
 
-  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1,card) then
+  if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1,card,union) then
     begin
       Cds_Customer.Edit;
       Cds_Customer.FieldByName('CUST_CODE').AsString:=card;

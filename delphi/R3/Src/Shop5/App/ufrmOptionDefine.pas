@@ -58,7 +58,7 @@ implementation
 uses uGlobal, uFnUtil, uDsUtil;
 {$R *.dfm}
 
-{ TfrmBasic1 }
+{ TfrmOptionDefine }
 
 procedure TfrmOptionDefine.ReadFrom;
 var Define, Value, LValue:String;

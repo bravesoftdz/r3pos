@@ -27,7 +27,6 @@ uses
   zBase,
   uPlugInUtil in '..\obj\uPlugInUtil.pas';
 
-   
 {$R *.res}
 
 
@@ -39,11 +38,10 @@ var
 begin
   result:='';
   try
-    str:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where A.ORGAN_CODE=B.LOGIN_NAME and B.TENANT_ID='+TENANT_ID+' ';
     try
       Rs:=TZQuery.Create(nil);
-      OpenData(PlugIntf, Rs, str);
-      if Rs.Active then
+      Rs.SQL.Text:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where A.ORGAN_CODE=B.LOGIN_NAME and B.TENANT_ID='+TENANT_ID+' ';
+      if OpenData(PlugIntf, Rs) then
         result:=trim(Rs.fieldbyName('ORGAN_ID').AsString);
     finally
       Rs.Free;
@@ -103,14 +101,15 @@ begin
     RsRim:=TZQuery.Create(nil);  //Rim视图
     RsInf:=TZQuery.Create(nil);  //R3中间表
     RsBarPub:=TZQuery.Create(nil);  //R3条码_供应链
-    StrSQL:=Pchar(
+    RsBarPub.SQL.Text:=
       'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID and B.SECOND_ID is not null then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
       'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+') B on A.GODS_ID=B.GODS_ID '+
-      ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ');
-    OpenData(PlugIntf, RsBarPub, StrSQL);
-    RimSQL:=Pchar('select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ');
-    OpenData(PlugIntf, RsRim, RimSQL);
-    OpenData(PlugIntf, RsInf, Pchar('select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID));
+      ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ';
+    OpenData(PlugIntf, RsBarPub);
+    RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+ORGAN_ID+''' ';
+    OpenData(PlugIntf, RsRim);
+    RsInf.SQL.Text:='select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID;
+    OpenData(PlugIntf, RsInf);
 
     //写调试日志:
     TLogRunInfo.LogWrite('对照Open数据：1、RsBarPub.SQL='+StrSQL+'  返回记录数:'+InttoStr(RsBarPub.RecordCount)+' 2、RsRim.SQL='+RimSQL+'  返回记录数:'+InttoStr(RsRim.RecordCount),'RimGodsDzPlugIn.dll');
@@ -159,7 +158,7 @@ begin
           Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
       end //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
       else
-        Raise Exception.Create(' 存在数据集没有Open！');
+        Raise Exception.Create(' 存在数据集没有Active状态！');
     except
       on E:Exception do
       begin

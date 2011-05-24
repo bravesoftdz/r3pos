@@ -32,7 +32,7 @@ uses
 
 procedure SetRimCom_CustID(PlugIn: IPlugIn; vParam: TftParamList; var ComID: string; var CustID: string);
 var
-  str,TenantID,ShopID: string;
+  TenantID,ShopID,str: string;
   rs: TZQuery;
 begin
   try
@@ -42,8 +42,8 @@ begin
     try
       TenantID:=vParam.ParamByName('TENANT_ID').AsString;
       ShopID:=vParam.ParamByName('SHOP_ID').AsString;
-      str:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenantID+' and B.SHOP_ID='''+ShopID+''' ';
-      if OpenData(PlugIn, rs, str) then
+      rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenantID+' and B.SHOP_ID='''+ShopID+''' ';
+      if OpenData(PlugIn, rs) then
       begin
         ComID:=trim(rs.fieldbyName('COM_ID').AsString);
         CustID:=trim(rs.fieldbyName('CUST_ID').AsString);

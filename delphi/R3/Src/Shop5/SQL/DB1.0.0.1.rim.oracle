@@ -1,0 +1,399 @@
+--RIM系统ORACLE版：
+
+--RIM系统Oracle版(2011.05.25 星期一)：
+--DB_R3创建Oracle的DBLink链接RIMDB创建过程：(根据实际情况替换参数) (原理类似DB2联邦)
+--参数说明：(1)固定参数：A、远程服务器名: RIMLINK)
+--          (2)RIM库：   A、库名：RIMDB; B、登录名：RIM_Loginname C、登陆密码：RIM_Password; D、RIM数据库服务器IP：Rim_IP   E、端口号：Rim_Port (系统默认：1521)
+--          (3)DB_R3库： A、库名：DB_R3; B、登陆名：R3_loginname  C、登陆密码：R3_Password; 
+
+--创建Oracle的DBLink：RIMLINK(原理类似DB2联邦)：
+CREATE DATABASE LINK RIMLINK CONNECT TO RIM_loginname IDENTIFIED BY RIM_Password 
+USING '
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = RIM_IP)(PORT = Rim_Port))
+    )
+    (CONNECT_DATA =
+      (SERVICE_NAME = r3dbtest)
+    )
+  )';
+  
+ 
+--////2011.05.25 AM：创建RIM烟草公司表(PUB_ORGAN)[两系统同步对接关联使用];
+CREATE SYNONYM PUB_ORGAN FOR PUB_ORGAN@RIMLINK;
+ 
+--创建视图：RIM_PUB_ORGAN
+create view RIM_PUB_ORGAN as select * from PUB_ORGAN;
+
+--////2011.05.25 PM：对照经营供应链商品， 创建远程对象表NICKNAME：
+CREATE SYNONYM SD_UM FOR SD_UM@RIMLINK;
+CREATE SYNONYM SD_ITEM FOR SD_ITEM@RIMLINK;
+CREATE SYNONYM SD_ITEM_UM FOR SD_ITEM_UM@RIMLINK;
+CREATE SYNONYM SD_ITEM_PRI FOR SD_ITEM_PRI@RIMLINK;
+CREATE SYNONYM SD_ITEM_COM FOR SD_ITEM_COM@RIMLINK;
+CREATE SYNONYM SD_ITEM_TOBACCO FOR SD_ITEM_TOBACCO@RIMLINK;
+
+--创建视图：RIM_GOODS_RELATION
+create view RIM_GOODS_RELATION
+as
+select
+  e.com_id as TENANT_ID,      --企业（公司）ID（包括省级、地市公司）
+  a.item_id as GODS_ID,       --商品内码
+  a.item_code as GODS_CODE,   --商品编码
+  a.item_name as GODS_NAME,   --商品名称
+  a.short_name as GODS_SNAME, --商品简称 
+  b.kind as SORT_ID2,         --烟分类（1：一类烟..6:无价类）
+  b.IS_IMPORTED as SORT_ID6,  --省内外烟 
+  b.spec as GODS_SPEC,        --商品规格
+  '条' as CALC_UNIT,          --单位
+  PACK_BAR as PACK_BARCODE,   --条条码
+  BOX_BAR as BOX_BARCODE,     --盒条码
+  um2.um_size/um1.um_size as CAlC_AMT, --条换算成合的换算关系
+  c.pri as PACK_INPRICE,      --批发价
+  d.pri as PACK_OUTPRICE      --零售价
+from sd_item a,sd_item_tobacco b,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID )um1,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID)um2,
+     sd_item_pri c,
+     sd_item_pri d,
+     sd_item_com e
+where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_id=b.item_id and a.item_id=um1.item_id and a.item_id=um2.item_id and um1.UM_ID='02' and um2.UM_ID='03' and
+      a.item_id=c.item_id and a.item_id=d.item_id and a.item_id=e.item_id and  c.pri_type='03' and d.pri_type='04' and a.is_mrb='1' and 
+      c.is_mrb='1' and e.is_mrb='1';   
+      
+--////2011.05.25 PM ：创建对接中间表：INF_GOODS_RELATION （国家烟草供应链：1000006）
+CREATE TABLE INF_GOODS_RELATION (
+     --GUID号
+	ROWS_ID char (36) NOT NULL ,
+     --企业代码 
+	TENANT_ID int NOT NULL ,
+     --供应链
+	RELATION_ID int NOT NULL ,
+     --货品代码
+	GODS_ID char (36) NOT NULL , 
+     --行业内码<第三方系统内码>
+	SECOND_ID varchar (36), 
+     --货号<识别码>
+	GODS_CODE varchar (36), 
+     --品名+规格
+	GODS_NAME varchar (50) ,
+     --拼音码
+	GODS_SPELL varchar (50) ,
+     --分类1
+	SORT_ID1 varchar (36),
+     --分类2
+	SORT_ID2 varchar (36),
+     --分类3
+	SORT_ID3 varchar (36),
+     --分类4
+	SORT_ID4 varchar (36),
+     --分类5
+	SORT_ID5 varchar (36),
+     --分类6
+	SORT_ID6 varchar (36),
+     --颜色组
+	SORT_ID7 varchar (36),
+     --尺码组
+	SORT_ID8 varchar (36),
+     --自定义9
+	SORT_ID9 varchar (36),
+     --自定义10
+	SORT_ID10 varchar (36),
+     --自定义11
+	SORT_ID11 varchar (36),
+     --自定义12
+	SORT_ID12 varchar (36),
+     --自定义13
+	SORT_ID13 varchar (36),
+     --自定义14
+	SORT_ID14 varchar (36),
+     --自定义15
+	SORT_ID15 varchar (36),
+     --自定义16
+	SORT_ID16 varchar (36),
+     --自定义17
+	SORT_ID17 varchar (36),
+     --自定义18
+	SORT_ID18 varchar (36),
+     --自定义19
+	SORT_ID19 varchar (36),
+     --自定义20
+	SORT_ID20 varchar (36),
+     --标准进价
+	NEW_INPRICE decimal(18, 3),
+     --标准售价
+	NEW_OUTPRICE decimal(18, 3),
+     --最低售价
+	NEW_LOWPRICE decimal(18, 3),
+     --是否启用折扣率 1启用,2禁用
+	USING_PRICE int ,
+     --是否参考积分
+	HAS_INTEGRAL int ,
+     --是否使用批号管制
+	USING_BATCH_NO int ,
+     --是否管制积分换购
+	USING_BARTER int ,
+     --是否管制物流跟踪码
+	USING_LOCUS_NO int ,
+     --积分换购积分
+	BARTER_INTEGRAL int ,
+	   --条条码
+  PACK_BARCODE varchar(30),
+     --更新标记位(0:表示没有更新对应; 1:表示修改; 2: 表示插入)、
+  UPDATE_FLAG int NOT NULL,
+  CONSTRAINT PK_INF_G_RELATION  PRIMARY KEY (ROWS_ID)  --广西柳州（PK_INF_G_RELATION）创建
+);
+
+-- 表上创建索引
+CREATE INDEX IX_INF_RELATION_TENANT_ID ON INF_GOODS_RELATION(TENANT_ID,RELATION_ID,GODS_ID);
+ 
+--2011.05.25 PM：下载订单创建远程链接表：
+CREATE SYNONYM RM_CUST FOR RM_CUST@RIMLINK;
+CREATE SYNONYM SD_CO FOR SD_CO@RIMLINK;
+CREATE SYNONYM SD_CO_LINE FOR SD_CO_LINE@RIMLINK;
+ 
+--创建视图：RIM_RM_CUST(零售户档案)
+create view RIM_RM_CUST
+as
+select 
+  CUST_ID     --零售户内码
+  CUST_CODE , --零售户编码
+  CORPORATION_NAME,  --企业名称
+  CUST_SHORT_NAME,   --零售户简称 
+  CUST_SHORT_ID,     --助记码 
+  COM_ID, 	    --公司内码
+  REGIE_ID,     --专卖局内码
+  LICENSE_CODE  --许可证号
+from RM_CUST; 
+--创建视图：RIM_SD_CO (订单主表)
+create view RIM_SD_CO
+as
+select 
+  CO_NUM,      --订单号ID
+  COM_ID,      --供应商公司ID
+  CUST_ID,     --客户编号（零售户）ID
+  CRT_DATE,    --创建日期
+  BORN_DATE,   --生效日期 为客户保留库存
+  ARR_DATE,    --送达日期, 承诺订单的商品送达到客户手中的日期
+  QTY_SUM,     --数量合计  
+  AMT_SUM,     --应收金额合计
+  STATUS       --单据状态		
+from SD_CO
+
+--创建视图：RIM_SD_CO_LINE ( 订单明明细表)
+create view RIM_SD_CO_LINE
+as
+select 
+  CO_NUM,   --订单编号
+  LINE_NUM, --行号
+  ITEM_ID,  --商品编号
+  UM_ID,    --计量单位
+  QTY_NEED, --需求数量
+  QTY_VFY,  --审核数量
+  QTY_ORD,  --订购数量
+  PRI,      --折扣价格
+  PRI3,     --三级批发价
+  AMT,      --含税金额, 金额=订购数量*折扣价格
+  RET_AMT,  --折扣额
+  NOTE as NOTE   --备注					
+from SD_CO_LINE
+
+--2011.05.25 PM：创建入库单中间表主表：
+CREATE TABLE INF_INDEORDER (
+        --企业ID(对应：Rim供应商:CLIENT_ID)
+	TENANT_ID int NOT NULL ,
+        --门店ID(对应：零售户代码:CUST_ID)
+	SHOP_ID varchar (13) NOT NULL ,
+        --订单单号
+	INDE_ID varchar (50) NOT NULL ,
+        --入库日期
+	INDE_DATE varchar(10) NOT NULL ,
+        --入库数量      
+	INDE_AMT decimal(18, 6) ,
+        --需求数量（下载订单导入）      
+	NEED_AMT decimal(18, 6) ,
+        --入库金额
+	INDE_MNY decimal(18, 6) ,
+	 --单据状态	
+  STATUS varchar(4), 		
+	CONSTRAINT PK_INF_INDEORDER PRIMARY KEY (TENANT_ID,SHOP_ID)
+);
+--创建索引
+CREATE INDEX IX_INF_INDEORDER_TENANT_ID ON INF_INDEORDER(TENANT_ID);
+CREATE INDEX IX_INF_INDEORDER_STOCK_DATE ON INF_INDEORDER(INDE_DATE);
+
+--2011.05.25 PM：创建入库单中间表明细表：
+ CREATE TABLE INF_INDEDATA (
+     --企业ID(对应：Rim供应商:CLIENT_ID)
+ 	TENANT_ID int NOT NULL , 
+ 	   --订单编号
+  INDE_ID varchar (50) NOT NULL ,
+     --商品编号(R3)  
+  GODS_ID varchar (50) ,   
+     --商品编号(第三方)
+  SECOND_ID varchar (50) ,   
+     --计量单位
+  UNIT_ID char (36) ,         
+     --需求数量
+  NEED_AMT decimal(18, 6) ,    
+     --审核数量
+  CHK_AMT decimal(18, 6) ,   
+     --订购数量 
+  AMOUNT decimal(18, 6) ,    
+     --折扣价格
+  APRICE decimal(18, 6),     
+     --三级批发价  
+  PRI3 decimal(18, 6) ,      
+     --折扣金额	
+  AGIO_MONEY decimal(18, 6),  
+     --含税金额, 金额=订购数量*折扣价格
+  AMONEY decimal(18, 6),      
+     --计量单位数据						
+	CALC_AMOUNT decimal(18, 3)  
+  );
+--创建索引 
+CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(TENANT_ID,INDE_ID);
+ 
+--2011.05.25 PM添加同步单据最大时间戳:RIM_R3_NUM,月台账映射NICKNAME：
+CREATE SYNONYM RIM_R3_NUM FOR RIM_R3_NUM@RIMLINK;  
+CREATE SYNONYM RIM_BAL_LOG FOR RIM_BAL_LOG@RIMLINK;  
+CREATE SYNONYM RIM_CUST_MONTH FOR RIM_CUST_MONTH@RIMLINK;  
+        
+--2011.05.25 PM日台账:(RIM_CUST_MONTH、RIM_RETAIL_CO_LINE)映射NICKNAME：
+CREATE SYNONYM RIM_RETAIL_CO FOR RIM_RETAIL_CO@RIMLINK;  
+CREATE SYNONYM RIM_RETAIL_CO_LINE FOR RIM_RETAIL_CO_LINE@RIMLINK;  
+
+--2011.05.25 AM添加零售户每天库、零售最新库存(RIM_CUST_ITEM_SWHSE、RIM_CUST_ITEM_WHSE)映射NICKNAME：
+CREATE SYNONYM RIM_CUST_ITEM_SWHSE FOR RIM_CUST_ITEM_SWHSE@RIMLINK; 
+CREATE SYNONYM RIM_CUST_ITEM_WHSE FOR RIM_CUST_ITEM_WHSE@RIMLINK; 
+
+--2011.05.25 PM添加销售单(RIM_RETAIL_INFO、RIM_RETAIL_DETAIL)映射NICKNAME：
+CREATE SYNONYM RIM_RETAIL_INFO FOR RIM_RETAIL_INFO@RIMLINK; 
+CREATE SYNONYM RIM_RETAIL_DETAIL FOR RIM_RETAIL_DETAIL@RIMLINK; 
+
+--2011.05.25 AM添加调拨单(RIM_CUST_TRN、RIM_CUST_TRN_LINE)映射NICKNAME：
+CREATE SYNONYM RIM_CUST_TRN FOR RIM_CUST_TRN@RIMLINK; 
+CREATE SYNONYM RIM_CUST_TRN_LINE FOR RIM_CUST_TRN_LINE@RIMLINK; 
+ 
+--2011.05.25 PM添加入库单(RIM_VOUCHER、RIM_VOUCHER_LINE)映射NICKNAME：
+CREATE SYNONYM RIM_VOUCHER FOR RIM_VOUCHER@RIMLINK; 
+CREATE SYNONYM RIM_VOUCHER_LINE FOR RIM_VOUCHER_LINE@RIMLINK; 
+
+--2011.05.25 PM添加调整单(RIM_ADJUST_INFO、RIM_ADJUST_DETAIL)映射NICKNAME：  
+CREATE SYNONYM RIM_ADJUST_INFO FOR RIM_ADJUST_INFO@RIMLINK; 
+CREATE SYNONYM RIM_ADJUST_DETAIL FOR RIM_ADJUST_DETAIL@RIMLINK; 
+  
+--2011.05.25 PM添加销售成本映射NICKNAME：  
+CREATE SYNONYM 版本创建临时表：RIM_CUST_ITEM_COST FOR RIM_CUST_ITEM_COST@RIMLINK; 
+ 
+--2011.05.25 PM添加：Rim系统Oracle版本创建临时表：
+--Rim系统Oracle
+--上报月台帐：
+ CREATE GLOBAL TEMPORARY TABLE INF_RECKMONTH (
+    TENANT_ID INTEGER NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,     --R3门店ID
+    COM_ID VARCHAR(30) NOT NULL,      --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,     --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,     --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,        --R3商品ID
+    UNIT_CALC DECIMAL (18,6),         --商品计量单位换算管理单位换算值
+    RECK_MONTH VARCHAR(8) NOT NULL    --台账月份
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报日台账
+CREATE GLOBAL TEMPORARY TABLE INF_RECKDAY(
+    TENANT_ID INTEGER NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,     --R3门店ID
+    COM_ID VARCHAR(30) NOT NULL,      --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,     --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,     --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,        --R3商品ID
+    UNIT_CALC DECIMAL (18,6),         --商品计量单位换算管理单位换算值
+    RECK_DAY VARCHAR(8) NOT NULL,     --台账日期
+    QTY_ORD DECIMAL (18,6),           --台账销售数量
+    AMT DECIMAL (18,6),               --台账销售金额
+    TIME_STAMP LONG NOT NULL          --时间戳
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报零售户库存
+CREATE GLOBAL TEMPORARY TABLE INF_CUST_STORAGE(
+    TENANT_ID INTEGER NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,     --R3门店ID
+    COM_ID VARCHAR(30) NOT NULL,      --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,     --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,     --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,        --R3商品ID
+    QTY DECIMAL (18,6),                --库存数量
+    UPD_DATE VARCHAR(8) NOT NULL,     --上报日期
+    UPD_TIME VARCHAR(8) NOT NULL,     --更新日期
+    TIME_STAMP LONG NOT NULL          --时间戳
+   )ON COMMIT PRESERVE ROWS;
+
+--上报零售单
+CREATE GLOBAL TEMPORARY TABLE INF_POS_SALE(
+   TENANT_ID INTEGER NOT NULL,         --R3企业ID
+   SHOP_ID VARCHAR(20) NOT NULL,       --R3门店ID
+   COM_ID VARCHAR(30) NOT NULL,        --RIM烟草公司ID
+   CUST_ID VARCHAR(30) NOT NULL,       --RIM零售户ID
+   SALES_ID CHAR(36) NOT NULL,         --RIM零售销售单ID
+   SALE_DATE CHAR (8) NOT NULL,        --RIM零售销售单日期
+   CUST_CODE varchar (20),             --会员号
+   TIME_STAMP LONG NOT NULL            --时间戳
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报销售单
+CREATE GLOBAL TEMPORARY TABLE INF_SALE(
+   TENANT_ID INTEGER NOT NULL,         --R3企业ID
+   SHOP_ID VARCHAR(20) NOT NULL,       --R3门店ID
+   COM_ID VARCHAR(30) NOT NULL,        --RIM烟草公司ID
+   CUST_ID VARCHAR(30) NOT NULL,       --RIM零售户ID
+   SALES_ID CHAR(36) NOT NULL,         --RIM销售单ID
+   SALE_DATE CHAR (8) NOT NULL,        --RIM销售单日期
+   TIME_STAMP LONG NOT NULL            --时间戳
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报调拨单
+CREATE GLOBAL TEMPORARY TABLE INF_DB(
+   TENANT_ID INTEGER NOT NULL,         --R3企业ID
+   SHOP_ID VARCHAR(20) NOT NULL,       --R3门店ID
+   COM_ID VARCHAR(30) NOT NULL,        --RIM烟草公司ID
+   CUST_ID VARCHAR(30) NOT NULL,       --RIM零售户ID
+   DB_ID CHAR(36) NOT NULL,            --RIM调拨ID
+   TIME_STAMP LONG NOT NULL            --时间戳
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报入库存单
+CREATE GLOBAL TEMPORARY TABLE INF_STOCK(   
+     TENANT_ID INTEGER NOT NULL,         --R3企业ID
+     SHOP_ID VARCHAR(20) NOT NULL,       --R3门店ID
+     COM_ID VARCHAR(30) NOT NULL,        --RIM烟草公司ID
+     CUST_ID VARCHAR(30) NOT NULL,       --RIM零售户ID
+     STOCK_ID CHAR(36) NOT NULL,         --RIM入库单ID
+     TIME_STAMP LONG NOT NULL            --时间戳
+     ) ON COMMIT PRESERVE ROWS;
+
+--上报调整单临时表
+CREATE GLOBAL TEMPORARY TABLE INF_CHANGE( 
+    TENANT_ID INTEGER NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,     --R3门店ID
+    COM_ID VARCHAR(30) NOT NULL,      --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,     --RIM零售户ID
+    CHANGE_ID CHAR(36) NOT NULL,      --RIM调整单ID
+    TIME_STAMP LONG NOT NULL          --时间戳
+    ) ON COMMIT PRESERVE ROWS;
+
+--上报成本价临时表
+ CREATE GLOBAL TEMPORARY TABLE INF_COST(
+    TENANT_ID INTEGER NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,     --R3门店ID
+    COM_ID VARCHAR(30) NOT NULL,      --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,     --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,     --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,        --R3商品ID
+    COST_PRICE DECIMAL (18,6),        --销售成本价
+    UNIT_CALC DECIMAL (18,6),         --商品计量单位换算管理单位换算值
+    RECK_DATE CHAR(8) NOT NULL,       --台账表日期
+    TIME_STAMP LONG NOT NULL          --台账表时间戳
+    ) ON COMMIT PRESERVE ROWS;

@@ -93,7 +93,7 @@ begin
 
   //1、先删除供应关系中间表:
   StrSQL:=PChar('delete from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' ');
-  if PlugIntf.ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:'); 
+  if PlugIntf.ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:');
 
   //2、插入传入企业商品供应链:
   try
@@ -150,12 +150,17 @@ begin
             RsInf.FieldByName('UPDATE_FLAG').AsInteger:=0; //状态[1对不上]
             RsInf.Post;
           end;
+          PlugIntf.ExecSQL(Pchar('insert into DebugTab(Rows_ID,CREATIME) values ('''+RsInf.fieldbyName('Rows_ID').asString+''','''+TimeToStr(Time())+''')'),iRet);
           RsRim.Next;
         end; //end (循环: while not RsRim.Eof do)
         TLogRunInfo.LogWrite('循环对照结果：对不上Rim条单位条码：'+NotGods,'RimGodsDzPlugIn.dll');
-        result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;
-        if result<>0 then
-          Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
+        if RsInf.Changed then
+        begin
+          result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;
+          if result<>0 then
+            Raise Exception.Create('提交中间表INF_GOODS_RELATION出现异常！');
+        end else
+          Raise Exception.Create('在Rim没有找到对应卷烟！');
       end //end (if (RsRim.Active) and (RsInf.Active) and (RsBarPub.Active) then)
       else
         Raise Exception.Create(' 存在数据集没有Active状态！');

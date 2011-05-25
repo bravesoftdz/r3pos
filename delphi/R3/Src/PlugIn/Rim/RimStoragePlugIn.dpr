@@ -101,7 +101,7 @@ var
   TenName,           //R3上报企业Name
   ShopID,            //R3上报门店ID
   ShopName: string;  //R3上报门店名称;
-  R3ShopList: TZQuery;
+  R3ShopList,Rs: TZQuery;
   vParam: TftParamList;
   IsFlag: Boolean;  //是否为零售户直接上报
   BegTime,ErrorStr: string; //开始运行时间点
@@ -125,12 +125,9 @@ begin
     vParam.Free;
   end;
 
+  Rs := TZQuery.Create(nil);
   R3ShopList := TZQuery.Create(nil);
   try
-    //根据R3传入烟草公司企业ID(TENANT_ID)
-    OrganID:=GetRimOrgan_ID(PlugIntf, TenantID);
-    if OrganID='' then Raise Exception.Create('R3传入企业ID（'+TenantID+'）在RIM中没找到对应的ORGAN_ID值...');
-
     //返回R3的上报ShopList
     GetR3ReportShopList(PlugIntf, R3ShopList, InParam);
     if R3ShopList.RecordCount=0 then Raise Exception.Create(' 企业表没有对应到数据，不需上报！ ');
@@ -147,7 +144,10 @@ begin
         ShopName:=trim(R3ShopList.Fields[3].AsString);      //R3门店名称 (Field: SHOP_NAME)
         LICENSE_CODE:=trim(R3ShopList.Fields[4].AsString);  //R3门店许可证号 (Field: LICENSE_CODE)
 
-        //根据R3许可证号读取RIM的零售户ID:
+        //根据R3传入烟草公司企业ID(TENANT_ID)
+        Rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenantID+' and B.SHOP_ID='''+ShopID+''' ';
+        if OpenData(GPlugIn, Rs) then        begin          OrganID:=trim(rs.fieldbyName('COM_ID').AsString);          CustID:=trim(rs.fieldbyName('CUST_ID').AsString);        end;
+        if OrganID='' then Raise Exception.Create('R3传入企业ID（'+TenantID+'）在RIM中没找到对应的ORGAN_ID值...');
         CustID:=GetRimCust_ID(PlugIntf, OrganID, LICENSE_CODE);
         if CustID<>'' then
         begin
@@ -173,6 +173,7 @@ begin
       R3ShopList.Next;
     end;
   finally
+    Rs.Free; 
     R3ShopList.Free;
     BegTick:=GetTickCount-BegTick; //总执行多少秒
     //输出日志:

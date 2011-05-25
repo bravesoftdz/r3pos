@@ -49,14 +49,8 @@ type
     function DbLock(Locked:boolean):integer;stdcall;
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
-   end;
-
-type
-  TLogRunInfo=class
-  public
-    class procedure LogWrite(LogText: string; LogType: string='');
   end;
-
+   
 type
   TConParam= Record
     DbType: integer;    //数据库类型
@@ -66,18 +60,29 @@ type
     LogPwd:  string;    //登陆密码
   end;
 
+type
+  TRunInfo=Record
+    BegTime: string;   //开始上报时间点
+    BegTick: integer;  //开始上报GetTickCount
+    ReCount: integer;  //上报记录数据[单据数量]
+    ErCount: integer;  //错误数量
+  end;  
 
+
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string; //2011.04.14 获取上报最大编号(MaxNum)
+function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;  //2011.05.25 获取Rim零售户IDCust_ID
+function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string): string;  //2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
+function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string): Boolean;
 
 //插件常用函数
 function NewId(id:string=''): string; //获取GUID
 function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;    //查询数据
 function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string; //返回某个字段值
+function WriteToRIM_BAL_LOG(PlugIntf:IPlugIn; LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean; //返回插入语句执行返回值;
+function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
 procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);  //锁定数据连接
 function ParseSQL(iDbType:integer;SQL:string):string;
-function  GetTimeStamp(iDbType:Integer):string;
-
-{== 暂无用 ==}
-function GetTickTime: string;  //取当前精确时间[暂时]
+function GetTimeStamp(iDbType:Integer):string;
 
 //共用变量定义
 var
@@ -85,6 +90,97 @@ var
   GLastError:string;
 
 implementation
+
+
+//2011.05.25 获取Rim零售户IDCust_ID
+function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;
+var
+  Rs: TZQuery;
+begin
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select CUST_ID from RM_CUST where COM_ID='''+Rim_ORGAN_ID+''' and LICENSE_CODE='''+LICENSE_CODE+'''';
+    if OpenData(PlugIntf,Rs) then
+      result:=trim(Rs.Fields[0].AsString);
+  finally
+    Rs.Free;
+  end;
+end;
+
+
+//2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
+function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string): string;
+var
+  Rs: TZQuery;
+begin
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select A.ORGAN_ID from PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+R3_TENANT_ID+' ';
+    if OpenData(PlugIntf,Rs) then
+      result:=trim(Rs.Fields[0].AsString);
+  finally
+    Rs.Free;
+  end;
+end;
+
+function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string): Boolean;
+var
+  Str: string;
+  IsFlag: Boolean;
+  vParam: TftParamList;
+begin
+  result:=False;
+  try
+    vParam:=TftParamList.Create(nil);
+    vParam.Decode(vParam,InParams);
+    if (vParam.FindParam('TYPE')<>nil) and (vParam.FindParam('TYPE').AsString='1')  then  //门店直接上报
+    begin
+      //(企业名称,门店ID,门店名称,门店许可证号):
+      Str:='select TE.TENANT_ID,TE.TENANT_NAME,SH.SHOP_ID,SH.SHOP_NAME,SH.LICENSE_CODE from CA_SHOP_INFO SH,CA_TENANT TE '+
+           ' where SH.TENANT_ID=TE.TENANT_ID and  SH.TENANT_ID='+vParam.ParamByName('TENANT_ID').AsString+' and SH.SHOP_ID='''+vParam.ParamByName('SHOP_ID').AsString+''' ';
+    end else  //调度上报：烟草公司企业
+    begin
+      //供应链关系表[返回传入企业所有下级企业]:
+      Str:='select T.TENANT_ID,T.TENANT_NAME from CA_TENANT T,CA_RELATIONS R '+
+           ' where T.TENANT_ID=R.RELATI_ID and T.COMM not in (''02'',''12'') and R.TENANT_ID='+vParam.ParamByName('TENANT_ID').AsString+' and R.RELATION_ID=1000006';
+
+      //(企业名称,门店ID,门店名称,门店许可证号):
+      Str:='select TE.TENANT_ID,TE.TENANT_NAME,SH.SHOP_ID,SH.SHOP_NAME,SH.LICENSE_CODE '+
+           ' from CA_SHOP_INFO SH,('+Str+') TE where SH.TENANT_ID=TE.TENANT_ID order by TE.TENANT_ID,SH.SHOP_ID ';
+    end;
+    
+    ShopList.Close;
+    ShopList.SQL.Text:=Str;
+    result:=OpenData(PlugIntf, ShopList); 
+  finally
+    vParam.Free;
+  end;  
+end;
+
+//2011.04.14 获取上报最大编号(MaxNum)
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string;
+var
+  iRet: integer;
+  Str: string;
+  Rs: TZQuery;
+begin
+  result:='';
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select MAX_NUM from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
+    if OpenData(PlugIntf, Rs) then
+      result:=trim(Rs.Fields[0].AsString);
+    if result='' then result:='0';
+    if Rs.IsEmpty then
+    begin
+      str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values ('''+ORGAN_ID+''','''+CustID+''','''+BillType+''','''+SHOP_ID+''',''0'')';
+      if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then
+        Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
+    end;
+  finally
+    Rs.Free;
+  end;
+end;
 
 function NewId(id:string=''): string;
 var
@@ -108,6 +204,33 @@ begin
    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
   end;
 end;
+
+//2011.04.15 写入上报执行日志
+function WriteToRIM_BAL_LOG(PlugIntf:IPlugIn; LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean; //返回插入语句执行返回值;
+var
+  str: string;
+  iRet: integer;
+begin
+  Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
+       '('''+LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogNote+''',''auto'','''+LogStatus+''')' ;
+  if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then
+   Raise Exception.Create('写日志执行失败！(SQL='+Str+')');
+end;
+
+//返回商品表管理单位与计量单位换算SQl:
+function GetDefaultUnitCalc(AliasTable: string=''): string;
+var
+  AliasTab: string;
+begin
+  if trim(AliasTable)<>'' then
+    AliasTab:=trim(AliasTable)+'.';
+  result:=
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+             //默认单位为 计量单位
+         ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
+         ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+      //默认单位为 大单位
+         ' else 1.0 end ';                                                        //都不是则默认为换算为1;
+end;
+
 function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;
 var
   ReRun: integer;
@@ -156,51 +279,6 @@ end;
 procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);
 begin
   if GPlugIn.DbLock(Locked)<>0 then Raise Exception.Create(GPlugIn.GetLastError); //缩定连接
-end;
-
-//取当前精确时间
-function GetTickTime: string;
-var
-  Hour, Min, Sec, MSec: Word;
-begin
-  DecodeTime(Now(), Hour, Min, Sec, MSec);
-  result:=InttoStr(Hour)+':'+InttoStr(Min)+':'+InttoStr(Sec)+' '+inttoStr(MSec);
-end;
-
-{ TLogRunInfo }
-
-{ 根据文件名[判断是写日志情况，日志文件存放在: C:\Rsp\Log或 E:盘的Rsp\Log  }
-class procedure TLogRunInfo.LogWrite(LogText: string; LogType: string='');
-const {==三处按顺序搜索，若找不到则不日志==}
-  FilePathC='C:\Rsp\Log\debug.log';
-  FilePathD='D:\Rsp\Log\debug.log';
-  FilePathE='E:\Rsp\Log\debug.log';
-var
-  i: integer;
-  FilePath, LogStr: string;
-  StrList: TStringList;
-begin
-  FilePath:='';
-  if FileExists(FilePathC) then FilePath:=FilePathC;
-  if (FilePath='') and (FileExists(FilePathD)) then FilePath:=FilePathD;
-  if (FilePath='') and (FileExists(FilePathE)) then FilePath:=FilePathE;
-  if FilePath<>'' then
-  begin
-    try
-      StrList:=TStringList.Create;
-      StrList.LoadFromFile(FilePath);
-      if StrList.Count>1000 then  //超过1000行则进行批量删除
-      begin
-        for i:=400 to 1 do
-          StrList.Delete(i);  
-      end;
-      LogStr:='类别：'+LogType+'  运行时间：'+GetTickTime+'  '+LogText;
-      StrList.Add(LogStr);
-      StrList.SaveToFile(FilePath);
-    finally
-      StrList.Free;
-    end;
-  end;
 end;
 
 function ParseSQL(iDbType:integer;SQL:string):string;

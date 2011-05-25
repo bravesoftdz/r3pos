@@ -36,35 +36,46 @@ uses
 function SendCustStorage(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE:string): Boolean;
 var
   iRet: integer;    //返回ExeSQL影响多少行记录
-  Str,StoreTab: string;
+  Str,StoreTab,ShortID: string;
 begin
   result := False;
   try
     PlugIntf.BeginTrans;
-    //1、先删除已上报数据:
-    Str:='delete from RIM_CUST_ITEM_SWHSE where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+SHOP_ID+''' ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('删除表RIM_CUST_ITEM_SWHSE历史数表出错：'+PlugIntf.GetLastError);
+    ShortID:=Copy(SHOP_ID,length(SHOP_ID)-3,4);
+    //1、先插入不存在商品:
+    Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
+         ' select '''+CustID+''' as CustID,B.SECOND_ID,'''+ORGAN_ID+''' as COM_ID,'''+ShortID+''' as TERM_ID,0 as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
+         ' from STO_STORAGE A,VIW_GOODSINFO B '+
+         ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
+         ' and not exists(select ITEM_ID from RIM_CUST_ITEM_SWHSE C where C.COM_ID='''+ORGAN_ID+''' and C.CUST_ID='''+CustID+''' and C.TERM_ID='''+ShortID+''' and C.ITEM_ID=B.SECOND_ID) ';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
+      Raise Exception.Create('插入不存在商品RIM_CUST_ITEM_SWHSE出错：'+PlugIntf.GetLastError);
 
     //2、插入: RIM_CUST_ITEM_SWHSE
-    StoreTab:='Select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT)as AMOUNT from STO_STORAGE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and COMM not in (''02'',''12'') group by TENANT_ID,SHOP_ID,GODS_ID'; //库存表
-    Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
-         ' select '''+CustID+''' as CustID,C.SECOND_ID,'''+ORGAN_ID+''' as COM_ID,trim(char(A.TENANT_ID)) as TERM_ID,(A.AMOUNT/('+GetDefaultUnitCalc+'))as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
-         ' from ('+StoreTab+')A,PUB_GOODSINFO B,PUB_GOODS_RELATION C '+
-         ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and A.TENANT_ID='+TENANT_ID+' and C.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE记录出错:'+PlugIntf.GetLastError);
+    Str:='update RIM_CUST_ITEM_SWHSE '+
+         ' set QTY=(select sum(A.AMOUNT)/('+GetDefaultUnitCalc+')as QRY from STO_STORAGE A,VIW_GOODSINFO B '+
+         ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and '+
+         ' B.COMM not in (''02'',''12'') and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)'+
+         ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' '+
+         ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' '+
+                     ' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)';
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
+      Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE记录出错:'+PlugIntf.GetLastError);
 
     //3、先更新当前当天的中间库存中间表：[RIM_CUST_ITEM_SWHSE]:
     str:=' update RIM_CUST_ITEM_WHSE '+
          '  set QTY=coalesce((select sum(QTY) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),0) '+
          ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('更新RIM_CUST_ITEM_SWHSE出错:'+PlugIntf.GetLastError);
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
+      Raise Exception.Create('更新RIM_CUST_ITEM_SWHSE出错:'+PlugIntf.GetLastError);
 
     //4、没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
     str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY) '+
          ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY) from RIM_CUST_ITEM_SWHSE A where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and '+
          ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
          ' group by COM_ID,CUST_ID,ITEM_ID ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE新记录出错:'+PlugIntf.GetLastError);
+    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
+      Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE新记录出错:'+PlugIntf.GetLastError);
 
     PlugIntf.CommitTrans;
     result:=true;

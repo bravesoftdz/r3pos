@@ -47,7 +47,7 @@ begin
     //2、插入: RIM_CUST_ITEM_SWHSE
     StoreTab:='Select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT)as AMOUNT from STO_STORAGE where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and COMM not in (''02'',''12'') group by TENANT_ID,SHOP_ID,GODS_ID'; //库存表
     Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
-         ' select '''+CustID+''' as CustID,A.SHOP_ID,'''+ORGAN_ID+''' as COM_ID,trim(char(A.TENANT_ID)) as TERM_ID,(A.AMOUNT/('+GetDefaultUnitCalc+'))as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
+         ' select '''+CustID+''' as CustID,C.SECOND_ID,'''+ORGAN_ID+''' as COM_ID,trim(char(A.TENANT_ID)) as TERM_ID,(A.AMOUNT/('+GetDefaultUnitCalc+'))as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
          ' from ('+StoreTab+')A,PUB_GOODSINFO B,PUB_GOODS_RELATION C '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and A.TENANT_ID='+TENANT_ID+' and C.RELATION_ID='+InttoStr(NT_RELATION_ID)+'  ';
     if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE记录出错:'+PlugIntf.GetLastError);

@@ -26,6 +26,7 @@ uses
   Classes,
   DB,
   zBase,
+  uRimPlugIn in 'uRimPlugIn.pas',
   uPlugInUtil in '..\obj\uPlugInUtil.pas';
 
 {$R *.res}

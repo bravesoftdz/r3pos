@@ -26,7 +26,6 @@ uses
   Classes,
   DB,
   zBase,
-  uRimPlugIn in 'uRimPlugIn.pas',
   uPlugInUtil in '..\obj\uPlugInUtil.pas';
 
 {$R *.res}
@@ -35,11 +34,12 @@ uses
 //////2011.04.15 AM上报零售户库 (每天上报一次)不需要上报时间戳  
 function SendCustStorage(PlugIntf:IPlugIn; TENANT_ID,SHOP_ID,ORGAN_ID,CustID,LICENSE_CODE:string): Boolean;
 var
-  iRet: integer;    //返回ExeSQL影响多少行记录
+  iRet,iDBType: integer;    //返回ExeSQL影响多少行记录
   Str,StoreTab,ShortID: string;
 begin
   result := False;
   try
+    if PlugIntf.iDbType(iDBType)<>0 then Raise Exception.Create('返回数据类型错误！');   
     PlugIntf.BeginTrans;
     ShortID:=Copy(SHOP_ID,length(SHOP_ID)-3,4);
     //1、先插入不存在商品:
@@ -56,9 +56,8 @@ begin
          ' set QTY=(select sum(A.AMOUNT)/('+GetDefaultUnitCalc+')as QRY from STO_STORAGE A,VIW_GOODSINFO B '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and '+
          ' B.COMM not in (''02'',''12'') and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)'+
-         ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' '+
-         ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' '+
-                     ' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)';
+         ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' ';
+         // ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)';
     if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
       Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE记录出错:'+PlugIntf.GetLastError);
 
@@ -66,6 +65,7 @@ begin
     str:=' update RIM_CUST_ITEM_WHSE '+
          '  set QTY=coalesce((select sum(QTY) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),0) '+
          ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' ';
+    str:=ParseSQL(iDBType,str);
     if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
       Raise Exception.Create('更新RIM_CUST_ITEM_SWHSE出错:'+PlugIntf.GetLastError);
 
@@ -119,7 +119,7 @@ begin
     vParam.Decode(vParam,InParam);
     TenantID:=vParam.ParamByName('TENANT_ID').AsString;
     IsFlag:=False; 
-    if (vParam.FindParam('TYPE')<>nil) and (vParam.FindParam('TYPE').AsString='1') then
+    if (vParam.FindParam('FLAG')<>nil) and (vParam.FindParam('TYPE').AsInteger=3) then
       IsFlag:=true;
   finally
     vParam.Free;

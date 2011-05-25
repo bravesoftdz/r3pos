@@ -53,7 +53,7 @@ begin
 
     //2°¢≤Â»Î: RIM_CUST_ITEM_SWHSE
     Str:='update RIM_CUST_ITEM_SWHSE '+
-         ' set QTY=(select sum(A.AMOUNT)/('+GetDefaultUnitCalc+')as QRY from STO_STORAGE A,VIW_GOODSINFO B '+
+         ' set QTY=(select sum(A.AMOUNT/'+GetDefaultUnitCalc+')as QRY from STO_STORAGE A,VIW_GOODSINFO B '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and '+
          ' B.COMM not in (''02'',''12'') and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)'+
          ' where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' ';

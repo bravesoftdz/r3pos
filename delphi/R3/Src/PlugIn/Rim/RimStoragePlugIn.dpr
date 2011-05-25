@@ -119,7 +119,7 @@ begin
     vParam.Decode(vParam,InParam);
     TenantID:=vParam.ParamByName('TENANT_ID').AsString;
     IsFlag:=False; 
-    if (vParam.FindParam('FLAG')<>nil) and (vParam.FindParam('TYPE').AsInteger=3) then
+    if (vParam.FindParam('FLAG')<>nil) and (vParam.FindParam('FLAG').AsInteger=3) then
       IsFlag:=true;
   finally
     vParam.Free;

@@ -372,6 +372,18 @@ CREATE TABLE [STK_STOCKORDER] (
 	[CREA_DATE] [varchar] (30) NULL ,
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
+  --发货状态
+  LOCUS_STATUS char(1);
+  --发货人
+  LOCUS_USER varchar(36);
+  --发货日期
+  LOCUS_DATE varchar(10);
+  --发货数量
+  LOCUS_AMT decimal(18, 3);
+  --发货审核人
+  LOCUS_CHK_USER varchar(36);
+  --发货审核日期
+  LOCUS_CHK_DATE varchar(10);
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
         --通讯标志
@@ -537,6 +549,18 @@ CREATE TABLE [SAL_SALESORDER] (
   BANK_ID varchar(36),
   --刷卡卡号
   BANK_CODE varchar(36),
+  --发货状态
+  LOCUS_STATUS char(1);
+  --发货人
+  LOCUS_USER varchar(36);
+  --发货日期
+  LOCUS_DATE varchar(10);
+  --发货数量
+  LOCUS_AMT decimal(18, 3);
+  --发货审核人
+  LOCUS_CHK_USER varchar(36);
+  --发货审核日期
+  LOCUS_CHK_DATE varchar(10);
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
         --通讯标志
@@ -608,7 +632,7 @@ CREATE TABLE [SAL_SALESDATA] (
         --金额
 	[AMONEY] [decimal](18, 3) NULL ,
         --当前计量单位进价
-	[COST_PRICE] [decimal](18, 3) NULL ,
+	[COST_PRICE] [decimal](18, 6) NULL ,
         --折扣率
 	[AGIO_RATE] [decimal](18, 3) NULL ,
         --折扣额
@@ -800,6 +824,18 @@ CREATE TABLE [STO_CHANGEORDER] (
 	[TELEPHONE] [varchar] (30) NULL ,
         --送货地址
 	[SEND_ADDR] [varchar] (255) NULL ,
+  --发货状态
+  LOCUS_STATUS char(1);
+  --发货人
+  LOCUS_USER varchar(36);
+  --发货日期
+  LOCUS_DATE varchar(10);
+  --发货数量
+  LOCUS_AMT decimal(18, 3);
+  --发货审核人
+  LOCUS_CHK_USER varchar(36);
+  --发货审核日期
+  LOCUS_CHK_DATE varchar(10);
 	      --通讯ID号
 	[COMM_ID] varchar(50) NULL,
         --通讯标志
@@ -852,7 +888,7 @@ CREATE TABLE [STO_CHANGEDATA] (
         --计量单位数据
 	[CALC_AMOUNT] [decimal](18, 3) NULL ,
         --当前计量单位进价
-	[COST_PRICE] [decimal](18, 3) NULL ,
+	[COST_PRICE] [decimal](18, 6) NULL ,
         --出库金额
 	[CALC_MONEY] [decimal](18, 3) NULL ,  
         --调整说明

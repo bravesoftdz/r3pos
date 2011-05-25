@@ -19,7 +19,7 @@ type
 var PrainpowerJudge:TPrainpowerJudge;
   
 implementation
-uses uGlobal,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
+uses uGlobal,uCaFactory,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
 
 
 { TPrainpowerJudge }
@@ -212,6 +212,15 @@ var
 begin
   //本地连接时不需同步
   if Global.RemoteFactory.ConnMode = 1 then Exit;
+  if not CaFactory.Audited then Exit;
+  if not Global.RemoteFactory.Connected then
+     begin
+      try
+        Global.RemoteFactory.Connect;
+      except
+        Exit;
+      end;
+     end;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

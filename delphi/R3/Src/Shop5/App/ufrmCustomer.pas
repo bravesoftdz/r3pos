@@ -655,15 +655,17 @@ var  card,union:string;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
-  //if Cds_Customer.FieldByName('IC_CARDNO').AsString<>'' then Raise Exception.Create('此会员已经有储值卡！');
 
   if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1,card,union) then
     begin
-      Cds_Customer.Edit;
-      Cds_Customer.FieldByName('CUST_CODE').AsString:=card;
-      Cds_Customer.Post;
-      UpdateToGlobal(card,Cds_Customer.FieldByName('CUST_ID').AsString);
-      MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
+      if union = '#' then
+        begin
+          Cds_Customer.Edit;
+          Cds_Customer.FieldByName('CUST_CODE').AsString:=card;
+          Cds_Customer.Post;
+          UpdateToGlobal(card,Cds_Customer.FieldByName('CUST_ID').AsString);
+        end;
+        MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
     end;
 end;
 
@@ -671,18 +673,7 @@ procedure TfrmCustomer.actPasswordExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Customer.Active) and (Cds_Customer.IsEmpty) then exit;
-  //if Cds_Customer.FieldByName('IC_CARDNO').AsString='' then  Raise Exception.Create('此会员没有储值卡！');
-
   TfrmPassWord.SelectCard(Self,Cds_Customer.FieldByName('CUST_ID').AsString,IntToStr(Global.TENANT_ID));
-  {with TfrmPassWord.Create(self) do
-    begin
-      try
-        IC_Card := Cds_Customer.FieldByName('CUST_ID').AsString;
-        ShowModal;
-      finally
-        free;
-      end;
-    end;}
 end;
 
 procedure TfrmCustomer.actDepositExecute(Sender: TObject);

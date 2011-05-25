@@ -21,14 +21,14 @@ implementation
 { TImpeach }
 
 function TImpeach.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-var
-  Proc:TZProcFactory;
-  ProcClass:TPersistentClass;
-  Params:TftParamList;
-  rs:TZQuery;
+//var
+//  Proc:TZProcFactory;
+//  ProcClass:TPersistentClass;
+//  Params:TftParamList;
+//  rs:TZQuery;
 begin
   //把问答卷结果直接上传到上级企业
-  ProcClass := GetClass('TSyncMessage');
+{  ProcClass := GetClass('TSyncMessage');
   if ProcClass=nil then Exit;
   Proc := TZProcFactoryClass(ProcClass).Create(AGlobal,nil);
   Params := TftParamList.Create(nil);
@@ -44,6 +44,7 @@ begin
     Params.Free;
     Proc.Free;
   end;
+}  
 end;
 
 function TImpeach.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;

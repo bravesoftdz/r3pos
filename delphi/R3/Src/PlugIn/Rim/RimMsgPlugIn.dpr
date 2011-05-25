@@ -8,35 +8,15 @@ library RimMsgPlugIn;
   are nested in records and classes. ShareMem is the interface unit to
   the BORLNDMM.DLL shared memory manager, which must be deployed along
   with your DLL. To avoid using BORLNDMM.DLL, pass string information
-  using PChar or ShortString parameters. }
+  using PChar or ShortString parameters.
+}
 
 uses
   SysUtils,
   Classes,
   ZBase,
   ZDataSet,
-  IniFiles,
-  WsdlComm in 'Wsdl\WsdlComm.pas',
-  SoapCheckCustCo in 'Wsdl\SoapCheckCustCo.pas',
-  SoapConsumerScoreService in 'Wsdl\SoapConsumerScoreService.pas',
-  SoapCoSimulatorService in 'Wsdl\SoapCoSimulatorService.pas',
-  SoapGetCustItemMaxWhse in 'Wsdl\SoapGetCustItemMaxWhse.pas',
-  SoapGetMessage in 'Wsdl\SoapGetMessage.pas',
-  SoapInitCustWhse in 'Wsdl\SoapInitCustWhse.pas',
-  SoapinsertRetailCo in 'Wsdl\SoapinsertRetailCo.pas',
-  SoapInvestigate in 'Wsdl\SoapInvestigate.pas',
-  SoapQueryCoDetai in 'Wsdl\SoapQueryCoDetai.pas',
-  SoapQueryCoService in 'Wsdl\SoapQueryCoService.pas',
-  SoapQueryCustBankAccService in 'Wsdl\SoapQueryCustBankAccService.pas',
-  SoapQueryItemInfoService in 'Wsdl\SoapQueryItemInfoService.pas',
-  SoapQueryItemUmSize in 'Wsdl\SoapQueryItemUmSize.pas',
-  SoapRimCoSave in 'Wsdl\SoapRimCoSave.pas',
-  SoapRimImpeachService in 'Wsdl\SoapRimImpeachService.pas',
-  SoapRimSuggestionService in 'Wsdl\SoapRimSuggestionService.pas',
-  SoapUserRegister in 'Wsdl\SoapUserRegister.pas',
-  uMsgFactory in 'uMsgFactory.pas',
-  ObjSyncMessage in '..\obj\ObjSyncMessage.pas',
-  ufrmRimConfig in 'ufrmRimConfig.pas' {frmRimConfig};
+  uPlugInUtil in '..\obj\uPlugInUtil.pas';
 
 {$R *.res}
 //RSP装载插件时调用，传插件可访问的服务接口
@@ -52,7 +32,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := '信息互动同步';
+  result := '信息公告同步插件';
 end;
 //为每个插件定义一个唯一标识号，范围1000-9999
 function GetPlugInId:Integer; stdcall;
@@ -60,45 +40,91 @@ begin
   result := 802;
 end;
 //RSP调用插件时执行此方法
+//由R3程序调用，只同步本门店的
 function DoExecute(Params:Pchar;var Data:OleVariant):Integer; stdcall;
+//tid 企业号
+//sid 门店号
+procedure SyncMessage(tid,sid:string);
 var
-  ParamList:TftParamList;
-  rs:TZQuery;
-  V:OleVariant;
-  F:TIniFile;
+  str,ComID,CustID,s: string;
+  rs: TZQuery;
+  r,iDbType:integer;
+  mid:string;
+begin
+  rs:=TZQuery.Create(nil);
+  try
+      rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''' ';
+      if OpenData(GPlugIn, rs) then
+      begin
+        ComID:=trim(rs.fieldbyName('COM_ID').AsString);
+        CustID:=trim(rs.fieldbyName('CUST_ID').AsString);
+      end;
+      if rs.IsEmpty then Raise Exception.Create('在RIM中没找到此客户');
+      rs.Close;
+      rs.SQL.Text :=
+         'select MSG_ID,TYPE from RIM_MESSAGE A where COM_ID='''+ComID+''' and RECEIVER='''+CustID+''' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and STATUS=''02'' '+
+         'and not Exists(select * from MSC_MESSAGE where TENANT_ID='+tid+' and COMM_ID=A.MSG_ID)';
+      OpenData(GPlugIn, rs);
+      rs.First;
+      while not rs.Eof do
+      begin
+        if GPlugIn.BeginTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+        try
+          GPlugIn.iDbType(iDbType);
+          mid := newid(sid);
+          str :=
+           'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) '+
+           'values('+tid+','''+mid+''','''+sid+''',''00'','+GetTimeStamp(iDbType)+')';
+          if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if rs.Fields[1].asString='01' then
+             s := '促销信息'
+          else
+          if rs.Fields[1].asString='02' then
+             s := '广告信息'
+          else
+          if rs.Fields[1].asString='03' then
+             s := '货源信息'
+          else
+          if rs.Fields[1].asString='04' then
+             s := '新品信息'
+          else
+          if rs.Fields[1].asString='05' then
+             s := '通知'
+          else
+          if rs.Fields[1].asString='99' then
+             s := '到货通知'
+          else
+             s := '公告';
+          case iDbType of
+          4:str :=
+           'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
+           'select '+tid+','''+mid+''',''0'',int(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,int(INVALID_DATE),'''+mid+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
+          1:str :=
+           'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
+           'select '+tid+','''+mid+''',''0'',to_number(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,to_number(INVALID_DATE),'''+mid+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
+          end;
+          if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if GPlugIn.CommitTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+        except
+          if GPlugIn.RollbackTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          Raise
+        end;
+      rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
+end;
+var ParamList:TftParamList;
 begin
   try
     //开始执行插件该做的工作.
     ParamList := TftParamList.Create(nil);
-    F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
     try
-      url := F.ReadString('rim','url','');
       ParamList.Decode(ParamList,Params);
-      if ParamList.ParamByName('flag').AsInteger <0 then
-         begin
-           if url='' then Raise Exception.Create('没有配置rim的服务地址...'); 
-           rs := TZQuery.Create(nil);
-           try
-             if GPlugIn.Open(pchar('select TENANT_ID,LICENSE_CODE from CA_TENANT where TENANT_ID in (select RELATI_ID from CA_RELATIONS where TENANT_ID='+ParamList.ParamByName('TENANT_ID').AsString+' and RELATION_ID=1000006)'),V)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
-             rs.Data := V;
-             rs.First;
-             while not rs.Eof do
-               begin
-                 DoSyncMessage(rs.Fields[0].asString,rs.Fields[1].asString);
-                 DoSyncQuestion(rs.Fields[0].asString,rs.Fields[1].asString);
-                 rs.Next;
-               end;
-           finally
-             rs.Free;
-           end;
-         end
-      else
-        case ParamList.ParamByName('flag').AsInteger of
-        0:DoSaveQuestion(ParamList.ParamByName('TENANT_ID').asString,ParamList.ParamByName('LICENSE_CODE').asString,ParamList.ParamByName('QUESTION_ID').asString);
-        1:DoSaveImpeach(ParamList.ParamByName('TENANT_ID').asString,ParamList.ParamByName('LICENSE_CODE').asString,ParamList.ParamByName('ROWS_ID').asString);
-        end;
+      if ParamList.FindParam('SHOP_ID')=nil then ParamList.ParambyName('SHOP_ID').asString := ParamList.ParambyName('TENANT_ID').asString+'0001';
+      SyncMessage(ParamList.ParambyName('TENANT_ID').asString,ParamList.ParambyName('SHOP_ID').asString);
     finally
-      F.free;
       ParamList.Free;
     end;
     result := 0;
@@ -114,15 +140,6 @@ end;
 function ShowPlugin:Integer; stdcall;
 begin
   try
-    //开始显示主界面窗体
-    with TfrmRimConfig.Create(nil) do
-      begin
-        try
-          ShowModal;
-        finally
-          free;
-        end;
-      end;
     result := 0;
   except
     on E:Exception do

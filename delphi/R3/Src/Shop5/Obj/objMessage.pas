@@ -35,7 +35,6 @@ end;
 
 function TMessage.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-
 end;
 
 function TMessage.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;

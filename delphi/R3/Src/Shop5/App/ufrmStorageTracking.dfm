@@ -1987,6 +1987,7 @@ inherited frmStorageTracking: TfrmStorageTracking
     object actSetup: TAction
       Caption = #35774#32622
       ImageIndex = 40
+      OnExecute = actSetupExecute
     end
   end
   object CdsStorage: TZQuery

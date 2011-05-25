@@ -74,6 +74,7 @@ function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;    //查询数据
 function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string; //返回某个字段值
 procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);  //锁定数据连接
 function ParseSQL(iDbType:integer;SQL:string):string;
+function  GetTimeStamp(iDbType:Integer):string;
 
 {== 暂无用 ==}
 function GetTickTime: string;  //取当前精确时间[暂时]
@@ -97,6 +98,16 @@ begin
      result :=id+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
+function  GetTimeStamp(iDbType:Integer):string;
+begin
+  case iDbType of
+   0:Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+   1:Result := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
+   4:result := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
+   5:result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
+   else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+  end;
+end;
 function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;
 var
   ReRun: integer;
@@ -106,13 +117,13 @@ begin
   try
     Qry.Close;
     ReRun:=GPlugIn.Open(Pchar(Qry.SQL.Text),vData);
-    if ReRun<>0 then Raise Exception.Create(Qry.SQL.Text+'执行异常！');
+    if ReRun<>0 then Raise Exception.Create(GPlugIn.GetLastError);
     Qry.Data:=vData;
     Result:=Qry.Active;
   except
     on E:Exception do
     begin
-      Raise Exception.Create(Pchar('PlugIntf.Open:('+Qry.Name+') 出错：'+E.Message));
+      Raise Exception.Create(Pchar('PlugIntf.Open:('+Qry.SQL.Text+') 错误：'+E.Message));
     end;
   end;
 end;
@@ -144,17 +155,7 @@ end;
 //锁定（解锁）数据库连接
 procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);
 begin
-  try
-    GPlugIn.DbLock(Locked); //缩定连接
-  except
-    on E:Exception do
-    begin
-      if Locked then
-        Raise Exception.Create('锁定数据连接错误：'+E.Message)
-      else
-        Raise Exception.Create('解锁数据连接错误：'+E.Message);
-    end;
-  end;
+  if GPlugIn.DbLock(Locked)<>0 then Raise Exception.Create(GPlugIn.GetLastError); //缩定连接
 end;
 
 //取当前精确时间

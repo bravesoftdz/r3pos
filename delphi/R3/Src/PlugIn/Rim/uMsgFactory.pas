@@ -19,7 +19,8 @@ var
  ErrorInfo,tmpStr,Msg:string;
  i:integer;
  RimCaTenant:TRimCaTenant;
- rs:TZQuery;
+ rs,tmp:TZQuery;
+ CV:OleVariant;
 begin
    RimCaTenant := GetRimInfo(tid,lscode);
    if RimCaTenant.CustId='' then
@@ -37,6 +38,7 @@ begin
    '  </MESSAGE_INFO> '+
    '  </MESSAGE_INFO_IN> ';
    rs := TZQuery.Create(nil);
+   tmp := TZQuery.Create(nil);
    XMLDoc := TXMLDocument.Create(Application);
    try
      XMLDoc.XML.Text := decodeZipBase64(GetMessageService(true,url+'/GetMessage?wsdl',nil).getMessage(txt));
@@ -69,9 +71,13 @@ begin
        begin
          V := P1.ChildNodes[i];
          if V.Attributes['MSG_ID']=null then Continue;
+         if GPlugIn.Open(pchar('select MSG_ID from MSC_MESSAGE where TENANT_ID='+tid+' and COMM_ID='''+VartoStr(V.Attributes['MSG_ID'])+''''),CV)<>0 then Raise Exception.Create(StrPas(GPlugIn.GetLastError));
+         tmp.Data := CV;
+         if tmp.IsEmpty then Continue;
          rs.Append;
          rs.FieldByName('TENANT_ID').AsInteger := strtoint(tid);
-         rs.FieldByName('MSG_ID').AsString := V.Attributes['MSG_ID'];
+         rs.FieldByName('MSG_ID').AsString := NewId(tid+'0001');
+         rs.FieldByName('COMM_ID').AsString := V.Attributes['MSG_ID'];
          rs.FieldByName('MSG_CLASS').AsString := '0';
          rs.FieldByName('MSG_TITLE').AsString := V.Attributes['TITLE'];
          rs.FieldByName('MSG_CONTENT').AsString := V.Attributes['CONTENT'];
@@ -84,6 +90,7 @@ begin
 
    finally
      XMLDoc.Free;
+     tmp.Free;
      rs.Free;
    end;
 end;

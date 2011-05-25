@@ -140,6 +140,7 @@ type
     procedure edtP2_SHOP_TYPEPropertiesChange(Sender: TObject);
     procedure edtP3_SHOP_TYPEPropertiesChange(Sender: TObject);
     procedure actfrmCalcExecute(Sender: TObject);
+    procedure actSetupExecute(Sender: TObject);
   private
     { Private declarations }
     IsEnd: boolean;
@@ -168,7 +169,7 @@ type
 
 implementation
 uses uTreeUtil,uGlobal, uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,uDsUtil,
-  ObjCommon,ufrmBasic, Math, ufrmCostCalc;
+  ObjCommon,ufrmBasic, Math, ufrmCostCalc, ufrmOptionDefine;
 {$R *.dfm}
 
 { TfrmStorageTrackingWarning }
@@ -1063,6 +1064,19 @@ procedure TfrmStorageTracking.actfrmCalcExecute(Sender: TObject);
 begin
   inherited;
   TfrmCostCalc.CalcAnalyLister(self);
+end;
+
+procedure TfrmStorageTracking.actSetupExecute(Sender: TObject);
+begin
+  inherited;
+  with TfrmOptionDefine.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

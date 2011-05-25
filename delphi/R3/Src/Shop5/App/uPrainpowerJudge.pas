@@ -4,7 +4,6 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, InvokeRegistry, Types, XSBuiltIns, Des, WinInet,
   ComObj, ObjCommon, ZDataSet, DB, ZBase, Variants, ZLogFile;
-
 type
   TPrainpowerJudge=class
   private
@@ -12,6 +11,7 @@ type
     List:TZQuery;
     constructor Create;
     destructor  Destroy;override;
+    procedure SyncMsgc;
     function EncodeSql:String;
     procedure Load(flag:Integer=0);
   end;
@@ -19,7 +19,7 @@ type
 var PrainpowerJudge:TPrainpowerJudge;
   
 implementation
-uses uGlobal,uShopGlobal,ufrmHintMsg, DateUtils;
+uses uGlobal,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
 
 
 { TPrainpowerJudge }
@@ -174,7 +174,6 @@ var Msg:PMsgInfo;
 begin
   MsgFactory.ClearType(4);
   if flag<>0 then Exit;
-
   List.Close;
   List.SQL.Text := EncodeSQL;
   uGlobal.Factor.Open(List);
@@ -205,6 +204,26 @@ begin
       MsgFactory.MsgRead[Msg] := False;
       List.Next;
     end;
+end;
+
+procedure TPrainpowerJudge.SyncMsgc;
+var
+  Params:TftParamList;
+begin
+  //本地连接时不需同步
+  if Global.RemoteFactory.ConnMode = 1 then Exit;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('flag').AsInteger := 2;
+    Global.RemoteFactory.ExecProc('TSyncMessage',Params);
+    //同步到本地
+    SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0);
+    SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0);
+  finally
+    Params.Free;
+  end;
 end;
 
 initialization

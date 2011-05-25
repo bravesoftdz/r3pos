@@ -21,12 +21,17 @@ var
   vParamStr: string;
 begin
   result:=False;
-  vParamStr := TftParamList.Encode(Params); 
+  vParamStr := TftParamList.Encode(Params);
   //下载Rim订单ID: 1002
   PlugIn := PlugInList.Find(802);
   try
-    //执行插件将RIM_SD_CO 对接到 中间表[INF_INDEORDER]:
-    PlugIn.DLLDoExecute(vParamStr,vData);
+    if PlugIn=nil then
+       begin
+         PlugIn.DLLDoExecute(vParamStr,vData);
+         msg := 'succ';
+       end
+    else
+       msg := 'none';
     result:=true;
   except
     Raise Exception.Create(PlugIn.DLLGetLastError);

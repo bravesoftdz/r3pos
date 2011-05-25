@@ -2,7 +2,7 @@ inherited frmOptionDefine: TfrmOptionDefine
   Left = 702
   Top = 155
   Width = 356
-  Height = 297
+  Height = 275
   Caption = #24211#23384#36873#39033#35774#32622
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -12,8 +12,8 @@ inherited frmOptionDefine: TfrmOptionDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 348
-    Height = 226
+    Width = 340
+    Height = 193
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
@@ -23,8 +23,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 340
-        Height = 199
+        Width = 332
+        Height = 166
         Align = alClient
         ParentShowHint = False
         Shape = bsFrame
@@ -140,8 +140,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 340
-        Height = 199
+        Width = 332
+        Height = 166
         Align = alClient
         ParentShowHint = False
         Shape = bsFrame
@@ -150,8 +150,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 340
-        Height = 199
+        Width = 332
+        Height = 166
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         AutoFitColWidths = True
@@ -164,6 +164,7 @@ inherited frmOptionDefine: TfrmOptionDefine
         FooterFont.Name = #23435#20307
         FooterFont.Style = []
         FrozenCols = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghEnterAsTab]
         RowHeight = 20
@@ -212,8 +213,8 @@ inherited frmOptionDefine: TfrmOptionDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 226
-    Width = 348
+    Top = 193
+    Width = 340
     Height = 44
     Align = alBottom
     BevelOuter = bvNone

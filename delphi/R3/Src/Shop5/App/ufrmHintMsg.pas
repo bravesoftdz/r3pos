@@ -7,6 +7,8 @@ uses
   Dialogs, RzBHints, ExtCtrls, RzForms, RzPanel, StdCtrls, RzLabel, jpeg ,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBckgnd, RzBmpBtn;
 
+const
+  MSC_MESSAGE=WM_USER+10000;
 type
   TMsgInfo=record
     ID:string;
@@ -85,7 +87,7 @@ type
 var
   MsgFactory:TMsgFactory;
 implementation
-uses uGlobal,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge;  //ufrmShowMsg
+uses uGlobal,ufrmMain,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge;  //ufrmShowMsg
 {$R *.dfm}
 var
   frmMsg: TfrmHintMsg;
@@ -128,7 +130,7 @@ begin
   Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=1 ';
 
   Str_Sql :=
-  'select a.MSG_ID,a.MSG_TITLE,a.MSG_CONTENT,a.ISSUE_DATE,a.MSG_CLASS from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
+  'select a.MSG_ID,a.MSG_TITLE,a.MSG_CONTENT,a.ISSUE_DATE,a.MSG_CLASS,a.MSG_SOURCE from MSC_MESSAGE a left join MSC_MESSAGE_LIST b on a.TENANT_ID=b.TENANT_ID and a.MSG_ID=b.MSG_ID '+
   ' where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+Str_where+' order by a.ISSUE_DATE desc';
 
   Result := Str_Sql;
@@ -170,6 +172,7 @@ var Str_where:String;
 begin
   try
     Clear;
+    PrainpowerJudge.SyncMsgc;
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := EncodeSQL;
@@ -185,6 +188,10 @@ begin
           MsgInfo^.Rdd := false;
           MsgInfo^.Msg_Class := StrToIntDef(rs.Fields[4].AsString,0);
           MsgInfo^.sFlag := 0;
+          if rs.FieldbyName('MSG_SOURCE').asString='到货通知' then
+             begin
+               PostMessage(frmMain.Handle,MSC_MESSAGE,1,strtoint(MsgInfo^.SndDate));
+             end;
           FList.Add(MsgInfo);
           rs.Next;
         end;

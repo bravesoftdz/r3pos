@@ -219,7 +219,9 @@ uses
   ufrmLossCard in 'App\ufrmLossCard.pas' {frmLossCard},
   uframeBaseAnaly in 'Frame\uframeBaseAnaly.pas' {frameBaseAnaly},
   ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas',
-  ufrmExcelFactory in 'App\ufrmExcelFactory.pas' {frmExcelFactory};
+  ufrmExcelFactory in 'App\ufrmExcelFactory.pas' {frmExcelFactory},
+  uReportFactory in 'App\uReportFactory.pas',
+  ufrmOptionDefine in 'App\ufrmOptionDefine.pas' {frmOptionDefine};
 
 {$R *.res}
 var

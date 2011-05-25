@@ -9,7 +9,7 @@ uses
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
-  DB, ZAbstractRODataset, ZAbstractDataset;
+  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -336,7 +336,6 @@ type
     actfrmImpeach: TAction;
     actfrmClearData: TAction;
     actfrmSaleAnaly: TAction;
-    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -465,6 +464,7 @@ type
     procedure WMQUERYENDSESSION(var msg:Tmessage);Message  WM_QUERYENDSESSION;
     procedure wm_Login(var Message: TMessage); message WM_LOGIN_REQUEST;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
+    procedure wm_message(var Message: TMessage); message MSC_MESSAGE;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
     function  ConnectToDb:boolean;
@@ -509,7 +509,7 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmHintMsg,ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
+  ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly;
 {$R *.dfm}
 
@@ -3470,6 +3470,11 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.wm_message(var Message: TMessage);
+begin
+
 end;
 
 end.

@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=..\..\..\Src\RspSrvr\PlugIn
+OutputDir=D:\rsp\PlugIn
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=D:\Delphi\R3\Src\RspSrvr\RSPScktSrvr.exe
+HostApplication=D:\rsp\RSPScktSrvr.exe
 Launcher=
 UseLauncher=0
 DebugCWD=
@@ -134,8 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files\borland\delphi7\Projects\Bpl\dclusr70.bpl=Borland User Components
 [HistoryLists\hlConditionals]
 Count=1
 Item0=LIBV4.0
@@ -151,9 +149,11 @@ Item3=D:\Delphi\R3\zLib\src\zLib
 Item4=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
 Item5=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
 [HistoryLists\hlOutputDirectorry]
-Count=5
-Item0=..\..\..\Src\RspSrvr\PlugIn
-Item1=D:\Delphi\R3\Src\RspSrvr\PlugIn
-Item2=D:\发布\okly
-Item3=D:\Delphi\XHT\Source\Shop5.0\Install
-Item4=D:\okly
+Count=7
+Item0=D:\rsp\PlugIn
+Item1=D:\rsp
+Item2=D:\Delphi\R3\Src\RspSrvr\PlugIn
+Item3=..\..\..\Src\RspSrvr\PlugIn
+Item4=D:\发布\okly
+Item5=D:\Delphi\XHT\Source\Shop5.0\Install
+Item6=D:\okly

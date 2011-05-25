@@ -303,6 +303,7 @@ begin
   if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   EndDate:=strtoInt(FormatDatetime('YYYYMMDD',P1_D2.Date));
+
   //测试计算日台账:
   CheckCalc(EndDate);
   //按根据条件门店查询:
@@ -311,11 +312,14 @@ begin
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P3_D1,P3_D2,'RECV_DATE')+
+     ' '+GetShopIDCnd(fndP3_SHOP_ID,'SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by A.RECV_DATE ';
 
   //台账表
-  RCKRData:='select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
+  RCKRData:='select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY '+
+            ' from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+
+            ' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
   //关联
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY '+
@@ -328,7 +332,7 @@ end;
 
 function TfrmRckDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,ViwSql,RMNYData: string;
+  strSql,ViwSql,RMNYData: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
@@ -340,6 +344,7 @@ begin
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P4_D1,P4_D2,'RECV_DATE')+
+     ' '+GetShopIDCnd(fndP4_SHOP_ID,'AA.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+
      ' group by A.TENANT_ID,A.CREA_USER ';
 

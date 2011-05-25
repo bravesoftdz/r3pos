@@ -335,6 +335,7 @@ begin
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+
+     ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by ABLE_DATE ';
 
@@ -366,6 +367,7 @@ begin
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+
+     ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' ';
 
   //关联
@@ -552,9 +554,9 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   //过滤企业ID:
   strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
-  //制单人：
-  if trim(fndP5_USER_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.CREA_USER='''+trim(fndP5_USER_ID.AsString)+''' ';  
+
+  //门店名称:
+  strWhere:=strWhere+GetShopIDCnd(fndP4_SHOP_ID,'A.SHOP_ID');
 
   //查询时间条件
   strWhere:=strWhere+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE');

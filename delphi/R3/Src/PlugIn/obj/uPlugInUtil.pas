@@ -133,7 +133,7 @@ begin
   try
     vParam:=TftParamList.Create(nil);
     vParam.Decode(vParam,InParams);
-    if (vParam.FindParam('FLAG')<>nil) and (vParam.FindParam('TYPE').AsInteger=3)  then  //门店直接上报
+    if (vParam.FindParam('FLAG')<>nil) and (vParam.FindParam('FLAG').AsInteger=3)  then  //门店直接上报
     begin
       //(企业名称,门店ID,门店名称,门店许可证号):
       Str:='select TE.TENANT_ID,TE.TENANT_NAME,SH.SHOP_ID,SH.SHOP_NAME,SH.LICENSE_CODE from CA_SHOP_INFO SH,CA_TENANT TE '+

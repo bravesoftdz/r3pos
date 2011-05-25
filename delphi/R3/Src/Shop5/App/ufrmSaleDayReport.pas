@@ -321,6 +321,8 @@ begin
 
       Label28.Caption := '仓库群组';
       Label17.Caption := '仓库名称';
+
+      Label23.Caption := '仓库群组';
     end;
 
   //增加单位显示：

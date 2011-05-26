@@ -42,12 +42,12 @@ begin
    1:
     begin
       Session:='';
-      vSALES_DATE:='to_char(SALES_DATE)';    //台账日期 转成 varchar
+      vSALES_DATE:='to_char(A.SALES_DATE)';    //台账日期 转成 varchar
     end;
    4:
     begin
       Session:='session.';
-      vSALES_DATE:='trim(char(SALES_DATE))';   //台账日期 转成 varchar
+      vSALES_DATE:='trim(char(A.SALES_DATE))';   //台账日期 转成 varchar
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
@@ -76,7 +76,7 @@ begin
     CndTab:=CndTab+' and ((TIME_STAMP>'+MaxStamp+')or(SALES_DATE='+SALES_DATE+'))'; //前台传入日期
 
   SalesTab:=
-    'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,'+vSALES_DATE+' as SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY '+
+    'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,M.SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY '+
     ' from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
     ' where M.TENANT_ID=S.TENANT_ID and M.SALES_ID=S.SALES_ID and M.TENANT_ID=C.TENANT_ID and M.SHOP_ID=C.SHOP_ID and '+
     ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+TENANT_ID+' and M.SHOP_ID='''+SHOP_ID+''' '+

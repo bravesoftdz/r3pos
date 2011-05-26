@@ -200,7 +200,7 @@ end;
 //为每个插件定义一个唯一标识号，范围1000-9999
 function GetPlugInId:Integer; stdcall;
 begin
-  result := 1001;  //RIM接口的插件
+  result := 803;  //RIM接口的插件
 end;
 
 //RSP调用插件时执行此方法

@@ -151,7 +151,7 @@ end;
 //返回RIM下载订单（到货确认）的插件
 function GetPlugInId:Integer; stdcall;
 begin
-  result := 1002;
+  result := 804;
 end;
 
 //RSP调用插件时执行此方法

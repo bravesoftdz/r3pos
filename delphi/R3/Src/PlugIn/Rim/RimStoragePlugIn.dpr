@@ -92,7 +92,6 @@ end;
 
 procedure CallReportStorageSync(PlugIntf:IPlugIn; InParam: string);  //上报库存
 var
-  RunInfo: TRunInfo; //上报纪录信息
   Str: string;       //企业表视图
   OrganID,           //RIM烟草公司ID
   LICENSE_CODE,      //RIM零售户许可证号
@@ -103,16 +102,15 @@ var
   ShopName: string;  //R3上报门店名称;
   R3ShopList,Rs: TZQuery;
   vParam: TftParamList;
-  IsFlag: Boolean;  //是否为零售户直接上报
-  BegTime,ErrorStr: string; //开始运行时间点
-  BegTick,RunCount,NotCount,ErrorCount: integer;
+  IsFlag: Boolean;    //是否为零售户直接上报
+  RunInfo: TRunInfo;  //运行日志
 begin
-  BegTime:=Timetostr(time());
-  BegTick:=GetTickCount;
-  RunCount:=0;
-  NotCount:=0;
-  ErrorCount:=0;
-  ErrorStr:='';
+  RunInfo.BegTime:=Timetostr(time());
+  RunInfo.BegTick:=GetTickCount;
+  RunInfo.RunCount:=0;
+  RunInfo.NotCount:=0;
+  RunInfo.ErrorCount:=0;
+  RunInfo.ErrorStr:='';
   
   try
     vParam:=TftParamList.Create(nil);
@@ -148,24 +146,23 @@ begin
         Rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenantID+' and B.SHOP_ID='''+ShopID+''' ';
         if OpenData(GPlugIn, Rs) then        begin          OrganID:=trim(rs.fieldbyName('COM_ID').AsString);          CustID:=trim(rs.fieldbyName('CUST_ID').AsString);        end;
         if OrganID='' then Raise Exception.Create('R3传入企业ID（'+TenantID+'）在RIM中没找到对应的ORGAN_ID值...');
-        CustID:=GetRimCust_ID(PlugIntf, OrganID, LICENSE_CODE);
         if CustID<>'' then
         begin
           //开始上零售户库存
           if SendCustStorage(PlugIntf,TenantID,ShopID,OrganID,CustID,LICENSE_CODE) then
-            Inc(RunCount)   //累计上报成功个数
+            Inc(RunInfo.RunCount)   //累计上报成功个数
           else
-            Inc(ErrorCount); //累计失败个数
+            Inc(RunInfo.ErrorCount); //累计失败个数
         end else
         begin
-          ErrorStr:=ErrorStr+'   '+'R3门店:'+ShopID+' —'+ShopName+' 许可证号'+LICENSE_CODE+' 在Rim系统中没对应上！';
-          Inc(NotCount);  //对应不上
+          RunInfo.ErrorStr:=RunInfo.ErrorStr+'   '+'R3门店:'+ShopID+' —'+ShopName+' 许可证号'+LICENSE_CODE+' 在Rim系统中没对应上！';
+          Inc(RunInfo.NotCount);  //对应不上
         end;
       except
         on E:Exception do
         begin
           sleep(1);
-          ErrorStr:=ErrorStr+'   '+E.Message;
+          RunInfo.ErrorStr:=RunInfo.ErrorStr+'   '+E.Message;
           WriteToRIM_BAL_LOG(PlugIntf, LICENSE_CODE,CustID,'12','上报库存出错误！','02'); //写Rim表错误日志
           Raise Exception.Create(E.Message);
         end;
@@ -175,20 +172,20 @@ begin
   finally
     Rs.Free; 
     R3ShopList.Free;
-    BegTick:=GetTickCount-BegTick; //总执行多少秒
+    RunInfo.BegTick:=GetTickCount-RunInfo.BegTick; //总执行多少秒
     //输出日志:
     if IsFlag then  //客户端单个门店日志
     begin
-      if RunCount=1 then
-        PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入门店：('+ShopID+'- '+ShopName+') 开始执行时间：'+BegTime+' 共执行'+FormatFloat('#0.00',BegTick/1000)+'秒  上报成功！')) 
+      if RunInfo.RunCount=1 then
+        PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入门店：('+ShopID+'- '+ShopName+') 开始执行时间：'+RunInfo.BegTime+' 共执行'+FormatFloat('#0.00',RunInfo.BegTick/1000)+'秒  上报成功！')) 
       else
-        PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入门店：('+ShopID+'- '+ShopName+') 开始执行时间：'+BegTime+' 共执行'+FormatFloat('#0.00',BegTick/1000)+'秒  上报出错:'+ErrorStr));
+        PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入门店：('+ShopID+'- '+ShopName+') 开始执行时间：'+RunInfo.BegTime+' 共执行'+FormatFloat('#0.00',RunInfo.BegTick/1000)+'秒  上报出错:'+RunInfo.ErrorStr));
     end else  //后台调度运行:
     begin
-      PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入企业：('+TenantID+'- '+TenName+') 开始执行时间：'+BegTime+' 共执行'+FormatFloat('#0.00',BegTick/1000)+'秒 '));
-      Str:='上报成功门店数：'+inttostr(RunCount)+'  Rim中没有对应门店数:'+inttoStr(NotCount)+' 上报失败门店数:'+inttoStr(ErrorCount);
-      if ErrorStr<>'' then Str:=Str+' 错误消息： '+#13+ErrorStr;
-      PlugIntf.WriteLogFile(Pchar(ErrorStr));
+      PlugIntf.WriteLogFile(Pchar('R3终端上报库存,传入企业：('+TenantID+'- '+TenName+') 开始执行时间：'+RunInfo.BegTime+' 共执行'+FormatFloat('#0.00',RunInfo.BegTick/1000)+'秒 '));
+      Str:='上报成功门店数：'+inttostr(RunInfo.RunCount)+'  Rim中没有对应门店数:'+inttoStr(RunInfo.NotCount)+' 上报失败门店数:'+inttoStr(RunInfo.ErrorCount);
+      if RunInfo.ErrorStr<>'' then Str:=Str+' 错误消息： '+#13+RunInfo.ErrorStr;
+      PlugIntf.WriteLogFile(Pchar(RunInfo.ErrorStr));
     end; 
   end;
 end;     
@@ -214,7 +211,7 @@ end;
 //为每个插件定义一个唯一标识号，范围1000-9999
 function GetPlugInId:Integer; stdcall;
 begin
-  result := 1004;  //RIM接口的插件
+  result := 805;  //RIM接口的插件
 end;
 
 //RSP调用插件时执行此方法

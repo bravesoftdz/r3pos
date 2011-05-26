@@ -5329,7 +5329,7 @@ CREATE TABLE [SAL_SALESDATA] (
         --金额
 	[AMONEY] [decimal](18, 3) NULL ,
         --当前计量单位进价
-	[COST_PRICE] [decimal](18, 3) NULL ,
+	[COST_PRICE] [decimal](18, 6) NULL ,
         --折扣率
 	[AGIO_RATE] [decimal](18, 3) NULL ,
         --折扣额
@@ -5565,7 +5565,7 @@ CREATE TABLE [STO_CHANGEDATA] (
         --计量单位数据
 	[CALC_AMOUNT] [decimal](18, 3) NULL ,
         --当前计量单位进价
-	[COST_PRICE] [decimal](18, 3) NULL ,
+	[COST_PRICE] [decimal](18, 6) NULL ,
         --出库金额
 	[CALC_MONEY] [decimal](18, 3) NULL ,  
         --调整说明
@@ -6133,7 +6133,7 @@ CREATE TABLE [ACC_PAYORDER] (
         --财务日期
 	[PAY_DATE] int NULL ,
         --付款人
-	[PAY_USER] [varchar] (30) NULL ,
+	[PAY_USER] [varchar] (36) NULL ,
         --付款总计
 	[PAY_MNY] [decimal](18, 3) NULL ,
         --审核日期
@@ -6210,7 +6210,7 @@ CREATE TABLE [ACC_RECVORDER] (
         --财务日期
 	[RECV_DATE] int NULL ,
         --付款人
-	[RECV_USER] [varchar] (30) NULL ,
+	[RECV_USER] [varchar] (36) NULL ,
         --收款合计
 	[RECV_MNY] [decimal](18, 3) NULL ,
         --审核日期

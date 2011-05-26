@@ -6483,7 +6483,7 @@ CREATE TABLE ACC_PAYORDER (
         --财务日期
 	PAY_DATE int ,
         --付款人
-	PAY_USER varchar (30) ,
+	PAY_USER varchar (36) ,
         --付款总计
 	PAY_MNY decimal(18, 3) ,
         --审核日期
@@ -6566,7 +6566,7 @@ CREATE TABLE ACC_RECVORDER (
         --财务日期
 	RECV_DATE int ,
         --付款人
-	RECV_USER varchar (30) ,
+	RECV_USER varchar (36) ,
         --收款合计
 	RECV_MNY decimal(18, 3) ,
         --审核日期

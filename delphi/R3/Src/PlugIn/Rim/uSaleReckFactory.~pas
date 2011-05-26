@@ -17,6 +17,7 @@ procedure CallSaleReckSync(PlugIntf:IPlugIn; InParams: string);   //上报销售数据
 
 implementation
 
+              
 {============================ 下面为上报RIM业务单据 [DB2\ORACLE] ==============================}
 
 //////2011.04.14 PM上报日台账  (type='10')

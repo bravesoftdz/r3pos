@@ -72,7 +72,6 @@ begin
   ShopID:=vParam.ParamByName('SHOP_ID').AsString;
   UseDate:=vParam.ParamByName('USING_DATE').AsString;
   SetRimCom_CustID(GPlugIn,vParam,ComID,CustID); //读取Rim系统的供应商（烟草公司Com_ID）和零售户的Cust_Id
-  TLogRunInfo.LogWrite('下载订单表体取参数:（R3企业ID：'+TenantID+';门店ID：'+ShopID+'），（RIM烟草公司ID:'+ComID+';零售户ID:'+CustID+'）','RimOrderDownPlugIn.dll');
   if ComID='' then Raise Exception.Create('没有找到RIM烟草公司ID！');
   if CustID='' then Raise Exception.Create('没有找到RIM零售户ID！'); //写异常日志;
 
@@ -91,7 +90,6 @@ begin
       ' where A.CO_NUM=B.CO_NUM and A.STATUS>=''04'' and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+ComID+''' and A.CUST_ID='''+CustID+''' '+
       ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
      if GPlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+Str);
-     TLogRunInfo.LogWrite('下载订单执行完毕:（下载:'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
   except
     on E:Exception do
     begin
@@ -108,7 +106,6 @@ begin
   result:=False;
   INDE_ID:=trim(vParam.ParamByName('INDE_ID').AsString);
   TenantID:=inttostr(vParam.ParamByName('TENANT_ID').AsInteger);
-  TLogRunInfo.LogWrite('下载订单表体前传入参数:（R3企业ID：'+TenantID+';订单ID：'+INDE_ID+'）','RimOrderDownPlugIn.dll');
   try
     //1、删除订单表体历史数据：
     Str:='delete from INF_INDEDATA where TENANT_ID='+TenantID+' and INDE_ID='''+INDE_ID+''' ';
@@ -121,7 +118,6 @@ begin
          ' left outer join (select GODS_ID,SECOND_ID from VIW_GOODSINFO where TENANT_ID='+TenantID+')B on A.ITEM_ID=B.SECOND_ID '+
          ' where A.CO_NUM='''+INDE_ID+''' ';
     if PlugIn.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入订单表体出错！（SQL='+Str+'）');
-    TLogRunInfo.LogWrite('下载订单表体执行完毕:（下载：'+inttoStr(iRet)+'笔）（InsertSQL:'+Str+'）','RimOrderDownPlugIn.dll');
   except
     on E:Exception do
     begin
@@ -151,7 +147,7 @@ end;
 //返回RIM下载订单（到货确认）的插件
 function GetPlugInId:Integer; stdcall;
 begin
-  result := 804;
+  result := 1002;
 end;
 
 //RSP调用插件时执行此方法

@@ -70,8 +70,7 @@ begin
   iRet:=-1;
   NotGods:='';
   ORGAN_ID:=GetORGAN_ID(PlugIntf,TENANT_ID); //根据R3企业ID返回Rim企业内码(comp_id)
-  TLogRunInfo.LogWrite('开始执行对照取参数:（R3企业ID：'+TENANT_ID+'，RIM烟草公司ID:'+ORGAN_ID+'）','RimGodsDzPlugIn.dll');
-  if ORGAN_ID='' then Raise Exception.Create('没有找到Rim系统烟草公司ID！'); 
+  if ORGAN_ID='' then Raise Exception.Create('没有找到Rim系统烟草公司ID！');
 
   Sort_ID2:=
     '(case when SORT_ID2=''1'' then ''85994503-9CBC-4346-BC86-24C7F5A92BC6'''+  //价类
@@ -110,9 +109,6 @@ begin
     OpenData(PlugIntf, RsRim);
     RsInf.SQL.Text:='select * from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID;
     OpenData(PlugIntf, RsInf);
-
-    //写调试日志:
-    TLogRunInfo.LogWrite('对照Open数据：1、RsBarPub.SQL='+StrSQL+'  返回记录数:'+InttoStr(RsBarPub.RecordCount)+' 2、RsRim.SQL='+RimSQL+'  返回记录数:'+InttoStr(RsRim.RecordCount),'RimGodsDzPlugIn.dll');
 
     //开始循环对照
     try
@@ -153,7 +149,6 @@ begin
           PlugIntf.ExecSQL(Pchar('insert into DebugTab(Rows_ID,CREATIME) values ('''+RsInf.fieldbyName('Rows_ID').asString+''','''+TimeToStr(Time())+''')'),iRet);
           RsRim.Next;
         end; //end (循环: while not RsRim.Eof do)
-        TLogRunInfo.LogWrite('循环对照结果：对不上Rim条单位条码：'+NotGods,'RimGodsDzPlugIn.dll');
         if RsInf.Changed then
         begin
           result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation'); //提交RsInf保存中间表:INF_GOODS_RELATION;
@@ -170,7 +165,6 @@ begin
         Raise Exception.Create('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message);
       end;
     end;
-    TLogRunInfo.LogWrite('对照执行完毕！','RimGodsDzPlugIn.dll');
   finally
     AObj.Free;
     RsRim.Free;
@@ -200,7 +194,7 @@ end;
 //为每个插件定义一个唯一标识号，范围1000-9999
 function GetPlugInId:Integer; stdcall;
 begin
-  result := 803;  //RIM接口的插件
+  result := 1001;  //RIM接口的插件
 end;
 
 //RSP调用插件时执行此方法

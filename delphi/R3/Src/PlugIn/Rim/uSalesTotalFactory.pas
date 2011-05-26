@@ -42,12 +42,12 @@ begin
    1:
     begin
       Session:='';
-      vSALES_DATE:='trim(char(M.CREA_DATE))';    //台账日期 转成 varchar
+      vSALES_DATE:='to_char(M.CREA_DATE)';    //台账日期 转成 varchar
     end;
    4:
     begin
       Session:='session.';
-      vSALES_DATE:='cast(M.CREA_DATE as varchar(8))';    //台账日期 转成 varchar
+      vSALES_DATE:='trim(char(M.CREA_DATE))';    //台账日期 转成 varchar
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
@@ -60,8 +60,7 @@ begin
              ' SALES_DAY VARCHAR(8) NOT NULL,'+  //销售日期
              ' QTY_ORD DECIMAL (18,6),'+         //台账销售数量
              ' AMT DECIMAL (18,6),'+             //台账销售金额
-             ' CO_NUM VARCHAR(30) NOT NULL, '+   //单据号[台账日期 + 零售户ID+ R3_门店ID后4位] 
-             ' TIME_STAMP bigint NOT NULL'+      //时间戳
+             ' CO_NUM VARCHAR(30) NOT NULL '+   //单据号[台账日期 + 零售户ID+ R3_门店ID后4位]
              ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日销售临时表INF_SALESUM错误:'+PlugIntf.GetLastError);
     end;
@@ -77,19 +76,20 @@ begin
     CndTab:=CndTab+' and ((TIME_STAMP>'+MaxStamp+')or(SALES_DATE='+SALES_DATE+'))'; //前台传入日期
 
   SalesTab:=
-    'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,'+vSALES_DATE+' as SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
+    'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,'+vSALES_DATE+' as SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY '+
+    ' from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
     ' where M.TENANT_ID=S.TENANT_ID and M.SALES_ID=S.SALES_ID and M.TENANT_ID=C.TENANT_ID and M.SHOP_ID=C.SHOP_ID and '+
     ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+TENANT_ID+' and M.SHOP_ID='''+SHOP_ID+''' '+
     ' group by M.TENANT_ID,M.SHOP_ID,M.SALES_DATE,S.GODS_ID';
 
-  Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,SALES_DATE,QTY_ORD,AMT,TIME_STAMP) '+
+  Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
     'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' as SALES_DATE,'+
     ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
     ' group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' ';
 
-  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表数据出错:'+PlugIntf.GetLastError);
+  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+PlugIntf.GetLastError);
   if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
 
   //第三步: 每一次执行作为一个事务提交

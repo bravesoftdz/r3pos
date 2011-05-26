@@ -175,6 +175,7 @@ inherited frmShopDesk: TfrmShopDesk
             Width = 595
             Height = 415
             AutoSize = True
+            Transparent = True
           end
           object RzBmpButton6: TRzBmpButton
             Left = 0
@@ -286,6 +287,7 @@ inherited frmShopDesk: TfrmShopDesk
             Width = 502
             Height = 422
             AutoSize = True
+            Transparent = True
           end
           object RzBmpButton10: TRzBmpButton
             Left = 25

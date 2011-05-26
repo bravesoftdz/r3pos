@@ -61,6 +61,8 @@ begin
     edtUrl.Text := copy(cdsUnion.FieldbyName('VALUE').AsString,8,length(cdsUnion.FieldbyName('VALUE').AsString)-8);
   if cdsUnion.Locate('DEFINE','XSM_USERNAME_'+Global.SHOP_ID,[]) then
     edtUsername.Text := cdsUnion.FieldbyName('VALUE').AsString;
+  if cdsUnion.Locate('DEFINE','XSM_PASSWORD_'+Global.SHOP_ID,[]) then
+    edtUsername.Text := DecStr(cdsUnion.FieldbyName('VALUE').AsString,ENC_KEY);
 end;
 
 procedure TfrmXsmLogin.SetValue(ID, Value: String);

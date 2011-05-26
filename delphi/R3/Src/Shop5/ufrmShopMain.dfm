@@ -7570,7 +7570,8 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmShopInfoListExecute
     end
     object actfrmXsmBrowser: TAction
-      Caption = #26032#21830#30431
+      Tag = 91700001
+      Caption = #32593#19978#35746#36135
       Enabled = False
       OnExecute = actfrmXsmBrowserExecute
     end
@@ -7762,6 +7763,11 @@ inherited frmShopMain: TfrmShopMain
     object actfrmSaleAnaly: TAction
       Caption = #38144#21806#20998#26512#34920
       OnExecute = actfrmSaleAnalyExecute
+    end
+    object actfrmNetForOrder: TAction
+      Tag = 91800001
+      Caption = #32593#19978#37197#36135
+      OnExecute = actfrmNetForOrderExecute
     end
   end
   inherited PopupMenu: TPopupMenu

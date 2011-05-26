@@ -15,6 +15,7 @@ type
     Button2: TButton;
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -40,6 +41,18 @@ begin
     F.free;
   end;
   close;
+end;
+
+procedure TfrmRimConfig.FormCreate(Sender: TObject);
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
+  try
+    Edit1.Text := F.ReadString('rim','url','');
+  finally
+    F.free;
+  end;
 end;
 
 end.

@@ -41,7 +41,7 @@ inherited ShopGlobal: TShopGlobal
       
         'select USER_ID,USER_SPELL,USER_NAME,ACCOUNT,DUTY_IDS,ROLE_IDS,SH' +
         'OP_ID,MM,DEPT_ID from VIW_USERS where COMM not in ('#39'02'#39','#39'12'#39')'
-      'and TENANT_ID=:TENANT_ID order by ACCOUNT')
+      'and TENANT_ID=:TENANT_ID and USER_ID<>'#39'system'#39' order by ACCOUNT')
     Params = <
       item
         DataType = ftUnknown

@@ -336,6 +336,7 @@ type
     actfrmImpeach: TAction;
     actfrmClearData: TAction;
     actfrmSaleAnaly: TAction;
+    actfrmNetForOrder: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -447,6 +448,7 @@ type
     procedure actfrmImpeachExecute(Sender: TObject);
     procedure actfrmClearDataExecute(Sender: TObject);
     procedure actfrmSaleAnalyExecute(Sender: TObject);
+    procedure actfrmNetForOrderExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -2232,13 +2234,15 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmIEWebForm);
+  Form := FindChildForm('frmXsmWebForm');
   if not Assigned(Form) then
      begin
        Form := TfrmIEWebForm.Create(self);
+       Form.Caption := actfrmXsmBrowser.Caption;
        AddFrom(Form);
      end;
   try
+    Form.Name := 'frmXsmWebForm';
     if copy(ParamStr(3),1,8)='-xsmurl=' then
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
@@ -3465,7 +3469,7 @@ begin
   Form := FindChildForm(TfrmSaleAnaly);
   if not Assigned(Form) then
      begin
-       Form := TfrmSaleAnaly.Create(self);                 
+       Form := TfrmSaleAnaly.Create(self);
        AddFrom(Form);
      end;
   Form.Show;
@@ -3475,6 +3479,55 @@ end;
 procedure TfrmShopMain.wm_message(var Message: TMessage);
 begin
 
+end;
+
+procedure TfrmShopMain.actfrmNetForOrderExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+  rimurl:string;
+  rimuid:string;
+  rimpwd:string;
+  Msg:string;
+  Params:TftParamList;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+    Params.Decode(Params,Msg);
+    rimurl := Params.ParambyName('rimurl').AsString;
+    rimuid := Params.ParambyName('rimuid').AsString;
+    rimpwd := Params.ParambyName('rimpwd').AsString;
+    if rimurl='' then Raise Exception.Create('无法连接到RIM服务主机，请和实施人员联系.'); 
+    if rimuid='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.'); 
+  finally
+    Params.Free;
+  end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmNetForOrder');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmIEWebForm.Create(self);
+       Form.Caption := actfrmNetForOrder.Caption;
+       AddFrom(Form);
+     end;
+  try
+    Form.Name := 'frmNetForOrder';
+    TfrmIEWebForm(Form).Open(rimurl+'/rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    Form.Show;
+    Form.BringToFront;
+  except
+    Form.Free;
+    Raise;
+  end;
 end;
 
 end.

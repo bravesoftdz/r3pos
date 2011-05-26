@@ -78,6 +78,8 @@ type
     procedure SyncAll;
     //开始基础数据
     procedure SyncBasic(gbl:boolean=true);
+    //数据同步到Rim
+    procedure SyncRim;
 
     //检测服务端是否没有数据？
     function CheckRemeteData:boolean;
@@ -230,24 +232,28 @@ begin
   n^.tbname := 'CA_SHOP_INFO';
   n^.keyFields := 'TENANT_ID;SHOP_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '门店资料';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_DEPT_INFO';
   n^.keyFields := 'TENANT_ID;DEPT_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '部门资料';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_DUTY_INFO';
   n^.keyFields := 'TENANT_ID;DUTY_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '职务资料';
   FList.Add(n);
   new(n);
   n^.tbname := 'CA_ROLE_INFO';
   n^.keyFields := 'TENANT_ID;ROLE_ID';
   n^.synFlag := 0;
+  n^.KeyFlag := 0;
   n^.tbtitle := '角色资料';
   FList.Add(n);
   new(n);
@@ -624,6 +630,7 @@ begin
       frmLogo.ProgressBar1.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
+    SyncRim;
   finally
     frmLogo.Close;
   end;
@@ -2054,6 +2061,25 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncRim;
+var
+  Params:TftParamList;
+begin
+  //本地连接时不需同步
+  if Global.RemoteFactory.ConnMode = 1 then Exit;
+  if not CaFactory.Audited then Exit;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('flag').AsInteger := 3;
+    Global.RemoteFactory.ExecProc('TSyncRimInfo',Params);
+    Global.RemoteFactory.ExecProc('TSyncCustomer',Params);
+  finally
+    Params.Free;
   end;
 end;
 

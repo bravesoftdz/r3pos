@@ -848,7 +848,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       Top = 19
       Width = 60
       Height = 12
-      Caption = #21830#30431#20027#26426#65306
+      Caption = #26381#21153#20027#26426#65306
     end
     object edtPassword: TcxTextEdit
       Left = 111

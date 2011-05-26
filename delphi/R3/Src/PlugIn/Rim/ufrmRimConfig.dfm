@@ -13,6 +13,7 @@ object frmRimConfig: TfrmRimConfig
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object Label1: TLabel
@@ -25,9 +26,9 @@ object frmRimConfig: TfrmRimConfig
   object Label2: TLabel
     Left = 80
     Top = 80
-    Width = 207
+    Width = 163
     Height = 13
-    Caption = #20363#65306'http://10.73.39.121:9081/rim/services'
+    Caption = #20363#65306'http://10.73.39.121:9081/rim'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clRed
     Font.Height = -11

@@ -226,7 +226,11 @@ begin
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Params.ParamByName('flag').AsInteger := 2;
-    Global.RemoteFactory.ExecProc('TSyncMessage',Params);
+    try
+      Global.RemoteFactory.ExecProc('TSyncMessage',Params);
+    except
+      Exit;
+    end;
     //同步到本地
     SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0);
     SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0);

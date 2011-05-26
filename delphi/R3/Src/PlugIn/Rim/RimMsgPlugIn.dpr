@@ -15,6 +15,7 @@ uses
   SysUtils,
   Classes,
   ZBase,
+  uFnUtil,
   ZDataSet,
   uPlugInUtil in '..\obj\uPlugInUtil.pas';
 
@@ -60,12 +61,18 @@ begin
         CustID:=trim(rs.fieldbyName('CUST_ID').AsString);
       end;
       if rs.IsEmpty then Raise Exception.Create('在RIM中没找到此客户');
+      GPlugIn.iDbType(iDbType);
       rs.Close;
-      rs.SQL.Text :=
-         'select MSG_ID,TYPE from RIM_MESSAGE A where COM_ID='''+ComID+''' and RECEIVER='''+CustID+''' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and STATUS=''02'' '+
-         'and not Exists(select * from MSC_MESSAGE where TENANT_ID='+tid+' and COMM_ID=A.MSG_ID)';
+      case iDbType of
+      4:rs.SQL.Text :=
+         'select MSG_ID,TYPE,INVALID_DATE from RIM_MESSAGE A where COM_ID='''+ComID+''' and (POSSTR(RECEIVER,'''+CustID+','')>0 or RECEIVER is null) and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and STATUS=''02'' '+
+         'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+sid+''' and B.TENANT_ID='+tid+' and B.COMM_ID=A.MSG_ID)';
+      1:rs.SQL.Text :=
+         'select MSG_ID,TYPE,INVALID_DATE from RIM_MESSAGE A where COM_ID='''+ComID+''' and (INSTR(RECEIVER,'''+CustID+','')>0 or RECEIVER is null) and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and STATUS=''02'' '+
+         'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+sid+''' and B.TENANT_ID='+tid+' and B.COMM_ID=A.MSG_ID)';
+      end;
       OpenData(GPlugIn, rs);
-      rs.First;
+      rs.First;                                  
       while not rs.Eof do
       begin
         if GPlugIn.BeginTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
@@ -74,7 +81,7 @@ begin
           mid := newid(sid);
           str :=
            'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) '+
-           'values('+tid+','''+mid+''','''+sid+''',''00'','+GetTimeStamp(iDbType)+')';
+           'values('+tid+','''+mid+''','''+sid+''',''1'',''1'',''00'','+GetTimeStamp(iDbType)+')';
           if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
           if rs.Fields[1].asString='01' then
              s := '促销信息'
@@ -98,10 +105,10 @@ begin
           case iDbType of
           4:str :=
            'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-           'select '+tid+','''+mid+''',''0'',int(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,int(INVALID_DATE),'''+mid+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
+           'select '+tid+','''+mid+''',''0'',int(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           1:str :=
            'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-           'select '+tid+','''+mid+''',''0'',to_number(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,to_number(INVALID_DATE),'''+mid+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
+           'select '+tid+','''+mid+''',''0'',to_number(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           end;
           if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
           if GPlugIn.CommitTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);

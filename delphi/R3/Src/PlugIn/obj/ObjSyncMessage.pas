@@ -16,10 +16,6 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
-  TSyncCustomer=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
 implementation
 uses ZPlugIn, ZlogFile;
 
@@ -34,7 +30,7 @@ var
 begin
   result:=False;
   vParamStr := TftParamList.Encode(Params);
-  //下载Rim订单ID: 1002
+  //信息同步
   PlugIn := PlugInList.Find(802);
   try
     if PlugIn<>nil then
@@ -61,7 +57,6 @@ var
 begin
   result:=False;
   vParamStr := TftParamList.Encode(Params);
-  //下载Rim订单ID: 1002
   PlugIn := PlugInList.Find(804);
   try
     if PlugIn<>nil then
@@ -88,9 +83,9 @@ var
 begin
   result:=False;
   vParamStr := TftParamList.Encode(Params);
-  //下载Rim订单ID: 1002
-  PlugIn := PlugInList.Find(1004);
   try
+    //当前库存
+    PlugIn := PlugInList.Find(805);
     if PlugIn<>nil then
        begin
          PlugIn.DLLDoExecute(vParamStr,vData);
@@ -98,26 +93,9 @@ begin
        end
     else
        msg := 'none';
-    result:=true;
-  except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
-  end;
-end;
 
-{ TSyncCustomer }
-
-function TSyncCustomer.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
-var
-  PlugIn: TPlugIn;
-  vData: OleVariant;
-  vParamStr: string;
-begin
-  result:=False;
-  vParamStr := TftParamList.Encode(Params);
-  //下载Rim订单ID: 1002
-  PlugIn := PlugInList.Find(803);
-  try
+    //消费者
+    PlugIn := PlugInList.Find(803);
     if PlugIn<>nil then
        begin
          PlugIn.DLLDoExecute(vParamStr,vData);
@@ -125,9 +103,23 @@ begin
        end
     else
        msg := 'none';
+
+    //销售汇总
+    PlugIn := PlugInList.Find(810);
+    if PlugIn<>nil then
+       begin
+         PlugIn.DLLDoExecute(vParamStr,vData);
+         msg := 'succ';
+       end
+    else
+       msg := 'none';
+
     result:=true;
   except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
+    if PlugIn<>nil then
+       Raise Exception.Create(PlugIn.DLLGetLastError)
+    else
+       Raise;
   end;
 end;
 
@@ -135,12 +127,10 @@ initialization
   RegisterClass(TSyncMessage);
   RegisterClass(TRimWsdlService);
   RegisterClass(TSyncRimInfo);
-  RegisterClass(TSyncCustomer);
 
 finalization
   UnRegisterClass(TSyncMessage);
   UnRegisterClass(TRimWsdlService);
   UnRegisterClass(TSyncRimInfo);
-  UnRegisterClass(TSyncCustomer);
 
 end.

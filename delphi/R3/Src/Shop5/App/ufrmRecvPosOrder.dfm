@@ -1,8 +1,8 @@
 inherited frmRecvPosOrder: TfrmRecvPosOrder
-  Left = 271
-  Top = 159
+  Left = 361
+  Top = 212
   Caption = #32564#27454#21333
-  ClientHeight = 465
+  ClientHeight = 445
   ClientWidth = 656
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -11,12 +11,12 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 656
-    Height = 465
+    Height = 445
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
       Top = 162
       Width = 646
-      Height = 255
+      Height = 235
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -27,14 +27,14 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Caption = #32564#27454#26126#32454
         inherited RzPanel2: TRzPanel
           Width = 642
-          Height = 228
+          Height = 208
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 632
-            Height = 218
+            Height = 198
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -168,7 +168,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       end
     end
     inherited btPanel: TRzPanel
-      Top = 417
+      Top = 397
       Width = 646
       Height = 43
       BorderColor = clWhite

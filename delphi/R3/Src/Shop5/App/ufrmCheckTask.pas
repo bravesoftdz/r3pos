@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzButton, StdCtrls, cxControls,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
   Grids, DBGridEh, DB, RzLabel, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, zBase;
+  ZDataset, zBase, cxButtonEdit, zrComboBoxList;
 
 type
   TfrmCheckTask = class(TfrmBasic)
@@ -19,14 +19,16 @@ type
     edtCHECK_TYPE: TGroupBox;
     RB_Single: TRadioButton;
     RB_Multi: TRadioButton;
+    Label2: TLabel;
+    edtSHOP_ID: TzrComboBoxList;
     procedure RzBitBtn5Click(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtSHOP_IDSaveValue(Sender: TObject);
   private
     FcDate: TDate;
-    FSHOP_ID: string;
     procedure SetcDate(const Value: TDate);
     function  GetSHOP_ID: string;
-    procedure SetSHOP_ID(const Value: string);
     function  CheckExistsIsPrintBill: Boolean;
   public
     { Public declarations }
@@ -34,13 +36,13 @@ type
     procedure Prepare;
     class function StartTask(vcid:string=''):boolean;
     property cDate:TDate read FcDate write SetcDate;
-    property SHOP_ID: string read GetSHOP_ID write SetSHOP_ID;
+    property SHOP_ID: string read GetSHOP_ID;
   end;
 
 implementation
 
 uses
-  uFnUtil, uGlobal, uShopGlobal, ObjCommon, uDsUtil;
+  uFnUtil, uGlobal, uShopGlobal, ObjCommon, uDsUtil, uShopUtil;
 
 {$R *.dfm}
 
@@ -115,7 +117,6 @@ begin
   with TfrmCheckTask.Create(Application.MainForm) do
   begin
     try
-      SHOP_ID:=vcid;
       Prepare;
       result := (ShowModal=MROK);
     finally
@@ -144,7 +145,12 @@ begin
       RB_Single.Enabled:=False;
       RB_Multi.Enabled:=False; 
     end else
+    begin
       cDate := Date();
+      RzBitBtn5.Enabled := true;
+      RB_Single.Enabled:=False;
+      RB_Multi.Enabled:=False; 
+    end;
     RzLabel1.Caption := format('≈Ãµ„»’∆⁄:%s',[formatDatetime('YYYY-MM-DD',cDate)]);
   finally
     rs.free;
@@ -208,15 +214,7 @@ end;
 
 function TfrmCheckTask.GetSHOP_ID: string;
 begin
-  if trim(FSHOP_ID)<>'' then
-    result:=FSHOP_ID
-  else
-    result:=Global.SHOP_ID;
-end;
-
-procedure TfrmCheckTask.SetSHOP_ID(const Value: string);
-begin
-  FSHOP_ID := Value;
+  result := edtSHOP_ID.AsString;
 end;
 
 function TfrmCheckTask.CheckExistsIsPrintBill: Boolean;
@@ -235,6 +233,25 @@ begin
   finally
     Rs.Free;
   end;
+end;
+
+procedure TfrmCheckTask.FormCreate(Sender: TObject);
+begin
+  inherited;
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME; 
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
+end;
+
+procedure TfrmCheckTask.edtSHOP_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  Prepare;
 end;
 
 end.

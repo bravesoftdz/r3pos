@@ -1,10 +1,10 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 283
-  Top = 109
+  Left = 377
+  Top = 145
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
-  ClientHeight = 570
+  ClientHeight = 550
   ClientWidth = 800
   Color = clBlack
   OldCreateOrder = True
@@ -17,7 +17,7 @@ inherited frmPosMain: TfrmPosMain
   TextHeight = 12
   object RzPanel3: TRzPanel [0]
     Left = 0
-    Top = 275
+    Top = 255
     Width = 800
     Height = 199
     Align = alBottom
@@ -599,7 +599,7 @@ inherited frmPosMain: TfrmPosMain
         object lblDIBS: TLabel
           Left = 198
           Top = 108
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #25214#38646#65306
           Font.Charset = GB2312_CHARSET
@@ -612,7 +612,7 @@ inherited frmPosMain: TfrmPosMain
         object lblCASH: TLabel
           Left = 198
           Top = 68
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #29616#37329#65306
           Font.Charset = GB2312_CHARSET
@@ -670,7 +670,7 @@ inherited frmPosMain: TfrmPosMain
         object lblACCT_MNY: TLabel
           Left = 198
           Top = 18
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #32467#31639#65306
           Font.Charset = GB2312_CHARSET
@@ -832,7 +832,7 @@ inherited frmPosMain: TfrmPosMain
     Left = 0
     Top = 26
     Width = 800
-    Height = 249
+    Height = 229
     Align = alClient
     BorderOuter = fsFlat
     BorderSides = [sdLeft, sdTop, sdRight]
@@ -843,7 +843,7 @@ inherited frmPosMain: TfrmPosMain
       Left = 1
       Top = 1
       Width = 798
-      Height = 248
+      Height = 228
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       AutoFitColWidths = True
@@ -1087,7 +1087,7 @@ inherited frmPosMain: TfrmPosMain
   end
   object RzPanel8: TRzPanel [3]
     Left = 0
-    Top = 544
+    Top = 524
     Width = 800
     Height = 26
     Align = alBottom
@@ -1162,7 +1162,7 @@ inherited frmPosMain: TfrmPosMain
   end
   object rzHelp: TRzPanel [4]
     Left = 0
-    Top = 474
+    Top = 454
     Width = 800
     Height = 70
     Align = alBottom

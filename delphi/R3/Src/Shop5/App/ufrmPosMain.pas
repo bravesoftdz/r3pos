@@ -392,7 +392,11 @@ begin
   finally
     F.Free;
   end;
-  ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600);
+
+  if (Screen.DesktopRect.Bottom-Screen.DesktopRect.Top)/(Screen.DesktopRect.Right-Screen.DesktopRect.Left)>600/800 then
+     ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600)
+  else
+     ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600);
   SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   rzinfo1.Width := RzPanel2.ClientWidth div 2 -10;
   

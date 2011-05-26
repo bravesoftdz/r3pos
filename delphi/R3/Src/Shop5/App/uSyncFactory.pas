@@ -2,7 +2,7 @@ unit uSyncFactory;
 
 interface
 uses
-  Windows, Messages, SysUtils, Classes,ZDataSet,ZBase,ObjCommon, ZLogFile;
+  Windows, Messages, Forms, SysUtils, Classes,ZDataSet,ZBase,ObjCommon, ZLogFile;
 type
   PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
@@ -2075,9 +2075,13 @@ begin
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('SALES_DATE').AsString := formatDatetime('YYYYMMDD',Date());
     Params.ParamByName('flag').AsInteger := 3;
-    Global.RemoteFactory.ExecProc('TSyncRimInfo',Params);
-    Global.RemoteFactory.ExecProc('TSyncCustomer',Params);
+    try
+      Global.RemoteFactory.ExecProc('TSyncRimInfo',Params);
+    except
+      MessageBox(Application.Handle,'数据无法同步的RIM平台,请通知客服人员','友情提示...',MB_OK+MB_ICONINFORMATION);
+    end;
   finally
     Params.Free;
   end;

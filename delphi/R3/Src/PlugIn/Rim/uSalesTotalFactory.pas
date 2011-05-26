@@ -42,12 +42,12 @@ begin
    1:
     begin
       Session:='';
-      vSALES_DATE:='to_char(M.CREA_DATE)';    //台账日期 转成 varchar
+      vSALES_DATE:='to_char(M.SALES_DATE)';    //台账日期 转成 varchar
     end;
    4:
     begin
       Session:='session.';
-      vSALES_DATE:='trim(char(M.CREA_DATE))';    //台账日期 转成 varchar
+      vSALES_DATE:='trim(char(M.SALES_DATE))';   //台账日期 转成 varchar
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
@@ -60,7 +60,7 @@ begin
              ' SALES_DAY VARCHAR(8) NOT NULL,'+  //销售日期
              ' QTY_ORD DECIMAL (18,6),'+         //台账销售数量
              ' AMT DECIMAL (18,6),'+             //台账销售金额
-             ' CO_NUM VARCHAR(30) NOT NULL '+   //单据号[台账日期 + 零售户ID+ R3_门店ID后4位]
+             ' CO_NUM VARCHAR(30) NOT NULL '+    //单据号[台账日期 + 零售户ID+ R3_门店ID后4位]
              ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日销售临时表INF_SALESUM错误:'+PlugIntf.GetLastError);
     end;

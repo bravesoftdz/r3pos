@@ -42,12 +42,12 @@ begin
    1:
     begin
       Session:='';
-      vSALES_DATE:='to_char(M.SALES_DATE)';    //台账日期 转成 varchar
+      vSALES_DATE:='to_char(SALES_DATE)';    //台账日期 转成 varchar
     end;
    4:
     begin
       Session:='session.';
-      vSALES_DATE:='trim(char(M.SALES_DATE))';   //台账日期 转成 varchar
+      vSALES_DATE:='trim(char(SALES_DATE))';   //台账日期 转成 varchar
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID

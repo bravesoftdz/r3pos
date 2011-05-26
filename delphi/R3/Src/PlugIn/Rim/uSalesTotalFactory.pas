@@ -84,7 +84,7 @@ begin
 
   Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
     'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' as SALES_DATE,'+
-    ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
+    ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
     ' group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' ';

@@ -87,9 +87,9 @@ begin
     ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
-
+  PlugIntf.WriteLogFile(Pchar(Str));
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+PlugIntf.GetLastError);
-  if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
+ // if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
 
   //第三步: 每一次执行作为一个事务提交
   try
@@ -97,15 +97,15 @@ begin
     //1、删除销售历史数据(先删除表体在删除表头):
     Str:='delete from RIM_RETAIL_CO_LINE A '+
          ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
-                      ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.RECK_DAY and B.COM_ID='''+ORGAN_ID+'''and B.TERM_ID='''+Short_ID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
+                      ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.SALES_DATE and B.COM_ID='''+ORGAN_ID+'''and B.TERM_ID='''+Short_ID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表体出错：'+PlugIntf.GetLastError);
-    Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.RECK_DAY) and A.COM_ID='''+ORGAN_ID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+CustID+''' ';
+    Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.SALES_DATE) and A.COM_ID='''+ORGAN_ID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+CustID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+PlugIntf.GetLastError);
 
     //2、插入日销售台账(先插表头在插入表体):
     Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
-         'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,RECK_DAY,''01'' as STATUS,'''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
-         ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,RECK_DAY';
+         'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
+         ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,SALES_DATE';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错:'+PlugIntf.GetLastError);
     Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT) '+
          'select CO_NUM,ITEM_ID,QTY_ORD,AMT from '+Session+'INF_SALESUM ';

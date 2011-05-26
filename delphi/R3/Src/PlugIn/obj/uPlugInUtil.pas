@@ -62,12 +62,13 @@ type
 
 type
   TRunInfo=Record
-    BegTime: string;   //开始上报时间点
-    BegTick: integer;  //开始上报GetTickCount
-    ReCount: integer;  //上报记录数据[单据数量]
-    ErCount: integer;  //错误数量
-  end;  
-
+    BegTime: string;      //开始上报时间点
+    BegTick: integer;     //开始上报GetTickCount
+    RunCount: integer;    //上报门店数
+    NotCount: integer;    //对应不上[R3门店  对不上  Rim零售户]
+    ErrorCount: integer;  //错误数量
+    ErrorStr: string;     //运行错误Str
+  end;
 
 function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string; //2011.04.14 获取上报最大编号(MaxNum)
 function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;  //2011.05.25 获取Rim零售户IDCust_ID

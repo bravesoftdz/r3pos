@@ -89,7 +89,7 @@ begin
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
   PlugIntf.WriteLogFile(Pchar(Str));
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+PlugIntf.GetLastError);
- // if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
+  if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
 
   //第三步: 每一次执行作为一个事务提交
   try

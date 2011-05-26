@@ -29,26 +29,27 @@ var
   Str,
   Short_ID,       //门店后四位代码
   CndTab,         //条件表
-  vSALES_DATE      //台账日期[转成字符]
+  SalesTab,       //销售视图
+  vSALES_DATE     //销售日期[转成字符]
   : string; 
 begin
   result := false;
   Short_ID:=Copy(SHOP_ID,Length(SHOP_ID)-3,4);
-  MaxStamp:=GetMaxNUM(PlugIntf,'10',SHOP_ID,ORGAN_ID,CustID); //返回日台账最大时间戳
+  MaxStamp:=GetMaxNUM(PlugIntf,'10',SHOP_ID,ORGAN_ID,CustID,UpMaxStamp); //返回日台账最大时间戳
   
   //创建日台帐临时[INF_RECKDAY]:
   case iDbType of
    1:
     begin
       Session:='';
-      vSALES_DATE:='trim(char(A.CREA_DATE))';    //台账日期 转成 varchar
+      vSALES_DATE:='trim(char(M.CREA_DATE))';    //台账日期 转成 varchar
     end;
    4:
     begin
       Session:='session.';
-      vSALES_DATE:='cast(A.CREA_DATE as varchar(8))';    //台账日期 转成 varchar
+      vSALES_DATE:='cast(M.CREA_DATE as varchar(8))';    //台账日期 转成 varchar
       Str:=
-        'DECLARE GLOBAL TEMPORARY TABLE session.INF_RECKDAY( '+
+        'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
              ' SHOP_ID VARCHAR(20) NOT NULL,'+   //R3门店ID
              ' SHORT_SHOP_ID VARCHAR(4) NOT NULL,'+  //R3门店ID后四位
@@ -56,55 +57,59 @@ begin
              ' CUST_ID VARCHAR(30) NOT NULL,'+   //RIM零售户ID
              ' ITEM_ID VARCHAR(30) NOT NULL,'+   //RIM商品ID
              ' GODS_ID CHAR(36) NOT NULL,'+      //R3商品ID
-             ' RECK_DAY VARCHAR(8) NOT NULL,'+   //台账日期
+             ' SALES_DAY VARCHAR(8) NOT NULL,'+  //销售日期
              ' QTY_ORD DECIMAL (18,6),'+         //台账销售数量
              ' AMT DECIMAL (18,6),'+             //台账销售金额
              ' CO_NUM VARCHAR(30) NOT NULL, '+   //单据号[台账日期 + 零售户ID+ R3_门店ID后4位] 
              ' TIME_STAMP bigint NOT NULL'+      //时间戳
              ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
-      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日销售临时表（session.INF_RECKDAY）错误！');
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日销售临时表INF_SALESUM错误:'+PlugIntf.GetLastError);
     end;
   end;
 
   iRet:=0;
   //第一步: 大于时间戳的台帐插入临时表:
   //条件表: 根据传入条件及指定日期返回对应门店及日期需要上报条件:
-  CndTab:='select A.TENANT_ID,A.SHOP_ID,C.CREA_DATE from RCK_GOODS_DAYS A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
-          ' A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
+  CndTab:='select TENANT_ID,SHOP_ID,SALES_DATE from SAL_SALESORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' ';
   if SALES_DATE='' then
-     CndTab:=CndTab+' and A.TIME_STAMP>'+MaxStamp+' '
+    CndTab:=CndTab+' and TIME_STAMP>'+MaxStamp+' '
   else
-     CndTab:=CndTab+' and ((A.TIME_STAMP>'+MaxStamp+')or(A.CREA_DATE='+SALES_DATE+'))'; //前台传入日期
+    CndTab:=CndTab+' and ((TIME_STAMP>'+MaxStamp+')or(SALES_DATE='+SALES_DATE+'))'; //前台传入日期
 
-  Str:='insert into '+Session+'INF_RECKDAY(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,RECK_DAY,QTY_ORD,AMT,TIME_STAMP) '+
-     'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' as RECK_DAY,'+
-     ' (case when '+GetDefaultUnitCalc+'<>0 then A.SALE_AMT/('+GetDefaultUnitCalc+') else A.SALE_AMT end) as SALE_AMT,A.SALE_RTL,A.TIME_STAMP,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
-     ' from RCK_GOODS_DAYS A,VIW_GOODSINFO B,('+CndTab+')C '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=B.GODS_ID and A.CREA_DATE=C.CREA_DATE and '+
-     ' A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
+  SalesTab:=
+    'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,'+vSALES_DATE+' as SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
+    ' where M.TENANT_ID=S.TENANT_ID and M.SALES_ID=S.SALES_ID and M.TENANT_ID=C.TENANT_ID and M.SHOP_ID=C.SHOP_ID and '+
+    ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+TENANT_ID+' and M.SHOP_ID='''+SHOP_ID+''' '+
+    ' group by M.TENANT_ID,M.SHOP_ID,M.SALES_DATE,S.GODS_ID';
+
+  Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,SALES_DATE,QTY_ORD,AMT,TIME_STAMP) '+
+    'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+ORGAN_ID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' as SALES_DATE,'+
+    ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
+    ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TENANT_ID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
+    ' group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' ';
 
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表数据出错:'+PlugIntf.GetLastError);
   if iRet=0 then Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
 
   //第三步: 每一次执行作为一个事务提交
-  UpMaxStamp:=GetValue(PlugIntf, 'select max(TIME_STAMP) as TIME_STAMP from '+Session+'INF_RECKDAY ');
   try
     PlugIntf.BeginTrans;
     //1、删除销售历史数据(先删除表体在删除表头):
     Str:='delete from RIM_RETAIL_CO_LINE A '+
-         ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_RECKDAY C '+
+         ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
                       ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.RECK_DAY and B.COM_ID='''+ORGAN_ID+'''and B.TERM_ID='''+Short_ID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表体出错：'+PlugIntf.GetLastError);
-    Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_RECKDAY B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.RECK_DAY) and A.COM_ID='''+ORGAN_ID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+CustID+''' ';
+    Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.RECK_DAY) and A.COM_ID='''+ORGAN_ID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+CustID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+PlugIntf.GetLastError);
 
     //2、插入日销售台账(先插表头在插入表体):
     Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
          'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,RECK_DAY,''01'' as STATUS,'''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
-         ' from '+Session+'INF_RECKDAY group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,RECK_DAY';
+         ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,RECK_DAY';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错:'+PlugIntf.GetLastError);
     Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT) '+
-         'select CO_NUM,ITEM_ID,QTY_ORD,AMT from '+Session+'INF_RECKDAY ';
+         'select CO_NUM,ITEM_ID,QTY_ORD,AMT from '+Session+'INF_SALESUM ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表体[RIM_RETAIL_CO_LINE]出错:'+PlugIntf.GetLastError);
 
     //3、更新上报时间戳:
@@ -143,7 +148,7 @@ var
   RunInfo: TRunInfo;  //运行日志
   DbType: integer;
 begin
-  ReckDate:='';
+  SALES_DATE:='';
   //返回数据库类型
   if PlugIntf.iDbType(DbType)<>0 then Raise Exception.Create('返回数据库类型错误：'+PlugIntf.GetLastError);
   

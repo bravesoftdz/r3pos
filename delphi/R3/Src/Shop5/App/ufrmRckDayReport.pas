@@ -312,7 +312,7 @@ begin
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P3_D1,P3_D2,'RECV_DATE')+
-     ' '+GetShopIDCnd(fndP3_SHOP_ID,'SHOP_ID')+
+     ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by A.RECV_DATE ';
 
@@ -344,7 +344,7 @@ begin
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P4_D1,P4_D2,'RECV_DATE')+
-     ' '+GetShopIDCnd(fndP4_SHOP_ID,'AA.SHOP_ID')+
+     ' '+GetShopIDCnd(fndP4_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+
      ' group by A.TENANT_ID,A.CREA_USER ';
 

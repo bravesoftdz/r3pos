@@ -70,7 +70,7 @@ type
     ErrorStr: string;     //运行错误Str
   end;
 
-function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string; //2011.04.14 获取上报最大编号(MaxNum)
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string): string; //2011.04.14 获取上报最大编号(MaxNum)
 function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;  //2011.05.25 获取Rim零售户IDCust_ID
 function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string): string;  //2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
 function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string): Boolean;
@@ -159,18 +159,22 @@ begin
 end;
 
 //2011.04.14 获取上报最大编号(MaxNum)
-function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string): string;
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string): string;
 var
-  iRet: integer;
+  iRet,DBType: integer;
   Str: string;
   Rs: TZQuery;
 begin
   result:='';
   try
+    if PlugIntf.iDbType(DBType)<>0 then Raise Exception.Create('返回数据库类型出错：'+PlugIntf.GetLastError);
     Rs:=TZQuery.Create(nil);
-    Rs.SQL.Text:='select MAX_NUM from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
+    Rs.SQL.Text:='select MAX_NUM,'+GetTimeStamp(DBType)+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
     if OpenData(PlugIntf, Rs) then
+    begin
       result:=trim(Rs.Fields[0].AsString);
+      UpMaxStmp:=trim(Rs.Fields[1].AsString);
+    end;
     if result='' then result:='0';
     if Rs.IsEmpty then
     begin

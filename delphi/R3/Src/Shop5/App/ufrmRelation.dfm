@@ -1,6 +1,6 @@
 inherited frmRelation: TfrmRelation
-  Left = 155
-  Top = 23
+  Left = 200
+  Top = 107
   Width = 844
   Height = 543
   Caption = #20379#24212#38142#31649#29702

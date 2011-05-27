@@ -45,7 +45,6 @@ type
     //下载订单后自动完成入库
     procedure AmountToCalc(edtTable: TDataSet; Amount: Real);  //计算
     function IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean; //入库1单
-    function DoAutoDownStockOrder(const IndeDate: string):Boolean;
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
@@ -340,11 +339,6 @@ begin
   finally
     Rs.Free;
   end;
-end;
-
-function TfrmDownStockOrder.DoAutoDownStockOrder(const IndeDate: string): Boolean;
-begin
-
 end;
 
 function TfrmDownStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;

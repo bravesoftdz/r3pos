@@ -158,7 +158,7 @@ begin
     FAllcount:=0;
     vParams:=TftParamList.Create(nil);
     vParams.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    vParams.ParamByName('UPDATE_MODE').AsInteger:=GetUpdateMode;
+    vParams.ParamByName('UPDATE_MODE').AsInteger:=GetUpdateMode;    
     Factor.Open(CdsTable,'TSynchronGood_Relation',vParams);  //==RspServer连接模式时执行
     result:=CdsTable.Active;
     if result then SetResultMsg;  //显示结果说明

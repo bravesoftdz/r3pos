@@ -13,6 +13,7 @@ object frmLogo: TfrmLogo
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object Image3: TImage

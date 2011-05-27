@@ -400,6 +400,7 @@ end;
 function TPlugIn.DbLock(Locked: boolean): integer;
 begin
   DbLocked := Locked;
+  result := 0;
 end;
 
 procedure TPlugIn.SetPlugInDisplayName(const Value: string);

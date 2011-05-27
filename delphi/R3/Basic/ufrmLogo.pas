@@ -12,6 +12,7 @@ type
     Label1: TLabel;
     ProgressBar1: TProgressBar;
     Image3: TImage;
+    procedure FormCreate(Sender: TObject);
   private
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
@@ -35,6 +36,12 @@ begin
   ProgressBar1.Position := Postion;
   Label1.Caption := Caption;
   Label1.Update;
+end;
+
+procedure TfrmLogo.FormCreate(Sender: TObject);
+begin
+  if FileExists(ExtractFilePath(ParamStr(0))+'flash.jpg') then
+     Image3.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'flash.jpg');
 end;
 
 initialization

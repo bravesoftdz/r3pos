@@ -1351,7 +1351,7 @@ begin
                with TCreateDbFactory.Create do
                begin
                  try
-                    RspComVersion := Factor.ExecProc('TGetComVersion');
+                   { RspComVersion := Factor.ExecProc('TGetComVersion');
                     if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
                     begin
                       if ShopGlobal.ONLVersion then
@@ -1366,7 +1366,7 @@ begin
                           Global.MoveToLocal;
                           Global.Connect;
                         end;
-                    end;
+                    end;   }
                  finally
                     free;
                  end;

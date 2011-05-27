@@ -76,7 +76,9 @@ uses ufrmDbOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFact
 function TfrmDbOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if trim(fndSALES_ID.Text) <> '' then
@@ -132,10 +134,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('SALES_ID').AsString;

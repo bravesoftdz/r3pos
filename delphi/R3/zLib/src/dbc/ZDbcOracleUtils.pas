@@ -410,7 +410,7 @@ begin
     if DefVarManager.IsNull(Values[I]) then
     begin
       CurrentVar.Indicator := -1;
-      CurrentVar.Data := nil;
+//      CurrentVar.Data := nil;  zhangsr delete 不能清空，要为以后留地址
     end
     else
     begin

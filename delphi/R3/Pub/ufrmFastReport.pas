@@ -302,6 +302,7 @@ var
   s:string;
 begin
   if frReport=nil then Exit;
+  if (Global.UserID<>'admin') and (Global.UserID<>'system') then Raise Exception.Create('只有管理员才能操作此功能.');
   Desgn := true;
   try
   if SaveIndex<0 then SaveIndex := GlobalIndex;
@@ -776,6 +777,7 @@ end;
 procedure TfrmFastReport.actFormerExecute(Sender: TObject);
 begin
   inherited;
+  if (Global.UserID<>'admin') and (Global.UserID<>'system') then Raise Exception.Create('只有管理员才能操作此功能.');
   Desgn := true;
   try
     DoFormer;

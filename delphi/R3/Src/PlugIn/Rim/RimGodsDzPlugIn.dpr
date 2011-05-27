@@ -199,13 +199,23 @@ end;
 
 //RSP调用插件时执行此方法
 function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+var
+  TenantID: string;  //企业ID
+  vParam:TftParamList; //参数
 begin
   try
     //2011.04.08 Pm  Add 执行从[RIM_GOODSINFO] ==> [INF_GOODS_RELATION]导入
     //调试使用: DoUpdateINF_GOODSINFO(GPlugIn, '100011'); //StrPas(Params)
     //GPlugIn.WriteLogFile(PChar('传入Tenant_ID:'+Params));
-    
-    result:=DoUpdateINF_GOODSINFO(GPlugIn, StrPas(Params));  //StrPas(Params)
+    try
+      vParam:=TftParamList.Create(nil);
+      vParam.Decode(vParam,StrPas(Params));
+      TenantID:=vParam.ParamByName('TENANT_ID').AsString;
+    finally
+      vParam.Free;
+    end;
+
+    result:=DoUpdateINF_GOODSINFO(GPlugIn, TenantID);  //StrPas(Params)
   except
     on E:Exception do
     begin

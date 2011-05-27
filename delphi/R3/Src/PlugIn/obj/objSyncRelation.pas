@@ -188,9 +188,10 @@ end;
 function TSynchronGood_Relation.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   PlugIn: TPlugIn;
-  TENANT_ID,Str: string;
+  InParams,TENANT_ID,Str: string;
   UpdateMode: integer;
   vData: oleVariant;
+  vParam: TftParamList;
 begin
   result:=False;
   //供应链对照同步组件ID: 1001
@@ -199,7 +200,15 @@ begin
     TENANT_ID:=InttoStr(Params.ParamByName('TENANT_ID').AsInteger);
     UpdateMode:=Params.ParamByName('UPDATE_MODE').AsInteger;
     //第一步: 从第三方视图 到 RSP中间表;
-    PlugIn.DLLDoExecute(TENANT_ID, vData);
+    try
+      vParam:=TftParamList.Create(nil);
+      vParam.ParamByName('TENANT_ID').AsString:=TENANT_ID;
+      InParams:=vParam.Encode(vParam);
+    finally
+      vParam.Free;
+    end;
+    PlugIn.DLLDoExecute(InParams, vData);
+
     //第二步: 从RSP中间表 到 RSP的关系表;
     case AGlobal.iDbType of
      0: DoUpdateRelation_MSSQL(AGlobal,TENANT_ID,UpdateMode);
@@ -210,19 +219,22 @@ begin
      1:
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' else ''未知状态'' end) as UpdateCase '+
+          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照'' else ''未知状态'' end) as UpdateCase '+
+          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG in (0,2) Order by GODS_CODE';
       end;
      3:
       begin
         Str:=
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=1 then ''已对照'' else ''未知状态'' end) as UpdateCase '+
+          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=1 then ''已对照'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG in (0,1) Order by GODS_CODE';
       end;
     end;

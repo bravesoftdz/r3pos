@@ -37,16 +37,22 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
   private
-    procedure CheckIsOrderDown; //判断本地是否已下载过
+    function CheckIsOrderDown: Boolean; //判断本地是否已下载过
     function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function GetOrderDate: TDate;
     function GetINDE_ID: string;
+
+    //下载订单后自动完成入库
+    procedure AmountToCalc(edtTable: TDataSet; Amount: Real);  //计算
+    function IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean; //入库1单
+    function DoAutoDownStockOrder(const IndeDate: string):Boolean;
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
     procedure OpenIndeOrderList;  //查询订单主表数据
     procedure DoCopyIndeOrderData;    //将选中的订单明细处理到中间表
     class function DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
+    class function AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认[IndeDate='YYYYMMDD']
     property OrderDate: TDate read GetOrderDate;
   end;
 
@@ -59,6 +65,40 @@ uses
 {$R *.dfm}
 
 { TfrmDownStockOrder }
+
+{ 订单日期：IndeDate 如：20110527 }
+class function TfrmDownStockOrder.AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认
+var
+  FrmObj: TfrmDownStockOrder;
+begin
+  Result:=False;
+  with TfrmDownStockOrder.Create(nil) do
+  begin
+    try
+      //1、调用原取Orade列表过程，返回近30天订单
+      OpenIndeOrderList;  //查询订单主表数据
+      if cdsTable.IsEmpty then exit; //没有订单List就不退出
+      //2、循环订单入库
+      cdsTable.First;
+      while not cdsTable.Eof do
+      begin
+        if cdsTable.FieldByName('INDE_DATE').AsString=IndeDate then  //指定日期下载
+        begin
+          if CheckIsOrderDown=False then //检查还没入库继续入库
+          begin
+            DoCopyIndeOrderData;   //复制订单明细数据
+            FAobj.ReadFromDataSet(cdsTable);  //读取返回值
+            IndeOrderWriteToStock(FAobj, FReData); //保存入库
+          end;
+        end;
+        cdsTable.Next;
+      end;
+    finally
+      FrmObj.Free;
+    end;
+  end;
+end;
+
 
 class function TfrmDownStockOrder.DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
 var
@@ -93,8 +133,13 @@ begin
   if trim(CdsTable.fieldbyName('INDE_ID').AsString)<>'' then
   begin
     //2011.05.10 Add判断是否本地已下载过
-    CheckIsOrderDown;
-    self.DoCopyIndeOrderData;  //复制明细数据
+    if CheckIsOrderDown then
+    begin
+      cdsTable.Delete;
+      Raise Exception.Create('当前订单：'+CdsTable.fieldbyName('INDE_ID').AsString+'已本地下载不能重复下载！');
+    end;
+
+    DoCopyIndeOrderData;  //复制明细数据
     FAobj.ReadFromDataSet(cdsTable);  //读取返回值
     ModalResult:=MROK; //正常返回
   end;
@@ -153,6 +198,7 @@ var
 begin
   try
     //启用日期  
+    {
     Rs:=Global.GetZQueryFromName('SYS_DEFINE');
     if (Rs<>nil) and (Rs.Active) then
     begin
@@ -163,6 +209,7 @@ begin
       end else
         UseDate:='';
     end;
+    }
 
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=1;
@@ -181,7 +228,7 @@ begin
         whereCnd:=whereCnd+','''+CdsTable.fieldbyName('INDE_ID').AsString+''' ';
       CdsTable.Next;
     end;
-    
+
     Rs:=TZQuery.Create(nil);
     Rs.Close;
     Rs.SQL.Text:='select COMM_ID from STK_STOCKORDER where COMM_ID in ('+whereCnd+') ';
@@ -202,20 +249,13 @@ begin
 end;
 
 procedure TfrmDownStockOrder.DoCopyIndeOrderData;
- function GetNum(Idx: integer): string;
- begin
-   if Idx<10 then
-     result:='    '+inttoStr(Idx)+' '
-   else
-     result:='    '+inttoStr(Idx);
- end;
 var
   i: integer;
   Msg,Str: String;
   vParam: TftParamList;
 begin
   i:=0;
-  try
+  try                              
     CdsStockData.Close;
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=2;
@@ -234,7 +274,7 @@ begin
       end;
       if i>0 then
       begin
-        Str:='系统检测到当前下载的订单,存在'+inttoStr(i)+'个商品没有对照关系！';
+        Str:='系统检测到当前下载的订单,有'+inttoStr(i)+'个新品！';
         Raise Exception.Create(Str);
       end;
       FReData:=CdsStockData.Data;
@@ -282,11 +322,12 @@ begin
   end;
 end;
 
-procedure TfrmDownStockOrder.CheckIsOrderDown;
+function TfrmDownStockOrder.CheckIsOrderDown: Boolean;
 var
   Rs: TZQuery;
   Str,IndeID: string;
 begin
+  result:=False;
   IndeID:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
   Str:='select Count(*) as ReSum from STK_STOCKORDER where COMM_ID='''+IndeID+''' ';
   try
@@ -295,13 +336,213 @@ begin
     Rs.SQL.Text:=Str;
     Factor.Open(Rs);
     if Rs.FieldByName('ReSum').AsInteger>0 then
-    begin
-      cdsTable.Delete;
-      Raise Exception.Create('当前订单：'+IndeID+'已本地下载不能重复下载！');
-    end;
+      result:=true;
   finally
     Rs.Free;
   end;
+end;
+
+function TfrmDownStockOrder.DoAutoDownStockOrder(const IndeDate: string): Boolean;
+begin
+
+end;
+
+function TfrmDownStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
+var
+  i: integer;
+  mny,amt:real;
+  Rs, RsGods, RsUnit, cdsHeader,cdsDetail: TZQuery;
+  TenantID,ShopID,CurName: string;
+  Params:TftParamList;  
+begin
+  result:=False;
+  mny:=0;
+  amt:=0;
+  try
+    Rs:=TZQuery.Create(nil);
+    cdsHeader:=TZQuery.Create(nil);
+    cdsDetail:=TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
+    Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('STOCK_ID').asString :='';
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsHeader,'TStockOrder',Params);
+      Factor.AddBatch(cdsDetail,'TStockData',Params);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+    //写入表头数据
+    cdsHeader.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    cdsHeader.FieldbyName('SHOP_ID').AsString := Aobj.FieldbyName('SHOP_ID').AsString;
+    cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
+    cdsHeader.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+    cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;
+    cdsHeader.FieldByName('CLIENT_ID').AsString := Aobj.FieldbyName('TENANT_ID').AsString; //烟草公司ID
+    cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
+    cdsHeader.FieldByName('COMM_ID').AsString := Aobj.FieldbyName('INDE_ID').AsString; //订单号
+    if ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0' then
+    begin
+      cdsHeader.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
+      cdsHeader.FieldbyName('CHK_USER').AsString := Global.UserID;
+    end;
+    //写入表体数据
+    Rs.Data:=vData;
+    RsGods := Global.GetZQueryFromName('PUB_GOODSINFO');
+    RsUnit := Global.GetZQueryFromName('PUB_MEAUNITS');
+
+    cdsDetail.IndexFieldNames:='SEQNO';
+    cdsDetail.SortedFields:='SEQNO';
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      cdsDetail.Append;
+      cdsDetail.FieldbyName('SEQNO').AsInteger := Rs.RecNo;
+      cdsDetail.FieldbyName('GODS_ID').AsString := Rs.FieldbyName('GODS_ID').AsString;
+      if RsGods.Locate('GODS_ID',Rs.FieldbyName('GODS_ID').AsString,[]) then
+      begin
+        cdsDetail.FieldbyName('GODS_NAME').AsString := RsGods.FieldbyName('GODS_NAME').AsString;
+        cdsDetail.FieldbyName('GODS_CODE').AsString := RsGods.FieldbyName('GODS_CODE').AsString;
+        cdsDetail.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;
+        cdsDetail.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_INPRICE').AsFloat;
+      end else
+      begin
+        cdsDetail.Close;
+        cdsDetail.CreateDataSet;
+        Exit; // 退出
+      end;
+      //单位换算:
+      cdsDetail.FieldbyName('UNIT_ID').AsString := Rs.FieldbyName('UNIT_ID').AsString;
+      // UnitToCalc(cdsDetail.FieldbyName('UNIT_ID').AsString);
+
+      cdsDetail.FieldbyName('AMOUNT').AsFloat := Rs.FieldbyName('AMOUNT').AsFloat;   //数量
+      cdsDetail.FieldbyName('AMONEY').AsFloat := Rs.FieldbyName('AMONEY').AsFloat;   //金额
+      cdsDetail.FieldbyName('AGIO_MONEY').AsFloat := Rs.FieldbyName('AGIO_MONEY').AsFloat;  //折扣（让利）金额
+      if Rs.FieldbyName('AMOUNT').AsFloat<>0 then
+        cdsDetail.FieldbyName('APRICE').AsString := formatFloat('#0.000', Rs.FieldbyName('AMONEY').AsFloat / Rs.FieldbyName('AMOUNT').AsFloat);
+
+      AMountToCalc(cdsDetail, cdsDetail.FieldbyName('AMOUNT').AsFloat);
+      cdsDetail.FieldbyName('REMARK').AsString := '';
+      if Rs.FieldbyName('NEED_AMT').AsFloat<>0 then
+         cdsDetail.FieldbyName('REMARK').AsString := '需求量:'+Rs.FieldbyName('NEED_AMT').AsString;
+      if Rs.FieldbyName('CHK_AMT').AsFloat<>0 then
+         cdsDetail.FieldbyName('REMARK').AsString := cdsDetail.FieldbyName('REMARK').AsString+'审核量:'+Rs.FieldbyName('CHK_AMT').AsString;
+      //计算累计数
+      mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
+      amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
+
+      //处理不为空字段:
+      cdsDetail.FieldbyName('BATCH_NO').AsString:='#';
+      cdsDetail.FieldbyName('IS_PRESENT').AsInteger:=0; 
+      cdsDetail.Post;
+      Rs.Next;
+    end;
+    //保存汇总数
+    cdsHeader.Edit;
+    cdsHeader.FieldbyName('STOCK_MNY').asFloat := mny;
+    cdsHeader.FieldbyName('STOCK_AMT').asFloat := amt;
+    cdsHeader.Post;
+    //提交保存
+    Factor.BeginBatch;
+    Factor.AddBatch(cdsHeader,'TStockOrder');
+    Factor.AddBatch(cdsDetail,'TStockData');
+    Factor.CommitBatch;
+    result:=true;
+  finally
+    cdsHeader.Free;
+    cdsDetail.Free;
+    Rs.Free;
+    Params.Free;
+  end;    
+end;
+
+procedure TfrmDownStockOrder.AmountToCalc(edtTable: TDataSet; Amount: Real);
+var
+  rs:TZQuery;
+  AMoney,APrice,Agio_Rate,Agio_Money,SourceScale:Real;
+  Field:TField;
+begin
+  if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then
+    Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+     begin
+      SourceScale := 1;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+     begin
+      SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+     end
+  else
+  if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+     begin
+      SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+     end
+  else
+     begin
+      SourceScale := 1;
+     end;
+
+  Field := edtTable.FindField('CALC_AMOUNT');
+  if Field<>nil then
+  begin
+     Field.AsFloat := AMount * SourceScale;
+  end;
+
+  Field := edtTable.FindField('APRICE');
+  if Field=nil then Exit;
+  Field.AsString := FormatFloat('#0.000',Field.AsFloat);
+  //取单价
+  APrice := Field.asFloat;
+  //算金额
+  AMoney := StrtoFloat(FormatFloat('#0.00',APrice * AMount));
+  Field := edtTable.FindField('AMONEY');
+  if Field<>nil then
+     Field.AsString := FormatFloat('#0.00',AMoney);
+  if edtTable.FindField('ORG_PRICE') = nil then
+    begin
+      //计算折扣
+      Field := edtTable.FindField('AGIO_RATE');
+      if Field<>nil then
+         Agio_Rate := (Field.AsFloat / 100)
+      else
+         Agio_Rate := 1;
+      //如果=0为不打折
+      if Agio_Rate=0 then Agio_Rate := 1;
+
+      Agio_Money := (AMoney/Agio_Rate) - AMoney;
+    end
+  else
+    begin
+      if edtTable.FindField('ORG_PRICE').AsFloat=0 then
+         Agio_Money := 0
+      else
+         Agio_Money := edtTable.FindField('ORG_PRICE').AsFloat*Amount-AMoney;
+
+      //计算折扣
+      Field := edtTable.FindField('AGIO_RATE');
+      if (Field<>nil) and (AMount<>0) then
+         begin
+            if edtTable.FindField('ORG_PRICE').AsFloat<>0 then
+               Field.AsString := formatFloat('#0.0',AMoney *100 /(edtTable.FindField('ORG_PRICE').AsFloat*Amount))
+            else
+               Field.AsString := '100';
+         end;
+    end;
+  Field := edtTable.FindField('AGIO_MONEY');
+  if Field<>nil then
+     Field.AsString := FormatFloat('#0.00',Agio_Money);
+
+  Field := edtTable.FindField('CALC_MONEY');
+  if Field<>nil then
+     Field.AsString := FormatFloat('#0.00',AMoney) ;
+  edtTable.Post;
+  edtTable.Edit;
 end;
 
 end.

@@ -44,7 +44,7 @@ type
 
     //下载订单后自动完成入库
     procedure AmountToCalc(edtTable: TDataSet; Amount: Real);  //计算
-    function IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean; //入库1单
+    function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean; //入库1单
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
@@ -59,7 +59,7 @@ type
 implementation
 
 uses
-  uFnUtil, uGlobal, uShopGlobal;  //ufrmCallIntf,
+  uFnUtil, uDsUtil, uGlobal, uShopGlobal;  //ufrmCallIntf,
 
 {$R *.dfm}
 
@@ -83,11 +83,15 @@ begin
       begin
         if cdsTable.FieldByName('INDE_DATE').AsString=IndeDate then  //指定日期下载
         begin
-          if CheckIsOrderDown=False then //检查还没入库继续入库
-          begin
-            DoCopyIndeOrderData;   //复制订单明细数据
-            FAobj.ReadFromDataSet(cdsTable);  //读取返回值
-            IndeOrderWriteToStock(FAobj, FReData); //保存入库
+          try
+            if CheckIsOrderDown=False then //检查还没入库继续入库
+            begin
+              DoCopyIndeOrderData;   //复制订单明细数据
+              FAobj.ReadFromDataSet(cdsTable);  //读取返回值
+              IndeOrderWriteToStock(FAobj, FReData); //保存入库
+            end;
+          except
+            MessageBox(Handle,pchar('自动接收订单失败，请手工执行！'),'友情提示...',MB_OK+MB_ICONWARNING);
           end;
         end;
         cdsTable.Next;
@@ -328,7 +332,7 @@ var
 begin
   result:=False;
   IndeID:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
-  Str:='select Count(*) as ReSum from STK_STOCKORDER where COMM_ID='''+IndeID+''' ';
+  Str:='select Count(*) as ReSum from STK_STOCKORDER where TENANT_ID='''+InttoStr(Global.TENANT_ID)+''' and COMM_ID='''+IndeID+''' ';
   try
     Rs:=TZQuery.Create(nil);
     Rs.Close;
@@ -342,8 +346,16 @@ begin
 end;
 
 function TfrmDownStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
+  function GetDeptID: string;
+  var Rs: TZQuery;
+  begin
+    result:='';
+    Rs:=ShopGlobal.GetDeptInfo;
+    if Rs<>nil then
+      result:=Rs.fieldbyname('DEPT_ID').AsString;
+  end;
 var
-  i: integer;
+  i,DefInvIdx: integer;
   mny,amt:real;
   Rs, RsGods, RsUnit, cdsHeader,cdsDetail: TZQuery;
   TenantID,ShopID,CurName: string;
@@ -370,14 +382,27 @@ begin
       Raise;
     end;
     //写入表头数据
+    cdsHeader.FieldByName('STOCK_ID').AsString:=TSequence.NewId();
     cdsHeader.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsHeader.FieldbyName('SHOP_ID').AsString := Aobj.FieldbyName('SHOP_ID').AsString;
     cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
     cdsHeader.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-    cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;
+    cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;   //操作员
+    cdsHeader.FieldByName('GUIDE_USER').AsString :=Global.UserID;   //收货人 
     cdsHeader.FieldByName('CLIENT_ID').AsString := Aobj.FieldbyName('TENANT_ID').AsString; //烟草公司ID
     cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
-    cdsHeader.FieldByName('COMM_ID').AsString := Aobj.FieldbyName('INDE_ID').AsString; //订单号
+    cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
+    cdsHeader.FieldByName('COMM_ID').AsString := Aobj.FieldbyName('INDE_ID').AsString;     //订单号
+    cdsHeader.FieldByName('DEPT_ID').AsString := GetDeptID;     //默认部门
+    //默认票据类型、税率
+    DefInvIdx:=StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+    cdsHeader.FieldByName('INVOICE_FLAG').AsString :=inttostr(DefInvIdx);  //票据类型
+    case DefInvIdx of                                                      //税率  
+     1: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := 0;
+     2: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
+     3: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);   
+    end;
+
     if ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0' then
     begin
       cdsHeader.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
@@ -393,7 +418,8 @@ begin
     Rs.First;
     while not Rs.Eof do
     begin
-      cdsDetail.Append;
+      if cdsDetail.IsEmpty then cdsDetail.Edit else cdsDetail.Append;
+      cdsDetail.FieldByName('STOCK_ID').AsString:=cdsHeader.FieldByName('STOCK_ID').AsString;
       cdsDetail.FieldbyName('SEQNO').AsInteger := Rs.RecNo;
       cdsDetail.FieldbyName('GODS_ID').AsString := Rs.FieldbyName('GODS_ID').AsString;
       if RsGods.Locate('GODS_ID',Rs.FieldbyName('GODS_ID').AsString,[]) then

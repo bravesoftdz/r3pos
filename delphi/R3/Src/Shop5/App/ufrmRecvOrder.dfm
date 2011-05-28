@@ -334,13 +334,6 @@ inherited frmRecvOrder: TfrmRecvOrder
             Footers = <>
             Title.Caption = #24080#25143#21517#31216
             Width = 60
-          end
-          item
-            EditButtons = <>
-            FieldName = 'ACCOUNT_ID'
-            Footers = <>
-            Title.Caption = #24080#25143#20195#30721
-            Width = 30
           end>
         DropWidth = 157
         DropHeight = 180

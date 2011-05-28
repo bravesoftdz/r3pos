@@ -36,7 +36,6 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    Label17: TLabel;
     Label1: TLabel;
     Label40: TLabel;
     D1: TcxDateEdit;
@@ -45,7 +44,6 @@ type
     fndOrderStatus: TcxRadioGroup;
     fndRECV_USER: TzrComboBoxList;
     fndACCOUNT_ID: TzrComboBoxList;
-    fndCLIENT_ID: TzrComboBoxList;
     fndPAYM_ID: TcxComboBox;
     fndSHOP_ID: TzrComboBoxList;
     fndITEM_ID: TzrComboBoxList;
@@ -139,7 +137,7 @@ begin
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+//  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
   fndRECV_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');
@@ -407,8 +405,8 @@ begin
      strWhere := strWhere + ' and A.ITEM_ID='''+fndITEM_ID.AsString+'''';
   if fndRECV_USER.AsString <> '' then
      strWhere := strWhere + ' and A.RECV_USER='''+fndRECV_USER.AsString+'''';
-  if fndCLIENT_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CLIENT_ID='''+fndCLIENT_ID.AsString+'''';
+//  if fndCLIENT_ID.AsString <> '' then
+//     strWhere := strWhere + ' and A.CLIENT_ID='''+fndCLIENT_ID.AsString+'''';
   case fndOrderStatus.ItemIndex of
   1:strWhere := strWhere + ' and CHK_DATE is null';
   2:strWhere := strWhere + ' and CHK_DATE is not null';

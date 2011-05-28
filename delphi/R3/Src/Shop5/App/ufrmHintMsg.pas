@@ -190,7 +190,7 @@ begin
           MsgInfo^.sFlag := 0;
           if rs.FieldbyName('MSG_SOURCE').asString='到货通知' then
              begin
-               PostMessage(frmMain.Handle,MSC_MESSAGE,1,strtoint(MsgInfo^.SndDate));
+               PostMessage(frmMain.Handle,MSC_MESSAGE,99,strtoint(MsgInfo^.SndDate));
              end;
           FList.Add(MsgInfo);
           rs.Next;

@@ -1,26 +1,65 @@
 unit uReportFactory;
 
 interface
+uses
+  Windows, Messages, SysUtils, Variants, Classes;
 type
-  TColumnRp=Class
-    
-  public
-    constructor Create; 
-    destructor Destroy; override;
+
+pRCondi=TRCondi;
+TRCondi=record
+  Count:integer;
+  idx:array [1..30] of string;
+  V:array [1..30] of string;
+  alled:boolean;
   end;
+
+pRVariant=^RVariant;
+RVariant=record
+  Value:Variant;
+  end;
+  
+PColumnR=^TColumnR;
+TColumnR=record
+  //0 字符型 1 数据值
+  DataType:integer;
+  FieldName:string;
+  Title:string;
+  Condi:pRCondi;
+  end;
+  
+PRowR=^TRowR;
+TRowR=record
+  //0 字符型 1 数据值
+  DataType:integer;
+  FieldName:string;
+  Title:string;
+  Condi:pRCondi;
+  Buffer:array [0..255] of pRVariant;
+  end;
+
+TReportFactory=class
+  private
+    Cols:TList;
+    Rows:TList;
+  public
+    constructor Create;
+    destructor Destroy;override;
+  end;
+
 implementation
 
-{ TColumnRp }
+{ TReportFactory }
 
-constructor TColumnRp.Create;
+constructor TReportFactory.Create;
 begin
-  inherited;
-
+  Cols := TList.Create;
+  Rows := TList.Create;
 end;
 
-destructor TColumnRp.Destroy;
+destructor TReportFactory.Destroy;
 begin
-
+  Cols.Free;
+  Rows.Free;
   inherited;
 end;
 

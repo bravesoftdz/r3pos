@@ -542,10 +542,9 @@ begin
   try
     rs := TZQuery.Create(nil);
     rs.Close;
-    rs.SQL.Text := 'select Max(CLSE_DATE) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER  ';
+    rs.SQL.Text := 'select Max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    rs.ParamByName('CREA_USER').AsString := Global.UserID;
     Factor.Open(rs);
     if rs.Fields[0].AsString='' then       //获得当前收银员最近的结账日期
     LastTime := 0 else

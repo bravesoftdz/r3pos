@@ -1351,7 +1351,7 @@ begin
                with TCreateDbFactory.Create do
                begin
                  try
-                   { RspComVersion := Factor.ExecProc('TGetComVersion');
+                    RspComVersion := Factor.ExecProc('TGetComVersion');
                     if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
                     begin
                       if ShopGlobal.ONLVersion then
@@ -1366,7 +1366,7 @@ begin
                           Global.MoveToLocal;
                           Global.Connect;
                         end;
-                    end;   }
+                    end;   
                  finally
                     free;
                  end;
@@ -1414,9 +1414,6 @@ begin
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
                CaFactory.SyncAll(1);
-               //if not SyncFactory.CheckRemeteData then
-               //   SyncFactory.SyncAll
-               //else
                SyncFactory.SyncBasic(true);
                InitTenant;
              end;
@@ -3478,7 +3475,8 @@ end;
 
 procedure TfrmShopMain.wm_message(var Message: TMessage);
 begin
-
+  if Message.WParam = 99 then //执行自动到货确认
+     TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
 end;
 
 procedure TfrmShopMain.actfrmNetForOrderExecute(Sender: TObject);

@@ -63,6 +63,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsDetailBeforeEdit(DataSet: TDataSet);
     procedure edtRECV_USERPropertiesChange(Sender: TObject);
+    procedure edtSHOP_IDSaveValue(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
@@ -570,6 +571,14 @@ begin
 //    begin
 //      if TRecord_().FieldbyName('CODE_ID').AsString = '
 //    end;
+end;
+
+procedure TfrmRecvPosOrder.edtSHOP_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  FillData;
+  if locked then exit;
+  btnOk.Enabled:=True;
 end;
 
 end.

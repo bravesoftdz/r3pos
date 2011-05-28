@@ -1,6 +1,6 @@
 object frmHintMsg: TfrmHintMsg
-  Left = 532
-  Top = 238
+  Left = 533
+  Top = 239
   BorderStyle = bsNone
   ClientHeight = 168
   ClientWidth = 248

@@ -1099,6 +1099,7 @@ procedure TfrmStkIndentOrder.RzBitBtn1Click(Sender: TObject);
 var Flag:Integer;
 begin
   inherited;
+  if edtCLIENT_ID.DataSet.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Exit;
   if Trim(edtCLIENT_ID.Text) = '' then Exit;
   Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
   case Flag of

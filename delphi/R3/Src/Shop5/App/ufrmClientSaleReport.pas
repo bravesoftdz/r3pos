@@ -266,8 +266,20 @@ begin
   fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex; //显示单位
 
   fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
-  fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
-  fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
+  //fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
+  //fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
+
+  fndP2_SHOP_VALUE.KeyValue:=fndP1_SHOP_VALUE.KeyValue;
+  fndP2_SHOP_VALUE.Text:=fndP1_SHOP_VALUE.Text;
+
+  fndP2_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
+  fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
+
+  fndP2_CLIENT_ID.Text := fndP1_CLIENT_ID.Text;
+  fndP2_CLIENT_ID.ItemIndex := fndP1_CLIENT_ID.ItemIndex;
+
+  fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
+  fndP2_SHOP_ID.Text := fndP1_SHOP_ID.Text;
 
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -347,17 +359,22 @@ procedure TfrmClientSaleReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-
   P3_D1.Date:=P2_D1.Date;
   P3_D2.Date:=P2_D2.Date;
   Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID); //部门名称
   Copy_ParamsValue('SHOP_TYPE',2,3);   //管理群组
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
 
-  fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
-  fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
+  //fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
+  //fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
 
-  RzPage.ActivePageIndex:=1;
+  fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
+  fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
+
+  fndP3_CLIENT_ID.KeyValue := adoReport2.FieldByName('CLIENT_ID').AsString;
+  fndP3_CLIENT_ID.Text := adoReport2.FieldByName('CLIENT_NAME').AsString;
+
+  RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
 end;
 
@@ -367,7 +384,7 @@ procedure TfrmClientSaleReport.DBGridEh2GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmClientSaleReport.fndP3_REPORT_FLAGPropertiesChange(
@@ -454,7 +471,10 @@ begin
   Copy_ParamsValue(fndP3_DEPT_ID, fndP4_DEPT_ID);  //部门名称
   fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
 
-  RzPage.ActivePageIndex:=2;
+  fndP4_CLIENT_ID.KeyValue := fndP3_CLIENT_ID.KeyValue;
+  fndP4_CLIENT_ID.Text := fndP3_CLIENT_ID.Text;
+
+  RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
 end;
 
@@ -491,7 +511,10 @@ begin
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue('TYPE_ID',4,5);   //商品指标
 
-  RzPage.ActivePageIndex:=3;
+  fndP5_CLIENT_ID.KeyValue := fndP4_CLIENT_ID.KeyValue;
+  fndP5_CLIENT_ID.Text := fndP4_CLIENT_ID.Text;
+
+  RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
 end;
 
@@ -670,10 +693,16 @@ begin
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
     begin
-      case fndP5_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+    case fndP5_SHOP_TYPE.ItemIndex of
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP5_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP5_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+       end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
-      end;
+    end;
     end;
 
   //商品指标:
@@ -808,8 +837,14 @@ begin
   if trim(fndP4_SHOP_VALUE.AsString)<>'' then
   begin
     case fndP4_SHOP_TYPE.ItemIndex of
-     0:strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
-     1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP4_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP4_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
     end;
   end;
     
@@ -941,8 +976,14 @@ begin
   if (fndP3_SHOP_VALUE.AsString<>'') then
   begin
     case fndP3_SHOP_TYPE.ItemIndex of
-     0: strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
-     1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP3_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP3_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
     end;
   end;
 
@@ -1096,7 +1137,7 @@ var
   IsVisble: Boolean;
   Rs: TZQuery;
 begin
-  Rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
+  {Rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
   if Rs<>nil then
   begin
     try
@@ -1108,7 +1149,7 @@ begin
       Rs.Filtered:=false;
       Rs.Filter:='';
     end;
-  end;
+  end; }
 
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := IsVisble;
@@ -1204,8 +1245,14 @@ begin
   if (fndP2_SHOP_VALUE.AsString<>'') then
     begin
       case fndP2_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+        0:
+         begin
+           if FnString.TrimRight(trim(fndP2_SHOP_VALUE.AsString),2)='00' then //非末级区域
+             strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP2_SHOP_VALUE.AsString)+'%'' '
+           else
+             strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
+         end;
+        1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
       end;
     end;
   //商品指标:
@@ -1245,7 +1292,7 @@ begin
   if Trim(fndP2_SHOP_ID.Text) <> '' then
     begin
       strWhere:=strWhere+' and A.SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
-      StrCnd:=' and SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+      StrCnd:=' and SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
     end;
     
   //客户群体
@@ -1253,7 +1300,7 @@ begin
     begin
       case fndP2_CLIENT_ID.ItemIndex of
         1: strWhere := strWhere + ' and D.FLAG=0 ';
-        2: strWhere := strWhere + ' and D.FLAG=1 ';
+        2: strWhere := strWhere + ' and D.FLAG=2 ';
       end;
     end;
     
@@ -1293,7 +1340,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,D.CLIENT_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
@@ -1381,7 +1428,7 @@ begin
   if Trim(fndP1_SHOP_ID.Text) <> '' then
     begin
       strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
-      StrCnd:=' and SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+      StrCnd:=' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
     end;
 
   //客户群体
@@ -1389,7 +1436,7 @@ begin
     begin
       case fndP1_CLIENT_ID.ItemIndex of
         1: strWhere := strWhere + ' and D.FLAG=0 ';
-        2: strWhere := strWhere + ' and D.FLAG=1 ';
+        2: strWhere := strWhere + ' and D.FLAG=2 ';
       end;
     end;
 

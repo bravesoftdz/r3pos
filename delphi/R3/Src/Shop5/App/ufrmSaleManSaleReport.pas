@@ -269,6 +269,15 @@ begin
   fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
 
+  fndP2_USER_ID.KeyValue := fndP1_USER_ID.KeyValue;
+  fndP2_USER_ID.Text := fndP1_USER_ID.Text;
+
+  fndP2_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
+  fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
+
+  fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
+  fndP2_SHOP_ID.Text := fndP1_SHOP_ID.Text;
+
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
 end;
@@ -354,10 +363,13 @@ begin
   Copy_ParamsValue('SHOP_TYPE',2,3);   //管理群组
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
 
-  fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
-  fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
+  fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
+  fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
 
-  RzPage.ActivePageIndex:=1;
+  fndP3_USER_ID.KeyValue := adoReport2.FieldByName('USER_ID').AsString;
+  fndP3_USER_ID.Text := adoReport2.FieldByName('USER_NAME').AsString;
+
+  RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
 end;
 
@@ -454,7 +466,13 @@ begin
   Copy_ParamsValue(fndP3_DEPT_ID, fndP4_DEPT_ID);  //部门名称
   fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
 
-  RzPage.ActivePageIndex:=2;
+  fndP4_SHOP_ID.KeyValue:=fndP3_SHOP_ID.KeyValue;
+  fndP4_SHOP_ID.Text:=fndP3_SHOP_ID.Text;
+
+  fndP4_USER_ID.KeyValue := fndP3_USER_ID.KeyValue;
+  fndP4_USER_ID.Text := fndP3_USER_ID.Text;
+
+  RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
 end;
 
@@ -491,7 +509,10 @@ begin
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue('TYPE_ID',4,5);   //商品指标
 
-  RzPage.ActivePageIndex:=3;
+  fndP5_USER_ID.KeyValue := fndP4_USER_ID.KeyValue;
+  fndP5_USER_ID.Text := fndP4_USER_ID.Text;
+
+  RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
 end;
 
@@ -1103,7 +1124,7 @@ var
   IsVisble: Boolean;
   Rs: TZQuery;
 begin
-  Rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
+  {Rs:=Global.GetZQueryFromName('CA_DEPT_INFO');
   if Rs<>nil then
   begin
     try
@@ -1115,7 +1136,7 @@ begin
       Rs.Filtered:=false;
       Rs.Filter:='';
     end;
-  end;
+  end;}
 
   IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := IsVisble;
@@ -1411,7 +1432,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',D.REGION_ID '+
+    ',B.REGION_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1425,7 +1446,7 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID  '+ strWhere + ' '+
-    'group by A.TENANT_ID,D.REGION_ID';
+    'group by A.TENANT_ID,B.REGION_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+

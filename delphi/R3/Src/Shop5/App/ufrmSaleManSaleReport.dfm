@@ -478,6 +478,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153

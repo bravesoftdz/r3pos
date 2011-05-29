@@ -148,7 +148,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 121
             Height = 20
             Properties.MaxLength = 30
-            TabOrder = 1
+            TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtLINKMAN: TcxTextEdit
@@ -158,7 +158,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 121
             Height = 20
             Properties.MaxLength = 20
-            TabOrder = 2
+            TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtTELEPHONE: TcxTextEdit
@@ -168,7 +168,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 121
             Height = 20
             Properties.MaxLength = 30
-            TabOrder = 3
+            TabOrder = 5
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtADDRESS: TcxTextEdit
@@ -178,7 +178,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 183
             Height = 20
             Properties.MaxLength = 50
-            TabOrder = 4
+            TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPOSTALCODE: TcxTextEdit
@@ -188,7 +188,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 121
             Height = 20
             Properties.MaxLength = 6
-            TabOrder = 5
+            TabOrder = 6
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtHOMEPAGE: TcxTextEdit
@@ -198,7 +198,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Width = 183
             Height = 20
             Properties.MaxLength = 6
-            TabOrder = 6
+            TabOrder = 2
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
         end
@@ -550,7 +550,7 @@ inherited frmTenantInfo: TfrmTenantInfo
         Width = 121
         Height = 20
         Properties.MaxLength = 50
-        TabOrder = 3
+        TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPASSWRD: TcxTextEdit
@@ -561,7 +561,7 @@ inherited frmTenantInfo: TfrmTenantInfo
         Height = 20
         Properties.EchoMode = eemPassword
         Properties.MaxLength = 25
-        TabOrder = 4
+        TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPASSWRD1: TcxTextEdit
@@ -572,7 +572,7 @@ inherited frmTenantInfo: TfrmTenantInfo
         Height = 20
         Properties.EchoMode = eemPassword
         Properties.MaxLength = 25
-        TabOrder = 5
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREGION_ID: TzrComboBoxList
@@ -587,7 +587,7 @@ inherited frmTenantInfo: TfrmTenantInfo
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 6
+        TabOrder = 7
         InGrid = False
         KeyValue = Null
         FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -625,7 +625,7 @@ inherited frmTenantInfo: TfrmTenantInfo
         Width = 121
         Height = 20
         Properties.MaxLength = 50
-        TabOrder = 7
+        TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

@@ -1,6 +1,6 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
-  Left = 259
-  Top = 143
+  Left = 221
+  Top = 118
   Width = 1101
   Caption = #23458#25143#38144#21806#25253#34920
   PixelsPerInch = 96
@@ -11,8 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
+        ActivePage = TabSheet2
         Color = clWhite
         ParentColor = False
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -446,6 +448,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     item
                       EditButtons = <>
                       FieldName = 'CODE_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #22320#21306#21517#31216
                       Width = 153
@@ -1016,7 +1019,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CLIENT_ID'
+                    FieldName = 'CLIENT_CODE'
                     Footers = <>
                     Title.Caption = #23458#25143#32534#21495
                     Width = 62

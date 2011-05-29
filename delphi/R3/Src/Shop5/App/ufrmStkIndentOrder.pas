@@ -121,7 +121,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,
-     ufrmShopInfo, ufrmShopMain;
+     ufrmShopInfo, ufrmShopMain, ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmStkIndentOrder.CancelOrder;
@@ -1106,9 +1106,10 @@ begin
       TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
     end;
     1:begin
+      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
     3:begin
-      //TfrmShopInfo.ShowDialog(Self,edtCLIENT_ID.DataSet.FieldByName('CLIENT_ID').AsString);
+      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
   end;
 end;

@@ -114,8 +114,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrder,ufrmFindOrder
-  ;
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,
+     ufrmStockOrder,ufrmFindOrder, ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmStkRetuOrder.CancelOrder;
@@ -1063,8 +1063,10 @@ begin
       TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
     end;
     1:begin
+      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
     3:begin
+      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
   end;
 end;

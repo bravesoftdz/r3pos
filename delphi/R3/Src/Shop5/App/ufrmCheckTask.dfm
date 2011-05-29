@@ -3,7 +3,7 @@ inherited frmCheckTask: TfrmCheckTask
   Top = 329
   BorderStyle = bsDialog
   Caption = #30424#28857#31649#29702
-  ClientHeight = 199
+  ClientHeight = 209
   ClientWidth = 344
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -11,7 +11,7 @@ inherited frmCheckTask: TfrmCheckTask
   TextHeight = 12
   object RzLabel1: TRzLabel [0]
     Left = 40
-    Top = 20
+    Top = 12
     Width = 84
     Height = 20
     Caption = #30424#28857#26085#26399
@@ -25,7 +25,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object Label1: TLabel [1]
     Left = 34
-    Top = 125
+    Top = 118
     Width = 276
     Height = 36
     Caption = #27880#65306#24320#22987#30424#28857#21518#24314#35758#20572#27490#24405#20837#19994#21153#21333#25454#65292#24453#30424#28857#23457#26680#13'    '#13'    '#23436#27605#21518#20877#36827#34892#34917#24405#12290
@@ -38,7 +38,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object Label40: TLabel [2]
     Left = 42
-    Top = 89
+    Top = 86
     Width = 60
     Height = 12
     Caption = #30424#28857#26041#24335#65306
@@ -51,7 +51,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object Label2: TLabel [3]
     Left = 42
-    Top = 57
+    Top = 50
     Width = 60
     Height = 12
     Caption = #30424#28857#26041#24335#65306
@@ -64,7 +64,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object RzBitBtn5: TRzBitBtn [4]
     Left = 91
-    Top = 177
+    Top = 165
     Height = 29
     Caption = #24320#22987#30424#28857
     Color = clSilver
@@ -86,7 +86,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object RzBitBtn1: TRzBitBtn [5]
     Left = 190
-    Top = 177
+    Top = 165
     Height = 29
     Caption = #20851#38381
     Color = clSilver
@@ -108,7 +108,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object edtCHECK_TYPE: TGroupBox [6]
     Left = 105
-    Top = 79
+    Top = 72
     Width = 200
     Height = 35
     TabOrder = 2
@@ -146,7 +146,7 @@ inherited frmCheckTask: TfrmCheckTask
   end
   object edtSHOP_ID: TzrComboBoxList [7]
     Left = 104
-    Top = 55
+    Top = 46
     Width = 201
     Height = 20
     Properties.AutoSelect = False

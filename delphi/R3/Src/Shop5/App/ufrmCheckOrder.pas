@@ -53,10 +53,11 @@ type
     { Private declarations }
     w:integer;
     PrintQry: TZQuery;
+    FNearShop_ID: string;  //最近一次打开SHOP_ID
     FIsCalcRecordCount: Boolean; //启用盘点时创建的库存明细且没有录入盘点数量
     procedure CalcRecordCount;   //计算记录
     procedure SetRecordCount(ReSum: Integer);    //
-    procedure GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean=False);
+    procedure GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string);
     procedure Calc(Kind: integer);
     procedure SetIsCalcRecordCount(const Value: Boolean); //Kind(1)1:输入 实盘 计算 盈亏; (2)2:输入 盈亏 计算 实盘
     procedure UnitToCalc(UNIT_ID:string);override;
@@ -67,9 +68,9 @@ type
   public
     //检测数据合法性
     procedure CheckInvaid;override;
-    function CheckInput:boolean;override;
+    function  CheckInput:boolean;override;
     //输入批号
-    function GodsToBatchNo(id:string):boolean;override;
+    function  GodsToBatchNo(id:string):boolean;override;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure NewOrder;override;
@@ -130,7 +131,7 @@ begin
   ReadFromObject(AObj,self);
   ReadFrom(cdsDetail);
   //读取计算PrintQry；
-  GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,inttoStr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
+  GetPrintQryData(InttoStr(Global.TENANT_ID),cid,inttoStr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
   if (PrintQry.Active) and (edtTable.Active) then
   begin
     IsCalcRecordCount:=true;
@@ -251,7 +252,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
+    Params.ParamByName('SHOP_ID').asString := cid;
     Params.ParamByName('PRINT_DATE').AsInteger:=StrtointDef(ID,0);    
     Factor.BeginBatch;
     try
@@ -267,7 +268,7 @@ begin
     ReadFromObject(AObj,self);
     ReadFrom(cdsDetail);
     //读取计算PrintQry；
-    GetPrintQryData(InttoStr(Global.TENANT_ID),Global.SHOP_ID,inttostr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
+    GetPrintQryData(InttoStr(Global.TENANT_ID),cid,inttostr(AObj.fieldbyName('PRINT_DATE').AsInteger)) ;
     if (PrintQry.Active) and (edtTable.Active) then
     begin
       IsCalcRecordCount:=true;
@@ -596,14 +597,16 @@ begin
   RefreshRckAMount(SourceScale);
 end;
 
-procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string; IsQry: Boolean);
+procedure TfrmCheckOrder.GetPrintQryData(TENANT_ID,SHOP_ID,PRINT_ID: string);
 begin
-  if IsQry and (PrintQry.Active) then PrintQry.Close
-  else if (not IsQry) and (PrintQry.Active) then Exit;
+  PrintQry.Close;
   PrintQry.SQL.Text:='select GODS_ID,BATCH_NO,PROPERTY_01,PROPERTY_02,RCK_AMOUNT from STO_PRINTDATA where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and PRINT_DATE=:PRINT_DATE ';
-  if PrintQry.Params.FindParam('TENANT_ID')<>nil then PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
-  if PrintQry.Params.FindParam('SHOP_ID')<>nil then PrintQry.ParamByName('SHOP_ID').AsString:=SHOP_ID;
-  if PrintQry.Params.FindParam('PRINT_DATE')<>nil then PrintQry.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(PRINT_ID,0);
+  if PrintQry.Params.FindParam('TENANT_ID')<>nil then
+    PrintQry.ParamByName('TENANT_ID').AsString:=TENANT_ID;
+  if PrintQry.Params.FindParam('SHOP_ID')<>nil then
+    PrintQry.ParamByName('SHOP_ID').AsString:=SHOP_ID;
+  if PrintQry.Params.FindParam('PRINT_DATE')<>nil then
+    PrintQry.ParamByName('PRINT_DATE').AsInteger:=StrtoIntDef(PRINT_ID,0);
   Factor.Open(PrintQry);
 end;
 

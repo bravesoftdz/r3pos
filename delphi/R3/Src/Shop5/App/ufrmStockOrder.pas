@@ -1242,8 +1242,13 @@ begin
         edtTable.FieldbyName('GODS_NAME').AsString := RsGods.FieldbyName('GODS_NAME').AsString;
         edtTable.FieldbyName('GODS_CODE').AsString := RsGods.FieldbyName('GODS_CODE').AsString;
         edtTable.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;        
-        edtTable.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_INPRICE').AsFloat;
-        //edtTable.FieldbyName('GODS_SPEC').AsString := RsGods.FieldbyName('GODS_SPEC').AsString;
+        //零售价: ORG_PRICE
+        if trim(Rs.FieldByName('UNIT_ID').AsString)=trim(RsGods.FieldByName('SMALL_UNITS').AsString) then //小件单位
+          edtTable.FieldbyName('ORG_PRICE').AsFloat:=RsGods.FieldbyName('NEW_OUTPRICE1').AsFloat
+        else if trim(Rs.FieldByName('UNIT_ID').AsString)=trim(RsGods.FieldByName('BIG_UNITS').AsString) then     //大件单位
+          edtTable.FieldbyName('ORG_PRICE').AsFloat:=RsGods.FieldbyName('NEW_OUTPRICE2').AsFloat
+        else
+          edtTable.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_OUTPRICE').AsFloat;
       end else
       begin
         edtTable.Close;

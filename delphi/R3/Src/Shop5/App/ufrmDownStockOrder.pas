@@ -356,10 +356,10 @@ function TfrmDownStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVari
   end;
 var
   i,DefInvIdx: integer;
-  mny,amt:real;
-  Rs, RsGods, RsUnit, cdsHeader,cdsDetail: TZQuery;
+  mny,amt: real;
   TenantID,ShopID,CurName: string;
-  Params:TftParamList;  
+  Params:TftParamList;
+  Rs, RsGods, RsUnit,cdsHeader,cdsDetail: TZQuery;
 begin
   result:=False;
   mny:=0;
@@ -427,7 +427,13 @@ begin
         cdsDetail.FieldbyName('GODS_NAME').AsString := RsGods.FieldbyName('GODS_NAME').AsString;
         cdsDetail.FieldbyName('GODS_CODE').AsString := RsGods.FieldbyName('GODS_CODE').AsString;
         cdsDetail.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;
-        cdsDetail.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_INPRICE').AsFloat;
+        //零售价: ORG_PRICE
+        if trim(Rs.FieldByName('UNIT_ID').AsString)=trim(RsGods.FieldByName('SMALL_UNITS').AsString) then //小件单位
+          cdsDetail.FieldbyName('ORG_PRICE').AsFloat :=RsGods.FieldbyName('NEW_OUTPRICE1').AsFloat
+        else if trim(Rs.FieldByName('UNIT_ID').AsString)=trim(RsGods.FieldByName('BIG_UNITS').AsString) then     //大件单位
+          cdsDetail.FieldbyName('ORG_PRICE').AsFloat :=RsGods.FieldbyName('NEW_OUTPRICE2').AsFloat
+        else
+          cdsDetail.FieldbyName('ORG_PRICE').AsFloat := RsGods.FieldbyName('NEW_OUTPRICE').AsFloat;
       end else
       begin
         cdsDetail.Close;

@@ -37,6 +37,7 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure fndP1_SHOP_IDPropertiesEditValueChanged(Sender: TObject);
   private
     sid1,//商品分类ID1;
     srid1,//商品分类REGLATION_ID; 关系ID
@@ -195,23 +196,23 @@ begin
   strSql:=
     'select A.TENANT_ID as TENANT_ID,A.GODS_ID as GODS_ID '+   //--货品内码
     ','+UnitField+                    // UNIT_ID统计单位
-    //',B.BARCODE as BARCODE'+          //[查询单位的]条形码
+    ',B.BARCODE as DEF_BARCODE'+      //[查询单位的]条形码
     ',GODS_NAME,GODS_CODE'+           //--货品名称、货品编码
     ',A.BATCH_NO as BATCH_NO,A.LOCUS_NO as LOCUS_NO,'+   //--批号、物流码
     'A.PROPERTY_01 as PROPERTY_01,A.PROPERTY_02 as PROPERTY_02' +   //--颜色码、尺码组
     ',(RCK_AMOUNT*1.00/'+CalcFields+') as RCK_AMOUNT ' +  //--帐面库存数量
     ',(case when D.CHECK_STATUS<>3 then null else CHK_AMOUNT*1.00/'+CalcFields+' end) as CHK_AMOUNT ' + //--实盘点数量:[只有单据审核时才显示数量]
     ',(case when D.CHECK_STATUS<>3 then null else (isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00/'+CalcFields+' end) as PAL_AMOUNT ' +  //--损益数量
-    ',isnull(B.NEW_INPRICE,0) as NEW_INPRICE '+      //--成本价
-    ',isnull(B.NEW_OUTPRICE,0) as NEW_OUTPRICE '+    //--零售价
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_INPRICE,0))*1.00/'+CalcFields+' end) as PAL_INAMONEY ' +    //--损益成本金额
-    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_OUTPRICE,0))*1.00/'+CalcFields+' end) as PAL_OUTAMONEY ' +  //--损益销售金额
+    ',isnull(B.NEW_INPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.0 end) as NEW_INPRICE '+      //--成本价
+    ',isnull(B.NEW_OUTPRICE,0)*(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1.0 end) as NEW_OUTPRICE '+    //--零售价
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_INPRICE,0))*1.00 end) as PAL_INAMONEY ' +    //--损益成本金额
+    ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_OUTPRICE,0))*1.00 end) as PAL_OUTAMONEY ' +  //--损益销售金额
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
     'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
     ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
 
   strSql:=
-    'select M.*,bar.BARCODE as BARCODE from ('+strSql+') M '+
+    'select M.*,isnull(Bar.BARCODE,M.DEF_BARCODE) as BARCODE from ('+strSql+') M '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) Bar '+
     ' on M.TENANT_ID=Bar.TENANT_ID and Bar.TENANT_ID='+inttostr(Global.TENANT_ID)+' and M.GODS_ID=Bar.GODS_ID and M.UNIT_ID=Bar.UNIT_ID and '+
     ' M.BATCH_NO=Bar.BATCH_NO and M.PROPERTY_01=Bar.PROPERTY_01 and M.PROPERTY_02=Bar.PROPERTY_02  ';
@@ -229,8 +230,9 @@ begin
   PrintDBGridEh1.Title.Clear;
   PrintDBGridEh1.PageHeader.CenterText.Text := rzPage.ActivePage.Caption;
   try
-    TitlList:=TStringList.Create;                                    
-    if fndP1_PRINT_DATE.AsString <> '' then TitlList.Add('盘点日期：'+Copy(fndP1_PRINT_DATE.AsString,1,4)+'-'+Copy(fndP1_PRINT_DATE.AsString,5,2)+'-Copy(fndP1_PRINT_DATE.AsString,7,2)');
+    TitlList:=TStringList.Create;
+    if fndP1_PRINT_DATE.AsString <> '' then
+      TitlList.Add('盘点日期：'+Copy(fndP1_PRINT_DATE.AsString,1,4)+'-'+Copy(fndP1_PRINT_DATE.AsString,5,2)+'-'+Copy(fndP1_PRINT_DATE.AsString,7,2));
     if fndP1_SHOP_ID.AsString <> '' then TitlList.Add('门店名称：'+fndP1_SHOP_ID.Text);
     if trim(fndP1_SORT_ID.Text) <> '' then TitlList.Add('商品分类：'+fndP1_SORT_ID.Text);
     if trim(fndP1_STAT_ID.AsString) <> '' then TitlList.Add(fndP1_TYPE_ID.Text+'：'+fndP1_STAT_ID.Text);
@@ -287,18 +289,28 @@ begin
 end;
 
 procedure TfrmCheckTablePrint.GetPrintDataList;
+var
+  Str: string;
 begin
-  if (trim(fndP1_SHOP_ID.AsString)<>'') and (trim(LastPrintDateShopID)<>trim(fndP1_SHOP_ID.AsString)) then
+  if fndP1_SHOP_ID.DataSet.Active then
   begin
-    LastPrintDateShopID:=trim(fndP1_SHOP_ID.AsString);
-    cdsPrintDate.Close;
-    cdsPrintDate.SQL.Text := 'select PRINT_DATE,CHECK_STATUS from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID order by PRINT_DATE desc';
-    if cdsPrintDate.Params.FindParam('TENANT_ID')<> nil then
-      cdsPrintDate.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    if cdsPrintDate.Params.FindParam('SHOP_ID')<> nil then
-      cdsPrintDate.ParamByName('SHOP_ID').AsString:=fndP1_SHOP_ID.AsString;
-    Factor.Open(cdsPrintDate);
+   if (trim(fndP1_SHOP_ID.AsString)<>'') and (trim(LastPrintDateShopID)=trim(fndP1_SHOP_ID.AsString)) then
+     Exit; //已经打开且门店名称没变化，则不需要在重新Open，直接退出;
   end;
+
+  LastPrintDateShopID:=trim(fndP1_SHOP_ID.AsString);
+  Str := 'select distinct PRINT_DATE,CHECK_STATUS from STO_PRINTORDER where TENANT_ID=:TENANT_ID ';
+  if fndP1_SHOP_ID.AsString<>'' then
+    Str:=Str+' and SHOP_ID=:SHOP_ID ';
+  Str:=Str+' order by PRINT_DATE desc ';
+
+  cdsPrintDate.Close;
+  cdsPrintDate.SQL.Text := Str;
+  if cdsPrintDate.Params.FindParam('TENANT_ID')<> nil then
+    cdsPrintDate.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+  if cdsPrintDate.Params.FindParam('SHOP_ID')<> nil then
+    cdsPrintDate.ParamByName('SHOP_ID').AsString:=fndP1_SHOP_ID.AsString;
+  Factor.Open(cdsPrintDate);
 end;
 
 procedure TfrmCheckTablePrint.fndP1_PRINT_DATEBeforeDropList(Sender: TObject);
@@ -309,11 +321,25 @@ end;
  
 
 procedure TfrmCheckTablePrint.RzPage1Open;
+var
+  IsCheck: Boolean;
+  SetCol: TColumnEh;
 begin
   try
     if adoReport1.Active then adoReport1.Close;
     adoReport1.SQL.Text:=GetGoodPrintSQL;
     Factor.Open(adoReport1);
+    IsCheck:=False;
+    if fndP1_PRINT_DATE.DataSet.Active then
+      IsCheck:=(fndP1_PRINT_DATE.DataSet.FieldByName('CHECK_STATUS').AsInteger=3); //审核
+    SetCol:=FindColumn(DBGridEh1,'CHK_AMOUNT');
+    if SetCol<>nil then SetCol.Visible:=IsCheck;
+    SetCol:=FindColumn(DBGridEh1,'PAL_AMOUNT');
+    if SetCol<>nil then SetCol.Visible:=IsCheck;
+    SetCol:=FindColumn(DBGridEh1,'PAL_INAMONEY');
+    if SetCol<>nil then SetCol.Visible:=IsCheck;
+    SetCol:=FindColumn(DBGridEh1,'PAL_OUTAMONEY');
+    if SetCol<>nil then SetCol.Visible:=IsCheck;
   finally
   end;
 end;
@@ -335,6 +361,7 @@ begin
    0: //第一分页
     begin
       self.RzPage1Open;//查询盘点
+      
     end;
    1:
     begin
@@ -396,6 +423,14 @@ procedure TfrmCheckTablePrint.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmCheckTablePrint.fndP1_SHOP_IDPropertiesEditValueChanged(
+  Sender: TObject);
+begin
+  inherited;
+  fndP1_PRINT_DATE.KeyValue:='';
+  fndP1_PRINT_DATE.Text:='';
 end;
 
 end.

@@ -1,5 +1,6 @@
 inherited frmCheckTablePrint: TfrmCheckTablePrint
-  Left = 198
+  Left = 191
+  Top = 108
   Width = 1078
   Height = 625
   Caption = #30424#28857#23545#29031#34920
@@ -33,7 +34,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 Height = 76
                 object Label3: TLabel
                   Left = 24
-                  Top = 31
+                  Top = 10
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
@@ -61,7 +62,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 end
                 object Label4: TLabel
                   Left = 24
-                  Top = 10
+                  Top = 31
                   Width = 48
                   Height = 12
                   Caption = #30424#28857#26085#26399
@@ -119,7 +120,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 27
+                  Top = 6
                   Width = 185
                   Height = 20
                   Properties.AutoSelect = False
@@ -128,6 +129,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Default = True
                     end>
                   Properties.ReadOnly = False
+                  Properties.OnEditValueChanged = fndP1_SHOP_IDPropertiesEditValueChanged
                   TabOrder = 0
                   InGrid = False
                   KeyValue = Null
@@ -216,7 +218,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                 end
                 object fndP1_PRINT_DATE: TzrComboBoxList
                   Left = 80
-                  Top = 6
+                  Top = 27
                   Width = 185
                   Height = 20
                   Properties.AutoSelect = False
@@ -294,6 +296,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 156
@@ -511,6 +514,10 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   inherited dsadoReport1: TDataSource
     Left = 41
     Top = 354
+  end
+  inherited SaveDialog1: TSaveDialog
+    Left = 317
+    Top = 172
   end
   inherited adoReport1: TZQuery
     Left = 41

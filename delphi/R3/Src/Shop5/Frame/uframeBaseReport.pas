@@ -9,8 +9,7 @@
       毛利率用: #0.00%
       折扣率用: #0% 
 
-}
-
+}                     
 
 
 unit uframeBaseReport;
@@ -79,6 +78,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     FSumRecord: TRecord_;  //汇总记录值
+    procedure Dofnd_CUST_TYPEChange(Sender: TObject);   //客户群体OnChange
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品统计指标OnChange
     procedure DoRBDate(Sender: TObject);   //暂时没用
@@ -411,6 +411,11 @@ begin
           Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
           Cbx.ItemIndex:=0;
         end else
+        if RightStr(CmpName,10)='_CUST_TYPE' then //客户群体
+        begin
+          Cbx.Properties.OnChange:=Dofnd_CUST_TYPEChange;
+          Cbx.ItemIndex:=0;
+        end else
         if RightStr(CmpName,8)='_TYPE_ID' then //商品指标
         begin
           AddGoodSortTypeItems(Cbx);
@@ -474,9 +479,11 @@ begin
     if Components[i] is TDBGridEh then
     begin
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_01');
-      if Column<>nil then Column.Visible := (CLVersion='FIG');
+      if Column<>nil then //Column.Visible := (CLVersion='FIG');
+        Column.Free;
       Column := FindColumn(TDBGridEh(Components[i]),'PROPERTY_02');
-      if Column<>nil then Column.Visible := (CLVersion='FIG');
+      if Column<>nil then //Column.Visible := (CLVersion='FIG');
+        Column.Free;
       //DBGridEh设置为多表头
       if not TDBGridEh(Components[i]).UseMultiTitle then
         TDBGridEh(Components[i]).UseMultiTitle:=true;
@@ -795,6 +802,62 @@ begin
   end;
 end;
 
+procedure TframeBaseReport.Dofnd_CUST_TYPEChange(Sender: TObject);
+var
+  i: integer;
+  CmpName: string;
+  FindCmp: TComponent;
+  CustValueList: TzrComboBoxList;
+begin
+  CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
+  if CmpName<>'' then
+  begin
+    CmpName:='fndP'+CmpName+'_CUST_VALUE';
+    FindCmp:=self.FindComponent(CmpName);
+    if (FindCmp<>nil) and (FindCmp is TzrComboBoxList) then
+    begin
+      CustValueList:=TzrComboBoxList(FindCmp);
+      case TcxComboBox(Sender).ItemIndex of
+       0:
+        begin
+          CustValueList.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO'); //行政区域 和客户分类
+          CustValueList.KeyField:='CODE_ID';
+          CustValueList.ListField:='CODE_NAME';
+          CustValueList.FilterFields:='CODE_ID;CODE_NAME;CODE_SPELL';
+          CustValueList.DropWidth:=170;
+          CustValueList.DropHeight:=180;
+        end;
+       1:
+        begin
+          CustValueList.DataSet:=Global.GetZQueryFromName('PUB_PRICEGRADE');  //客户等级
+          CustValueList.KeyField:='PRICE_ID';
+          CustValueList.ListField:='PRICE_NAME';
+          CustValueList.FilterFields:='PRICE_ID;PRICE_NAME;PRICE_SPELL';
+          CustValueList.DropWidth:=CustValueList.Width+20;
+          CustValueList.DropHeight:=120;
+        end;
+        2:
+        begin
+          CustValueList.DataSet:=Global.GetZQueryFromName('PUB_CLIENTSORT'); //行政区域 和客户分类
+          CustValueList.KeyField:='CODE_ID';
+          CustValueList.ListField:='CODE_NAME';
+          CustValueList.FilterFields:='CODE_ID;CODE_NAME;CODE_SPELL';
+          CustValueList.DropWidth:=150;
+          CustValueList.DropHeight:=154;          
+        end;
+      end;
+      CustValueList.Columns[0].FieldName:=CustValueList.ListField;
+      if CustValueList.Columns.Count>1 then
+      begin
+        CustValueList.Columns[1].FieldName:=CustValueList.KeyField;
+        CustValueList.Columns[1].Visible:=(TcxComboBox(Sender).ItemIndex<>1);
+      end;
+      CustValueList.KeyValue:=null;
+      CustValueList.Text:='';
+    end;
+  end;
+end;  
+
 procedure TframeBaseReport.Dofnd_SHOP_TYPEChange(Sender: TObject);
 var
   CmpName: string;
@@ -1043,22 +1106,38 @@ begin
   begin
     TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
   end;
-  
-  // 2、门店名称：
+
+  //  2、客户分组
+  FindCmp1:=FindComponent('fndP'+PageNo+'_CUST_TYPE');
+  FindCmp2:=FindComponent('fndP'+PageNo+'_CUST_VALUE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp2<>nil)and (FindCmp2.Tag<>100) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList)  and (TcxComboBox(FindCmp1).Visible) and
+     (TcxComboBox(FindCmp1).ItemIndex<>-1) and (TzrComboBoxList(FindCmp2).Visible) and (TzrComboBoxList(FindCmp2).AsString<>'')  then
+  begin
+    TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
+  end;
+
+  //  3、 客户名称：
+  FindCmp1:=FindComponent('fndP'+PageNo+'_CLIENT_ID');
+  if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
+  begin
+    TitleList.Add('客户名称：'+TzrComboBoxList(FindCmp1).Text);
+  end;
+
+  // 4、门店名称：
   FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
   begin
     TitleList.Add('门店名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 3、部门名称:  
+  // 5、部门名称:
   FindCmp1:=FindComponent('fndP'+PageNo+'_DEPT_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
   begin
     TitleList.Add('部门名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 4、商品指标：
+  // 6、商品指标：
   FindCmp1:=FindComponent('fndP'+PageNo+'_TYPE_ID');
   FindCmp2:=FindComponent('fndP'+PageNo+'_STAT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp2<>nil)and (FindCmp2.Tag<>100) and (FindCmp1 is TcxComboBox) and (FindCmp2 is TzrComboBoxList) and (TcxComboBox(FindCmp1).Visible) and
@@ -1066,26 +1145,36 @@ begin
   begin
     TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
   end;
-  // 5、商品分类
+  // 7、商品分类
   FindCmp1:=FindComponent('fndP'+PageNo+'_SORT_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TcxButtonEdit) and (TcxButtonEdit(FindCmp1).Visible) and (TcxButtonEdit(FindCmp1).Text<>'') then
   begin
     TitleList.Add('商品分类：'+TcxButtonEdit(FindCmp1).Text);
   end;
 
-  // 6、商品名称：
+  // 8、商品名称：
   FindCmp1:=FindComponent('fndP'+PageNo+'_GODS_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
   begin
     TitleList.Add('商品名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 7、计量单位
+  // 9、计量单位
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 
-  // 8、单据类型:[全部命名规则]
+  // 10、业务员、导购员
+  FindCmp1:=FindComponent('fndP'+PageNo+'_GUIDE_USER');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then
+  begin
+    if ProductID = 'R3_RYC' then
+      TitleList.Add('导购员：'+TzrComboBoxList(FindCmp1).Text)
+    else
+      TitleList.Add('业务员：'+TzrComboBoxList(FindCmp1).Text);
+  end;
+
+  // 11、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin

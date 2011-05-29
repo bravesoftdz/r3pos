@@ -339,8 +339,6 @@ type
     actfrmNetForOrder: TAction;
     actfrmSaleManSaleReport: TAction;
     actfrmClientSaleReport: TAction;
-    Button1: TButton;
-    Button2: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

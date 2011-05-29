@@ -1474,7 +1474,7 @@ begin
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',r.DEPT_NAME from ('+strSql+') j '+
+    ',isnull(r.DEPT_NAME,''нч'') as DEPT_NAME from ('+strSql+') j '+
     ' left outer join CA_DEPT_INFO r on j.DEPT_ID=r.DEPT_ID order by j.DEPT_ID'
     );
 end;

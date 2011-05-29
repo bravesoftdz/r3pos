@@ -1155,9 +1155,9 @@ begin
     end;
   end; }
 
-  IsVisble:=true; // HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
-  rzPage.Pages[1].TabVisible := IsVisble;
-  rzPage.Pages[2].TabVisible := IsVisble;
+//  IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
+  rzPage.Pages[1].TabVisible := true; // IsVisble;
+  rzPage.Pages[2].TabVisible := true; //IsVisble;
   for i:=0 to rzPage.PageCount-1 do
   begin
     if rzPage.Pages[i].TabVisible then

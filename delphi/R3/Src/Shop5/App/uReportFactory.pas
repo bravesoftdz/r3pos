@@ -5,7 +5,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes;
 type
 
-pRCondi=TRCondi;
+pRCondi=^TRCondi;
 TRCondi=record
   Count:integer;
   idx:array [1..30] of string;

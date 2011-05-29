@@ -89,7 +89,7 @@ begin
       4: w := w +' and to_char(PRINT_DATE) like ''%'+trim(fndPRINT_DATE.Text)+'''';
     end;
   end;
-  
+
   if fndSTATUS.ItemIndex=1 then
     w := w +' and CHECK_STATUS=2 '
   else if fndSTATUS.ItemIndex=2 then
@@ -99,9 +99,10 @@ begin
     w := w +' and PRINT_DATE>'+id+' ';
 
   str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+'';
-  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT from ('+str+')jb '+
-       ' left outer join VIW_USERS b on b.TENANT_ID=:TENANT_ID and jb.CREA_USER=b.USER_ID '+
-       ' left outer join VIW_USERS c on c.TENANT_ID=:TENANT_ID and jb.CHK_USER=c.USER_ID ';
+  str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT,d.SHOP_NAME as SHOP_ID_TEXT from ('+str+')jb '+
+       ' left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.CREA_USER=b.USER_ID '+
+       ' left outer join VIW_USERS c on jb.TENANT_ID=c.TENANT_ID and jb.CHK_USER=c.USER_ID '+
+       ' left outer join CA_SHOP_INFO d on jb.TENANT_ID=d.TENANT_ID and jb.SHOP_ID=d.SHOP_ID ';
   case Factor.iDbType of
    0,3: result:='select top 600 * from ('+str+') tmp order by PRINT_DATE ';
    1: result:='select * from ('+str+' order by jb.PRINT_DATE) where ROWNUM<=600 order by PRINT_DATE';

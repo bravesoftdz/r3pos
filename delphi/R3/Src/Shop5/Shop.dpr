@@ -221,7 +221,10 @@ uses
   ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas',
   ufrmExcelFactory in 'App\ufrmExcelFactory.pas' {frmExcelFactory},
   uReportFactory in 'App\uReportFactory.pas',
-  ufrmOptionDefine in 'App\ufrmOptionDefine.pas' {frmOptionDefine};
+  ufrmOptionDefine in 'App\ufrmOptionDefine.pas' {frmOptionDefine},
+  ufrmSaleManSaleReport in 'App\ufrmSaleManSaleReport.pas' {frmSaleManSaleReport},
+  ufrmClientSaleReport in 'App\ufrmClientSaleReport.pas' {frmClientSaleReport},
+  ufrmTenantInfo in 'App\ufrmTenantInfo.pas' {frmTenantInfo};
 
 {$R *.res}
 var

@@ -7,22 +7,22 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 883
-    Height = 508
+    Width = 875
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 873
-      Height = 498
+      Width = 865
+      Height = 487
       inherited RzPage: TRzPageControl
-        Width = 867
-        Height = 492
+        Width = 859
+        Height = 481
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 865
-            Height = 465
+            Width = 857
+            Height = 454
             inherited RzPanel1: TRzPanel
-              Width = 855
+              Width = 847
               Height = 91
               object RzLabel2: TRzLabel
                 Left = 57
@@ -233,8 +233,8 @@ inherited frmCheckOrderList: TfrmCheckOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 96
-              Width = 855
-              Height = 364
+              Width = 847
+              Height = 353
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -250,28 +250,35 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                   FieldName = 'PRINT_DATE'
                   Footers = <>
                   Title.Caption = #30424#28857#26085#26399
-                  Width = 92
+                  Width = 77
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_ID_TEXT'
+                  Footers = <>
+                  Title.Caption = #30424#28857#38376#24215
+                  Width = 138
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_USER_TEXT'
                   Footers = <>
                   Title.Caption = #30424#28857#20154
-                  Width = 71
+                  Width = 57
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
                   Title.Caption = #24320#22987#30424#28857#26102#38388
-                  Width = 155
+                  Width = 145
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CHECK_TYPE'
                   Footers = <>
                   Title.Caption = #30424#28857#31867#22411
-                  Width = 81
+                  Width = 67
                 end
                 item
                   EditButtons = <>
@@ -308,40 +315,40 @@ inherited frmCheckOrderList: TfrmCheckOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 883
+    Width = 875
     inherited Image1: TImage
-      Left = 581
-      Width = 282
+      Left = 585
+      Width = 270
     end
     inherited Image3: TImage
-      Left = 581
-      Width = 282
+      Left = 585
+      Width = 270
     end
     inherited Image14: TImage
-      Left = 863
+      Left = 855
     end
     inherited rzPanel5: TPanel
-      Left = 581
+      Left = 585
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #30424#28857#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 565
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
+          MinHeight = 565
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
+        Width = 565
         object ToolButton11: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Action = actExit
         end

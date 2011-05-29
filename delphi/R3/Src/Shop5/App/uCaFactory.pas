@@ -1425,7 +1425,7 @@ try
       try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
-        Params.ParamByName('KEY_FIELDS').AsString := 'RELATIONS_ID';
+        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;RELATION_ID;RELATI_ID';
         Params.ParamByName('KEY_FLAG').AsInteger := 1;
         Params.ParamByName('COMM_LOCK').AsString := '1';
         Factor.UpdateBatch(rs,'TSyncSingleTable',Params);

@@ -612,6 +612,7 @@ begin
        end else r := 0;
        if r=0 then
           begin
+            if (Comm='02') or (Comm='12') then Exit;
             FillParams(InsertQuery);
             try
               AGlobal.ExecQuery(InsertQuery);
@@ -624,7 +625,6 @@ begin
             end;
           end;
      end;
-
 end;
 
 function TSyncSingleTable.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;

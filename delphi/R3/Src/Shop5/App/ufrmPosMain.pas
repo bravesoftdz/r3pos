@@ -3548,7 +3548,7 @@ begin
       begin
         if not bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
         if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (cdsTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
-        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (cdsTable.FieldbyName('LOCUS_NO').AsString='') then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品物流跟踪号。');
+//        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (cdsTable.FieldbyName('LOCUS_NO').AsString='') then Raise Exception.Create(cdsTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品物流跟踪号。');
         cdsTable.Next;
       end;
     if r>0 then cdsTable.RecNo := r;

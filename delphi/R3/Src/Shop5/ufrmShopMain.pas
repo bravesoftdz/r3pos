@@ -337,6 +337,10 @@ type
     actfrmClearData: TAction;
     actfrmSaleAnaly: TAction;
     actfrmNetForOrder: TAction;
+    actfrmSaleManSaleReport: TAction;
+    actfrmClientSaleReport: TAction;
+    Button1: TButton;
+    Button2: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -449,6 +453,8 @@ type
     procedure actfrmClearDataExecute(Sender: TObject);
     procedure actfrmSaleAnalyExecute(Sender: TObject);
     procedure actfrmNetForOrderExecute(Sender: TObject);
+    procedure actfrmSaleManSaleReportExecute(Sender: TObject);
+    procedure actfrmClientSaleReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -512,7 +518,8 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly;
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,ufrmSaleManSaleReport
+  ;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -3526,6 +3533,50 @@ begin
     Form.Free;
     Raise;
   end;
+end;
+
+procedure TfrmShopMain.actfrmSaleManSaleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSaleManSaleReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleManSaleReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmClientSaleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmClientSaleReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmClientSaleReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

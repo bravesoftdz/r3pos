@@ -30,8 +30,8 @@ type
     fndP1_UNIT_ID: TcxComboBox;
     fndP1_STAT_ID: TzrComboBoxList;
     fndP1_SORT_ID: TcxButtonEdit;
-    fndP1_SHOP_TYPE: TcxComboBox;
-    fndP1_SHOP_VALUE: TzrComboBoxList;
+    fndP1_CUST_TYPE: TcxComboBox;
+    fndP1_CUST_VALUE: TzrComboBoxList;
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_GODS_ID: TzrComboBoxList;
     fndP1_SHOP_ID: TzrComboBoxList;
@@ -52,13 +52,13 @@ type
     Label41: TLabel;
     P2_D1: TcxDateEdit;
     P2_D2: TcxDateEdit;
-    fndP2_SHOP_VALUE: TzrComboBoxList;
+    fndP2_CUST_VALUE: TzrComboBoxList;
     BtnSort: TRzBitBtn;
     fndP2_TYPE_ID: TcxComboBox;
     fndP2_UNIT_ID: TcxComboBox;
     fndP2_STAT_ID: TzrComboBoxList;
     fndP2_SORT_ID: TcxButtonEdit;
-    fndP2_SHOP_TYPE: TcxComboBox;
+    fndP2_CUST_TYPE: TcxComboBox;
     fndP2_DEPT_ID: TzrComboBoxList;
     fndP2_GODS_ID: TzrComboBoxList;
     fndP2_CLIENT_ID: TcxComboBox;
@@ -91,8 +91,8 @@ type
     fndP3_SHOP_ID: TzrComboBoxList;
     fndP3_REPORT_FLAG: TcxComboBox;
     fndP3_UNIT_ID: TcxComboBox;
-    fndP3_SHOP_VALUE: TzrComboBoxList;
-    fndP3_SHOP_TYPE: TcxComboBox;
+    fndP3_CUST_VALUE: TzrComboBoxList;
+    fndP3_CUST_TYPE: TcxComboBox;
     fndP3_DEPT_ID: TzrComboBoxList;
     fndP3_CLIENT_ID: TzrComboBoxList;
     RzPanel12: TRzPanel;
@@ -116,8 +116,8 @@ type
     fndP4_UNIT_ID: TcxComboBox;
     fndP4_STAT_ID: TzrComboBoxList;
     fndP4_SORT_ID: TcxButtonEdit;
-    fndP4_SHOP_VALUE: TzrComboBoxList;
-    fndP4_SHOP_TYPE: TcxComboBox;
+    fndP4_CUST_VALUE: TzrComboBoxList;
+    fndP4_CUST_TYPE: TcxComboBox;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP4_DEPT_ID: TzrComboBoxList;
     fndP4_CLIENT_ID: TzrComboBoxList;
@@ -142,8 +142,8 @@ type
     fndP5_TYPE_ID: TcxComboBox;
     fndP5_STAT_ID: TzrComboBoxList;
     fndP5_SORT_ID: TcxButtonEdit;
-    fndP5_SHOP_VALUE: TzrComboBoxList;
-    fndP5_SHOP_TYPE: TcxComboBox;
+    fndP5_CUST_VALUE: TzrComboBoxList;
+    fndP5_CUST_TYPE: TcxComboBox;
     fndP5_SHOP_ID: TzrComboBoxList;
     RzGB: TRzGroupBox;
     fndP5_ALL: TcxRadioButton;
@@ -265,12 +265,9 @@ begin
   Copy_ParamsValue('TYPE_ID',1,2);          //指标
   fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex; //显示单位
 
-  fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
-  //fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
-  //fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
-
-  fndP2_SHOP_VALUE.KeyValue:=fndP1_SHOP_VALUE.KeyValue;
-  fndP2_SHOP_VALUE.Text:=fndP1_SHOP_VALUE.Text;
+  fndP2_CUST_TYPE.ItemIndex:=0;  //管理群组
+  fndP2_CUST_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
+  fndP2_CUST_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
 
   fndP2_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
   fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
@@ -364,12 +361,7 @@ begin
   Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID); //部门名称
   Copy_ParamsValue('SHOP_TYPE',2,3);   //管理群组
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
-
-  //fndP3_SHOP_ID.KeyValue:=trim(adoReport2.fieldbyName('SHOP_ID').AsString);
-  //fndP3_SHOP_ID.Text:=trim(adoReport2.fieldbyName('SHOP_NAME').AsString);
-
-  fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
-  fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
+  Copy_ParamsValue(fndP2_SHOP_ID,fndP3_SHOP_ID); //部门名称
 
   fndP3_CLIENT_ID.KeyValue := adoReport2.FieldByName('CLIENT_ID').AsString;
   fndP3_CLIENT_ID.Text := adoReport2.FieldByName('CLIENT_NAME').AsString;
@@ -690,20 +682,21 @@ begin
   else
     Raise Exception.Create('结束日期不能小于开始日期...');
 
-  //门店所属行政区域|门店类型:
-  if (fndP5_SHOP_VALUE.AsString<>'') then
-    begin
-    case fndP5_SHOP_TYPE.ItemIndex of
+  //客户群体所属行政区域|客户等级\客户分类:
+  if (fndP5_CUST_VALUE.AsString<>'') then
+  begin
+    case fndP5_CUST_TYPE.ItemIndex of
       0:
        begin
-         if FnString.TrimRight(trim(fndP5_SHOP_VALUE.AsString),2)='00' then //非末级区域
-           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP5_SHOP_VALUE.AsString)+'%'' '
+         if FnString.TrimRight(trim(fndP5_CUST_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and D.REGION_ID like '''+GetRegionId(fndP5_CUST_VALUE.AsString)+'%'' '
          else
-           strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+           strWhere:=strWhere+' and D.REGION_ID='''+fndP5_CUST_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP5_CUST_VALUE.AsString+''' ';
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP5_CUST_VALUE.AsString+''' ';
     end;
-    end;
+  end;
 
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
@@ -779,8 +772,11 @@ begin
     ',(case when A.NOTAX_MONEY<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.NOTAX_MONEY as decimal(18,3)) else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
     ',(case when A.NOTAX_MONEY*A.AMOUNT<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/A.AMOUNT else 0 end) as AVG_PROFIT'+    //--单位毛利
     ',B.SHOP_NAME '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' ';
+    'from '+SQLData+' A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+    ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' '+ strWhere + ' ';
 
   Result := ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -811,7 +807,7 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
   begin
@@ -833,18 +829,19 @@ begin
     StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
   
-  //门店所属行政区域|门店类型:
-  if trim(fndP4_SHOP_VALUE.AsString)<>'' then
+  //客户群体所属行政区域|客户等级\客户分类:
+  if trim(fndP4_CUST_VALUE.AsString)<>'' then
   begin
-    case fndP4_SHOP_TYPE.ItemIndex of
+    case fndP4_CUST_TYPE.ItemIndex of
       0:
        begin
-         if FnString.TrimRight(trim(fndP4_SHOP_VALUE.AsString),2)='00' then //非末级区域
-           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP4_SHOP_VALUE.AsString)+'%'' '
+         if FnString.TrimRight(trim(fndP4_CUST_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and D.REGION_ID like '''+GetRegionId(fndP4_CUST_VALUE.AsString)+'%'' '
          else
-           strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
+           strWhere:=strWhere+' and D.REGION_ID='''+fndP4_CUST_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP4_CUST_VALUE.AsString+''' ';
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP4_CUST_VALUE.AsString+''' ';
     end;
   end;
     
@@ -919,8 +916,11 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' '+
+    'from '+SQLData+' A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+    ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    '  '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=
@@ -951,7 +951,7 @@ begin
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
   begin
@@ -972,18 +972,19 @@ begin
     StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
   
-  //门店所属行政区域|门店类型:
-  if (fndP3_SHOP_VALUE.AsString<>'') then
+  //客户群体所属行政区域|客户等级\客户分类:
+  if (fndP3_CUST_VALUE.AsString<>'') then
   begin
-    case fndP3_SHOP_TYPE.ItemIndex of
+    case fndP3_CUST_TYPE.ItemIndex of
       0:
        begin
-         if FnString.TrimRight(trim(fndP3_SHOP_VALUE.AsString),2)='00' then //非末级区域
-           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP3_SHOP_VALUE.AsString)+'%'' '
+         if FnString.TrimRight(trim(fndP3_CUST_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and D.REGION_ID like '''+GetRegionId(fndP3_CUST_VALUE.AsString)+'%'' '
          else
-           strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
+           strWhere:=strWhere+' and D.REGION_ID='''+fndP3_CUST_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP3_CUST_VALUE.AsString+''' ';
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP3_CUST_VALUE.AsString+''' ';
     end;
   end;
 
@@ -1041,8 +1042,11 @@ begin
     ',sum(SALE_PRF) as SALE_PRF '+   //毛利
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' '+
+    'from '+SQLData+' A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+    ' left outer join VIW_CUSTOMER D A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -1151,7 +1155,7 @@ begin
     end;
   end; }
 
-  IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
+  IsVisble:=true; // HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := IsVisble;
   rzPage.Pages[2].TabVisible := IsVisble;
   for i:=0 to rzPage.PageCount-1 do
@@ -1225,7 +1229,7 @@ begin
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
@@ -1241,31 +1245,32 @@ begin
     StrCnd:=' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
   
-  //门店所属行政区域|门店类型:
-  if (fndP2_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP2_SHOP_TYPE.ItemIndex of
-        0:
-         begin
-           if FnString.TrimRight(trim(fndP2_SHOP_VALUE.AsString),2)='00' then //非末级区域
-             strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP2_SHOP_VALUE.AsString)+'%'' '
-           else
-             strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
-         end;
-        1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+  //客户群体所属行政区域|客户等级\客户分类:
+  if (fndP2_CUST_VALUE.AsString<>'') then
+  begin
+    case fndP2_CUST_TYPE.ItemIndex of
+     0:
+      begin
+        if FnString.TrimRight(trim(fndP2_CUST_VALUE.AsString),2)='00' then //非末级区域
+          strWhere:=strWhere+' and D.REGION_ID like '''+GetRegionId(fndP2_CUST_VALUE.AsString)+'%'' '
+        else
+          strWhere:=strWhere+' and D.REGION_ID='''+fndP2_CUST_VALUE.AsString+''' ';
       end;
+     1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP2_CUST_VALUE.AsString+''' ';
+     2: strWhere:=strWhere+' and D.SORT_ID='''+fndP2_CUST_VALUE.AsString+''' ';
     end;
+  end;
   //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP2_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
+     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
+     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP2_STAT_ID.AsString+''' ';
+     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
+     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
+    end;
+  end;
 
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
@@ -1290,19 +1295,19 @@ begin
 
   //门店名称
   if Trim(fndP2_SHOP_ID.Text) <> '' then
-    begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
-      StrCnd:=' and SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
-    end;
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
+    StrCnd:=' and SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
+  end;
     
   //客户群体
   if Trim(fndP2_CLIENT_ID.Text) <> '' then
-    begin
-      case fndP2_CLIENT_ID.ItemIndex of
-        1: strWhere := strWhere + ' and D.FLAG=0 ';
-        2: strWhere := strWhere + ' and D.FLAG=2 ';
-      end;
+  begin
+    case fndP2_CLIENT_ID.ItemIndex of
+     1: strWhere := strWhere + ' and D.FLAG=0 ';
+     2: strWhere := strWhere + ' and D.FLAG=2 '
     end;
+  end;
     
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1339,13 +1344,17 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' '+
+    'from '+SQLData+' A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+    ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' '+strWhere + ' '+
     'group by A.TENANT_ID,D.CLIENT_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',r.CLIENT_CODE,r.CLIENT_NAME from ('+strSql+') j '+
+    ',isnull(r.CLIENT_CODE,''#'') as CLIENT_CODE'+
+    ',(case when isnull(r.CLIENT_CODE,''#'')=''#'' then ''无'' else r.CLIENT_NAME end) as CLIENT_NAME from ('+strSql+') j '+
     ' left outer join VIW_CUSTOMER r on j.TENANT_ID=r.TENANT_ID and j.CLIENT_ID=r.CLIENT_ID order by r.CLIENT_CODE'
     );
 end;
@@ -1360,7 +1369,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
@@ -1376,21 +1385,22 @@ begin
     StrCnd:=' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
-  //门店所属行政区域|门店类型:
-  if (fndP1_SHOP_VALUE.AsString<>'') then
+  //客户群体所属行政区域|客户等级\客户分类:
+  if (fndP1_CUST_VALUE.AsString<>'') then
   begin
-    case fndP1_SHOP_TYPE.ItemIndex of
+    case fndP1_CUST_TYPE.ItemIndex of
       0:
        begin
-         if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
-           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
+         if FnString.TrimRight(trim(fndP1_CUST_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and D.REGION_ID like '''+GetRegionId(fndP1_CUST_VALUE.AsString)+'%'' '
          else
-           strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+           strWhere:=strWhere+' and D.REGION_ID='''+fndP1_CUST_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP1_CUST_VALUE.AsString+''' ';   //等级 
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP1_CUST_VALUE.AsString+''' ';    //分类
     end;
   end;
-
+                                
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
@@ -1475,14 +1485,18 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+ strWhere + ' '+
+    'from '+SQLData+' A '+
+    ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+    ' inner join '+GoodTab+' C on  A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+    ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' '+ strWhere + ' '+
     'group by A.TENANT_ID,D.REGION_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
     ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
-    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
+    ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID '
     );
 end;
 

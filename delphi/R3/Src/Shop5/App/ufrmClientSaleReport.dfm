@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet2
+        ActivePage = TabSheet3
         Color = clWhite
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -68,7 +68,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 34
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = #23458#25143#20998#32452
                 end
                 object Label32: TLabel
                   Left = 288
@@ -225,7 +225,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 6
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
-                object fndP1_SHOP_TYPE: TcxComboBox
+                object fndP1_CUST_TYPE: TcxComboBox
                   Left = 80
                   Top = 30
                   Width = 73
@@ -234,10 +234,11 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
+                    #23458#25143#31561#32423
+                    #23458#25143#20998#31867)
                   TabOrder = 7
                 end
-                object fndP1_SHOP_VALUE: TzrComboBoxList
+                object fndP1_CUST_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 30
@@ -572,7 +573,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #38376#24215#32676#32452
+                Caption = #23458#25143#20998#32452
               end
               object Label13: TLabel
                 Left = 288
@@ -644,7 +645,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
-              object fndP2_SHOP_VALUE: TzrComboBoxList
+              object fndP2_CUST_VALUE: TzrComboBoxList
                 Tag = -1
                 Left = 154
                 Top = 31
@@ -795,7 +796,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 TabOrder = 7
                 OnKeyPress = fndP2_SORT_IDKeyPress
               end
-              object fndP2_SHOP_TYPE: TcxComboBox
+              object fndP2_CUST_TYPE: TcxComboBox
                 Left = 80
                 Top = 31
                 Width = 73
@@ -804,7 +805,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Properties.DropDownListStyle = lsEditFixedList
                 Properties.Items.Strings = (
                   #34892#25919#22320#21306
-                  #31649#29702#32676#32452)
+                  #23458#25143#31561#32423
+                  #23458#25143#20998#31867)
                 TabOrder = 8
               end
               object fndP2_DEPT_ID: TzrComboBoxList
@@ -1203,7 +1205,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #38376#24215#32676#32452
+                  Caption = #23458#25143#20998#32452
                 end
                 object Label35: TLabel
                   Left = 288
@@ -1329,7 +1331,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #21253#35013'2')
                   TabOrder = 5
                 end
-                object fndP3_SHOP_VALUE: TzrComboBoxList
+                object fndP3_CUST_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 30
@@ -1371,7 +1373,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP3_SHOP_TYPE: TcxComboBox
+                object fndP3_CUST_TYPE: TcxComboBox
                   Left = 80
                   Top = 30
                   Width = 73
@@ -1380,7 +1382,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
+                    #23458#25143#31561#32423
+                    #23458#25143#20998#31867)
                   TabOrder = 7
                 end
                 object fndP3_DEPT_ID: TzrComboBoxList
@@ -1715,7 +1718,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = #23458#25143#20998#32452
                 end
                 object Label36: TLabel
                   Left = 289
@@ -1858,7 +1861,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 6
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
-                object fndP4_SHOP_VALUE: TzrComboBoxList
+                object fndP4_CUST_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -1900,7 +1903,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP4_SHOP_TYPE: TcxComboBox
+                object fndP4_CUST_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
@@ -1909,7 +1912,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
+                    #23458#25143#31561#32423
+                    #23458#25143#20998#31867)
                   TabOrder = 8
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
@@ -2299,7 +2303,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 36
                   Width = 48
                   Height = 12
-                  Caption = #38376#24215#32676#32452
+                  Caption = #23458#25143#20998#32452
                 end
                 object Label29: TLabel
                   Left = 24
@@ -2436,7 +2440,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 5
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
-                object fndP5_SHOP_VALUE: TzrComboBoxList
+                object fndP5_CUST_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
                   Top = 32
@@ -2478,7 +2482,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP5_SHOP_TYPE: TcxComboBox
+                object fndP5_CUST_TYPE: TcxComboBox
                   Left = 80
                   Top = 32
                   Width = 73
@@ -2487,7 +2491,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
+                    #23458#25143#31561#32423
+                    #23458#25143#20998#31867)
                   TabOrder = 7
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList

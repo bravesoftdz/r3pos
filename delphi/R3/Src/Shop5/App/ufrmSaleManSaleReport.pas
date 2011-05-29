@@ -266,13 +266,13 @@ begin
   fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex; //显示单位
 
   fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组
-  fndP2_SHOP_VALUE.KeyValue:=adoReport1.fieldbyName('REGION_ID').AsString;
-  fndP2_SHOP_VALUE.Text:=adoReport1.fieldbyName('CODE_NAME').AsString;
+  fndP2_SHOP_VALUE.KeyValue:=fndP1_SHOP_VALUE.KeyValue;
+  fndP2_SHOP_VALUE.Text:=fndP1_SHOP_VALUE.Text;
 
   fndP2_USER_ID.KeyValue := fndP1_USER_ID.KeyValue;
   fndP2_USER_ID.Text := fndP1_USER_ID.Text;
 
-  fndP2_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
+  fndP2_GODS_ID.KeyValue := fndP1_GODS_ID.KeyValue;
   fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
 
   fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
@@ -332,7 +332,7 @@ procedure TfrmSaleManSaleReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmSaleManSaleReport.fndP2_SORT_IDKeyPress(Sender: TObject;
@@ -366,8 +366,8 @@ begin
   fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
   fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
 
-  fndP3_USER_ID.KeyValue := adoReport2.FieldByName('USER_ID').AsString;
-  fndP3_USER_ID.Text := adoReport2.FieldByName('USER_NAME').AsString;
+  fndP3_USER_ID.KeyValue := fndP2_USER_ID.KeyValue;
+  fndP3_USER_ID.Text := fndP2_USER_ID.Text;
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -700,8 +700,14 @@ begin
   if (fndP5_SHOP_VALUE.AsString<>'') then
     begin
       case fndP5_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
+        0:
+         begin
+           if FnString.TrimRight(trim(fndP5_SHOP_VALUE.AsString),2)='00' then //非末级区域
+             strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP5_SHOP_VALUE.AsString)+'%'' '
+           else
+             strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+         end;
+        1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
       end;
     end;
 
@@ -736,7 +742,7 @@ begin
 
   //业务员
   if Trim(fndP5_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and D.USER_ID='''+fndP5_USER_ID.AsString+''' ';
+    strWhere := strWhere + ' and A.GUIDE_USER='''+fndP5_USER_ID.AsString+''' ';
 
   if fndP5_SALEORDER.Checked then //销售单:1
     strWhere := strWhere+' and SALES_TYPE=1 '
@@ -777,8 +783,8 @@ begin
     ',(case when A.NOTAX_MONEY<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.NOTAX_MONEY as decimal(18,3)) else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
     ',(case when A.NOTAX_MONEY*A.AMOUNT<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/A.AMOUNT else 0 end) as AVG_PROFIT'+    //--单位毛利
     ',B.SHOP_NAME '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID '+ strWhere + ' ';
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
 
   Result := ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -835,8 +841,14 @@ begin
   if trim(fndP4_SHOP_VALUE.AsString)<>'' then
   begin
     case fndP4_SHOP_TYPE.ItemIndex of
-     0:strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
-     1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP4_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP4_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
     end;
   end;
     
@@ -878,7 +890,7 @@ begin
 
   //业务员
   if Trim(fndP4_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and D.USER_ID='''+fndP4_USER_ID.AsString+''' ';
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP4_USER_ID.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -915,8 +927,8 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=
@@ -971,8 +983,14 @@ begin
   if (fndP3_SHOP_VALUE.AsString<>'') then
   begin
     case fndP3_SHOP_TYPE.ItemIndex of
-     0: strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
-     1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP3_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP3_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
     end;
   end;
 
@@ -994,7 +1012,7 @@ begin
 
   //业务员
   if Trim(fndP3_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and D.USER_ID='''+fndP3_USER_ID.AsString+''' ';
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP3_USER_ID.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1028,8 +1046,8 @@ begin
     ',sum(SALE_PRF) as SALE_PRF '+   //毛利
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID '+ strWhere + ' '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -1232,8 +1250,14 @@ begin
   if (fndP2_SHOP_VALUE.AsString<>'') then
     begin
       case fndP2_SHOP_TYPE.ItemIndex of
-      0:strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+        0:
+         begin
+           if FnString.TrimRight(trim(fndP2_SHOP_VALUE.AsString),2)='00' then //非末级区域
+             strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP2_SHOP_VALUE.AsString)+'%'' '
+           else
+             strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
+         end;
+        1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
       end;
     end;
   //商品指标:
@@ -1278,7 +1302,7 @@ begin
 
   //业务员
   if Trim(fndP2_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and D.USER_ID='''+fndP2_USER_ID.AsString+''' ';
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP2_USER_ID.AsString+''' ';
     
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1303,7 +1327,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',D.USER_ID '+
+    ',A.GUIDE_USER '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1315,14 +1339,14 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID';
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'group by A.TENANT_ID,A.GUIDE_USER';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
     ',r.ACCOUNT,r.USER_NAME from ('+strSql+') j '+
-    ' left outer join VIW_USERS r on j.TENANT_ID=r.TENANT_ID and j.USER_ID=r.USER_ID order by r.USER_ID'
+    ' left outer join VIW_USERS r on j.TENANT_ID=r.TENANT_ID and j.GUIDE_USER=r.USER_ID order by r.USER_ID'
     );
 end;
 
@@ -1407,7 +1431,7 @@ begin
     end;
   //业务员
   if Trim(fndP1_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and D.USER_ID='''+fndP1_USER_ID.AsString+''' ';
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP1_USER_ID.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1432,7 +1456,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',B.REGION_ID '+
+    ',A.DEPT_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1444,14 +1468,14 @@ begin
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
-    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C,VIW_USERS D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID and A.TENANT_ID=D.TENANT_ID and A.GUIDE_USER=D.USER_ID  '+ strWhere + ' '+
-    'group by A.TENANT_ID,B.REGION_ID';
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID  '+ strWhere + ' '+
+    'group by A.TENANT_ID,A.DEPT_ID';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',isnull(r.CODE_NAME,''无'') as CODE_NAME from ('+strSql+') j '+
-    ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r on j.REGION_ID=r.CODE_ID order by j.REGION_ID'
+    ',r.DEPT_NAME from ('+strSql+') j '+
+    ' left outer join CA_DEPT_INFO r on j.DEPT_ID=r.DEPT_ID order by j.DEPT_ID'
     );
 end;
 

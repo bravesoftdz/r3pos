@@ -11,14 +11,14 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet4
+        ActivePage = TabSheet2
         Color = clWhite
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
-          Caption = #22320#21306#38144#21806#27719#24635#34920
+          Caption = #37096#38376#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 876
             BorderColor = clBtnFace
@@ -471,16 +471,17 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'REGION_ID'
+                      FieldName = 'DEPT_ID'
                       Footers = <>
-                      Title.Caption = #21306#22495#20195#30721
+                      Title.Caption = #37096#38376#32534#30721
+                      Visible = False
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'CODE_NAME'
+                      FieldName = 'DEPT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
-                      Title.Caption = #22320#21306#21517#31216
+                      Title.Caption = #37096#38376#21517#31216
                       Width = 153
                     end
                     item

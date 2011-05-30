@@ -155,11 +155,9 @@ begin
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin
-      lab_SHOP_ID.Visible := False;
+      lab_SHOP_ID.Caption := 'À˘ Ù≤÷ø‚';
       edtSHOP_ID.KeyValue:=IntToStr(Global.TENANT_ID)+'0001';
       edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;
-      edtSHOP_ID.Visible := False;
-      RzLabel3.Visible := False;
     end;
 end;
 

@@ -248,7 +248,7 @@ begin
   for i:=0 to rzPage.PageCount -1 do
     begin
       if rzPage.Pages[i].Data = nil then continue;
-      if (TframeOrderForm(rzPage.Pages[i].Data).oid = id) or (TframeOrderForm(rzPage.Pages[i].Data).cid=cid) then
+      if (TframeOrderForm(rzPage.Pages[i].Data).oid = id) and (TframeOrderForm(rzPage.Pages[i].Data).cid=cid) then
          begin
            result := i;
            exit;

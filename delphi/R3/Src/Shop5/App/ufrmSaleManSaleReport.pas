@@ -379,7 +379,7 @@ procedure TfrmSaleManSaleReport.DBGridEh2GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'USER_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmSaleManSaleReport.fndP3_REPORT_FLAGPropertiesChange(
@@ -1345,7 +1345,7 @@ begin
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
-    ',r.ACCOUNT,r.USER_NAME from ('+strSql+') j '+
+    ',r.ACCOUNT,isnull(r.USER_NAME,''无'') as USER_NAME from ('+strSql+') j '+
     ' left outer join VIW_USERS r on j.TENANT_ID=r.TENANT_ID and j.GUIDE_USER=r.USER_ID order by r.USER_ID'
     );
 end;

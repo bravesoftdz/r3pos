@@ -70,6 +70,7 @@ type
     MaxId:string;
     FMultiSelect: boolean;
     FPRINT_DATE: string;
+    FSHOP_ID: string;
     procedure LoadTree;
     procedure LoadList;
     procedure LoadProv;
@@ -78,13 +79,15 @@ type
     procedure SetMultiSelect(const Value: boolean);
     procedure SetPRINT_DATE(const Value: string);
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
+    procedure SetSHOP_ID(const Value: string);
   public
     { Public declarations }
-    procedure InitGrid(PRINT_ID: string);
+    procedure InitGrid(PRINT_ID,InSHOP_ID: string);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     property MultiSelect:boolean read FMultiSelect write SetMultiSelect;
     property PRINT_DATE: string read FPRINT_DATE write SetPRINT_DATE;    //传入盘点单号
+    property SHOP_ID: string read FSHOP_ID write SetSHOP_ID; //传入门店ID
   end;
 
 implementation
@@ -106,13 +109,14 @@ begin
   inherited;
 end;
 
-procedure TfrmSelectCheckGoods.InitGrid(PRINT_ID: string);
+procedure TfrmSelectCheckGoods.InitGrid(PRINT_ID,InSHOP_ID: string);
 var
   rs: TZQuery;
   SetCol: TColumnEh;
 begin
   inherited;
   PRINT_DATE:=PRINT_ID;
+  SHOP_ID:=InSHOP_ID;
   SetCol:=FindColumn(self.DBGridEh1,'UNIT_ID');
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   if (SetCol<>nil) and (rs.Active) then
@@ -143,7 +147,7 @@ begin
   0:sc := '+';
   1,4,5: sc := '||';
   end;
-  w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+  w := 'and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then
      begin
       if w<>'' then w := w + ' and ';
@@ -178,8 +182,10 @@ begin
   0,3:
    result :=
      'select top 600 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
-     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b '+
+     '  where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
+     ' where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
      ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID';
@@ -187,8 +193,8 @@ begin
    result :=
      'select * from '+
      '(select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
-     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
      ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID) where ROWNUM<=600 order by ROWNUM';
@@ -196,8 +202,8 @@ begin
   result :=
      'select tp.* from ('+
      'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
-     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     ' (select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l, '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
      ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
      ' where l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
   5:
@@ -205,7 +211,8 @@ begin
      'select 0 as A,l.*,r.BATCH_NO as BATCH_NO,r.AMOUNT as AMOUNT from '+
      '(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE,J.NEW_INPRICE '+
      ' from VIW_GOODSPRICE j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l,'+
-     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m where s.PRINT_DATE=m.PRINT_DATE and s.TENANT_ID=m.TENANT_ID and m.COMM not in (''02'',''12'') and '+
+     '(select GODS_ID,BATCH_NO,RCK_AMOUNT as AMOUNT from STO_PRINTDATA s,STO_PRINTORDER m '+
+     ' where s.TENANT_ID=m.TENANT_ID and s.SHOP_ID=m.SHOP_ID and s.PRINT_DATE=m.PRINT_DATE and m.COMM not in (''02'',''12'') and '+
      ' s.TENANT_ID=:TENANT_ID and s.SHOP_ID=:SHOP_ID and s.PRINT_DATE=:PRINT_DATE) r '+
      ' where l.GODS_ID=r.GODS_ID '+
      ' order by l.GODS_ID limit 600 ';
@@ -225,7 +232,7 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
+    rs.Params.ParamByName('SHOP_ID').asString := SHOP_ID; //传入门店
     if rs.Params.FindParam('MAXID')<>nil then
        rs.Params.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then
@@ -664,6 +671,11 @@ begin
     DBGridEh1.Canvas.Brush.Color := clAqua;
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TfrmSelectCheckGoods.SetSHOP_ID(const Value: string);
+begin
+  FSHOP_ID := Value;
 end;
 
 end.

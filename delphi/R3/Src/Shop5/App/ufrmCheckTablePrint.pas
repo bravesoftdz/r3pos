@@ -153,6 +153,9 @@ var
   SortTypeIdx: integer;
   strSql,strWhere,GoodTab,CalcFields,UnitField,CodeID: string;
 begin
+  //过滤企业ID
+  strWhere := ' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+
   //门店名称
   if trim(fndP1_SHOP_ID.AsString)='' then Raise Exception.Create('  请选择门店名称！  ');
   strWhere := ' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
@@ -161,8 +164,6 @@ begin
   if fndP1_PRINT_DATE.AsString = '' then Raise Exception.Create('请选择盘点日期...');
   strWhere := strWhere + ' and A.PRINT_DATE='+fndP1_PRINT_DATE.AsString+' ';  
 
-  //商品分类[供应链] (以前过滤为了优化查询性能，加不加结果一样)
-  strWhere := strWhere+' and (B.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.SHOP_ID='''+Global.SHOP_ID+''')';  //过滤企业ID和门店
   if trim(fndP1_SORT_ID.Text)<>'' then
   begin
     GoodTab:='VIW_GOODSPRICE_SORTEXT';
@@ -208,8 +209,9 @@ begin
     ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_INPRICE,0))*1.00 end) as PAL_INAMONEY ' +    //--损益成本金额
     ',(case when D.CHECK_STATUS<>3 then null else ((isnull(RCK_AMOUNT,0)-isnull(CHK_AMOUNT,0))*1.00 * isnull(B.NEW_OUTPRICE,0))*1.00 end) as PAL_OUTAMONEY ' +  //--损益销售金额
     ' from STO_PRINTDATA A,STO_PRINTORDER D,'+GoodTab+' B  ' +
-    'where A.PRINT_DATE=D.PRINT_DATE and A.TENANT_ID=D.TENANT_ID and D.TENANT_ID=B.TENANT_ID and D.SHOP_ID=B.SHOP_ID and '+
-    ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.TENANT_ID=A.TENANT_ID and A.GODS_ID=B.GODS_ID '+StrWhere;
+    'where A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.PRINT_DATE=D.PRINT_DATE and '+
+    ' A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID '+
+    ' '+StrWhere;
 
   strSql:=
     'select M.*,isnull(Bar.BARCODE,M.DEF_BARCODE) as BARCODE from ('+strSql+') M '+
@@ -332,8 +334,8 @@ begin
     IsCheck:=False;
     if fndP1_PRINT_DATE.DataSet.Active then
       IsCheck:=(fndP1_PRINT_DATE.DataSet.FieldByName('CHECK_STATUS').AsInteger=3); //审核
-    SetCol:=FindColumn(DBGridEh1,'CHK_AMOUNT');
-    if SetCol<>nil then SetCol.Visible:=IsCheck;
+    // SetCol:=FindColumn(DBGridEh1,'CHK_AMOUNT');
+    // if SetCol<>nil then SetCol.Visible:=IsCheck;
     SetCol:=FindColumn(DBGridEh1,'PAL_AMOUNT');
     if SetCol<>nil then SetCol.Visible:=IsCheck;
     SetCol:=FindColumn(DBGridEh1,'PAL_INAMONEY');
@@ -387,17 +389,19 @@ procedure TfrmCheckTablePrint.DoOpenDefaultData(Aobj: TRecord_);
 var DropDs: TDataSet; CurID: string;
 begin
   CurID:='';
-  if (Aobj.FindField('PRINT_DATE')<>nil) then
-  begin
-    fndP1_PRINT_DATE.KeyValue:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
-    fndP1_PRINT_DATE.Text:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
-  end;
+  //先门店
   if Aobj.FindField('SHOP_ID')<>nil then
   begin
     CurID:=trim(Aobj.fieldbyName('SHOP_ID').AsString);
     DropDs:=fndP1_SHOP_ID.DataSet;
     fndP1_SHOP_ID.KeyValue:=CurID;
     fndP1_SHOP_ID.Text:=TdsFind.GetNameByID(DropDs,fndP1_SHOP_ID.KeyField,fndP1_SHOP_ID.ListField,CurID);
+  end;
+  //在盘点日期
+  if (Aobj.FindField('PRINT_DATE')<>nil) then
+  begin
+    fndP1_PRINT_DATE.KeyValue:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
+    fndP1_PRINT_DATE.Text:=trim(Aobj.fieldbyName('PRINT_DATE').AsString);
   end;
   if (trim(Aobj.fieldbyName('PRINT_DATE').AsString)<>'') and (CurID<>'')then
     self.RzPage1Open;//查询盘点

@@ -803,7 +803,7 @@ begin
     try
       CurObj:=TRecord_.Create;
       MultiSelect := true;
-      InitGrid(Print_ID);
+      InitGrid(Print_ID, edtSHOP_ID.AsString);
       if self.dbState = dsBrowse then
       begin
         MultiSelect:=False;

@@ -1375,7 +1375,6 @@ begin
     strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
   begin

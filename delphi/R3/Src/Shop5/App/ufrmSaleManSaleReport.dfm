@@ -11,10 +11,10 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet2
+        ActivePage = TabSheet3
         Color = clWhite
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -1238,7 +1238,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Left = 0
                 Top = 0
                 Width = 866
-                Height = 101
+                Height = 97
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1324,7 +1324,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 489
-                  Top = 61
+                  Top = 63
                   Width = 67
                   Height = 29
                   Action = actFind
@@ -1549,9 +1549,9 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 101
+                Top = 97
                 Width = 866
-                Height = 351
+                Height = 355
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1561,7 +1561,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Left = 2
                   Top = 2
                   Width = 862
-                  Height = 347
+                  Height = 351
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

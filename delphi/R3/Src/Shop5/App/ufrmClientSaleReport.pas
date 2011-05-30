@@ -22,7 +22,6 @@ type
     Label32: TLabel;
     Label33: TLabel;
     Label38: TLabel;
-    Label39: TLabel;
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     BtnDept: TRzBitBtn;
@@ -35,7 +34,6 @@ type
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_GODS_ID: TzrComboBoxList;
     fndP1_SHOP_ID: TzrComboBoxList;
-    fndP1_CLIENT_ID: TcxComboBox;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -49,7 +47,6 @@ type
     Label15: TLabel;
     Label34: TLabel;
     Label30: TLabel;
-    Label41: TLabel;
     P2_D1: TcxDateEdit;
     P2_D2: TcxDateEdit;
     fndP2_CUST_VALUE: TzrComboBoxList;
@@ -61,7 +58,6 @@ type
     fndP2_CUST_TYPE: TcxComboBox;
     fndP2_DEPT_ID: TzrComboBoxList;
     fndP2_GODS_ID: TzrComboBoxList;
-    fndP2_CLIENT_ID: TcxComboBox;
     RzPanel10: TRzPanel;
     DBGridEh2: TDBGridEh;
     Label9: TLabel;
@@ -194,7 +190,7 @@ type
       State: TGridDrawState; var Text: String);
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
+    //数据集；
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
     RckMaxDate: integer; //台帐最大日期
@@ -271,9 +267,6 @@ begin
 
   fndP2_GODS_ID.KeyValue := fndP2_GODS_ID.KeyValue;
   fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
-
-  fndP2_CLIENT_ID.Text := fndP1_CLIENT_ID.Text;
-  fndP2_CLIENT_ID.ItemIndex := fndP1_CLIENT_ID.ItemIndex;
 
   fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
   fndP2_SHOP_ID.Text := fndP1_SHOP_ID.Text;
@@ -685,7 +678,7 @@ begin
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP5_CUST_VALUE.AsString<>'') then
   begin
-    case fndP5_CUST_TYPE.ItemIndex of
+    case fndP5_CUST_TYPE.ItemIndex of  //行政区域
       0:
        begin
          if FnString.TrimRight(trim(fndP5_CUST_VALUE.AsString),2)='00' then //非末级区域
@@ -693,8 +686,9 @@ begin
          else
            strWhere:=strWhere+' and D.REGION_ID='''+fndP5_CUST_VALUE.AsString+''' ';
        end;
-      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP5_CUST_VALUE.AsString+''' ';
-      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP5_CUST_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP5_CUST_VALUE.AsString+''' ';  //等级
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP5_CUST_VALUE.AsString+''' ';   //分类
+      3: strWhere:=strWhere+' and D.FLAG='+fndP5_CUST_VALUE.AsString+' ';          //客户群体
     end;
   end;
 
@@ -840,8 +834,9 @@ begin
          else
            strWhere:=strWhere+' and D.REGION_ID='''+fndP4_CUST_VALUE.AsString+''' ';
        end;
-      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP4_CUST_VALUE.AsString+''' ';
-      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP4_CUST_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP4_CUST_VALUE.AsString+''' ';  //等级
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP4_CUST_VALUE.AsString+''' ';   //分类
+      3: strWhere:=strWhere+' and D.FLAG='+fndP4_CUST_VALUE.AsString+' ';        //客户群体
     end;
   end;
     
@@ -975,7 +970,7 @@ begin
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP3_CUST_VALUE.AsString<>'') then
   begin
-    case fndP3_CUST_TYPE.ItemIndex of
+    case fndP3_CUST_TYPE.ItemIndex of  //行政区域
       0:
        begin
          if FnString.TrimRight(trim(fndP3_CUST_VALUE.AsString),2)='00' then //非末级区域
@@ -983,8 +978,9 @@ begin
          else
            strWhere:=strWhere+' and D.REGION_ID='''+fndP3_CUST_VALUE.AsString+''' ';
        end;
-      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP3_CUST_VALUE.AsString+''' ';
-      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP3_CUST_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP3_CUST_VALUE.AsString+''' ';  //等级
+      2: strWhere:=strWhere+' and D.SORT_ID='''+fndP3_CUST_VALUE.AsString+''' ';   //分类
+      3: strWhere:=strWhere+' and D.FLAG='+fndP3_CUST_VALUE.AsString+' ';     //客户群体
     end;
   end;
 
@@ -1045,7 +1041,7 @@ begin
     'from '+SQLData+' A '+
     ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
     ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
-    ' left outer join VIW_CUSTOMER D A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     ' '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
 
@@ -1155,7 +1151,7 @@ begin
     end;
   end; }
 
-//  IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
+{ IsVisble:=HasChild and (Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) = '0001');
   rzPage.Pages[1].TabVisible := true; // IsVisble;
   rzPage.Pages[2].TabVisible := true; //IsVisble;
   for i:=0 to rzPage.PageCount-1 do
@@ -1165,7 +1161,9 @@ begin
       rzPage.ActivePageIndex:=i;
       break;
     end;
-  end; 
+  end;
+  }
+  rzPage.ActivePageIndex:=0; //默认是第一页
 end;
 
 procedure TfrmClientSaleReport.SetUnitIDList(DBGrid: TDBGridEh;
@@ -1248,7 +1246,7 @@ begin
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP2_CUST_VALUE.AsString<>'') then
   begin
-    case fndP2_CUST_TYPE.ItemIndex of
+    case fndP2_CUST_TYPE.ItemIndex of  //行政区域
      0:
       begin
         if FnString.TrimRight(trim(fndP2_CUST_VALUE.AsString),2)='00' then //非末级区域
@@ -1256,8 +1254,9 @@ begin
         else
           strWhere:=strWhere+' and D.REGION_ID='''+fndP2_CUST_VALUE.AsString+''' ';
       end;
-     1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP2_CUST_VALUE.AsString+''' ';
-     2: strWhere:=strWhere+' and D.SORT_ID='''+fndP2_CUST_VALUE.AsString+''' ';
+     1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP2_CUST_VALUE.AsString+''' ';//客户等级
+     2: strWhere:=strWhere+' and D.SORT_ID='''+fndP2_CUST_VALUE.AsString+''' '; //客户分类
+     3: strWhere:=strWhere+' and D.FLAG='+fndP2_CUST_VALUE.AsString+' ';        //客户群体
     end;
   end;
   //商品指标:
@@ -1299,16 +1298,7 @@ begin
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
     StrCnd:=' and SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
   end;
-    
-  //客户群体
-  if Trim(fndP2_CLIENT_ID.Text) <> '' then
-  begin
-    case fndP2_CLIENT_ID.ItemIndex of
-     1: strWhere := strWhere + ' and D.FLAG=0 ';
-     2: strWhere := strWhere + ' and D.FLAG=2 '
-    end;
-  end;
-    
+
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
@@ -1398,6 +1388,7 @@ begin
        end;
       1: strWhere:=strWhere+' and D.PRICE_ID='''+fndP1_CUST_VALUE.AsString+''' ';   //等级 
       2: strWhere:=strWhere+' and D.SORT_ID='''+fndP1_CUST_VALUE.AsString+''' ';    //分类
+      3: strWhere:=strWhere+' and D.FLAG='+fndP1_CUST_VALUE.AsString+' ';        //客户群体
     end;
   end;
                                 
@@ -1436,19 +1427,10 @@ begin
 
   //门店名称
   if Trim(fndP1_SHOP_ID.Text) <> '' then
-    begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
-      StrCnd:=' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
-    end;
-
-  //客户群体
-  if Trim(fndP1_CLIENT_ID.Text) <> '' then
-    begin
-      case fndP1_CLIENT_ID.ItemIndex of
-        1: strWhere := strWhere + ' and D.FLAG=0 ';
-        2: strWhere := strWhere + ' and D.FLAG=2 ';
-      end;
-    end;
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+    StrCnd:=' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+  end;
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);

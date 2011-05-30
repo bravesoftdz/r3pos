@@ -11,7 +11,7 @@ inherited frmEhLibReport: TfrmEhLibReport
   object CoolBar1: TCoolBar [0]
     Left = 0
     Top = 0
-    Width = 1016
+    Width = 1008
     Height = 39
     AutoSize = True
     Bands = <
@@ -19,13 +19,13 @@ inherited frmEhLibReport: TfrmEhLibReport
         Control = ToolBar2
         ImageIndex = -1
         MinHeight = 35
-        Width = 1012
+        Width = 1004
       end>
     Images = dmIcon.ImgLst16
     object ToolBar2: TToolBar
       Left = 9
       Top = 0
-      Width = 999
+      Width = 991
       Height = 35
       ButtonHeight = 35
       ButtonWidth = 43
@@ -110,8 +110,8 @@ inherited frmEhLibReport: TfrmEhLibReport
   object PageControl1: TPageControl [1]
     Left = 0
     Top = 39
-    Width = 1016
-    Height = 645
+    Width = 1008
+    Height = 641
     Align = alClient
     MultiLine = True
     Style = tsFlatButtons
@@ -120,8 +120,8 @@ inherited frmEhLibReport: TfrmEhLibReport
   object PreviewBox1: TPreviewBox [2]
     Left = 0
     Top = 39
-    Width = 1016
-    Height = 645
+    Width = 1008
+    Height = 641
     HorzScrollBar.Tracking = True
     VertScrollBar.Tracking = True
     Align = alClient
@@ -254,7 +254,8 @@ inherited frmEhLibReport: TfrmEhLibReport
     end
   end
   object SaveDialog1: TSaveDialog
-    Filter = 'Excel'#26684#24335'|(*.xls)'
+    DefaultExt = '*.xls'
+    Filter = 'Excel'#26684#24335'(*.xls)|(*.xls)'
     Left = 328
     Top = 119
   end

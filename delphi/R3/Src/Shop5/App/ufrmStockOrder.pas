@@ -1359,9 +1359,7 @@ procedure TfrmStockOrder.RzBitBtn1Click(Sender: TObject);
 var Flag:Integer;
 begin
   inherited;
-  if edtCLIENT_ID.DataSet.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Exit;
-  if Trim(edtCLIENT_ID.Text) = '' then Exit;
-  if edtCLIENT_ID.DataSet.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Exit;
+  if not edtCLIENT_ID.DataSet.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Exit;
   Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
   case Flag of
     0:begin

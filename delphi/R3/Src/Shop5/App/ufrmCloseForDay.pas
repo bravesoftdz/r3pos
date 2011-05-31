@@ -66,6 +66,7 @@ type
     LastTime:integer;
     Is_Print: Boolean;
     MainRecord: TRecord_;
+    function CheckStatus:boolean;
     //检查是否有离线数据，必须上传后才能结账
     procedure CheckOffData;
     procedure GetEverydayAcc(var Acc_Data:TZQuery;ThatDay:Integer);
@@ -249,7 +250,7 @@ begin
         if not (GetBalance and (LastTime = 0)) then
           begin
             Open;
-            if (IntToStr(LastTime) = FormatDateTime('YYYYMMDD',Date())) then  //打印当天已经结账汇总
+            if CheckStatus then  //打印当天已经结账汇总
             begin
               Btn_Save.Caption := '打印小票(&P)';
               Btn_Save.Tag := 1;
@@ -574,6 +575,24 @@ end;
 procedure TfrmCloseForDay.CheckOffData;
 begin
 
+end;
+
+function TfrmCloseForDay.CheckStatus: boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select CLSE_DATE from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER';
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
+    rs.Params.ParamByName('CLSE_DATE').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',Date));
+    rs.Params.ParamByName('CREA_USER').asString := Global.UserId;
+    Factor.Open(rs);
+    result := not rs.IsEmpty;
+  finally
+    rs.free;
+  end;
 end;
 
 end.

@@ -572,6 +572,7 @@ procedure TSyncFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64;SHOP_ID:
 var
   r:integer;
 begin
+  if TimeStamp=0 then TimeStamp := round((now()-40542.0)*86400);
   if SHOP_ID='' then SHOP_ID:='#';
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then

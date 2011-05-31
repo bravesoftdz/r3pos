@@ -2957,6 +2957,7 @@ end;
 procedure TframeOrderForm.mnuDeleteGodsClick(Sender: TObject);
 begin
   inherited;
+  if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if not edtTable.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+edtTable.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
@@ -3044,6 +3045,7 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   if edtTable.IsEmpty then Exit;
+  if DBGridEh1.ReadOnly then Exit;
   fndStr := edtTable.FieldbyName('GODS_ID').AsString;
   if Assigned(fndGODS_ID.OnAddClick) then
      fndGODS_ID.OnAddClick(fndGODS_ID);
@@ -3080,6 +3082,7 @@ var
 begin
   inherited;
   if not edtTable.Active then Exit;
+  if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
   if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
@@ -3132,6 +3135,7 @@ end;
 procedure TframeOrderForm.munAppendRowClick(Sender: TObject);
 begin
   inherited;
+  if DBGridEh1.ReadOnly then Exit;
   InitRecord;
 end;
 
@@ -3236,6 +3240,7 @@ end;
 procedure TframeOrderForm.actBatchNoExecute(Sender: TObject);
 begin
   inherited;
+  if DBGridEh1.ReadOnly then Exit;
   if edtInput.CanFocus and Visible then edtInput.SetFocus;
   InputFlag := 8;
 
@@ -3244,12 +3249,14 @@ end;
 procedure TframeOrderForm.actUnitConvertExecute(Sender: TObject);
 begin
   inherited;
+  if DBGridEh1.ReadOnly then Exit;
   ConvertUnit;
 end;
 
 procedure TframeOrderForm.actIsPressentExecute(Sender: TObject);
 begin
   inherited;
+  if DBGridEh1.ReadOnly then Exit;
   if edtTable.FieldbyName('IS_PRESENT').AsInteger = 0 then
      PresentToCalc(1)
   else

@@ -1,3 +1,4 @@
+
 { 13100001	0	收银机	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	兑换	8	审核   }
 
 unit ufrmPosMain;
@@ -393,10 +394,10 @@ begin
     F.Free;
   end;
 
-  if (Screen.DesktopRect.Bottom-Screen.DesktopRect.Top)/(Screen.DesktopRect.Right-Screen.DesktopRect.Left)>600/800 then
+  if (Screen.DesktopRect.Bottom-Screen.DesktopRect.Top)/(Screen.DesktopRect.Right-Screen.DesktopRect.Left)<600/800 then
      ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600)
   else
-     ScaleBy((Screen.DesktopRect.Bottom-Screen.DesktopRect.Top),600);
+     ScaleBy((Screen.DesktopRect.Right-Screen.DesktopRect.Left),800);
   SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   rzinfo1.Width := RzPanel2.ClientWidth div 2 -10;
   

@@ -9,7 +9,7 @@ uses
   RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
-  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg;
+  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg,uTimerFactory;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -462,6 +462,8 @@ type
     FLoging: boolean;
     FSystemShutdown: boolean;
     sflag:string;
+    TimerFactory:TTimerFactory;
+    procedure DoLoadMsg(Sender:TObject);
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
@@ -515,7 +517,7 @@ uses
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
-  ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,
+  ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,ufrmSaleManSaleReport
   ;
 {$R *.dfm}
@@ -561,12 +563,14 @@ begin
   end;
   RzVersionInfo.FilePath := ParamStr(0);
   LoadFrame;
+  TimerFactory := nil;
 end;
 
 procedure TfrmShopMain.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
+  if TimerFactory<>nil then FreeAndNil(TimerFactory);
   frmLogo.Free;
   if frmInstall<>nil then frmInstall.free;
   screen.OnActiveFormChange := nil;
@@ -748,6 +752,8 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
+  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  try
   Logined := false;
   Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
   result := Logined;
@@ -819,6 +825,9 @@ begin
           end;
      end;
   LoadFrame;
+  finally
+     if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,120000);
+  end;
 end;
 
 procedure TfrmShopMain.wm_Login(var Message: TMessage);
@@ -981,11 +990,13 @@ begin
   if not Logined then Exit;
   if not Visible then Exit;
   if not Factor.Connected then Exit;
+
   if not MsgFactory.Loaded or (MsgFactory.Loaded and (Timer1.Tag>0) and
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod 120)=0)
      )
   then
-     MsgFactory.Load;
+   MsgFactory.Load;
+
   if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
   if MsgFactory.Count > 0 then
      begin
@@ -1343,7 +1354,7 @@ begin
   result := TfrmTenant.coRegister(self);
   if result then LoadFrame;
   if result and CaFactory.Audited then result := CheckVersion;
-  if not result then Exit; //不为true时没必要执行下载的语句了
+  if not result then Exit;
   if result then
      begin
       if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
@@ -1429,6 +1440,7 @@ begin
              begin
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
+                    SyncTimeStamp := CaFactory.TimeStamp;
                     SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
@@ -3481,7 +3493,9 @@ end;
 procedure TfrmShopMain.wm_message(var Message: TMessage);
 begin
   if Message.WParam = 99 then //执行自动到货确认
+  begin
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
+  end;
 end;
 
 procedure TfrmShopMain.actfrmNetForOrderExecute(Sender: TObject);
@@ -3575,6 +3589,11 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.DoLoadMsg(Sender: TObject);
+begin
+  PrainpowerJudge.SyncMsgc;
 end;
 
 end.

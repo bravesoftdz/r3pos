@@ -910,7 +910,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'GODS_CODE'
           Footers = <>
           Title.Caption = #36135#21495
-          Width = 59
+          Width = 67
         end
         item
           EditButtons = <>
@@ -952,14 +952,14 @@ inherited frmPosMain: TfrmPosMain
           Footers = <>
           Title.Caption = #21333#20301
           Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
-          Width = 30
+          Width = 19
         end
         item
           EditButtons = <>
           FieldName = 'ORG_PRICE'
           Footers = <>
           Title.Caption = #21407#21333#20215
-          Width = 51
+          Width = 45
         end
         item
           Alignment = taRightJustify
@@ -968,7 +968,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'AGIO_RATE'
           Footers = <>
           Title.Caption = #25240#25187#29575
-          Width = 47
+          Width = 44
         end
         item
           Alignment = taRightJustify
@@ -976,7 +976,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'APRICE'
           Footers = <>
           Title.Caption = #29616#21333#20215
-          Width = 51
+          Width = 45
         end
         item
           Alignment = taRightJustify
@@ -985,21 +985,21 @@ inherited frmPosMain: TfrmPosMain
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #37329#39069
-          Width = 61
+          Width = 57
         end
         item
           EditButtons = <>
           FieldName = 'BATCH_NO'
           Footers = <>
           Title.Caption = #25209#21495
-          Width = 82
+          Width = 68
         end
         item
           EditButtons = <>
           FieldName = 'LOCUS_NO'
           Footers = <>
           Title.Caption = #29289#27969#36319#36394#30721
-          Width = 88
+          Width = 77
         end>
     end
   end

@@ -87,7 +87,7 @@ type
 var
   MsgFactory:TMsgFactory;
 implementation
-uses uGlobal,ufrmMain,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge;  //ufrmShowMsg
+uses uGlobal,ufrmMain,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge,ObjCommon;  //ufrmShowMsg
 {$R *.dfm}
 var
   frmMsg: TfrmHintMsg;
@@ -124,7 +124,8 @@ begin
 end;
 
 function TMsgFactory.EncodeSQL: String;
-var Str_Sql,Str_where:String;
+var
+  Str_Sql,Str_where:String;
 begin
   Str_where := ' and a.END_DATE >= '+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()));
   Str_where := Str_where + ' and b.SHOP_ID=' + QuotedStr(Global.SHOP_ID)+ ' and b.MSG_READ_STATUS=1 ';
@@ -172,7 +173,6 @@ var Str_where:String;
 begin
   try
     Clear;
-    PrainpowerJudge.SyncMsgc;
     rs := TZQuery.Create(nil);
     try
       rs.SQL.Text := EncodeSQL;
@@ -190,6 +190,8 @@ begin
           MsgInfo^.sFlag := 0;
           if rs.FieldbyName('MSG_SOURCE').asString='到货通知' then
              begin
+               MsgInfo^.Rdd := true;
+               Factor.ExecSQL('update MSC_MESSAGE_LIST set READ_USER='''+Global.UserId+''',READ_DATE='''+formatDatetime('YYYY-MM-DD',Date())+''',MSG_READ_STATUS=''2'',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and MSG_ID='''+MsgInfo^.ID+'''');
                PostMessage(frmMain.Handle,MSC_MESSAGE,99,strtoint(MsgInfo^.SndDate));
              end;
           FList.Add(MsgInfo);

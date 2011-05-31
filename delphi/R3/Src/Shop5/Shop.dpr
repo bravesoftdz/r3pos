@@ -224,7 +224,8 @@ uses
   ufrmOptionDefine in 'App\ufrmOptionDefine.pas' {frmOptionDefine},
   ufrmSaleManSaleReport in 'App\ufrmSaleManSaleReport.pas' {frmSaleManSaleReport},
   ufrmClientSaleReport in 'App\ufrmClientSaleReport.pas' {frmClientSaleReport},
-  ufrmTenantInfo in 'App\ufrmTenantInfo.pas' {frmTenantInfo};
+  ufrmTenantInfo in 'App\ufrmTenantInfo.pas' {frmTenantInfo},
+  uTimerFactory in 'App\uTimerFactory.pas';
 
 {$R *.res}
 var

@@ -548,6 +548,10 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
       Caption = #26174#31034#25152#26377
       OnClick = N4Click
     end
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20837'...'
+      OnClick = Excel1Click
+    end
   end
   object cdsBrowser: TZQuery
     SortedFields = 'GODS_CODE'

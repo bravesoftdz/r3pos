@@ -54,6 +54,7 @@ type
     ToolButton3: TToolButton;
     ToolButton6: TToolButton;
     actDefineState: TAction;
+    Excel1: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -85,6 +86,7 @@ type
     procedure N8Click(Sender: TObject);
     procedure N10Click(Sender: TObject);
     procedure actDefineStateExecute(Sender: TObject);
+    procedure Excel1Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure PrintView;
@@ -1127,6 +1129,269 @@ procedure TfrmGoodsInfoList.actDefineStateExecute(Sender: TObject);
 begin
   inherited;
   TfrmDefineStateInfo.ShowDialog(self);
+end;
+
+procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
+  function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
+  var rs:TZQuery;
+  begin
+    {Result := False;
+    // *******************门店********************
+    if DFieldName = 'SHOP_ID' then
+      begin
+        if Source.FieldByName(SFieldName).AsString <> '' then
+          begin
+            rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+            if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的门店代码...');
+          end
+        else
+          Raise Exception.Create('门店不能为空!');
+      end;
+
+    //*******************地区*****************
+    if DFieldName = 'REGION_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_REGION_INFO');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
+          end
+        else
+          Dest.FieldByName('REGION_ID').AsString := '#';
+      end;
+
+    //*******************供应商类别*****************
+    if DFieldName = 'SORT_ID' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的供应商类别代码...');
+          end
+        else
+          begin
+            Dest.FieldByName('SORT_ID').AsString := '#';
+            //Raise Exception.Create('客户类别不能为空!');
+          end;
+      end;
+
+    //*******************结算方式*****************
+    if DFieldName = 'SETTLE_CODE' then
+      begin
+        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的结算方式代码...');
+          end
+        else
+          Raise Exception.Create('结算方式不能为空!');
+      end;
+
+    //*******************开户银行*****************
+    if DFieldName = 'BANK_ID' then
+      begin
+        rs := Global.GetZQueryFromName('PUB_BANK_INFO');
+        if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+          begin
+            Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+            Result := True;
+          end
+        else
+          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的开户银行代码...');
+      end;
+
+    //*******************发票类型*****************
+    if DFieldName = 'INVOICE_FLAG' then
+      begin
+        rs := Global.GetZQueryFromName('PUB_PARAMS');
+        if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+          begin
+            Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
+            Result := True;
+          end
+        else
+          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的发票类型代码...');
+      end;
+
+    //供应商编号
+    if DFieldName = 'CLIENT_CODE' then
+      begin
+        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 20 then
+              Raise Exception.Create('供应商编号就在20个字符以内!')
+            else
+              begin
+                rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+                if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                  Raise Exception.Create('当前供应商编号已经存在!')
+                else
+                  begin
+                    Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end;
+          end
+        else
+          begin
+            Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+          end;
+      end;
+
+    //供应商名称
+    if DFieldName = 'CLIENT_NAME' then
+      begin
+        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('供应商名称就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          Raise Exception.Create('供应商名称不能为空!');
+      end;
+
+    //供应商拼音码
+    if DFieldName = 'CLIENT_SPELL' then
+      begin
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+              Raise Exception.Create('供应商拼音码就在50个字符以内!')
+            else
+              begin
+                Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                Result := True;
+              end;
+          end
+        else
+          begin
+            if Trim(Source.FieldByName('CLIENT_NAME').AsString) <> '' then
+              Dest.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CLIENT_NAME').AsString),3)
+            else
+              Raise Exception.Create('供应商拼音码不能为空!');
+          end;
+      end;
+  end;
+  function SaveExcel(CdsExcel:TDataSet):Boolean;
+  begin
+    CdsExcel.First;
+    while not CdsExcel.Eof do
+      begin
+        CdsExcel.Edit;
+        CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        CdsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
+        CdsExcel.FieldByName('UNION_ID').AsString := '#';
+        CdsExcel.FieldByName('CLIENT_TYPE').AsString := '1';
+        CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
+        CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
+        //CdsExcel.FieldByName('IC_STATUS').AsString := '0';
+        //CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        CdsExcel.Post;
+        CdsExcel.Next;
+      end;
+    Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil); }
+  end;
+  function FindColumn(CdsCol:TDataSet):Boolean;
+  begin
+    {if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少门店字段!');
+      end;
+    if not CdsCol.Locate('FieldName','SETTLE_CODE',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少结算方式字段!');
+      end;
+    if not CdsCol.Locate('FieldName','CLIENT_NAME',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少客户名称字段!');
+      end; }
+  end;
+var FieldsString,FormatString:String;
+    Params:TftParamList;
+    rs:TZQuery;
+begin
+  inherited;
+{  Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    with rs.FieldDefs do
+      begin
+        Add('BARCODE',ftString,40,False);
+        Add('GODS_CODE',ftString,40,False);
+        Add('GODS_NAME',ftString,40,False);
+        Add('GODS_SPELL',ftString,40,False);
+        Add('UNIT_ID',ftString,40,False);
+        Add('CALC_UNITS',ftString,40,False);
+        Add('SORT_ID1',ftString,40,False);
+        Add('RTL_OUTPRICE',ftString,40,False);
+        Add('NEW_OUTPRICE',ftString,40,False);
+        Add('NEW_INPRICE',ftString,40,False);
+        Add('NEW_LOWPRICE',ftString,40,False);
+        Add('SORT_ID7',ftString,40,False);
+        Add('SORT_ID8',ftString,40,False);
+        Add('SMALL_UNITS',ftString,40,False);
+        Add('SMALLTO_CALC',ftString,40,False);
+        Add('BARCODE2',ftString,40,False);
+        Add('NEW_OUTPRICE1',ftString,40,False);
+        Add('BIG_UNITS',ftString,40,False);
+        Add('BIGTO_CALC',ftString,40,False);
+        Add('BARCODE3',ftString,40,False);
+        Add('NEW_OUTPRICE2',ftString,40,False);
+      end;
+    Params.ParamByName('CLIENT_ID').asString := '';
+    Params.ParamByName('UNION_ID').AsString := '#';
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.Open(rs,'TSupplier',Params);
+
+    
+
+    FieldsString := 'CLIENT_CODE=供应商编号,CLIENT_NAME=供应商名称,CLIENT_SPELL=拼音码,SHOP_ID=所属门店,SORT_ID=供应商分类,REGION_ID=地区,SETTLE_CODE=结算方式,'+
+    'INVO_NAME=公司全称,LEGAL_REPR=法人代表,LICENSE_CODE=经营许可证,BANK_ID=开户银行,ACCOUNT=账号,TELEPHONE3=注册电话,INVOICE_FLAG=发票类型,'+
+    'TAX_RATE=进项税率,TAX_NO=税务登记证号,ADDRESS=地址,LINKMAN=联系人,FAXES=传真,TELEPHONE1=电话,TELEPHONE2=手机,QQ=QQ,MSN=MSN,EMAIL=电子邮件,'+
+    'HOMEPAGE=网址,SEND_ADDR=送货地址,POSTALCODE=邮政编码,SEND_LINKMAN=送货人,SEND_TELE=送货人手机,RECV_ADDR=收货地址,RECV_LINKMAN=收货人,RECV_TELE=收货人手机,REMARK=备注';
+
+    FormatString := '0=CLIENT_CODE,1=CLIENT_NAME,2=CLIENT_SPELL,3=SHOP_ID,4=SORT_ID,5=REGION_ID,6=SETTLE_CODE,7=INVO_NAME,8=LEGAL_REPR,'+
+    '9=LICENSE_CODE,10=BANK_ID,11=ACCOUNT,12=TELEPHONE3,13=INVOICE_FLAG,14=TAX_RATE,15=TAX_NO,16=ADDRESS,17=LINKMAN,18=FAXES,19=TELEPHONE1,'+
+    '20=TELEPHONE2,21=QQ,22=MSN,23=EMAIL,24=HOMEPAGE,25=SEND_ADDR,26=POSTALCODE,27=SEND_LINKMAN,28=SEND_TELE,29=RECV_ADDR,30=RECV_LINKMAN,31=RECV_TELE,31=REMARK';
+
+    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
+
+  finally
+    Params.Free;
+    rs.Free;
+  end; }
 end;
 
 end.

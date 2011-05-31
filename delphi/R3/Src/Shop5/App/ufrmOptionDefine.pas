@@ -141,11 +141,11 @@ begin
   try
     ObjRecord.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsTable, 'TSysDefine', ObjRecord.Params);
-    PageControl1.ActivePageIndex := 0;
   finally
     ObjRecord.Free;
   end;
   ReadFrom;
+  PageControl1.ActivePageIndex := 0;  
 end;
 
 procedure TfrmOptionDefine.FormCreate(Sender: TObject);

@@ -12,9 +12,9 @@ inherited frmOptionDefine: TfrmOptionDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 340
-    Height = 193
-    ActivePage = TabSheet2
+    Width = 348
+    Height = 204
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -23,8 +23,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 332
-        Height = 166
+        Width = 340
+        Height = 177
         Align = alClient
         ParentShowHint = False
         Shape = bsFrame
@@ -140,8 +140,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 332
-        Height = 166
+        Width = 340
+        Height = 177
         Align = alClient
         ParentShowHint = False
         Shape = bsFrame
@@ -150,8 +150,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object DBGridEh1: TDBGridEh
         Left = 0
         Top = 0
-        Width = 332
-        Height = 166
+        Width = 340
+        Height = 177
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         AutoFitColWidths = True
@@ -213,8 +213,8 @@ inherited frmOptionDefine: TfrmOptionDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 193
-    Width = 340
+    Top = 204
+    Width = 348
     Height = 44
     Align = alBottom
     BevelOuter = bvNone

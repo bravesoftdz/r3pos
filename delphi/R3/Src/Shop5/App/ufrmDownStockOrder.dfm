@@ -73,7 +73,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
         end
         item
           EditButtons = <>
-          FieldName = 'TENANT_ID'
+          FieldName = 'CLIENT_NAME'
           Footers = <>
           Title.Caption = #20379#24212#21830
           Width = 165

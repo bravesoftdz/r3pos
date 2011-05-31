@@ -1210,10 +1210,11 @@ begin
   //根据传入的AObj填充主表字段；
   FDownOrderID:=trim(AObj.fieldbyName('INDE_ID').AsString);
   TenantID:=trim(Aobj.FieldbyName('TENANT_ID').AsString); //企业ID
+
   ShopID:=trim(Aobj.FieldbyName('SHOP_ID').AsString);     //门店ID
   //读取(供应商)企业ID:
-  edtCLIENT_ID.KeyValue:=TenantID;
-  edtCLIENT_ID.Text:=Global.TENANT_NAME;
+  edtCLIENT_ID.KeyValue:=Aobj.FieldbyName('CLIENT_ID').AsString;
+  edtCLIENT_ID.Text:=Aobj.FieldbyName('CLIENT_NAME').AsString; ;
   //读取门店ID
   edtSHOP_ID.KeyValue:=Global.SHOP_ID;
   edtSHOP_ID.Text:=Global.SHOP_NAME;

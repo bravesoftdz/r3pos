@@ -388,6 +388,7 @@ begin
     cdsHeader.Edit;
     cdsHeader.FieldByName('STOCK_ID').AsString:=TSequence.NewId();
     cdsHeader.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    cdsDetail.FieldByName('CLIENT_ID').AsString:=Aobj.FieldbyName('CLIENT_ID').AsString;
     cdsHeader.FieldbyName('SHOP_ID').AsString := Aobj.FieldbyName('SHOP_ID').AsString;
     cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
     cdsHeader.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());

@@ -85,8 +85,11 @@ type
     procedure DoCxDateOnCloseUp(Sender: TObject); //暂时没用
     function  GetHasChild: Boolean;
   public
+    PUB_CLIENT_ID: TZQuery; //客户群体数据集
+
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
+
     //返回字符的右侧子串
     function  RightStr(Str: string; vlen: integer): string;
     //返回指定控件名中数序号如: ('fndP3_D1','fndP'); 返回: 3;
@@ -455,6 +458,14 @@ begin
         if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
           TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
       end;
+      //客户群体
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_CUST_VALUE') then
+      begin
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;        
+      end;
       //商品名称
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_GODS_ID') then
       begin
@@ -809,6 +820,33 @@ var
   FindCmp: TComponent;
   CustValueList: TzrComboBoxList;
 begin
+  if not assigned(PUB_CLIENT_ID) then
+  begin
+    PUB_CLIENT_ID:=TZQuery.Create(self);
+    PUB_CLIENT_ID.Close;
+    PUB_CLIENT_ID.SQL.Text:='select 0 as SEQ_NO,DEFINE as CODE_ID,VALUE as CODE_NAME from SYS_DEFINE where 1=2 ';
+    Factor.Open(PUB_CLIENT_ID);
+    PUB_CLIENT_ID.IndexFieldNames:='SEQ_NO';
+    //添加：全部
+    PUB_CLIENT_ID.Edit;
+    PUB_CLIENT_ID.FieldByName('SEQ_NO').AsString:='1';
+    PUB_CLIENT_ID.FieldByName('CODE_ID').AsString:='1';
+    PUB_CLIENT_ID.FieldByName('CODE_NAME').AsString:='全部';
+    PUB_CLIENT_ID.Post;
+    //添加：企业客户
+    PUB_CLIENT_ID.Append;
+    PUB_CLIENT_ID.FieldByName('SEQ_NO').AsString:='2';
+    PUB_CLIENT_ID.FieldByName('CODE_ID').AsString:='0';
+    PUB_CLIENT_ID.FieldByName('CODE_NAME').AsString:='企业客户';
+    PUB_CLIENT_ID.Post;
+    //添加：会员
+    PUB_CLIENT_ID.Append;
+    PUB_CLIENT_ID.FieldByName('SEQ_NO').AsString:='3';
+    PUB_CLIENT_ID.FieldByName('CODE_ID').AsString:='2';
+    PUB_CLIENT_ID.FieldByName('CODE_NAME').AsString:='会员';
+    PUB_CLIENT_ID.Post;
+  end;
+
   CmpName:=GetCmpNum(TcxComboBox(Sender).Name,'fndP'); //返回控件Num
   if CmpName<>'' then
   begin
@@ -833,7 +871,7 @@ begin
           CustValueList.KeyField:='PRICE_ID';
           CustValueList.ListField:='PRICE_NAME';
           CustValueList.FilterFields:='PRICE_ID;PRICE_NAME;PRICE_SPELL';
-          CustValueList.DropWidth:=CustValueList.Width+20;
+          CustValueList.DropWidth:=CustValueList.Width+15;
           CustValueList.DropHeight:=120;
         end;
         2:
@@ -843,14 +881,23 @@ begin
           CustValueList.ListField:='CODE_NAME';
           CustValueList.FilterFields:='CODE_ID;CODE_NAME;CODE_SPELL';
           CustValueList.DropWidth:=150;
-          CustValueList.DropHeight:=154;          
+          CustValueList.DropHeight:=154;
+        end;
+        3:
+        begin
+          CustValueList.DataSet:=PUB_CLIENT_ID; //行政区域 和客户分类
+          CustValueList.KeyField:='CODE_ID';
+          CustValueList.ListField:='CODE_NAME';
+          CustValueList.FilterFields:='CODE_ID;CODE_NAME';
+          CustValueList.DropWidth:=CustValueList.Width+15;
+          CustValueList.DropHeight:=120;
         end;
       end;
       CustValueList.Columns[0].FieldName:=CustValueList.ListField;
       if CustValueList.Columns.Count>1 then
       begin
         CustValueList.Columns[1].FieldName:=CustValueList.KeyField;
-        CustValueList.Columns[1].Visible:=(TcxComboBox(Sender).ItemIndex<>1);
+        CustValueList.Columns[1].Visible:=not((TcxComboBox(Sender).ItemIndex=1) or (TcxComboBox(Sender).ItemIndex=3));
       end;
       CustValueList.KeyValue:=null;
       CustValueList.Text:='';
@@ -1115,14 +1162,7 @@ begin
   begin
     TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
   end;
-
-  //  3、 客户名称：
-  FindCmp1:=FindComponent('fndP'+PageNo+'_CLIENT_ID');
-  if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
-  begin
-    TitleList.Add('客户名称：'+TzrComboBoxList(FindCmp1).Text);
-  end;
-
+  
   // 4、门店名称：
   FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then

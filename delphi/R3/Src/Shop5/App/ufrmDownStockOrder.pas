@@ -400,9 +400,9 @@ begin
     cdsHeader.FieldByName('DEPT_ID').AsString := GetDeptID;     //默认部门
     cdsHeader.FieldByName('INVOICE_FLAG').AsString :=inttostr(DefInvIdx);  //票据类型
     case DefInvIdx of                                                      //税率  
-     1: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := 0;
-     2: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
-     3: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);   
+     1: cdsHeader.FieldByName('TAX_RATE').AsFloat := 0;
+     2: cdsHeader.FieldByName('TAX_RATE').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
+     3: cdsHeader.FieldByName('TAX_RATE').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);   
     end;
     cdsHeader.Post;
 

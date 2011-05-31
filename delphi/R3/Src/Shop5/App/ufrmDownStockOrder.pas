@@ -67,13 +67,12 @@ uses
 
 { 订单日期：IndeDate 如：20110527 }
 class function TfrmDownStockOrder.AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认
-var
-  FrmObj: TfrmDownStockOrder;
 begin
   Result:=False;
   with TfrmDownStockOrder.Create(nil) do
   begin
     try
+      FAobj:=TRecord_.Create;
       //1、调用原取Orade列表过程，返回近30天订单
       OpenIndeOrderList;  //查询订单主表数据
       if cdsTable.IsEmpty then exit; //没有订单List就不退出
@@ -97,7 +96,8 @@ begin
         cdsTable.Next;
       end;
     finally
-      FrmObj.Free;
+      FAobj.Free;
+      Free;
     end;
   end;
 end;
@@ -381,7 +381,11 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    //默认票据类型、税率
+    DefInvIdx:=StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+    
     //写入表头数据
+    cdsHeader.Edit;
     cdsHeader.FieldByName('STOCK_ID').AsString:=TSequence.NewId();
     cdsHeader.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsHeader.FieldbyName('SHOP_ID').AsString := Aobj.FieldbyName('SHOP_ID').AsString;
@@ -394,19 +398,20 @@ begin
     cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
     cdsHeader.FieldByName('COMM_ID').AsString := Aobj.FieldbyName('INDE_ID').AsString;     //订单号
     cdsHeader.FieldByName('DEPT_ID').AsString := GetDeptID;     //默认部门
-    //默认票据类型、税率
-    DefInvIdx:=StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
     cdsHeader.FieldByName('INVOICE_FLAG').AsString :=inttostr(DefInvIdx);  //票据类型
     case DefInvIdx of                                                      //税率  
      1: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := 0;
      2: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
      3: cdsHeader.FieldByName('INVOICE_FLAG').AsFloat := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);   
     end;
+    cdsHeader.Post;
 
     if ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0' then
     begin
+      cdsHeader.Edit;
       cdsHeader.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
       cdsHeader.FieldbyName('CHK_USER').AsString := Global.UserID;
+      cdsHeader.Post;
     end;
     //写入表体数据
     Rs.Data:=vData;
@@ -420,13 +425,15 @@ begin
     begin
       if cdsDetail.IsEmpty then cdsDetail.Edit else cdsDetail.Append;
       cdsDetail.FieldByName('STOCK_ID').AsString:=cdsHeader.FieldByName('STOCK_ID').AsString;
+      cdsDetail.FieldByName('TENANT_ID').AsString:=cdsHeader.FieldByName('TENANT_ID').AsString;
+      cdsDetail.FieldByName('SHOP_ID').AsString:=cdsHeader.FieldByName('SHOP_ID').AsString;
       cdsDetail.FieldbyName('SEQNO').AsInteger := Rs.RecNo;
       cdsDetail.FieldbyName('GODS_ID').AsString := Rs.FieldbyName('GODS_ID').AsString;
       if RsGods.Locate('GODS_ID',Rs.FieldbyName('GODS_ID').AsString,[]) then
       begin
         cdsDetail.FieldbyName('GODS_NAME').AsString := RsGods.FieldbyName('GODS_NAME').AsString;
         cdsDetail.FieldbyName('GODS_CODE').AsString := RsGods.FieldbyName('GODS_CODE').AsString;
-        cdsDetail.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;
+        // cdsDetail.FieldbyName('BARCODE').AsString := RsGods.FieldbyName('BARCODE').AsString;
         //零售价: ORG_PRICE
         if trim(Rs.FieldByName('UNIT_ID').AsString)=trim(RsGods.FieldByName('SMALL_UNITS').AsString) then //小件单位
           cdsDetail.FieldbyName('ORG_PRICE').AsFloat :=RsGods.FieldbyName('NEW_OUTPRICE1').AsFloat
@@ -462,7 +469,9 @@ begin
 
       //处理不为空字段:
       cdsDetail.FieldbyName('BATCH_NO').AsString:='#';
-      cdsDetail.FieldbyName('IS_PRESENT').AsInteger:=0; 
+      cdsDetail.FieldbyName('PROPERTY_01').AsString:='#';
+      cdsDetail.FieldbyName('PROPERTY_02').AsString:='#';
+      cdsDetail.FieldbyName('IS_PRESENT').AsInteger:=0;
       cdsDetail.Post;
       Rs.Next;
     end;

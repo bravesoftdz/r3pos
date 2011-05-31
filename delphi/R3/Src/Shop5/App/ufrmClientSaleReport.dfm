@@ -1,5 +1,5 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
-  Left = 202
+  Left = 179
   Top = 109
   Width = 1101
   Caption = #23458#25143#38144#21806#25253#34920

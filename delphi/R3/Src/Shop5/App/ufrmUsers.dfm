@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 461
-  Top = 208
+  Left = 305
+  Top = 188
   Width = 744
   Height = 484
   Caption = #29992#25143#26723#26696#31649#29702
@@ -104,6 +104,13 @@ inherited frmUsers: TfrmUsers
                     Footers = <>
                     Title.Caption = #32844#21153
                     Width = 76
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_ID_TEXT'
+                    Footers = <>
+                    Title.Caption = #37096#38376
+                    Width = 90
                   end
                   item
                     EditButtons = <>

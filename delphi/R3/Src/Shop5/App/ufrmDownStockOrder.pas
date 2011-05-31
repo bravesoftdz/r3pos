@@ -388,13 +388,12 @@ begin
     cdsHeader.Edit;
     cdsHeader.FieldByName('STOCK_ID').AsString:=TSequence.NewId();
     cdsHeader.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsDetail.FieldByName('CLIENT_ID').AsString:=Aobj.FieldbyName('CLIENT_ID').AsString;
     cdsHeader.FieldbyName('SHOP_ID').AsString := Aobj.FieldbyName('SHOP_ID').AsString;
     cdsHeader.FieldByName('STOCK_TYPE').AsInteger := 1;
     cdsHeader.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
     cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;   //操作员
-    cdsHeader.FieldByName('GUIDE_USER').AsString :=Global.UserID;   //收货人 
-    cdsHeader.FieldByName('CLIENT_ID').AsString := Aobj.FieldbyName('TENANT_ID').AsString; //烟草公司ID
+    cdsHeader.FieldByName('GUIDE_USER').AsString :=Global.UserID;   //收货人
+    cdsHeader.FieldByName('CLIENT_ID').AsString := Aobj.FieldbyName('CLIENT_ID').AsString; //烟草公司ID
     cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
     cdsHeader.FieldByName('STOCK_DATE').AsString :=AObj.fieldbyName('INDE_DATE').AsString; //订单日期;
     cdsHeader.FieldByName('COMM_ID').AsString := Aobj.FieldbyName('INDE_ID').AsString;     //订单号

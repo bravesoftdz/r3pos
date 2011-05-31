@@ -481,6 +481,13 @@ inherited frmSupplier: TfrmSupplier
       ShortCut = 16452
       OnClick = N3Click
     end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20837'...'
+      OnClick = Excel1Click
+    end
   end
   object PrintDBGridEh1: TPrintDBGridEh
     Options = [pghFitGridToPageWidth]

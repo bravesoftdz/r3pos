@@ -112,8 +112,8 @@ begin
     'j.CHK_AMOUNT as CALC_AMOUNT,'+  //盘点库存量
     '(ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PAL_AMOUNT,'+  //盈亏数量
     ' b.GODS_NAME as GODS_NAME,b.GODS_CODE as GODS_CODE,'+
-    ' b.NEW_INPRICE*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
-    ' b.NEW_OUTPRICE*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+
+    ' b.NEW_INPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_INPRICE,'+
+    ' b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_INPRICE,0) as PAL_INAMONEY,'+
     ' (ifnull(j.RCK_AMOUNT,0)-ifnull(j.CHK_AMOUNT,0))*ifnull(b.NEW_OUTPRICE,0) as PAL_OUTAMONEY  '+
     ' from STO_PRINTDATA j '+

@@ -390,6 +390,7 @@ var r:integer;
 begin
   inherited;
   r := Cds_RelationAndGoods.RecNo;
+  while not IsEnd do Open(MaxID);  //全选之前先全部查询
   Cds_RelationAndGoods.DisableControls;
   try
     Cds_RelationAndGoods.First;

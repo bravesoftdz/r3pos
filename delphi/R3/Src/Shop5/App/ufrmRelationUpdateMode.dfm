@@ -136,10 +136,10 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
     Top = 47
     Width = 413
     Height = 160
-    ActivePage = TabUpMode
+    ActivePage = TabUpResult
     Align = alClient
     TabHeight = 20
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 1
     TabStyle = tsRoundCorners
     FixedDimension = 20

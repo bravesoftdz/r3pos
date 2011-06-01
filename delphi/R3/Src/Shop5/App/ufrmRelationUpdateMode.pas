@@ -184,6 +184,10 @@ begin
   if (trim(GridDs.FieldByName('Update_Flag').AsString)='0') and (trim(LowerCase(Column.FieldName))='updatecase') then
   begin
     Grid_Relation.Canvas.Font.Color := clRed;
+  end else
+  if (trim(GridDs.FieldByName('Update_Flag').AsString)='4') and (trim(LowerCase(Column.FieldName))='updatecase') then
+  begin
+    Grid_Relation.Canvas.Font.Color := clNavy;
   end;
   
   Grid_Relation.DefaultDrawColumnCell(Rect, DataCol, Column, State);

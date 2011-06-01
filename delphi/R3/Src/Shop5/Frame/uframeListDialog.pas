@@ -107,6 +107,7 @@ var
   i:integer;
 begin
   inherited;
+  if cdsList.State in [dsEdit,dsInsert] then cdsList.Post;
   cdsList.DisableControls;
   try
     if MultiSelect then
@@ -122,8 +123,6 @@ begin
          Raise Exception.Create('请选择货品,在选择栏打勾');
        end;
   finally
-    if MultiSelect then
-       cdsList.Filtered := false;
     cdsList.EnableControls;
   end;
   ModalResult := MROK;

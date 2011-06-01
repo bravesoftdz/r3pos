@@ -17,8 +17,6 @@ inherited frmRecvPosList: TfrmRecvPosList
       inherited RzPage: TRzPageControl
         Width = 876
         Height = 510
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -51,7 +49,7 @@ inherited frmRecvPosList: TfrmRecvPosList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #32564#27454#26085#26399
+                Caption = #32467#36134#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 186
@@ -281,11 +279,19 @@ inherited frmRecvPosList: TfrmRecvPosList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CUST_ID_TEXT'
+                    FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #23458#25143#21517#31216
-                    Width = 139
+                    Title.Caption = #32467#36134#38376#24215
+                    Width = 172
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLSE_USER_TEXT'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #32467#36134#20154
+                    Width = 57
                   end
                   item
                     EditButtons = <>
@@ -343,16 +349,8 @@ inherited frmRecvPosList: TfrmRecvPosList
                     FieldName = 'NEAR_DATE'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #26368#26032#32564#27454#26085#26399
+                    Title.Caption = #26368#36817#30331#35760#26085#26399
                     Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SHOP_ID_TEXT'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #25152#23646#38376#24215
-                    Width = 97
                   end>
               end
             end
@@ -741,10 +739,10 @@ inherited frmRecvPosList: TfrmRecvPosList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CLIENT_ID_TEXT'
+                    FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
-                    Title.Caption = #23458#25143#21517#31216
-                    Width = 153
+                    Title.Caption = #32564#27454#38376#24215
+                    Width = 170
                   end
                   item
                     EditButtons = <>

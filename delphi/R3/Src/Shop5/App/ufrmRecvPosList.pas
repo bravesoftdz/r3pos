@@ -358,7 +358,7 @@ begin
     'select A.ABLE_ID'+
     ',A.SHOP_ID'+
     ',A.CLIENT_ID'+
-    ',B.CLIENT_NAME as CUST_ID_TEXT'+
+    ',B.USER_NAME as CLSE_USER_TEXT'+
     ',A.ACCT_INFO'+
     ',A.RECV_TYPE '+
     ',A.ACCT_MNY'+
@@ -368,8 +368,8 @@ begin
     ',A.ABLE_DATE'+
     ',A.NEAR_DATE'+
     ',C.SHOP_NAME as SHOP_ID_TEXT '+
-    ' from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C  '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+    ' from ACC_RECVABLE_INFO A,VIW_USERS B,CA_SHOP_INFO C  '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.CREA_USER=B.USER_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
     ' '+strWhere+' ';
 
   case Factor.iDbType of
@@ -420,8 +420,8 @@ begin
            'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID';
   strSql :='select je.*,e.USER_NAME as RECV_USER_TEXT  from ('+strSql+') je '+
            'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.RECV_USER=e.USER_ID ';
-  strSql :='select jf.*,f.CLIENT_NAME as CLIENT_ID_TEXT  from ('+strSql+') jf '+
-           'left outer join VIW_CUSTOMER f on jf.TENANT_ID=f.TENANT_ID and jf.CLIENT_ID=f.CLIENT_ID';
+  strSql :='select jf.*,f.SHOP_NAME as SHOP_ID_TEXT  from ('+strSql+') jf '+
+           'left outer join CA_SHOP_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.SHOP_ID=f.SHOP_ID';
   strSql :='select jg.*,g.CODE_NAME as PAYM_ID_TEXT  from ('+strSql+') jg '+
            'left outer join VIW_PAYMENT g on jg.TENANT_ID=g.TENANT_ID and jg.PAYM_ID=g.CODE_ID';
   strSql :='select jh.*,h.USER_NAME as CHK_USER_TEXT  from ('+strSql+') jh '+

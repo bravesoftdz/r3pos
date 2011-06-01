@@ -131,7 +131,7 @@ type
     //procedure Create
   public
     { Public declarations }
-    procedure SyncQuestion;
+    procedure SyncQuestion(flag:integer);
     function  CreateHtml:String;
     function GetRow:String;
     procedure GetQuestionList;
@@ -564,7 +564,6 @@ begin
   cdsListAnswer.FieldByName('QUESTION_FEEDBACK_STATUS').AsInteger := 1;
   cdsListAnswer.FieldByName('QUESTION_ANSWER_STATUS').AsInteger := 1;
   cdsListAnswer.Post;
-
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsListAnswer,'TInvest');
@@ -574,6 +573,10 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+
+  QID := cdsListAnswer.FieldbyName('QUESTION_ID').AsString;
+  SyncQuestion(2);
+  
 end;
 
 procedure TfrmQuestionnaire.SetListAnswer;
@@ -650,31 +653,7 @@ end;
 procedure TfrmQuestionnaire.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
-  if cdsQuestionList.IsEmpty then Exit;
-
-  if Column.FieldName = 'ANSWER' then
-    begin
-      RzPage.ActivePageIndex := 1;
-      if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
-        begin
-          btnLook.Visible := False;
-          btnAnswer.Visible := True;
-        end
-      else if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '1' then
-        begin
-          if cdsQuestionList.FieldByName('ANSWER_FLAG').AsString = '2' then
-            begin
-              btnLook.Visible := True;
-              btnAnswer.Visible := False;
-            end
-          else
-            begin
-              btnLook.Visible := False;
-              btnAnswer.Visible := True;
-            end;
-        end;
-      GetParams;
-    end;
+  if Column.FieldName = 'ANSWER' then DBGridEh1DblClick(nil);
 end;
 
 procedure TfrmQuestionnaire.btnLookClick(Sender: TObject);
@@ -718,7 +697,7 @@ begin
 
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString <> '1' then
+  if cdsQuestionList.FieldByName('QUESTION_ANSWER_STATUS').AsString = '2' then
     Str_Answer := '答题'
   else
     Str_Answer := '查看';
@@ -840,7 +819,7 @@ begin
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
-        SyncQuestion;
+        SyncQuestion(1);
         result := (ShowModal=MROK);
       finally
         free;
@@ -854,7 +833,7 @@ begin
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
-        SyncQuestion;
+        SyncQuestion(1);
         QID := ID;
         result := (ShowModal=MROK);
       finally
@@ -863,7 +842,7 @@ begin
     end;
 end;
 
-procedure TfrmQuestionnaire.SyncQuestion;
+procedure TfrmQuestionnaire.SyncQuestion(flag:integer);
 var
   Params:TftParamList;
 begin
@@ -880,19 +859,31 @@ begin
      end;
   Params := TftParamList.Create(nil);
   try
+    //同步到本地
+    if not ShopGlobal.ONLVersion and (flag=2) then
+    begin
+      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+      SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
+      SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
+      SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+    end;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('QUESTION_ID').AsString := QID;
     Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    Params.ParamByName('flag').AsInteger := 2;
+    Params.ParamByName('flag').AsInteger := flag;
     try
       Global.RemoteFactory.ExecProc('TSyncQuestion',Params);
     except
       Exit;
     end;
     //同步到本地
-    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-    SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
-    SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
-    SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+    if not ShopGlobal.ONLVersion and (flag=1) then
+    begin
+      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+      SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
+      SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
+      SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+    end;
   finally
     Params.Free;
   end;

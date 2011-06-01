@@ -240,8 +240,11 @@ begin
               Column.FieldName := List.Names[i];
               Column.Title.Caption := List.ValueFromIndex[i];
             end;
-          Column.ReadOnly := True;
-          Column.Width := 100;
+          Column.ReadOnly := (Column.FieldName<>'A');
+          if not Column.ReadOnly then
+            Column.Width := 40
+          else
+            Column.Width := 100;
        end;
   finally
     List.Free;

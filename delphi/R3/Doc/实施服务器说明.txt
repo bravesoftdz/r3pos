@@ -40,7 +40,7 @@ amdin\Silverbase5709
 山东烟草公司—滨州烟草远程APPserIP:
 
 IP: 202.110.222.215:9085
-user:xfz AgNfuqHZ
-Pwd: 
+user:xfz 
+Pwd: AgNfuqHZ
 
 

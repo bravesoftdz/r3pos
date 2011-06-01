@@ -49,29 +49,7 @@ type
 implementation
 
 function TInvestData.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-//var
-//  Proc:TZProcFactory;
-//  ProcClass:TPersistentClass;
-//  Params:TftParamList;
-//  rs:TZQuery;
 begin
-  //把问答卷结果直接上传到上级企业
-{  ProcClass := GetClass('TSyncMessage');
-  if ProcClass=nil then Exit;
-  Proc := TZProcFactoryClass(ProcClass).Create(AGlobal,nil);
-  Params := TftParamList.Create(nil);
-  rs := TZQuery.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-    Params.ParamByName('flag').AsInteger := 1;
-    Params.ParamByName('QUESTION_ID').AsString := FieldbyName('QUESTION_ID').AsString;
-    Params.ParamByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsString;
-    if not Proc.Execute(AGlobal,Params) then Raise Exception.Create('同步接口没有正确返回值');
-  finally
-    rs.Free;
-    Params.Free;
-    Proc.Free;
-  end; }
 end;
 
 { TQuestionItem }

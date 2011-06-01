@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, ExtCtrls, RzPanel, StdCtrls,
   ComCtrls, RzBmpBtn, RzTabs, DB, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, RzBorder, RzButton, RzRadChk, OleCtrls, SHDocVw, Grids,
-  DBGridEh;
+  DBGridEh, zBase;
 
 type
   TfrmQuestionnaire = class(TfrmBasic)
@@ -131,6 +131,7 @@ type
     //procedure Create
   public
     { Public declarations }
+    procedure SyncQuestion;
     function  CreateHtml:String;
     function GetRow:String;
     procedure GetQuestionList;
@@ -148,7 +149,7 @@ type
   end;
 
 implementation
-uses uShopUtil, uShopGlobal, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils;
+uses uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils;
 {$R *.dfm}
 
 { TfrmQuestionnaire }
@@ -330,7 +331,7 @@ var vList:TStringList;
           begin
             if cdsAnswer.FieldByName('ANSWER_VALUE').AsString <> '' then
               begin
-                vAnswer.Delimiter := ';';
+                vAnswer.Delimiter := ',';
                 vAnswer.DelimitedText := cdsAnswer.FieldbyName('ANSWER_VALUE').AsString;
                 for i:=0 to vAnswer.Count-1 do
                   begin
@@ -349,7 +350,7 @@ begin
   vList := TStringList.Create;
 
   try
-    vList.Delimiter := ';';
+    vList.Delimiter := ',';
     vList.DelimitedText := cdsQuestion.fieldbyName('QUESTION_OPTIONS').AsString;
     if IsEnable then
       Atr_Enable := ''
@@ -360,15 +361,16 @@ begin
       1:begin
         for i:=0 to vList.Count-1 do
           begin
-            Select_Item := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
-            if IsSelected(Select_Item) then
+            Select_Item := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1)+'.';
+            if IsSelected(vList.Names[i]) then
               Select_Str := ' checked="checked" '
             else
               Select_Str := '';
+            if length(Select_Item)>3 then Select_Item := '';
             Html_Row := Html_Row +
             '				<tr>'+
             '					<td>&nbsp;&nbsp;&nbsp;'+
-            '						<input type=Radio name=Radio id=Radio'+IntToStr(i)+' value='+Select_Item+Select_Str+Atr_Enable+'>'+Select_Item+'.'+vList.Values[Select_Item]+'<br>'+
+            '						<input type=Radio name=Radio id=Radio'+IntToStr(i)+' value='+vList.Names[i]+Select_Str+Atr_Enable+'>'+Select_Item+vList.ValueFromIndex[i]+'<br>'+
             '					</td>'+
             '				</tr>';
           end;
@@ -376,15 +378,16 @@ begin
       2:begin 
         for i:=0 to vList.Count-1 do
           begin
-            Select_Item := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1);
-            if IsSelected(Select_Item) then
+            Select_Item := COPY(vList.Strings[i],1,AnsiPos('=',vList.Strings[i])-1)+'.';
+            if IsSelected(vList.Names[i]) then
               Select_Str := ' checked="checked" '
             else
               Select_Str := '';
+            if length(Select_Item)>3 then Select_Item := '';
             Html_Row := Html_Row +
             '				<tr>'+
             '					<td>&nbsp;&nbsp;&nbsp;'+
-            '						<input type=checkbox name=checkbox id=checkbox'+IntToStr(i)+' value='+Select_Item+Select_Str+Atr_Enable+'>'+Select_Item+'.'+vList.Values[Select_Item]+'<br>'+
+            '						<input type=checkbox name=checkbox id=checkbox'+IntToStr(i)+' value='+vList.Names[i]+Select_Str+Atr_Enable+'>'+Select_Item+vList.ValueFromIndex[i]+'<br>'+
             '					</td>'+
             '				</tr>';
           end;
@@ -465,7 +468,7 @@ begin
           if Obe.checked = True then
             begin
               if Str_Value <> '' then
-                Str_Value := Str_Value + ';'+ Obe.value
+                Str_Value := Str_Value + ','+ Obe.value
               else
                 Str_Value := Obe.value;
             end;
@@ -479,7 +482,7 @@ begin
           if Obe.checked = True then
             begin
               if Str_Value <> '' then
-                Str_Value := Str_Value + ';'+ Obe.value
+                Str_Value := Str_Value + ','+ Obe.value
               else
                 Str_Value := Obe.value;
             end;
@@ -494,7 +497,7 @@ begin
           if TextArea <> nil then
             begin
               if Str_Value <> '' then
-                Str_Value := Str_Value + ';'+ TextArea.value
+                Str_Value := Str_Value + ','+ TextArea.value
               else
                 Str_Value := TextArea.value;
             end;
@@ -599,9 +602,11 @@ begin
 end;
 
 procedure TfrmQuestionnaire.GetQuestionList;
-var C1,C2,C3,C4:Integer;
+var
+  C1,C2,C3,C4:Integer;
 begin
   if not ShopGlobal.GetChkRight('91600004',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
+
   cdsQuestionList.Close;
   cdsQuestionList.SQL.Text :=
   'select a.QUESTION_ID,a.QUESTION_CLASS,a.ISSUE_DATE,a.QUESTION_SOURCE,a.QUESTION_TITLE,a.ANSWER_FLAG,a.END_DATE,b.QUESTION_ANSWER_STATUS '+
@@ -705,11 +710,11 @@ var  ARect: TRect;
   Str_Answer:String;
 begin
   inherited;
-  if not (gdSelected in State ) then
-    begin
-      if cdsQuestionList.RecNo mod 2 = 0 then
-        DBGridEh1.Canvas.Brush.Color := $00FDF6EB;
-    end;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
 
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
@@ -835,6 +840,7 @@ begin
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
+        SyncQuestion;
         result := (ShowModal=MROK);
       finally
         free;
@@ -848,12 +854,48 @@ begin
   with TfrmQuestionnaire.Create(AOwner) do
     begin
       try
+        SyncQuestion;
         QID := ID;
         result := (ShowModal=MROK);
       finally
         free;
       end;
     end;
+end;
+
+procedure TfrmQuestionnaire.SyncQuestion;
+var
+  Params:TftParamList;
+begin
+  //本地连接时不需同步
+  if Global.RemoteFactory.ConnMode = 1 then Exit;
+  if not CaFactory.Audited then Exit;
+  if not Global.RemoteFactory.Connected then
+     begin
+      try
+        Global.RemoteFactory.Connect;
+      except
+        Exit;
+      end;
+     end;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Params.ParamByName('flag').AsInteger := 2;
+    try
+      Global.RemoteFactory.ExecProc('TSyncQuestion',Params);
+    except
+      Exit;
+    end;
+    //同步到本地
+    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+    SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
+    SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
+    SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+  finally
+    Params.Free;
+  end;
 end;
 
 end.

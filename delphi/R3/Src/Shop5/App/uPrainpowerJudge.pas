@@ -232,7 +232,7 @@ begin
       Exit;
     end;
     //同步到本地
-    SyncTimeStamp := CaFactory.TimeStamp;
+    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
     SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0);
     SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0);
   finally

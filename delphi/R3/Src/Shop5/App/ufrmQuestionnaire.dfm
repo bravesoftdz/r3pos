@@ -1136,12 +1136,12 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           Top = 5
           Width = 554
           Height = 403
-          ActivePage = TabTittle
+          ActivePage = TabSheet1
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1166,6 +1166,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 Width = 554
                 Height = 385
                 Align = alClient
+                AllowedOperations = []
                 AutoFitColWidths = True
                 BorderStyle = bsNone
                 DataSource = dsQuestionList
@@ -1183,7 +1184,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 FooterFont.Name = #23435#20307
                 FooterFont.Style = []
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                Options = [dgEditing, dgTitles, dgColumnResize, dgTabs, dgConfirmDelete, dgCancelOnExit]
+                Options = [dgTitles, dgColumnResize, dgTabs, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
                 ParentFont = False
                 RowHeight = 20
@@ -1617,8 +1618,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 294
-                    Height = 95
+                    Width = 36
+                    Height = 12
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET

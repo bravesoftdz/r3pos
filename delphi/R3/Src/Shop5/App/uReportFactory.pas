@@ -3,6 +3,10 @@ unit uReportFactory;
 interface
 uses
   Windows, Messages, DB, SysUtils, Variants, Classes, ZDataSet, DBGridEh;
+const
+  RF_DATA_SOURCE1='SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
+  RF_DATA_SOURCE2='STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
+  RF_DATA_SOURCE3='BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
 type
 
 pRCondi=^TRCondi;
@@ -131,7 +135,8 @@ begin
   Init;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' order by CELL_TYPE,col,row';
+    rs.Close;
+    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''1'' order by col,row';
     Factor.Open(rs);
     rs.first;
     while not rs.Eof do
@@ -144,7 +149,24 @@ begin
         node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
         node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
         node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
-        TLate.Add(node); 
+        TLate.Add(node);
+        rs.next;
+      end;
+    rs.Close;
+    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''2'' order by row,col';
+    Factor.Open(rs);
+    rs.first;
+    while not rs.Eof do
+      begin
+        new(node);
+        node^.row := rs.FieldbyName('ROW').AsInteger;
+        node^.col := rs.FieldbyName('COL').AsInteger;
+        node^.coltype := rs.FieldbyName('CELL_TYPE').AsInteger;
+        node^.subtype := rs.FieldbyName('SUM_TYPE').AsInteger;
+        node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
+        node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
+        node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
+        TLate.Add(node);
         rs.next;
       end;
   finally
@@ -355,16 +377,16 @@ begin
   for i:=0 to TLate.Count -1 do
     begin
       if PRTemplate(TLate[i])^.coltype=2 then continue;
-      if c=PRTemplate(TLate[i])^.col then
+      if c=PRTemplate(TLate[i])^.row then
          begin
-           ATree[PRTemplate(TLate[i])^.row] := PRTemplate(TLate[i]);
+           ATree[PRTemplate(TLate[i])^.col] := PRTemplate(TLate[i]);
          end
       else
          begin
            if c<>-1 then  DoCreateRows(ATree);
            for j:=1 to 30 do ATree[j] := nil;
-           ATree[PRTemplate(TLate[i])^.row] := PRTemplate(TLate[i]);
-           c := PRTemplate(TLate[i])^.col;
+           ATree[PRTemplate(TLate[i])^.col] := PRTemplate(TLate[i]);
+           c := PRTemplate(TLate[i])^.row;
          end;
     end;
  if c<>-1 then  DoCreateRows(ATree);

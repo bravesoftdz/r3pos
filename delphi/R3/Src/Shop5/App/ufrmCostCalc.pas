@@ -1587,8 +1587,8 @@ end;
 
 procedure TfrmCostCalc.CalcAnaly;
 var
-  SQL:string;
-  safe,reas,daySale:integer;
+  SQL,id,v,v1,v2,sid:string;
+  safe,reas,daySale,w:integer;
   LRate,HRate:real;
   rs:TZQuery;
 begin
@@ -1629,19 +1629,29 @@ begin
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
   RzProgressBar1.Percent := 50;
+  sid := ShopGlobal.GetParameter('SMT_RATE');
+  if sid='' then sid := '2';
   //¼ÆËã´æÏú±È
-  rs := Global.GetZQueryFromName('PUB_GOODS_INDEXS');
-  if ShopGlobal.GetParameter('SMT_RATE')='' then
-     rs.Filter := 'SORT_TYPE=2'
-  else
-     rs.Filter := 'SORT_TYPE='+ShopGlobal.GetParameter('SMT_RATE');
-  rs.Filtered := true;
-  rs.First;
-  while not rs.Eof do
-    begin
-      
-      rs.Next;
-    end;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE like ''SMT_RATE_%'' and COMM not in (''02'',''12'')';
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        id := copy(rs.Fields[0].AsString,1,36);
+        v := trim(copy(rs.Fields[0].AsString,38,555));
+        w := pos('-',v);
+        v1:= copy(v,1,w-1);
+        v2:= copy(v,w+1,20);
+        SQL := 'update PUB_GOODS_INSHOP set LOWER_RATE='+v1+',UPPER_RATE='+v2+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and exists(select * from VIW_GOODSINFO where TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SORT_ID'+sid+'='''+id+''')';
+        Factor.ExecSQL(SQL);
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
   RzProgressBar1.Percent := 60;
 end;
 

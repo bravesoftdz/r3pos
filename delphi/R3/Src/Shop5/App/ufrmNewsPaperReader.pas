@@ -324,11 +324,11 @@ var  ARect: TRect;
 begin
   inherited;
   if CdsNewsPaper.IsEmpty then Exit;
-  if not (gdSelected in State ) then
-    begin
-      if CdsNewsPaper.RecNo mod 2 = 0 then
-        DBGridEh1.Canvas.Brush.Color := $00FDF6EB;
-    end;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
 
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 

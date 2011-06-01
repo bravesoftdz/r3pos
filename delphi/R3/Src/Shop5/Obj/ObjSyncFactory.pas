@@ -495,6 +495,25 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //24
+  TSyncMscQuestion=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncMscQuestionItem=class(TSyncSingleTable)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3309,6 +3328,58 @@ begin
     rs.Free;
   end;
 end;
+{ TSyncMscQuestion }
+
+function TSyncMscQuestion.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update MSC_QUESTION set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID'),self);
+end;
+
+function TSyncMscQuestion.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'MSC_QUESTION';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncMscQuestion.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select * from MSC_QUESTION where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID';
+end;
+
+function TSyncMscQuestion.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from MSC_QUESTION where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID',Params);
+  AGlobal.ExecSQL('delete from MSC_QUESTION_ITEM where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID',Params);
+end;
+
+{ TSyncMscQuestionItem }
+
+function TSyncMscQuestionItem.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'MSC_QUESTION_ITEM';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncMscQuestionItem.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  SelectSQL.Text := 'select * from MSC_QUESTION_ITEM where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID';
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3370,6 +3441,8 @@ initialization
   RegisterClass(TSyncLocusForSaleData);
   RegisterClass(TSyncLocusForChagData);
   RegisterClass(TSyncSequence);
+  RegisterClass(TSyncMscQuestion);
+  RegisterClass(TSyncMscQuestionItem);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
@@ -3431,4 +3504,6 @@ finalization
   UnRegisterClass(TSyncLocusForSaleData);
   UnRegisterClass(TSyncLocusForChagData);
   UnRegisterClass(TSyncSequence);
+  UnRegisterClass(TSyncMscQuestion);
+  UnRegisterClass(TSyncMscQuestionItem);
 end.

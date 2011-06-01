@@ -6,31 +6,31 @@ inherited frmStockDayReport: TfrmStockDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1075
-    Height = 559
+    Width = 1067
+    Height = 548
     inherited RzPanel2: TRzPanel
-      Width = 1065
-      Height = 549
+      Width = 1057
+      Height = 538
       inherited RzPage: TRzPageControl
-        Width = 860
-        Height = 543
-        ActivePage = TabSheet5
+        Width = 852
+        Height = 532
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               inherited w1: TRzPanel
-                Width = 848
+                Width = 840
                 Height = 79
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -87,6 +87,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -95,6 +96,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 86
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -130,6 +132,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 52
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
@@ -141,6 +144,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 52
                   Width = 121
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
@@ -210,6 +214,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 31
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -311,11 +316,11 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 79
-                Width = 848
-                Height = 427
+                Width = 840
+                Height = 416
                 inherited DBGridEh1: TDBGridEh
-                  Width = 844
-                  Height = 423
+                  Width = 836
+                  Height = 412
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -529,6 +534,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -537,6 +543,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 87
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -614,6 +621,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 52
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 4
                 end
@@ -622,6 +630,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 53
                   Width = 121
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
@@ -691,6 +700,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 31
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -1008,6 +1018,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -1016,6 +1027,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 87
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -1093,6 +1105,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 31
                   Width = 121
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
                   TabOrder = 4
@@ -1102,6 +1115,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 52
                   Width = 121
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
@@ -1156,6 +1170,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 31
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -1344,8 +1359,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1353,8 +1368,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1362,7 +1377,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1426,6 +1441,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -1434,6 +1450,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 86
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -1469,6 +1486,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 76
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 3
                 end
@@ -1477,6 +1495,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 76
                   Width = 121
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
@@ -1630,6 +1649,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 32
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -1640,8 +1660,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 103
-                Width = 848
-                Height = 403
+                Width = 840
+                Height = 392
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1649,8 +1669,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 399
+                  Width = 836
+                  Height = 388
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1836,8 +1856,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1845,8 +1865,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1854,7 +1874,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1916,6 +1936,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 83
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -1951,6 +1972,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 90
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -1959,6 +1981,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 55
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 3
                 end
@@ -2108,6 +2131,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 31
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -2154,8 +2178,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 848
-                Height = 424
+                Width = 840
+                Height = 413
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2163,8 +2187,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 420
+                  Width = 836
+                  Height = 409
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2406,8 +2430,8 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 863
-        Height = 543
+        Left = 855
+        Height = 532
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -2423,15 +2447,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1075
+    Width = 1067
     inherited Image1: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image3: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image14: TImage
-      Left = 1055
+      Left = 1047
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

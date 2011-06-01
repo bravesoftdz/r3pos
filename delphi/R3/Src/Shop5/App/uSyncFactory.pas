@@ -74,6 +74,8 @@ type
     procedure SyncLocusForSale(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //扫码盘点
     procedure SyncLocusForChag(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //同步问答卷
+    procedure SyncQuestion(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -1947,6 +1949,121 @@ begin
     cs_d.Free;
     rs_s.Free;
     cs_s.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncQuestion(tbName, KeyFields, ZClassName: string;
+  KeyFlag: integer);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('QUESTION_ID').AsString := ls.FieldbyName('QUESTION_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncMscQuestion',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncMscQuestionItem',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncMscQuestion',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncMscQuestionItem',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('QUESTION_ID').AsString := ls.FieldbyName('QUESTION_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncMscQuestion',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncMscQuestionItem',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncMscQuestion',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncMscQuestionItem',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
   end;
 end;
 

@@ -50,12 +50,12 @@ inherited frmNewPaperReader: TfrmNewPaperReader
           Top = 5
           Width = 623
           Height = 459
-          ActivePage = TabContents
+          ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight

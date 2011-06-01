@@ -78,7 +78,8 @@ type
   end;
 
 implementation
-uses ufrmSupplierInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmBasic,ufrmExcelFactory;//,ufrmSendGsm
+uses ufrmSupplierInfo, uShopGlobal, uCtrlUtil, ufrmEhLibReport, ufrmBasic, uFnUtil, ufrmExcelFactory,
+     uDsUtil;//,ufrmSendGsm
 {$R *.dfm}
 
 procedure TfrmSupplier.actNewExecute(Sender: TObject);

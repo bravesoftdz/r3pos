@@ -94,6 +94,18 @@ inherited frmDefineReport: TfrmDefineReport
                 Title.Caption = #27719#24635#31867#22411
                 Title.Color = clWhite
                 Width = 121
+              end
+              item
+                EditButtons = <>
+                FieldName = 'COL'
+                Footers = <>
+                Width = 20
+              end
+              item
+                EditButtons = <>
+                FieldName = 'ROW'
+                Footers = <>
+                Width = 20
               end>
           end
           object RzPanel1: TRzPanel

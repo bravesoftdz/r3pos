@@ -86,7 +86,7 @@ type
     procedure Open(Report_Id:String);
     procedure Edit(Report_Id:String);
     procedure Save;
-    class function AddReport(Owner:TForm;Field_Name,Type_Name,Source_Name:String):Boolean;
+    class function AddReport(Owner:TForm;Field_Name,Type_Id,Source_Id:String):Boolean;
     class function EditReport(Owner:TForm;Id:String;Field_Name,Code:String):Boolean;
     property ColumnNum:Integer read FColumnNum write SetColumnNum;
     property SQL:String  read FSQL write SetSQL;
@@ -124,7 +124,7 @@ begin
     Params1.ParamByName('CELL_TYPE').AsString := '2';
     Factor.BeginBatch;
     try
-      Factor.AddBatch(DsReport,'TReport',Params);
+      Factor.AddBatch(DsReport,'TR3Report',Params);
       Factor.AddBatch(DsReportTemplate,'TReportTemplate',Params);
       Factor.AddBatch(DsReportTemplate1,'TReportTemplate',Params1);
       Factor.OpenBatch;
@@ -186,7 +186,7 @@ begin
 
   Factor.BeginBatch;
   try
-    Factor.AddBatch(DsReport,'TReport');
+    Factor.AddBatch(DsReport,'TR3Report');
     Factor.AddBatch(DsReportTemplate,'TReportTemplate');
     Factor.AddBatch(DsReportTemplate1,'TReportTemplate');
     Factor.CommitBatch;
@@ -271,15 +271,15 @@ begin
   if not DsReportTemplate.IsEmpty then BtnDelete.Enabled := True;
 end;
 
-class function TfrmDefineReport.AddReport(Owner: TForm;Field_Name,Type_Name,Source_Name:String): Boolean;
+class function TfrmDefineReport.AddReport(Owner: TForm;Field_Name,Type_Id,Source_Id:String): Boolean;
 begin
   with TfrmDefineReport.Create(Owner) do
     begin
       try
         SQL := Field_Name;
         Append;
-        edtREPORT_TYPE.ItemIndex := TdsItems.FindItems(edtREPORT_TYPE.Properties.Items,'CODE_ID',Type_Name);
-        edtREPORT_SOURCE.ItemIndex := TdsItems.FindItems(edtREPORT_SOURCE.Properties.Items,'CODE_ID',Source_Name);
+        edtREPORT_TYPE.ItemIndex := TdsItems.FindItems(edtREPORT_TYPE.Properties.Items,'CODE_ID',Type_Id);
+        edtREPORT_SOURCE.ItemIndex := TdsItems.FindItems(edtREPORT_SOURCE.Properties.Items,'CODE_ID',Source_Id);
         Result := ShowModal = mrOk;
       finally
         Free;

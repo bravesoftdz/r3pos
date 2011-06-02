@@ -225,7 +225,10 @@ uses
   ufrmSaleManSaleReport in 'App\ufrmSaleManSaleReport.pas' {frmSaleManSaleReport},
   ufrmClientSaleReport in 'App\ufrmClientSaleReport.pas' {frmClientSaleReport},
   ufrmTenantInfo in 'App\ufrmTenantInfo.pas' {frmTenantInfo},
-  uTimerFactory in 'App\uTimerFactory.pas';
+  uTimerFactory in 'App\uTimerFactory.pas',
+  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
+  ufrmDefineReport in 'App\ufrmDefineReport.pas' {frmDefineReport},
+  ObjDefineReport in 'Obj\ObjDefineReport.pas';
 
 {$R *.res}
 var

@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 224
-  Top = 33
+  Left = 221
+  Top = 173
   Width = 701
   Height = 535
   Caption = ''
@@ -2354,6 +2354,14 @@ inherited frmShopMain: TfrmShopMain
                   OnClick = RzBmpButton4Click
                 end
               end
+            end
+            object Button1: TButton
+              Left = 24
+              Top = 24
+              Width = 137
+              Height = 25
+              Action = actfrmSaleTotalReport
+              TabOrder = 1
             end
           end
         end
@@ -7778,6 +7786,10 @@ inherited frmShopMain: TfrmShopMain
       Tag = 41901001
       Caption = #23458#25143#38144#21806#25253#34920
       OnExecute = actfrmClientSaleReportExecute
+    end
+    object actfrmSaleTotalReport: TAction
+      Caption = #38144#21806#32479#35745#25253#34920
+      OnExecute = actfrmSaleTotalReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

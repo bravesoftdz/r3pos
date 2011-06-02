@@ -339,6 +339,8 @@ type
     actfrmNetForOrder: TAction;
     actfrmSaleManSaleReport: TAction;
     actfrmClientSaleReport: TAction;
+    actfrmSaleTotalReport: TAction;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -453,6 +455,7 @@ type
     procedure actfrmNetForOrderExecute(Sender: TObject);
     procedure actfrmSaleManSaleReportExecute(Sender: TObject);
     procedure actfrmClientSaleReportExecute(Sender: TObject);
+    procedure actfrmSaleTotalReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -518,7 +521,8 @@ uses
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
-  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,ufrmSaleManSaleReport
+  ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
+  ufrmSaleManSaleReport,ufrmSaleTotalReport
   ;
 {$R *.dfm}
 
@@ -3595,6 +3599,28 @@ end;
 procedure TfrmShopMain.DoLoadMsg(Sender: TObject);
 begin
   PrainpowerJudge.SyncMsgc;
+end;
+
+procedure TfrmShopMain.actfrmSaleTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSaleTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

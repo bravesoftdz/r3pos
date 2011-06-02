@@ -135,7 +135,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -152,7 +152,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 7
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 344
@@ -165,7 +165,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 4
+                  TabOrder = 11
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -179,7 +179,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -221,7 +221,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 9
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
@@ -234,7 +234,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 7
+                  TabOrder = 2
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -248,7 +248,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -289,7 +289,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -377,7 +377,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 11
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -407,7 +407,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndP1_USER_ID: TzrComboBoxList
+                object fndP1_GUIDE_USER: TzrComboBoxList
                   Tag = -1
                   Left = 344
                   Top = 51
@@ -419,7 +419,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 12
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -709,7 +709,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 2
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -759,7 +759,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 3
+                TabOrder = 12
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -776,7 +776,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Properties.Items.Strings = (
                   #20027#20379#24212#21830
                   #21697#29260#21517#31216)
-                TabOrder = 4
+                TabOrder = 7
               end
               object fndP2_UNIT_ID: TcxComboBox
                 Left = 344
@@ -789,7 +789,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   #35745#37327#21333#20301
                   #21253#35013'1'
                   #21253#35013'2')
-                TabOrder = 5
+                TabOrder = 11
               end
               object fndP2_STAT_ID: TzrComboBoxList
                 Tag = -1
@@ -803,7 +803,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 8
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -845,7 +845,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   end>
                 Properties.ReadOnly = True
                 Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                TabOrder = 7
+                TabOrder = 9
                 OnKeyPress = fndP2_SORT_IDKeyPress
               end
               object fndP2_SHOP_TYPE: TcxComboBox
@@ -858,7 +858,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Properties.Items.Strings = (
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
-                TabOrder = 8
+                TabOrder = 2
               end
               object fndP2_DEPT_ID: TzrComboBoxList
                 Left = 344
@@ -871,7 +871,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 9
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -959,7 +959,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 11
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -989,7 +989,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndP2_USER_ID: TzrComboBoxList
+              object fndP2_GUIDE_USER: TzrComboBoxList
                 Tag = -1
                 Left = 344
                 Top = 52
@@ -1001,7 +1001,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 12
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -1340,7 +1340,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1359,7 +1359,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1410,7 +1410,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 5
+                  TabOrder = 8
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1424,7 +1424,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1464,7 +1464,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 7
+                  TabOrder = 2
                 end
                 object fndP3_DEPT_ID: TzrComboBoxList
                   Left = 344
@@ -1477,7 +1477,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1502,7 +1502,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   RangeField = 'DEPT_TYPE'
                   RangeValue = '1'
                 end
-                object fndP3_USER_ID: TzrComboBoxList
+                object fndP3_GUIDE_USER: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 74
@@ -1514,7 +1514,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -1853,7 +1853,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1870,7 +1870,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
                   Left = 343
@@ -1883,7 +1883,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 4
+                  TabOrder = 10
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1897,7 +1897,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1939,7 +1939,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 8
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
                 object fndP4_SHOP_VALUE: TzrComboBoxList
@@ -1954,7 +1954,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1994,7 +1994,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 8
+                  TabOrder = 2
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -2008,7 +2008,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -2049,7 +2049,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -2074,7 +2074,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   RangeField = 'DEPT_TYPE'
                   RangeValue = '1'
                 end
-                object fndP4_USER_ID: TzrComboBoxList
+                object fndP4_GUIDE_USER: TzrComboBoxList
                   Tag = -1
                   Left = 80
                   Top = 98
@@ -2086,7 +2086,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 11
+                  TabOrder = 9
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -2436,7 +2436,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -2462,7 +2462,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 5
                 end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -2476,7 +2476,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2518,7 +2518,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
-                  TabOrder = 5
+                  TabOrder = 9
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_VALUE: TzrComboBoxList
@@ -2533,7 +2533,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2573,7 +2573,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 7
+                  TabOrder = 2
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -2624,7 +2624,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Height = 27
                   Color = clWindow
                   GroupStyle = gsStandard
-                  TabOrder = 9
+                  TabOrder = 10
                   ThemeAware = False
                   object fndP5_ALL: TcxRadioButton
                     Left = 5
@@ -2672,7 +2672,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -2697,7 +2697,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   RangeField = 'DEPT_TYPE'
                   RangeValue = '1'
                 end
-                object fndP5_USER_ID: TzrComboBoxList
+                object fndP5_GUIDE_USER: TzrComboBoxList
                   Tag = -1
                   Left = 343
                   Top = 32
@@ -2709,7 +2709,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 11
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'

@@ -12,8 +12,8 @@ type
 pRCondi=^TRCondi;
 TRCondi=record
   Count:integer;
-  idx:array [1..30] of integer;
-  V:array [1..30] of string;
+  idx:array [0..30] of integer;
+  V:array [0..30] of string;
   alled:boolean;
   end;
 
@@ -178,9 +178,9 @@ procedure TReportFactory.Open(id:string;Grid:TDBGridEh);
 begin
   Load(id);
   Prepare;
-  Calc;
   CreateHeader(Grid);
-  Fill(Grid.DataSource.DataSet);
+//  Calc;
+//  Fill(Grid.DataSource.DataSet);
 end;
 
 procedure TReportFactory.Prepare;
@@ -223,6 +223,7 @@ begin
                 node^.id := rs.Fields[idx].AsString;
                 node^.title := rs.Fields[ndx].AsString;
                 node^.FieldName := sid;
+                result.add(node);
                 id := DataSet.Fields[idx].AsString;
               end;
            DataSet.Next;
@@ -241,6 +242,7 @@ begin
            node^.id := rs.FieldbyName('SORT_ID').AsString;
            node^.title := rs.FieldbyName('SORT_NAME').AsString;
            node^.FieldName := 'SORT_ID'+sid;
+           result.add(node);
            rs.Next;
          end;
      end;
@@ -260,18 +262,20 @@ begin
       ATree[idx].curid := PIdxNode(TList(ATree[idx].Data)[i])^.id;
       ATree[idx].curname := PIdxNode(TList(ATree[idx].Data)[i])^.title;
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
-      if ATree[idx+1].Data=nil then //到根结点了
+      if ATree[idx+1]=nil then //到根结点了
          begin
            new(Column);
            Column^.DataType := 0;
-           for j:=1 to 30 do Column.Condi.idx[j] := -1;
-           for j:=idx downto 1 do
+           for j:=0 to 30 do Column.Condi.idx[j] := -1;
+           for j:=idx downto 0 do
               begin
-                Column^.Title := ATree[j].curname+'|'+Column^.Title;
+                if Column^.Title<>'' then Column^.Title := '|'+Column^.Title;
+                Column^.Title := ATree[j].curname+Column^.Title;
                 Column^.Condi.V[idx] := ATree[j].curid;
-                Column^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
+                //Column^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
               end;
            Column^.FieldName := ATree[idx].FieldName;
+           Cols.Add(Column);
          end
       else
          DoHeader(idx+1);
@@ -280,39 +284,33 @@ end;
 var
   i:integer;
 begin
-  for i:=1 to 30 do
+  for i:=0 to 30 do
     begin
       if ATree[i]=nil then break;
       ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
     end;
-  if ATree[1]=nil then exit;
-  if ATree[1].Data=nil then exit;
-  for i:=0 to TList(ATree[1].Data).Count -1 do
-    begin
-      ATree[1].curid := PIdxNode(TList(ATree[1].Data)[i])^.id;
-      ATree[1].curname := PIdxNode(TList(ATree[1].Data)[i])^.title;
-      ATree[1].curfield := PIdxNode(TList(ATree[1].Data)[i])^.FieldName;
-      DoHeader(1);
-    end;
+  if ATree[0]=nil then exit;
+  if ATree[0].Data=nil then exit;
+  DoHeader(0);
 end;
 var
   i,j,c:integer;
-  ATree:array [1..30] of PRTemplate;
+  ATree:array [0..30] of PRTemplate;
 begin
-  for i:=1 to 30 do ATree[i] := nil;
+  for i:=0 to 30 do ATree[i] := nil;
   c := -1;
   for i:=0 to TLate.Count -1 do
     begin
-      if PRTemplate(TLate[i])^.coltype=1 then continue;
+      if PRTemplate(TLate[i])^.coltype=2 then continue;
       if c=PRTemplate(TLate[i])^.col then
          begin
-           ATree[PRTemplate(TLate[i])^.row] := PRTemplate(TLate[i]);
+           ATree[PRTemplate(TLate[i])^.row-1] := PRTemplate(TLate[i]);
          end
       else
          begin
            if c<>-1 then  DoCreateHeader(ATree);
-           for j:=1 to 30 do ATree[j] := nil;
-           ATree[PRTemplate(TLate[i])^.row] := PRTemplate(TLate[i]);
+           for j:=0 to 30 do ATree[j] := nil;
+           ATree[PRTemplate(TLate[i])^.row-1] := PRTemplate(TLate[i]);
            c := PRTemplate(TLate[i])^.col;
          end;
     end;
@@ -337,14 +335,15 @@ begin
            new(Row);
            Row^.DataType := 0;
            Row^.Title := PIdxNode(TList(ATree[idx].Data)[i])^.title;
-           for j:=1 to 30 do Row.Condi.idx[j] := -1;
-           for j:=idx downto 1 do
+           for j:=0 to 30 do Row.Condi.idx[j] := -1;
+           for j:=idx downto 0 do
               begin
                 Row^.Title := '  '+Row^.Title;
                 Row^.Condi.V[idx] := ATree[j].curid;
                 Row^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
               end;
            Row^.FieldName := ATree[idx].FieldName;
+           Rows.Add(Row);
          end
       else
          DoRows(idx+1);
@@ -353,20 +352,14 @@ end;
 var
   i:integer;
 begin
-  for i:=1 to 30 do
+  for i:=0 to 30 do
     begin
       if ATree[i]=nil then break;
       ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
     end;
-  if ATree[1]=nil then exit;
-  if ATree[1].Data=nil then exit;
-  for i:=0 to TList(ATree[1].Data).Count -1 do
-    begin
-      ATree[1].curid := PIdxNode(TList(ATree[1].Data)[i])^.id;
-      ATree[1].curname := PIdxNode(TList(ATree[1].Data)[i])^.title;
-      ATree[1].curfield := PIdxNode(TList(ATree[1].Data)[i])^.FieldName;
-      DoRows(1);
-    end;
+  if ATree[0]=nil then exit;
+  if ATree[0].Data=nil then exit;
+  DoRows(0);
 end;
 var
   i,j,c:integer;
@@ -376,16 +369,16 @@ begin
   c := -1;
   for i:=0 to TLate.Count -1 do
     begin
-      if PRTemplate(TLate[i])^.coltype=2 then continue;
+      if PRTemplate(TLate[i])^.coltype=1 then continue;
       if c=PRTemplate(TLate[i])^.row then
          begin
-           ATree[PRTemplate(TLate[i])^.col] := PRTemplate(TLate[i]);
+           ATree[PRTemplate(TLate[i])^.col-1] := PRTemplate(TLate[i]);
          end
       else
          begin
            if c<>-1 then  DoCreateRows(ATree);
            for j:=1 to 30 do ATree[j] := nil;
-           ATree[PRTemplate(TLate[i])^.col] := PRTemplate(TLate[i]);
+           ATree[PRTemplate(TLate[i])^.col-1] := PRTemplate(TLate[i]);
            c := PRTemplate(TLate[i])^.row;
          end;
     end;
@@ -403,15 +396,22 @@ var
   Column:TColumnEh;
   tb:TZQuery;
 begin
+  Grid.Columns.Clear;
   tb := TZQuery(Grid.DataSource.DataSet);
   tb.Close;
   tb.FieldDefs.Clear;
   tb.FieldDefs.Add('A_IDX',ftString,255,true);
+  Column := Grid.Columns.Add;
+  Column.FieldName := 'A_IDX';
+  Column.Title.Caption := '名称';
+  Column.Width := 150;
   for i:=0 to Cols.Count-1 do
     begin
       Column := Grid.Columns.Add;
       Column.FieldName := 'A_'+inttostr(i);
       Column.Title.Caption := PColumnR(Cols[i])^.Title;
+      Column.Width := 60;
+      Column.DisplayFormat := '#0.00';
       tb.FieldDefs.Add('A_'+inttostr(i),ftFloat,0,true);
     end;
   tb.CreateDataSet;
@@ -440,7 +440,7 @@ var
   i:integer;
 begin
   result := true;
-  for i:=1 to 30 do
+  for i:=0 to 30 do
     begin
       if V.idx[I]<0 then break;
       result := (DataSet.Fields[V.idx[I]].AsString=V.V[I]);

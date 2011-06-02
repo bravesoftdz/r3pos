@@ -92,7 +92,7 @@ type
     fndP3_SHOP_VALUE: TzrComboBoxList;
     fndP3_SHOP_TYPE: TcxComboBox;
     fndP3_DEPT_ID: TzrComboBoxList;
-    fndP3_USER_ID: TzrComboBoxList;
+    fndP3_GUIDE_USER: TzrComboBoxList;
     RzPanel12: TRzPanel;
     DBGridEh3: TDBGridEh;
     RzPanel14: TRzPanel;
@@ -118,7 +118,7 @@ type
     fndP4_SHOP_TYPE: TcxComboBox;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP4_DEPT_ID: TzrComboBoxList;
-    fndP4_USER_ID: TzrComboBoxList;
+    fndP4_GUIDE_USER: TzrComboBoxList;
     RzPanel21: TRzPanel;
     DBGridEh4: TDBGridEh;
     TabSheet5: TRzTabSheet;
@@ -149,11 +149,11 @@ type
     fndP5_POSMAIN: TcxRadioButton;
     fndP5_SALRETU: TcxRadioButton;
     fndP5_DEPT_ID: TzrComboBoxList;
-    fndP5_USER_ID: TzrComboBoxList;
+    fndP5_GUIDE_USER: TzrComboBoxList;
     RzPanel18: TRzPanel;
     DBGridEh5: TDBGridEh;
-    fndP2_USER_ID: TzrComboBoxList;
-    fndP1_USER_ID: TzrComboBoxList;
+    fndP2_GUIDE_USER: TzrComboBoxList;
+    fndP1_GUIDE_USER: TzrComboBoxList;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -269,8 +269,8 @@ begin
   fndP2_SHOP_VALUE.KeyValue:=fndP1_SHOP_VALUE.KeyValue;
   fndP2_SHOP_VALUE.Text:=fndP1_SHOP_VALUE.Text;
 
-  fndP2_USER_ID.KeyValue := fndP1_USER_ID.KeyValue;
-  fndP2_USER_ID.Text := fndP1_USER_ID.Text;
+  fndP2_GUIDE_USER.KeyValue := fndP1_GUIDE_USER.KeyValue;
+  fndP2_GUIDE_USER.Text := fndP1_GUIDE_USER.Text;
 
   fndP2_GODS_ID.KeyValue := fndP1_GODS_ID.KeyValue;
   fndP2_GODS_ID.Text := fndP1_GODS_ID.Text;
@@ -366,8 +366,8 @@ begin
   fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
   fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
 
-  fndP3_USER_ID.KeyValue := fndP2_USER_ID.KeyValue;
-  fndP3_USER_ID.Text := fndP2_USER_ID.Text;
+  fndP3_GUIDE_USER.KeyValue := fndP2_GUIDE_USER.KeyValue;
+  fndP3_GUIDE_USER.Text := fndP2_GUIDE_USER.Text;
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -469,8 +469,8 @@ begin
   fndP4_SHOP_ID.KeyValue:=fndP3_SHOP_ID.KeyValue;
   fndP4_SHOP_ID.Text:=fndP3_SHOP_ID.Text;
 
-  fndP4_USER_ID.KeyValue := fndP3_USER_ID.KeyValue;
-  fndP4_USER_ID.Text := fndP3_USER_ID.Text;
+  fndP4_GUIDE_USER.KeyValue := fndP3_GUIDE_USER.KeyValue;
+  fndP4_GUIDE_USER.Text := fndP3_GUIDE_USER.Text;
 
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
@@ -509,8 +509,8 @@ begin
   Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
   Copy_ParamsValue('TYPE_ID',4,5);   //商品指标
 
-  fndP5_USER_ID.KeyValue := fndP4_USER_ID.KeyValue;
-  fndP5_USER_ID.Text := fndP4_USER_ID.Text;
+  fndP5_GUIDE_USER.KeyValue := fndP4_GUIDE_USER.KeyValue;
+  fndP5_GUIDE_USER.Text := fndP4_GUIDE_USER.Text;
 
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
@@ -570,11 +570,11 @@ begin
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
-  fndP1_USER_ID.DataSet := Global.GetZQueryFromName('CA_USERS');
-  fndP2_USER_ID.DataSet := Global.GetZQueryFromName('CA_USERS');
-  fndP3_USER_ID.DataSet := Global.GetZQueryFromName('CA_USERS');
-  fndP4_USER_ID.DataSet := Global.GetZQueryFromName('CA_USERS');
-  fndP5_USER_ID.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndP1_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndP2_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndP3_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndP4_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndP5_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   SetRzPageActivePage; //设置PzPage.Activepage
 
   RefreshColumn;
@@ -741,8 +741,8 @@ begin
     strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
 
   //业务员
-  if Trim(fndP5_USER_ID.Text) <> '' then
-    strWhere := strWhere + ' and A.GUIDE_USER='''+fndP5_USER_ID.AsString+''' ';
+  if Trim(fndP5_GUIDE_USER.Text) <> '' then
+    strWhere := strWhere + ' and A.GUIDE_USER='''+fndP5_GUIDE_USER.AsString+''' ';
 
   if fndP5_SALEORDER.Checked then //销售单:1
     strWhere := strWhere+' and SALES_TYPE=1 '
@@ -889,8 +889,8 @@ begin
     GoodTab:='VIW_GOODSPRICE';
 
   //业务员
-  if Trim(fndP4_USER_ID.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP4_USER_ID.AsString+''' ';
+  if Trim(fndP4_GUIDE_USER.Text) <> '' then
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP4_GUIDE_USER.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1011,8 +1011,8 @@ begin
     strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
 
   //业务员
-  if Trim(fndP3_USER_ID.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP3_USER_ID.AsString+''' ';
+  if Trim(fndP3_GUIDE_USER.Text) <> '' then
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP3_GUIDE_USER.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1301,8 +1301,8 @@ begin
     end;
 
   //业务员
-  if Trim(fndP2_USER_ID.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP2_USER_ID.AsString+''' ';
+  if Trim(fndP2_GUIDE_USER.Text) <> '' then
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP2_GUIDE_USER.AsString+''' ';
     
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -1429,8 +1429,8 @@ begin
       StrCnd:=' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
     end;
   //业务员
-  if Trim(fndP1_USER_ID.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP1_USER_ID.AsString+''' ';
+  if Trim(fndP1_GUIDE_USER.Text) <> '' then
+    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP1_GUIDE_USER.AsString+''' ';
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);

@@ -260,8 +260,7 @@ var
   i,r:integer;
 begin
   inherited;
-  if DsReportTemplate.IsEmpty then Exit;
-  if dbState = dsBrowse then Exit;  
+  if dbState = dsBrowse then Exit;
   RecordList := TRecordList.Create;
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
@@ -1106,7 +1105,6 @@ var
   i,c:integer;
 begin
   inherited;
-  if DsReportTemplate1.IsEmpty then Exit;
   if dbState = dsBrowse then Exit;  
   RecordList := TRecordList.Create;
   Str_Sql :=

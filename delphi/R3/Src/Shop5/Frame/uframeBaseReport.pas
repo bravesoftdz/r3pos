@@ -277,6 +277,7 @@ begin
   inherited;
   if rzShowColumns.Tag = 1 then Exit;
   try
+    if rzShowColumns.Items[Index]='' then Exit;
     TColumnEh(rzShowColumns.Items.Objects[Index]).Visible := (NewState = cbChecked);
     SaveFormat;
   except

@@ -968,10 +968,6 @@ begin
   if trim(fndP5_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';  
 
-  //门店条件
-  if (fndP5_SHOP_ID.AsString<>'') then
-    strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
-
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
@@ -1033,7 +1029,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID';
 
   strSql :=

@@ -4,7 +4,7 @@ interface
 uses
   Windows, Messages, DB, SysUtils, Variants, Classes, ZDataSet, DBGridEh;
 const
-  RF_DATA_SOURCE1='SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
+  RF_DATA_SOURCE1='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
   RF_DATA_SOURCE2='STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
   RF_DATA_SOURCE3='BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
 type
@@ -26,6 +26,7 @@ PColumnR=^TColumnR;
 TColumnR=record
   //0 字符型 1 数据值
   DataType:integer;
+  SumType:integer;
   FieldName:string;
   Title:string;
   Condi:TRCondi;
@@ -266,13 +267,14 @@ begin
          begin
            new(Column);
            Column^.DataType := 0;
+           Column^.SumType := ATree[j].subtype;
            for j:=0 to 30 do Column.Condi.idx[j] := -1;
            for j:=idx downto 0 do
               begin
                 if Column^.Title<>'' then Column^.Title := '|'+Column^.Title;
                 Column^.Title := ATree[j].curname+Column^.Title;
                 Column^.Condi.V[idx] := ATree[j].curid;
-                //Column^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
+                Column^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
               end;
            Column^.FieldName := ATree[idx].FieldName;
            Cols.Add(Column);
@@ -405,6 +407,9 @@ begin
   Column.FieldName := 'A_IDX';
   Column.Title.Caption := '名称';
   Column.Width := 150;
+  Column.Footer.ValueType := fvtStaticText;
+  Column.Footer.Value := '合计';
+  Column.Footer.Alignment := taCenter;
   for i:=0 to Cols.Count-1 do
     begin
       Column := Grid.Columns.Add;
@@ -413,6 +418,13 @@ begin
       Column.Width := 60;
       Column.DisplayFormat := '#0.00';
       tb.FieldDefs.Add('A_'+inttostr(i),ftFloat,0,true);
+      case PColumnR(Cols[i])^.SumType of
+      1:Column.Footer.ValueType := fvtSum;
+      2:Column.Footer.ValueType := fvtAvg;
+      3:Column.Footer.ValueType := fvtCount;
+      end;
+      Column.Alignment := taRightJustify;
+      Column.Footer.Alignment := taRightJustify;
     end;
   tb.CreateDataSet;
 end;

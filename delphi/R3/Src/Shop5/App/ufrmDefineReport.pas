@@ -66,14 +66,9 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh2CellClick(Column: TColumnEh);
-    procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2Columns3UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh2Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure BtnAdd1Click(Sender: TObject);
     procedure BtnDelete1Click(Sender: TObject);
@@ -81,6 +76,10 @@ type
     procedure BtnDownRow1Click(Sender: TObject);
     procedure BtnLeftRow1Click(Sender: TObject);
     procedure BtnRightRow1Click(Sender: TObject);
+    procedure DBGridEh1Columns2UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns2EditButtonClick(Sender: TObject;
+      var Handled: Boolean);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -265,6 +264,10 @@ begin
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
   ' union all '+
+  ' select 0 as A,''TOTAL'' as CODE_ID,''合计'' as CODE_NAME '+
+  ' union all '+
+  ' select 0 as A,''FIELD'' as CODE_ID,''字段值'' as CODE_NAME '+
+  ' union all '+
   ' select * from ('+
   ' select 0 as A,CODE_ID,CODE_NAME from ( '+
   ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
@@ -286,8 +289,8 @@ begin
             DsReportTemplate.FieldByName('CELL_TYPE').AsString := '1';
             DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
             DsReportTemplate.FieldByName('ROW').AsInteger := r;
-            DsReportTemplate.FieldByName('SUM_TYPE').AsInteger := 1;
-            DsReportTemplate.FieldByName('INDEX_FLAG').AsInteger := 2;
+            DsReportTemplate.FieldByName('SUM_TYPE').AsString := '1';
+            DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate.Post;
@@ -827,17 +830,17 @@ begin
     begin
       ARect := Rect;
       DBGridEh2.canvas.FillRect(ARect);
-      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(DsReportTemplate.RecNo)),length(Inttostr(DsReportTemplate.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(DsReportTemplate1.RecNo)),length(Inttostr(DsReportTemplate1.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 
   if Column.FieldName = 'DISPLAY_NAME' then
     begin
-      if DsReportTemplate.FieldByName('ROW').AsInteger <> 0 then
+      if DsReportTemplate1.FieldByName('COL').AsInteger <> 0 then
       begin
         ARect :=  Rect;
-        StrPlace := ReturnSpace(DsReportTemplate.FieldbyName('ROW').AsInteger)+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString;
+        StrPlace := ReturnSpace(DsReportTemplate1.FieldbyName('COL').AsInteger)+DsReportTemplate1.FieldbyName('DISPLAY_NAME').AsString;
         DBGridEh2.canvas.FillRect(ARect);
-        DrawText(DBGridEh2.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+        DrawText(DBGridEh2.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_LEFT or DT_LEFT);
       end;
     end;
 end;
@@ -867,80 +870,44 @@ procedure TfrmDefineReport.InitGrid;
 var Col:TColumnEh;
     rs:TZQuery;
 begin
-  Col := FindColumn(DBGridEh1,'SUM_TYPE');
-  if Col = nil then Exit;
-
   rs := Global.GetZQueryFromName('PUB_PARAMS');
-  rs.Filtered := False;
-  rs.Filter := ' TYPE_CODE=''SUM_TYPE'' ';
-  rs.Filtered := True;
 
-  Col.KeyList.Clear;
-  Col.PickList.Clear;
-
-  rs.First;
-  while not rs.Eof do
-    begin
-      Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
-      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
-      rs.Next;
-    end;
+  Col := FindColumn(DBGridEh1,'SUM_TYPE');
+  if Col <> nil then
+  begin
+    rs.Filtered := False;
+    rs.Filter := ' TYPE_CODE=''SUM_TYPE'' ';
+    rs.Filtered := True;
+    
+    Col.KeyList.Clear;
+    Col.PickList.Clear;
+    rs.First;
+    while not rs.Eof do
+      begin
+        Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
+        Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
+        rs.Next;
+      end;
+  end;
 
   Col := FindColumn(DBGridEh1,'INDEX_FLAG');
-  if Col = nil then Exit;
-
-  rs.Filtered := False;
-  rs.Filter := ' TYPE_CODE=''INDEX_FLAG'' ';
-  rs.Filtered := True;
-
-  Col.KeyList.Clear;
-  Col.PickList.Clear;
-
-  rs.First;
-  while not rs.Eof do
+  if Col <> nil then
     begin
-      Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
-      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
-      rs.Next;
+      rs.Filtered := False;
+      rs.Filter := ' TYPE_CODE=''INDEX_FLAG'' ';
+      rs.Filtered := True;
+
+      Col.KeyList.Clear;
+      Col.PickList.Clear;
+      rs.First;
+      while not rs.Eof do
+        begin
+          Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
+          Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
+          rs.Next;
+        end;
     end;
 
-  //
-  Col := FindColumn(DBGridEh2,'SUM_TYPE');
-  if Col = nil then Exit;
-
-  rs := Global.GetZQueryFromName('PUB_PARAMS');
-  rs.Filtered := False;
-  rs.Filter := ' TYPE_CODE=''SUM_TYPE'' ';
-  rs.Filtered := True;
-
-  Col.KeyList.Clear;
-  Col.PickList.Clear;
-
-  rs.First;
-  while not rs.Eof do
-    begin
-      Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
-      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
-      rs.Next;
-    end;
-
-  Col := FindColumn(DBGridEh2,'INDEX_FLAG');
-  if Col = nil then Exit;
-
-  rs.Filtered := False;
-  rs.Filter := ' TYPE_CODE=''INDEX_FLAG'' ';
-  rs.Filtered := True;
-
-  Col.KeyList.Clear;
-  Col.PickList.Clear;
-
-  rs.First;
-  while not rs.Eof do
-    begin
-      Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
-      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
-      rs.Next;
-    end;
 end;
 
 procedure TfrmDefineReport.DBGridEh2CellClick(Column: TColumnEh);
@@ -974,38 +941,6 @@ begin
   end;
 end;
 
-procedure TfrmDefineReport.DBGridEh1CellClick(Column: TColumnEh);
-var
-  RecordList:TRecordList;
-  Str_Sql: String;
-  i,r:integer;
-begin
-  inherited;
-  if DsReportTemplate.IsEmpty then Exit;
-  if Column.FieldName <> 'FIELD_NAME' then Exit;
-  
-  RecordList := TRecordList.Create;
-  Str_Sql := SQL;
-  try
-    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
-      begin
-        Str_Sql := '';
-        for i:=0 to RecordList.Count -1 do
-          begin
-            if Str_Sql = '' then
-              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
-            else
-              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
-          end;
-        DsReportTemplate.Edit;
-        DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
-        DsReportTemplate.Post;
-      end;
-  finally
-    RecordList.Free;
-  end;
-end;
-
 procedure TfrmDefineReport.DBGridEh1Columns3UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var ROWS_ID,SUMTYPE:String;
@@ -1022,29 +957,6 @@ begin
         begin
           DsReportTemplate.Edit;
           DsReportTemplate.FieldByName('SUM_TYPE').AsString := SUMTYPE;
-          DsReportTemplate.Post;
-        end;
-      DsReportTemplate.Next;
-    end;
-  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
-end;
-
-procedure TfrmDefineReport.DBGridEh1Columns4UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var ROWS_ID,INDEX:String;
-    COL:Integer;
-begin
-  inherited;
-  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-  COL := DsReportTemplate.FieldByName('COL').AsInteger;
-  INDEX := Value;
-  DsReportTemplate.First;
-  while not DsReportTemplate.Eof do
-    begin
-      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
-        begin
-          DsReportTemplate.Edit;
-          DsReportTemplate.FieldByName('INDEX_FLAG').AsString := INDEX;
           DsReportTemplate.Post;
         end;
       DsReportTemplate.Next;
@@ -1075,29 +987,6 @@ begin
   if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate1.Edit;
 end;
 
-procedure TfrmDefineReport.DBGridEh2Columns4UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var ROWS_ID,INDEX:String;
-    COL:Integer;
-begin
-  inherited;
-  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
-  INDEX := Value;
-  DsReportTemplate1.First;
-  while not DsReportTemplate1.Eof do
-    begin
-      if DsReportTemplate1.FieldByName('COL').AsInteger = COL then
-        begin
-          DsReportTemplate1.Edit;
-          DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := INDEX;
-          DsReportTemplate1.Post;
-        end;
-      DsReportTemplate1.Next;
-    end;
-  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate1.Edit;
-end;
-
 procedure TfrmDefineReport.BtnAdd1Click(Sender: TObject);
 var
   RecordList:TRecordList;
@@ -1105,7 +994,7 @@ var
   i,c:integer;
 begin
   inherited;
-  if dbState = dsBrowse then Exit;  
+  if dbState = dsBrowse then Exit;
   RecordList := TRecordList.Create;
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
@@ -1131,8 +1020,9 @@ begin
             DsReportTemplate1.FieldByName('CELL_TYPE').AsString := '2';
             DsReportTemplate1.FieldByName('COL').AsInteger := c;
             DsReportTemplate1.FieldByName('ROW').AsInteger := RowNum;
-            DsReportTemplate1.FieldByName('SUM_TYPE').AsInteger := 1;
-            DsReportTemplate1.FieldByName('INDEX_FLAG').AsInteger := 2;
+            DsReportTemplate1.FieldByName('SUM_TYPE').AsString := '#';   
+            DsReportTemplate1.FieldByName('FIELD_NAME').AsString := '#';
+            DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := '2';
             DsReportTemplate1.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate1.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate1.Post;
@@ -1141,7 +1031,7 @@ begin
   finally
     RecordList.Free;
   end;
-  if not DsReportTemplate.IsEmpty then BtnDelete.Enabled := True;
+  if not DsReportTemplate1.IsEmpty then BtnDelete1.Enabled := True;
 end;
 
 procedure TfrmDefineReport.SetRowNum(const Value: Integer);
@@ -1418,6 +1308,66 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmDefineReport.DBGridEh1Columns2UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var ROWS_ID,FIELDNAME:String;
+    COL:Integer;
+begin
+  inherited;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  FIELDNAME := Value;
+  DsReportTemplate.First;
+  while not DsReportTemplate.Eof do
+    begin
+      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+        begin
+          DsReportTemplate.Edit;
+          DsReportTemplate.FieldByName('FIELD_NAME').AsString := FIELDNAME;
+          DsReportTemplate.Post;
+        end;
+      DsReportTemplate.Next;
+    end;
+  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
+end;
+
+procedure TfrmDefineReport.DBGridEh1Columns2EditButtonClick(
+  Sender: TObject; var Handled: Boolean);
+var
+  RecordList:TRecordList;
+  Str_Sql: String;
+  i,r:integer;
+begin
+  inherited;
+  if DsReportTemplate.IsEmpty then Exit;
+  
+  RecordList := TRecordList.Create;
+  Str_Sql := SQL;
+  try
+    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
+      begin
+        Str_Sql := '';
+        for i:=0 to RecordList.Count -1 do
+          begin
+            if Str_Sql = '' then
+              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
+            else
+              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+          end;
+        DsReportTemplate.First;
+        while not DsReportTemplate.Eof do
+          begin
+            DsReportTemplate.Edit;
+            DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
+            DsReportTemplate.Post;
+            DsReportTemplate.Next;
+          end;
+      end;
+  finally
+    RecordList.Free;
+  end;
 end;
 
 end.

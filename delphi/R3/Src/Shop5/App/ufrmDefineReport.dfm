@@ -1,6 +1,6 @@
 inherited frmDefineReport: TfrmDefineReport
-  Left = 689
-  Top = 172
+  Left = 388
+  Top = 235
   Caption = #33258#23450#20041#25253#34920
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -27,6 +29,7 @@ inherited frmDefineReport: TfrmDefineReport
             Width = 447
             Height = 214
             Align = alClient
+            AutoFitColWidths = True
             DataSource = CdsReportTemplate
             Flat = True
             FooterColor = clWindow
@@ -50,7 +53,6 @@ inherited frmDefineReport: TfrmDefineReport
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
-            OnCellClick = DBGridEh1CellClick
             OnDrawColumnCell = DBGridEh1DrawColumnCell
             Columns = <
               item
@@ -78,13 +80,16 @@ inherited frmDefineReport: TfrmDefineReport
                 Width = 160
               end
               item
+                ButtonStyle = cbsEllipsis
                 EditButtons = <>
                 FieldName = 'FIELD_NAME'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #25968#25454#23383#27573
                 Title.Color = clWhite
-                Width = 80
+                Width = 60
+                OnEditButtonClick = DBGridEh1Columns2EditButtonClick
+                OnUpdateData = DBGridEh1Columns2UpdateData
               end
               item
                 AutoDropDown = True
@@ -93,7 +98,7 @@ inherited frmDefineReport: TfrmDefineReport
                 Footers = <>
                 Title.Caption = #27719#24635#31867#22411
                 Title.Color = clWhite
-                Width = 80
+                Width = 35
                 OnUpdateData = DBGridEh1Columns3UpdateData
               end
               item
@@ -102,8 +107,22 @@ inherited frmDefineReport: TfrmDefineReport
                 Footers = <>
                 Title.Caption = #25351#26631#31867#22411
                 Title.Color = clWhite
-                Width = 80
-                OnUpdateData = DBGridEh1Columns4UpdateData
+                Width = 60
+              end
+              item
+                Checkboxes = True
+                EditButtons = <>
+                FieldName = 'SUB_FLAG'
+                Footers = <>
+                KeyList.Strings = (
+                  '2'
+                  '1')
+                PickList.Strings = (
+                  '1'
+                  '2')
+                Title.Caption = #26159#21542#23567#35745
+                Title.Color = clWhite
+                Width = 30
               end>
           end
           object RzPanel1: TRzPanel
@@ -512,31 +531,11 @@ inherited frmDefineReport: TfrmDefineReport
               end
               item
                 EditButtons = <>
-                FieldName = 'FIELD_NAME'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #25968#25454#23383#27573
-                Title.Color = clWhite
-                Width = 80
-              end
-              item
-                AutoDropDown = True
-                EditButtons = <>
-                FieldName = 'SUM_TYPE'
-                Footers = <>
-                Title.Caption = #27719#24635#31867#22411
-                Title.Color = clWhite
-                Width = 80
-                OnUpdateData = DBGridEh2Columns3UpdateData
-              end
-              item
-                EditButtons = <>
                 FieldName = 'INDEX_FLAG'
                 Footers = <>
                 Title.Caption = #25351#26631#31867#22411
                 Title.Color = clWhite
                 Width = 80
-                OnUpdateData = DBGridEh2Columns4UpdateData
               end>
           end
         end

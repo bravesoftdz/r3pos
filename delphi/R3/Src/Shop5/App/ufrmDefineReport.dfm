@@ -1,6 +1,6 @@
 inherited frmDefineReport: TfrmDefineReport
-  Left = 422
-  Top = 187
+  Left = 689
+  Top = 172
   Caption = #33258#23450#20041#25253#34920
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -50,7 +52,7 @@ inherited frmDefineReport: TfrmDefineReport
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
-            OnDblClick = DBGridEh1DblClick
+            OnCellClick = DBGridEh1CellClick
             OnDrawColumnCell = DBGridEh1DrawColumnCell
             Columns = <
               item
@@ -94,6 +96,7 @@ inherited frmDefineReport: TfrmDefineReport
                 Title.Caption = #27719#24635#31867#22411
                 Title.Color = clWhite
                 Width = 80
+                OnUpdateData = DBGridEh1Columns3UpdateData
               end
               item
                 EditButtons = <>
@@ -102,6 +105,7 @@ inherited frmDefineReport: TfrmDefineReport
                 Title.Caption = #25351#26631#31867#22411
                 Title.Color = clWhite
                 Width = 80
+                OnUpdateData = DBGridEh1Columns4UpdateData
               end>
           end
           object RzPanel1: TRzPanel
@@ -295,8 +299,8 @@ inherited frmDefineReport: TfrmDefineReport
             BorderOuter = fsNone
             Color = clWhite
             TabOrder = 0
-            object RzBitBtn1: TRzBitBtn
-              Left = 13
+            object BtnAdd1: TRzBitBtn
+              Left = 11
               Top = 17
               Width = 61
               Height = 26
@@ -317,12 +321,12 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 0
               TextStyle = tsRaised
               ThemeAware = False
-              OnClick = RzBitBtn1Click
+              OnClick = BtnAdd1Click
               NumGlyphs = 2
               Spacing = 5
             end
-            object RzBitBtn2: TRzBitBtn
-              Left = 13
+            object BtnDelete1: TRzBitBtn
+              Left = 11
               Top = 49
               Width = 61
               Height = 26
@@ -343,6 +347,7 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 1
               TextStyle = tsRaised
               ThemeAware = False
+              OnClick = BtnDelete1Click
               NumGlyphs = 2
               Spacing = 5
             end
@@ -368,7 +373,7 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 2
               TextStyle = tsRaised
               ThemeAware = False
-              OnClick = BtnUpRowClick
+              OnClick = BtnUpRow1Click
               NumGlyphs = 2
               Spacing = 5
             end
@@ -394,7 +399,7 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 3
               TextStyle = tsRaised
               ThemeAware = False
-              OnClick = BtnNextRowClick
+              OnClick = BtnDownRow1Click
               NumGlyphs = 2
               Spacing = 5
             end
@@ -420,7 +425,7 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 4
               TextStyle = tsRaised
               ThemeAware = False
-              OnClick = BtnRightRowClick
+              OnClick = BtnRightRow1Click
               NumGlyphs = 2
               Spacing = 5
             end
@@ -446,7 +451,7 @@ inherited frmDefineReport: TfrmDefineReport
               TabOrder = 5
               TextStyle = tsRaised
               ThemeAware = False
-              OnClick = BtnLeftRowClick
+              OnClick = BtnLeftRow1Click
               NumGlyphs = 2
               Spacing = 5
             end
@@ -480,7 +485,7 @@ inherited frmDefineReport: TfrmDefineReport
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
-            OnDblClick = DBGridEh2DblClick
+            OnCellClick = DBGridEh2CellClick
             OnDrawColumnCell = DBGridEh2DrawColumnCell
             Columns = <
               item
@@ -505,7 +510,7 @@ inherited frmDefineReport: TfrmDefineReport
                 ReadOnly = True
                 Title.Caption = #26174#31034#21517#31216
                 Title.Color = clWhite
-                Width = 150
+                Width = 160
               end
               item
                 EditButtons = <>
@@ -514,26 +519,26 @@ inherited frmDefineReport: TfrmDefineReport
                 ReadOnly = True
                 Title.Caption = #25968#25454#23383#27573
                 Title.Color = clWhite
-                Width = 121
+                Width = 80
               end
               item
                 AutoDropDown = True
-                ButtonStyle = cbsDropDown
                 EditButtons = <>
                 FieldName = 'SUM_TYPE'
                 Footers = <>
-                KeyList.Strings = (
-                  '1'
-                  '2'
-                  '3')
-                PickList.Strings = (
-                  #21512#35745
-                  #24179#22343
-                  #25351#25968)
-                ReadOnly = True
                 Title.Caption = #27719#24635#31867#22411
                 Title.Color = clWhite
-                Width = 121
+                Width = 80
+                OnUpdateData = DBGridEh2Columns3UpdateData
+              end
+              item
+                EditButtons = <>
+                FieldName = 'INDEX_FLAG'
+                Footers = <>
+                Title.Caption = #25351#26631#31867#22411
+                Title.Color = clWhite
+                Width = 80
+                OnUpdateData = DBGridEh2Columns4UpdateData
               end>
           end
         end

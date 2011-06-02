@@ -34,19 +34,19 @@ type
     BtnUpRow: TRzBitBtn;
     BtnNextRow: TRzBitBtn;
     RzPanel4: TRzPanel;
-    RzBitBtn1: TRzBitBtn;
-    RzBitBtn2: TRzBitBtn;
+    BtnAdd1: TRzBitBtn;
+    BtnDelete1: TRzBitBtn;
     RzLabel7: TRzLabel;
     RzLabel1: TRzLabel;
     BtnRightRow: TRzBitBtn;
     BtnLeftRow: TRzBitBtn;
     DsReportTemplate1: TZQuery;
     CdsReportTemplate1: TDataSource;
-    DBGridEh2: TDBGridEh;
     BtnUpRow1: TRzBitBtn;
     BtnDownRow1: TRzBitBtn;
     BtnRightRow1: TRzBitBtn;
     BtnLeftRow1: TRzBitBtn;
+    DBGridEh2: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
@@ -55,7 +55,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure btnExitClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
-    procedure DBGridEh1DblClick(Sender: TObject);
     procedure edtREPORT_NAMEPropertiesChange(Sender: TObject);
     procedure BtnUpRowClick(Sender: TObject);
     procedure BtnLeftRowClick(Sender: TObject);
@@ -66,11 +65,28 @@ type
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormShow(Sender: TObject);
+    procedure DBGridEh2CellClick(Column: TColumnEh);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh2Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh2Columns4UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure BtnAdd1Click(Sender: TObject);
+    procedure BtnDelete1Click(Sender: TObject);
+    procedure BtnUpRow1Click(Sender: TObject);
+    procedure BtnDownRow1Click(Sender: TObject);
+    procedure BtnLeftRow1Click(Sender: TObject);
+    procedure BtnRightRow1Click(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
     FColumnNum: Integer;
     FSQL: String;
+    FRowNum: Integer;
     function ReturnSpace(Num:Integer):String;
     procedure SetColumnNum(const Value: Integer);
     procedure DbGridEh1FocusNextColumn;
@@ -79,6 +95,7 @@ type
     procedure SetSQL(const Value: String);
     function FindColumn(Grid:TDBGridEh;FieldName:String):TColumnEh;
     procedure InitGrid;
+    procedure SetRowNum(const Value: Integer);
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -87,8 +104,10 @@ type
     procedure Edit(Report_Id:String);
     procedure Save;
     class function AddReport(Owner:TForm;Field_Name,Type_Id,Source_Id:String):Boolean;
-    class function EditReport(Owner:TForm;Id:String;Field_Name,Code:String):Boolean;
+    class function EditReport(Owner:TForm;Id,Field_Name:String):Boolean;
+    class function DeleteReport(Owner:TForm;Id:String):Boolean;
     property ColumnNum:Integer read FColumnNum write SetColumnNum;
+    property RowNum:Integer read FRowNum write SetRowNum;
     property SQL:String  read FSQL write SetSQL;
   end;
 
@@ -106,6 +125,7 @@ end;
 procedure TfrmDefineReport.Edit(Report_Id: String);
 begin
   Open(Report_Id);
+  dbState := dsEdit;
 end;
 
 procedure TfrmDefineReport.Open(Report_Id: String);
@@ -140,10 +160,16 @@ begin
         DsReportTemplate.Last;
         ColumnNum := DsReportTemplate.FieldByName('COL').AsInteger;
       end;
+    if not DsReportTemplate1.IsEmpty then
+      begin
+        DsReportTemplate1.Last;
+        RowNum := DsReportTemplate.FieldByName('ROW').AsInteger;
+      end;
   finally
     Params.Free;
     Params1.Free;
   end;
+  dbState := dsBrowse;
 end;
 
 procedure TfrmDefineReport.Save;
@@ -234,6 +260,8 @@ var
   i,r:integer;
 begin
   inherited;
+  if DsReportTemplate.IsEmpty then Exit;
+  if dbState = dsBrowse then Exit;  
   RecordList := TRecordList.Create;
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
@@ -259,7 +287,8 @@ begin
             DsReportTemplate.FieldByName('CELL_TYPE').AsString := '1';
             DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
             DsReportTemplate.FieldByName('ROW').AsInteger := r;
-            //DsReportTemplate.FieldByName('REPORT_ID').AsString := DsReport.FieldByName('REPORT_ID').AsString;
+            DsReportTemplate.FieldByName('SUM_TYPE').AsInteger := 1;
+            DsReportTemplate.FieldByName('INDEX_FLAG').AsInteger := 2;
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate.Post;
@@ -315,7 +344,7 @@ begin
         ARect :=  Rect;
         StrPlace := ReturnSpace(DsReportTemplate.FieldbyName('ROW').AsInteger)+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString;
         DbGridEh1.canvas.FillRect(ARect);
-        DrawText(DbGridEh1.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+        DrawText(DbGridEh1.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_LEFT or DT_LEFT);
       end;
     end;
 end;
@@ -323,9 +352,9 @@ end;
 function TfrmDefineReport.ReturnSpace(Num: Integer): String;
 var i:Integer;
 begin
-  for i := 0 to Num-1 do
+  for i := 0 to (Num-1)*4 do
     begin
-      Result := Result + '  ';
+      Result := Result + ' ';
     end;
 end;
 
@@ -337,7 +366,19 @@ end;
 procedure TfrmDefineReport.btnExitClick(Sender: TObject);
 begin
   inherited;
-  Close;
+  if btnExit.Tag = 0 then
+    Close
+  else if btnExit.Tag = 1 then
+    begin
+      if DsReport.IsEmpty then Exit;
+      DsReport.Delete;
+      try
+        Factor.UpdateBatch(DsReport);
+      except
+        Raise;
+      end;
+      ModalResult := mrOk;
+    end;
 end;
 
 procedure TfrmDefineReport.btnSaveClick(Sender: TObject);
@@ -434,13 +475,13 @@ begin
 end;
 
 class function TfrmDefineReport.EditReport(Owner: TForm; Id,
-  Field_Name,Code: String): Boolean;
+  Field_Name: String): Boolean;
 begin
   with TfrmDefineReport.Create(Owner) do
     begin
       try
         SQL := Field_Name;
-        Open(Code);
+        Open(Id);
         Result := ShowModal = mrOk;
       finally
         Free;
@@ -479,36 +520,6 @@ begin
   Result := Sql_Str;
 end;
 
-procedure TfrmDefineReport.DBGridEh1DblClick(Sender: TObject);
-var
-  RecordList:TRecordList;
-  Str_Sql: String;
-  i,r:integer;
-begin
-  inherited;
-  if DsReportTemplate.IsEmpty then Exit;
-  RecordList := TRecordList.Create;
-  Str_Sql := SQL;
-  try
-    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
-      begin
-        Str_Sql := '';
-        for i:=0 to RecordList.Count -1 do
-          begin
-            if Str_Sql = '' then
-              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
-            else
-              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
-          end;
-        DsReportTemplate.Edit;
-        DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
-        DsReportTemplate.Post;
-      end;
-  finally
-    RecordList.Free;
-  end;
-end;
-
 procedure TfrmDefineReport.SetSQL(const Value: String);
 begin
   //FSQL := Value;
@@ -527,15 +538,18 @@ var
   CURCOL,MINCOL,COL1:Integer;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;  
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
   if DsReportTemplate.RecNo = 1 then Exit;
+  if DsReportTemplate.FieldByName('COL').AsInteger = 1 then Exit;
+  
   CURCOL := DsReportTemplate.FieldByName('COL').AsInteger;
-  DsReportTemplate.First;
-  MINCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+  MINCOL := 1;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
-  DsReportTemplate.SortedFields := 'CELL_TYPE';
+
   DsReportTemplate.DisableControls;
+  DsReportTemplate.SortedFields := 'ROWS_ID';
   try
   if CURCOL > MINCOL then
     Begin
@@ -548,7 +562,6 @@ begin
             DsReportTemplate.FieldByName('COL').AsInteger := 0;
             DsReportTemplate.Post;
           end;
-        DsReportTemplate.FieldByName('ROW').AsInteger;
         DsReportTemplate.Next;
       end;
 
@@ -561,7 +574,6 @@ begin
             DsReportTemplate.FieldByName('COL').AsInteger := CURCOL;
             DsReportTemplate.Post;
           end;
-        DsReportTemplate.FieldByName('ROW').AsInteger;
         DsReportTemplate.Next;
       end;
 
@@ -574,15 +586,14 @@ begin
             DsReportTemplate.FieldByName('COL').AsInteger := CURCOL-1;
             DsReportTemplate.Post;
           end;
-        DsReportTemplate.FieldByName('ROW').AsInteger;
         DsReportTemplate.Next;
       end;
     end
   else
     Exit;
   finally
-    DsReportTemplate.EnableControls;
     DsReportTemplate.SortedFields := 'COL;ROW';
+    DsReportTemplate.EnableControls;
   end;
 end;
 
@@ -592,6 +603,7 @@ var
   ROW,ROW1,COL,COL1:Integer;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
   if DsReportTemplate.RecNo = 1 then Exit;
@@ -621,10 +633,11 @@ end;
 
 procedure TfrmDefineReport.BtnRightRowClick(Sender: TObject);
 var
-  ROWS_ID,ROWS_ID1:String; //DISPLAY_NAME,FIELD_NAME,INDEX_ID,SUM_TYPE,,DISPLAY_NAME1,FIELD_NAME1,INDEX_ID1,SUM_TYPE1
+  ROWS_ID,ROWS_ID1:String;
   ROW,ROW1,COL,COL1:Integer;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
 
@@ -670,64 +683,62 @@ var
   CURCOL,MAXCOL,COL1:Integer;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if DsReportTemplate.IsEmpty then Exit;
-  if DsReportTemplate.RecordCount = DsReportTemplate.RecNo then Exit;
+  //if DsReportTemplate.RecordCount = DsReportTemplate.RecNo then Exit;
 
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
 
-  DsReportTemplate.SortedFields := 'CELL_TYPE';
+  CURCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+  DsReportTemplate.Last;
+  MAXCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+
   DsReportTemplate.DisableControls;
+  DsReportTemplate.SortedFields := 'ROWS_ID';
   try
-    CURCOL := DsReportTemplate.FieldByName('COL').AsInteger;
-    DsReportTemplate.Last;
-    MAXCOL := DsReportTemplate.FieldByName('COL').AsInteger;
     if CURCOL < MAXCOL then
       Begin
-        DsReportTemplate.Filtered := False;
-        DsReportTemplate.Filter := ' COL='+IntToStr(CURCOL);
-        DsReportTemplate.Filtered := True;
-
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := 100;
-            DsReportTemplate.Post;
+            if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL then
+              begin
+                DsReportTemplate.Edit;
+                DsReportTemplate.FieldByName('COL').AsInteger := 0;
+                DsReportTemplate.Post;
+              end;
             DsReportTemplate.Next;
           end;
 
-        //
-        DsReportTemplate.Filtered := False;
-        DsReportTemplate.Filter := ' COL='+IntToStr(CURCOL+1);
-        DsReportTemplate.Filtered := True;
-
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := CURCOL;
-            DsReportTemplate.Post;
+            if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL + 1 then
+              begin
+                DsReportTemplate.Edit;
+                DsReportTemplate.FieldByName('COL').AsInteger := CURCOL;
+                DsReportTemplate.Post;
+              end;
             DsReportTemplate.Next;
           end;
-        //
-        DsReportTemplate.Filtered := False;
-        DsReportTemplate.Filter := ' COL=100 ';
-        DsReportTemplate.Filtered := True;
 
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := CURCOL+1;
-            DsReportTemplate.Post;
+            if DsReportTemplate.FieldByName('COL').AsInteger = 0 then
+              begin
+                DsReportTemplate.Edit;
+                DsReportTemplate.FieldByName('COL').AsInteger := CURCOL+1;
+                DsReportTemplate.Post;
+              end;
             DsReportTemplate.Next;
           end;
       end
     else
       Exit;
   finally
-    DsReportTemplate.EnableControls;
     DsReportTemplate.SortedFields := 'COL;ROW';    
+    DsReportTemplate.EnableControls;
   end;
 end;
 
@@ -735,6 +746,8 @@ procedure TfrmDefineReport.BtnDeleteClick(Sender: TObject);
 var CurRow,CurCol:Integer;
 begin
   inherited;
+  if DsReportTemplate.IsEmpty then Exit;
+  if dbState = dsBrowse then Exit;
   if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   CurRow := DsReportTemplate.FieldByName('ROW').AsInteger;
   CurCol := DsReportTemplate.FieldByName('COL').AsInteger;
@@ -742,6 +755,7 @@ begin
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
   //删除后重新排序
   DsReportTemplate.DisableControls;
+  DsReportTemplate.SortedFields := 'ROWS_ID';
   try
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
@@ -756,6 +770,7 @@ begin
     end;
   finally
     DsReportTemplate.EnableControls;
+    DsReportTemplate.SortedFields := 'COL;ROW';
   end;
   //btnSave.Enabled:=True;
   //删除记录后，如果没有记录了，删除按钮不能操作
@@ -832,6 +847,7 @@ procedure TfrmDefineReport.FormShow(Sender: TObject);
 begin
   inherited;
   InitGrid;
+  RzPage.ActivePageIndex := 0;
 end;
 
 function TfrmDefineReport.FindColumn(Grid: TDBGridEh;
@@ -887,6 +903,522 @@ begin
       Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
       Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
       rs.Next;
+    end;
+
+  //
+  Col := FindColumn(DBGridEh2,'SUM_TYPE');
+  if Col = nil then Exit;
+
+  rs := Global.GetZQueryFromName('PUB_PARAMS');
+  rs.Filtered := False;
+  rs.Filter := ' TYPE_CODE=''SUM_TYPE'' ';
+  rs.Filtered := True;
+
+  Col.KeyList.Clear;
+  Col.PickList.Clear;
+
+  rs.First;
+  while not rs.Eof do
+    begin
+      Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
+      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
+      rs.Next;
+    end;
+
+  Col := FindColumn(DBGridEh2,'INDEX_FLAG');
+  if Col = nil then Exit;
+
+  rs.Filtered := False;
+  rs.Filter := ' TYPE_CODE=''INDEX_FLAG'' ';
+  rs.Filtered := True;
+
+  Col.KeyList.Clear;
+  Col.PickList.Clear;
+
+  rs.First;
+  while not rs.Eof do
+    begin
+      Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
+      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
+      rs.Next;
+    end;
+end;
+
+procedure TfrmDefineReport.DBGridEh2CellClick(Column: TColumnEh);
+var
+  RecordList:TRecordList;
+  Str_Sql: String;
+  i,r:integer;
+begin
+  inherited;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if Column.FieldName <> 'FIELD_NAME' then Exit; 
+  RecordList := TRecordList.Create;
+  Str_Sql := SQL;
+  try
+    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
+      begin
+        Str_Sql := '';
+        for i:=0 to RecordList.Count -1 do
+          begin
+            if Str_Sql = '' then
+              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
+            else
+              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+          end;
+        DsReportTemplate1.Edit;
+        DsReportTemplate1.FieldByName('FIELD_NAME').AsString := Str_Sql;
+        DsReportTemplate1.Post;
+      end;
+  finally
+    RecordList.Free;
+  end;
+end;
+
+procedure TfrmDefineReport.DBGridEh1CellClick(Column: TColumnEh);
+var
+  RecordList:TRecordList;
+  Str_Sql: String;
+  i,r:integer;
+begin
+  inherited;
+  if DsReportTemplate.IsEmpty then Exit;
+  if Column.FieldName <> 'FIELD_NAME' then Exit;
+  
+  RecordList := TRecordList.Create;
+  Str_Sql := SQL;
+  try
+    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
+      begin
+        Str_Sql := '';
+        for i:=0 to RecordList.Count -1 do
+          begin
+            if Str_Sql = '' then
+              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
+            else
+              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+          end;
+        DsReportTemplate.Edit;
+        DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
+        DsReportTemplate.Post;
+      end;
+  finally
+    RecordList.Free;
+  end;
+end;
+
+procedure TfrmDefineReport.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var ROWS_ID,SUMTYPE:String;
+    COL:Integer;
+begin
+  inherited;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  SUMTYPE := Value;
+  DsReportTemplate.First;
+  while not DsReportTemplate.Eof do
+    begin
+      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+        begin
+          DsReportTemplate.Edit;
+          DsReportTemplate.FieldByName('SUM_TYPE').AsString := SUMTYPE;
+          DsReportTemplate.Post;
+        end;
+      DsReportTemplate.Next;
+    end;
+  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
+end;
+
+procedure TfrmDefineReport.DBGridEh1Columns4UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var ROWS_ID,INDEX:String;
+    COL:Integer;
+begin
+  inherited;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  INDEX := Value;
+  DsReportTemplate.First;
+  while not DsReportTemplate.Eof do
+    begin
+      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+        begin
+          DsReportTemplate.Edit;
+          DsReportTemplate.FieldByName('INDEX_FLAG').AsString := INDEX;
+          DsReportTemplate.Post;
+        end;
+      DsReportTemplate.Next;
+    end;
+  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
+end;
+
+procedure TfrmDefineReport.DBGridEh2Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var ROWS_ID,SUMTYPE:String;
+    COL:Integer;
+begin
+  inherited;
+  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
+  SUMTYPE := Value;
+  DsReportTemplate1.First;
+  while not DsReportTemplate1.Eof do
+    begin
+      if DsReportTemplate1.FieldByName('COL').AsInteger = COL then
+        begin
+          DsReportTemplate1.Edit;
+          DsReportTemplate1.FieldByName('SUM_TYPE').AsString := SUMTYPE;
+          DsReportTemplate1.Post;
+        end;
+      DsReportTemplate1.Next;
+    end;
+  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate1.Edit;
+end;
+
+procedure TfrmDefineReport.DBGridEh2Columns4UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var ROWS_ID,INDEX:String;
+    COL:Integer;
+begin
+  inherited;
+  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
+  INDEX := Value;
+  DsReportTemplate1.First;
+  while not DsReportTemplate1.Eof do
+    begin
+      if DsReportTemplate1.FieldByName('COL').AsInteger = COL then
+        begin
+          DsReportTemplate1.Edit;
+          DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := INDEX;
+          DsReportTemplate1.Post;
+        end;
+      DsReportTemplate1.Next;
+    end;
+  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate1.Edit;
+end;
+
+procedure TfrmDefineReport.BtnAdd1Click(Sender: TObject);
+var
+  RecordList:TRecordList;
+  Str_Sql: String;
+  i,c:integer;
+begin
+  inherited;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if dbState = dsBrowse then Exit;  
+  RecordList := TRecordList.Create;
+  Str_Sql :=
+  ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
+  ' union all '+
+  ' select * from ('+
+  ' select 0 as A,CODE_ID,CODE_NAME from ( '+
+  ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
+  ' (select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
+  ' where j.TYPE_CODE=''SORT_TYPE'') '+
+  ' g where not(CODE_NAME like ''自定义%'') order by SEQ_NO, cast(CODE_ID as int) '+
+  ' ) ';
+  try
+    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称',RecordList) then
+      begin
+        c := 0;
+        RowNum := RowNum + 1;
+        for i:=0 to RecordList.Count -1 do
+          begin
+            inc(c);
+            DsReportTemplate1.Append;
+            DsReportTemplate1.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+            DsReportTemplate1.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            DsReportTemplate1.FieldByName('CELL_TYPE').AsString := '2';
+            DsReportTemplate1.FieldByName('COL').AsInteger := c;
+            DsReportTemplate1.FieldByName('ROW').AsInteger := RowNum;
+            DsReportTemplate1.FieldByName('SUM_TYPE').AsInteger := 1;
+            DsReportTemplate1.FieldByName('INDEX_FLAG').AsInteger := 2;
+            DsReportTemplate1.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
+            DsReportTemplate1.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
+            DsReportTemplate1.Post;
+          end;
+      end;
+  finally
+    RecordList.Free;
+  end;
+  if not DsReportTemplate.IsEmpty then BtnDelete.Enabled := True;
+end;
+
+procedure TfrmDefineReport.SetRowNum(const Value: Integer);
+begin
+  FRowNum := Value;
+end;
+
+procedure TfrmDefineReport.BtnDelete1Click(Sender: TObject);
+var CurRow,CurCol:Integer;
+begin
+  inherited;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if dbState = dsBrowse then Exit;
+  if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  CurRow := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  CurCol := DsReportTemplate1.FieldByName('COL').AsInteger;
+  DsReportTemplate1.Delete;
+  if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
+  //删除后重新排序
+  DsReportTemplate1.DisableControls;
+  DsReportTemplate1.SortedFields := 'ROWS_ID';
+  try
+    DsReportTemplate1.First;
+    while not DsReportTemplate1.Eof do
+    begin
+      if (DsReportTemplate1.FieldByName('COL').AsInteger > CurCol) and (DsReportTemplate1.FieldByName('ROW').AsInteger = CurRow) then
+        begin
+          DsReportTemplate1.Edit;
+          DsReportTemplate1.FieldByName('COL').AsInteger := DsReportTemplate1.FieldByName('COL').AsInteger-1;
+          DsReportTemplate1.Post;
+        end;
+      DsReportTemplate1.Next;
+    end;
+  finally
+    DsReportTemplate1.EnableControls;
+    DsReportTemplate1.SortedFields := 'ROW;COL';
+  end;
+  //btnSave.Enabled:=True;
+  //删除记录后，如果没有记录了，删除按钮不能操作
+  if DsReportTemplate1.IsEmpty then
+  begin
+    BtnDelete1.Enabled := False;
+  end;
+end;
+
+procedure TfrmDefineReport.BtnUpRow1Click(Sender: TObject);
+var
+  ROWS_ID,ROWS_ID1:String;
+  CURROW,MINROW,ROW1:Integer;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if DsReportTemplate1.RecordCount = 1 then Exit;
+  if DsReportTemplate1.RecNo = 1 then Exit;
+  if DsReportTemplate1.FieldByName('ROW').AsInteger = 1 then Exit;
+  CURROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  MINROW := 1;
+  if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
+
+  DsReportTemplate1.DisableControls;
+  DsReportTemplate1.SortedFields := 'ROWS_ID';
+  try
+  if CURROW > MINROW then
+    Begin
+    DsReportTemplate1.First;
+    while not DsReportTemplate1.Eof do
+      begin
+        if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW then
+          begin
+            DsReportTemplate1.Edit;
+            DsReportTemplate1.FieldByName('ROW').AsInteger := 0;
+            DsReportTemplate1.Post;
+          end;
+        DsReportTemplate1.Next;
+      end;
+
+    DsReportTemplate1.First;
+    while not DsReportTemplate1.Eof do
+      begin
+        if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW-1 then
+          begin
+            DsReportTemplate1.Edit;
+            DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW;
+            DsReportTemplate1.Post;
+          end;
+        DsReportTemplate1.Next;
+      end;
+
+    DsReportTemplate1.First;
+    while not DsReportTemplate1.Eof do
+      begin
+        if DsReportTemplate1.FieldByName('ROW').AsInteger = 0 then
+          begin
+            DsReportTemplate1.Edit;
+            DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW-1;
+            DsReportTemplate1.Post;
+          end;
+        DsReportTemplate1.Next;
+      end;
+    end
+  else
+    Exit;
+  finally
+    DsReportTemplate1.SortedFields := 'ROW;COL';
+    DsReportTemplate1.EnableControls;
+  end;
+end;
+
+procedure TfrmDefineReport.BtnDownRow1Click(Sender: TObject);
+var
+  ROWS_ID,ROWS_ID1:String;
+  CURROW,MAXROW,ROW1:Integer;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if DsReportTemplate1.IsEmpty then Exit;
+  //if DsReportTemplate.RecordCount = DsReportTemplate.RecNo then Exit;
+
+  if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
+
+  CURROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  DsReportTemplate1.Last;
+  MAXROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+
+  DsReportTemplate1.DisableControls;
+  DsReportTemplate1.SortedFields := 'ROWS_ID';
+  try
+    if CURROW < MAXROW then
+      Begin
+        DsReportTemplate1.First;
+        while not DsReportTemplate1.Eof do
+          begin
+            if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW then
+              begin
+                DsReportTemplate1.Edit;
+                DsReportTemplate1.FieldByName('ROW').AsInteger := 0;
+                DsReportTemplate1.Post;
+              end;
+            DsReportTemplate1.Next;
+          end;
+
+        DsReportTemplate1.First;
+        while not DsReportTemplate1.Eof do
+          begin
+            if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW + 1 then
+              begin
+                DsReportTemplate1.Edit;
+                DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW;
+                DsReportTemplate1.Post;
+              end;
+            DsReportTemplate1.Next;
+          end;
+
+        DsReportTemplate1.First;
+        while not DsReportTemplate1.Eof do
+          begin
+            if DsReportTemplate1.FieldByName('ROW').AsInteger = 0 then
+              begin
+                DsReportTemplate1.Edit;
+                DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW+1;
+                DsReportTemplate1.Post;
+              end;
+            DsReportTemplate1.Next;
+          end;
+      end
+    else
+      Exit;
+  finally
+    DsReportTemplate1.SortedFields := 'ROW;COL';
+    DsReportTemplate1.EnableControls;
+  end;
+end;
+
+procedure TfrmDefineReport.BtnLeftRow1Click(Sender: TObject);
+var
+  ROWS_ID,ROWS_ID1:String;
+  ROW,ROW1,COL,COL1:Integer;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if DsReportTemplate1.RecordCount = 1 then Exit;
+  if DsReportTemplate1.RecNo = 1 then Exit;
+  if DsReportTemplate1.FieldByName('COL').AsInteger = 1 then Exit;
+  if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
+
+  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
+  ROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+  DsReportTemplate1.Prior;
+  COL1 := DsReportTemplate1.FieldByName('COL').AsInteger;
+  ROW1 := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
+  if ROW <> ROW1 then
+    begin
+      DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
+      Exit;
+    end;
+
+  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
+    begin
+      DsReportTemplate1.Edit;
+      DsReportTemplate1.FieldByName('COL').AsInteger := COL;
+      DsReportTemplate1.Post;
+    end;
+    
+  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
+    begin
+      DsReportTemplate1.Edit;
+      DsReportTemplate1.FieldByName('COL').AsInteger := COL1;
+      DsReportTemplate1.Post;
+    end;
+end;
+
+procedure TfrmDefineReport.BtnRightRow1Click(Sender: TObject);
+var
+  ROWS_ID,ROWS_ID1:String;
+  ROW,ROW1,COL,COL1:Integer;
+begin
+  inherited;
+  if dbState = dsBrowse then Exit;
+  if DsReportTemplate1.IsEmpty then Exit;
+  if DsReportTemplate1.RecordCount = 1 then Exit;
+
+  DsReportTemplate1.DisableControls;
+  try
+    COL := DsReportTemplate1.FieldByName('COL').AsInteger;
+    ROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+    ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
+    DsReportTemplate1.Next;
+    COL1 := DsReportTemplate1.FieldByName('COL').AsInteger;
+    ROW1 := DsReportTemplate1.FieldByName('ROW').AsInteger;
+    ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
+    if ROW <> ROW1 then
+      begin
+        DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
+        Exit;
+      end;
+    if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
+
+    if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
+      begin
+        DsReportTemplate1.Edit;
+        DsReportTemplate1.FieldByName('COL').AsInteger := COL;
+        DsReportTemplate1.Post;
+      end;
+    if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
+      begin
+        DsReportTemplate1.Edit;
+        DsReportTemplate1.FieldByName('COL').AsInteger := COL1;
+        DsReportTemplate1.Post;
+      end;
+  finally
+    DsReportTemplate1.EnableControls;
+  end;
+end;
+
+class function TfrmDefineReport.DeleteReport(Owner: TForm;
+  Id: String): Boolean;
+begin
+  with TfrmDefineReport.Create(Owner) do
+    begin
+      try
+        //SQL := Field_Name;
+        Open(Id);
+        btnExit.Caption := '删除(&D)';
+        btnExit.Tag := 1;
+        Result := ShowModal = mrOk;
+      finally
+        Free;
+      end;
     end;
 end;
 

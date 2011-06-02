@@ -588,22 +588,22 @@ end;
 
 procedure TfrmDefineReport.BtnLeftRowClick(Sender: TObject);
 var
-  ROWS_ID,ROWS_ID1:String; //DISPLAY_NAME,FIELD_NAME,INDEX_ID,SUM_TYPE,,DISPLAY_NAME1,FIELD_NAME1,INDEX_ID1,SUM_TYPE1
-  ROW,ROW1:Integer;
+  ROWS_ID,ROWS_ID1:String;
+  ROW,ROW1,COL,COL1:Integer;
 begin
   inherited;
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
   if DsReportTemplate.RecNo = 1 then Exit;
-  if DsReportTemplate.FieldByName('COL').AsInteger = DsReportTemplate.FieldByName('ROW').AsInteger then Exit;
+  if DsReportTemplate.FieldByName('ROW').AsInteger = 1 then Exit;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
-  
+
   ROW := DsReportTemplate.FieldByName('ROW').AsInteger;
   ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
   DsReportTemplate.Prior;
-
   ROW1 := DsReportTemplate.FieldByName('ROW').AsInteger;
   ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
   if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
     begin
       DsReportTemplate.Edit;
@@ -622,7 +622,7 @@ end;
 procedure TfrmDefineReport.BtnRightRowClick(Sender: TObject);
 var
   ROWS_ID,ROWS_ID1:String; //DISPLAY_NAME,FIELD_NAME,INDEX_ID,SUM_TYPE,,DISPLAY_NAME1,FIELD_NAME1,INDEX_ID1,SUM_TYPE1
-  ROW,ROW1,COL:Integer;
+  ROW,ROW1,COL,COL1:Integer;
 begin
   inherited;
   if DsReportTemplate.IsEmpty then Exit;
@@ -634,17 +634,17 @@ begin
     ROW := DsReportTemplate.FieldByName('ROW').AsInteger;
     ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
-    DsReportTemplate.Filtered := False;
-    DsReportTemplate.Filter := ' COL='+IntToStr(COL);
-    DsReportTemplate.Filtered := True;
-
-    if DsReportTemplate.RecordCount = ROW then Exit;
-    if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
-
-    DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]);
     DsReportTemplate.Next;
+    COL1 := DsReportTemplate.FieldByName('COL').AsInteger;
     ROW1 := DsReportTemplate.FieldByName('ROW').AsInteger;
     ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
+    if COL <> COL1 then
+      begin
+        DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]);
+        Exit;
+      end;
+    if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
 
     if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
       begin
@@ -659,7 +659,6 @@ begin
         DsReportTemplate.Post;
       end;
   finally
-    DsReportTemplate.Filtered := False;
     DsReportTemplate.EnableControls;
   end;
   //DsReportTemplate.IndexFieldNames := 'DISPLAY_NAME';
@@ -868,6 +867,24 @@ begin
   while not rs.Eof do
     begin
       Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
+      Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
+      rs.Next;
+    end;
+
+  Col := FindColumn(DBGridEh1,'INDEX_FLAG');
+  if Col = nil then Exit;
+
+  rs.Filtered := False;
+  rs.Filter := ' TYPE_CODE=''INDEX_FLAG'' ';
+  rs.Filtered := True;
+
+  Col.KeyList.Clear;
+  Col.PickList.Clear;
+
+  rs.First;
+  while not rs.Eof do
+    begin
+      Col.KeyList.Add(rs.FieldByName('CODE_ID').AsString);
       Col.PickList.Add(rs.FieldByName('CODE_NAME').AsString);
       rs.Next;
     end;

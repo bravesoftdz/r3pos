@@ -1,6 +1,6 @@
 inherited frmDefineReport: TfrmDefineReport
-  Left = 439
-  Top = 188
+  Left = 422
+  Top = 187
   Caption = #33258#23450#20041#25253#34920
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -75,7 +75,7 @@ inherited frmDefineReport: TfrmDefineReport
                 ReadOnly = True
                 Title.Caption = #26174#31034#21517#31216
                 Title.Color = clWhite
-                Width = 150
+                Width = 160
               end
               item
                 EditButtons = <>
@@ -84,7 +84,7 @@ inherited frmDefineReport: TfrmDefineReport
                 ReadOnly = True
                 Title.Caption = #25968#25454#23383#27573
                 Title.Color = clWhite
-                Width = 121
+                Width = 80
               end
               item
                 AutoDropDown = True
@@ -93,19 +93,15 @@ inherited frmDefineReport: TfrmDefineReport
                 Footers = <>
                 Title.Caption = #27719#24635#31867#22411
                 Title.Color = clWhite
-                Width = 121
+                Width = 80
               end
               item
                 EditButtons = <>
-                FieldName = 'COL'
+                FieldName = 'INDEX_FLAG'
                 Footers = <>
-                Width = 20
-              end
-              item
-                EditButtons = <>
-                FieldName = 'ROW'
-                Footers = <>
-                Width = 20
+                Title.Caption = #25351#26631#31867#22411
+                Title.Color = clWhite
+                Width = 80
               end>
           end
           object RzPanel1: TRzPanel

@@ -8,6 +8,10 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TSyncQuestion=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
   TRimWsdlService=class(TZProcFactory)
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
@@ -123,13 +127,42 @@ begin
   end;
 end;
 
+{ TSyncQuestion }
+
+function TSyncQuestion.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  PlugIn: TPlugIn;
+  vData: OleVariant;
+  vParamStr: string;
+begin
+  result:=False;
+  vParamStr := TftParamList.Encode(Params);
+  //信息同步
+  PlugIn := PlugInList.Find(807);
+  try
+    if PlugIn<>nil then
+       begin
+         PlugIn.DLLDoExecute(vParamStr,vData);
+         msg := 'succ';
+       end
+    else
+       msg := 'none';
+    result:=true;
+  except
+    Raise Exception.Create(PlugIn.DLLGetLastError);
+  end;
+end;
+
 initialization
   RegisterClass(TSyncMessage);
+  RegisterClass(TSyncQuestion);
   RegisterClass(TRimWsdlService);
   RegisterClass(TSyncRimInfo);
 
 finalization
   UnRegisterClass(TSyncMessage);
+  UnRegisterClass(TSyncQuestion);
   UnRegisterClass(TRimWsdlService);
   UnRegisterClass(TSyncRimInfo);
 

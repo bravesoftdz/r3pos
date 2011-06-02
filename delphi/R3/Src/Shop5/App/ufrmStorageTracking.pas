@@ -817,7 +817,7 @@ begin
   ' '+StrWhere+' ) j group by TENANT_ID,SHOP_ID,GODS_ID';
 
   StrSql :=
-  'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtUNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,sum(ROAD_AMT) as ROAD_AMT,max(F.NEW_INPRICE*('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+'*1.0)) as NEW_INPRICE,'+
+  'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,sum(ROAD_AMT) as ROAD_AMT,max(F.NEW_INPRICE*('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+'*1.0)) as NEW_INPRICE,'+
   'sum(E.LOWER_AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as LOWER_AMOUNT,'+
   'sum(E.UPPER_AMOUNT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as UPPER_AMOUNT,'+
   'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as NEAR_SALE_AMT,'+

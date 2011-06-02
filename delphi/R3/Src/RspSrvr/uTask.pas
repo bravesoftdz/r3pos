@@ -101,7 +101,11 @@ var s:string;
   sm:TStringStream;
   tt:TTimerType;
 begin
-  if Str='' then Exit;
+  if Str='' then
+     begin
+       TimerType := ttNone;
+       Exit;
+     end;
   s := DecodeString(Str);
   sm := TStringStream.Create(s);
   try

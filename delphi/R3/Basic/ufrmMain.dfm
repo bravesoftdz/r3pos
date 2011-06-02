@@ -1,5 +1,5 @@
 inherited frmMain: TfrmMain
-  Left = 156
+  Left = 159
   Caption = 'frmMain'
   FormStyle = fsMDIForm
   OldCreateOrder = True

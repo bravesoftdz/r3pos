@@ -54,7 +54,7 @@ inherited frmCheckTask: TfrmCheckTask
     Top = 50
     Width = 60
     Height = 12
-    Caption = #30424#28857#26041#24335#65306
+    Caption = #30424#28857#38376#24215#65306
     Font.Charset = GB2312_CHARSET
     Font.Color = clWindowText
     Font.Height = -12

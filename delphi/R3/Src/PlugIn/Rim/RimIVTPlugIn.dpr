@@ -131,7 +131,7 @@ begin
           mid := newid(sid);
           str :=
            'insert into MSC_QUESTION(TENANT_ID,QUESTION_ID,QUESTION_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,QUESTION_SOURCE,ISSUE_USER,QUESTION_TITLE,ANSWER_FLAG,QUESTION_ITEM_AMT,REMARK,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-           'select '+tid+','''+mid+''',''1'','+formatDatetime('YYYYMMDD',Date())+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,''2'',0,B.VOLUME_NOTE,''2099-12-31'','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(iDbType)+' '+
+           'select '+tid+','''+mid+''',''1'','+formatDatetime('YYYYMMDD',Date())+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,''2'',0,B.VOLUME_NOTE,''2099-12-31'',A.INVEST_ID,''00'','+GetTimeStamp(iDbType)+' '+
            'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID '+
            'and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+ComId+''' and not Exists(select * from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID=A.INVEST_ID) ';
           if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
@@ -166,8 +166,8 @@ begin
           end;
 
           str :=
-            'insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM,TIME_STAMP) '+
-            'values('+tid+','''+mid+''','''+sid+''',''1'',''2'',''00'','+GetTimeStamp(iDbType)+')';
+            'insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM_ID,COMM,TIME_STAMP) '+
+            'values('+tid+','''+mid+''','''+sid+''',''1'',''2'','''+rs.Fields[0].AsString+''',''00'','+GetTimeStamp(iDbType)+')';
           if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
           if GPlugIn.CommitTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
         except

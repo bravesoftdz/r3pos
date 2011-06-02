@@ -1440,7 +1440,7 @@ begin
              begin
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
-                    SyncTimeStamp := CaFactory.TimeStamp;
+                    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
                     SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
@@ -3519,7 +3519,7 @@ begin
     Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
     Params.Decode(Params,Msg);
-    rimurl := Params.ParambyName('rimurl').AsString;
+    rimurl := trim(Params.ParambyName('rimurl').AsString);
     rimuid := Params.ParambyName('rimuid').AsString;
     rimpwd := Params.ParambyName('rimpwd').AsString;
     if rimurl='' then Raise Exception.Create('无法连接到RIM服务主机，请和实施人员联系.'); 
@@ -3538,7 +3538,8 @@ begin
      end;
   try
     Form.Name := 'frmNetForOrder';
-    TfrmIEWebForm(Form).Open(rimurl+'/rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    if rimurl[length(rimurl)]<>'/' then rimurl := rimurl + '/';
+    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
     Form.Show;
     Form.BringToFront;
   except

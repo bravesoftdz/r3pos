@@ -38,7 +38,7 @@ var
 begin
   inherited;
   SelectSQL.Text :=
-  'select TENANT_ID,REPORT_ID,REPORT_TYPE,REPORT_SOURCE,REPORT_NAME,REPORT_SPELL from SYS_REPORT where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID ';
+  'select TENANT_ID,REPORT_ID,REPORT_TYPE,REPORT_SOURCE,REPORT_NAME,REPORT_SPELL from SYS_REPORT where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID ';
   IsSQLUpdate := True;
 
   Str := 'insert into SYS_REPORT(TENANT_ID,REPORT_ID,REPORT_TYPE,REPORT_SOURCE,REPORT_NAME,REPORT_SPELL,COMM,TIME_STAMP) '
@@ -50,8 +50,8 @@ begin
     + ',TIME_STAMP='+GetTimeStamp(iDbType) 
     + ' where TENANT_ID=:OLD_TENANT_ID and REPORT_ID=:OLD_REPORT_ID';
   UpdateSQL.Text := Str;
-  
-  Str := 'delete from SYS_REPORT where TENANT_ID=:OLD_TENANT_ID and REPORT_ID=:OLD_REPORT_ID';
+
+  Str := 'update SYS_REPORT set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and REPORT_ID=:OLD_REPORT_ID';
   DeleteSQL.Text := Str;
 end;
 
@@ -74,8 +74,8 @@ begin
   'FIELD_NAME=:FIELD_NAME,INDEX_ID=:INDEX_ID,SUM_TYPE=:SUM_TYPE,INDEX_FLAG=:INDEX_FLAG where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
   UpdateSQL.Text := Str;
 
-  Str := 'delete from SYS_REPORT_TEMPLATE where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
-  DeleteSQL.Text := Str;
+  {Str := 'delete from SYS_REPORT_TEMPLATE where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
+  DeleteSQL.Text := Str;}
 end;
 
 initialization

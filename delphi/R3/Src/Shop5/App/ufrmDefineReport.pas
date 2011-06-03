@@ -96,6 +96,7 @@ type
     procedure SetRowNum(const Value: Integer);
     procedure SetColumn(Ds:TDataSet;C:Integer);
     procedure SetRow(Ds:TDataSet;R:Integer);
+    procedure AnalysisData(Ds:TDataSet);
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -153,6 +154,9 @@ begin
     end;
     AObj.ReadFromDataSet(DsReport);
     ReadFromObject(AObj,Self);
+
+    AnalysisData(DsReportTemplate);
+    AnalysisData(DsReportTemplate1);
 
     if not DsReportTemplate.IsEmpty then
       begin
@@ -255,12 +259,14 @@ end;
 procedure TfrmDefineReport.BtnAddClick(Sender: TObject);
 var
   RecordList:TRecordList;
+  Record_1:TRecord_;
   Str_Sql: String;
-  i,r:integer;
+  i,r,c:integer;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
   RecordList := TRecordList.Create;
+  Record_1 := TRecord_.Create;
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
   ' union all '+
@@ -279,23 +285,37 @@ begin
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=Ö¸±êÃû³Æ',RecordList) then
       begin
         r := 0;
+        c := ColumnNum + 1;
         ColumnNum := ColumnNum + 1;
         for i:=0 to RecordList.Count -1 do
           begin
-            inc(r);
             DsReportTemplate.Append;
             DsReportTemplate.FieldByName('ROWS_ID').AsString := TSequence.NewId;
             DsReportTemplate.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             DsReportTemplate.FieldByName('CELL_TYPE').AsString := '1';
-            DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
-            DsReportTemplate.FieldByName('ROW').AsInteger := r;
             DsReportTemplate.FieldByName('SUM_TYPE').AsString := '1';
+            DsReportTemplate.FieldByName('SUB_FLAG').AsString := '2';
             if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'TOTAL' then
-              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '5'
+              begin
+                ColumnNum := ColumnNum + 1;
+                DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '5';
+                DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
+                DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+              end
             else if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'FIELD' then
-              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '4'
+              begin
+                ColumnNum := ColumnNum + 1;
+                DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '4';
+                DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
+                DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+              end
             else
-              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
+              begin
+                inc(r);
+                DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
+                DsReportTemplate.FieldByName('COL').AsInteger := c;
+                DsReportTemplate.FieldByName('ROW').AsInteger := r;
+              end;
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate.Post;
@@ -303,6 +323,7 @@ begin
       end;
   finally
     RecordList.Free;
+    Record_1.Free;
   end;
   if not DsReportTemplate.IsEmpty then BtnDelete.Enabled := True;
 end;
@@ -962,6 +983,14 @@ begin
         end;
     end;
 
+  Col := FindColumn(DBGridEh1,'SUB_FLAG');
+  if Col <> nil then
+    begin
+      Col.KeyList.Clear;
+      Col.PickList.Clear;
+      Col.KeyList.Add('2');
+      Col.KeyList.Add('1');
+    end;
 end;
 
 procedure TfrmDefineReport.DBGridEh2CellClick(Column: TColumnEh);
@@ -1461,6 +1490,50 @@ begin
       Ds.Next;
     end;
   RowNum := RowNum - 1;
+end;
+
+procedure TfrmDefineReport.AnalysisData(Ds: TDataSet);
+var i:Integer;
+    Str_Field:String;
+    rs:TZQuery;
+    VList:TStringList;
+begin
+  if Ds.IsEmpty then Exit;
+
+  VList := TStringList.Create;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := SQL;
+    Factor.Open(rs);
+
+    Ds.First;
+    while not Ds.Eof do
+      begin
+        if Ds.FieldByName('FIELD_NAME').AsString <> '' then
+          begin
+            VList.CommaText := Ds.FieldByName('FIELD_NAME').AsString;
+            for i := 0 to VList.Count - 1 do
+              begin
+                if rs.Locate('CODE_ID',VList[i],[]) then
+                  begin
+                    if Str_Field = '' then
+                      Str_Field := rs.FieldByName('CODE_NAME').AsString
+                    else
+                      Str_Field := Str_Field + ','+rs.FieldByName('CODE_NAME').AsString;
+                  end;
+              end;
+            Ds.Edit;
+            Ds.FieldByName('FIELD_NAME_TEXT').AsString := Str_Field;
+            Ds.Post;
+            Str_Field := '';
+          end;
+        Ds.Next;
+      end;
+  finally
+    VList.Free;
+    rs.Free;
+  end;
 end;
 
 end.

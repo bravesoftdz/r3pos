@@ -106,7 +106,7 @@ type
     procedure Save;
     class function AddReport(Owner:TForm;Field_Name,Type_Id,Source_Id:String):Boolean;
     class function EditReport(Owner:TForm;Id,Field_Name:String):Boolean;
-    class function DeleteReport(Owner:TForm;Id:String):Boolean;
+    class function DeleteReport(Owner:TForm;Id,Field_Name:String):Boolean;
     property ColumnNum:Integer read FColumnNum write SetColumnNum;
     property RowNum:Integer read FRowNum write SetRowNum;
     property SQL:String  read FSQL write SetSQL;
@@ -1386,12 +1386,12 @@ begin
 end;
 
 class function TfrmDefineReport.DeleteReport(Owner: TForm;
-  Id: String): Boolean;
+  Id,Field_Name: String): Boolean;
 begin
   with TfrmDefineReport.Create(Owner) do
     begin
       try
-        //SQL := Field_Name;
+        SQL := Field_Name;
         Open(Id);
         btnExit.Caption := 'É¾³ý(&D)';
         btnExit.Tag := 1;

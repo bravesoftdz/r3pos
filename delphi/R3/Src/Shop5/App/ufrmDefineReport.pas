@@ -95,6 +95,7 @@ type
     procedure InitGrid;
     procedure SetRowNum(const Value: Integer);
     procedure SetColumn(Ds:TDataSet;C:Integer);
+    procedure SetRow(Ds:TDataSet;R:Integer);
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -402,6 +403,45 @@ begin
       Raise Exception.Create('拼音码不能为空!');
     end;
 
+  DsReportTemplate.First;
+  while not DsReportTemplate.Eof do
+    begin
+      if DsReportTemplate.FieldByName('DISPLAY_NAME').AsString = '' then
+        begin
+          Raise Exception.Create('在"表头行"页中显示名不能为空!');
+        end;
+      if DsReportTemplate.FieldByName('FIELD_NAME').AsString = '' then
+        begin
+          Raise Exception.Create('在"表头行"页中数据字段不能为空!');
+        end;
+      if DsReportTemplate.FieldByName('INDEX_ID').AsString = '' then
+        begin
+          Raise Exception.Create('在"表头行"页中指标名不能为空!');
+        end;
+      if DsReportTemplate.FieldByName('SUM_TYPE').AsString = '' then
+        begin
+          Raise Exception.Create('在"表头行"页中汇总类型不能为空!');
+        end;
+      if DsReportTemplate.FieldByName('INDEX_FLAG').AsString = '' then
+        begin
+          Raise Exception.Create('在"表头行"页中指标类型不能为空!');
+        end;
+      DsReportTemplate.Next;
+    end;
+
+  DsReportTemplate1.First;
+  while not DsReportTemplate1.Eof do
+    begin
+      if DsReportTemplate1.FieldByName('DISPLAY_NAME').AsString = '' then
+        begin
+          Raise Exception.Create('在"数据行"页中显示名不能为空!');
+        end;
+      if DsReportTemplate1.FieldByName('INDEX_FLAG').AsString = '' then
+        begin
+          Raise Exception.Create('在"数据行"页中指标类型不能为空!');
+        end;
+      DsReportTemplate1.Next;
+    end;
   Save;
   ModalResult := mrOk;
 end;
@@ -1055,6 +1095,7 @@ end;
 
 procedure TfrmDefineReport.BtnDelete1Click(Sender: TObject);
 var CurRow,CurCol:Integer;
+    IsExist:Boolean;
 begin
   inherited;
   if DsReportTemplate1.IsEmpty then Exit;
@@ -1068,6 +1109,7 @@ begin
   DsReportTemplate1.DisableControls;
   DsReportTemplate1.SortedFields := 'ROWS_ID';
   try
+    IsExist := True;
     DsReportTemplate1.First;
     while not DsReportTemplate1.Eof do
     begin
@@ -1079,6 +1121,13 @@ begin
         end;
       DsReportTemplate1.Next;
     end;
+    DsReportTemplate1.Filtered := False;
+    DsReportTemplate1.Filter := ' ROW='+IntToStr(CurRow);
+    DsReportTemplate1.Filtered := True;
+    if DsReportTemplate1.RecordCount > 0 then IsExist := False;
+    DsReportTemplate1.Filtered := False;
+    if IsExist and (not DsReportTemplate1.IsEmpty) then
+      SetRow(DsReportTemplate1,CurRow);
   finally
     DsReportTemplate1.EnableControls;
     DsReportTemplate1.SortedFields := 'ROW;COL';
@@ -1396,6 +1445,22 @@ begin
       Ds.Next;
     end;
   ColumnNum := ColumnNum - 1;
+end;
+
+procedure TfrmDefineReport.SetRow(Ds: TDataSet; R: Integer);
+begin
+  Ds.First;
+  while not Ds.Eof do
+    begin
+      if Ds.FieldByName('ROW').AsInteger > R then
+        begin
+          Ds.Edit;
+          Ds.FieldByName('ROW').AsInteger := Ds.FieldByName('ROW').AsInteger - 1;
+          Ds.Post;
+        end;
+      Ds.Next;
+    end;
+  RowNum := RowNum - 1;
 end;
 
 end.

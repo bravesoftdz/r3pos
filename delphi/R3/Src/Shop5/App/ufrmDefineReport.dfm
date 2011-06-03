@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -120,12 +122,6 @@ inherited frmDefineReport: TfrmDefineReport
                 Title.Caption = #26159#21542#23567#35745
                 Title.Color = clWhite
                 Width = 30
-              end
-              item
-                EditButtons = <>
-                FieldName = 'COL'
-                Footers = <>
-                Width = 20
               end>
           end
           object RzPanel1: TRzPanel

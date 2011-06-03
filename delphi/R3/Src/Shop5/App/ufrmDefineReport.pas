@@ -1409,6 +1409,8 @@ begin
         Open(Id);
         btnExit.Caption := 'É¾³ý(&D)';
         btnExit.Tag := 1;
+        DBGridEh1.ReadOnly := True;
+        DBGridEh2.ReadOnly := True;
         Result := ShowModal = mrOk;
       finally
         Free;

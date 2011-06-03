@@ -19,8 +19,10 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       Top = 121
       Width = 518
       Height = 208
+      ActivePage = TabSheet3
       Color = clWhite
       ParentColor = False
+      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -295,6 +297,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
           Width = 514
           Height = 181
           Align = alClient
+          BorderOuter = fsNone
           BorderColor = clWhite
           Color = clWhite
           TabOrder = 0

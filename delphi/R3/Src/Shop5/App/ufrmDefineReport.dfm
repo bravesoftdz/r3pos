@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet3
+      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -534,6 +536,83 @@ inherited frmDefineReport: TfrmDefineReport
           end
         end
       end
+      object TabSheet3: TRzTabSheet
+        Color = clWhite
+        Caption = #35282#33394#26435#38480
+        object RzPanel6: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 535
+          Height = 224
+          Align = alClient
+          BorderOuter = fsNone
+          BorderColor = clWhite
+          Color = clWhite
+          TabOrder = 0
+          object DBGridEh3: TDBGridEh
+            Left = 0
+            Top = 0
+            Width = 535
+            Height = 224
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = RoleDs
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FrozenCols = 2
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+            RowHeight = 20
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            Columns = <
+              item
+                Checkboxes = True
+                Color = clBtnFace
+                EditButtons = <>
+                FieldName = 'selflag'
+                Footers = <>
+                KeyList.Strings = (
+                  '1'
+                  '0')
+                PickList.Strings = (
+                  '0'
+                  '1')
+                Title.Caption = #36873#25321
+                Width = 36
+              end
+              item
+                EditButtons = <>
+                FieldName = 'ROLE_NAME'
+                Footers = <>
+                Title.Caption = #35282#33394#21517#31216
+                Width = 83
+              end
+              item
+                EditButtons = <>
+                FieldName = 'REMARK'
+                Footers = <>
+                Title.Caption = #25551#36848
+                Width = 212
+              end>
+          end
+        end
+      end
     end
     inherited btPanel: TRzPanel
       BorderColor = clWhite
@@ -766,5 +845,17 @@ inherited frmDefineReport: TfrmDefineReport
     DataSet = DsReportTemplate1
     Left = 14
     Top = 324
+  end
+  object RoleDs: TDataSource
+    DataSet = RoleList
+    Left = 180
+    Top = 356
+  end
+  object RoleList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 150
+    Top = 357
   end
 end

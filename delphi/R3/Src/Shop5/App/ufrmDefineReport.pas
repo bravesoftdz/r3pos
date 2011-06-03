@@ -47,6 +47,11 @@ type
     BtnRightRow1: TRzBitBtn;
     BtnLeftRow1: TRzBitBtn;
     DBGridEh2: TDBGridEh;
+    TabSheet3: TRzTabSheet;
+    RzPanel6: TRzPanel;
+    DBGridEh3: TDBGridEh;
+    RoleDs: TDataSource;
+    RoleList: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
@@ -97,6 +102,8 @@ type
     procedure SetColumn(Ds:TDataSet;C:Integer);
     procedure SetRow(Ds:TDataSet;R:Integer);
     procedure AnalysisData(Ds:TDataSet);
+    procedure OpenRights(ROLES_ID:String);
+    function GetROLES:String;
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -155,6 +162,7 @@ begin
     AObj.ReadFromDataSet(DsReport);
     ReadFromObject(AObj,Self);
 
+    OpenRights(DsReport.FieldByName('ROLES').AsString);
     AnalysisData(DsReportTemplate);
     AnalysisData(DsReportTemplate1);
 
@@ -187,6 +195,9 @@ begin
       DsReport.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       DsReport.Post;
     end;
+  DsReport.Edit;
+  DsReport.FieldByName('ROLES').AsString := GetROLES;;
+  DsReport.Post;
 
   DsReportTemplate.DisableControls;
   DsReportTemplate1.DisableControls;
@@ -1555,6 +1566,46 @@ begin
   finally
     VList.Free;
     rs.Free;
+  end;
+end;
+
+procedure TfrmDefineReport.OpenRights(ROLES_ID: String);
+var
+  Str,Cnd: string;
+begin
+  //≥ı ºªØœ‘ æ
+
+  Cnd:='Select ROLE_ID as ROLE_ID1  From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and ROLE_ID in ('''+StringReplace(ROLES_ID,',',''',''',[rfReplaceAll])+''')';
+  Str:='Select (case when B.ROLE_ID1 is null then 0 else 1 end) as selflag,A.* from  '+
+       ' (select ROLE_ID,ROLE_NAME,REMARK from CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
+       ' Left Join ('+Cnd+')B On A.ROLE_ID=B.ROLE_ID1 order by ROLE_ID ';
+  RoleList.Close;
+  RoleList.SQL.Text:=str;
+  RoleList.Params.ParamByName('TENANT_ID').AsInteger:=shopGlobal.TENANT_ID;
+  Factor.Open(RoleList); 
+
+end;
+
+function TfrmDefineReport.GetROLES: String;
+begin
+  result:='';
+  if not RoleList.Active then exit;
+  if RoleList.State = dsEdit then RoleList.Post; //≈–∂œ «∑Ò±‡º≠◊¥Ã¨≤¢Post
+  if (not RoleList.Active) or (RoleList.IsEmpty) then Exit;
+  try
+    RoleList.DisableControls;
+    RoleList.First;
+    while not RoleList.Eof do
+    begin
+      if trim(RoleList.fieldbyName('selflag').AsString)<>'0' then
+      begin
+        if result<>'' then result:=result+',';
+        result:=result+RoleList.fieldbyName('ROLE_ID').AsString;
+      end;
+      RoleList.Next;
+    end;
+  finally
+    RoleList.EnableControls;
   end;
 end;
 

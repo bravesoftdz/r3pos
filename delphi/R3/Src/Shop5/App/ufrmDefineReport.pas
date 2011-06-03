@@ -294,13 +294,13 @@ begin
             DsReportTemplate.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             DsReportTemplate.FieldByName('CELL_TYPE').AsString := '1';
             DsReportTemplate.FieldByName('SUM_TYPE').AsString := '1';
-            DsReportTemplate.FieldByName('SUB_FLAG').AsString := '2';
             if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'TOTAL' then
               begin
                 ColumnNum := ColumnNum + 1;
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '5';
                 DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
                 DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+                DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end
             else if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'FIELD' then
               begin
@@ -308,6 +308,7 @@ begin
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '4';
                 DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
                 DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+                DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end
             else
               begin
@@ -315,6 +316,7 @@ begin
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
                 DsReportTemplate.FieldByName('COL').AsInteger := c;
                 DsReportTemplate.FieldByName('ROW').AsInteger := r;
+                DsReportTemplate.FieldByName('SUB_FLAG').AsString := '2';
               end;
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
@@ -1407,8 +1409,6 @@ begin
         Open(Id);
         btnExit.Caption := 'É¾³ý(&D)';
         btnExit.Tag := 1;
-        DBGridEh1.ReadOnly := True;
-        DBGridEh1.ReadOnly := True;
         Result := ShowModal = mrOk;
       finally
         Free;
@@ -1469,9 +1469,15 @@ procedure TfrmDefineReport.DsReportTemplateAfterScroll(DataSet: TDataSet);
 begin
   inherited;
   if (DsReportTemplate.FieldByName('INDEX_FLAG').AsString = '4') or (DsReportTemplate.FieldByName('INDEX_FLAG').AsString = '5') then
-    DBGridEh1.Columns[4].ReadOnly := True
+    begin
+      DBGridEh1.Columns[4].ReadOnly := True;
+      DBGridEh1.Columns[5].ReadOnly := True;
+    end
   else
-    DBGridEh1.Columns[4].ReadOnly := False;
+    begin
+      DBGridEh1.Columns[4].ReadOnly := False;
+      DBGridEh1.Columns[5].ReadOnly := False;
+    end;
 end;
 
 procedure TfrmDefineReport.SetColumn(Ds: TDataSet; C: Integer);

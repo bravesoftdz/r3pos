@@ -400,9 +400,21 @@ begin
     begin
       if DsReport.IsEmpty then Exit;
       DsReport.Delete;
+
+      DsReportTemplate.First;
+      while not DsReportTemplate.Eof do DsReportTemplate.Delete;
+
+      DsReportTemplate1.First;
+      while not DsReportTemplate1.Eof do DsReportTemplate1.Delete;
+
+      Factor.BeginBatch;
       try
-        Factor.UpdateBatch(DsReport);
+        Factor.AddBatch(DsReport,'TR3Report');
+        Factor.AddBatch(DsReportTemplate,'TReportTemplate');
+        Factor.AddBatch(DsReportTemplate1,'TReportTemplate');
+        Factor.CommitBatch;
       except
+        Factor.CancelBatch;
         Raise;
       end;
       ModalResult := mrOk;
@@ -1395,6 +1407,8 @@ begin
         Open(Id);
         btnExit.Caption := 'É¾³ý(&D)';
         btnExit.Tag := 1;
+        DBGridEh1.ReadOnly := True;
+        DBGridEh1.ReadOnly := True;
         Result := ShowModal = mrOk;
       finally
         Free;

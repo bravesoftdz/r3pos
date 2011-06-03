@@ -13,8 +13,6 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
-      ActivePage = TabSheet2
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -82,14 +80,13 @@ inherited frmDefineReport: TfrmDefineReport
               item
                 ButtonStyle = cbsEllipsis
                 EditButtons = <>
-                FieldName = 'FIELD_NAME'
+                FieldName = 'FIELD_NAME_TEXT'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #25968#25454#23383#27573
                 Title.Color = clWhite
                 Width = 60
                 OnEditButtonClick = DBGridEh1Columns2EditButtonClick
-                OnUpdateData = DBGridEh1Columns2UpdateData
               end
               item
                 AutoDropDown = True
@@ -123,6 +120,12 @@ inherited frmDefineReport: TfrmDefineReport
                 Title.Caption = #26159#21542#23567#35745
                 Title.Color = clWhite
                 Width = 30
+              end
+              item
+                EditButtons = <>
+                FieldName = 'COL'
+                Footers = <>
+                Width = 20
               end>
           end
           object RzPanel1: TRzPanel
@@ -747,6 +750,7 @@ inherited frmDefineReport: TfrmDefineReport
   object DsReportTemplate: TZQuery
     SortedFields = 'COL;ROW'
     FieldDefs = <>
+    AfterScroll = DsReportTemplateAfterScroll
     CachedUpdates = True
     Params = <>
     IndexFieldNames = 'COL Asc;ROW Asc'

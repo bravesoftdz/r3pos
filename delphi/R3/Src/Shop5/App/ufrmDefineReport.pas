@@ -76,10 +76,9 @@ type
     procedure BtnDownRow1Click(Sender: TObject);
     procedure BtnLeftRow1Click(Sender: TObject);
     procedure BtnRightRow1Click(Sender: TObject);
-    procedure DBGridEh1Columns2UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns2EditButtonClick(Sender: TObject;
       var Handled: Boolean);
+    procedure DsReportTemplateAfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -95,6 +94,7 @@ type
     function FindColumn(Grid:TDBGridEh;FieldName:String):TColumnEh;
     procedure InitGrid;
     procedure SetRowNum(const Value: Integer);
+    procedure SetColumn(Ds:TDataSet;C:Integer);
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -111,8 +111,7 @@ type
   end;
 
 implementation
-uses uShopUtil, uDsUtil, uFnUtil, uGlobal, uShopGlobal, uframeListDialog,
-  ufrmBasic;
+uses uShopUtil, uDsUtil, uFnUtil, uGlobal, uShopGlobal, uframeListDialog, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmDefineReport.Append;
@@ -266,7 +265,7 @@ begin
   ' union all '+
   ' select 0 as A,''TOTAL'' as CODE_ID,''合计'' as CODE_NAME '+
   ' union all '+
-  ' select 0 as A,''FIELD'' as CODE_ID,''字段值'' as CODE_NAME '+
+  ' select 0 as A,''FIELD'' as CODE_ID,''数据字段'' as CODE_NAME '+
   ' union all '+
   ' select * from ('+
   ' select 0 as A,CODE_ID,CODE_NAME from ( '+
@@ -290,7 +289,12 @@ begin
             DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
             DsReportTemplate.FieldByName('ROW').AsInteger := r;
             DsReportTemplate.FieldByName('SUM_TYPE').AsString := '1';
-            DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
+            if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'TOTAL' then
+              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '5'
+            else if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'FIELD' then
+              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '4'
+            else
+              DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate.Post;
@@ -483,7 +487,7 @@ begin
     begin
       try
         SQL := Field_Name;
-        Open(Id);
+        Edit(Id);
         Result := ShowModal = mrOk;
       finally
         Free;
@@ -746,6 +750,7 @@ end;
 
 procedure TfrmDefineReport.BtnDeleteClick(Sender: TObject);
 var CurRow,CurCol:Integer;
+    IsExist:Boolean;
 begin
   inherited;
   if DsReportTemplate.IsEmpty then Exit;
@@ -759,6 +764,7 @@ begin
   DsReportTemplate.DisableControls;
   DsReportTemplate.SortedFields := 'ROWS_ID';
   try
+    IsExist := True;
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
     begin
@@ -770,6 +776,13 @@ begin
         end;
       DsReportTemplate.Next;
     end;
+    DsReportTemplate.Filtered := False;
+    DsReportTemplate.Filter := ' COL='+IntToStr(CurCol);
+    DsReportTemplate.Filtered := True;
+    if DsReportTemplate.RecordCount > 0 then IsExist := False;
+    DsReportTemplate.Filtered := False;
+    if IsExist and (not DsReportTemplate.IsEmpty) then
+      SetColumn(DsReportTemplate,CurCol);
   finally
     DsReportTemplate.EnableControls;
     DsReportTemplate.SortedFields := 'COL;ROW';
@@ -779,6 +792,7 @@ begin
   if DsReportTemplate.IsEmpty then
   begin
     BtnDelete.Enabled := False;
+    ColumnNum := 0;
   end;
 end;
 
@@ -1310,39 +1324,18 @@ begin
     end;
 end;
 
-procedure TfrmDefineReport.DBGridEh1Columns2UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var ROWS_ID,FIELDNAME:String;
-    COL:Integer;
-begin
-  inherited;
-  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-  COL := DsReportTemplate.FieldByName('COL').AsInteger;
-  FIELDNAME := Value;
-  DsReportTemplate.First;
-  while not DsReportTemplate.Eof do
-    begin
-      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
-        begin
-          DsReportTemplate.Edit;
-          DsReportTemplate.FieldByName('FIELD_NAME').AsString := FIELDNAME;
-          DsReportTemplate.Post;
-        end;
-      DsReportTemplate.Next;
-    end;
-  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
-end;
-
 procedure TfrmDefineReport.DBGridEh1Columns2EditButtonClick(
   Sender: TObject; var Handled: Boolean);
 var
   RecordList:TRecordList;
-  Str_Sql: String;
-  i,r:integer;
+  Str_Sql,ROWS_ID,Str_Field: String;
+  i,r,COL:integer;
 begin
   inherited;
   if DsReportTemplate.IsEmpty then Exit;
-  
+  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
   RecordList := TRecordList.Create;
   Str_Sql := SQL;
   try
@@ -1352,22 +1345,57 @@ begin
         for i:=0 to RecordList.Count -1 do
           begin
             if Str_Sql = '' then
-              Str_Sql := RecordList.Records[i].FieldByName('CODE_NAME').AsString
+              begin
+              Str_Sql := RecordList.Records[i].FieldByName('CODE_ID').AsString;
+              Str_Field := RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+              end
             else
-              Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+              begin
+                Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_ID').AsString;
+                Str_Field := Str_Field + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
+              end;
           end;
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
-            DsReportTemplate.Post;
+            if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+              begin
+                DsReportTemplate.Edit;
+                DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
+                DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString := Str_Field;
+                DsReportTemplate.Post;
+              end;
             DsReportTemplate.Next;
           end;
       end;
   finally
     RecordList.Free;
   end;
+end;
+
+procedure TfrmDefineReport.DsReportTemplateAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if (DsReportTemplate.FieldByName('INDEX_FLAG').AsString = '4') or (DsReportTemplate.FieldByName('INDEX_FLAG').AsString = '5') then
+    DBGridEh1.Columns[4].ReadOnly := True
+  else
+    DBGridEh1.Columns[4].ReadOnly := False;
+end;
+
+procedure TfrmDefineReport.SetColumn(Ds: TDataSet; C: Integer);
+begin
+  Ds.First;
+  while not Ds.Eof do
+    begin
+      if Ds.FieldByName('COL').AsInteger > C then
+        begin
+          Ds.Edit;
+          Ds.FieldByName('COL').AsInteger := Ds.FieldByName('COL').AsInteger - 1;
+          Ds.Post;
+        end;
+      Ds.Next;
+    end;
+  ColumnNum := ColumnNum - 1;
 end;
 
 end.

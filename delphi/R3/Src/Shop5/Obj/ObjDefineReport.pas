@@ -75,8 +75,8 @@ begin
   'FIELD_NAME=:FIELD_NAME,INDEX_ID=:INDEX_ID,SUM_TYPE=:SUM_TYPE,INDEX_FLAG=:INDEX_FLAG,SUB_FLAG=:SUB_FLAG where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
   UpdateSQL.Text := Str;
 
-  {Str := 'delete from SYS_REPORT_TEMPLATE where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
-  DeleteSQL.Text := Str;}
+  Str := 'delete from SYS_REPORT_TEMPLATE where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
+  DeleteSQL.Text := Str;
 end;
 
 initialization

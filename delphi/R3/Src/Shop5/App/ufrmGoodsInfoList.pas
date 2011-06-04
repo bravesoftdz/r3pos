@@ -1343,48 +1343,41 @@ var FieldsString,FormatString:String;
     rs:TZQuery;
 begin
   inherited;
-{  Params := TftParamList.Create(nil);
+  {Params := TftParamList.Create(nil);
   rs := TZQuery.Create(nil);
   try
     with rs.FieldDefs do
       begin
-        Add('BARCODE',ftString,40,False);
+        Add('BARCODE1',ftString,40,False);
         Add('GODS_CODE',ftString,40,False);
         Add('GODS_NAME',ftString,40,False);
         Add('GODS_SPELL',ftString,40,False);
-        Add('UNIT_ID',ftString,40,False);
         Add('CALC_UNITS',ftString,40,False);
         Add('SORT_ID1',ftString,40,False);
-        Add('RTL_OUTPRICE',ftString,40,False);
         Add('NEW_OUTPRICE',ftString,40,False);
         Add('NEW_INPRICE',ftString,40,False);
         Add('NEW_LOWPRICE',ftString,40,False);
+        Add('MY_OUTPRICE',ftString,40,False);
         Add('SORT_ID7',ftString,40,False);
         Add('SORT_ID8',ftString,40,False);
         Add('SMALL_UNITS',ftString,40,False);
         Add('SMALLTO_CALC',ftString,40,False);
         Add('BARCODE2',ftString,40,False);
-        Add('NEW_OUTPRICE1',ftString,40,False);
+        Add('MY_OUTPRICE1',ftString,40,False);
         Add('BIG_UNITS',ftString,40,False);
         Add('BIGTO_CALC',ftString,40,False);
         Add('BARCODE3',ftString,40,False);
-        Add('NEW_OUTPRICE2',ftString,40,False);
+        Add('MY_OUTPRICE2',ftString,40,False);
       end;
-    Params.ParamByName('CLIENT_ID').asString := '';
-    Params.ParamByName('UNION_ID').AsString := '#';
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.Open(rs,'TSupplier',Params);
 
-    
+    FieldsString :=
+    'BARCODE1=条形码,GODS_CODE=货号,GODS_NAME=商品名称,GODS_SPELL=拼音码,CALC_UNITS=计量单位,SORT_ID1=商品分类,NEW_OUTPRICE=标准售价,'+
+    'NEW_INPRICE=最新进价,NEW_LOWPRICE=最低售价,MY_OUTPRICE=本店售价,SORT_ID7=颜色组,SORT_ID8=尺码组,SMALL_UNITS=小包装单位,SMALLTO_CALC=小包装换算系数,'+
+    'BARCODE2=小包装条码,MY_OUTPRICE1=小包装本店售价,BIG_UNITS=大包装单位,BIGTO_CALC=大包装换算系数,BARCODE3=大包装条码,MY_OUTPRICE2=大包装本店售价';
 
-    FieldsString := 'CLIENT_CODE=供应商编号,CLIENT_NAME=供应商名称,CLIENT_SPELL=拼音码,SHOP_ID=所属门店,SORT_ID=供应商分类,REGION_ID=地区,SETTLE_CODE=结算方式,'+
-    'INVO_NAME=公司全称,LEGAL_REPR=法人代表,LICENSE_CODE=经营许可证,BANK_ID=开户银行,ACCOUNT=账号,TELEPHONE3=注册电话,INVOICE_FLAG=发票类型,'+
-    'TAX_RATE=进项税率,TAX_NO=税务登记证号,ADDRESS=地址,LINKMAN=联系人,FAXES=传真,TELEPHONE1=电话,TELEPHONE2=手机,QQ=QQ,MSN=MSN,EMAIL=电子邮件,'+
-    'HOMEPAGE=网址,SEND_ADDR=送货地址,POSTALCODE=邮政编码,SEND_LINKMAN=送货人,SEND_TELE=送货人手机,RECV_ADDR=收货地址,RECV_LINKMAN=收货人,RECV_TELE=收货人手机,REMARK=备注';
-
-    FormatString := '0=CLIENT_CODE,1=CLIENT_NAME,2=CLIENT_SPELL,3=SHOP_ID,4=SORT_ID,5=REGION_ID,6=SETTLE_CODE,7=INVO_NAME,8=LEGAL_REPR,'+
-    '9=LICENSE_CODE,10=BANK_ID,11=ACCOUNT,12=TELEPHONE3,13=INVOICE_FLAG,14=TAX_RATE,15=TAX_NO,16=ADDRESS,17=LINKMAN,18=FAXES,19=TELEPHONE1,'+
-    '20=TELEPHONE2,21=QQ,22=MSN,23=EMAIL,24=HOMEPAGE,25=SEND_ADDR,26=POSTALCODE,27=SEND_LINKMAN,28=SEND_TELE,29=RECV_ADDR,30=RECV_LINKMAN,31=RECV_TELE,31=REMARK';
+    FormatString :=
+    '0=BARCODE1,1=GODS_CODE,2=GODS_NAME,3=GODS_SPELL,4=CALC_UNITS,5=SORT_ID1,6=NEW_OUTPRICE,7=NEW_INPRICE,8=NEW_LOWPRICE,9=MY_OUTPRICE,'+
+    '10=SORT_ID7,11=SORT_ID8,12=SMALL_UNITS,13=SMALLTO_CALC,14=BARCODE2,15=MY_OUTPRICE1,16=BIG_UNITS,17=BIGTO_CALC,18=BARCODE3,19=MY_OUTPRICE2';
 
     TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
 

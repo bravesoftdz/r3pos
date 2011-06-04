@@ -11,8 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1075
       inherited RzPage: TRzPageControl
         Width = 870
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -300,9 +302,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                   RangeField = 'DEPT_TYPE'
@@ -810,9 +812,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
                 RangeField = 'DEPT_TYPE'
@@ -1374,9 +1376,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                   RangeField = 'DEPT_TYPE'
@@ -1418,9 +1420,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -1947,9 +1949,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                   RangeField = 'DEPT_TYPE'
@@ -1991,9 +1993,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -2493,9 +2495,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -2615,9 +2617,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end

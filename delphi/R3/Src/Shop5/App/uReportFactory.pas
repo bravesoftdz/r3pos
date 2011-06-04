@@ -5,8 +5,8 @@ uses
   Windows, Messages, DB, SysUtils, Variants, Classes, ZDataSet, DBGridEh;
 const
   RF_DATA_SOURCE1='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
-  RF_DATA_SOURCE2='STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
-  RF_DATA_SOURCE3='BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
+  RF_DATA_SOURCE2='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
+  RF_DATA_SOURCE3='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
 type
 
 pRCondi=^TRCondi;
@@ -27,7 +27,10 @@ TColumnR=record
   //0 字符型 1 数据值
   DataType:integer;
   SumType:integer;
+  SumFlag:integer;
   FieldName:string;
+  Expr:string;
+  Idx:Integer;
   Title:string;
   Condi:TRCondi;
   end;
@@ -39,7 +42,7 @@ TRTemplate=record
   FieldName:string;
   Title:string;
   INDEX_ID:string;
-  subtype:integer;
+  subtype,sumFlag:integer;
   Data:Pointer;
   curid:string;
   curname:string;
@@ -52,7 +55,9 @@ TRowR=record
   DataType:integer;
   FieldName:string;
   Title:string;
-  Condi:pRCondi;
+  Condi:TRCondi;
+  Level:integer;
+  HasChild:boolean;
   Buffer:array [0..255] of RVariant;
   end;
 
@@ -62,11 +67,13 @@ TReportFactory=class
     Rows:TList;
     TLate:TList;
     FDataSet: TDataSet;
+    Fields:TStringList;
     procedure SetDataSet(const Value: TDataSet);
   protected
     function CreateIndex(sid: string): TList;
     function Check(V:pRCondi):boolean;
     procedure Init;
+    procedure InitCondi(RCondi:pRCondi);
     procedure Load(rid:string);
     procedure PrepareHeader;
     procedure PrepareRows;
@@ -75,8 +82,9 @@ TReportFactory=class
     procedure Fill(rs:TDataSet);
     procedure CreateHeader(Grid:TDBGridEh);
   public
+    Footer:array [0..255] of RVariant;
     procedure Open(id:string;Grid:TDBGridEh);
-    constructor Create;
+    constructor Create(sourid:string);
     destructor Destroy;override;
     property DataSet:TDataSet read FDataSet write SetDataSet;
   end;
@@ -92,11 +100,15 @@ type
     FieldName:string;
     end;
 
-constructor TReportFactory.Create;
+constructor TReportFactory.Create(sourid:string);
 begin
   Cols := TList.Create;
   Rows := TList.Create;
   TLate := TList.Create;
+  Fields := TStringList.Create;
+  if sourid='1' then Fields.CommaText := RF_DATA_SOURCE1;
+  if sourid='2' then Fields.CommaText := RF_DATA_SOURCE2;
+  if sourid='3' then Fields.CommaText := RF_DATA_SOURCE3;
 end;
 
 destructor TReportFactory.Destroy;
@@ -104,6 +116,7 @@ begin
   TLate.Free;
   Cols.Free;
   Rows.Free;
+  Fields.Free;
   inherited;
 end;
 
@@ -150,6 +163,12 @@ begin
         node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
         node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
         node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
+        if rs.FieldbyName('SUM_TYPE').AsString='#' then
+        node^.subtype := 0 else
+        node^.subtype := rs.FieldbyName('SUM_TYPE').AsInteger;
+        if rs.FieldbyName('SUB_FLAG').AsString='#' then
+        node^.sumFlag := 1 else
+        node^.sumFlag := rs.FieldbyName('SUB_FLAG').AsInteger;
         TLate.Add(node);
         rs.next;
       end;
@@ -163,7 +182,12 @@ begin
         node^.row := rs.FieldbyName('ROW').AsInteger;
         node^.col := rs.FieldbyName('COL').AsInteger;
         node^.coltype := rs.FieldbyName('CELL_TYPE').AsInteger;
+        if rs.FieldbyName('SUM_TYPE').AsString='#' then
+        node^.subtype := 0 else
         node^.subtype := rs.FieldbyName('SUM_TYPE').AsInteger;
+        if rs.FieldbyName('SUB_FLAG').AsString='#' then
+        node^.sumFlag := 1 else
+        node^.sumFlag := rs.FieldbyName('SUB_FLAG').AsInteger;
         node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
         node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
         node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
@@ -177,11 +201,16 @@ end;
 
 procedure TReportFactory.Open(id:string;Grid:TDBGridEh);
 begin
+Grid.DataSource.DataSet.DisableControls;
+try
   Load(id);
   Prepare;
   CreateHeader(Grid);
-//  Calc;
-//  Fill(Grid.DataSource.DataSet);
+  Calc;
+  Fill(Grid.DataSource.DataSet);
+finally
+  Grid.DataSource.DataSet.EnableControls;
+end;
 end;
 
 procedure TReportFactory.Prepare;
@@ -221,8 +250,8 @@ begin
            if id<>DataSet.Fields[idx].AsString then
               begin
                 new(node);
-                node^.id := rs.Fields[idx].AsString;
-                node^.title := rs.Fields[ndx].AsString;
+                node^.id := DataSet.Fields[idx].AsString;
+                node^.title := DataSet.Fields[ndx].AsString;
                 node^.FieldName := sid;
                 result.add(node);
                 id := DataSet.Fields[idx].AsString;
@@ -254,10 +283,60 @@ procedure TReportFactory.PrepareHeader;
 procedure DoCreateHeader(ATree:array of PRTemplate);
 procedure DoHeader(idx:integer);
 var
-  i,j:integer;
+  i,j,c:integer;
   Column:PColumnR;
+  vList:TStringList;
 begin
   if ATree[idx].Data=nil then Exit;
+  vList := TStringList.Create;
+  try
+  if ATree[idx].INDEX_ID = 'TOTAL' then
+     begin
+       vList.CommaText := ATree[idx].FieldName;
+       for c:=0 to vList.Count-1 do
+       begin
+         new(Column);
+         if ATree[idx].INDEX_ID = 'FIELD' then
+            Column^.DataType := 0
+         else
+            Column^.DataType := 1;
+         Column^.SumType := ATree[idx].subtype;
+         InitCondi(@Column.Condi);
+         Column.Condi.alled := true;
+         Column^.Title := ATree[j].Title;
+         if (vList.Count>1) then
+            Column^.Title := Column^.Title+'|'+Fields.Values[vList[c]];
+         Column^.FieldName := vList[c];
+         if DataSet.FindField(Column^.FieldName)<>nil then
+            Column^.Idx := DataSet.FindField(Column^.FieldName).Index
+         else
+            Column^.Idx := -1;
+         Cols.Add(Column);
+       end;
+     end
+  else
+  if ATree[idx].INDEX_ID = 'FIELD' then
+     begin
+       vList.CommaText := ATree[idx].FieldName;
+       for c:=0 to vList.Count-1 do
+       begin
+         new(Column);
+         Column^.DataType := 0;
+         Column^.SumType := ATree[idx].subtype;
+         InitCondi(@Column.Condi);
+         Column.Condi.alled := true;
+         Column^.Title := Fields.Values[vList[c]];
+         Column^.FieldName := vList[c];
+         if DataSet.FindField(Column^.FieldName)<>nil then
+            Column^.Idx := DataSet.FindField(Column^.FieldName).Index
+         else
+            Column^.Idx := -1;
+         Cols.Add(Column);
+       end;
+     end
+  else
+  begin
+  //展开列
   for i:=0 to TList(ATree[idx].Data).Count -1 do
     begin
       ATree[idx].curid := PIdxNode(TList(ATree[idx].Data)[i])^.id;
@@ -265,23 +344,65 @@ begin
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
       if ATree[idx+1]=nil then //到根结点了
          begin
-           new(Column);
-           Column^.DataType := 0;
-           Column^.SumType := ATree[j].subtype;
-           for j:=0 to 30 do Column.Condi.idx[j] := -1;
-           for j:=idx downto 0 do
-              begin
-                if Column^.Title<>'' then Column^.Title := '|'+Column^.Title;
-                Column^.Title := ATree[j].curname+Column^.Title;
-                Column^.Condi.V[idx] := ATree[j].curid;
-                Column^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
-              end;
-           Column^.FieldName := ATree[idx].FieldName;
-           Cols.Add(Column);
+           vList.CommaText := ATree[idx].FieldName;
+           for c:=0 to vList.Count-1 do
+           begin
+             new(Column);
+             Column^.DataType := 1;
+             Column^.SumType := ATree[idx].subtype;
+             InitCondi(@Column.Condi);
+             for j:=idx downto 0 do
+                begin
+                  if Column^.Title<>'' then Column^.Title := '|'+Column^.Title;
+                  Column^.Title := ATree[j].curname+Column^.Title;
+                  Column^.Condi.V[j] := ATree[j].curid;
+                  Column^.Condi.idx[j] := DataSet.FindField(ATree[j].curfield).Index;
+                end;
+             if (vList.Count>1) then
+                Column^.Title := Column^.Title+'|'+Fields.Values[vList[c]];
+             Column^.FieldName := vList[c];
+             if DataSet.FindField(Column^.FieldName)<>nil then
+                Column^.Idx := DataSet.FindField(Column^.FieldName).Index
+             else
+                Column^.Idx := -1;
+             Cols.Add(Column);
+           end;
          end
       else
          DoHeader(idx+1);
     end;
+  //添加小计
+  if ATree[idx].sumFlag=2 then
+    begin
+       vList.CommaText := ATree[idx].FieldName;
+       for c:=0 to vList.Count-1 do
+       begin
+         new(Column);
+         Column^.DataType := 1;
+         Column^.SumType := ATree[idx].subtype;
+         InitCondi(@Column.Condi);
+         Column^.Title := '小计';
+         for j:=idx-1 downto 0 do
+            begin
+              if Column^.Title<>'' then Column^.Title := '|'+Column^.Title;
+              Column^.Title := ATree[j].curname+Column^.Title;
+              Column^.Condi.V[j] := ATree[j].curid;
+              Column^.Condi.idx[j] := DataSet.FindField(ATree[j].curfield).Index;
+            end;
+         if (vList.Count>1) then
+            Column^.Title := Column^.Title+'|'+Fields.Values[vList[c]];
+         Column^.FieldName := vList[c];
+         if DataSet.FindField(Column^.FieldName)<>nil then
+            Column^.Idx := DataSet.FindField(Column^.FieldName).Index
+         else
+            Column^.Idx := -1;
+         Cols.Add(Column);
+       end;
+    end;
+  end;
+  finally
+    vList.Free;
+  end;
 end;
 var
   i:integer;
@@ -323,7 +444,7 @@ procedure TReportFactory.PrepareRows;
 procedure DoCreateRows(ATree:array of PRTemplate);
 procedure DoRows(idx:integer);
 var
-  i,j:integer;
+  i,j,c:integer;
   Row:PRowR;
 begin
   if ATree[idx].Data=nil then Exit;
@@ -332,23 +453,29 @@ begin
       ATree[idx].curid := PIdxNode(TList(ATree[idx].Data)[i])^.id;
       ATree[idx].curname := PIdxNode(TList(ATree[idx].Data)[i])^.title;
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
-      if ATree[idx+1].Data=nil then //到根结点了
+      new(Row);
+      Row^.DataType := 0;
+      Row^.Title := PIdxNode(TList(ATree[idx].Data)[i])^.title;
+      InitCondi(@Row.Condi);
+      for j:=idx downto 0 do
          begin
-           new(Row);
-           Row^.DataType := 0;
-           Row^.Title := PIdxNode(TList(ATree[idx].Data)[i])^.title;
-           for j:=0 to 30 do Row.Condi.idx[j] := -1;
-           for j:=idx downto 0 do
-              begin
-                Row^.Title := '  '+Row^.Title;
-                Row^.Condi.V[idx] := ATree[j].curid;
-                Row^.Condi.idx[idx] := DataSet.FindField(ATree[j].curfield).Index;
-              end;
-           Row^.FieldName := ATree[idx].FieldName;
-           Rows.Add(Row);
+           if idx>0 then Row^.Title := '  '+Row^.Title;
+           Row^.Condi.V[j] := ATree[j].curid;
+           Row^.Condi.idx[j] := DataSet.FindField(ATree[j].curfield).Index;
+         end;
+      Row^.Level := idx+1;
+      Row^.FieldName := ATree[idx].FieldName;
+      for c:=0 to 255 do Row^.Buffer[c].Value := null; 
+      Rows.Add(Row);
+      if ATree[idx+1]<>nil then //到根结点了
+         begin
+           Row^.HasChild := true;
+           DoRows(idx+1);
          end
       else
-         DoRows(idx+1);
+         begin
+           Row^.HasChild := false;
+         end;
     end;
 end;
 var
@@ -365,9 +492,9 @@ begin
 end;
 var
   i,j,c:integer;
-  ATree:array [1..30] of PRTemplate;
+  ATree:array [0..30] of PRTemplate;
 begin
-  for i:=1 to 30 do ATree[i] := nil;
+  for i:=0 to 30 do ATree[i] := nil;
   c := -1;
   for i:=0 to TLate.Count -1 do
     begin
@@ -379,7 +506,7 @@ begin
       else
          begin
            if c<>-1 then  DoCreateRows(ATree);
-           for j:=1 to 30 do ATree[j] := nil;
+           for j:=0 to 30 do ATree[j] := nil;
            ATree[PRTemplate(TLate[i])^.col-1] := PRTemplate(TLate[i]);
            c := PRTemplate(TLate[i])^.row;
          end;
@@ -401,8 +528,11 @@ begin
   Grid.Columns.Clear;
   tb := TZQuery(Grid.DataSource.DataSet);
   tb.Close;
+  tb.Fields.Clear;
   tb.FieldDefs.Clear;
+  tb.FieldDefs.Add('ROW',ftInteger,0,true);
   tb.FieldDefs.Add('A_IDX',ftString,255,true);
+  tb.FieldDefs.Add('LVL',ftInteger,0,true);
   Column := Grid.Columns.Add;
   Column.FieldName := 'A_IDX';
   Column.Title.Caption := '名称';
@@ -415,16 +545,25 @@ begin
       Column := Grid.Columns.Add;
       Column.FieldName := 'A_'+inttostr(i);
       Column.Title.Caption := PColumnR(Cols[i])^.Title;
-      Column.Width := 60;
-      Column.DisplayFormat := '#0.00';
-      tb.FieldDefs.Add('A_'+inttostr(i),ftFloat,0,true);
-      case PColumnR(Cols[i])^.SumType of
-      1:Column.Footer.ValueType := fvtSum;
-      2:Column.Footer.ValueType := fvtAvg;
-      3:Column.Footer.ValueType := fvtCount;
+      if PColumnR(Cols[i])^.DataType = 0 then
+      begin
+        Column.Width := 100;
+        tb.FieldDefs.Add('A_'+inttostr(i),ftString,255,true);
+      end
+      else
+      begin
+        tb.FieldDefs.Add('A_'+inttostr(i),ftFloat,0,true);
+        Column.Width := 60;
+        Column.DisplayFormat := '#0.00';
+        Column.Footer.DisplayFormat := '#0.00';
+        case PColumnR(Cols[i])^.SumType of
+        1:Column.Footer.ValueType := fvtSum;
+        2:Column.Footer.ValueType := fvtAvg;
+        3:Column.Footer.ValueType := fvtCount;
+        end;
+        Column.Alignment := taRightJustify;
+        Column.Footer.Alignment := taRightJustify;
       end;
-      Column.Alignment := taRightJustify;
-      Column.Footer.Alignment := taRightJustify;
     end;
   tb.CreateDataSet;
 end;
@@ -432,17 +571,38 @@ end;
 procedure TReportFactory.Calc;
 var i,j:integer;
 begin
+  for j:=0 to Cols.Count -1 do Footer[j].Value := null;
   DataSet.First;
   while not DataSet.Eof do
     begin
-      for i:=0 to Rows.Count -1 do
       for j:=0 to Cols.Count -1 do
+      begin
+        for i:=0 to Rows.Count -1 do
         begin
-          if Check(@PRowR(Rows[i])^.Condi) and Check(@PColumnR(Cols[i])^.Condi) then
+          if Check(@PRowR(Rows[i])^.Condi) and Check(@PColumnR(Cols[j])^.Condi) and (PColumnR(Cols[j])^.Idx>=0) then
              begin
-               PRowR(Rows[i])^.Buffer[j].Value := PRowR(Rows[i])^.Buffer[j].Value + DataSet.FieldbyName(PColumnR(Cols[i])^.FieldName).asFloat;
+               if PColumnR(Cols[j])^.DataType = 0 then
+                  begin
+                    if not PRowR(Rows[i])^.HasChild then
+                       PRowR(Rows[i])^.Buffer[j].Value := DataSet.Fields[PColumnR(Cols[j])^.Idx].asString;
+                  end
+               else
+                  begin
+                    if VarIsNull(PRowR(Rows[i])^.Buffer[j].Value) then
+                       PRowR(Rows[i])^.Buffer[j].Value := DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat
+                    else
+                       PRowR(Rows[i])^.Buffer[j].Value := PRowR(Rows[i])^.Buffer[j].Value + DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat;
+                  end;
              end;
         end;
+        if (PColumnR(Cols[j])^.DataType = 1) and Check(@PColumnR(Cols[j])^.Condi) and (PColumnR(Cols[j])^.Idx>=0) then
+           begin
+             if VarIsNull(Footer[j].Value) then
+                Footer[j].Value := DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat
+             else
+                Footer[j].Value := Footer[j].Value + DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat;
+           end;
+      end;
       DataSet.Next;
     end;
 end;
@@ -452,6 +612,7 @@ var
   i:integer;
 begin
   result := true;
+  if V.alled then Exit;
   for i:=0 to 30 do
     begin
       if V.idx[I]<0 then break;
@@ -467,11 +628,30 @@ begin
   for i:=0 to Rows.Count -1 do
   begin
     rs.Append;
+    rs.Fields[0].Value :=  i;
+    rs.Fields[1].Value :=  PRowR(Rows[i])^.Title;
+    if PRowR(Rows[i])^.HasChild then
+       rs.Fields[2].Value :=  PRowR(Rows[i])^.Level
+    else
+       rs.Fields[2].Value :=  0;
     for j:=0 to Cols.Count -1 do
     begin
-      rs.Fields[j+1].Value :=  PRowR(Rows[i])^.Buffer[j].Value;
+      rs.Fields[j+3].Value :=  PRowR(Rows[i])^.Buffer[j].Value;
     end;
     rs.Post;
+  end;
+end;
+
+procedure TReportFactory.InitCondi(RCondi: pRCondi);
+var
+  i:integer;
+begin
+  RCondi^.Count := 0;
+  RCondi^.alled := false;
+  for i:=0 to 30 do
+  begin
+    RCondi^.idx[i] := -1;
+    RCondi^.V[i] := '';
   end;
 end;
 

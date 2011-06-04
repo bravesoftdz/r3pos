@@ -433,6 +433,8 @@ begin
     if Components[i] is TzrComboBoxList then
     begin
       CmpName:=trim(UpperCase(TzrComboBoxList(Components[i]).Name));
+      TzrComboBoxList(Components[i]).ShowButton:=true;
+      TzrComboBoxList(Components[i]).Buttons:=[zbClear];
       //门店名称
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_SHOP_ID') then
       begin
@@ -478,6 +480,15 @@ begin
       end;
       //制单人
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,8)='_USER_ID') then
+      begin
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth<TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;        
+        TzrComboBoxList(Components[i]).DataSet:=Global.GetZQueryFromName('CA_USERS');
+      end;
+      //制单人
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_GUIDE_USER') then
       begin
         TzrComboBoxList(Components[i]).ShowButton:=true;
         TzrComboBoxList(Components[i]).Buttons:=[zbClear];

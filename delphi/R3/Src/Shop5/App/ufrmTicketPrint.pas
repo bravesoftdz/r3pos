@@ -110,7 +110,7 @@ begin
         'select A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02,sum(A.AMOUNT) as AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
         'from SAL_SALESDATA A,SAL_SALESORDER B where A.SALES_ID=B.SALES_ID and A.TENANT_ID=B.TENANT_ID '+
         'and B.SALES_TYPE=4 and SALES_DATE=:SALES_DATE and '+WhereStr+' group by A.TENANT_ID,A.GODS_ID,A.UNIT_ID,A.PROPERTY_01,A.PROPERTY_02) ja '+
-        'left outer join PUB_MEAUNITS a on a.UNIT_ID=ja.UNIT_ID and a.TENANT_ID=ja.TENANT_ID) jb '+
+        'left outer join VIW_MEAUNITS a on a.UNIT_ID=ja.UNIT_ID and a.TENANT_ID=ja.TENANT_ID) jb '+
         'left outer join VIW_GOODSINFO b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID) jc '+
         'left outer join VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
         'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.PROPERTY_02=d.COLOR_ID ) je '+

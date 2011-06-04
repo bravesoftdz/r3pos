@@ -222,6 +222,7 @@ var List:TStrings;
     Column:TColumnEh;
     i:Integer;
 begin
+  DBGridEh1.AutoFitColWidths := false;
   List := TStringList.create;
   try
     List.CommaText := ListField;
@@ -229,8 +230,6 @@ begin
         DBGridEh1.Columns[i];
     for i:=0 to List.Count -1 do
        begin
-          if List.Count > 4 then
-             DBGridEh1.AutoFitColWidths := false;
           Column := DbGridEh1.Columns.Add;
           if pos('=',List[i])=0 then
              Column.FieldName := List[i]
@@ -246,6 +245,8 @@ begin
             Column.Width := 100;
        end;
   finally
+    if List.Count > 4 then
+       DBGridEh1.AutoFitColWidths := false;
     List.Free;
   end;
 end;

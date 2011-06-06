@@ -24,7 +24,8 @@ uses
   Variants,
   Classes,
   zBase,
-  uPlugInUtil in '..\obj\uPlugInUtil.pas',
+  uRimSyncFactory in 'uRimSyncFactory.pas',
+  uBaseSyncFactory in '..\pub\uBaseSyncFactory.pas',
   uBillFactory in 'uBillFactory.pas';
 
 {$R *.res}
@@ -44,7 +45,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := 'Rsp平台上报到RIM流水单据';
+  result := 'Rsp上报RIM系统业务单据';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999
@@ -56,27 +57,22 @@ end;
 //RSP调用插件时执行此方法
 function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 var
-  TENANT_ID: string;
-  vParam: TftParamList;
+  BillFactory: TBillSyncFactory;
 begin
   try
-    vParam:=TftParamList.Create(nil);
-    vParam.Decode(vParam,StrPas(Params));
-    TENANT_ID:=trim(vParam.ParamByName('TENANT_ID').AsString);
-  finally
-    vParam.Free;
-  end;
-
-  try
-    //执行操作
-    CallSync(GPlugIn,TENANT_ID);
+    try
+      BillFactory:=TBillSyncFactory.Create;
+      BillFactory.CallSyncData(GPlugIn,StrPas(Params));
+    finally
+      BillFactory.Free;
+    end;
     result := 0;
   except
     on E:Exception do
-      begin
-        GLastError := E.Message;
-        result := 2001;
-      end;
+    begin
+      GLastError := E.Message;
+      result := 2001;
+    end;
   end;
 end;
 

@@ -24,15 +24,12 @@ uses
   Variants,
   Classes,
   zBase,
-  uPlugInUtil in '..\obj\uPlugInUtil.pas',
+  uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
+  uRimSyncFactory in 'uRimSyncFactory.pas',
   uSalesTotalFactory in 'uSalesTotalFactory.pas';
 
 {$R *.res}
-
-
-
-
-
+ 
 
 //RSP装载插件时调用，传插件可访问的服务接口
 function SetParams(PlugIn: IPlugIn):integer; stdcall;
@@ -49,7 +46,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := 'RSP平台上报销售汇总';
+  result := 'RSP上报RIM日销售汇总';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999
@@ -60,9 +57,16 @@ end;
 
 //RSP调用插件时执行此方法
 function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+var
+  SalesFactory: TSalesTotalSyncFactory;
 begin
   try
-    CallSaleReckSync(GPlugIn,StrPas(Params));
+    try
+      SalesFactory:=TSalesTotalSyncFactory.Create;
+      SalesFactory.CallSyncData(GPlugIn,StrPas(Params));
+    finally
+      SalesFactory.Free;
+    end;
     result := 0;
   except
     on E:Exception do

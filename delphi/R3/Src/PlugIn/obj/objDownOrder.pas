@@ -32,7 +32,7 @@ var
   PlugIn: TPlugIn;
   vData: OleVariant;
   vParamStr: string;
-  Str,IndeTab, TenantID: string;
+  Str, IndeTab, TenantID: string;
 begin
   result:=False;
   //»°∆Û“µID

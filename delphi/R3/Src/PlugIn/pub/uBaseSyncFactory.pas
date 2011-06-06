@@ -31,9 +31,9 @@ type
     BegTime: string;      //开始上报时间点
     BegTick: integer;     //开始上报GetTickCount
     AllCount: integer;    //上报总门店数
-    RunCount: integer;    //上报门店数
+    RunCount: integer;    //上报成功门店数
     NotCount: integer;    //对应不上[R3门店  对不上  Rim零售户]
-    ErrorCount: integer;  //错误数量
+    ErrorCount: integer;  //上报存在错误门店数
     ErrorStr: string;     //运行错误Str
   end;
 
@@ -47,7 +47,8 @@ type
     ShopID: string;     //R3上报门店ID
     ShopName: string;   //R3上报门店名称;
     LICENSE_CODE: string;  //零售户许可证号
-  end; 
+    SHORT_ShopID: string;  //R3上报门店ID后4位
+  end;
 
 //第三方系统数据对接的接口
 type
@@ -77,6 +78,29 @@ type
     function WriteLogFile(s:Pchar):integer;stdcall;
   end;
 
+//门店上报日志
+type
+  TLogShopInfo=class
+  private
+    FRuniRet: integer;  //总上报记录数
+    FBegTickCount: integer; //开始上报时间点
+    FBegTime: string;   //开始上报时间点
+    FShopName: string;  //当前上报门店
+    FErrorState: Boolean;  //全部执行成功状态
+    FBillList: TStringList; //上报单据列表
+    function GetTickTime: string;
+  public
+    constructor Create;
+    destructor Destroy;override;
+    procedure BeginLog(const ShopName: string); //初始化参数
+    //vType: 1:表示成功; 0:表示错误;
+    function AddBillMsg(BillName: string;iRect: integer=-1): Boolean;
+    function SetLogMsg(SetList: TStringList; vNum: integer=0): Boolean; //返回日志内容
+    property RuniRet: integer read FRuniRet; //运行更改记录数
+    property ErrorState: Boolean read FErrorState; //运行状态[默认为False]
+    property BillList: TStringList read FBillList;
+  end;
+
 //第三方系统数据对接的基类
 type
   TBaseSyncFactory=class
@@ -88,6 +112,7 @@ type
     procedure SetPlugIntf(const Value: IPlugIn);
     procedure SetParams(const Value: TftParamList);
     procedure SetDbType(const Value: Integer);
+    function  GetUpdateTime: string; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
   public
     FRunInfo: TRunInfo; //日志信息
     constructor Create; virtual;
@@ -104,26 +129,22 @@ type
     function RollbackTrans: Boolean; //回滚事务
     function Open(DataSet: TDataSet):Boolean;  //取数据
 
-    //写上报日志信息[写文本文件每天1个文件]
-    function  GetTickTime: string;   //返回当前时间
-    procedure AddLogMsg(LogType: integer; LogMsg: string); virtual; //添加日志
-    procedure BeginLogRun; virtual;  //开始上报
-    procedure WriteLogRun(ReportName: string); virtual;  //结束上报
-
     //返回类函数
     class function newId(id:string=''): string; //获取GUID
     class function newRandomId: string;        //返回时间+随机编号ID
+    class function GetTickTime: string;   //返回当前时间
     class function OpenData(GPlugIn: IPlugIn; Qry: TZQuery):Boolean;  //取数据（暂时兼容以前使用）
     class function GetCommStr(iDbType:integer;alias:string=''):string;
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
-    
+
     //数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase 3: access  4: db2
     property DbType:Integer read FDbType write SetDbType;
     property Params:TftParamList read FParams write SetParams;
     property PlugIntf: IPlugIn read FPlugIntf write SetPlugIntf;
     property LogList: TStringList read FLogList;
+    property UpdateTime: string read GetUpdateTime; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
   end;
 
 
@@ -133,6 +154,110 @@ var
   GLastError:string;
 
 implementation
+
+
+{ TLogShopInfo }
+constructor TLogShopInfo.Create;
+begin
+  FBillList:=TStringList.Create;
+end;
+
+destructor TLogShopInfo.Destroy;
+begin
+  FBillList.Free;
+  inherited;
+end;
+
+//vType: 1:表示成功; 0:表示错误;
+function TLogShopInfo.AddBillMsg(BillName: string; iRect: integer): Boolean;
+begin
+  if not FErrorState then
+  begin
+    FErrorState:=(iRect=-1);
+  end;
+  if iRect=-1 then
+    FBillList.Add(BillName+'上报错误')
+  else
+  begin
+    FBillList.Add(BillName+'上报：'+inttoStr(iRect)+'笔');
+    FRuniRet:=FRuniRet+iRect;
+  end;
+end;
+
+procedure TLogShopInfo.BeginLog(const ShopName: string);
+begin
+  FShopName:=ShopName;
+  FBegTime:=GetTickTime;
+  FBegTickCount:=GetTickCount;
+  FRuniRet:=0;
+  FErrorState:=False;
+  FBillList.Clear;
+end;
+
+function TLogShopInfo.SetLogMsg(SetList: TStringList; vNum: integer): Boolean;
+var
+  i: integer;
+  isFirst: Boolean;
+  Str,NumStr,TitleStr,ResutMsg: string;
+begin
+  result:=False;
+  isFirst:=False;
+  if vNum=0 then
+    NumStr:='    '
+  else
+    NumStr:='  ('+InttoStr(vNum)+')';
+  FBegTickCount:=GetTickCount-FBegTickCount;
+  Str:='';
+  TitleStr:=NumStr+'门店('+FShopName+') 运行时间：'+FormatFloat('#0.00',FBegTickCount/1000)+'秒';
+  if FErrorState then //没有全部上报成功
+    TitleStr:=TitleStr+'，上报结果：〖存在上报异常〗，共上报'+inttoStr(FRuniRet)+'笔;'
+  else
+    TitleStr:=TitleStr+'，上报结果：〖全部上报成功〗，共上报'+inttoStr(FRuniRet)+'笔;';
+
+  if FBillList.Count=1 then
+  begin
+    TitleStr:=TitleStr+'    详细:'+trim(FBillList.Strings[0]);
+    SetList.Add(TitleStr); 
+  end else
+  begin
+    SetList.Add(TitleStr);  //添加标题
+    for i:=0 to FBillList.Count-1 do
+    begin
+      if Str='' then
+        Str:='('+InttoStr(i+1)+')'+trim(FBillList.Strings[i]) 
+      else
+        Str:=Str+'; ('+InttoStr(i+1)+')'+trim(FBillList.Strings[i]);
+      if (i+1) mod 5 =0 then
+      begin
+        if not isFirst then
+        begin
+          Str:='    详细:'+Str;
+          isFirst:=true;
+        end else
+          Str:='         '+Str;
+        SetList.Add(Str);
+        Str:='';
+      end;
+    end;
+    if Str<>'' then
+    begin
+      if not isFirst then
+        Str:='    详细:'+Str
+      else
+        Str:='         '+Str;
+      SetList.Add(Str);
+    end;
+  end;
+  result:=true;
+end;
+
+function TLogShopInfo.GetTickTime: string;
+var
+  Hour, Min, Sec, MSec: Word;
+begin
+  DecodeTime(time(), Hour, Min, Sec, MSec);
+  result:=FormatFloat('00',Hour)+':'+FormatFloat('00',Min)+':'+FormatFloat('00',Sec)+':'+FormatFloat('00',MSec);
+end;
 
 { TBaseSyncFactory }
 
@@ -413,29 +538,7 @@ begin
   end;
 end;
 
-procedure TBaseSyncFactory.BeginLogRun;
-begin
-  FLogList.Clear;
-  FRunInfo.BegTime:=Timetostr(time());
-  FRunInfo.BegTick:=GetTickCount;
-  FRunInfo.AllCount:=0;
-  FRunInfo.RunCount:=0;
-  FRunInfo.NotCount:=0;
-  FRunInfo.ErrorCount:=0;
-  FRunInfo.ErrorStr:=''
-end;
-
-procedure TBaseSyncFactory.WriteLogRun(ReportName: string);
-begin
-
-end;
-
-procedure TBaseSyncFactory.AddLogMsg(LogType: integer; LogMsg: string);
-begin
-  FLogList.Add(inttostr(LogType)+'='+GetTickTime+' '+LogMsg);
-end;
-
-function TBaseSyncFactory.GetTickTime: string;
+class function TBaseSyncFactory.GetTickTime: string;
 var
   Hour, Min, Sec, MSec: Word;
 begin
@@ -461,6 +564,17 @@ begin
       Raise Exception.Create(Pchar('PlugIntf.Open:('+Qry.SQL.Text+') 错误：'+E.Message));
     end;
   end;
+end;
+
+
+function TBaseSyncFactory.GetUpdateTime: string;
+var
+  vYear,vMonth,vDay,vHour,vMin, vSec,vMSec: Word;
+begin
+  DecodeDate(Date(), vYear, vMonth,vDay);
+  result:=FormatFloat('0000',vYear)+FormatFloat('00',vMonth)+FormatFloat('00',vDay);
+  DecodeTime(Time(), vHour, vMin, vSec, vMSec);
+  result:=result+'_'+FormatFloat('00',vHour)+':'+FormatFloat('00',vMin)+':'+FormatFloat('00',vSec);
 end;
 
 end.

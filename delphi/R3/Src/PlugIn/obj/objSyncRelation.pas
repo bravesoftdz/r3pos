@@ -18,7 +18,7 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean; override;      //所有记录处理完毕后,事务提交以前执行。
   end;
 
-{=== 前台Obj调用 ===}  
+{=== 前台Obj调用 ===}
 type
   TSynchronGood_Relation=class(TZFactory)
   public
@@ -52,16 +52,14 @@ begin
 
     //第二步：处理手工对照:[]
     case AGlobal.iDbType of
-     1: Str:=' update INF_GOODS_RELATION A set (UPDATE_FLAG)='+
-             ' (select 1 as UPDATE_FLAG from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0) '+
-             ' where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG=0 and  '+
+     1:
+       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=1 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
              ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0)';
-     4: Str:=' update INF_GOODS_RELATION A set (UPDATE_FLAG)='+
-             ' (select 1 as UPDATE_FLAG from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0) '+
-             ' where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG=0 and  '+
+     4:
+       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=1 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
              ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and locate('','' || A.SECOND_ID || '','',B.COMM_ID)>0)';
     end;
-    AGlobal.ExecSQL(Str);  
+    AGlobal.ExecSQL(Str);
 
 
     //第三步：返回查询结果:
@@ -69,21 +67,21 @@ begin
      1:
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
-          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' when UPDATE_FLAG=4 then ''条码重复'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
-          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照''  when UPDATE_FLAG=4 then ''条码重复''  else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG<>1 Order by GODS_CODE';
       end;
      3:
       begin
         Str:=
-          'select GODS_CODE,SECOND_ID,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select GODS_CODE,SECOND_ID,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG, '+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=3 then ''已刷新''  when UPDATE_FLAG=4 then ''条码重复'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG=3 Order by GODS_CODE';
       end;
@@ -115,7 +113,7 @@ begin
   iRet:=0;
   TENANT_ID:=FieldbyName('TENANT_ID').AsString;     //从数据集传过来，每一条记录都一样
   UpdateMode:=FieldbyName('UpdateMode').AsInteger;  //从数据集传过来，每一条记录都一样
-  if (UpdateMode<0) or (UpdateMode>2) then UpdateMode:=1;  //默认为1
+  if (UpdateMode<0) or (UpdateMode>3) then UpdateMode:=1;  //默认为1
 
   Comm:=GetCommStr(AGlobal.iDbType);
   TimeStp:=GetTimeStamp(AGlobal.iDbType);
@@ -162,7 +160,8 @@ begin
         'update PUB_GOODS_RELATION A '+
         ' set (NEW_INPRICE,NEW_OUTPRICE,COMM,TIME_STAMP)= '+
         ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+') '+
-        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and '+
+        ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
 
       iRet:=AGlobal.ExecSQL(UpSQL);
     end;

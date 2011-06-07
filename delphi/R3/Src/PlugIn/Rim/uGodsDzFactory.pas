@@ -31,7 +31,7 @@ begin
   PlugIntf:=GPlugIn;
 
   //1、返回数据库类型
-  // GetDBType;
+  GetDBType;
 
   //2、还原ParamsList的参数对象
   Params.Decode(Params, InParamStr);
@@ -41,7 +41,7 @@ begin
   if Params.FindParam('UPDATE_MODE')<>nil then
   begin
     UpdateMode:=Params.ParamByName('UPDATE_MODE').AsInteger;  //刷新模式
-    if (UpdateMode<1) or (UpdateMode>2) then
+    if (UpdateMode<1) or (UpdateMode>3) then
       UpdateMode:=1;  //默认为全部；  
   end;
 
@@ -97,8 +97,10 @@ begin
     RsInf:=TZQuery.Create(nil);  //R3中间表
     RsBarPub:=TZQuery.Create(nil);  //R3条码_供应链
     RsBarPub.SQL.Text:=
-      'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,(case when A.GODS_ID=B.Gods_ID and B.SECOND_ID is not null then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
-      'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+') B on A.GODS_ID=B.GODS_ID '+
+      'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,'+
+      '(case when A.GODS_ID=B.Gods_ID and B.SECOND_ID is not null then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
+      'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+') B '+
+      ' on A.GODS_ID=B.GODS_ID '+
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ';
     Open(RsBarPub);
     RsRim.Close;

@@ -1433,7 +1433,7 @@ var FieldsString,FormatString:String;
     rs:TZQuery;
 begin
   inherited;
-  Params := TftParamList.Create(nil);
+  {Params := TftParamList.Create(nil);
   rs := TZQuery.Create(nil);
   try
     with rs.FieldDefs do
@@ -1474,7 +1474,7 @@ begin
   finally
     Params.Free;
     rs.Free;
-  end; 
+  end;}
 end;
 
 end.

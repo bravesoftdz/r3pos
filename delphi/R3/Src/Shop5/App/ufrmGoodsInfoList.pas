@@ -1208,36 +1208,10 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           end;
       end;
 
-    {//*******************开户银行*****************
-    if DFieldName = 'BANK_ID' then
-      begin
-        rs := Global.GetZQueryFromName('PUB_BANK_INFO');
-        if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-          begin
-            Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-            Result := True;
-          end
-        else
-          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的开户银行代码...');
-      end;
-
-    //*******************发票类型*****************
-    if DFieldName = 'INVOICE_FLAG' then
-      begin
-        rs := Global.GetZQueryFromName('PUB_PARAMS');
-        if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
-          begin
-            Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
-            Result := True;
-          end
-        else
-          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的发票类型代码...');
-      end;}
-
     //货号
     if DFieldName = 'GODS_CODE' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') or (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 20 then
               Raise Exception.Create('货号应在20个字符以内!')
@@ -1262,7 +1236,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
     //条形码                          
     if DFieldName = 'BARCODE1' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') or (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 30 then
               Raise Exception.Create('条形码应在30个字符以内!')
@@ -1287,7 +1261,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
     //商品名称
     if DFieldName = 'GODS_NAME' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 50  then
               Raise Exception.Create('商品名称就在50个字符以内!')
@@ -1324,40 +1298,84 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       end;
   end;
   function SaveExcel(CdsExcel:TDataSet):Boolean;
-  var rs:TZQuery;
+    procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode:String);
+    begin
+      Data_Bar.Append;
+      Data_Bar.FieldByName('RELATION_FLAG').AsString := '2';
+      Data_Bar.FieldByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
+      Data_Bar.FieldByName('GODS_ID').AsString := Gods_Id;
+      Data_Bar.FieldByName('ROWS_ID').AsString := TSequence.NewId;  //行号[GUID编号]
+      Data_Bar.FieldByName('PROPERTY_01').AsString := '#';
+      Data_Bar.FieldByName('PROPERTY_02').AsString := '#';
+      Data_Bar.FieldByName('BARCODE_TYPE').AsString := '0';
+      Data_Bar.FieldByName('UNIT_ID').AsString := Unit_Id;
+      Data_Bar.FieldByName('BATCH_NO').AsString := '#';
+      Data_Bar.FieldByName('BARCODE').AsString := BarCode;
+      Data_Bar.Post;
+    end;
+  var DsGoods,DsBarcode:TZQuery;
+      GodsId:String;
   begin
-    rs := TZQuery.Create(nil);
+    DsGoods := TZQuery.Create(nil);
+    DsBarcode := TZQuery.Create(nil);
     try
-      Factor.Open(rs,'TGoodsInfo');
+      Factor.BeginBatch;
+      Factor.AddBatch(DsGoods,'TGoodsInfo');
+      Factor.AddBatch(DsBarcode,'TPUB_BARCODE');
+      Factor.OpenBatch;
+
       CdsExcel.First;
       while not CdsExcel.Eof do
         begin
-          rs.FieldByName('GODS_ID').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('TENANT_ID').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('GODS_CODE').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('GODS_NAME').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('GODS_SPELL').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('SORT_ID1').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('SORT_ID7').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('SORT_ID8').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('BARCODE').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('UNIT_ID').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('CALC_UNITS').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('SMALL_UNITS').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('BIG_UNITS').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('SMALLTO_CALC').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('BIGTO_CALC').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('NEW_OUTPRICE').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('NEW_LOWPRICE').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
-          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
+          DsGoods.Append;
+          GodsId := TSequence.NewId;
+          DsGoods.FieldByName('GODS_ID').AsString := GodsId;
+          DsGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          DsGoods.FieldByName('GODS_CODE').AsString := CdsExcel.FieldByName('GODS_CODE').AsString;
+          DsGoods.FieldByName('GODS_NAME').AsString := CdsExcel.FieldByName('GODS_NAME').AsString;
+          DsGoods.FieldByName('GODS_SPELL').AsString := CdsExcel.FieldByName('GODS_SPELL').AsString;
+          DsGoods.FieldByName('SORT_ID1').AsString := CdsExcel.FieldByName('SORT_ID1').AsString;
+          DsGoods.FieldByName('SORT_ID7').AsString := CdsExcel.FieldByName('SORT_ID7').AsString;
+          DsGoods.FieldByName('SORT_ID8').AsString := CdsExcel.FieldByName('SORT_ID8').AsString;
+
+{0=,1=,2=,3=,4=,5=,6=NEW_OUTPRICE,7=,8=,9=MY_OUTPRICE,'+
+    '10=,11=,12=,13=,14=BARCODE2,15=MY_OUTPRICE1,16=,17=,18=BARCODE3,19=MY_OUTPRICE2 }
+
+          DsGoods.FieldByName('BARCODE').AsString := CdsExcel.FieldByName('BARCODE1').AsString;
+          DsGoods.FieldByName('UNIT_ID').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
+          DsGoods.FieldByName('CALC_UNITS').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
+          WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('CALC_UNITS').AsString,CdsExcel.FieldByName('BARCODE1').AsString);
+
+          if CdsExcel.FieldByName('BARCODE2').AsString <> '' then
+            begin
+              DsGoods.FieldByName('SMALL_UNITS').AsString := CdsExcel.FieldByName('SMALL_UNITS').AsString;
+              DsGoods.FieldByName('SMALLTO_CALC').AsString := CdsExcel.FieldByName('SMALLTO_CALC').AsString;
+              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('SMALL_UNITS').AsString,CdsExcel.FieldByName('BARCODE2').AsString);
+            end;
+
+          if CdsExcel.FieldByName('BARCODE3').AsString <> '' then
+            begin
+              DsGoods.FieldByName('BIG_UNITS').AsString := CdsExcel.FieldByName('BIG_UNITS').AsString;
+              DsGoods.FieldByName('BIGTO_CALC').AsString := CdsExcel.FieldByName('BIGTO_CALC').AsString;
+              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString);
+            end;
+
+          DsGoods.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('NEW_INPRICE').AsString;
+          DsGoods.FieldByName('RTL_OUTPRICE').AsString := CdsExcel.FieldByName('NEW_OUTPRICE').AsString;
+          DsGoods.FieldByName('NEW_LOWPRICE').AsString := CdsExcel.FieldByName('NEW_LOWPRICE').AsString;
+
+
+          DsGoods.FieldByName('NEW_OUTPRICE').AsString := CdsExcel.FieldByName('MY_OUTPRICE').AsString;
+          DsGoods.FieldByName('NEW_OUTPRICE1').AsString := CdsExcel.FieldByName('MY_OUTPRICE1').AsString;
+          DsGoods.FieldByName('NEW_OUTPRICE2').AsString := CdsExcel.FieldByName('MY_OUTPRICE2').AsString;
+
+          DsGoods.Post;
           CdsExcel.Next;
         end;
+
     finally
-      rs.Free;
+      DsGoods.Free;
+      DsBarcode.Free;
     end;
     {CdsExcel.First;
     while not CdsExcel.Eof do
@@ -1376,6 +1394,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       end;
     Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil); }
   end;
+
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
     {if not CdsCol.Locate('FieldName','BARCODE1',[]) then
@@ -1419,26 +1438,26 @@ begin
   try
     with rs.FieldDefs do
       begin
-        Add('BARCODE1',ftString,40,False);
-        Add('GODS_CODE',ftString,40,False);
-        Add('GODS_NAME',ftString,40,False);
-        Add('GODS_SPELL',ftString,40,False);
-        Add('CALC_UNITS',ftString,40,False);
-        Add('SORT_ID1',ftString,40,False);
-        Add('NEW_OUTPRICE',ftString,40,False);
-        Add('NEW_INPRICE',ftString,40,False);
-        Add('NEW_LOWPRICE',ftString,40,False);
-        Add('MY_OUTPRICE',ftString,40,False);
-        Add('SORT_ID7',ftString,40,False);
-        Add('SORT_ID8',ftString,40,False);
-        Add('SMALL_UNITS',ftString,40,False);
-        Add('SMALLTO_CALC',ftString,40,False);
-        Add('BARCODE2',ftString,40,False);
-        Add('MY_OUTPRICE1',ftString,40,False);
-        Add('BIG_UNITS',ftString,40,False);
-        Add('BIGTO_CALC',ftString,40,False);
-        Add('BARCODE3',ftString,40,False);
-        Add('MY_OUTPRICE2',ftString,40,False);
+        Add('BARCODE1',ftString,30,False);
+        Add('GODS_CODE',ftString,20,False);
+        Add('GODS_NAME',ftString,50,False);
+        Add('GODS_SPELL',ftString,50,False);
+        Add('CALC_UNITS',ftString,36,False);
+        Add('SORT_ID1',ftString,36,False);
+        Add('NEW_OUTPRICE',ftInteger,18,False);
+        Add('NEW_INPRICE',ftInteger,18,False);
+        Add('NEW_LOWPRICE',ftInteger,18,False);
+        Add('MY_OUTPRICE',ftInteger,18,False);
+        Add('SORT_ID7',ftString,36,False);
+        Add('SORT_ID8',ftString,36,False);
+        Add('SMALL_UNITS',ftString,36,False);
+        Add('SMALLTO_CALC',ftInteger,18,False);
+        Add('BARCODE2',ftString,30,False);
+        Add('MY_OUTPRICE1',ftInteger,18,False);
+        Add('BIG_UNITS',ftString,36,False);
+        Add('BIGTO_CALC',ftInteger,18,False);
+        Add('BARCODE3',ftString,30,False);
+        Add('MY_OUTPRICE2',ftInteger,18,False);
       end;
 
     FieldsString :=

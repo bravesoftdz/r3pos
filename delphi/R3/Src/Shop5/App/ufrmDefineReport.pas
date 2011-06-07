@@ -90,6 +90,7 @@ type
     FColumnNum: Integer;
     FSQL: String;
     FRowNum: Integer;
+    FSourceId: Integer;
     function ReturnSpace(Num:Integer):String;
     procedure SetColumnNum(const Value: Integer);
     procedure DbGridEh1FocusNextColumn;
@@ -104,6 +105,7 @@ type
     procedure AnalysisData(Ds:TDataSet);
     procedure OpenRights(ROLES_ID:String);
     function GetROLES:String;
+    procedure SetSourceId(const Value: String);
   public
     { Public declarations }
     procedure SetdbState(const Value: TDataSetState); override;
@@ -114,6 +116,7 @@ type
     class function AddReport(Owner:TForm;Field_Name,Type_Id,Source_Id:String):Boolean;
     class function EditReport(Owner:TForm;Id,Field_Name:String):Boolean;
     class function DeleteReport(Owner:TForm;Id,Field_Name:String):Boolean;
+    property SourceId:String read FSourceId write SetSourceId;
     property ColumnNum:Integer read FColumnNum write SetColumnNum;
     property RowNum:Integer read FRowNum write SetRowNum;
     property SQL:String  read FSQL write SetSQL;
@@ -132,6 +135,7 @@ end;
 procedure TfrmDefineReport.Edit(Report_Id: String);
 begin
   Open(Report_Id);
+  SourceId := DsReport.FieldbyName('REPORT_SOURCE').AsString;
   dbState := dsEdit;
 end;
 
@@ -279,7 +283,7 @@ begin
   RecordList := TRecordList.Create;
   Record_1 := TRecord_.Create;
   Str_Sql :=
-  ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
+  ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' '+
   ' union all '+
   ' select 0 as A,''TOTAL'' as CODE_ID,''ºÏ¼Æ'' as CODE_NAME '+
   ' union all '+
@@ -347,9 +351,10 @@ begin
     begin
       try
         SQL := Field_Name;
+        SourceId := Source_Id;
         Append;
         edtREPORT_TYPE.ItemIndex := TdsItems.FindItems(edtREPORT_TYPE.Properties.Items,'CODE_ID',Type_Id);
-        edtREPORT_SOURCE.ItemIndex := TdsItems.FindItems(edtREPORT_SOURCE.Properties.Items,'CODE_ID',Source_Id);
+        edtREPORT_SOURCE.ItemIndex := TdsItems.FindItems(edtREPORT_SOURCE.Properties.Items,'CODE_ID',SourceId);
         Result := ShowModal = mrOk;
       finally
         Free;
@@ -1105,7 +1110,7 @@ begin
   if dbState = dsBrowse then Exit;
   RecordList := TRecordList.Create;
   Str_Sql :=
-  ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' '+
+  ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' '+
   ' union all '+
   ' select * from ('+
   ' select 0 as A,CODE_ID,CODE_NAME from ( '+
@@ -1607,6 +1612,11 @@ begin
   finally
     RoleList.EnableControls;
   end;
+end;
+
+procedure TfrmDefineReport.SetSourceId(const Value: String);
+begin
+  FSourceId := Value;
 end;
 
 end.

@@ -13,8 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
-      ActivePage = TabSheet3
-      TabIndex = 2
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite

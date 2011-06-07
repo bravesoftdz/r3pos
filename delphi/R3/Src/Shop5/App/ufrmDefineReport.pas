@@ -1135,7 +1135,7 @@ begin
   inherited;
   if DsReportTemplate1.IsEmpty then Exit;
   if dbState = dsBrowse then Exit;
-  if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate1.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   CurRow := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
   CurCol := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
   DsReportTemplate1.Delete;

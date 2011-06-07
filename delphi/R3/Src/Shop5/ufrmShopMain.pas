@@ -340,7 +340,8 @@ type
     actfrmSaleManSaleReport: TAction;
     actfrmClientSaleReport: TAction;
     actfrmSaleTotalReport: TAction;
-    Button1: TButton;
+    actfrmStgTotalReport: TAction;
+    actfrmStockTotalReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -456,6 +457,8 @@ type
     procedure actfrmSaleManSaleReportExecute(Sender: TObject);
     procedure actfrmClientSaleReportExecute(Sender: TObject);
     procedure actfrmSaleTotalReportExecute(Sender: TObject);
+    procedure actfrmStgTotalReportExecute(Sender: TObject);
+    procedure actfrmStockTotalReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -522,7 +525,7 @@ uses
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
-  ufrmSaleManSaleReport,ufrmSaleTotalReport
+  ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar
   ;
 {$R *.dfm}
 
@@ -550,6 +553,7 @@ begin
   Panel25.Visible := (sflag='s1_');
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
+  frmPrgBar := TfrmPrgBar.Create(nil);
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   ForceDirectories(ExtractFilePath(ParamStr(0))+'debug');
   SystemShutdown := false;
@@ -576,6 +580,7 @@ var
 begin
   if TimerFactory<>nil then FreeAndNil(TimerFactory);
   frmLogo.Free;
+  frmPrgBar.Free;
   if frmInstall<>nil then frmInstall.free;
   screen.OnActiveFormChange := nil;
   for i:=0 to FList.Count - 1 do TObject(FList[i]).Free;
@@ -928,6 +933,7 @@ begin
      begin
        if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
+            if TimerFactory<>nil then FreeAndNil(TimerFactory);
             SyncFactory.SyncAll;
           end;
      end;
@@ -1302,6 +1308,10 @@ begin
        if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        for i:= FList.Count -1 downto 0 do
          TForm(TrzBmpButton(FList[i]).tag).free;
+     end;
+  if PrainpowerJudge.Locked>0 then
+     begin
+       MessageBox(Handle,'正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
   if FList.Count=0 then
      begin
@@ -2845,6 +2855,10 @@ end;
 procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if PrainpowerJudge.Locked>0 then
+     begin
+       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+     end;
   if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不能执行数据同步..'); 
   if ShopGlobal.offline and not Global.RemoteFactory.Connected then
      begin
@@ -3598,6 +3612,7 @@ end;
 
 procedure TfrmShopMain.DoLoadMsg(Sender: TObject);
 begin
+  if SyncFactory.Locked > 0 then Exit;
   PrainpowerJudge.SyncMsgc;
 end;
 
@@ -3617,6 +3632,50 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmSaleTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStgTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStgTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStgTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmStockTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmStockTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStockTotalReport.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

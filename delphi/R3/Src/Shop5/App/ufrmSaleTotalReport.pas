@@ -63,6 +63,7 @@ type
     vEndDate: integer;   //查询结束日期
     RckMaxDate: integer; //台帐最大日期
     sid1,srid1,SortName:string;
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
     { Public declarations }
     Factory:TReportFactory;
@@ -71,9 +72,10 @@ type
     function GetGodsSQL(chk:boolean=true): string;   //5555
     procedure Open(id:string);
     procedure load;
+    procedure PrintBefore;override;
   end;
 implementation
-uses ufrmDefineReport,ufnUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
+uses ufrmDefineReport,ufnUtil,uShopUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
   uShopGlobal;
 {$R *.dfm}
 
@@ -89,16 +91,33 @@ end;
 procedure TfrmSaleTotalReport.load;
 var
   rs:TZQuery;
+  list:TStringList;
+  w:string;
+  i:integer;
 begin
   rs := TZQuery.Create(nil);
+  list := TStringList.Create;
   lock := true;
   try
-    rs.SQL.Text := 'select REPORT_ID,REPORT_NAME from SYS_REPORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_TYPE=''3''';
+    w := '';
+    if not ((Global.UserID = 'admin') or (Global.UserID = 'system')) then
+    begin
+    list.CommaText := Global.Roles;
+    for i:=0 to list.Count - 1 do
+      begin
+        if w<>'' then w := w + ' or ';
+        w := w+''',''+ROLES+'','' like ''%,'+list[i]+',%''';
+      end;
+    if w <> '' then w := ' and ('+w+')';
+    end;
+    rs.Close;
+    rs.SQL.Text := 'select REPORT_ID,REPORT_NAME from SYS_REPORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_TYPE=''3'' and COMM not in (''02'',''12'') and REPORT_SOURCE=''1'' '+w;
     Factor.Open(rs);
     TdsItems.AddDataSetToItems(rs,rptTemplate.Properties.Items,'REPORT_NAME');
     if rptTemplate.Properties.Items.Count>0 then rptTemplate.ItemIndex := 0;
   finally
     lock := false;
+    list.Free;
     rs.Free;
   end;
 end;
@@ -125,6 +144,14 @@ begin
       Label23.Caption := '仓库群组';
       Label21.Caption := '仓库名称';
     end;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    fndP1_SHOP_ID.Properties.ReadOnly := False;
+    fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP1_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
+    fndP1_SHOP_ID.Properties.ReadOnly := True;
+  end;
   btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin');
   btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin');
   btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin');
@@ -307,7 +334,7 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID,A.DEPT_ID,A.GUIDE_USER,A.CLIENT_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
+    'group by A.TENANT_ID,A.GODS_ID,A.DEPT_ID,A.GUIDE_USER,A.CLIENT_ID,A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
 
   strSql :=
     'select j.*,'+
@@ -361,6 +388,39 @@ begin
        load;
      end;
 
+end;
+
+procedure TfrmSaleTotalReport.PrintBefore;
+var
+  ReStr: string;
+  Title: TStringList;
+begin
+  inherited;
+  PrintDBGridEh1.PageHeader.CenterText.Text := rptTemplate.Text;
+  try
+    Title:=TStringList.Create;
+    AddReportReport(Title,'1');
+    ReStr:=FormatReportHead(Title,1);
+    PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
+  finally
+    Title.Free;
+  end;
+end;
+
+function TfrmSaleTotalReport.AddReportReport(TitleList: TStringList;
+  PageNo: string): string;
+var
+  FindCmp1,FindCmp2: TComponent;
+begin
+  //日期
+  FindCmp1:=FindComponent('P'+PageNo+'_D1');
+  FindCmp2:=FindComponent('P'+PageNo+'_D2');
+  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
+     (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
+    TitleList.add('日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
+
+  inherited AddReportReport(TitleList,PageNo);
 end;
 
 end.

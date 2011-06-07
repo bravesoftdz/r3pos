@@ -26,6 +26,8 @@ type
     procedure SetTicket;
     function GetTicket:Int64;
   public
+    Locked:integer;
+
     constructor Create;
     destructor Destroy;override;
 
@@ -39,7 +41,7 @@ type
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     //双同同步
-    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0;onlyDown:boolean=false);
     //同步入库类单据
     procedure SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步出库类单据
@@ -133,6 +135,7 @@ end;
 
 constructor TSyncFactory.Create;
 begin
+  Locked := 0;
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
   SyncComm := true;
@@ -594,6 +597,8 @@ procedure TSyncFactory.SyncAll;
 var
   i:integer;
 begin
+  InterlockedIncrement(Locked);
+  try
   frmLogo.Show;
   try
   try
@@ -637,12 +642,17 @@ begin
   finally
     frmLogo.Close;
   end;
+  finally
+    InterlockedDecrement(Locked);
+  end;
 end;
 
 procedure TSyncFactory.SyncBasic(gbl:boolean=true);
 var
   i:integer;
 begin
+  InterlockedIncrement(Locked);
+  try
   SyncComm := CheckRemeteData;
   frmLogo.Show;
   try
@@ -665,6 +675,9 @@ begin
     SetSynTimeStamp('#',SyncTimeStamp,'#');
   finally
     frmLogo.Close;
+  end;
+  finally
+    InterlockedDecrement(Locked);
   end;
 end;
 
@@ -2453,7 +2466,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0);
+procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0;onlyDown:boolean=false);
 var
   cs,rs:TZQuery;
 begin
@@ -2482,6 +2495,11 @@ begin
     rs.Free;
     cs.Free;
   end;
+  if onlyDown then
+     begin
+       SetSynTimeStamp(tbName,SyncTimeStamp);
+       Exit;
+     end;
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
   try

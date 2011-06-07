@@ -246,7 +246,9 @@ begin
        end;
   finally
     if List.Count > 4 then
-       DBGridEh1.AutoFitColWidths := false;
+       DBGridEh1.AutoFitColWidths := false
+    else
+       DBGridEh1.AutoFitColWidths := true;
     List.Free;
   end;
 end;

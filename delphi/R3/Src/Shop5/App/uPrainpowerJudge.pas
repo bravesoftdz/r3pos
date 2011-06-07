@@ -9,6 +9,7 @@ type
   private
   public
     List:TZQuery;
+    Locked:integer;
     constructor Create;
     destructor  Destroy;override;
     procedure SyncMsgc;
@@ -26,6 +27,7 @@ uses uGlobal,uCaFactory,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
 
 constructor TPrainpowerJudge.Create;
 begin
+  Locked := 0;
   List := TZQuery.Create(nil);
 end;
 
@@ -210,6 +212,8 @@ procedure TPrainpowerJudge.SyncMsgc;
 var
   Params:TftParamList;
 begin
+  InterlockedIncrement(Locked);
+  try
   //本地连接时不需同步
   if Global.RemoteFactory.ConnMode = 1 then Exit;
   if not CaFactory.Audited then Exit;
@@ -232,14 +236,17 @@ begin
       Exit;
     end;
     //同步到本地
-    if not ShopGlobal.ONLVersion then
+    if not ShopGlobal.ONLVersion and ShopGlobal.offline then
     begin
       SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-      SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0);
-      SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0);
+      SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0,true);
+      SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0,true);
     end;
   finally
     Params.Free;
+  end;
+  finally
+    InterlockedDecrement(Locked);
   end;
 end;
 

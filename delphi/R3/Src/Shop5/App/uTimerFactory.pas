@@ -44,7 +44,10 @@ begin
     begin
       Proc(nil);
       WaitForSingleObject(hEvent, TimeOut);
-      if not Terminated then ResetEvent(hEvent);
+      if not Terminated then
+         begin
+           ResetEvent(hEvent);
+         end;
     end;
 end;
 

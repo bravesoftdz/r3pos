@@ -454,7 +454,9 @@ begin
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');
       if not Is_Print and (MessageBox(Handle,'你今天没有营业数据是否继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
       Save;
-      if Is_Print then 
+      Btn_Save.Caption := '打印小票(&P)';
+      Btn_Save.Tag := 1;
+      if Is_Print then
       begin
         if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
         if DevFactory.CloseDayPrinted then

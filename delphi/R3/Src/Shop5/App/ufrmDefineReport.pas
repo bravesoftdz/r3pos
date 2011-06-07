@@ -265,17 +265,15 @@ begin
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' '+
   ' union all '+
-  ' select 0 as A,''TOTAL'' as CODE_ID,''合计'' as CODE_NAME '+
+  ' select 0 as A,''TOTAL'' as CODE_ID,''合计'' as CODE_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
   ' union all '+
-  ' select 0 as A,''FIELD'' as CODE_ID,''数据字段'' as CODE_NAME '+
+  ' select 0 as A,''FIELD'' as CODE_ID,''数据字段'' as CODE_NAME from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
   ' union all '+
-  ' select * from ('+
   ' select 0 as A,CODE_ID,CODE_NAME from ( '+
   ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
   ' (select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
   ' where j.TYPE_CODE=''SORT_TYPE'') '+
-  ' g where not(CODE_NAME like ''自定义%'') order by SEQ_NO, cast(CODE_ID as int) '+
-  ' ) ';
+  ' g where not(CODE_NAME like ''自定义%'') ';
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称',RecordList) then
       begin
@@ -584,11 +582,11 @@ begin
       begin
         if Sql_Str = '' then
           begin
-            Sql_Str := ' select 0 as A,'''+VList.Names[i]+''' as CODE_ID,'''+VList.ValueFromIndex[i]+''' as CODE_NAME ';
+            Sql_Str := ' select 0 as A,'''+VList.Names[i]+''' as CODE_ID,'''+VList.ValueFromIndex[i]+''' as CODE_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
           end
         else
           begin
-            Sql_Str := Sql_Str + ' union all select 0 as A,'''+VList.Names[i]+''' as CODE_ID,'''+VList.ValueFromIndex[i]+''' as CODE_NAME ';
+            Sql_Str := Sql_Str + ' union all select 0 as A,'''+VList.Names[i]+''' as CODE_ID,'''+VList.ValueFromIndex[i]+''' as CODE_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
           end;
       end;
   finally
@@ -1092,13 +1090,11 @@ begin
   Str_Sql :=
   ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' '+
   ' union all '+
-  ' select * from ('+
   ' select 0 as A,CODE_ID,CODE_NAME from ( '+
   ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
   ' (select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
   ' where j.TYPE_CODE=''SORT_TYPE'') '+
-  ' g where not(CODE_NAME like ''自定义%'') order by SEQ_NO, cast(CODE_ID as int) '+
-  ' ) ';
+  ' g where not(CODE_NAME like ''自定义%'') ';
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称',RecordList) then
       begin

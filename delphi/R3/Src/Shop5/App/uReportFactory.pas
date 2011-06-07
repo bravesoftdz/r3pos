@@ -47,6 +47,7 @@ TRTemplate=record
   curid:string;
   curname:string;
   curfield:string;
+  idxflag:integer;
   end;
 
 PRowR=^TRowR;
@@ -58,7 +59,7 @@ TRowR=record
   Condi:TRCondi;
   Level:integer;
   HasChild:boolean;
-  Buffer:array [0..255] of RVariant;
+  Buffer:array [0..8000] of RVariant;
   end;
 
 TReportFactory=class
@@ -75,6 +76,7 @@ TReportFactory=class
     procedure Init;
     procedure InitCondi(RCondi:pRCondi);
     procedure Load(rid:string);
+    function CheckIndex(ATree:array of PRTemplate;idx:integer):boolean;
     procedure PrepareHeader;
     procedure PrepareRows;
     procedure Prepare;
@@ -82,7 +84,7 @@ TReportFactory=class
     procedure Fill(rs:TDataSet);
     procedure CreateHeader(Grid:TDBGridEh);
   public
-    Footer:array [0..255] of RVariant;
+    Footer:array [0..8000] of RVariant;
     procedure Open(id:string;Grid:TDBGridEh);
     constructor Create(sourid:string);
     destructor Destroy;override;
@@ -90,7 +92,7 @@ TReportFactory=class
   end;
 
 implementation
-uses uGlobal;
+uses uGlobal,ufrmPrgBar;
 { TReportFactory }
 type
   PIdxNode=^TIdxNode;
@@ -150,14 +152,14 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''1'' order by col,row';
+    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''1'' order by cell_col,cell_row';
     Factor.Open(rs);
     rs.first;
     while not rs.Eof do
       begin
         new(node);
-        node^.row := rs.FieldbyName('ROW').AsInteger;
-        node^.col := rs.FieldbyName('COL').AsInteger;
+        node^.row := rs.FieldbyName('CELL_ROW').AsInteger;
+        node^.col := rs.FieldbyName('CELL_COL').AsInteger;
         node^.coltype := rs.FieldbyName('CELL_TYPE').AsInteger;
         node^.subtype := rs.FieldbyName('SUM_TYPE').AsInteger;
         node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
@@ -169,18 +171,19 @@ begin
         if rs.FieldbyName('SUB_FLAG').AsString='#' then
         node^.sumFlag := 1 else
         node^.sumFlag := rs.FieldbyName('SUB_FLAG').AsInteger;
+        node^.idxflag := rs.FieldbyName('INDEX_FLAG').AsInteger;
         TLate.Add(node);
         rs.next;
       end;
     rs.Close;
-    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''2'' order by row,col';
+    rs.SQL.Text := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_ID='''+rid+''' and CELL_TYPE=''2'' order by cell_row,cell_col';
     Factor.Open(rs);
     rs.first;
     while not rs.Eof do
       begin
         new(node);
-        node^.row := rs.FieldbyName('ROW').AsInteger;
-        node^.col := rs.FieldbyName('COL').AsInteger;
+        node^.row := rs.FieldbyName('CELL_ROW').AsInteger;
+        node^.col := rs.FieldbyName('CELL_COL').AsInteger;
         node^.coltype := rs.FieldbyName('CELL_TYPE').AsInteger;
         if rs.FieldbyName('SUM_TYPE').AsString='#' then
         node^.subtype := 0 else
@@ -191,6 +194,7 @@ begin
         node^.Title := rs.FieldbyName('DISPLAY_NAME').AsString;
         node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
         node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
+        node^.idxflag := rs.FieldbyName('INDEX_FLAG').AsInteger;
         TLate.Add(node);
         rs.next;
       end;
@@ -202,21 +206,36 @@ end;
 procedure TReportFactory.Open(id:string;Grid:TDBGridEh);
 begin
 Grid.DataSource.DataSet.DisableControls;
+frmPrgBar.Show;
 try
+  frmPrgBar.WaitHint := '装载报表格式...';
+  frmPrgBar.Precent := 0;
   Load(id);
+  frmPrgBar.Precent := 2;
   Prepare;
+  frmPrgBar.WaitHint := '准备显示表格';
   CreateHeader(Grid);
+  frmPrgBar.Precent := 50;
+  frmPrgBar.WaitHint := '计算数据...';
   Calc;
+  frmPrgBar.Precent := 75;
+  frmPrgBar.WaitHint := '填充显示数据...';
   Fill(Grid.DataSource.DataSet);
+  frmPrgBar.Precent := 95;
 finally
   Grid.DataSource.DataSet.EnableControls;
+  frmPrgBar.Close;
 end;
 end;
 
 procedure TReportFactory.Prepare;
 begin
+  frmPrgBar.WaitHint := '准备表头行...';
   PrepareHeader;
+  frmPrgBar.Precent := 20;
+  frmPrgBar.WaitHint := '准备数据行...';
   PrepareRows;
+  frmPrgBar.Precent := 30;
 end;
 function TReportFactory.CreateIndex(sid:string):TList;
 var
@@ -344,6 +363,7 @@ begin
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
       if ATree[idx+1]=nil then //到根结点了
          begin
+           if not CheckIndex(ATree,idx) then continue;
            vList.CommaText := ATree[idx].FieldName;
            for c:=0 to vList.Count-1 do
            begin
@@ -453,6 +473,7 @@ begin
       ATree[idx].curid := PIdxNode(TList(ATree[idx].Data)[i])^.id;
       ATree[idx].curname := PIdxNode(TList(ATree[idx].Data)[i])^.title;
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
+      if not CheckIndex(ATree,idx) then continue;
       new(Row);
       Row^.DataType := 0;
       Row^.Title := PIdxNode(TList(ATree[idx].Data)[i])^.title;
@@ -465,7 +486,7 @@ begin
          end;
       Row^.Level := idx+1;
       Row^.FieldName := ATree[idx].FieldName;
-      for c:=0 to 255 do Row^.Buffer[c].Value := null; 
+      for c:=0 to Cols.Count do Row^.Buffer[c].Value := null; 
       Rows.Add(Row);
       if ATree[idx+1]<>nil then //到根结点了
          begin
@@ -653,6 +674,37 @@ begin
     RCondi^.idx[i] := -1;
     RCondi^.V[i] := '';
   end;
+end;
+
+function TReportFactory.CheckIndex(ATree: array of PRTemplate;idx:integer): boolean;
+var
+  i:integer;
+begin
+  result := true;
+  if ATree[idx].idxflag <> 2 then Exit;
+  DataSet.Filtered := false;
+  for i:=0 to idx do
+    begin
+      if (ATree[i].INDEX_ID='DEPT_ID')
+         or
+         (ATree[i].INDEX_ID='GUIDE_USER')
+         or
+         (ATree[i].INDEX_ID='CLIENT_ID')
+         or
+         (ATree[i].INDEX_ID='GODS_ID')
+         or
+         (ATree[i].INDEX_ID='SHOP_ID')
+         or
+         (ATree[i].INDEX_ID='CREGION_ID')
+         or
+         (ATree[i].INDEX_ID='SREGION_ID')
+      then
+         DataSet.Filter := ATree[i].INDEX_ID+'='''+ATree[i].curid+''''
+      else
+         DataSet.Filter := 'SORT_ID'+ATree[i].INDEX_ID+'='''+ATree[i].curid+'''';
+    end;
+  DataSet.Filtered := true;
+  result := not DataSet.IsEmpty;
 end;
 
 end.

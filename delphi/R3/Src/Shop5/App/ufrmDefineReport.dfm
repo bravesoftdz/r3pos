@@ -12,22 +12,20 @@ inherited frmDefineReport: TfrmDefineReport
     Color = clWhite
     inherited RzPage: TRzPageControl
       Top = 91
-      Height = 251
-      ActivePage = TabSheet2
-      TabIndex = 1
+      Height = 240
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #34920#22836#34892
         inherited RzPanel2: TRzPanel
-          Height = 224
+          Height = 213
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 447
-            Height = 214
+            Width = 439
+            Height = 203
             Align = alClient
             AutoFitColWidths = True
             DataSource = CdsReportTemplate
@@ -38,6 +36,7 @@ inherited frmDefineReport: TfrmDefineReport
             FooterFont.Height = -12
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 17
@@ -122,10 +121,10 @@ inherited frmDefineReport: TfrmDefineReport
               end>
           end
           object RzPanel1: TRzPanel
-            Left = 452
+            Left = 444
             Top = 5
             Width = 78
-            Height = 214
+            Height = 203
             Align = alRight
             BorderOuter = fsNone
             Color = clWhite
@@ -295,8 +294,8 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel5: TRzPanel
           Left = 0
           Top = 0
-          Width = 535
-          Height = 224
+          Width = 527
+          Height = 213
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -304,10 +303,10 @@ inherited frmDefineReport: TfrmDefineReport
           Color = clWhite
           TabOrder = 0
           object RzPanel4: TRzPanel
-            Left = 452
+            Left = 444
             Top = 5
             Width = 78
-            Height = 214
+            Height = 203
             Align = alRight
             BorderOuter = fsNone
             Color = clWhite
@@ -472,8 +471,8 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh2: TDBGridEh
             Left = 5
             Top = 5
-            Width = 447
-            Height = 214
+            Width = 439
+            Height = 203
             Align = alClient
             DataSource = CdsReportTemplate1
             Flat = True
@@ -483,6 +482,7 @@ inherited frmDefineReport: TfrmDefineReport
             FooterFont.Height = -12
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 17
@@ -542,8 +542,8 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel6: TRzPanel
           Left = 0
           Top = 0
-          Width = 535
-          Height = 224
+          Width = 527
+          Height = 213
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -552,8 +552,8 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh3: TDBGridEh
             Left = 0
             Top = 0
-            Width = 535
-            Height = 224
+            Width = 527
+            Height = 213
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = RoleDs
@@ -565,6 +565,7 @@ inherited frmDefineReport: TfrmDefineReport
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
             FrozenCols = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -673,7 +674,7 @@ inherited frmDefineReport: TfrmDefineReport
     object RzPanel3: TRzPanel
       Left = 5
       Top = 5
-      Width = 539
+      Width = 531
       Height = 86
       Align = alTop
       BorderOuter = fsNone
@@ -776,6 +777,7 @@ inherited frmDefineReport: TfrmDefineReport
         Height = 20
         Properties.OnChange = edtREPORT_NAMEPropertiesChange
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREPORT_SPELL: TcxTextEdit
         Left = 368
@@ -783,6 +785,7 @@ inherited frmDefineReport: TfrmDefineReport
         Width = 121
         Height = 20
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREPORT_TYPE: TcxComboBox
         Left = 88
@@ -790,6 +793,7 @@ inherited frmDefineReport: TfrmDefineReport
         Width = 121
         Height = 20
         Enabled = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 2
       end
       object edtREPORT_SOURCE: TcxComboBox
@@ -798,6 +802,7 @@ inherited frmDefineReport: TfrmDefineReport
         Width = 121
         Height = 20
         Enabled = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         TabOrder = 3
       end
     end

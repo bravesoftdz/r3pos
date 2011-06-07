@@ -2355,14 +2355,6 @@ inherited frmShopMain: TfrmShopMain
                 end
               end
             end
-            object Button1: TButton
-              Left = 24
-              Top = 24
-              Width = 137
-              Height = 25
-              Action = actfrmSaleTotalReport
-              TabOrder = 1
-            end
           end
         end
         object rzTool: TPanel
@@ -7788,8 +7780,19 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmClientSaleReportExecute
     end
     object actfrmSaleTotalReport: TAction
+      Tag = 42400001
       Caption = #38144#21806#32479#35745#25253#34920
       OnExecute = actfrmSaleTotalReportExecute
+    end
+    object actfrmStgTotalReport: TAction
+      Tag = 42500001
+      Caption = #24211#23384#20998#26512#25253#34920
+      OnExecute = actfrmStgTotalReportExecute
+    end
+    object actfrmStockTotalReport: TAction
+      Tag = 42600001
+      Caption = #36827#36135#20998#26512#25253#34920
+      OnExecute = actfrmStockTotalReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

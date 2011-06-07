@@ -1102,8 +1102,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 505
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1111,8 +1111,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 495
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1120,7 +1120,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 106
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1397,8 +1397,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 106
-                Width = 848
-                Height = 400
+                Width = 840
+                Height = 389
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1406,8 +1406,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 396
+                  Width = 836
+                  Height = 385
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

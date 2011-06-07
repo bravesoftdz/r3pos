@@ -143,7 +143,7 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //4、按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string;override; //添加Title
     procedure DoReckTypeOnChange(Sender: TObject); //
   public
     procedure PrintBefore;override;
@@ -284,7 +284,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,REGION_ID ';
     Result :=  ParseSQL(Factor.iDbType,
       'select j.* '+
@@ -299,7 +299,7 @@ begin
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));
     //检测是否计算
     CheckCalc(BAL_Date);
-    strWhere:=strWhere+' and exists(select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where DD.CREA_DATE=DD.CREA_DATE and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
+    strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
 
     strSql :=
       'SELECT '+
@@ -310,7 +310,7 @@ begin
       ',sum(BAL_CST) as BAL_CST '+
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
-      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,B.REGION_ID';
 
     strSql :=
@@ -407,7 +407,7 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
-  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');    
+  UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
   //日期条件
   if fndP2_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
@@ -426,7 +426,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,SHOP_ID ';
     Result :=  ParseSQL(Factor.iDbType,
       'select j.* '+
@@ -440,6 +440,7 @@ begin
     //检测是否计算
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //库存日期=+1天取期初
     CheckCalc(BAL_Date);
+    strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
 
     strSql :=
       'SELECT '+
@@ -450,7 +451,7 @@ begin
       ',sum(BAL_CST) as BAL_CST '+
       ',case when sum(BAL_AMT)<>0 then sum(BAL_RTL*1.00)/sum(BAL_AMT*1.00/'+UnitCalc+') else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
-      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.SHOP_ID';
 
     strSql :=
@@ -459,7 +460,7 @@ begin
       ',j.BAL_AMT '+
       ',j.BAL_PRC '+
       ',j.BAL_OUTPRC '+
-      ',j.BAL_RTL '+    
+      ',j.BAL_RTL '+
       ',r.SEQ_NO as SHOP_CODE,r.SHOP_NAME '+
       ' from ('+strSql+') j '+
       ' left outer join CA_SHOP_INFO r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID order by r.SEQ_NO';
@@ -527,7 +528,7 @@ begin
        ',AMONEY as BAL_CST '+                 //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
   end else
   if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:
@@ -536,15 +537,16 @@ begin
     if P3_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');    
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //库存日期=+1天取期初
     CheckCalc(BAL_Date);
+    strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
     strSql :=
       'SELECT '+
       ' A.TENANT_ID '+
       ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
       ',sum(BAL_CST) as BAL_CST '+
-      ',sum(BAL_RTL) as BAL_RTL '+    
+      ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
   end;
 
@@ -670,7 +672,7 @@ begin
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
       ' group by TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
 
     strSql :=
@@ -688,7 +690,7 @@ begin
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));
     //检测是否计算
     CheckCalc(BAL_Date);
-    strWhere:=strWhere+' and exists(select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where DD.CREA_DATE=DD.CREA_DATE and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
+    strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
     strSql :=
       'SELECT '+
       ' A.TENANT_ID '+
@@ -699,7 +701,7 @@ begin
       ',sum(BAL_CST) as BAL_CST '+
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
-      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+      'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
 
     strSql :=

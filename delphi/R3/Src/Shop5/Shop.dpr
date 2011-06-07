@@ -226,9 +226,12 @@ uses
   ufrmClientSaleReport in 'App\ufrmClientSaleReport.pas' {frmClientSaleReport},
   ufrmTenantInfo in 'App\ufrmTenantInfo.pas' {frmTenantInfo},
   uTimerFactory in 'App\uTimerFactory.pas',
-  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
+  ufrmStgTotalReport in 'App\ufrmStgTotalReport.pas' {frmStgTotalReport},
   ufrmDefineReport in 'App\ufrmDefineReport.pas' {frmDefineReport},
-  ObjDefineReport in 'Obj\ObjDefineReport.pas';
+  ObjDefineReport in 'Obj\ObjDefineReport.pas',
+  ufrmStockTotalReport in 'App\ufrmStockTotalReport.pas' {frmStockTotalReport},
+  ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
+  ufrmPrgBar in '..\..\Basic\ufrmPrgBar.pas' {frmPrgBar};
 
 {$R *.res}
 var
@@ -237,7 +240,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.1.2';
+  DBVersion := '1.0.1.3';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

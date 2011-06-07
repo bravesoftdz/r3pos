@@ -90,8 +90,8 @@ begin
         //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
         SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID); //返回烟草公司ComID、零售户CustID
 
-        if RimParam.ComID='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
-        if RimParam.CustID<>'' then
+        //if then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
+        if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
           LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
 
@@ -151,7 +151,10 @@ begin
             Inc(FRunInfo.RunCount);  //执行成功！
         end else
         begin
-          LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！'); 
+          if R3ShopList.RecordCount=1 then
+            LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！') 
+          else
+            LogList.Add('  ('+InttoStr(R3ShopList.RecordCount)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
           Inc(FRunInfo.NotCount);  //对应不上
         end;
       except

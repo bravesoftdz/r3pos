@@ -268,14 +268,15 @@ begin
 
     //输出日志:
     Str:='开始执行时间：'+FRunInfo.BegTime+'  共执行'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'秒，'+
-                 '门店总数：'+inttoStr(FRunInfo.AllCount)+'，其中：上报成功数：'+inttoStr(FRunInfo.RunCount)+'，';
-    if FRunInfo.ErrorCount>0 then Str:=Str+'异常门店数：'+inttoStr(FRunInfo.ErrorCount);
-    if FRunInfo.NotCount>0 then Str:=Str+'，没有对应Rim零售户门店数：'+inttoStr(FRunInfo.NotCount);
+                 '门店总数：'+inttoStr(FRunInfo.AllCount)+'，其中：上报成功数：'+inttoStr(FRunInfo.RunCount);
+    if FRunInfo.ErrorCount>0 then Str:=Str+'，异常门店数：'+inttoStr(FRunInfo.ErrorCount);
+    if FRunInfo.NotCount>0   then Str:=Str+'，没有对应Rim零售户门店数：'+inttoStr(FRunInfo.NotCount);
 
     if SyncType=3 then  //客户端单个门店日志
     begin
       LogFileList.Add('------------- R3终端上报 '+ReportTitle+' ---------------------');
       LogFileList.Add(Str);
+      LogFileList.Add('  ');
       for i:=0 to LogList.Count-1 do
       begin
         LogFileList.Add(LogList.Strings[i]);
@@ -285,6 +286,7 @@ begin
     begin
       LogFileList.Add('------------- RSP调度上报 '+ReportTitle+' -----------------------');
       LogFileList.Add(Str);
+      LogFileList.Add('  ');
       for i:=0 to LogList.Count-1 do
       begin
         LogFileList.Add(LogList.Strings[i]);

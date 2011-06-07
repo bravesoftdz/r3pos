@@ -122,8 +122,8 @@ begin
         //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
         SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID); //返回烟草公司ComID、零售户CustID
 
-        if RimParam.ComID='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
-        if RimParam.CustID<>'' then
+        //if ='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
+        if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
           LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
 
@@ -158,7 +158,8 @@ begin
     FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
     DBLock(False);
     R3ShopList.Free;
-    WriteLogRun('零售户库存'); //输出到文本日志
+    if SyncType<>3 then
+      WriteLogRun('零售户库存'); //输出到文本日志
   end;
 end;
 

@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Variants, Classes, Dialogs, DB, zDataSet, zIntf, zBase,
-  uBaseSyncFactory,uRimSyncFactory;
+  uBaseSyncFactory, uRimSyncFactory;
 
 
 //第三方系统数据对接的基类

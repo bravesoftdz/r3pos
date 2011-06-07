@@ -139,7 +139,7 @@ begin
              ' sum(AMT) as AMT,'+
              ' sum(RET_AMT) as RET_AMT '+
              ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+')B '+
-             ' on (A.ITEM_ID=B.SECOND_ID) or (locate( B.COMM_ID,'','' || A.ITEM_ID || '','')>0) '+  //加条件：
+             ' on (A.ITEM_ID=B.SECOND_ID) or (locate('','' || A.ITEM_ID || '','',B.COMM_ID)>0) '+  //加条件：
              ' where A.CO_NUM='''+INDE_ID+''' '+
              ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID
       end;

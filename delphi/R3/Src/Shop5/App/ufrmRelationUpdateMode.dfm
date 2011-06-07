@@ -1,6 +1,6 @@
 inherited frmRelationUpdateMode: TfrmRelationUpdateMode
-  Left = 428
-  Top = 175
+  Left = 276
+  Top = 169
   BorderStyle = bsDialog
   Caption = #23545#29031#34920#21047#26032#27169#24335#36873#25321
   ClientHeight = 249
@@ -51,8 +51,8 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       ParentFont = False
     end
     object LblMsg: TLabel
-      Left = 326
-      Top = 16
+      Left = 328
+      Top = 15
       Width = 65
       Height = 12
       Caption = #21047#26032#26041#24335#65306
@@ -127,6 +127,22 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 3
+      Visible = False
+      OnClick = RB_ViewAllClick
+    end
+    object RB_DT: TRadioButton
+      Left = 344
+      Top = 14
+      Width = 63
+      Height = 16
+      Caption = #37325#22797
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
       Visible = False
       OnClick = RB_ViewAllClick
     end
@@ -228,6 +244,11 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           AllowedOperations = [alopUpdateEh]
           DataSource = Ds
           Flat = True
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
           FooterColor = clWindow
           FooterFont.Charset = GB2312_CHARSET
           FooterFont.Color = clWindowText
@@ -237,6 +258,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           FrozenCols = 1
           Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+          ParentFont = False
           RowHeight = 23
           TabOrder = 0
           TitleFont.Charset = GB2312_CHARSET
@@ -251,6 +273,21 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           DigitalNumber = 12
           OnDrawColumnCell = Grid_RelationDrawColumnCell
           Columns = <
+            item
+              Checkboxes = True
+              EditButtons = <>
+              FieldName = 'FLAG'
+              Footers = <>
+              KeyList.Strings = (
+                '1'
+                '0')
+              PickList.Strings = (
+                '0'
+                '1')
+              Title.Caption = #36873#25321
+              Visible = False
+              Width = 28
+            end
             item
               EditButtons = <>
               FieldName = 'SEQNO'
@@ -322,23 +359,6 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           Font.Style = []
           ParentFont = False
           TabOrder = 1
-          DesignSize = (
-            399
-            18)
-          object LblMemo: TLabel
-            Left = 228
-            Top = 4
-            Width = 169
-            Height = 12
-            Anchors = [akTop, akRight]
-            Caption = #65288#27880#65306#32418#23383#34920#31034#27809#26377#23545#19978#65281#65289
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clRed
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
         end
       end
     end

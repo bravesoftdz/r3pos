@@ -194,8 +194,7 @@ end;
 
 procedure TfrmDownStockOrder.OpenIndeOrderList;
 var
-  whereCnd,
-  UseDate: string; //启用日期
+  whereCnd, UseDate: string; //启用日期
   Rs: TZQuery;
   vParam: TftParamList;
 begin
@@ -213,7 +212,7 @@ begin
         UseDate:='';
     end;
     }
-
+    Rs:=TZQuery.Create(nil);
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=1;
     vParam.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
@@ -221,29 +220,31 @@ begin
     vParam.ParamByName('USING_DATE').AsString:=UseDate;
     Global.RemoteFactory.Open(CdsTable,'TDownOrder',vParam);  //==RspServer连接模式时执行
     //根据取出单据号。过滤查询本地库
-    whereCnd:='';
-    CdsTable.First;
-    while not CdsTable.Eof do
+    if not CdsTable.IsEmpty then //有订单与本地对比
     begin
-      if whereCnd='' then
-        whereCnd:=''''+CdsTable.fieldbyName('INDE_ID').AsString+''' ' 
-      else
-        whereCnd:=whereCnd+','''+CdsTable.fieldbyName('INDE_ID').AsString+''' ';
-      CdsTable.Next;
-    end;
+      whereCnd:='';
+      CdsTable.First;
+      while not CdsTable.Eof do
+      begin
+        if whereCnd='' then
+          whereCnd:=''''+CdsTable.fieldbyName('INDE_ID').AsString+''' ' 
+        else
+          whereCnd:=whereCnd+','''+CdsTable.fieldbyName('INDE_ID').AsString+''' ';
+        CdsTable.Next;
+      end;
 
-    Rs:=TZQuery.Create(nil);
-    Rs.Close;
-    Rs.SQL.Text:='select COMM_ID from STK_STOCKORDER where COMM_ID in ('+whereCnd+') ';
-    Factor.Open(Rs);
-    Rs.First;
-    while not Rs.Eof do
-    begin
-      if CdsTable.Locate('INDE_ID',trim(Rs.fieldbyName('COMM_ID').AsString),[]) then
-        CdsTable.Delete;
-      Rs.Next;
+      Rs.Close;
+      Rs.SQL.Text:='select COMM_ID from STK_STOCKORDER where COMM_ID in ('+whereCnd+') ';
+      Factor.Open(Rs);
+      Rs.First;
+      while not Rs.Eof do
+      begin
+        if CdsTable.Locate('INDE_ID',trim(Rs.fieldbyName('COMM_ID').AsString),[]) then
+          CdsTable.Delete;
+        Rs.Next;
+      end;
+      CdsTable.First;
     end;
-    CdsTable.First;
   finally
     CdsTable.EnableControls;
     vParam.Free;

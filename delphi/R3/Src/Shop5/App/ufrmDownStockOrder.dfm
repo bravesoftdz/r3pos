@@ -4,7 +4,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   BorderStyle = bsDialog
   Caption = #21040#36135#30830#35748
   ClientHeight = 330
-  ClientWidth = 506
+  ClientWidth = 499
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -12,7 +12,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 33
-    Width = 506
+    Width = 499
     Height = 250
     Align = alClient
     BorderInner = fsFlat
@@ -26,7 +26,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object DBGridEh1: TDBGridEh
       Left = 3
       Top = 3
-      Width = 500
+      Width = 493
       Height = 244
       Align = alClient
       AutoFitColWidths = True
@@ -76,7 +76,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           FieldName = 'CLIENT_NAME'
           Footers = <>
           Title.Caption = #20379#24212#21830
-          Width = 165
+          Width = 160
         end
         item
           EditButtons = <>
@@ -104,7 +104,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   object TitlePanel: TPanel [1]
     Left = 0
     Top = 0
-    Width = 506
+    Width = 499
     Height = 33
     Align = alTop
     BevelOuter = bvNone
@@ -125,7 +125,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel2: TBevel
       Left = 0
       Top = 31
-      Width = 506
+      Width = 499
       Height = 2
       Align = alBottom
     end
@@ -146,7 +146,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   object BottonPanel: TPanel [2]
     Left = 0
     Top = 283
-    Width = 506
+    Width = 499
     Height = 47
     Align = alBottom
     BevelOuter = bvNone
@@ -155,12 +155,12 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel1: TBevel
       Left = 1
       Top = 1
-      Width = 504
+      Width = 497
       Height = 2
       Align = alTop
     end
     object btnOK: TRzBitBtn
-      Left = 293
+      Left = 302
       Top = 13
       Width = 79
       Caption = #21040#36135#30830#35748'(&O)'
@@ -172,7 +172,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       OnClick = btnOKClick
     end
     object RzBitBtn1: TRzBitBtn
-      Left = 376
+      Left = 385
       Top = 13
       Width = 64
       Caption = #21462#28040'(&C)'

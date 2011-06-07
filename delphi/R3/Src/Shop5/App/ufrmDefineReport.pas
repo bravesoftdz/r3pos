@@ -90,7 +90,7 @@ type
     FColumnNum: Integer;
     FSQL: String;
     FRowNum: Integer;
-    FSourceId: Integer;
+    FSourceId: String;
     function ReturnSpace(Num:Integer):String;
     procedure SetColumnNum(const Value: Integer);
     procedure DbGridEh1FocusNextColumn;
@@ -331,7 +331,7 @@ begin
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
                 DsReportTemplate.FieldByName('COL').AsInteger := c;
                 DsReportTemplate.FieldByName('ROW').AsInteger := r;
-                DsReportTemplate.FieldByName('SUB_FLAG').AsString := '2';
+                DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end;
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;

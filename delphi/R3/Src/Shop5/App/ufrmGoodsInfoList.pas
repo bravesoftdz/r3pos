@@ -115,9 +115,9 @@ type
 implementation
 
 uses
-  uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint,
+  uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint, uDsUtil,
   uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort, ufrmDefineStateInfo,
-  ufrmGoodssortTree, ObjCommon;
+  ufrmGoodssortTree, ObjCommon, ufrmExcelFactory;
    
 
 {$R *.dfm}
@@ -1135,83 +1135,80 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
   function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
   var rs:TZQuery;
   begin
-    {Result := False;
-    // *******************门店********************
-    if DFieldName = 'SHOP_ID' then
+    Result := False;
+    // *******************计量单位********************
+    if DFieldName = 'CALC_UNITS' then
       begin
         if Source.FieldByName(SFieldName).AsString <> '' then
           begin
-            rs := Global.GetZQueryFromName('CA_SHOP_INFO');
-            if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+            if rs.Locate('UNIT_ID',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
-                Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的门店代码...');
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的计量单位...');
           end
         else
-          Raise Exception.Create('门店不能为空!');
+          Raise Exception.Create('计量单位不能为空!');
       end;
 
-    //*******************地区*****************
-    if DFieldName = 'REGION_ID' then
+    //*******************商品分类*****************
+    if DFieldName = 'SORT_ID1' then
       begin
         if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
           begin
-            rs := Global.GetZQueryFromName('PUB_REGION_INFO');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            rs := Global.GetZQueryFromName('PUB_GOODSSORT');
+            if rs.Locate('SORT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
-                Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Dest.FieldByName('SORT_ID1').AsString := rs.FieldbyName('SORT_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的商品分类...');
           end
         else
-          Dest.FieldByName('REGION_ID').AsString := '#';
+          Raise Exception.Create('商品分类不能为空!');
       end;
 
-    //*******************供应商类别*****************
-    if DFieldName = 'SORT_ID' then
+    //*******************颜色组*****************
+    if DFieldName = 'SORT_ID7' then
       begin
         if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
           begin
-            rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+            if rs.Locate('COLOR_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
-                Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Dest.FieldByName('SORT_ID7').AsString := rs.FieldbyName('COLOR_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的供应商类别代码...');
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的颜色...');
           end
         else
           begin
-            Dest.FieldByName('SORT_ID').AsString := '#';
             //Raise Exception.Create('客户类别不能为空!');
           end;
       end;
 
-    //*******************结算方式*****************
-    if DFieldName = 'SETTLE_CODE' then
+    //*******************尺码组*****************
+    if DFieldName = 'SORT_ID8' then
       begin
         if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
           begin
-            rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+            if rs.Locate('SIZE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
-                Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Dest.FieldByName('SORT_ID8').AsString := rs.FieldbyName('SIZE_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的结算方式代码...');
-          end
-        else
-          Raise Exception.Create('结算方式不能为空!');
+              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的尺码...');
+          end;
       end;
 
-    //*******************开户银行*****************
+    {//*******************开户银行*****************
     if DFieldName = 'BANK_ID' then
       begin
         rs := Global.GetZQueryFromName('PUB_BANK_INFO');
@@ -1235,75 +1232,75 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           end
         else
           Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的发票类型代码...');
-      end;
+      end;}
 
-    //供应商编号
-    if DFieldName = 'CLIENT_CODE' then
+    //货号
+    if DFieldName = 'GODS_CODE' then
       begin
         if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 20 then
-              Raise Exception.Create('供应商编号就在20个字符以内!')
+              Raise Exception.Create('货号就在20个字符以内!')
             else
               begin
                 rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
-                if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
-                  Raise Exception.Create('当前供应商编号已经存在!')
+                if rs.Locate('GODS_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                  Raise Exception.Create('货号已经存在!')
                 else
                   begin
-                    Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    Dest.FieldbyName('GODS_CODE').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
                   end;
               end;
           end
         else
-          begin
-            Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+          begin     
+            Dest.FieldbyName('GODS_CODE').AsString := TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
           end;
       end;
 
-    //供应商名称
-    if DFieldName = 'CLIENT_NAME' then
+    //商品名称
+    if DFieldName = 'GODS_NAME' then
       begin
         if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('供应商名称就在50个字符以内!')
+              Raise Exception.Create('商品名称就在50个字符以内!')
             else
               begin
-                Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
+                Dest.FieldbyName('GODS_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
               end;
           end
         else
-          Raise Exception.Create('供应商名称不能为空!');
+          Raise Exception.Create('商品名称不能为空!');
       end;
 
-    //供应商拼音码
-    if DFieldName = 'CLIENT_SPELL' then
+    //商品拼音码
+    if DFieldName = 'GODS_SPELL' then
       begin
         if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('供应商拼音码就在50个字符以内!')
+              Raise Exception.Create('商品拼音码就在50个字符以内!')
             else
               begin
-                Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                Dest.FieldbyName('GODS_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
               end;
           end
         else
           begin
-            if Trim(Source.FieldByName('CLIENT_NAME').AsString) <> '' then
-              Dest.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CLIENT_NAME').AsString),3)
+            if Trim(Source.FieldByName('GODS_NAME').AsString) <> '' then
+              Dest.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('GODS_NAME').AsString),3)
             else
-              Raise Exception.Create('供应商拼音码不能为空!');
+              Raise Exception.Create('商品拼音码不能为空!');
           end;
       end;
   end;
   function SaveExcel(CdsExcel:TDataSet):Boolean;
   begin
-    CdsExcel.First;
+    {CdsExcel.First;
     while not CdsExcel.Eof do
       begin
         CdsExcel.Edit;
@@ -1322,28 +1319,43 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
   end;
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
-    {if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
+    if not CdsCol.Locate('FieldName','BARCODE1',[]) then
       begin
         Result := False;
-        Raise Exception.Create('缺少门店字段!');
+        Raise Exception.Create('缺少条形码字段!');
       end;
-    if not CdsCol.Locate('FieldName','SETTLE_CODE',[]) then
+    {if not CdsCol.Locate('FieldName','GODS_CODE',[]) then
       begin
         Result := False;
-        Raise Exception.Create('缺少结算方式字段!');
-      end;
-    if not CdsCol.Locate('FieldName','CLIENT_NAME',[]) then
-      begin
-        Result := False;
-        Raise Exception.Create('缺少客户名称字段!');
+        Raise Exception.Create('缺少货号字段!'); 
       end; }
+    if not CdsCol.Locate('FieldName','GODS_NAME',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少商品名称字段!');    
+      end;
+    if not CdsCol.Locate('FieldName','CALC_UNITS',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少计量单位字段!');  
+      end;
+    if not CdsCol.Locate('FieldName','SORT_ID1',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少商品分类字段!');   
+      end;
+    if not CdsCol.Locate('FieldName','NEW_OUTPRICE',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少标准售价字段!');
+      end;
   end;
 var FieldsString,FormatString:String;
     Params:TftParamList;
     rs:TZQuery;
 begin
   inherited;
-  {Params := TftParamList.Create(nil);
+  Params := TftParamList.Create(nil);
   rs := TZQuery.Create(nil);
   try
     with rs.FieldDefs do
@@ -1384,7 +1396,7 @@ begin
   finally
     Params.Free;
     rs.Free;
-  end; }
+  end; 
 end;
 
 end.

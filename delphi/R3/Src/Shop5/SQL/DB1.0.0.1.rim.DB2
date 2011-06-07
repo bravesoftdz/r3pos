@@ -258,7 +258,7 @@ select
   QTY_SUM,     --数量合计  
   AMT_SUM,     --应收金额合计
   STATUS       --单据状态		
-from SD_CO
+from SD_CO;
 
 --创建视图：RIM_SD_CO_LINE ( 订单明明细表)
 create view RIM_SD_CO_LINE

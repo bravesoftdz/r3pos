@@ -55,21 +55,21 @@ begin
      1:
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' when UPDATE_FLAG=4 then ''条码重复'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照''  when UPDATE_FLAG=4 then ''条码重复''  else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG<>1 Order by GODS_CODE';
       end;
      3:
       begin
         Str:=
-          'select GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
+          'select GODS_CODE,SECOND_ID,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=3 then ''已刷新''  when UPDATE_FLAG=4 then ''条码重复'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG=3 Order by GODS_CODE';
       end;

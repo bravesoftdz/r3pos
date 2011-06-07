@@ -1,7 +1,7 @@
 inherited frmDefineReport: TfrmDefineReport
   Left = 388
   Top = 235
-  Caption = #33258#23450#20041#25253#34920
+  Caption = #25253#34920#26679#24335
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite

@@ -1427,6 +1427,9 @@ begin
         btnExit.Tag := 1;
         DBGridEh1.ReadOnly := True;
         DBGridEh2.ReadOnly := True;
+        DBGridEh3.ReadOnly := True;
+        RzPanel4.Visible := False;
+        RzPanel1.Visible := False;
         Result := ShowModal = mrOk;
       finally
         Free;

@@ -68,7 +68,7 @@ begin
   //判断启用日期与最近30天关系
   //if NearDate < UseDate then NearDate:=UseDate;
 
-  TENANT_ID:=trim(Params.ParamByName('SHOP_ID').AsString);
+  TENANT_ID:=trim(Params.ParamByName('TENANT_ID').AsString);
   SHOP_ID:=trim(Params.ParamByName('SHOP_ID').AsString);    //R3门店ID
   //返回Rim烟草公司ID,零售户ID
   SetRimORGAN_CUST_ID(TENANT_ID,SHOP_ID, COM_ID, CUST_ID);
@@ -114,10 +114,10 @@ begin
 
     case DbType of
      1: //Oracle
-      begin
-        Str:='insert into INF_INDEDATA(TENANT_ID,INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
-             ' select '+TENANT_ID+' as TENANT_ID,CO_NUM,B.GODS_ID,ITEM_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,'+
-             ' sum(QTY_NEED) as QTY_NEED,'+
+      begin                                                     //SECOND_ID,
+        Str:='insert into INF_INDEDATA(TENANT_ID,INDE_ID,GODS_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
+             ' select '+TENANT_ID+' as TENANT_ID,CO_NUM,B.GODS_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,'+
+             ' sum(QTY_NEED) as QTY_NEED,'+                       //ITEM_ID,
              ' sum(QTY_VFY) as QTY_VFY,'+
              ' sum(QTY_ORD) as QTY_ORD,'+
              ' (case when sum(QTY_ORD)<>0 then cast(sum(AMT)as decimal(18,3))/cast(sum(QTY_ORD) as decimal(18,3)) else 0 end) as PRI,'+
@@ -126,13 +126,13 @@ begin
              ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+')B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (INSTR( B.COMM_ID,'','' || A.ITEM_ID || '','', 1, 1)>0) '+  //加条件：
              ' where A.CO_NUM='''+INDE_ID+''' '+
-             ' group by CO_NUM,B.GODS_ID,ITEM_ID ';
+             ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID
       end;
      4: //DB2
-      begin
-        Str:='insert into INF_INDEDATA(TENANT_ID,INDE_ID,GODS_ID,SECOND_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
-             ' select '+TENANT_ID+' as TENANT_ID,CO_NUM,B.GODS_ID,ITEM_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,'+
-             ' sum(QTY_NEED) as QTY_NEED,'+
+      begin                                                     //SECOND_ID,
+        Str:='insert into INF_INDEDATA(TENANT_ID,INDE_ID,GODS_ID,UNIT_ID,NEED_AMT,CHK_AMT,AMOUNT,APRICE,AMONEY,AGIO_MONEY) '+
+             ' select '+TENANT_ID+' as TENANT_ID,CO_NUM,B.GODS_ID,''95331F4A-7AD6-45C2-B853-C278012C5525'' as UNIT_ID,'+
+             ' sum(QTY_NEED) as QTY_NEED,'+                       //ITEM_ID,
              ' sum(QTY_VFY) as QTY_VFY,'+
              ' sum(QTY_ORD) as QTY_ORD,'+
              ' (case when sum(QTY_ORD)<>0 then cast(sum(AMT)as decimal(18,3))/cast(sum(QTY_ORD) as decimal(18,3)) else 0 end) as PRI,'+
@@ -141,7 +141,7 @@ begin
              ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+')B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (locate( B.COMM_ID,'','' || A.ITEM_ID || '','')>0) '+  //加条件：
              ' where A.CO_NUM='''+INDE_ID+''' '+
-             ' group by CO_NUM,B.GODS_ID,ITEM_ID ';
+             ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID
       end;
     end;
 

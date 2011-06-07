@@ -50,7 +50,21 @@ begin
     InParams:=Params.Encode(Params);
     PlugIn.DLLDoExecute(InParams, vData);
 
-    //第二步：返回查询结果：
+    //第二步：处理手工对照:[]
+    case AGlobal.iDbType of
+     1: Str:=' update INF_GOODS_RELATION A set (UPDATE_FLAG)='+
+             ' (select 1 as UPDATE_FLAG from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0) '+
+             ' where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG=0 and  '+
+             ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0)';
+     4: Str:=' update INF_GOODS_RELATION A set (UPDATE_FLAG)='+
+             ' (select 1 as UPDATE_FLAG from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0) '+
+             ' where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG=0 and  '+
+             ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and locate('','' || A.SECOND_ID || '','',B.COMM_ID)>0)';
+    end;
+    AGlobal.ExecSQL(Str);  
+
+
+    //第三步：返回查询结果:
     case UpdateMode of
      1:
       begin
@@ -93,16 +107,15 @@ end;
 function TInf_Goods_Relation.DoUpdateRelation_DB2_Oracle(AGlobal: IdbHelp): Integer;
 var
   UpdateMode,iRet: integer;
-  TENANT_ID: string;
+  TENANT_ID, Str: string;
   Comm, TimeStp: string;
   UpStr, UpSQL, InFields, UpFields: WideString;
 begin
-  result:=-1;  
+  result:=-1;
   iRet:=0;
   TENANT_ID:=FieldbyName('TENANT_ID').AsString;     //从数据集传过来，每一条记录都一样
   UpdateMode:=FieldbyName('UpdateMode').AsInteger;  //从数据集传过来，每一条记录都一样
   if (UpdateMode<0) or (UpdateMode>2) then UpdateMode:=1;  //默认为1
-
 
   Comm:=GetCommStr(AGlobal.iDbType);
   TimeStp:=GetTimeStamp(AGlobal.iDbType);
@@ -119,7 +132,8 @@ begin
       UpSQL:=
         'update PUB_GOODS_RELATION A set ('+UpFields+',COMM,TIME_STAMP)= '+
         ' (select '+UpFields+','+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1 and A.TENANT_ID='+TENANT_ID+')'+
-        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and exists(select 1 from INF_GOODS_RELATION B where A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1) ';
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and '+
+        ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1) ';
         iRet:=AGlobal.ExecSQL(UpSQL);
 
       //插入新记录:

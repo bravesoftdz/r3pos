@@ -627,7 +627,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
     //供应商编号
     if DFieldName = 'CLIENT_CODE' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 20 then
               Raise Exception.Create('供应商编号就在20个字符以内!')
@@ -652,7 +652,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
     //供应商名称
     if DFieldName = 'CLIENT_NAME' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 50  then
               Raise Exception.Create('供应商名称就在50个字符以内!')

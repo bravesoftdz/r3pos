@@ -117,7 +117,7 @@ implementation
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint, uDsUtil,
   uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort, ufrmDefineStateInfo,
-  ufrmGoodssortTree, ObjCommon, ufrmExcelFactory;
+  ufrmGoodssortTree, ObjCommon, ufrmExcelFactory, ufrmBasic;
    
 
 {$R *.dfm}
@@ -1237,13 +1237,13 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
     //货号
     if DFieldName = 'GODS_CODE' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Source.FieldByName(SFieldName).AsString <> '') or (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 20 then
-              Raise Exception.Create('货号就在20个字符以内!')
+              Raise Exception.Create('货号应在20个字符以内!')
             else
               begin
-                rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+                rs := Global.GetZQueryFromName('PUB_GOODSINFO');
                 if rs.Locate('GODS_CODE',Source.FieldByName(SFieldName).AsString,[]) then
                   Raise Exception.Create('货号已经存在!')
                 else
@@ -1256,6 +1256,31 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
         else
           begin     
             Dest.FieldbyName('GODS_CODE').AsString := TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
+          end;
+      end;
+
+    //条形码                          
+    if DFieldName = 'BARCODE1' then
+      begin
+        if (Source.FieldByName(SFieldName).AsString <> '') or (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+          begin
+            if Length(Source.FieldByName(SFieldName).AsString) > 30 then
+              Raise Exception.Create('条形码应在30个字符以内!')
+            else
+              begin
+                rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+                if rs.Locate('BARCODE',Source.FieldByName(SFieldName).AsString,[]) then
+                  Raise Exception.Create('条形码已经存在!')
+                else
+                  begin
+                    Dest.FieldbyName('BARCODE1').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end;
+          end
+        else
+          begin
+            Dest.FieldbyName('BARCODE1').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6),'#','#');
           end;
       end;
 
@@ -1299,7 +1324,41 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       end;
   end;
   function SaveExcel(CdsExcel:TDataSet):Boolean;
+  var rs:TZQuery;
   begin
+    rs := TZQuery.Create(nil);
+    try
+      Factor.Open(rs,'TGoodsInfo');
+      CdsExcel.First;
+      while not CdsExcel.Eof do
+        begin
+          rs.FieldByName('GODS_ID').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('TENANT_ID').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('GODS_CODE').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('GODS_NAME').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('GODS_SPELL').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('SORT_ID1').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('SORT_ID7').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('SORT_ID8').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('BARCODE').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('UNIT_ID').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('CALC_UNITS').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('SMALL_UNITS').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('BIG_UNITS').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('SMALLTO_CALC').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('BIGTO_CALC').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('NEW_OUTPRICE').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('NEW_LOWPRICE').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
+          rs.FieldByName('').AsString := CdsExcel.FieldByName('').AsString;
+          CdsExcel.Next;
+        end;
+    finally
+      rs.Free;
+    end;
     {CdsExcel.First;
     while not CdsExcel.Eof do
       begin
@@ -1319,12 +1378,12 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
   end;
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
-    if not CdsCol.Locate('FieldName','BARCODE1',[]) then
+    {if not CdsCol.Locate('FieldName','BARCODE1',[]) then
       begin
         Result := False;
         Raise Exception.Create('缺少条形码字段!');
       end;
-    {if not CdsCol.Locate('FieldName','GODS_CODE',[]) then
+    if not CdsCol.Locate('FieldName','GODS_CODE',[]) then
       begin
         Result := False;
         Raise Exception.Create('缺少货号字段!'); 

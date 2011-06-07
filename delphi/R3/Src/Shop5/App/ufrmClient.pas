@@ -740,7 +740,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
     //客户编号
     if DFieldName = 'CLIENT_CODE' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 20 then
               Raise Exception.Create('客户编号就在20个字符以内!')
@@ -765,7 +765,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
     //客户名称
     if DFieldName = 'CLIENT_NAME' then
       begin
-        if (Source.FieldByName(SFieldName).AsString <> '') and (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
           begin
             if Length(Source.FieldByName(SFieldName).AsString) > 50  then
               Raise Exception.Create('客户名称就在50个字符以内!')

@@ -1,6 +1,6 @@
 inherited frmDefineReport: TfrmDefineReport
-  Left = 388
-  Top = 235
+  Left = 575
+  Top = 275
   Caption = #25253#34920#26679#24335
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -818,12 +818,12 @@ inherited frmDefineReport: TfrmDefineReport
     Top = 292
   end
   object DsReportTemplate: TZQuery
-    SortedFields = 'COL;ROW'
+    SortedFields = 'CELL_COL;CELL_ROW'
     FieldDefs = <>
     AfterScroll = DsReportTemplateAfterScroll
     CachedUpdates = True
     Params = <>
-    IndexFieldNames = 'COL Asc;ROW Asc'
+    IndexFieldNames = 'CELL_COL Asc;CELL_ROW Asc'
     Left = 46
     Top = 356
   end
@@ -833,11 +833,11 @@ inherited frmDefineReport: TfrmDefineReport
     Top = 356
   end
   object DsReportTemplate1: TZQuery
-    SortedFields = 'ROW;COL'
+    SortedFields = 'CELL_ROW;CELL_COL'
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    IndexFieldNames = 'ROW Asc;COL Asc'
+    IndexFieldNames = 'CELL_ROW Asc;CELL_COL Asc'
     Left = 46
     Top = 324
   end

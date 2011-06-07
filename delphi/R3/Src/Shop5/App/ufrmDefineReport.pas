@@ -54,7 +54,6 @@ type
     RoleList: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure RzBitBtn1Click(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -173,12 +172,12 @@ begin
     if not DsReportTemplate.IsEmpty then
       begin
         DsReportTemplate.Last;
-        ColumnNum := DsReportTemplate.FieldByName('COL').AsInteger;
+        ColumnNum := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
       end;
     if not DsReportTemplate1.IsEmpty then
       begin
         DsReportTemplate1.Last;
-        RowNum := DsReportTemplate.FieldByName('ROW').AsInteger;
+        RowNum := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
       end;
   finally
     Params.Free;
@@ -252,25 +251,6 @@ begin
   AObj.Free;
 end;
 
-procedure TfrmDefineReport.RzBitBtn1Click(Sender: TObject);
-var
-  RecordList:TRecordList;
-  Str_Sql,Str_Field:String;
-begin
-  inherited;
-  RecordList := TRecordList.Create;
-  Str_Sql := ' select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'' ';
-  Str_Field := '';
-  try
-    if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=DKJFDK',RecordList) then
-      begin
-
-      end;
-  finally
-    RecordList.Free;
-  end;
-end;
-
 procedure TfrmDefineReport.BtnAddClick(Sender: TObject);
 var
   RecordList:TRecordList;
@@ -313,24 +293,24 @@ begin
               begin
                 ColumnNum := ColumnNum + 1;
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '5';
-                DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
-                DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := ColumnNum;
+                DsReportTemplate.FieldByName('CELL_ROW').AsInteger := 1;
                 DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end
             else if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'FIELD' then
               begin
                 ColumnNum := ColumnNum + 1;
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '4';
-                DsReportTemplate.FieldByName('COL').AsInteger := ColumnNum;
-                DsReportTemplate.FieldByName('ROW').AsInteger := 1;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := ColumnNum;
+                DsReportTemplate.FieldByName('CELL_ROW').AsInteger := 1;
                 DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end
             else
               begin
                 inc(r);
                 DsReportTemplate.FieldByName('INDEX_FLAG').AsString := '2';
-                DsReportTemplate.FieldByName('COL').AsInteger := c;
-                DsReportTemplate.FieldByName('ROW').AsInteger := r;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := c;
+                DsReportTemplate.FieldByName('CELL_ROW').AsInteger := r;
                 DsReportTemplate.FieldByName('SUB_FLAG').AsString := '1';
               end;
             DsReportTemplate.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
@@ -385,10 +365,10 @@ begin
 
   if Column.FieldName = 'DISPLAY_NAME' then
     begin
-      if DsReportTemplate.FieldByName('ROW').AsInteger <> 0 then
+      if DsReportTemplate.FieldByName('CELL_ROW').AsInteger <> 0 then
       begin
         ARect :=  Rect;
-        StrPlace := ReturnSpace(DsReportTemplate.FieldbyName('ROW').AsInteger)+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString;
+        StrPlace := ReturnSpace(DsReportTemplate.FieldbyName('CELL_ROW').AsInteger)+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString;
         DbGridEh1.canvas.FillRect(ARect);
         DrawText(DbGridEh1.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_LEFT or DT_LEFT);
       end;
@@ -639,9 +619,9 @@ begin
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
   if DsReportTemplate.RecNo = 1 then Exit;
-  if DsReportTemplate.FieldByName('COL').AsInteger = 1 then Exit;
+  if DsReportTemplate.FieldByName('CELL_COL').AsInteger = 1 then Exit;
   
-  CURCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+  CURCOL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   MINCOL := 1;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
 
@@ -653,10 +633,10 @@ begin
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
       begin
-        if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL then
+        if DsReportTemplate.FieldByName('CELL_COL').AsInteger = CURCOL then
           begin
             DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := 0;
+            DsReportTemplate.FieldByName('CELL_COL').AsInteger := 0;
             DsReportTemplate.Post;
           end;
         DsReportTemplate.Next;
@@ -665,10 +645,10 @@ begin
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
       begin
-        if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL-1 then
+        if DsReportTemplate.FieldByName('CELL_COL').AsInteger = CURCOL-1 then
           begin
             DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := CURCOL;
+            DsReportTemplate.FieldByName('CELL_COL').AsInteger := CURCOL;
             DsReportTemplate.Post;
           end;
         DsReportTemplate.Next;
@@ -677,10 +657,10 @@ begin
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
       begin
-        if DsReportTemplate.FieldByName('COL').AsInteger = 0 then
+        if DsReportTemplate.FieldByName('CELL_COL').AsInteger = 0 then
           begin
             DsReportTemplate.Edit;
-            DsReportTemplate.FieldByName('COL').AsInteger := CURCOL-1;
+            DsReportTemplate.FieldByName('CELL_COL').AsInteger := CURCOL-1;
             DsReportTemplate.Post;
           end;
         DsReportTemplate.Next;
@@ -689,7 +669,7 @@ begin
   else
     Exit;
   finally
-    DsReportTemplate.SortedFields := 'COL;ROW';
+    DsReportTemplate.SortedFields := 'CELL_COL;CELL_ROW';
     DsReportTemplate.EnableControls;
   end;
 end;
@@ -704,25 +684,25 @@ begin
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
   if DsReportTemplate.RecNo = 1 then Exit;
-  if DsReportTemplate.FieldByName('ROW').AsInteger = 1 then Exit;
+  if DsReportTemplate.FieldByName('CELL_ROW').AsInteger = 1 then Exit;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
 
-  ROW := DsReportTemplate.FieldByName('ROW').AsInteger;
+  ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
   ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
   DsReportTemplate.Prior;
-  ROW1 := DsReportTemplate.FieldByName('ROW').AsInteger;
+  ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
   ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
   if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
     begin
       DsReportTemplate.Edit;
-      DsReportTemplate.FieldByName('ROW').AsInteger := ROW;
+      DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW;
       DsReportTemplate.Post;
     end;
   if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then
     begin
       DsReportTemplate.Edit;
-      DsReportTemplate.FieldByName('ROW').AsInteger := ROW1;
+      DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW1;
       DsReportTemplate.Post;
     end;
   //DsReportTemplate.IndexFieldNames := 'DISPLAY_NAME';
@@ -740,13 +720,13 @@ begin
 
   DsReportTemplate.DisableControls;
   try
-    COL := DsReportTemplate.FieldByName('COL').AsInteger;
-    ROW := DsReportTemplate.FieldByName('ROW').AsInteger;
+    COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+    ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
     ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
     DsReportTemplate.Next;
-    COL1 := DsReportTemplate.FieldByName('COL').AsInteger;
-    ROW1 := DsReportTemplate.FieldByName('ROW').AsInteger;
+    COL1 := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+    ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
     ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
     if COL <> COL1 then
@@ -759,13 +739,13 @@ begin
     if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
       begin
         DsReportTemplate.Edit;
-        DsReportTemplate.FieldByName('ROW').AsInteger := ROW;
+        DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW;
         DsReportTemplate.Post;
       end;
     if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then
       begin
         DsReportTemplate.Edit;
-        DsReportTemplate.FieldByName('ROW').AsInteger := ROW1;
+        DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW1;
         DsReportTemplate.Post;
       end;
   finally
@@ -786,9 +766,9 @@ begin
 
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
 
-  CURCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+  CURCOL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   DsReportTemplate.Last;
-  MAXCOL := DsReportTemplate.FieldByName('COL').AsInteger;
+  MAXCOL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
 
   DsReportTemplate.DisableControls;
   DsReportTemplate.SortedFields := 'ROWS_ID';
@@ -798,10 +778,10 @@ begin
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL then
+            if DsReportTemplate.FieldByName('CELL_COL').AsInteger = CURCOL then
               begin
                 DsReportTemplate.Edit;
-                DsReportTemplate.FieldByName('COL').AsInteger := 0;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := 0;
                 DsReportTemplate.Post;
               end;
             DsReportTemplate.Next;
@@ -810,10 +790,10 @@ begin
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            if DsReportTemplate.FieldByName('COL').AsInteger = CURCOL + 1 then
+            if DsReportTemplate.FieldByName('CELL_COL').AsInteger = CURCOL + 1 then
               begin
                 DsReportTemplate.Edit;
-                DsReportTemplate.FieldByName('COL').AsInteger := CURCOL;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := CURCOL;
                 DsReportTemplate.Post;
               end;
             DsReportTemplate.Next;
@@ -822,10 +802,10 @@ begin
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            if DsReportTemplate.FieldByName('COL').AsInteger = 0 then
+            if DsReportTemplate.FieldByName('CELL_COL').AsInteger = 0 then
               begin
                 DsReportTemplate.Edit;
-                DsReportTemplate.FieldByName('COL').AsInteger := CURCOL+1;
+                DsReportTemplate.FieldByName('CELL_COL').AsInteger := CURCOL+1;
                 DsReportTemplate.Post;
               end;
             DsReportTemplate.Next;
@@ -834,7 +814,7 @@ begin
     else
       Exit;
   finally
-    DsReportTemplate.SortedFields := 'COL;ROW';    
+    DsReportTemplate.SortedFields := 'CELL_COL;CELL_ROW';
     DsReportTemplate.EnableControls;
   end;
 end;
@@ -847,8 +827,8 @@ begin
   if DsReportTemplate.IsEmpty then Exit;
   if dbState = dsBrowse then Exit;
   if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  CurRow := DsReportTemplate.FieldByName('ROW').AsInteger;
-  CurCol := DsReportTemplate.FieldByName('COL').AsInteger;
+  CurRow := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+  CurCol := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   DsReportTemplate.Delete;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
   //删除后重新排序
@@ -859,16 +839,16 @@ begin
     DsReportTemplate.First;
     while not DsReportTemplate.Eof do
     begin
-      if (DsReportTemplate.FieldByName('COL').AsInteger = CurCol) and (DsReportTemplate.FieldByName('ROW').AsInteger > CurRow) then
+      if (DsReportTemplate.FieldByName('CELL_COL').AsInteger = CurCol) and (DsReportTemplate.FieldByName('CELL_ROW').AsInteger > CurRow) then
         begin
           DsReportTemplate.Edit;
-          DsReportTemplate.FieldByName('ROW').AsInteger := DsReportTemplate.FieldByName('ROW').AsInteger-1;
+          DsReportTemplate.FieldByName('CELL_ROW').AsInteger := DsReportTemplate.FieldByName('CELL_ROW').AsInteger-1;
           DsReportTemplate.Post;
         end;
       DsReportTemplate.Next;
     end;
     DsReportTemplate.Filtered := False;
-    DsReportTemplate.Filter := ' COL='+IntToStr(CurCol);
+    DsReportTemplate.Filter := ' CELL_COL='+IntToStr(CurCol);
     DsReportTemplate.Filtered := True;
     if DsReportTemplate.RecordCount > 0 then IsExist := False;
     DsReportTemplate.Filtered := False;
@@ -876,7 +856,7 @@ begin
       SetColumn(DsReportTemplate,CurCol);
   finally
     DsReportTemplate.EnableControls;
-    DsReportTemplate.SortedFields := 'COL;ROW';
+    DsReportTemplate.SortedFields := 'CELL_COL;CELL_ROW';
   end;
   //btnSave.Enabled:=True;
   //删除记录后，如果没有记录了，删除按钮不能操作
@@ -940,10 +920,10 @@ begin
 
   if Column.FieldName = 'DISPLAY_NAME' then
     begin
-      if DsReportTemplate1.FieldByName('COL').AsInteger <> 0 then
+      if DsReportTemplate1.FieldByName('CELL_COL').AsInteger <> 0 then
       begin
         ARect :=  Rect;
-        StrPlace := ReturnSpace(DsReportTemplate1.FieldbyName('COL').AsInteger)+DsReportTemplate1.FieldbyName('DISPLAY_NAME').AsString;
+        StrPlace := ReturnSpace(DsReportTemplate1.FieldbyName('CELL_COL').AsInteger)+DsReportTemplate1.FieldbyName('DISPLAY_NAME').AsString;
         DBGridEh2.canvas.FillRect(ARect);
         DrawText(DBGridEh2.Canvas.Handle,pchar(StrPlace),length(StrPlace),ARect,DT_NOCLIP or DT_SINGLELINE or DT_LEFT or DT_LEFT);
       end;
@@ -1061,12 +1041,12 @@ var ROWS_ID,SUMTYPE:String;
 begin
   inherited;
   ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   SUMTYPE := Value;
   DsReportTemplate.First;
   while not DsReportTemplate.Eof do
     begin
-      if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+      if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
         begin
           DsReportTemplate.Edit;
           DsReportTemplate.FieldByName('SUM_TYPE').AsString := SUMTYPE;
@@ -1084,12 +1064,12 @@ var ROWS_ID,SUMTYPE:String;
 begin
   inherited;
   ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
+  COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
   SUMTYPE := Value;
   DsReportTemplate1.First;
   while not DsReportTemplate1.Eof do
     begin
-      if DsReportTemplate1.FieldByName('COL').AsInteger = COL then
+      if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = COL then
         begin
           DsReportTemplate1.Edit;
           DsReportTemplate1.FieldByName('SUM_TYPE').AsString := SUMTYPE;
@@ -1131,8 +1111,8 @@ begin
             DsReportTemplate1.FieldByName('ROWS_ID').AsString := TSequence.NewId;
             DsReportTemplate1.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             DsReportTemplate1.FieldByName('CELL_TYPE').AsString := '2';
-            DsReportTemplate1.FieldByName('COL').AsInteger := c;
-            DsReportTemplate1.FieldByName('ROW').AsInteger := RowNum;
+            DsReportTemplate1.FieldByName('CELL_COL').AsInteger := c;
+            DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := RowNum;
             DsReportTemplate1.FieldByName('SUM_TYPE').AsString := '#';   
             DsReportTemplate1.FieldByName('FIELD_NAME').AsString := '#';
             DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := '2';
@@ -1160,8 +1140,8 @@ begin
   if DsReportTemplate1.IsEmpty then Exit;
   if dbState = dsBrowse then Exit;
   if MessageBox(Handle,pchar('确认要删除"'+DsReportTemplate.FieldbyName('DISPLAY_NAME').AsString+'"吗？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  CurRow := DsReportTemplate1.FieldByName('ROW').AsInteger;
-  CurCol := DsReportTemplate1.FieldByName('COL').AsInteger;
+  CurRow := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+  CurCol := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
   DsReportTemplate1.Delete;
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
   //删除后重新排序
@@ -1172,16 +1152,16 @@ begin
     DsReportTemplate1.First;
     while not DsReportTemplate1.Eof do
     begin
-      if (DsReportTemplate1.FieldByName('COL').AsInteger > CurCol) and (DsReportTemplate1.FieldByName('ROW').AsInteger = CurRow) then
+      if (DsReportTemplate1.FieldByName('CELL_COL').AsInteger > CurCol) and (DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = CurRow) then
         begin
           DsReportTemplate1.Edit;
-          DsReportTemplate1.FieldByName('COL').AsInteger := DsReportTemplate1.FieldByName('COL').AsInteger-1;
+          DsReportTemplate1.FieldByName('CELL_COL').AsInteger := DsReportTemplate1.FieldByName('CELL_COL').AsInteger-1;
           DsReportTemplate1.Post;
         end;
       DsReportTemplate1.Next;
     end;
     DsReportTemplate1.Filtered := False;
-    DsReportTemplate1.Filter := ' ROW='+IntToStr(CurRow);
+    DsReportTemplate1.Filter := ' CELL_ROW='+IntToStr(CurRow);
     DsReportTemplate1.Filtered := True;
     if DsReportTemplate1.RecordCount > 0 then IsExist := False;
     DsReportTemplate1.Filtered := False;
@@ -1189,7 +1169,7 @@ begin
       SetRow(DsReportTemplate1,CurRow);
   finally
     DsReportTemplate1.EnableControls;
-    DsReportTemplate1.SortedFields := 'ROW;COL';
+    DsReportTemplate1.SortedFields := 'CELL_ROW;CELL_COL';
   end;
   //btnSave.Enabled:=True;
   //删除记录后，如果没有记录了，删除按钮不能操作
@@ -1209,8 +1189,8 @@ begin
   if DsReportTemplate1.IsEmpty then Exit;
   if DsReportTemplate1.RecordCount = 1 then Exit;
   if DsReportTemplate1.RecNo = 1 then Exit;
-  if DsReportTemplate1.FieldByName('ROW').AsInteger = 1 then Exit;
-  CURROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = 1 then Exit;
+  CURROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
   MINROW := 1;
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
 
@@ -1222,10 +1202,10 @@ begin
     DsReportTemplate1.First;
     while not DsReportTemplate1.Eof do
       begin
-        if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW then
+        if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = CURROW then
           begin
             DsReportTemplate1.Edit;
-            DsReportTemplate1.FieldByName('ROW').AsInteger := 0;
+            DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := 0;
             DsReportTemplate1.Post;
           end;
         DsReportTemplate1.Next;
@@ -1234,10 +1214,10 @@ begin
     DsReportTemplate1.First;
     while not DsReportTemplate1.Eof do
       begin
-        if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW-1 then
+        if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = CURROW-1 then
           begin
             DsReportTemplate1.Edit;
-            DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW;
+            DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := CURROW;
             DsReportTemplate1.Post;
           end;
         DsReportTemplate1.Next;
@@ -1246,10 +1226,10 @@ begin
     DsReportTemplate1.First;
     while not DsReportTemplate1.Eof do
       begin
-        if DsReportTemplate1.FieldByName('ROW').AsInteger = 0 then
+        if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = 0 then
           begin
             DsReportTemplate1.Edit;
-            DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW-1;
+            DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := CURROW-1;
             DsReportTemplate1.Post;
           end;
         DsReportTemplate1.Next;
@@ -1258,7 +1238,7 @@ begin
   else
     Exit;
   finally
-    DsReportTemplate1.SortedFields := 'ROW;COL';
+    DsReportTemplate1.SortedFields := 'CELL_ROW;CELL_COL';
     DsReportTemplate1.EnableControls;
   end;
 end;
@@ -1275,9 +1255,9 @@ begin
 
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
 
-  CURROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  CURROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
   DsReportTemplate1.Last;
-  MAXROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  MAXROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
 
   DsReportTemplate1.DisableControls;
   DsReportTemplate1.SortedFields := 'ROWS_ID';
@@ -1287,10 +1267,10 @@ begin
         DsReportTemplate1.First;
         while not DsReportTemplate1.Eof do
           begin
-            if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW then
+            if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = CURROW then
               begin
                 DsReportTemplate1.Edit;
-                DsReportTemplate1.FieldByName('ROW').AsInteger := 0;
+                DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := 0;
                 DsReportTemplate1.Post;
               end;
             DsReportTemplate1.Next;
@@ -1299,10 +1279,10 @@ begin
         DsReportTemplate1.First;
         while not DsReportTemplate1.Eof do
           begin
-            if DsReportTemplate1.FieldByName('ROW').AsInteger = CURROW + 1 then
+            if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = CURROW + 1 then
               begin
                 DsReportTemplate1.Edit;
-                DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW;
+                DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := CURROW;
                 DsReportTemplate1.Post;
               end;
             DsReportTemplate1.Next;
@@ -1311,10 +1291,10 @@ begin
         DsReportTemplate1.First;
         while not DsReportTemplate1.Eof do
           begin
-            if DsReportTemplate1.FieldByName('ROW').AsInteger = 0 then
+            if DsReportTemplate1.FieldByName('CELL_ROW').AsInteger = 0 then
               begin
                 DsReportTemplate1.Edit;
-                DsReportTemplate1.FieldByName('ROW').AsInteger := CURROW+1;
+                DsReportTemplate1.FieldByName('CELL_ROW').AsInteger := CURROW+1;
                 DsReportTemplate1.Post;
               end;
             DsReportTemplate1.Next;
@@ -1323,7 +1303,7 @@ begin
     else
       Exit;
   finally
-    DsReportTemplate1.SortedFields := 'ROW;COL';
+    DsReportTemplate1.SortedFields := 'CELL_ROW;CELL_COL';
     DsReportTemplate1.EnableControls;
   end;
 end;
@@ -1338,15 +1318,15 @@ begin
   if DsReportTemplate1.IsEmpty then Exit;
   if DsReportTemplate1.RecordCount = 1 then Exit;
   if DsReportTemplate1.RecNo = 1 then Exit;
-  if DsReportTemplate1.FieldByName('COL').AsInteger = 1 then Exit;
+  if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = 1 then Exit;
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
 
-  COL := DsReportTemplate1.FieldByName('COL').AsInteger;
-  ROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
   ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
   DsReportTemplate1.Prior;
-  COL1 := DsReportTemplate1.FieldByName('COL').AsInteger;
-  ROW1 := DsReportTemplate1.FieldByName('ROW').AsInteger;
+  COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
   ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
 
   if ROW <> ROW1 then
@@ -1358,14 +1338,14 @@ begin
   if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
     begin
       DsReportTemplate1.Edit;
-      DsReportTemplate1.FieldByName('COL').AsInteger := COL;
+      DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL;
       DsReportTemplate1.Post;
     end;
     
   if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
     begin
       DsReportTemplate1.Edit;
-      DsReportTemplate1.FieldByName('COL').AsInteger := COL1;
+      DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL1;
       DsReportTemplate1.Post;
     end;
 end;
@@ -1382,13 +1362,13 @@ begin
 
   DsReportTemplate1.DisableControls;
   try
-    COL := DsReportTemplate1.FieldByName('COL').AsInteger;
-    ROW := DsReportTemplate1.FieldByName('ROW').AsInteger;
+    COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+    ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
     ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
 
     DsReportTemplate1.Next;
-    COL1 := DsReportTemplate1.FieldByName('COL').AsInteger;
-    ROW1 := DsReportTemplate1.FieldByName('ROW').AsInteger;
+    COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+    ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
     ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
 
     if ROW <> ROW1 then
@@ -1401,13 +1381,13 @@ begin
     if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
       begin
         DsReportTemplate1.Edit;
-        DsReportTemplate1.FieldByName('COL').AsInteger := COL;
+        DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL;
         DsReportTemplate1.Post;
       end;
     if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
       begin
         DsReportTemplate1.Edit;
-        DsReportTemplate1.FieldByName('COL').AsInteger := COL1;
+        DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL1;
         DsReportTemplate1.Post;
       end;
   finally
@@ -1446,7 +1426,7 @@ var
 begin
   inherited;
   if DsReportTemplate.IsEmpty then Exit;
-  COL := DsReportTemplate.FieldByName('COL').AsInteger;
+  COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
   RecordList := TRecordList.Create;
@@ -1471,7 +1451,7 @@ begin
         DsReportTemplate.First;
         while not DsReportTemplate.Eof do
           begin
-            if DsReportTemplate.FieldByName('COL').AsInteger = COL then
+            if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
               begin
                 DsReportTemplate.Edit;
                 DsReportTemplate.FieldByName('FIELD_NAME').AsString := Str_Sql;
@@ -1506,10 +1486,10 @@ begin
   Ds.First;
   while not Ds.Eof do
     begin
-      if Ds.FieldByName('COL').AsInteger > C then
+      if Ds.FieldByName('CELL_COL').AsInteger > C then
         begin
           Ds.Edit;
-          Ds.FieldByName('COL').AsInteger := Ds.FieldByName('COL').AsInteger - 1;
+          Ds.FieldByName('CELL_COL').AsInteger := Ds.FieldByName('CELL_COL').AsInteger - 1;
           Ds.Post;
         end;
       Ds.Next;
@@ -1522,10 +1502,10 @@ begin
   Ds.First;
   while not Ds.Eof do
     begin
-      if Ds.FieldByName('ROW').AsInteger > R then
+      if Ds.FieldByName('CELL_ROW').AsInteger > R then
         begin
           Ds.Edit;
-          Ds.FieldByName('ROW').AsInteger := Ds.FieldByName('ROW').AsInteger - 1;
+          Ds.FieldByName('CELL_ROW').AsInteger := Ds.FieldByName('CELL_ROW').AsInteger - 1;
           Ds.Post;
         end;
       Ds.Next;

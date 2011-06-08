@@ -49,7 +49,7 @@ type
   private
     { Private declarations }
     w:integer;
-    function  CheckNotChangePrice(RelationID: string): Boolean; //返回是否企业定价
+    function  CheckNotChangePrice(RelationID: string): Boolean; //2011.06.08 返回是否企业定价
     function  CheckInput:boolean;override;
     function  GetColIdx(ColName: string): integer;
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);

@@ -532,7 +532,7 @@ begin
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
 
   //调价权限(调价权限)

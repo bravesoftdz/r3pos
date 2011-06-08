@@ -58,7 +58,7 @@ begin
     begin
       if ShowModal=MROK then
          begin
-           result := rgMenu.Row+1; 
+           result := rgMenu.Row; 
          end
       else
          result := 0;
@@ -70,7 +70,7 @@ begin
   inherited;
   if Key in ['0'..'9',#13] then
      begin
-       if Key in ['0'..'9'] then rgMenu.Row := StrtoInt(Key)-1;
+       if Key in ['0'..'9'] then rgMenu.Row := StrtoInt(Key);
        ModalResult := MROK;
      end;
 end;

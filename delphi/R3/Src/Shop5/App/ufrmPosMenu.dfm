@@ -3,7 +3,7 @@ inherited frmPosMenu: TfrmPosMenu
   Top = 183
   BorderStyle = bsNone
   Caption = #21151#33021#33756#21333
-  ClientHeight = 329
+  ClientHeight = 351
   ClientWidth = 442
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -13,7 +13,7 @@ inherited frmPosMenu: TfrmPosMenu
     Left = 0
     Top = 0
     Width = 442
-    Height = 329
+    Height = 351
     Align = alClient
     BorderInner = fsFlatBold
     BorderOuter = fsFlatRounded
@@ -42,7 +42,7 @@ inherited frmPosMenu: TfrmPosMenu
       Left = 7
       Top = 32
       Width = 428
-      Height = 290
+      Height = 312
       Align = alClient
       BorderStyle = bsNone
       Color = clBlack

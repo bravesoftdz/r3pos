@@ -3445,13 +3445,12 @@ procedure TfrmPosMain.PopupMenu;
 var CardNo:String;
 begin
   case TfrmPosMenu.ShowMenu(self) of
-  0:PickUp;
-  1:case TfrmCloseForDay.ShowClDy(self) of
+  0:case TfrmCloseForDay.ShowClDy(self) of
     1:Close;
     2:Close;
     end;
-  2:self.WindowState := wsMinimized;
-  3:begin
+  1:self.WindowState := wsMinimized;
+  2:begin
     if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
     With TfrmCustomerInfo.Create(self) do
     begin
@@ -3468,7 +3467,7 @@ begin
     if CardNo <> '' then
       WriteInfo(CardNo);
   end;
-  4:begin
+  3:begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
@@ -3480,7 +3479,7 @@ begin
     else
       NewCardExecute;
   end;
-  5:begin
+  4:begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
@@ -3492,7 +3491,7 @@ begin
     else
       DepositExecute;
   end;
-  6:begin
+  5:begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
@@ -3504,7 +3503,7 @@ begin
     else
       ReturnExecute;
   end;
-  7:begin
+  6:begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
@@ -3516,7 +3515,7 @@ begin
     else
       LossCardExecute;
   end;
-  8:begin
+  7:begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
@@ -3528,10 +3527,12 @@ begin
     else
       PasswordExecute;
   end;
-  9:HangUp;
+  8:HangUp;
+  9:PickUp;
   else
     Raise Exception.Create('暂时不支持此项功能...'); 
   end;
+
 end;
 
 procedure TfrmPosMain.CheckInvaid;

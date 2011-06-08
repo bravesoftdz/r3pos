@@ -95,7 +95,7 @@ begin
   Aobj := TRecord_.Create;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := OPTION;
+    rs.SQL.Text := StringReplace(OPTION,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
     Factor.Open(rs);
     rs.First;
     while not rs.Eof do

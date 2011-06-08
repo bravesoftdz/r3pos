@@ -7,7 +7,7 @@ uses
   Dialogs, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, ExtCtrls, uShopUtil,
   RzPanel, RzRadGrp, RzEdit, StdCtrls, Mask, RzCmboBx, RzLabel, cxControls, strutils,
   cxContainer, cxEdit, cxTextEdit, cxSpinEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
-  ZBase, cxRadioGroup;
+  ZBase, cxRadioGroup, cxButtonEdit, zrComboBoxList, DBGridEh;
 
 type
   TfrmCustomerExt = class(TFrame)
@@ -62,7 +62,10 @@ var i:integer;
 begin
   Freeframe(self);
   for i:=0 to FList.Count-1 do
-    TObject(FList[i]).Free;
+    begin
+      if TObject(FList[i]) is TzrComboBoxList then TzrComboBoxList(FList[i]).DataSet.Free;
+      TObject(FList[i]).Free;
+    end;
   FList.Clear;
 end;
 
@@ -75,14 +78,17 @@ begin
 end;
 
 procedure TfrmCustomerExt.CreateCmb(UNION_ID,OPTION,In_Value:String;Is_Null:Integer);
-var Cmb:TcxComboBox;
-    Aobj:TRecord_;
+var Cmb:TzrComboBoxList;
+    Column:TColumnEh;
     rs:TZQuery;
 begin
-  Cmb := TcxComboBox.Create(nil);
+  Cmb := TzrComboBoxList.Create(nil);
   Cmb.Parent := bg;
   Cmb.Name := 'cmd_'+AnsiReplaceText(UNION_ID,'-','_');
-  Cmb.Properties.DropDownListStyle := lsFixedList;
+  Cmb.DropListStyle := lsFixed;
+  Cmb.FilterFields := 'CODE_ID;CODE_NAME;CODE_SPELL';
+  Cmb.KeyField := 'CODE_ID';
+  Cmb.ListField := 'CODE_NAME';
   Cmb.Text := '';
   if Row_Num mod 2 = 0 then
     Cmb.Left := 332
@@ -92,25 +98,36 @@ begin
   Cmb.Height := 21;
   Cmb.Width := 121;
   Cmb.Tag := Is_Null;
-  Aobj := TRecord_.Create;
+  Column := Cmb.Columns.Add;
+  Column.FieldName := 'CODE_NAME';
+  Column.Title.Caption := '名称';
+  Column.Width := 90;
+  Column := Cmb.Columns.Add;
+  Column.FieldName := 'CODE_SPELL';
+  Column.Title.Caption := '拼音码';
+  Column.Width := 30;
+
   rs := TZQuery.Create(nil);
+  Cmb.DataSet := rs;
   try
     rs.SQL.Text := StringReplace(OPTION,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
     Factor.Open(rs);
-    rs.First;
+    {rs.First;
     while not rs.Eof do
       begin
         Aobj := TRecord_.Create;
         Aobj.ReadFromDataSet(rs);
         Cmb.Properties.Items.AddObject(rs.FieldByName('CODE_NAME').AsString,Aobj);
         rs.Next;
-      end;
+      end;}
   finally
-    rs.Free;
+    //rs.Free;
   end;
   if In_Value <> '' then
-    Cmb.ItemIndex := TdsItems.FindItems(Cmb.Properties.Items,'CODE_ID',In_Value);
-
+  begin
+    Cmb.KeyValue := In_Value;
+    Cmb.Text := TdsFind.GetNameByID(Cmb.DataSet,Cmb.KeyField,Cmb.ListField,In_Value);
+  end;
   if DataState in [dsBrowse,dsInactive] then
     begin
       Cmb.Properties.ReadOnly := True;
@@ -302,6 +319,19 @@ begin
                 DataSet.FieldByName('INDEX_VALUE').AsString := ''
               else
                 DataSet.FieldByName('INDEX_VALUE').AsString := FormatDateTime('YYYY-MM-DD',TcxDateEdit(FList[i]).Date);
+              DataSet.Post;
+            end;
+        end
+      else if TObject(FList[i]) is TzrComboBoxList then
+        begin
+          if (TzrComboBoxList(FList[i]).Tag = 1) and (Trim(TzrComboBoxList(FList[i]).Text) = '') then
+            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
+          Index_Id := copy(TzrComboBoxList(FList[i]).Name,5,50);
+          Index_Id := AnsiReplaceText(Index_Id,'_','-');
+          if DataSet.Locate('INDEX_ID',Index_Id,[]) then
+            begin
+              DataSet.Edit;
+              DataSet.FieldByName('INDEX_VALUE').AsString := TzrComboBoxList(FList[i]).AsString;
               DataSet.Post;
             end;
         end;

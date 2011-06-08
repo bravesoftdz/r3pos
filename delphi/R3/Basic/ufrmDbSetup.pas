@@ -184,7 +184,7 @@ begin
     edtDbName.Visible := True;
     edtDbDir.Visible := False;
 //    lbDBName.Left :=67;
-    lbDBName.Caption :='DB2数据名称：';
+    lbDBName.Caption :='DB2主机名称：';
   end;
   else begin
 //    lbDBName.Left :=67;

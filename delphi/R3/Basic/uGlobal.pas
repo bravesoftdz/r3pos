@@ -271,6 +271,7 @@ begin
          begin
            Sleep(0);
            TZQuery(Components[i]).Close;
+           TZQuery(Components[i]).Filtered := false;
            if TZQuery(Components[i]).Params.FindParam('SHOP_ID')<>nil then
               TZQuery(Components[i]).Params.FindParam('SHOP_ID').AsString := SHOP_ID;
            if TZQuery(Components[i]).Params.FindParam('SHOP_ID_ROOT')<>nil then
@@ -309,6 +310,7 @@ begin
                if TZQuery(Components[i]).SQL.Text ='' then
                   Raise Exception.CreateFmt('%s的SQL不能为空。',[TZQuery(Components[i]).Name]);
                TZQuery(Components[i]).Close;
+               TZQuery(Components[i]).Filtered := false;
                if Factor.Connected then
                   begin
                     Factor.Open(TZQuery(Components[i]));

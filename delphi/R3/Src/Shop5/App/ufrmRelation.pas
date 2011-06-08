@@ -90,6 +90,7 @@ type
     procedure SetIsRel(const Value: Boolean);
     function  getflag: integer;
     function  CheckCanExport:Boolean;
+    function  GetParentTENANT_ID: integer;  //2011.06.08 返回当前市级的企业ID（卷烟供应链）
   public
     property IsRel:Boolean read FIsRel write SetIsRel;
     constructor Create(AOwner: TComponent); override;
@@ -599,9 +600,21 @@ begin
 end;
 
 procedure TfrmRelation.actCancelExecute(Sender: TObject);
+var
+  CurTen_ID,pTen_ID: Integer;  //当前登陆TENANT_ID
 begin
   inherited;
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
+  //2011.06.08 Add增加自动对照:
+  pTen_ID:=GetParentTENANT_ID;  //返回省级烟草公司ID 
+  if pTen_ID>0 then
+  begin
+    CurTen_ID:=Global.TENANT_ID; //当前Tenant_ID存储临时 CurTen_ID
+    Global.TENANT_ID:=pTen_ID;   //省级ID 赋入 Global.TENANT_ID
+    CaFactory.SyncAll(1);        //执行省公司
+    Global.TENANT_ID:=CurTen_ID; //替换回原TENANT_ID 
+  end;
+  //原来
   CaFactory.SyncAll(1);
   Global.LoadBasic;
   InitGrid;
@@ -733,5 +746,21 @@ begin
   TfrmRelationUpdateMode.FrmShow;
 end;
 
+
+//2011.06.08 返回当前市级的企业ID（卷烟供应链）
+function TfrmRelation.GetParentTENANT_ID: integer;
+var
+  Qry: TZQuery;
+begin
+  try
+    Qry:=TZQuery.Create(nil);
+    Qry.SQL.Text:='select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID='+InttoStr(Global.TENANT_ID);
+    Factor.Open(Qry);
+    if Qry.Active then
+      result:=Qry.fieldbyName('TENANT_ID').AsInteger;
+  finally
+    Qry.Free;
+  end;
+end;
 
 end.

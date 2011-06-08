@@ -36,6 +36,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     SaveQry: TZQuery;
+    NT_GOODSINFO: TZQuery;
     procedure btnCancelClick(Sender: TObject);
     procedure Grid_RelationDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
     procedure Grid_RelationCellClick(Column: TColumnEh);
@@ -92,8 +93,13 @@ begin
 end;
 
 procedure TfrmRelationHandSet.InitParams(vData: OleVariant);
+var
+  Str: string;
 begin
   Grid_Relation.DataSource:=nil;
+  Str:='select GODS_ID,GODS_CODE,GODE_NAME,BARCODE from VIW_GOODSINFO where TENANT_ID=110000001 and RELATION_ID=0 ';
+  NT_GOODSINFO.Close;
+  NT_GOODSINFO.SQL.Text:=Str;
   R3_GODS_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSINFO');
   CdsTable.Close;
   CdsTable.Data:=vData;
@@ -177,7 +183,10 @@ begin
   SaveQry.Post;
   //提交
   if Factor.UpdateBatch(SaveQry,'THandSetRelation',nil) then
-    MessageBox(Application.Handle,pchar('保存成功！'),'友情提示...',MB_OK+MB_ICONQUESTION); 
+  begin
+    MessageBox(Application.Handle,pchar('保存成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
+    self.Close;
+  end;
 end;
 
 end.

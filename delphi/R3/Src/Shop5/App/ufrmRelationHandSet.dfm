@@ -312,19 +312,26 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 273
-    Top = 49
+    Left = 9
+    Top = 105
   end
   object Ds: TDataSource
     DataSet = CdsTable
-    Left = 313
-    Top = 50
+    Left = 41
+    Top = 106
   end
   object SaveQry: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 417
-    Top = 49
+    Left = 9
+    Top = 161
+  end
+  object NT_GOODSINFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 321
+    Top = 1
   end
 end

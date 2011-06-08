@@ -1298,7 +1298,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       end;
   end;
   function SaveExcel(CdsExcel:TDataSet):Boolean;
-    procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode:String);
+    procedure WriteToBarcode(Data_Bar:TZQuery;Gods_Id,Unit_Id,BarCode,BarcodeType:String);
     begin
       Data_Bar.Append;
       Data_Bar.FieldByName('RELATION_FLAG').AsString := '2';
@@ -1307,11 +1307,20 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       Data_Bar.FieldByName('ROWS_ID').AsString := TSequence.NewId;  //行号[GUID编号]
       Data_Bar.FieldByName('PROPERTY_01').AsString := '#';
       Data_Bar.FieldByName('PROPERTY_02').AsString := '#';
-      Data_Bar.FieldByName('BARCODE_TYPE').AsString := '0';
+      Data_Bar.FieldByName('BARCODE_TYPE').AsString := BarcodeType;
       Data_Bar.FieldByName('UNIT_ID').AsString := Unit_Id;
       Data_Bar.FieldByName('BATCH_NO').AsString := '#';
       Data_Bar.FieldByName('BARCODE').AsString := BarCode;
       Data_Bar.Post;
+    end;
+    procedure IsSameBarcode(_DataBar:TZQuery);
+    begin
+      if (_DataBar.FieldByName('BARCODE1').AsString <> '') and (_DataBar.FieldByName('BARCODE1').AsString = _DataBar.FieldByName('BARCODE2').AsString) then
+        raise Exception.Create('计量单位的条码不能和小包装条码一样!');
+      if (_DataBar.FieldByName('BARCODE1').AsString <> '') and (_DataBar.FieldByName('BARCODE1').AsString = _DataBar.FieldByName('BARCODE3').AsString) then
+        raise Exception.Create('计量单位的条码不能和大包装条码一样!');
+      if (_DataBar.FieldByName('BARCODE2').AsString <> '') and (_DataBar.FieldByName('BARCODE3').AsString <> '') and (_DataBar.FieldByName('BARCODE3').AsString = _DataBar.FieldByName('BARCODE2').AsString) then
+        raise Exception.Create('小包装条码不能和大包装条码一样!');
     end;
   var DsGoods,DsBarcode:TZQuery;
       GodsId:String;
@@ -1327,6 +1336,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       CdsExcel.First;
       while not CdsExcel.Eof do
         begin
+          IsSameBarcode(@CdsExcel);
           DsGoods.Append;
           GodsId := TSequence.NewId;
           DsGoods.FieldByName('GODS_ID').AsString := GodsId;
@@ -1338,26 +1348,23 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           DsGoods.FieldByName('SORT_ID7').AsString := CdsExcel.FieldByName('SORT_ID7').AsString;
           DsGoods.FieldByName('SORT_ID8').AsString := CdsExcel.FieldByName('SORT_ID8').AsString;
 
-{0=,1=,2=,3=,4=,5=,6=NEW_OUTPRICE,7=,8=,9=MY_OUTPRICE,'+
-    '10=,11=,12=,13=,14=BARCODE2,15=MY_OUTPRICE1,16=,17=,18=BARCODE3,19=MY_OUTPRICE2 }
-
           DsGoods.FieldByName('BARCODE').AsString := CdsExcel.FieldByName('BARCODE1').AsString;
           DsGoods.FieldByName('UNIT_ID').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
           DsGoods.FieldByName('CALC_UNITS').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
-          WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('CALC_UNITS').AsString,CdsExcel.FieldByName('BARCODE1').AsString);
+          WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('CALC_UNITS').AsString,CdsExcel.FieldByName('BARCODE1').AsString,'0');
 
           if CdsExcel.FieldByName('BARCODE2').AsString <> '' then
             begin
               DsGoods.FieldByName('SMALL_UNITS').AsString := CdsExcel.FieldByName('SMALL_UNITS').AsString;
               DsGoods.FieldByName('SMALLTO_CALC').AsString := CdsExcel.FieldByName('SMALLTO_CALC').AsString;
-              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('SMALL_UNITS').AsString,CdsExcel.FieldByName('BARCODE2').AsString);
+              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('SMALL_UNITS').AsString,CdsExcel.FieldByName('BARCODE2').AsString,'1');
             end;
 
           if CdsExcel.FieldByName('BARCODE3').AsString <> '' then
             begin
               DsGoods.FieldByName('BIG_UNITS').AsString := CdsExcel.FieldByName('BIG_UNITS').AsString;
               DsGoods.FieldByName('BIGTO_CALC').AsString := CdsExcel.FieldByName('BIGTO_CALC').AsString;
-              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString);
+              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString,'2');
             end;
 
           DsGoods.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('NEW_INPRICE').AsString;
@@ -1373,26 +1380,19 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           CdsExcel.Next;
         end;
 
+        Factor.BeginBatch;
+        try
+          Factor.AddBatch(DsGoods,'TGoodsInfo');
+          Factor.AddBatch(DsBarcode,'TPUB_BARCODE');
+          Factor.CommitBatch;
+        except
+          Factor.CancelBatch;
+        end;
     finally
       DsGoods.Free;
       DsBarcode.Free;
     end;
-    {CdsExcel.First;
-    while not CdsExcel.Eof do
-      begin
-        CdsExcel.Edit;
-        CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        CdsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
-        CdsExcel.FieldByName('UNION_ID').AsString := '#';
-        CdsExcel.FieldByName('CLIENT_TYPE').AsString := '1';
-        CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
-        CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
-        //CdsExcel.FieldByName('IC_STATUS').AsString := '0';
-        //CdsExcel.FieldByName('IC_TYPE').AsString := '0';
-        CdsExcel.Post;
-        CdsExcel.Next;
-      end;
-    Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil); }
+
   end;
 
   function FindColumn(CdsCol:TDataSet):Boolean;
@@ -1433,7 +1433,7 @@ var FieldsString,FormatString:String;
     rs:TZQuery;
 begin
   inherited;
-  {Params := TftParamList.Create(nil);
+  Params := TftParamList.Create(nil);
   rs := TZQuery.Create(nil);
   try
     with rs.FieldDefs do
@@ -1474,7 +1474,7 @@ begin
   finally
     Params.Free;
     rs.Free;
-  end;}
+  end;
 end;
 
 end.

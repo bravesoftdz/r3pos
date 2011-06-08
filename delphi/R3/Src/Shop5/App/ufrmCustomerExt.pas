@@ -85,6 +85,7 @@ begin
   Cmb := TzrComboBoxList.Create(nil);
   Cmb.Parent := bg;
   Cmb.Name := 'cmd_'+AnsiReplaceText(UNION_ID,'-','_');
+  Cmb.Properties.ReadOnly := False;
   Cmb.DropListStyle := lsFixed;
   Cmb.FilterFields := 'CODE_ID;CODE_NAME;CODE_SPELL';
   Cmb.KeyField := 'CODE_ID';
@@ -105,8 +106,9 @@ begin
   Column := Cmb.Columns.Add;
   Column.FieldName := 'CODE_SPELL';
   Column.Title.Caption := '∆¥“Ù¬Î';
-  Column.Width := 30;
-
+  Column.Width := 50;
+  Cmb.DropWidth := 200;
+  Cmb.ShowButton := False;
   rs := TZQuery.Create(nil);
   Cmb.DataSet := rs;
   try

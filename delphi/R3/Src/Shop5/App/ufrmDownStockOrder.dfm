@@ -65,6 +65,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           Width = 31
         end
         item
+          DisplayFormat = '0000-00-00'
           EditButtons = <>
           FieldName = 'INDE_DATE'
           Footers = <>

@@ -385,6 +385,7 @@ begin
     FDownOrderID:='';
     edtCLIENT_ID.Enabled:=true;  //供应商选择
     edtSHOP_ID.Enabled:=True;    //入库门店
+    edtSHOP_ID.Enabled:=True;
     DBGridEh1.ReadOnly:=False;     //明细Grid
   except
     Factor.CancelBatch;
@@ -1288,7 +1289,9 @@ begin
   //控制控件不可修改属性:
   edtCLIENT_ID.Enabled:=False;  //供应商选择
   edtSHOP_ID.Enabled:=False;    //入库门店
+  edtInput.Enabled:=False;      //条形码
   DBGridEh1.ReadOnly:=true;     //明细Grid
+
   {for i:=0 to DBGridEh1.PopupMenu.Items.Count-1 do
   begin
     CurName:=trim(LowerCase(DBGridEh1.PopupMenu.Items[i].Name));

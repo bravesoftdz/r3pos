@@ -2,35 +2,35 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
   Left = 379
   Top = 181
   Caption = #33258#23450#20041#21830#21697#25351#26631
-  ClientHeight = 350
-  ClientWidth = 349
+  ClientHeight = 364
+  ClientWidth = 369
   Color = clWhite
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 349
-    Height = 350
+    Width = 369
+    Height = 364
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 339
-      Height = 303
+      Width = 359
+      Height = 317
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #21830#21697#25351#26631
         inherited RzPanel2: TRzPanel
-          Width = 335
-          Height = 276
+          Width = 355
+          Height = 290
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 325
-            Height = 266
+            Width = 345
+            Height = 280
             Align = alClient
             AutoFitColWidths = True
             DataSource = dsStateInfo
@@ -67,7 +67,15 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
                 Footers = <>
                 Title.Caption = #24207#21495
                 Title.Color = clWhite
-                Width = 33
+                Width = 36
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CODE_ID'
+                Footers = <>
+                Title.Caption = #25351#26631'ID'
+                Title.Color = clWindow
+                Width = 43
               end
               item
                 EditButtons = <>
@@ -75,7 +83,7 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
                 Footers = <>
                 Title.Caption = #25351#26631#21517#31216
                 Title.Color = clWhite
-                Width = 218
+                Width = 194
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item
@@ -91,7 +99,7 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
                   '1')
                 Title.Caption = #33258#23450#20041
                 Title.Color = clWindow
-                Width = 47
+                Width = 44
                 OnUpdateData = DBGridEh1Columns2UpdateData
               end>
           end
@@ -99,8 +107,8 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 308
-      Width = 339
+      Top = 322
+      Width = 359
       Height = 37
       BorderColor = clWhite
       Color = clWhite

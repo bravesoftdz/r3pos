@@ -50,7 +50,7 @@ inherited frmPosMenu: TfrmPosMenu
       DefaultColWidth = 428
       DefaultRowHeight = 30
       FixedCols = 0
-      RowCount = 9
+      RowCount = 10
       FixedRows = 0
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite

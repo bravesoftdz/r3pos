@@ -530,4 +530,28 @@ inherited frmPriceOrder: TfrmPriceOrder
     Left = 208
     Top = 328
   end
+  object CA_RELATIONS: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select RELATION_ID,CHANGE_PRICE,SINGLE_LIMIT,SALE_LIMIT,USING_MO' +
+        'DULE from CA_RELATIONS where RELATI_ID=:TENANT_ID order by RELAT' +
+        'ION_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 664
+    Top = 184
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
 end

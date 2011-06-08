@@ -34,6 +34,7 @@ type
     cdsShopList: TZQuery;
     Btn_View: TRzBitBtn;
     Label19: TLabel;
+    CA_RELATIONS: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure actImportFromPrintExecute(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
@@ -44,10 +45,12 @@ type
     procedure DBGridEh1Columns10UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure Btn_ViewClick(Sender: TObject);
+    procedure fndGODS_IDSaveValue(Sender: TObject);
   private
     { Private declarations }
     w:integer;
-    function CheckInput:boolean;override;
+    function  CheckNotChangePrice(RelationID: string): Boolean; //返回是否企业定价
+    function  CheckInput:boolean;override;
     function  GetColIdx(ColName: string): integer;
     procedure InitShopInfo(CdsShop: TDataSet; ShopID: string);
     procedure SetdbState(const Value: TDataSetState); override;
@@ -67,6 +70,7 @@ type
     procedure CancelOrder;override;
     procedure AuditOrder;override;
     procedure Open(id:string);override;
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
   end;
 
 implementation
@@ -75,6 +79,19 @@ uses
  uGlobal,uShopUtil,uFnUtil,uDsUtil, uShopGlobal,ufrmPrcCompList,ufrmBatchPmdPrice;
 
 {$R *.dfm}
+
+
+function TfrmPriceOrder.CheckNotChangePrice(RelationID: string): Boolean;
+var
+  Rs: TZQuery;
+begin
+  result:=False;
+  Rs:=Global.GetZQueryFromName('CA_RELATIONS');
+  if Rs.Locate('RELATION_ID',RelationID,[]) then
+  begin
+    result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
+  end;
+end;
 
 procedure TfrmPriceOrder.CancelOrder;
 begin
@@ -702,6 +719,39 @@ end;
 procedure TfrmPriceOrder.WriteAmount(UNIT_ID, PROPERTY_01, PROPERTY_02: string; Amt: real; Appended: boolean);
 begin
   //条码输入数量覆盖掉原方法  
+end;
+
+
+procedure TfrmPriceOrder.fndGODS_IDSaveValue(Sender: TObject);
+var
+  RelID: string;
+begin
+  //判断当前商品是否允许改价若
+  RelID:=fndGODS_ID.DataSet.FieldbyName('RELATION_ID').AsString;
+  if CheckNotChangePrice(RelID) then
+  begin
+    MessageBox(Handle,pchar('商品”'+fndGODS_ID.DataSet.FieldbyName('GODS_NAME').AsString+'“是统一定价，不能促销！'),'友情提示',MB_OK+MB_ICONINFORMATION);
+    fndGODS_ID.Text := edtTable.FieldbyName('GODS_NAME').AsString;
+    fndGODS_ID.KeyValue := edtTable.FieldbyName('GODS_ID').AsString;
+    Exit;
+  end;
+  
+  inherited;
+end;
+
+procedure TfrmPriceOrder.AddRecord(AObj: TRecord_; UNIT_ID: string; Located, IsPresent: boolean);
+var
+  RelID: string;
+begin
+  //判断当前商品是否允许改价若
+  RelID:= AObj.FieldbyName('RELATION_ID').AsString;
+  if CheckNotChangePrice(RelID) then
+  begin
+    MessageBox(Handle,pchar('商品”'+fndGODS_ID.DataSet.FieldbyName('GODS_NAME').AsString+'“是统一定价，不能促销！'),'友情提示',MB_OK+MB_ICONINFORMATION);
+    Exit;
+  end;
+
+  inherited; //继承基类
 end;
 
 end.

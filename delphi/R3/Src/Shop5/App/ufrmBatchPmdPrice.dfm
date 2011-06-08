@@ -250,4 +250,11 @@ inherited frmBatchPmdPrice: TfrmBatchPmdPrice
     Left = 168
     Top = 184
   end
+  object PUB_GODSSORT: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 144
+  end
 end

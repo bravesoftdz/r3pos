@@ -95,6 +95,7 @@ type
     procedure edtFROM_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     //进位法则
@@ -104,7 +105,8 @@ type
     procedure ReadHeader;
     procedure IndeFrom(id:string);
     procedure WMNextRecord(var Message: TMessage);
-    function  CheckCanExport: boolean; override;      
+    function  CheckCanExport: boolean; override;
+    function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -526,6 +528,13 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+  begin
+    Value := TColumnEh(Sender).Field.asFloat;
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  end;
+
   //调价权限(调价权限)
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -576,6 +585,13 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+  begin
+    Value := TColumnEh(Sender).Field.asFloat;
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改金额！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  end;
+
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
@@ -621,6 +637,13 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+  begin
+    Value := TColumnEh(Sender).Field.asFloat;
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  end;
+
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
@@ -1535,6 +1558,48 @@ begin
       TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
   end;
+end;
+
+function TfrmSalesOrder.CheckNotChangePrice(GodsID: string): Boolean;
+var
+  RelationID: string;
+  RsGods,Rs: TZQuery;
+begin
+  result:=False;
+  RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
+  if RsGods.Locate('GODS_ID',trim(GodsID),[]) then
+  begin
+    RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+  end;
+  Rs:=Global.GetZQueryFromName('CA_RELATIONS');
+  if Rs.Locate('RELATION_ID',RelationID,[]) then
+  begin
+    result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
+  end;
+end;
+
+procedure TfrmSalesOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
+var
+  GodsID: string;
+begin
+  if (InputFlag=3) or (InputFlag=4) then //改价 和 折扣率
+  begin
+    GodsID:=trim(edtTable.fieldbyname('GODS_ID').AsString);
+    if CheckNotChangePrice(GodsID) then
+    begin
+      if InputFlag=3 then
+        GodsID:='商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改价格！'
+      else
+        GodsID:='商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许折扣！';
+      InputFlag := 0;
+      DBGridEh1.Col := 1;
+      edtInput.Text := '';
+      MessageBox(Handle,pchar(GodsID),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+      Exit;
+    end;
+  end;
+  
+  inherited;  //继承基类
 end;
 
 end.

@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, RzButton, DB, StdCtrls, ExtCtrls,
   ComCtrls, RzTreeVw, cxCheckBox, cxSpinEdit, cxControls, cxContainer,
-  cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, ADODB, zBase, zDataSet;
+  cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, ADODB, zBase, zDataSet,
+  ZAbstractRODataset, ZAbstractDataset;
 
 type
   TfrmBatchPmdPrice = class(TfrmBasic)
@@ -24,6 +25,7 @@ type
     edtRATE_OFF: TcxComboBox;
     Label5: TLabel;
     edtISINTEGRAL: TcxCheckBox;
+    PUB_GODSSORT: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure fndGODS_FLAGPropertiesChange(Sender: TObject);
@@ -31,6 +33,7 @@ type
     { Private declarations }
     cdsTable:TDataSet;
     CarryRule,Deci:integer;
+    procedure OpenPUB_GODSSORT;
     procedure LoadLevelSort;
     procedure LoadBrandInfo;
     procedure LoadProvInfo;
@@ -53,14 +56,14 @@ uses uGlobal, uDsUtil, uFnUtil, uTreeUtil, uShopUtil, uShopGlobal;
 class function TfrmBatchPmdPrice.BatchPrice(DataSet: TDataSet): Boolean;
 begin
   with TfrmBatchPmdPrice.Create(Application.MainForm) do
-    begin
-      try
-        cdsTable := DataSet;
-        Result := (ShowModal=MROK);
-      finally
-        free;
-      end;
+  begin
+    try
+      cdsTable := DataSet;
+      Result := (ShowModal=MROK);
+    finally
+      free;
     end;
+  end;
 end;
 
 //商品树形:
@@ -75,28 +78,26 @@ end;}
 //商品树形:
 procedure TfrmBatchPmdPrice.LoadLevelSort;
 var
-  rs:TZQuery;
   w,i:integer;
   AObj,CurObj:TRecord_;
 begin
   ClearTree(rzChkTree);
-  rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-  rs.SortedFields := 'RELATION_ID';
-  w := -1;
   try
+    PUB_GODSSORT.SortedFields := 'RELATION_ID';
+    w := -1;
     CurObj:=TRecord_.Create;
-    rs.First;
-    while not rs.Eof do
+    PUB_GODSSORT.First;
+    while not PUB_GODSSORT.Eof do
     begin
-      CurObj.ReadFromDataSet(rs); 
+      CurObj.ReadFromDataSet(PUB_GODSSORT); 
       if w<>CurObj.FieldByName('RELATION_ID').AsInteger then
       begin
         AObj := TRecord_.Create;
-        AObj.ReadFromDataSet(rs);
-        rzChkTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        AObj.ReadFromDataSet(PUB_GODSSORT);
+        rzChkTree.Items.AddObject(nil,AObj.FieldbyName('RELATION_NAME').AsString,AObj);
         w := CurObj.FieldByName('RELATION_ID').AsInteger;
       end;
-      rs.Next;
+      PUB_GODSSORT.Next;
     end;
   finally
     CurObj.Free;
@@ -104,11 +105,11 @@ begin
   
   for i:=rzChkTree.Items.Count-1 downto 0 do
   begin
-    rs.Filtered := false;
-    rs.filter := 'RELATION_ID='+TRecord_(rzChkTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
-    rs.Filtered := true;
-    rs.SortedFields := 'LEVEL_ID';
-    CreateLevelTree(rs,rzChkTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzChkTree.Items[i]);
+    PUB_GODSSORT.Filtered := false;
+    PUB_GODSSORT.filter := 'RELATION_ID='+TRecord_(rzChkTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+    PUB_GODSSORT.Filtered := true;
+    PUB_GODSSORT.SortedFields := 'LEVEL_ID';
+    CreateLevelTree(PUB_GODSSORT,rzChkTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzChkTree.Items[i]);
   end;
   rzChkTree.FullExpand;
 end;
@@ -120,6 +121,7 @@ begin
   //进位法则
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
+  OpenPUB_GODSSORT; //过滤掉商品分类（供应链为可改价）
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
   Initform(self);
   fndGODS_FLAG1.ItemIndex := 0;
@@ -260,7 +262,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text:='select SORT_ID,SORT_NAME,null as PID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and SORT_TYPE=4 order by SORT_ID ';
+    rs.SQL.Text:=
+      'select SORT_ID,SORT_NAME,null as PID from VIW_GOODSSORT where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and SORT_TYPE=4 '+
+      ' and not exists(select 1 from CA_RELATIONS B where B.RELATI_ID=:TENANT_ID and B.RELATION_ID=VIW_GOODSSORT.RELATION_ID and B.CHANGE_PRICE=''2'') '+
+      ' order by SORT_ID ';
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;  
     Factor.Open(rs);
     rzChkTree.Items.Clear;
@@ -276,8 +281,8 @@ var rs: TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text :='select CLIENT_ID as SORT_ID,CLIENT_NAME as SORT_NAME,null as PID from VIW_CLIENTINFO '+
-                  ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' order by CLIENT_CODE ';
+    rs.SQL.Text:='select CLIENT_ID as SORT_ID,CLIENT_NAME as SORT_NAME,null as PID from VIW_CLIENTINFO '+
+                ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and CLIENT_TYPE=''1'' order by CLIENT_CODE ';
     Factor.Open(rs);
     rzChkTree.Items.Clear;
     CreateParantTree(rs, rzChkTree, 'SORT_ID', 'SORT_NAME', 'PID');
@@ -290,6 +295,34 @@ function TfrmBatchPmdPrice.ConvertToFight(value: Currency;
   deci: Integer): real;
 begin
   result := FnNumber.ConvertToFight(value,CarryRule,deci);
+end;
+
+procedure TfrmBatchPmdPrice.OpenPUB_GODSSORT;
+var
+  RelID: string;
+  Rs, RsRelation: TZQuery;
+begin
+  Rs:=Global.GetZQueryFromName('PUB_GOODSSORT');
+  RsRelation:=Global.GetZQueryFromName('CA_RELATIONS');
+  PUB_GODSSORT.Close;
+  PUB_GODSSORT.Data:=Rs.Data;
+  RsRelation.First;
+  while not RsRelation.Eof do
+  begin
+    if trim(RsRelation.FieldByName('CHANGE_PRICE').AsString)='2' then
+    begin
+      RelID:=trim(RsRelation.FieldByName('RELATION_ID').AsString);
+      PUB_GODSSORT.First;
+      while not PUB_GODSSORT.eof do
+      begin
+        if trim(PUB_GODSSORT.fieldbyName('RELATION_ID').AsString)=RelID then
+          PUB_GODSSORT.Delete
+        else
+          PUB_GODSSORT.Next;
+      end;
+    end;
+    RsRelation.Next;
+  end;
 end;
 
 end.

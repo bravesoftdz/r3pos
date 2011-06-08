@@ -245,7 +245,7 @@ type
      function  IsEdit(Aobj:TRecord_;cdsTable: TZQuery):Boolean;//判断商品资料是否有修改
      procedure IsBarCodeSame(Aobj:TRecord_);//判断条码有没有重复
      procedure SetdbState(const Value: TDataSetState); override;
-     procedure EditPrice; //只能修改价格
+     procedure EditPrice(NotChangPrice: Boolean=False); //只能修改价格
      procedure WriteBarCode;  //写入条形码
      procedure WriteExtBarCode;  //写入附加条形码
      procedure WriteMemberPrice(GODS_ID: String);   //写入会员价
@@ -338,29 +338,40 @@ begin
   end;
 end;
 
+{
+ 2011.06.08 Modif：
+  
+
+}
 procedure TfrmGoodsInfo.Edit(code: string);
 var
   Tmp: TZQuery;
-  IsRelFlag: Boolean; //是否是供应链
+  NotChangePrice: Boolean; //是否是供应链
 begin
   Open(code);
   dbState := dsEdit;
   FPriceChange:=False;
   CheckTabGoodPriceVisible; //判断会员价格是否显示
-
-  if (trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0') and
-     (Inttostr(Global.TENANT_ID)+'0001'<>trim(Global.SHOP_ID)) then //自主经营 且 不是总店  只能修改本店的售价
+  //根据修改商品供应链ID:RELATION_ID;返回是否允许改价（CHANGE_PRICE）;
+  Tmp:=Global.GetZQueryFromName('CA_RELATIONS'); 
+  if Tmp.Locate('RELATION_ID',trim(cdsGoods.FieldByName('RELATION_ID').AsString),[]) then
   begin
-    EditPrice;
+    NotChangePrice:=(Tmp.FieldByName('CHANGE_PRICE').AsString='2');  {== 1:企业变价; 2:统一定价 ===}
+  end;
+
+  if trim(cdsGoods.FieldByName('RELATION_ID').AsString)='0' then //自主创建商品
+  begin
+    if Inttostr(Global.TENANT_ID)+'0001'<>trim(Global.SHOP_ID) then //自主经营 且 不是总店 只能修改本店的售价
+      EditPrice(NotChangePrice);
   end else
-  if trim(cdsGoods.FieldByName('RELATION_ID').AsString)<>'0' then
-    EditPrice;
+  begin //加盟经营商品
+    EditPrice(NotChangePrice);
+  end;
 
   InitRecord;
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
-//var rs: TZQuery;
 var
   SetCol: TColumnEh;
 begin
@@ -1311,7 +1322,7 @@ begin
     end;
 end;
 
-procedure TfrmGoodsInfo.EditPrice;
+procedure TfrmGoodsInfo.EditPrice(NotChangPrice: Boolean);
 var i:integer;
 begin
   for i := 0 to ComponentCount-1 do
@@ -1371,6 +1382,9 @@ begin
   //是总店才有权限修改:标准售价：
   //SetEditStyle(dsEdit,edtNEW_OUTPRICE.Style);
   //edtNEW_OUTPRICE.Properties.ReadOnly:=False;
+
+  //供应链企业统一定价则退出
+  if NotChangPrice then Exit;
 
   SetEditStyle(dsEdit,edtMY_OUTPRICE.Style);
   edtMY_OUTPRICE.Properties.ReadOnly:=False;

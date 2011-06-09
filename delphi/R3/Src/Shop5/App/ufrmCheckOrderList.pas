@@ -268,6 +268,13 @@ begin
     if cdsList.IsEmpty then Exit;
     OpenForm(cdsList.FieldbyName('PRINT_DATE').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
   end;
+  if CurOrder=nil then Raise Exception.Create('"盘点单"打开异常!');
+
+  if TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('14400001',5) then
+        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+    end;
   inherited;
 end;
 
@@ -279,6 +286,13 @@ begin
     if cdsList.IsEmpty then Exit;
     OpenForm(cdsList.FieldbyName('PRINT_DATE').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
   end;
+  if CurOrder=nil then Raise Exception.Create('"盘点单"打开异常!');
+
+  if TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('14400001',5) then
+        Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+    end;
   inherited;
   if (CurOrder<>nil) then
      begin

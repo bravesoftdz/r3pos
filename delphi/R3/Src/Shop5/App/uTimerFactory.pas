@@ -22,16 +22,17 @@ implementation
 constructor TTimerFactory.Create(AProc:TNotifyEvent;uTimeOut:int64);
 begin
   Proc := AProc;
-  TimeOut := uTimeOut;
   FreeOnTerminate := false;
   hEvent := CreateEvent(nil, True, False, nil);
   ResetEvent(hEvent);
+  TimeOut := uTimeOut;
   inherited Create(false);
 end;
 
 destructor TTimerFactory.Destroy;
 begin
   DoTerminate;
+  TimeOut := 1;
   SetEvent(hEvent);
   inherited;
   if hEvent<>0 then CloseHandle(hEvent);
@@ -54,6 +55,7 @@ end;
 procedure TTimerFactory.SetTimeOut(const Value: int64);
 begin
   FTimeOut := Value;
+  SetEvent(hEvent);
 end;
 
 end.

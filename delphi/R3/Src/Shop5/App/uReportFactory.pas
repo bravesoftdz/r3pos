@@ -4,9 +4,9 @@ interface
 uses
   Windows, Messages, DB, SysUtils, Variants, Classes, ZDataSet, DBGridEh;
 const
-  RF_DATA_SOURCE1='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
-  RF_DATA_SOURCE2='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
-  RF_DATA_SOURCE3='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
+  RF_DATA_SOURCE1='CLIENT_CODE=客户编码,ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
+  RF_DATA_SOURCE2='ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
+  RF_DATA_SOURCE3='ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
 type
 
 pRCondi=^TRCondi;
@@ -48,6 +48,8 @@ TRTemplate=record
   curname:string;
   curfield:string;
   idxflag:integer;
+  FieldIndex:integer;
+  FieldNIdx:integer;
   end;
 
 PRowR=^TRowR;
@@ -71,12 +73,15 @@ TReportFactory=class
     Fields:TStringList;
     procedure SetDataSet(const Value: TDataSet);
   protected
+    function IsDSIndex(sid:string):boolean;
+    function GetIndexFieldName(sid:string):integer;
     function CreateIndex(sid: string): TList;
     function Check(V:pRCondi):boolean;
     procedure Init;
     procedure InitCondi(RCondi:pRCondi);
     procedure Load(rid:string);
     function CheckIndex(ATree:array of PRTemplate;idx:integer):boolean;
+    procedure PrepareIndex;
     procedure PrepareHeader;
     procedure PrepareRows;
     procedure Prepare;
@@ -99,8 +104,21 @@ type
   TIdxNode=record
     id:string;
     title:string;
+    seqid:string;
     FieldName:string;
+    Condi:TRCondi;
     end;
+
+function IdxNodeCompare(Item1, Item2: Pointer): Integer;
+begin
+  if PIdxNode(Item1)^.seqid>PIdxNode(Item2)^.seqid then
+     result := 1
+  else
+  if PIdxNode(Item1)^.seqid<PIdxNode(Item2)^.seqid then
+     result := 2
+  else
+     result := 0;
+end;
 
 constructor TReportFactory.Create(sourid:string);
 begin
@@ -124,10 +142,15 @@ end;
 
 procedure TReportFactory.Init;
 var
-  i:integer;
+  i,j:integer;
 begin
   for i:=0 to TLate.Count -1 do
     begin
+      if PRTemplate(TLate[i])^.Data <> nil then
+         begin
+           for j:=0 to TList(PRTemplate(TLate[i])^.Data).Count -1 do dispose(TList(PRTemplate(TLate[i])^.Data)[j]);
+           TList(PRTemplate(TLate[i])^.Data).Free;
+         end;
       dispose(TLate[i]);
     end;
   TLate.Clear;
@@ -172,6 +195,12 @@ begin
         node^.sumFlag := 1 else
         node^.sumFlag := rs.FieldbyName('SUB_FLAG').AsInteger;
         node^.idxflag := rs.FieldbyName('INDEX_FLAG').AsInteger;
+        node^.FieldIndex := GetIndexFieldName(node^.INDEX_ID);
+        if DataSet.FindField(node^.INDEX_ID+'_TEXT')<>nil then
+           node^.FieldNIdx :=  DataSet.FindField(node^.INDEX_ID+'_TEXT').Index
+        else
+           node^.FieldNIdx := -1;
+        node^.Data := nil;
         TLate.Add(node);
         rs.next;
       end;
@@ -195,27 +224,35 @@ begin
         node^.FieldName := rs.FieldbyName('FIELD_NAME').AsString;
         node^.INDEX_ID := rs.FieldbyName('INDEX_ID').AsString;
         node^.idxflag := rs.FieldbyName('INDEX_FLAG').AsInteger;
+        node^.FieldIndex := GetIndexFieldName(node^.INDEX_ID);
+        if DataSet.FindField(node^.INDEX_ID+'_TEXT')<>nil then
+           node^.FieldNIdx :=  DataSet.FindField(node^.INDEX_ID+'_TEXT').Index
+        else
+           node^.FieldNIdx := -1;
+        node^.Data := nil;
         TLate.Add(node);
         rs.next;
       end;
   finally
     rs.free;
   end;
+  if TLate.Count >30 then Raise Exception.Create('报表表样太复杂，最多只能定义30个指标'); 
 end;
 
 procedure TReportFactory.Open(id:string;Grid:TDBGridEh);
 begin
 Grid.DataSource.DataSet.DisableControls;
 frmPrgBar.Show;
+frmPrgBar.Update;
 try
   frmPrgBar.WaitHint := '装载报表格式...';
-  frmPrgBar.Precent := 0;
+  frmPrgBar.Precent := 10;
   Load(id);
-  frmPrgBar.Precent := 2;
+  frmPrgBar.Precent := 15;
   Prepare;
   frmPrgBar.WaitHint := '准备显示表格';
   CreateHeader(Grid);
-  frmPrgBar.Precent := 50;
+  frmPrgBar.Precent := 60;
   frmPrgBar.WaitHint := '计算数据...';
   Calc;
   frmPrgBar.Precent := 75;
@@ -230,53 +267,62 @@ end;
 
 procedure TReportFactory.Prepare;
 begin
+  frmPrgBar.WaitHint := '准备动态指标...';
+  PrepareIndex;
+  frmPrgBar.Precent := 20;
   frmPrgBar.WaitHint := '准备表头行...';
   PrepareHeader;
-  frmPrgBar.Precent := 20;
+  frmPrgBar.Precent := 30;
   frmPrgBar.WaitHint := '准备数据行...';
   PrepareRows;
-  frmPrgBar.Precent := 30;
+  frmPrgBar.Precent := 40;
 end;
 function TReportFactory.CreateIndex(sid:string):TList;
+function CheckExists(id:string;vList:TList):boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=vList.Count -1 downto 0 do
+    begin
+      if PIdxNode(vList[i])^.id=id then
+         begin
+           result := true;
+           Exit;
+         end;
+    end;
+end;
 var
   rs:TZQuery;
   node:PIdxNode;
   id:string;
-  idx,ndx:integer;
+  idx,ndx,i:integer;
 begin
   result := TList.Create;
-  if (sid='DEPT_ID')
-     or
-     (sid='GUIDE_USER')
-     or
-     (sid='CLIENT_ID')
-     or
-     (sid='GODS_ID')
-     or
-     (sid='SHOP_ID')
-     or
-     (sid='CREGION_ID')
-     or
-     (sid='SREGION_ID')
-  then
+  if sid='24' then
      begin
-       id := '';
-       idx := DataSet.FindField(sid).Index;
-       ndx := DataSet.FindField(sid+'_TEXT').Index;
-       DataSet.First;
-       while not DataSet.Eof do
-         begin
-           if id<>DataSet.Fields[idx].AsString then
-              begin
-                new(node);
-                node^.id := DataSet.Fields[idx].AsString;
-                node^.title := DataSet.Fields[ndx].AsString;
-                node^.FieldName := sid;
-                result.add(node);
-                id := DataSet.Fields[idx].AsString;
-              end;
-           DataSet.Next;
-         end;
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select RELATION_ID,RELATION_NAME from CA_RELATION where COMM not in (''02'',''12'') and RELATION_ID in (select RELATION_ID from CA_RELATIONS where RELATI_ID='+inttostr(Global.TENANT_ID)+') order by RELATION_ID';
+         Factor.Open(rs);
+         rs.First;
+         while not rs.Eof do
+           begin
+             new(node);
+             node^.id := rs.FieldbyName('RELATION_ID').AsString;
+             node^.title := rs.FieldbyName('RELATION_NAME').AsString;
+             node^.FieldName := 'SORT_ID'+sid;
+             result.add(node);
+             rs.Next;
+           end;
+         new(node);
+         node^.id := '0';
+         node^.title := '自主经营';
+         node^.FieldName := 'SORT_ID'+sid;
+         result.add(node);
+       finally
+         rs.Free;
+       end;
      end
   else
      begin
@@ -305,6 +351,7 @@ var
   i,j,c:integer;
   Column:PColumnR;
   vList:TStringList;
+  Created:boolean;
 begin
   if ATree[idx].Data=nil then Exit;
   vList := TStringList.Create;
@@ -355,6 +402,7 @@ begin
      end
   else
   begin
+  Created := false;
   //展开列
   for i:=0 to TList(ATree[idx].Data).Count -1 do
     begin
@@ -367,6 +415,7 @@ begin
            vList.CommaText := ATree[idx].FieldName;
            for c:=0 to vList.Count-1 do
            begin
+             Created := true;
              new(Column);
              Column^.DataType := 1;
              Column^.SumType := ATree[idx].subtype;
@@ -392,7 +441,7 @@ begin
          DoHeader(idx+1);
     end;
   //添加小计
-  if ATree[idx].sumFlag=2 then
+  if (ATree[idx].sumFlag=2) and Created then
     begin
        vList.CommaText := ATree[idx].FieldName;
        for c:=0 to vList.Count-1 do
@@ -430,6 +479,7 @@ begin
   for i:=0 to 30 do
     begin
       if ATree[i]=nil then break;
+      if ATree[i].Data=nil then
       ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
     end;
   if ATree[0]=nil then exit;
@@ -505,6 +555,7 @@ begin
   for i:=0 to 30 do
     begin
       if ATree[i]=nil then break;
+      if ATree[i].Data=nil then
       ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
     end;
   if ATree[0]=nil then exit;
@@ -546,6 +597,8 @@ var
   Column:TColumnEh;
   tb:TZQuery;
 begin
+//  Grid.Visible := false;
+  try
   Grid.Columns.Clear;
   tb := TZQuery(Grid.DataSource.DataSet);
   tb.Close;
@@ -587,6 +640,9 @@ begin
       end;
     end;
   tb.CreateDataSet;
+  finally
+//    Grid.Visible := true;
+  end;
 end;
 
 procedure TReportFactory.Calc;
@@ -679,32 +735,475 @@ end;
 function TReportFactory.CheckIndex(ATree: array of PRTemplate;idx:integer): boolean;
 var
   i:integer;
+  r:boolean;
 begin
   result := true;
   if ATree[idx].idxflag <> 2 then Exit;
-  DataSet.Filtered := false;
-  for i:=0 to idx do
+  if idx=0 then Exit;
+  DataSet.first;
+  while not DataSet.eof do
+  begin
+    r := true;
+    for i:=0 to idx do
+      begin
+        if DataSet.Fields[ATree[i].FieldIndex].asString<>ATree[i].curid then r := false;
+        if not r then break;
+      end;
+    if r then Exit;
+    DataSet.Next;
+  end;
+  result := false;
+end;
+
+function TReportFactory.GetIndexFieldName(sid: string): integer;
+begin
+  result := -1;
+  try
+  if (sid='FIELD') or (sid='TOTAL') then Exit;
+  if (sid='DEPT_ID')
+     or
+     (sid='GUIDE_USER')
+     or
+     (sid='CLIENT_ID')
+     or
+     (sid='GODS_ID')
+     or
+     (sid='SHOP_ID')
+     or
+     (sid='CREGION_ID')
+     or
+     (sid='SREGION_ID')
+     or
+     (sid='CREGION_ID1')
+     or
+     (sid='SREGION_ID1')
+     or
+     (sid='CREGION_ID2')
+     or
+     (sid='SREGION_ID2')
+  then
+     result := DataSet.FindField(sid).Index
+  else
+     result := DataSet.FindField('SORT_ID'+sid).Index;
+  except
+     Raise Exception.Create('数据源不支持'+sid+'指标');
+  end;
+end;
+
+procedure TReportFactory.PrepareIndex;
+function CheckExists(id:string;vList:TList):boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=vList.Count -1 downto 0 do
     begin
-      if (ATree[i].INDEX_ID='DEPT_ID')
-         or
-         (ATree[i].INDEX_ID='GUIDE_USER')
-         or
-         (ATree[i].INDEX_ID='CLIENT_ID')
-         or
-         (ATree[i].INDEX_ID='GODS_ID')
-         or
-         (ATree[i].INDEX_ID='SHOP_ID')
-         or
-         (ATree[i].INDEX_ID='CREGION_ID')
-         or
-         (ATree[i].INDEX_ID='SREGION_ID')
-      then
-         DataSet.Filter := ATree[i].INDEX_ID+'='''+ATree[i].curid+''''
-      else
-         DataSet.Filter := 'SORT_ID'+ATree[i].INDEX_ID+'='''+ATree[i].curid+'''';
+      if PIdxNode(vList[i])^.id=id then
+         begin
+           result := true;
+           Exit;
+         end;
     end;
-  DataSet.Filtered := true;
-  result := not DataSet.IsEmpty;
+end;
+var
+  i:integer;
+  node:PIdxNode;
+  dept,users,region,sort:TZQuery;
+begin
+  dept := Global.GetZQueryFromName('CA_DEPT_INFO'); 
+  users := Global.GetZQueryFromName('CA_USERS');
+  region := Global.GetZQueryFromName('PUB_REGION_INFO');
+  sort := Global.GetZQueryFromName('PUB_GOODSSORT');
+  DataSet.First;
+  while not DataSet.Eof do
+    begin
+      for i:=0 to TLate.Count-1 do
+        begin
+          if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and (PRTemplate(TLate[i])^.Data=nil) then PRTemplate(TLate[i])^.Data := TList.Create;
+          if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+             begin
+                new(node);
+                node^.id := DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString;
+                node^.seqid := node^.id;
+                node^.FieldName := PRTemplate(TLate[i])^.INDEX_ID;
+                if PRTemplate(TLate[i])^.FieldNIdx>=0 then
+                   begin
+                     node^.title := DataSet.Fields[PRTemplate(TLate[i])^.FieldNIdx].AsString;
+                     if PRTemplate(TLate[i])^.INDEX_ID='CLIENT_ID' then
+                        node^.seqid := DataSet.FieldbyName('CLIENT_CODE').AsString
+                     else
+                     if PRTemplate(TLate[i])^.INDEX_ID='GODS_ID' then
+                        node^.seqid := DataSet.FieldbyName('GODS_CODE').AsString;
+                   end
+                else
+                begin
+                  if PRTemplate(TLate[i])^.INDEX_ID='DEPT_ID' then
+                     begin
+                       if dept.Locate('DEPT_ID',node^.id,[]) then
+                          node^.title := dept.FieldbyName('DEPT_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '@';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '未知名称';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='GUIDE_USER' then
+                     begin
+                       if users.Locate('USER_ID',node^.id,[]) then
+                          begin
+                            node^.title := users.FieldbyName('USER_NAME').AsString;
+                            node^.seqid := users.FieldbyName('ACCOUNT').AsString;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '@';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '未知名称';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID' then
+                     begin
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          node^.title := region.FieldbyName('CODE_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID' then
+                     begin
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          node^.title := region.FieldbyName('CODE_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID1' then
+                     begin
+                       node^.id := copy(node^.id,1,2)+'0000';
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                            DataSet.Post;
+                            node^.title := region.FieldbyName('CODE_NAME').AsString;
+                            if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID2' then
+                     begin
+                       node^.id := copy(node^.id,1,4)+'00';
+                       if not region.Locate('CODE_ID',node^.id,[]) then
+                          node^.id := copy(node^.id,1,2)+'0000';
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                            DataSet.Post;
+                            node^.title := region.FieldbyName('CODE_NAME').AsString;
+                            if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID1' then
+                     begin
+                       node^.id := copy(node^.id,1,2)+'0000';
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                            DataSet.Post;
+                            node^.title := region.FieldbyName('CODE_NAME').AsString;
+                            if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID2' then
+                     begin
+                       node^.id := copy(node^.id,1,4)+'00';
+                       if not region.Locate('CODE_ID',node^.id,[]) then
+                          node^.id := copy(node^.id,1,2)+'0000';
+                       if region.Locate('CODE_ID',node^.id,[]) then
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                            DataSet.Post;
+                            node^.title := region.FieldbyName('CODE_NAME').AsString;
+                            if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='21' then
+                     begin
+                       node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
+                       if sort.Locate('SORT_ID',node^.id,[]) then
+                          begin
+                            if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,4)]),[]) then
+                            begin
+                               node^.id := sort.FieldbyName('SORT_ID').AsString;
+                               node^.title := sort.FieldbyName('SORT_NAME').AsString;
+                               node^.seqid := sort.FieldbyName('RELATION_ID').asString +'#'+sort.FieldbyName('LEVEL_ID').asString;
+                               DataSet.Edit;
+                               DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                               DataSet.Post;
+                               if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            end
+                            else
+                            begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                            end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='22' then
+                     begin
+                       node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
+                       if sort.Locate('SORT_ID',node^.id,[]) then
+                          begin
+                            if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,8)]),[]) then
+                            begin
+                               node^.id := sort.FieldbyName('SORT_ID').AsString;
+                               node^.title := sort.FieldbyName('SORT_NAME').AsString;
+                               node^.seqid := sort.FieldbyName('RELATION_ID').asString +'#'+sort.FieldbyName('LEVEL_ID').asString;
+                               DataSet.Edit;
+                               DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                               DataSet.Post;
+                               if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            end
+                            else
+                            begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                            end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='23' then
+                     begin
+                       node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
+                       if sort.Locate('SORT_ID',node^.id,[]) then
+                          begin
+                            if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,12)]),[]) then
+                            begin
+                               node^.id := sort.FieldbyName('SORT_ID').AsString;
+                               node^.title := sort.FieldbyName('SORT_NAME').AsString;
+                               node^.seqid := sort.FieldbyName('RELATION_ID').asString +'#'+sort.FieldbyName('LEVEL_ID').asString;
+                               DataSet.Edit;
+                               DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
+                               DataSet.Post;
+                               if CheckExists(node^.id,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            end
+                            else
+                            begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                            end;
+                          end
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '无';
+                          end;
+                     end;
+                end;
+                TList(PRTemplate(TLate[i])^.Data).add(node);
+             end;
+        end;
+      DataSet.Next;
+    end;
+for i:=0 to TLate.Count-1 do
+  begin
+    if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) then
+       begin
+         TList(PRTemplate(TLate[i])^.Data).Sort(@IdxNodeCompare); 
+       end;
+  end;
+end;
+
+function TReportFactory.IsDSIndex(sid: string): boolean;
+begin
+  result :=
+     (sid='21')
+     or
+     (sid='22')
+     or
+     (sid='23')
+     or
+     (sid='DEPT_ID')
+     or
+     (sid='GUIDE_USER')
+     or
+     (sid='CLIENT_ID')
+     or
+     (sid='GODS_ID')
+     or
+     (sid='SHOP_ID')
+     or
+     (sid='CREGION_ID')
+     or
+     (sid='SREGION_ID')
+     or
+     (sid='CREGION_ID1')
+     or
+     (sid='SREGION_ID1')
+     or
+     (sid='CREGION_ID2')
+     or
+     (sid='SREGION_ID2');
 end;
 
 end.

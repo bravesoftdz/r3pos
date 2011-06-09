@@ -388,11 +388,14 @@ try
    // rio.Free;
   end;    
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'读取<企业资料>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'读取<企业资料>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'读取<企业资料>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'读取<企业资料>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -572,11 +575,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'认证<企业登录>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'认证<企业登录>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'认证<企业登录>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'认证<企业登录>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -717,11 +723,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'认证<企业注册>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'认证<企业注册>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'认证<企业注册>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'认证<企业注册>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -1441,11 +1450,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<供应关系>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<供应关系>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<供应关系>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<供应关系>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -1601,11 +1613,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<供应链>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<供应链>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<供应链>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<供应链>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -1760,11 +1775,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<企业资料>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<企业资料>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<企业资料>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<企业资料>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -1888,11 +1906,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商品分类>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商品分类>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -2086,11 +2107,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商品资料>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商品资料>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商品资料>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商品资料>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -2210,11 +2234,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商品单位>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商品单位>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商品单位>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商品单位>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -2447,11 +2474,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商品分类>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商品分类>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商品分类>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -2578,11 +2608,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商品条码>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商品条码>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商品条码>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商品条码>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 
@@ -2660,6 +2693,10 @@ try
   Node.text := inttostr(1);
   FindNode(doc,'header\pub').appendChild(Node);
 
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(GetSynTimeStamp('PUB_UNION_INFO','#'));
+  FindNode(doc,'header\pub').appendChild(Node);
+
   LogFile.AddLogFile(0,'开始下载<商盟资料>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
   Node := doc.createElement('pubUnionQueryReq');
@@ -2672,7 +2709,7 @@ try
   Node := doc.createElement('supTenantId');
   Node.text := GetParant;
   FindNode(doc,'body\pubUnionQueryReq').appendChild(Node);
-  
+
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   rio := CreateRio(120000);
@@ -2845,11 +2882,14 @@ try
     //rio.Free;
   end;
 except
-  if doc<>nil then
-     LogFile.AddLogFile(0,'下载<商盟资料>xml='+doc.xml)
-  else
-     LogFile.AddLogFile(0,'下载<商盟资料>xml=无');
-  Raise;
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<商盟资料>xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<商盟资料>xml=无;原因:'+E.Message);
+    Raise;
+  end;
 end;
 end;
 

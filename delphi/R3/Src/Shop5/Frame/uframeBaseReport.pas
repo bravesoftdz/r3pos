@@ -90,6 +90,7 @@ type
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
 
+    //得到市
     //返回字符的右侧子串
     function  RightStr(Str: string; vlen: integer): string;
     //返回指定控件名中数序号如: ('fndP3_D1','fndP'); 返回: 3;

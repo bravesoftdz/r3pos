@@ -123,7 +123,7 @@ begin
     'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST'+
     ') '+
     'select '+
-    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
+    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+0)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
     'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
@@ -459,7 +459,7 @@ begin
     'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST'+
     ') '+
     'select '+
-    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+b)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
+    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+0)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
     'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
@@ -715,7 +715,7 @@ begin
     'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST'+
     ') '+
     'select '+
-    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
+    '0 as TENANT_ID,A.SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+0)+' as CREA_DATE,A.GODS_ID,A.BATCH_NO,'+
     'B.NEW_INPRICE,B.NEW_OUTPRICE,'+
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+

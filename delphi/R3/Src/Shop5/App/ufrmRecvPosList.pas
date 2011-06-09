@@ -221,7 +221,7 @@ begin
   if cdsList.FieldByName('RECV_USER').AsString <> Global.UserID then
   begin
     if not ShopGlobal.GetChkRight('13300001',5) then
-      Raise Exception.Create('你没有修改"'+cdsList.FieldByName('RECV_USER_TEXT').AsString)+'"录入单据的权限!');
+      Raise Exception.Create('你没有修改"'+cdsList.FieldByName('RECV_USER_TEXT').AsString+'"录入单据的权限!');
   end;
 
   if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('此单已经审核,不能执行修改操作.');  
@@ -628,7 +628,7 @@ begin
    if cdsList.FieldByName('RECV_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('13300001',5) then
-        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('RECV_USER_TEXT').AsString)+'"录入单据的权限!');
+        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('RECV_USER_TEXT').AsString+'"录入单据的权限!');
     end;
 
    if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('此单已经审核,不能执行删除操作.');   

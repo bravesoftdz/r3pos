@@ -67,7 +67,7 @@ type
 implementation
 
 uses
-  ufrmCheckOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal,
+  ufrmCheckOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal,uDsUtil,
   ufrmCheckTask, ufrmCheckTablePrint;
 
  {$R *.dfm}
@@ -270,10 +270,10 @@ begin
   end;
   if CurOrder=nil then Raise Exception.Create('"盘点单"打开异常!');
 
-  if TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmCheckOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('14400001',5) then
-        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmCheckOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 end;
@@ -288,10 +288,10 @@ begin
   end;
   if CurOrder=nil then Raise Exception.Create('"盘点单"打开异常!');
 
-  if TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmCheckOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('14400001',5) then
-        Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmdbOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+        Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmCheckOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurOrder<>nil) then

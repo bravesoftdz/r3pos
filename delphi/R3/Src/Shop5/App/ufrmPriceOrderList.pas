@@ -52,7 +52,7 @@ type
   end;
 
 implementation
-uses ufrmPriceOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal;
+uses ufrmPriceOrder,uGlobal,uShopUtil,uDsUtil,uXDictFactory, uShopGlobal;
 {$R *.dfm}
 
 { TfrmPriceOrderList }

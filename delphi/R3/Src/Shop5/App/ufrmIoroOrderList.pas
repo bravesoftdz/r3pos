@@ -436,12 +436,12 @@ begin
     if IoroType = 1 then
       begin
         if not ShopGlobal.GetChkRight('21500001',5) then
-          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
       end
     else
       begin
         if not ShopGlobal.GetChkRight('21600001',5) then
-          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
       end;
   end;
   if IoroType = 1 then
@@ -489,12 +489,12 @@ begin
     if IoroType = 1 then
       begin
         if not ShopGlobal.GetChkRight('21500001',5) then
-          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
       end
     else
       begin
         if not ShopGlobal.GetChkRight('21600001',5) then
-          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
       end;
   end;
   if IoroType = 1 then

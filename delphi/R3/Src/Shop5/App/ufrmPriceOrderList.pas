@@ -220,6 +220,13 @@ begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('PROM_ID').AsString);
      end;
+  if CurOrder=nil then Raise Exception.Create('"促销单"打开异常!');
+
+  if TfrmPriceOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('12200001',5) then
+        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmPriceOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+    end;
   inherited;
 
 end;
@@ -232,6 +239,13 @@ begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('PROM_ID').AsString);
      end;
+  if CurOrder=nil then Raise Exception.Create('"促销单"打开异常!');
+
+  if TfrmPriceOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('12200001',5) then
+        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmPriceOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+    end;
   inherited;
   if (CurOrder<>nil) then
      begin

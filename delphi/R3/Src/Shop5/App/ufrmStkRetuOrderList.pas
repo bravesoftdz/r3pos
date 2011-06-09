@@ -301,7 +301,7 @@ begin
   if TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('11300001',5) then
-        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+        Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 
@@ -320,7 +320,7 @@ begin
   if TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('11300001',5) then
-        Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+        Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmStkRetuOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurOrder<>nil) then

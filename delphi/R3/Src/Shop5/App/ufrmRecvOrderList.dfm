@@ -17,6 +17,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 521
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -402,8 +404,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 483
+            Width = 882
+            Height = 494
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -412,7 +414,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -788,16 +790,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 862
-              Height = 348
+              Width = 870
+              Height = 359
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 346
+                Width = 868
+                Height = 357
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -1081,7 +1083,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
     Left = 176
     Top = 233
     ReportForm = {
-      1800000075190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      180000007C190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1284,7 +1286,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       00000200000000000000FEFEFF060000000A00205661726961626C6573000000
       000200736C0014006364735F436867426F64792E22534C30303030220002006A
       650014006364735F436867426F64792E224A4530303030220004006B68796800
-      000000040079687A68000000000200647A000000000000000000000000}
+      000000040079687A68000000000200647A000000000000000000000000FDFF01
+      00000000}
   end
   object cdsList: TZQuery
     FieldDefs = <>

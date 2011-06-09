@@ -431,6 +431,19 @@ begin
   inherited;
   if  (not cdsBrowser.Active) or (cdsBrowser.IsEmpty) then exit;
   if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改操作!');
+  if cdsBrowser.FieldByName('CREA_USER').AsString <> Global.UserID then
+  begin
+    if IoroType = 1 then
+      begin
+        if not ShopGlobal.GetChkRight('21500001',5) then
+          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+      end
+    else
+      begin
+        if not ShopGlobal.GetChkRight('21600001',5) then
+          Raise Exception.Create('你没有修改"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+      end;
+  end;
   if IoroType = 1 then
     if not ShopGlobal.GetChkRight('21500001',3) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
   else
@@ -471,6 +484,19 @@ begin
   inherited;
   if cdsBrowser.IsEmpty then Exit;
   if cdsBrowser.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行删除操作!');
+  if cdsBrowser.FieldByName('CREA_USER').AsString <> Global.UserID then
+  begin
+    if IoroType = 1 then
+      begin
+        if not ShopGlobal.GetChkRight('21500001',5) then
+          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+      end
+    else
+      begin
+        if not ShopGlobal.GetChkRight('21600001',5) then
+          Raise Exception.Create('你没有删除"'+cdsBrowser.FieldByName('CREA_USER_TEXT').AsString)+'"录入单据的权限!');
+      end;
+  end;
   if IoroType = 1 then
     if not ShopGlobal.GetChkRight('21500001',4) then Raise Exception.Create('你没有添加其他收入的权限,请和管理员联系.')
   else

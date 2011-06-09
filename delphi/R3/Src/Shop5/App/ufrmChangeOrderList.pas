@@ -302,10 +302,10 @@ begin
     begin
       if CodeId = '1' then
         if not ShopGlobal.GetChkRight('14300001',5) then
-          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       if CodeId = '2' then
         if not ShopGlobal.GetChkRight('14200001',5) then
-          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 
@@ -336,10 +336,10 @@ begin
     begin
       if CodeId = '1' then
         if not ShopGlobal.GetChkRight('14300001',5) then
-          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       if CodeId = '2' then
         if not ShopGlobal.GetChkRight('14200001',5) then
-          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"创建单据的权限!');
+          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmChangeOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurOrder<>nil) then

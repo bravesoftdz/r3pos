@@ -635,7 +635,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的门店代码...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
           end
         else
           Raise Exception.Create('门店不能为空!');
@@ -651,7 +651,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
             Result := True;
           end
         else
-          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的客户等级代码...');
+          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户等级代码...');
       end;
 
     //*******************地区*****************
@@ -666,7 +666,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的地区代码...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
           end
         else
           Dest.FieldByName('REGION_ID').AsString := '#';
@@ -684,7 +684,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的客户类别代码...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户类别代码...');
           end
         else
           begin
@@ -705,7 +705,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的结算方式代码...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
           end
         else
           Raise Exception.Create('结算方式不能为空!');
@@ -721,7 +721,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
             Result := True;
           end
         else
-          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的开户银行代码...');
+          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的开户银行代码...');
       end;
 
     //*******************发票类型*****************
@@ -734,7 +734,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
             Result := True;
           end
         else
-          Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的发票类型代码...');
+          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
       end;
 
     //客户编号
@@ -791,13 +791,6 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
               end;
-          end
-        else
-          begin
-            if Trim(Source.FieldByName('CLIENT_NAME').AsString) <> '' then
-              Dest.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CLIENT_NAME').AsString),3)
-            else
-              Raise Exception.Create('客户拼音码不能为空!');
           end;
       end;
   end;
@@ -816,6 +809,8 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
         CdsExcel.FieldByName('IC_STATUS').AsString := '0';
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        if CdsExcel.FieldByName('CLIENT_SPELL').AsString = '' then
+          CdsExcel.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CLIENT_NAME').AsString),3);
         CdsExcel.Post;
         CdsExcel.Next;
       end;

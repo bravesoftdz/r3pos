@@ -1142,13 +1142,13 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
         if Source.FieldByName(SFieldName).AsString <> '' then
           begin
             rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-            if rs.Locate('UNIT_ID',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
                 Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的计量单位...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的计量单位...');
           end
         else
           Raise Exception.Create('计量单位不能为空!');
@@ -1166,7 +1166,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的商品分类...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品分类...');
           end
         else
           Raise Exception.Create('商品分类不能为空!');
@@ -1184,7 +1184,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的颜色...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的颜色...');
           end;
       end;
 
@@ -1200,7 +1200,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到'+Source.FieldByName(SFieldName).AsString+'对应的尺码...');
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的尺码...');
           end;
       end;
 
@@ -1233,12 +1233,10 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
               Raise Exception.Create('条形码应在30个字符以内!')
             else
               begin
-                if (Source.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName('BARCODE1').AsString = Source.FieldByName('BARCODE2').AsString) then
+                if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Source.FieldByName('BARCODE2').AsString) then
                   raise Exception.Create('计量单位的条码不能和小包装条码一样!');
-                if (Source.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName('BARCODE1').AsString = Source.FieldByName('BARCODE3').AsString) then
+                if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
                   raise Exception.Create('计量单位的条码不能和大包装条码一样!');
-                if (Source.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName('BARCODE3').AsString = Source.FieldByName('BARCODE2').AsString) then
-                  raise Exception.Create('小包装条码不能和大包装条码一样!');
 
                 Dest.FieldbyName('BARCODE1').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
@@ -1259,12 +1257,10 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
               Raise Exception.Create('条形码应在30个字符以内!')
             else
               begin
-                if (Source.FieldByName('BARCODE1').AsString <> '') and (Source.FieldByName('BARCODE1').AsString = Source.FieldByName('BARCODE2').AsString) then
+                if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
                   raise Exception.Create('计量单位的条码不能和小包装条码一样!');
-                if (Source.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName('BARCODE2').AsString = Source.FieldByName('BARCODE3').AsString) then
+                if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
                   raise Exception.Create('小包装条码不能和大包装条码一样!');
-                if (Source.FieldByName('BARCODE1').AsString <> '') and (Source.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName('BARCODE3').AsString = Source.FieldByName('BARCODE1').AsString) then
-                  raise Exception.Create('计量单位的条码不能和大包装条码一样!');
 
                 Dest.FieldbyName('BARCODE2').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
@@ -1281,11 +1277,9 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
               Raise Exception.Create('条形码应在30个字符以内!')
             else
               begin
-                if (Source.FieldByName('BARCODE1').AsString <> '') and (Source.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName('BARCODE1').AsString = Source.FieldByName('BARCODE2').AsString) then
-                  raise Exception.Create('计量单位的条码不能和小包装条码一样!');
-                if (Source.FieldByName('BARCODE1').AsString <> '') and (Source.FieldByName('BARCODE1').AsString = Source.FieldByName('BARCODE3').AsString) then
+                if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
                   raise Exception.Create('计量单位的条码不能和大包装条码一样!');
-                if (Source.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName('BARCODE3').AsString = Source.FieldByName('BARCODE2').AsString) then
+                if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE2').AsString) then
                   raise Exception.Create('小包装条码不能和大包装条码一样!');
 
                 Dest.FieldbyName('BARCODE3').AsString := Source.FieldByName(SFieldName).AsString;
@@ -1323,16 +1317,6 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                 Dest.FieldbyName('GODS_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
               end;
-          end
-        else
-          begin
-            if Trim(Source.FieldByName('GODS_NAME').AsString) <> '' then
-              begin
-                Dest.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('GODS_NAME').AsString),3);
-                Result := True;
-              end
-            else
-              Raise Exception.Create('商品拼音码不能为空!');
           end;
       end;
   end;
@@ -1357,6 +1341,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       GodsId,Bar,Code,Name,Error_Info:String;
       SumBarcode,SumCode,SumName:Integer;
   begin
+    Result := False;
     DsGoods := TZQuery.Create(nil);
     DsBarcode := TZQuery.Create(nil);
     rs := Global.GetZQueryFromName('PUB_GOODSINFO');
@@ -1392,7 +1377,10 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           DsGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
           DsGoods.FieldByName('GODS_CODE').AsString := Code;
           DsGoods.FieldByName('GODS_NAME').AsString := Name;
-          DsGoods.FieldByName('GODS_SPELL').AsString := CdsExcel.FieldByName('GODS_SPELL').AsString;
+          if CdsExcel.FieldByName('GODS_SPELL').AsString <> '' then
+            DsGoods.FieldByName('GODS_SPELL').AsString := CdsExcel.FieldByName('GODS_SPELL').AsString
+          else
+            DsGoods.FieldByName('GODS_SPELL').AsString := fnString.GetWordSpell(Trim(Name),3);
           DsGoods.FieldByName('SORT_ID1').AsString := CdsExcel.FieldByName('SORT_ID1').AsString;
           DsGoods.FieldByName('SORT_ID7').AsString := CdsExcel.FieldByName('SORT_ID7').AsString;
           DsGoods.FieldByName('SORT_ID8').AsString := CdsExcel.FieldByName('SORT_ID8').AsString;
@@ -1400,30 +1388,37 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           DsGoods.FieldByName('BARCODE').AsString := Bar;
           DsGoods.FieldByName('UNIT_ID').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
           DsGoods.FieldByName('CALC_UNITS').AsString := CdsExcel.FieldByName('CALC_UNITS').AsString;
-          WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('CALC_UNITS').AsString,CdsExcel.FieldByName('BARCODE1').AsString,'0');
+          WriteToBarcode(DsBarcode,GodsId,CdsExcel.FieldByName('CALC_UNITS').AsString,CdsExcel.FieldByName('BARCODE1').AsString,'0');
 
           if CdsExcel.FieldByName('BARCODE2').AsString <> '' then
             begin
               DsGoods.FieldByName('SMALL_UNITS').AsString := CdsExcel.FieldByName('SMALL_UNITS').AsString;
               DsGoods.FieldByName('SMALLTO_CALC').AsString := CdsExcel.FieldByName('SMALLTO_CALC').AsString;
-              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('SMALL_UNITS').AsString,CdsExcel.FieldByName('BARCODE2').AsString,'1');
+              WriteToBarcode(DsBarcode,GodsId,CdsExcel.FieldByName('SMALL_UNITS').AsString,CdsExcel.FieldByName('BARCODE2').AsString,'1');
             end;
 
           if CdsExcel.FieldByName('BARCODE3').AsString <> '' then
             begin
               DsGoods.FieldByName('BIG_UNITS').AsString := CdsExcel.FieldByName('BIG_UNITS').AsString;
               DsGoods.FieldByName('BIGTO_CALC').AsString := CdsExcel.FieldByName('BIGTO_CALC').AsString;
-              WriteToBarcode(@DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString,'2');
+              WriteToBarcode(DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString,'2');
             end;
 
           DsGoods.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('NEW_INPRICE').AsString;
           DsGoods.FieldByName('RTL_OUTPRICE').AsString := CdsExcel.FieldByName('NEW_OUTPRICE').AsString;
           DsGoods.FieldByName('NEW_LOWPRICE').AsString := CdsExcel.FieldByName('NEW_LOWPRICE').AsString;
-
-
           DsGoods.FieldByName('NEW_OUTPRICE').AsString := CdsExcel.FieldByName('MY_OUTPRICE').AsString;
           DsGoods.FieldByName('NEW_OUTPRICE1').AsString := CdsExcel.FieldByName('MY_OUTPRICE1').AsString;
           DsGoods.FieldByName('NEW_OUTPRICE2').AsString := CdsExcel.FieldByName('MY_OUTPRICE2').AsString;
+          DsGoods.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
+
+          DsGoods.FieldByName('USING_PRICE').AsInteger := 1;
+          DsGoods.FieldByName('HAS_INTEGRAL').AsInteger := 1;
+          DsGoods.FieldByName('USING_BATCH_NO').AsInteger := 2;
+
+          DsGoods.FieldByName('USING_BARTER').AsInteger := 1;
+          DsGoods.FieldByName('USING_LOCUS_NO').AsInteger := 2;
+          DsGoods.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
 
           DsGoods.Post;
           CdsExcel.Next;
@@ -1438,7 +1433,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           begin
             if (rs.FieldByName('VALUE').AsString='') or (rs.FieldByName('VALUE').AsString='1') then
               begin
-                Error_Info := '在导入数据中,';
+                Error_Info := '在导入数据中:'+#13#10;
 
                 if SumBarcode > 0 then
                   Error_Info := Error_Info + '条形码相同有"'+IntToStr(SumBarcode)+'"条;'+#13#10;
@@ -1448,7 +1443,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   Error_Info := Error_Info + '商品名称相同有"'+IntToStr(SumName)+'"条;'+#13#10;
                 Error_Info := Error_Info + '是否导入！';
 
-                if MessageBox(Handle,pchar(Error_Info),pchar('提示信息..'),MB_YESNO+MB_ICONINFORMATION) <> 6 then
+                if MessageBox(Application.Handle,Pchar(Error_Info),'提示信息..',MB_YESNO+MB_ICONINFORMATION) <> 6 then
                   begin
                     Exit;
                   end;
@@ -1468,7 +1463,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
       DsGoods.Free;
       DsBarcode.Free;
     end;
-
+    Result := True;
   end;
 
   function FindColumn(CdsCol:TDataSet):Boolean;
@@ -1509,7 +1504,6 @@ var FieldsString,FormatString:String;
     rs:TZQuery;
 begin
   inherited;
-  Params := TftParamList.Create(nil);
   rs := TZQuery.Create(nil);
   try
     with rs.FieldDefs do
@@ -1520,22 +1514,22 @@ begin
         Add('GODS_SPELL',ftString,50,False);
         Add('CALC_UNITS',ftString,36,False);
         Add('SORT_ID1',ftString,36,False);
-        Add('NEW_OUTPRICE',ftInteger,18,False);
-        Add('NEW_INPRICE',ftInteger,18,False);
-        Add('NEW_LOWPRICE',ftInteger,18,False);
-        Add('MY_OUTPRICE',ftInteger,18,False);
+        Add('NEW_OUTPRICE',ftInteger,0,False);
+        Add('NEW_INPRICE',ftInteger,0,False);
+        Add('NEW_LOWPRICE',ftInteger,0,False);
+        Add('MY_OUTPRICE',ftInteger,0,False);
         Add('SORT_ID7',ftString,36,False);
         Add('SORT_ID8',ftString,36,False);
         Add('SMALL_UNITS',ftString,36,False);
-        Add('SMALLTO_CALC',ftInteger,18,False);
+        Add('SMALLTO_CALC',ftInteger,0,False);
         Add('BARCODE2',ftString,30,False);
-        Add('MY_OUTPRICE1',ftInteger,18,False);
+        Add('MY_OUTPRICE1',ftInteger,0,False);
         Add('BIG_UNITS',ftString,36,False);
-        Add('BIGTO_CALC',ftInteger,18,False);
+        Add('BIGTO_CALC',ftInteger,0,False);
         Add('BARCODE3',ftString,30,False);
-        Add('MY_OUTPRICE2',ftInteger,18,False);
+        Add('MY_OUTPRICE2',ftInteger,0,False);
       end;
-
+    rs.CreateDataSet;
     FieldsString :=
     'BARCODE1=条形码,GODS_CODE=货号,GODS_NAME=商品名称,GODS_SPELL=拼音码,CALC_UNITS=计量单位,SORT_ID1=商品分类,NEW_OUTPRICE=标准售价,'+
     'NEW_INPRICE=最新进价,NEW_LOWPRICE=最低售价,MY_OUTPRICE=本店售价,SORT_ID7=颜色组,SORT_ID8=尺码组,SMALL_UNITS=小包装单位,SMALLTO_CALC=小包装换算系数,'+
@@ -1548,7 +1542,6 @@ begin
     TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
 
   finally
-    Params.Free;
     rs.Free;
   end;
 end;

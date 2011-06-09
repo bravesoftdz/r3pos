@@ -1110,13 +1110,6 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                 Dest.FieldbyName('CUST_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                 Result := True;
               end;
-          end
-        else
-          begin
-            if Trim(Source.FieldByName('CUST_NAME').AsString) <> '' then
-              Dest.FieldByName('CUST_SPELL').AsString := fnString.GetWordSpell(Trim(Source.FieldByName('CUST_NAME').AsString),3)
-            else
-              Raise Exception.Create('会员拼音码不能为空!');
           end;
       end;
   end;
@@ -1135,6 +1128,8 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
         CdsExcel.FieldByName('IC_STATUS').AsString := '0';
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        if CdsExcel.FieldByName('CUST_SPELL').AsString = '' then
+          CdsExcel.FieldByName('CUST_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CUST_NAME').AsString),3);
         CdsExcel.Post;
         CdsExcel.Next;
       end;

@@ -75,6 +75,7 @@ begin
     ':NEW_INPRICE,:NEW_OUTPRICE,:NEW_LOWPRICE,:USING_PRICE,:HAS_INTEGRAL,:USING_BATCH_NO,:USING_BARTER,:USING_LOCUS_NO,:BARTER_INTEGRAL,:COMM_ID,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add(Str);
   str:='update PUB_GOODS_RELATION set '+
+       ' TENANT_ID=:TENANT_ID,'+
        ' RELATION_ID=:RELATION_ID,'+
        ' GODS_ID=:GODS_ID,'+
        ' SECOND_ID=:SECOND_ID,'+
@@ -112,7 +113,7 @@ begin
        ' BARTER_INTEGRAL=:BARTER_INTEGRAL,'+
        ' COMM_ID=:COMM_ID,'+
        ' COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
-       ' where ROWS_ID=:OLD_ROWS_ID and TENANT_ID=:OLD_TENANT_ID ';
+       ' where ROWS_ID=:OLD_ROWS_ID and TENANT_ID=:OLD_TENANT_ID and RELATION_ID=:OLD_RELATION_ID and GODS_ID=:OLD_GODS_ID ';
   UpdateSQL.Add(Str);
 end;
 

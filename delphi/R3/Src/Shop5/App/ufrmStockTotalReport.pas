@@ -171,8 +171,12 @@ begin
   frmPrgBar.Update;
   frmPrgBar.WaitHint := '准备数据源...';
   frmPrgBar.Precent := 0;
-  Factor.Open(TZQuery(Factory.DataSet));
-  Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
+  try
+    Factor.Open(TZQuery(Factory.DataSet));
+    Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
+  finally
+    frmPrgBar.Close;
+  end;
 
 end;
 

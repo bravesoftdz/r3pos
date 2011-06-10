@@ -35,6 +35,8 @@ type
     fndP1_SHOP_VALUE: TzrComboBoxList;
     fndP1_SHOP_TYPE: TcxComboBox;
     fndP1_ReckType: TcxComboBox;
+    Label4: TLabel;
+    fndP1_STOR_AMT: TcxComboBox;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -129,6 +131,7 @@ var
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
+  fndP1_STOR_AMT.ItemIndex := 0;
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   for i:=0 to ComponentCount-1 do
   begin
@@ -183,8 +186,12 @@ begin
   frmPrgBar.Update;
   frmPrgBar.WaitHint := '准备数据源...';
   frmPrgBar.Precent := 0;
-  Factor.Open(TZQuery(Factory.DataSet));
-  Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
+  try
+    Factor.Open(TZQuery(Factory.DataSet));
+    Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
+  finally
+    frmPrgBar.Close;
+  end;
 
 end;
 
@@ -238,6 +245,20 @@ begin
   //门店条件
   if (fndP1_SHOP_ID.AsString<>'') then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+  if fndP1_ReckType.ItemIndex=0 then
+  case fndP1_STOR_AMT.ItemIndex of
+  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
+  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
+  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
+  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+  end
+  else
+  case fndP1_STOR_AMT.ItemIndex of
+  1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
+  2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
+  3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
+  4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+  end;
 
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then

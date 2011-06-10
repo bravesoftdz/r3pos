@@ -598,9 +598,9 @@ var
   Column:TColumnEh;
   tb:TZQuery;
 begin
-//  Grid.Visible := false;
-  try
   Grid.Columns.Clear;
+  Grid.Columns.BeginUpdate;
+  try
   tb := TZQuery(Grid.DataSource.DataSet);
   tb.Close;
   tb.Fields.Clear;
@@ -642,7 +642,7 @@ begin
     end;
   tb.CreateDataSet;
   finally
-//    Grid.Visible := true;
+    Grid.Columns.EndUpdate;
   end;
 end;
 
@@ -736,19 +736,18 @@ end;
 function TReportFactory.CheckIndex(ATree: array of PRTemplate;idx,CurIdx:integer): boolean;
 var
   i,Index:integer;
-  r:boolean;
   IdxNode:PIdxNode;
 begin
   result := true;
   if ATree[idx].idxflag <> 2 then Exit;
   if idx=0 then Exit;
+  result := false;
   IdxNode := PIdxNode(TList(ATree[idx].Data)[CurIdx]);
   for i:=0 to idx do
     begin
-      r := not IdxNode^.Relation[ATree[i].idx].Find(ATree[i].curid,Index);
-      if not r then break;
+      result := (IdxNode^.Relation[ATree[i].idx]<>nil) and IdxNode^.Relation[ATree[i].idx].Find(ATree[i].curid,Index);
+      if result then break;
     end;
-  result := false;
 end;
 
 function TReportFactory.GetIndexFieldName(sid: string): integer;

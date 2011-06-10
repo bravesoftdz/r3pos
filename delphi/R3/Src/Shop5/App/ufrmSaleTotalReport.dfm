@@ -1,31 +1,31 @@
 inherited frmSaleTotalReport: TfrmSaleTotalReport
-  Left = -8
-  Top = -8
-  Width = 1296
-  Height = 776
+  Left = 1
+  Top = 1
+  Width = 958
+  Height = 558
   Caption = #38144#21806#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1280
-    Height = 702
+    Width = 942
+    Height = 484
     inherited RzPanel2: TRzPanel
-      Width = 1270
-      Height = 692
+      Width = 932
+      Height = 474
       inherited RzPage: TRzPageControl
-        Width = 1065
-        Height = 686
+        Width = 727
+        Height = 468
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 1063
-            Height = 659
+            Width = 725
+            Height = 441
             inherited Panel4: TPanel
-              Width = 1053
-              Height = 649
+              Width = 715
+              Height = 431
               inherited w1: TRzPanel
-                Width = 1053
+                Width = 715
                 Height = 121
                 object Label3: TLabel
                   Left = 279
@@ -539,11 +539,11 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 121
-                Width = 1053
-                Height = 528
+                Width = 715
+                Height = 310
                 inherited DBGridEh1: TDBGridEh
-                  Width = 1049
-                  Height = 524
+                  Width = 711
+                  Height = 306
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -552,15 +552,15 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1068
-        Height = 686
+        Left = 730
+        Height = 468
         Visible = False
         inherited Panel2: TPanel
-          Height = 662
+          Height = 444
           inherited Panel5: TPanel
-            Height = 547
+            Height = 329
             inherited rzShowColumns: TRzCheckList
-              Height = 543
+              Height = 325
             end
           end
         end
@@ -568,15 +568,15 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1280
+    Width = 942
     inherited Image1: TImage
-      Width = 906
+      Width = 568
     end
     inherited Image3: TImage
-      Width = 906
+      Width = 568
     end
     inherited Image14: TImage
-      Left = 1260
+      Left = 922
     end
   end
   inherited actList: TActionList

@@ -15,8 +15,10 @@ inherited frmStorageDayReport: TfrmStorageDayReport
       inherited RzPage: TRzPageControl
         Width = 852
         Height = 532
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1170,6 +1172,19 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
+                object Label4: TLabel
+                  Left = 288
+                  Top = 34
+                  Width = 48
+                  Height = 12
+                  Caption = #24211#23384#25968#37327
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
                 object P4_D1: TcxDateEdit
                   Left = 154
                   Top = 10
@@ -1392,6 +1407,22 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                     #24403#21069#24211#23384
                     #26085#32467#24211#23384)
                   TabOrder = 9
+                end
+                object fndP4_STOR_AMT: TcxComboBox
+                  Left = 344
+                  Top = 30
+                  Width = 121
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  ParentFont = False
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #20840#37096
+                    #19981#20026#38646
+                    #22823#20110#38646
+                    #31561#20110#38646
+                    #23567#20110#38646)
+                  TabOrder = 10
                 end
               end
               object RzPanel15: TRzPanel

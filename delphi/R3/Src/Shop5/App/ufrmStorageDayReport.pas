@@ -96,6 +96,8 @@ type
     fndP3_ReckType: TcxComboBox;
     fndP2_ReckType: TcxComboBox;
     fndP1_ReckType: TcxComboBox;
+    Label4: TLabel;
+    fndP4_STOR_AMT: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -167,6 +169,7 @@ var
 begin
   inherited;
   IsOnDblClick:=False;
+  fndP4_STOR_AMT.ItemIndex := 0;
   TDbGridEhSort.InitForm(self,false);
   for i:=0 to ComponentCount-1 do
   begin
@@ -627,6 +630,20 @@ begin
   if (fndP4_SHOP_ID.AsString<>'') then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
 
+  if fndP4_ReckType.ItemIndex=0 then
+  case fndP4_STOR_AMT.ItemIndex of
+  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
+  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
+  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
+  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+  end
+  else
+  case fndP4_STOR_AMT.ItemIndex of
+  1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
+  2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
+  3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
+  4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+  end;
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin

@@ -1,8 +1,8 @@
 inherited frameBaseReport: TframeBaseReport
-  Left = 196
-  Top = 107
+  Left = 197
+  Top = 0
   Width = 798
-  Height = 568
+  Height = 560
   Caption = #25253#34920#22522#31867
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,25 +11,25 @@ inherited frameBaseReport: TframeBaseReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 782
-    Height = 494
+    Height = 486
     inherited RzPanel2: TRzPanel
       Width = 772
-      Height = 484
+      Height = 476
       inherited RzPage: TRzPageControl
         Width = 567
-        Height = 478
+        Height = 470
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
             Width = 565
-            Height = 451
+            Height = 443
             BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
               Width = 555
-              Height = 441
+              Height = 433
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -49,7 +49,7 @@ inherited frameBaseReport: TframeBaseReport
                 Left = 0
                 Top = 81
                 Width = 555
-                Height = 360
+                Height = 352
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -58,7 +58,7 @@ inherited frameBaseReport: TframeBaseReport
                   Left = 2
                   Top = 2
                   Width = 551
-                  Height = 356
+                  Height = 348
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -110,7 +110,7 @@ inherited frameBaseReport: TframeBaseReport
         Left = 570
         Top = 3
         Width = 199
-        Height = 478
+        Height = 470
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -118,7 +118,7 @@ inherited frameBaseReport: TframeBaseReport
           Left = 0
           Top = 0
           Width = 199
-          Height = 445
+          Height = 437
           Align = alTop
           Anchors = [akLeft, akTop, akRight, akBottom]
           BevelInner = bvLowered
@@ -126,7 +126,7 @@ inherited frameBaseReport: TframeBaseReport
           TabOrder = 0
           DesignSize = (
             195
-            441)
+            433)
           object Image5: TImage
             Left = 2
             Top = 84
@@ -449,7 +449,7 @@ inherited frameBaseReport: TframeBaseReport
             Left = 2
             Top = 109
             Width = 191
-            Height = 330
+            Height = 322
             Align = alClient
             BevelOuter = bvNone
             BorderWidth = 2
@@ -459,7 +459,7 @@ inherited frameBaseReport: TframeBaseReport
               Left = 2
               Top = 2
               Width = 187
-              Height = 326
+              Height = 318
               OnChange = rzShowColumnsChange
               Align = alClient
               FrameVisible = True

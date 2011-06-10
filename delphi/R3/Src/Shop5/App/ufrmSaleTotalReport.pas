@@ -76,7 +76,7 @@ type
   end;
 implementation
 uses ufrmDefineReport,ufnUtil,uShopUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
-  uShopGlobal,uIdLogFile, ufrmPrgBar;
+  uShopGlobal, ufrmPrgBar;
 {$R *.dfm}
 
 procedure TfrmSaleTotalReport.btnNewClick(Sender: TObject);

@@ -231,7 +231,9 @@ uses
   ObjDefineReport in 'Obj\ObjDefineReport.pas',
   ufrmStockTotalReport in 'App\ufrmStockTotalReport.pas' {frmStockTotalReport},
   ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
-  ufrmPrgBar in '..\..\Basic\ufrmPrgBar.pas' {frmPrgBar};
+  ufrmPrgBar in '..\..\Basic\ufrmPrgBar.pas' {frmPrgBar},
+  objHandSetRelation in 'Obj\objHandSetRelation.pas',
+  ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet};
 
 {$R *.res}
 var

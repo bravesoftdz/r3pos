@@ -188,45 +188,22 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select J.GODS_ID as GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NA' +
-        'ME,J.UNIT_ID as UNIT_ID,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO' +
-        '_CALC,BIGTO_CALC,'
-      
-        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE else C' +
-        '.NEW_INPRICE end as NEW_INPRICE,'
-      
-        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.SMAL' +
-        'LTO_CALC else C.NEW_INPRICE1 end as NEW_INPRICE1,'
-      
-        '       case when C.NEW_INPRICE is null then J.NEW_INPRICE*J.BIGT' +
-        'O_CALC else C.NEW_INPRICE2 end as NEW_INPRICE2,'
+        'select  GODS_ID,GODS_CODE,BARCODE,GODS_SPELL,GODS_NAME,UNIT_ID,C' +
+        'ALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,'
+      '       NEW_INPRICE,'
+      '       NEW_INPRICE1,'
+      '       NEW_INPRICE2,'
       '       NEW_OUTPRICE,'
       '       NEW_OUTPRICE1,'
       '       NEW_OUTPRICE2,'
       '       NEW_LOWPRICE,'
       
         '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,USING_BATC' +
-        'H_NO,USING_LOCUS_NO,j.RELATION_ID as RELATION_ID'
-      'from ('
+        'H_NO,USING_LOCUS_NO,RELATION_ID'
       
-        'select * from VIW_GOODSPRICE where POLICY_TYPE=2 and SHOP_ID=:SH' +
-        'OP_ID and TENANT_ID=:TENANT_ID'
-      'union all'
-      'select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '
-      
-        'where B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=' +
-        'B.GODS_ID and B.SHOP_ID=:SHOP_ID and A.SHOP_ID=:SHOP_ID_ROOT and' +
-        ' A.TENANT_ID=:TENANT_ID'
-      
-        ') J left join PUB_GOODSINFOEXT C on J.GODS_ID=C.GODS_ID and J.TE' +
-        'NANT_ID=C.TENANT_ID'
-      'where J.COMM not in ('#39'02'#39','#39'12'#39') order by J.GODS_CODE')
+        'from VIW_GOODSPRICEEXT where TENANT_ID=:TENANT_ID and SHOP_ID=:S' +
+        'HOP_ID and COMM not in ('#39'02'#39','#39'12'#39') order by GODS_CODE')
     Params = <
-      item
-        DataType = ftUnknown
-        Name = 'SHOP_ID'
-        ParamType = ptUnknown
-      end
       item
         DataType = ftUnknown
         Name = 'TENANT_ID'
@@ -234,7 +211,7 @@ inherited ShopGlobal: TShopGlobal
       end
       item
         DataType = ftUnknown
-        Name = 'SHOP_ID_ROOT'
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
     IndexFieldNames = 'GODS_ID Asc'
@@ -243,17 +220,12 @@ inherited ShopGlobal: TShopGlobal
     ParamData = <
       item
         DataType = ftUnknown
-        Name = 'SHOP_ID'
-        ParamType = ptUnknown
-      end
-      item
-        DataType = ftUnknown
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end
       item
         DataType = ftUnknown
-        Name = 'SHOP_ID_ROOT'
+        Name = 'SHOP_ID'
         ParamType = ptUnknown
       end>
   end

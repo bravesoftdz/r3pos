@@ -1514,20 +1514,20 @@ begin
         Add('GODS_SPELL',ftString,50,False);
         Add('CALC_UNITS',ftString,36,False);
         Add('SORT_ID1',ftString,36,False);
-        Add('NEW_OUTPRICE',ftInteger,0,False);
-        Add('NEW_INPRICE',ftInteger,0,False);
-        Add('NEW_LOWPRICE',ftInteger,0,False);
-        Add('MY_OUTPRICE',ftInteger,0,False);
+        Add('NEW_OUTPRICE',ftFloat,0,False);
+        Add('NEW_INPRICE',ftFloat,0,False);
+        Add('NEW_LOWPRICE',ftFloat,0,False);
+        Add('MY_OUTPRICE',ftFloat,0,False);
         Add('SORT_ID7',ftString,36,False);
         Add('SORT_ID8',ftString,36,False);
         Add('SMALL_UNITS',ftString,36,False);
-        Add('SMALLTO_CALC',ftInteger,0,False);
+        Add('SMALLTO_CALC',ftFloat,0,False);
         Add('BARCODE2',ftString,30,False);
-        Add('MY_OUTPRICE1',ftInteger,0,False);
+        Add('MY_OUTPRICE1',ftFloat,0,False);
         Add('BIG_UNITS',ftString,36,False);
-        Add('BIGTO_CALC',ftInteger,0,False);
+        Add('BIGTO_CALC',ftFloat,0,False);
         Add('BARCODE3',ftString,30,False);
-        Add('MY_OUTPRICE2',ftInteger,0,False);
+        Add('MY_OUTPRICE2',ftFloat,0,False);
       end;
     rs.CreateDataSet;
     FieldsString :=

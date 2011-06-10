@@ -1056,9 +1056,12 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select RELATION_ID,CHANGE_PRICE,SINGLE_LIMIT,SALE_LIMIT,USING_MO' +
-        'DULE from CA_RELATIONS where RELATI_ID=:TENANT_ID order by RELAT' +
-        'ION_ID')
+        'select A.RELATION_ID as RELATION_ID ,CHANGE_PRICE,SINGLE_LIMIT,S' +
+        'ALE_LIMIT,USING_MODULE,RELATION_NAME from CA_RELATIONS A,CA_RELA' +
+        'TION B  '
+      
+        'where A.RELATION_ID=B.RELATION_ID and A.RELATI_ID=:TENANT_ID ord' +
+        'er by A.RELATION_ID')
     Params = <
       item
         DataType = ftUnknown

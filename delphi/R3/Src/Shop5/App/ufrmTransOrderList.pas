@@ -294,6 +294,11 @@ begin
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
   if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能删除操作!');
   if not ShopGlobal.GetChkRight('21700001',4) then Raise Exception.Create('你没有删除存取单的权限,请和管理员联系.');
+  if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('21700001',5) then
+        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
+    end;
   if MessageBox(Self.Handle,pchar('是否要删除当前存取款单'),pchar(Caption),MB_YESNO+MB_DEFBUTTON1) = 6 then
     begin
       try
@@ -312,6 +317,11 @@ begin
   inherited;
   if (not cdsList.Active) and cdsList.IsEmpty then Exit;
   if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('审核状态下,不能进行修改操作!');
+  if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
+    begin
+      if not ShopGlobal.GetChkRight('21700001',5) then
+        Raise Exception.Create('你没有修改"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"录入单据的权限!');
+    end;
   if not ShopGlobal.GetChkRight('21700001',3) then Raise Exception.Create('你没有编辑存取单的权限,请和管理员联系.');
   with TfrmTransOrder.Create(nil) do
     begin

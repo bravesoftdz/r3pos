@@ -69,7 +69,7 @@ type
   end;
 
 implementation
-uses ufrmChangeOrder,ufrmFastReport,uFnUtil,uGlobal,uShopUtil,uXDictFactory,
+uses ufrmChangeOrder,ufrmFastReport,uFnUtil,uGlobal,uDsUtil,uShopUtil,uXDictFactory,
   uShopGlobal;
 {$R *.dfm}
 

@@ -37,6 +37,7 @@ TColumnR=record
 
 PRTemplate=^TRTemplate;
 TRTemplate=record
+  idx:integer;
   //0 字符型 1 数据值
   row,col,coltype:integer;
   FieldName:string;
@@ -80,7 +81,7 @@ TReportFactory=class
     procedure Init;
     procedure InitCondi(RCondi:pRCondi);
     procedure Load(rid:string);
-    function CheckIndex(ATree:array of PRTemplate;idx:integer):boolean;
+    function CheckIndex(ATree:array of PRTemplate;idx,CurIdx:integer):boolean;
     procedure PrepareIndex;
     procedure PrepareHeader;
     procedure PrepareRows;
@@ -106,7 +107,7 @@ type
     title:string;
     seqid:string;
     FieldName:string;
-    Condi:TRCondi;
+    Relation:array [0..30] of TStringList;
     end;
 
 function IdxNodeCompare(Item1, Item2: Pointer): Integer;
@@ -142,13 +143,20 @@ end;
 
 procedure TReportFactory.Init;
 var
-  i,j:integer;
+  i,j,c:integer;
 begin
   for i:=0 to TLate.Count -1 do
     begin
       if PRTemplate(TLate[i])^.Data <> nil then
          begin
-           for j:=0 to TList(PRTemplate(TLate[i])^.Data).Count -1 do dispose(TList(PRTemplate(TLate[i])^.Data)[j]);
+           for j:=0 to TList(PRTemplate(TLate[i])^.Data).Count -1 do
+               begin
+                 for c:=0 to 30 do
+                   begin
+                     if PIdxNode(TList(PRTemplate(TLate[i])^.Data)[j])^.Relation[c]<>nil then PIdxNode(TList(PRTemplate(TLate[i])^.Data)[j])^.Relation[c].Free;
+                   end;
+                 dispose(TList(PRTemplate(TLate[i])^.Data)[j]);
+               end;
            TList(PRTemplate(TLate[i])^.Data).Free;
          end;
       dispose(TLate[i]);
@@ -201,6 +209,7 @@ begin
         else
            node^.FieldNIdx := -1;
         node^.Data := nil;
+        node^.idx := TLate.Count;
         TLate.Add(node);
         rs.next;
       end;
@@ -230,6 +239,7 @@ begin
         else
            node^.FieldNIdx := -1;
         node^.Data := nil;
+        node^.idx := TLate.Count;
         TLate.Add(node);
         rs.next;
       end;
@@ -312,6 +322,7 @@ begin
              node^.id := rs.FieldbyName('RELATION_ID').AsString;
              node^.title := rs.FieldbyName('RELATION_NAME').AsString;
              node^.FieldName := 'SORT_ID'+sid;
+             for i:=0 to 30 do node^.Relation[i] := nil;
              result.add(node);
              rs.Next;
            end;
@@ -319,6 +330,7 @@ begin
          node^.id := '0';
          node^.title := '自主经营';
          node^.FieldName := 'SORT_ID'+sid;
+         for i:=0 to 30 do node^.Relation[i] := nil;
          result.add(node);
        finally
          rs.Free;
@@ -337,6 +349,7 @@ begin
            node^.id := rs.FieldbyName('SORT_ID').AsString;
            node^.title := rs.FieldbyName('SORT_NAME').AsString;
            node^.FieldName := 'SORT_ID'+sid;
+           for i:=0 to 30 do node^.Relation[i] := nil;
            result.add(node);
            rs.Next;
          end;
@@ -411,7 +424,7 @@ begin
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
       if ATree[idx+1]=nil then //到根结点了
          begin
-           if not CheckIndex(ATree,idx) then continue;
+           if not CheckIndex(ATree,idx,i) then continue;
            vList.CommaText := ATree[idx].FieldName;
            for c:=0 to vList.Count-1 do
            begin
@@ -476,12 +489,6 @@ end;
 var
   i:integer;
 begin
-  for i:=0 to 30 do
-    begin
-      if ATree[i]=nil then break;
-      if ATree[i].Data=nil then
-      ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
-    end;
   if ATree[0]=nil then exit;
   if ATree[0].Data=nil then exit;
   DoHeader(0);
@@ -523,7 +530,7 @@ begin
       ATree[idx].curid := PIdxNode(TList(ATree[idx].Data)[i])^.id;
       ATree[idx].curname := PIdxNode(TList(ATree[idx].Data)[i])^.title;
       ATree[idx].curfield := PIdxNode(TList(ATree[idx].Data)[i])^.FieldName;
-      if not CheckIndex(ATree,idx) then continue;
+      if not CheckIndex(ATree,idx,i) then continue;
       new(Row);
       Row^.DataType := 0;
       Row^.Title := PIdxNode(TList(ATree[idx].Data)[i])^.title;
@@ -552,12 +559,6 @@ end;
 var
   i:integer;
 begin
-  for i:=0 to 30 do
-    begin
-      if ATree[i]=nil then break;
-      if ATree[i].Data=nil then
-      ATree[i].Data := CreateIndex(ATree[i].INDEX_ID);
-    end;
   if ATree[0]=nil then exit;
   if ATree[0].Data=nil then exit;
   DoRows(0);
@@ -732,26 +733,21 @@ begin
   end;
 end;
 
-function TReportFactory.CheckIndex(ATree: array of PRTemplate;idx:integer): boolean;
+function TReportFactory.CheckIndex(ATree: array of PRTemplate;idx,CurIdx:integer): boolean;
 var
-  i:integer;
+  i,Index:integer;
   r:boolean;
+  IdxNode:PIdxNode;
 begin
   result := true;
   if ATree[idx].idxflag <> 2 then Exit;
   if idx=0 then Exit;
-  DataSet.first;
-  while not DataSet.eof do
-  begin
-    r := true;
-    for i:=0 to idx do
-      begin
-        if DataSet.Fields[ATree[i].FieldIndex].asString<>ATree[i].curid then r := false;
-        if not r then break;
-      end;
-    if r then Exit;
-    DataSet.Next;
-  end;
+  IdxNode := PIdxNode(TList(ATree[idx].Data)[CurIdx]);
+  for i:=0 to idx do
+    begin
+      r := not IdxNode^.Relation[ATree[i].idx].Find(ATree[i].curid,Index);
+      if not r then break;
+    end;
   result := false;
 end;
 
@@ -791,6 +787,36 @@ begin
 end;
 
 procedure TReportFactory.PrepareIndex;
+procedure AddRelation(DataSet:TDataSet);
+var
+  i,j,c:integer;
+  IdxNode:PIdxNode;
+begin
+  for i:=0 to TLate.Count-1 do
+    begin
+      if PRTemplate(TLate[i])^.Data=nil then Continue;
+      if PRTemplate(TLate[i])^.FieldIndex<0 then Continue;
+      for j:=0 to TList(PRTemplate(TLate[i])^.Data).Count -1 do
+      begin
+        IdxNode := PIdxNode(TList(PRTemplate(TLate[i])^.Data)[j]);
+        if DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString=IdxNode^.id then //当数据源的ID为当前ID时,加入其他指标id关系
+           begin
+              for c:=0 to TLate.Count-1 do
+              begin
+                if c=i then continue;
+                if PRTemplate(TLate[c])^.FieldIndex<0 then Continue;
+                if IdxNode.Relation[c]=nil then
+                   begin
+                     IdxNode.Relation[c] := TStringList.Create;
+                     IdxNode.Relation[c].Duplicates := dupIgnore;
+                     IdxNode.Relation[c].Sorted := true;
+                   end;
+                IdxNode.Relation[c].Add(DataSet.Fields[PRTemplate(TLate[c])^.FieldIndex].AsString);
+              end;
+           end;
+      end;
+    end;
+end;
 function CheckExists(id:string;vList:TList):boolean;
 var
   i:integer;
@@ -806,11 +832,18 @@ begin
     end;
 end;
 var
-  i:integer;
+  i,j:integer;
   node:PIdxNode;
   dept,users,region,sort:TZQuery;
 begin
-  dept := Global.GetZQueryFromName('CA_DEPT_INFO'); 
+  for i:=0 to TLate.Count-1 do
+  begin
+    if not IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) then
+       begin
+         PRTemplate(TLate[i])^.Data := CreateIndex(PRTemplate(TLate[i])^.INDEX_ID);
+       end;
+  end;
+  dept := Global.GetZQueryFromName('CA_DEPT_INFO');
   users := Global.GetZQueryFromName('CA_USERS');
   region := Global.GetZQueryFromName('PUB_REGION_INFO');
   sort := Global.GetZQueryFromName('PUB_GOODSSORT');
@@ -826,6 +859,7 @@ begin
                 node^.id := DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString;
                 node^.seqid := node^.id;
                 node^.FieldName := PRTemplate(TLate[i])^.INDEX_ID;
+                for j:=0 to 30 do node^.Relation[j] := nil;
                 if PRTemplate(TLate[i])^.FieldNIdx>=0 then
                    begin
                      node^.title := DataSet.Fields[PRTemplate(TLate[i])^.FieldNIdx].AsString;
@@ -876,7 +910,7 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID' then
                      begin
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           node^.title := region.FieldbyName('CODE_NAME').AsString
                        else
                           begin
@@ -893,7 +927,7 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID' then
                      begin
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           node^.title := region.FieldbyName('CODE_NAME').AsString
                        else
                           begin
@@ -910,8 +944,8 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID1' then
                      begin
-                       node^.id := copy(node^.id,1,2)+'0000';
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       if (node^.id<>'#') then node^.id := copy(node^.id,1,2)+'0000';
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           begin
                             DataSet.Edit;
                             DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
@@ -938,10 +972,13 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='SREGION_ID2' then
                      begin
+                       if (node^.id<>'#') then
+                       begin
                        node^.id := copy(node^.id,1,4)+'00';
                        if not region.Locate('CODE_ID',node^.id,[]) then
                           node^.id := copy(node^.id,1,2)+'0000';
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       end;
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           begin
                             DataSet.Edit;
                             DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
@@ -968,8 +1005,8 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID1' then
                      begin
-                       node^.id := copy(node^.id,1,2)+'0000';
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       if (node^.id<>'#') then node^.id := copy(node^.id,1,2)+'0000';
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           begin
                             DataSet.Edit;
                             DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
@@ -996,10 +1033,13 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='CREGION_ID2' then
                      begin
+                       if (node^.id<>'#') then
+                       begin
                        node^.id := copy(node^.id,1,4)+'00';
                        if not region.Locate('CODE_ID',node^.id,[]) then
                           node^.id := copy(node^.id,1,2)+'0000';
-                       if region.Locate('CODE_ID',node^.id,[]) then
+                       end;
+                       if (node^.id<>'#') and region.Locate('CODE_ID',node^.id,[]) then
                           begin
                             DataSet.Edit;
                             DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := node^.id;
@@ -1027,7 +1067,7 @@ begin
                   if PRTemplate(TLate[i])^.INDEX_ID='21' then
                      begin
                        node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
-                       if sort.Locate('SORT_ID',node^.id,[]) then
+                       if (node^.id<>'#') and sort.Locate('SORT_ID',node^.id,[]) then
                           begin
                             if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,4)]),[]) then
                             begin
@@ -1072,7 +1112,7 @@ begin
                   if PRTemplate(TLate[i])^.INDEX_ID='22' then
                      begin
                        node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
-                       if sort.Locate('SORT_ID',node^.id,[]) then
+                       if (node^.id<>'#') and sort.Locate('SORT_ID',node^.id,[]) then
                           begin
                             if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,8)]),[]) then
                             begin
@@ -1117,7 +1157,7 @@ begin
                   if PRTemplate(TLate[i])^.INDEX_ID='23' then
                      begin
                        node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
-                       if sort.Locate('SORT_ID',node^.id,[]) then
+                       if (node^.id<>'#') and sort.Locate('SORT_ID',node^.id,[]) then
                           begin
                             if sort.locate('RELATION_ID;LEVEL_ID',VarArrayOf([sort.FieldbyName('RELATION_ID').AsString,copy(sort.FieldbyName('LEVEL_ID').AsString,1,12)]),[]) then
                             begin
@@ -1163,11 +1203,13 @@ begin
                 TList(PRTemplate(TLate[i])^.Data).add(node);
              end;
         end;
+      //准备指标关系
+      AddRelation(DataSet);
       DataSet.Next;
     end;
-for i:=0 to TLate.Count-1 do
+  for i:=0 to TLate.Count-1 do
   begin
-    if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) then
+    if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and (PRTemplate(TLate[i])^.Data<>nil) then
        begin
          TList(PRTemplate(TLate[i])^.Data).Sort(@IdxNodeCompare); 
        end;

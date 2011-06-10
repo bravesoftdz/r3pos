@@ -76,7 +76,7 @@ type
   end;
 implementation
 uses ufrmDefineReport,ufnUtil,uShopUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
-  uShopGlobal;
+  uShopGlobal,uIdLogFile, ufrmPrgBar;
 {$R *.dfm}
 
 procedure TfrmSaleTotalReport.btnNewClick(Sender: TObject);
@@ -175,9 +175,16 @@ begin
   strSql := GetGodsSQL;
   if strSql='' then Exit;
   TZQuery(Factory.DataSet).SQL.Text:= strSql;
-  Factor.Open(TZQuery(Factory.DataSet));
-  Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
-
+  frmPrgBar.Show;
+  frmPrgBar.Update;
+  frmPrgBar.WaitHint := '准备数据源...';
+  frmPrgBar.Precent := 0;
+  try
+    Factor.Open(TZQuery(Factory.DataSet));
+    Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
+  finally
+    frmPrgBar.Close;
+  end;
 end;
 
 procedure TfrmSaleTotalReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -320,7 +327,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.DEPT_ID,A.GUIDE_USER,A.CLIENT_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT '+
+    ',A.GODS_ID,isnull(A.DEPT_ID,''#'') as DEPT_ID,isnull(A.GUIDE_USER,''#'') as GUIDE_USER,isnull(A.CLIENT_ID,''#'') as CLIENT_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+   //价税合计
@@ -334,28 +341,26 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID,A.DEPT_ID,A.GUIDE_USER,A.CLIENT_ID,A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
+    'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
 
   strSql :=
-    'select j.*,'+
+    'select j.*,a.CLIENT_CODE,'+
     'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
-    'r.SORT_ID1,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
-    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20,'+
-    'isnull(a.REGION_ID,''#'') as CREGION_ID,a.CLIENT_NAME as CLIENT_ID_TEXT,isnull(b.CODE_NAME,''无'') as CREGION_ID_TEXT,isnull(c.CODE_NAME,''无'') as SREGION_ID_TEXT,'+
-    'd.DEPT_NAME as DEPT_ID_TEXT,e.USER_NAME as GUIDE_USER_TEXT '+
-    'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
-    'left outer join VIW_CUSTOMER a on j.TENANT_ID=a.TENANT_ID and j.CLIENT_ID=a.CLIENT_ID '+
-    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) b on a.REGION_ID=b.CODE_ID '+
-    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) c on j.SREGION_ID=c.CODE_ID '+
-    'left outer join CA_DEPT_INFO d on j.TENANT_ID=d.TENANT_ID and j.DEPT_ID=d.DEPT_ID '+
-    'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.GUIDE_USER=e.USER_ID ';
+    'r.SORT_ID1,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
+    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20,isnull(a.CLIENT_NAME,''不记名客户'') as CLIENT_ID_TEXT,'+
+    'isnull(a.REGION_ID,''#'') as CREGION_ID1,isnull(a.REGION_ID,''#'') as CREGION_ID2,'+
+    'isnull(a.REGION_ID,''#'') as CREGION_ID,'+
+    'j.SREGION_ID as SREGION_ID1,j.SREGION_ID as SREGION_ID2 '+
+    'from ('+strSql+') j '+
+    'left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+    'left outer join VIW_CUSTOMER a on j.TENANT_ID=a.TENANT_ID and j.CLIENT_ID=a.CLIENT_ID ';
 
   strSql :=
     'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
     ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE';
+    ' ';
     
   result:=ParseSQL(Factor.iDbType,strSql);
 end;
@@ -375,7 +380,7 @@ procedure TfrmSaleTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) and (Column.Field.Index>2) then
+  if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) then
      Text := formatFloat('#0.00',Factory.Footer[Column.Field.Index-3].Value);
 end;
 

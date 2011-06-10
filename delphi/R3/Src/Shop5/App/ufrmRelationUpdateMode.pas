@@ -12,9 +12,7 @@ uses
 type
   TfrmRelationUpdateMode = class(TfrmBasic)
     TitlePanel: TPanel;
-    labTitle: TLabel;
     Bevel2: TBevel;
-    HintL: TLabel;
     RzPage: TRzPageControl;
     TabUpMode: TRzTabSheet;
     RzPanel2: TRzPanel;
@@ -38,17 +36,20 @@ type
     RB_ViewNot: TRadioButton;
     RB_ViewNew: TRadioButton;
     RB_DT: TRadioButton;
+    RB_Hander: TRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure Grid_RelationDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure RB_ViewAllClick(Sender: TObject);
+    procedure Grid_RelationDblClick(Sender: TObject);
   private
     FAllcount, //当前返回总记录数
     FNotcount, //未对上
     FNewcount, //新对上
     FDtcount,  //重复条码
+    FHandcount,  //手工对照
     FOldCount: integer;  //原对上
     function  DoUpdateRelation: Boolean; //更新对照关系
     procedure SetResultMsg;  //设置结果显示
@@ -115,8 +116,8 @@ begin
     begin
       self.Top:=self.Top-85;
       self.Left:=self.Left-100;
-      Width:=600;
-      Height:=460;
+      Width:=630;
+      Height:=470;
       btnCancel.Left:=BottonPanel.Width - btnCancel.Width - 30;
       btnCancel.Caption:='关闭(&C)';
       if RB_ALL.Checked then
@@ -212,13 +213,15 @@ begin
   //设置控件显示
   RB_ViewAll.Visible:=true;
   RB_ViewNot.Visible:=true;
-  RB_DT.Left:=345;
+  RB_DT.Left:=268;
+  RB_Hander.Left:=349;
   if RB_ALL.Checked then
   begin
     RB_ViewAll.Checked:=true;
     RB_ViewNew.Visible:=true;
     RB_ViewOld.Visible:=true;
     RB_DT.Visible:=true;
+    RB_Hander.Visible:=true;
   end else
   if RB_NEW.Checked then
   begin
@@ -226,6 +229,9 @@ begin
     RB_ViewNew.Checked:=true;
     RB_DT.Visible:=true;
     RB_DT.Left:=RB_ViewOld.Left;
+    RB_Hander.Visible:=true;
+    RB_DT.Left:=RB_ViewOld.Left;
+    RB_Hander.Left:=275;
   end else
   if RB_PRICE.Checked then
   begin
@@ -234,8 +240,8 @@ begin
     RB_ViewNew.Visible:=False;
     RB_ViewOld.Visible:=false;
     RB_DT.Visible:=false;
-  end;
-  
+    RB_Hander.Visible:=false;
+  end;                     
   SetChoice;
 end;
 
@@ -255,19 +261,23 @@ begin
   begin
     if RB_ALL.Checked then
     begin
-      if RB_ViewNew.Checked then
-        FilterCnd:=' Update_Flag=2 '
-      else if RB_ViewOld.Checked then
+      if RB_ViewOld.Checked then
         FilterCnd:=' Update_Flag=1 '
+      else if RB_ViewNew.Checked then
+        FilterCnd:=' Update_Flag=2 '
       else if RB_DT.Checked then
-        FilterCnd:=' Update_Flag=4 ';
+        FilterCnd:=' Update_Flag=4 '
+      else if RB_Hander.Checked then
+        FilterCnd:=' Update_Flag=5 ';
     end else
     if RB_NEW.Checked then
     begin
       if RB_ViewNew.Checked then
         FilterCnd:=' Update_Flag=2 '
       else if RB_DT.Checked then
-        FilterCnd:=' Update_Flag=4 ';
+        FilterCnd:=' Update_Flag=4 '
+      else if RB_Hander.Checked then
+        FilterCnd:=' Update_Flag=5 ';
     end;
   end;
   try
@@ -311,6 +321,7 @@ begin
   FNewcount:=0;
   FOldCount:=0;
   FDtcount:=0;
+  FHandcount:=0;
   if not CdsTable.Active then Exit;
 
   FAllcount:=CdsTable.RecordCount;  //返回总记录数据
@@ -325,13 +336,14 @@ begin
        1: inc(FOldCount);
        2: inc(FNewcount);
        4: inc(FDtcount);
+       5: inc(FHandcount);
       end;
       CdsTable.Next;
     end;
     if RB_ALL.Checked then
-      PnlMsg.Caption:=' 对照结果：总数：'+Inttostr(FAllcount)+'，其中未对上：'+Inttostr(FNotcount)+'，本次对照：'+inttostr(FNewcount)+'，原对照：'+inttostr(FOldCount)+'，条码重复：'+inttoStr(FDtCount)+' ' 
+      PnlMsg.Caption:=' 对照结果：总数：'+Inttostr(FAllcount)+'，其中未对上：'+Inttostr(FNotcount)+'，本次对照：'+inttostr(FNewcount)+'，原对照：'+inttostr(FOldCount)+'，条码重复：'+inttoStr(FDtCount)+'，手工对照：'+inttoStr(FHandcount)+' ' 
     else if RB_NEW.Checked then
-      PnlMsg.Caption:=' 对照结果：总数：'+Inttostr(FAllcount)+'，其中未对上：'+Inttostr(FNotcount)+'，本次新对照：'+inttostr(FNewcount)+'，条码重复：'+inttoStr(FDtCount)+' '
+      PnlMsg.Caption:=' 对照结果：总数：'+Inttostr(FAllcount)+'，其中未对上：'+Inttostr(FNotcount)+'，本次新对照：'+inttostr(FNewcount)+'，条码重复：'+inttoStr(FDtCount)+'，手工对照：'+inttoStr(FHandcount)+' ' 
     else if RB_PRICE.Checked then
       PnlMsg.Caption:=' 刷新结果：总数：'+Inttostr(FAllcount)+' ';
   finally
@@ -371,11 +383,13 @@ end;
 
 procedure TfrmRelationUpdateMode.HandRelation(Sender: TObject);
 var
+  CName: string;
   IsCHoice: Boolean;
   ReData: OleVariant;
 begin
   IsCHoice:=False;
   try
+    if CdsTable.State in [dsEdit,dsInsert] then CdsTable.Post;
     CdsTable.DisableControls;
     CdsTable.First;
     while not CdsTable.Eof do
@@ -392,7 +406,29 @@ begin
   end;
   if not IsCHoice then Raise Exception.Create('请先选择手工对照的卷烟'); 
   ReData:=CdsTable.Data;
-  TfrmRelationHandSet.FrmShow(ReData);
+  if TfrmRelationHandSet.FrmShow(ReData)=1 then
+  begin
+    try
+      CdsTable.Filtered:=False;
+      CdsTable.DisableControls;
+      CdsTable.First;
+      while not CdsTable.Eof do
+      begin
+        if CdsTable.FieldByName('FLAG').AsString='1' then
+        begin
+          CdsTable.Edit;
+          CdsTable.FieldByName('FLAG').AsString:='0';
+          CdsTable.FieldByName('Update_Flag').AsString:='2';
+          CdsTable.FieldByName('UpdateCase').AsString:='手工对照';
+          CdsTable.Post;
+        end;
+        CdsTable.Next;
+      end;  
+    finally
+      CdsTable.EnableControls;
+      DoFilterResultData;
+    end;
+  end;
 end;
 
 procedure TfrmRelationUpdateMode.SetChoice;
@@ -407,7 +443,7 @@ begin
   begin
     SetCol.Visible:=False;
     SetCol.Visible:=(RB_ViewNot.Visible and RB_ViewNot.Checked) or
-                    (RB_DT.Visible and RB_DT.Checked);;  //是否显示
+                    (RB_DT.Visible and RB_DT.Checked);  //是否显示
 
     Pm:=Grid_Relation.PopupMenu;
     for i:=0 to Pm.Items.Count-1 do
@@ -417,6 +453,95 @@ begin
         Item.Enabled:=SetCol.Visible;
     end;
   end;
+end;
+
+procedure TfrmRelationUpdateMode.Grid_RelationDblClick(Sender: TObject);
+var
+  i: integer;
+  R3GodsInfo,MainGodsInfo,Cnd,MainID,COMM_ID,vFields: string;
+  Rs: TZQuery;
+  StrList: TStringList;
+begin
+  //手工对照查看对照关系：
+  if (RB_Hander.Visible) and (RB_Hander.Checked) then
+  begin
+    try
+      R3GodsInfo:='';
+      Cnd:=','+trim(CdsTable.fieldbyName('SECOND_ID').AsString)+',';
+      case Factor.iDbType of
+       0: Cnd:=' and CHARINDEX('''+Cnd+''',COMM_ID)>0 ';
+       1: Cnd:=' and INSTR(COMM_ID,'''+Cnd+''',1,1)>0 ';
+       4: Cnd:=' and LOCATE('''+Cnd+''',COMM_ID)>0 ';
+      end;
+      StrList:=TStringList.Create;
+      Rs:=TZQuery.Create(nil);
+      Rs.SQL.Text:='select GODS_ID,GODS_CODE,GODS_NAME,SECOND_ID,COMM_ID,BARCODE from VIW_GOODSINFO '+
+                   ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RELATION_ID='+IntToStr(NT_RELATION_ID)+Cnd;
+      Factor.Open(Rs);
+      if (Rs.Active) and (Rs.RecordCount=1) then
+      begin
+        R3GodsInfo:='R3的卷烟：编码:'+Rs.fieldbyName('GODS_CODE').AsString+'， 名称：'+Rs.fieldbyName('GODS_NAME').AsString+'， 条码:'+Rs.fieldbyName('BARCODE').AsString;
+        COMM_ID:=trim(Rs.fieldbyName('COMM_ID').AsString);
+        MainID:=trim(Rs.fieldbyName('SECOND_ID').AsString);
+        case Factor.iDbType of
+         0:
+          begin
+            Cnd:=' and CHARINDEX(SECOND_ID,'''+COMM_ID+''')>0 ';
+            vFields:='(case when CHARINDEX('',''+SECOND+'','','''+COMM_ID+''')>0 then 1 else 0 end) as IsFlag ';
+          end;
+         1:
+          begin
+            Cnd:=' and INSTR('''+COMM_ID+''',SECOND_ID,1,1)>0 ';
+            vFields:='(case when INSTR('''+COMM_ID+''','','' || SECOND_ID || '','',1,1)>0 then 1 else 0 end) as IsFlag ';
+          end;
+         4:
+          begin
+            Cnd:=' and LOCATE(SECOND_ID,'''+COMM_ID+''')>0 ';
+            vFields:='(case when LOCATE('','' || SECOND_ID || '','','''+COMM_ID+''',1,1)>0 then 1 else 0 end) as IsFlag ';
+          end;
+        end;
+        Rs.Close;
+        Rs.SQL.Text:='select SECOND_ID,GODS_CODE,GODS_NAME,PACK_BARCODE,'+vFields+' from INF_GOODS_RELATION where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RELATION_ID='+IntToStr(NT_RELATION_ID)+Cnd;
+        Factor.Open(Rs);
+        while not Rs.Eof do
+        begin
+          if trim(Rs.FieldByName('SECOND_ID').AsString)=MainID then 
+            MainGodsInfo:='第三方主对照卷烟：  编码:'+Rs.fieldbyName('GODS_CODE').AsString+'， 名称：'+Rs.fieldbyName('GODS_NAME').AsString+'， 条码:'+Rs.fieldbyName('PACK_BARCODE').AsString
+          else
+            StrList.Add('编码:'+Rs.fieldbyName('GODS_CODE').AsString+'， 名称：'+Rs.fieldbyName('GODS_NAME').AsString+'， 条码:'+Rs.fieldbyName('PACK_BARCODE').AsString);
+          Rs.Next;
+        end;
+        if StrList.Count=1 then
+        begin
+          Cnd:=R3GodsInfo+#13+
+               '--------------------------------------------------------------------------------------------------------------'+#13+
+               MainGodsInfo+#13+
+               '第三方共同对照卷烟：'+StrList.Strings[0];
+        end else
+        begin
+          Cnd:='';
+          for i:=0 to StrList.Count-1 do
+          begin
+            if Cnd='' then
+              Cnd:='('+InttoStr(i+1)+')'+trim(StrList.Strings[i])+';' 
+            else
+              Cnd:=Cnd+#13+'('+InttoStr(i+1)+')'+trim(StrList.Strings[i])+';';
+          end;
+
+          Cnd:=R3GodsInfo+#13+
+               '--------------------------------------------------------------------------------------------------------------                 '+#13+
+               MainGodsInfo+#13+
+               '第三方共同对照卷烟：'+#13+
+               Cnd;
+        end;
+        MessageBox(self.Handle,pchar('  '+#13+Cnd+#13+' '),'友情提示...',MB_OK+MB_ICONQUESTION);
+      end;
+    finally
+      Rs.Free;
+      StrList.Free;
+    end;
+  end;
+
 end;
 
 end.

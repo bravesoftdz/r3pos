@@ -13,47 +13,22 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
     Left = 0
     Top = 0
     Width = 413
-    Height = 47
+    Height = 51
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
-    object labTitle: TLabel
-      Left = 16
-      Top = 16
-      Width = 7
-      Height = 12
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
     object Bevel2: TBevel
       Left = 0
-      Top = 45
+      Top = 49
       Width = 413
       Height = 2
       Align = alBottom
     end
-    object HintL: TLabel
-      Left = 7
-      Top = 16
-      Width = 65
-      Height = 12
-      Caption = #23545#29031#34920#21047#26032
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
     object LblMsg: TLabel
-      Left = 328
-      Top = 15
-      Width = 65
+      Left = 342
+      Top = 16
+      Width = 38
       Height = 12
       Caption = #21047#26032#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -65,14 +40,14 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       Visible = False
     end
     object RB_ViewAll: TRadioButton
-      Left = 96
+      Left = 10
       Top = 14
       Width = 48
       Height = 16
       Caption = #25152#26377
       Checked = True
       Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
+      Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]
@@ -83,13 +58,13 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       OnClick = RB_ViewAllClick
     end
     object RB_ViewOld: TRadioButton
-      Left = 279
+      Left = 197
       Top = 14
       Width = 63
       Height = 16
       Caption = #21407#23545#29031
       Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
+      Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]
@@ -99,13 +74,13 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       OnClick = RB_ViewAllClick
     end
     object RB_ViewNot: TRadioButton
-      Left = 148
+      Left = 64
       Top = 14
       Width = 61
       Height = 16
       Caption = #26410#23545#19978
       Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
+      Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]
@@ -115,13 +90,13 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       OnClick = RB_ViewAllClick
     end
     object RB_ViewNew: TRadioButton
-      Left = 214
+      Left = 130
       Top = 14
-      Width = 62
+      Width = 61
       Height = 16
       Caption = #26032#23545#29031
       Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
+      Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]
@@ -131,13 +106,13 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       OnClick = RB_ViewAllClick
     end
     object RB_DT: TRadioButton
-      Left = 344
+      Left = 268
       Top = 14
-      Width = 63
+      Width = 76
       Height = 16
-      Caption = #37325#22797
+      Caption = #37325#22797#26465#30721
       Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
+      Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]
@@ -146,12 +121,28 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
       Visible = False
       OnClick = RB_ViewAllClick
     end
+    object RB_Hander: TRadioButton
+      Left = 349
+      Top = 14
+      Width = 74
+      Height = 16
+      Caption = #25163#24037#23545#29031
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clNavy
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      Visible = False
+      OnClick = RB_ViewAllClick
+    end
   end
   object RzPage: TRzPageControl [1]
     Left = 0
-    Top = 47
+    Top = 51
     Width = 413
-    Height = 160
+    Height = 156
     ActivePage = TabUpResult
     Align = alClient
     TabHeight = 20
@@ -165,7 +156,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
         Left = 0
         Top = 0
         Width = 409
-        Height = 133
+        Height = 129
         Align = alClient
         BorderOuter = fsNone
         BorderWidth = 5
@@ -174,7 +165,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           Left = 5
           Top = 5
           Width = 399
-          Height = 123
+          Height = 119
           Align = alClient
           TabOrder = 0
           object RB_ALL: TRadioButton
@@ -230,7 +221,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
         Left = 0
         Top = 0
         Width = 409
-        Height = 133
+        Height = 129
         Align = alClient
         BorderOuter = fsNone
         BorderWidth = 5
@@ -239,7 +230,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           Left = 5
           Top = 5
           Width = 399
-          Height = 105
+          Height = 101
           Align = alClient
           AllowedOperations = [alopUpdateEh]
           DataSource = Ds
@@ -271,6 +262,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
           CurrencySymbol = #65509
           DecimalNumber = 2
           DigitalNumber = 12
+          OnDblClick = Grid_RelationDblClick
           OnDrawColumnCell = Grid_RelationDrawColumnCell
           Columns = <
             item
@@ -344,7 +336,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
         end
         object PnlMsg: TPanel
           Left = 5
-          Top = 110
+          Top = 106
           Width = 399
           Height = 18
           Align = alBottom

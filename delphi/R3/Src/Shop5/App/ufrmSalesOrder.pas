@@ -92,8 +92,7 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actCustomerExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
-    procedure edtFROM_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure edtFROM_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
   private
@@ -107,6 +106,7 @@ type
     procedure WMNextRecord(var Message: TMessage);
     function  CheckCanExport: boolean; override;
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
+    function  CheckSale_Limit: Boolean; //2011.06.09判断是否限量
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -528,13 +528,14 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
-
+                                  
   //调价权限(调价权限)
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -585,12 +586,13 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改金额！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
+    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改金额！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  end;                              
 
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -637,12 +639,13 @@ var
   allow :boolean;
   rs,us:TZQuery;
 begin
+  //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
+    MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  end;                           
 
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -1560,6 +1563,7 @@ begin
   end;
 end;
 
+//2011.06.08 Add 传入GodsID返回其供应链是否限制改价（True表示改价）
 function TfrmSalesOrder.CheckNotChangePrice(GodsID: string): Boolean;
 var
   RelationID: string;
@@ -1578,6 +1582,7 @@ begin
   end;
 end;
 
+//2011.06.08 Add 供应链限制改价 继承基类之前做判断
 procedure TfrmSalesOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
   GodsID: string;
@@ -1588,9 +1593,9 @@ begin
     if CheckNotChangePrice(GodsID) then
     begin
       if InputFlag=3 then
-        GodsID:='商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许修改价格！'
+        GodsID:='商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改价格！'
       else
-        GodsID:='商品"'+edtTable.FieldByName('GODS_NAME').AsString+'"统一定价，不允许折扣！';
+        GodsID:='商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许折扣！';
       InputFlag := 0;
       DBGridEh1.Col := 1;
       edtInput.Text := '';
@@ -1600,6 +1605,86 @@ begin
   end;
   
   inherited;  //继承基类
+end;
+
+function TfrmSalesOrder.CheckSale_Limit: Boolean;
+  //返回设定参数值: 单品限量、本单限量、当前供应链ID,供应链名称
+  procedure SetSaleLimit(const GodsID: string; var sLitmit,alitmit: real; var RelID,RelName: string);
+  var RsGods,Rs: TZQuery;
+  begin
+    sLitmit:=0.0;
+    alitmit:=0.0;
+    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
+    if RsGods.Locate('GODS_ID',trim(GodsID),[]) then
+    begin
+      RelID:=trim(RsGods.fieldbyName('RELATION_ID').AsString); 
+      //定位供应链:
+      Rs:=Global.GetZQueryFromName('CA_RELATIONS');
+      if Rs.Locate('RELATION_ID',RelID,[]) then
+      begin
+        RelName:=trim(RsGods.fieldbyName('RELATION_NAME').AsString);
+        sLitmit:=Rs.FieldByName('SINGLE_LIMIT').AsFloat;
+        alitmit:=Rs.FieldByName('SALE_LIMIT').AsFloat;
+      end;
+    end;
+  end;
+  //返回当前供应链本单的总数:
+  function GetBillAll_Sale_Limit(RsDetal: TZQuery; vRelationID: string): real;
+  var
+    GodsID: string;
+    Calc_Limit: Real;
+    RsGods: TZQuery;
+  begin
+    Calc_Limit:=0;
+    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); 
+    RsDetal.First;
+    while not RsDetal.Eof do
+    begin
+      GodsID:=trim(RsDetal.fieldbyName('GODS_ID').AsString);
+      if RsGods.Locate('GODS_ID',GodsID,[]) then //定位 
+      begin
+        if trim(RsGods.fieldbyName('RELATION_ID').AsString)=trim(vRelationID) then
+          Calc_Limit:=Calc_Limit+RsDetal.fieldbyName('CALC_AMOUNT').AsFloat; //计量单位数量累计
+      end;       
+      RsDetal.Next;
+    end; 
+  end;
+var
+  GodsID, RelationID, RelationName, RelList: string;  
+  Sing_Litmit, All_Litmit,CalcLimit: Real;  //单品限量，本单限量
+  CheckQry: TZQuery;
+begin
+  result:=False;
+  RelList:=';';
+  try
+    CheckQry:=TZQuery.Create(nil);
+    CheckQry.Data:=cdsDetail.Data; //数据集复制数据过来循环判断
+    //开始循环：
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+    begin
+      GodsID:=trim(cdsDetail.fieldbyName('GODS_ID').AsString);
+      SetSaleLimit(GodsID, Sing_Litmit, All_Litmit, RelationID, RelationName);
+                                                          
+      //判断单品限量是否超过:
+      if (Sing_Litmit > 0) and (cdsDetail.fieldbyName('CALC_AMOUNT').AsFloat > Sing_Litmit) then
+         Raise Exception.Create('商品〖'+cdsDetail.fieldbyName('GODS_NAME').AsString+'〗超过单品限量值'+FloattoStr(Sing_Litmit)+'！');
+
+      //判断单品所属供应链ID本单限量:
+      if (RelationID<>'') and (All_Litmit>0) and (Pos(';'+RelationID+';',RelList)<=0) then
+      begin
+        CalcLimit:=GetBillAll_Sale_Limit(CheckQry, RelationID);
+        if CalcLimit > All_Litmit then
+          Raise Exception.Create('供应链〖'+RelationName+'〗本单总量'+FloattoStr(CalcLimit)+'，超过限量值'+FloattoStr(All_Litmit)+'！');
+
+        //将已累计加入：RelList;下次不需要累计
+        if Pos(';'+RelationID+';',RelList)<=0 then RelList:=RelList+RelationID+';';
+      end;
+      cdsDetail.Next;
+    end;
+  finally
+    CheckQry.Free;
+  end;
 end;
 
 end.

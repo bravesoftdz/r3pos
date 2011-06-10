@@ -421,7 +421,7 @@ end;
 procedure TfrmSalesOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('12400001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',8) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
   //if (CurOrder<>nil) then
   //   begin
   //     if DevFactory.SavePrint then
@@ -454,7 +454,7 @@ end;
 procedure TfrmSalesOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('12400001',7) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12400001',8) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try

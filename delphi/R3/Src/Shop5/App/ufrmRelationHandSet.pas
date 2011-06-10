@@ -41,7 +41,9 @@ type
     procedure Grid_RelationDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
     procedure Grid_RelationCellClick(Column: TColumnEh);
     procedure btnOKClick(Sender: TObject);
+    function  CheckIsExistsRelation: Boolean;
   private
+    ReRun: integer;
     FSecond_IDS: string;
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure InitParams(vData: OleVariant);
@@ -62,8 +64,8 @@ begin
   begin
     try
       InitParams(vData);
-      if ShowModal=MROK then
-        result:=1;
+      ShowModal;
+      result:=ReRun;
     finally
       free;
     end;
@@ -96,11 +98,15 @@ procedure TfrmRelationHandSet.InitParams(vData: OleVariant);
 var
   Str: string;
 begin
+  ReRun:=0;
   Grid_Relation.DataSource:=nil;
-  Str:='select GODS_ID,GODS_CODE,GODE_NAME,BARCODE from VIW_GOODSINFO where TENANT_ID=110000001 and RELATION_ID=0 ';
+  Str:='select GODS_ID,GODS_CODE,GODS_NAME,GODS_SPELL,BARCODE from VIW_GOODSINFO '+
+       ' where TENANT_ID=110000001 and RELATION_ID=0 and COMM not in (''02'',''12'')';
   NT_GOODSINFO.Close;
   NT_GOODSINFO.SQL.Text:=Str;
-  R3_GODS_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSINFO');
+  Factor.Open(NT_GOODSINFO);
+  
+  R3_GODS_ID.DataSet:=NT_GOODSINFO; //Global.GetZQueryFromName('PUB_GOODSINFO');
   CdsTable.Close;
   CdsTable.Data:=vData;
   CdsTable.Filtered:=False;
@@ -151,14 +157,15 @@ begin
 end;
 
 procedure TfrmRelationHandSet.btnOKClick(Sender: TObject);
-var
-  Str,Cnd: string;
 begin
   if R3_GODS_ID.AsString='' then raise Exception.Create('请选择R3的商品');
   //判断当前选入的是否已存在对照关系：
   SaveQry.Close;     //对照针对卷烟行业用，固定供应链:
   SaveQry.SQL.Text:='select * from PUB_GOODS_RELATION where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RELATION_ID='+IntToStr(NT_RELATION_ID)+' and GODS_ID='''+R3_GODS_ID.AsString+''' ';
   Factor.Open(SaveQry);
+
+  //编辑前判断当前所选商品是否已在供应两
+  if not CheckIsExistsRelation then Exit; 
 
   //保存
   SaveQry.Edit;
@@ -181,11 +188,66 @@ begin
   SaveQry.FieldByName('NEW_INPRICE').AsFloat:=CdsTable.fieldbyName('NEW_INPRICE').AsFloat;
   SaveQry.FieldByName('NEW_OUTPRICE').AsFloat:=CdsTable.fieldbyName('NEW_OUTPRICE').AsFloat;
   SaveQry.Post;
+
   //提交
   if Factor.UpdateBatch(SaveQry,'THandSetRelation',nil) then
   begin
     MessageBox(Application.Handle,pchar('保存成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
+    Global.RefreshTable('PUB_GOODSINFO');
+    ModalResult:=MROK;
+    ReRun:=1;
     self.Close;
+  end;
+end;
+
+function TfrmRelationHandSet.CheckIsExistsRelation: Boolean;
+var
+  Rs: TZQuery;
+  Str,COMM_ID: string;
+begin
+  if SaveQry.FieldByName('ROWS_ID').AsString<>'' then
+  begin
+    COMM_ID:=trim(SaveQry.FieldByName('COMM_ID').AsString);
+    if COMM_ID<>'' then //是手工对照
+      Str:='select * from INF_GOODS_RELATION where SECOND_ID in ('''+stringReplace(COMM_ID,',',''',''',[rfReplaceAll])+''')'
+    else
+      Str:='select * from INF_GOODS_RELATION where SECOND_ID='''+trim(SaveQry.FieldByName('SECOND_ID').AsString)+''' ' ;
+    try
+      Rs:=TZQuery.Create(nil);
+      Rs.Close;
+      Rs.SQL.Text:=Str;
+      Factor.Open(Rs);
+      Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在卷烟供应链, 真的要覆盖吗？';
+      if Rs.RecordCount>0 then
+      begin
+        COMM_ID:='';
+        if Rs.RecordCount>1 then
+        begin
+          Rs.First;
+          while not Rs.Eof do
+          begin
+            if COMM_ID='' then
+              COMM_ID:='         ('+InttoStr(Rs.RecNo)+')编码:'+Rs.FieldbyName('GODS_CODE').AsString+' ，名称：'+Rs.FieldbyName('GODS_NAME').AsString+'，条条码：'+Rs.FieldbyName('PACK_BARCODE').AsString
+            else
+              COMM_ID:=COMM_ID+#13+'         ('+InttoStr(Rs.RecNo)+')编码:'+Rs.FieldbyName('GODS_CODE').AsString+' ，名称：'+Rs.FieldbyName('GODS_NAME').AsString+'，条条码：'+Rs.FieldbyName('PACK_BARCODE').AsString;
+            Rs.Next;
+          end;
+          Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在对照关系：'+#13+COMM_ID+#13+'， 真的要覆盖吗？';
+        end else
+        if Rs.RecordCount=1 then
+          Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在对照关系：'+#13+
+               '         编码:'+Rs.FieldbyName('GODS_CODE').AsString+' ，名称：'+Rs.FieldbyName('GODS_NAME').AsString+'，条条码：'+Rs.FieldbyName('PACK_BARCODE').AsString+
+               #13+'， 真的要覆盖吗？';
+      end;
+      if MessageBox(Handle,pChar(Str),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then
+        Exit;
+    finally
+      Rs.Free;
+    end;
+  end else
+  begin
+    if MessageBox(Handle,pChar('您选择卷烟“'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'”未加入卷烟供应链, 确定要加入吗？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then
+      Exit;
   end;
 end;
 

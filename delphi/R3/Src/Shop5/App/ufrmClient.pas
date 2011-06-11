@@ -622,174 +622,177 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
   function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
   var rs:TZQuery;
   begin
-    Result := False;
-    // *******************门店********************
-    if DFieldName = 'SHOP_ID' then
+    if (SFieldName <> '') and (DFieldName <> '') then
       begin
-        if Source.FieldByName(SFieldName).AsString <> '' then
+        Result := False;
+        // *******************门店********************
+        if DFieldName = 'SHOP_ID' then
           begin
-            rs := Global.GetZQueryFromName('CA_SHOP_INFO');
-            if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Source.FieldByName(SFieldName).AsString <> '' then
               begin
-                Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
-                Result := True;
+                rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+                if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
-          end
-        else
-          Raise Exception.Create('门店不能为空!');
-      end;
-
-    //*******************客户等级*****************
-    if DFieldName = 'PRICE_ID' then
-      begin
-        rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
-        if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-          begin
-            Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
-            Result := True;
-          end
-        else
-          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户等级代码...');
-      end;
-
-    //*******************地区*****************
-    if DFieldName = 'REGION_ID' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
-          begin
-            rs := Global.GetZQueryFromName('PUB_REGION_INFO');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-              begin
-                Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                Result := True;
-              end
-            else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
-          end
-        else
-          Dest.FieldByName('REGION_ID').AsString := '#';
-      end;
-
-    //*******************客户类别*****************
-    if DFieldName = 'SORT_ID' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
-          begin
-            rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-              begin
-                Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                Result := True;
-              end
-            else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户类别代码...');
-          end
-        else
-          begin
-            Dest.FieldByName('SORT_ID').AsString := '#';
-            //Raise Exception.Create('客户类别不能为空!');
+              Raise Exception.Create('门店不能为空!');
           end;
-      end;
 
-    //*******************结算方式*****************
-    if DFieldName = 'SETTLE_CODE' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+        //*******************客户等级*****************
+        if DFieldName = 'PRICE_ID' then
           begin
-            rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
+            if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
               begin
-                Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
                 Result := True;
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
-          end
-        else
-          Raise Exception.Create('结算方式不能为空!');
-      end;
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户等级代码...');
+          end;
 
-    //*******************开户银行*****************
-    if DFieldName = 'BANK_ID' then
-      begin
-        rs := Global.GetZQueryFromName('PUB_BANK_INFO');
-        if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+        //*******************地区*****************
+        if DFieldName = 'REGION_ID' then
           begin
-            Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-            Result := True;
-          end
-        else
-          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的开户银行代码...');
-      end;
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_REGION_INFO');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
+              end
+            else
+              Dest.FieldByName('REGION_ID').AsString := '#';
+          end;
 
-    //*******************发票类型*****************
-    if DFieldName = 'INVOICE_FLAG' then
-      begin
-        rs := Global.GetZQueryFromName('PUB_PARAMS');
-        if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+        //*******************客户类别*****************
+        if DFieldName = 'SORT_ID' then
           begin
-            Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
-            Result := True;
-          end
-        else
-          Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
-      end;
-
-    //客户编号
-    if DFieldName = 'CLIENT_CODE' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 20 then
-              Raise Exception.Create('客户编号就在20个字符以内!')
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户类别代码...');
+              end
             else
               begin
-                rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
-                if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
-                  Raise Exception.Create('当前客户编号已经存在!')
+                Dest.FieldByName('SORT_ID').AsString := '#';
+                //Raise Exception.Create('客户类别不能为空!');
+              end;
+          end;
+
+        //*******************结算方式*****************
+        if DFieldName = 'SETTLE_CODE' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_SETTLE_CODE');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
+              end
+            else
+              Raise Exception.Create('结算方式不能为空!');
+          end;
+
+        //*******************开户银行*****************
+        if DFieldName = 'BANK_ID' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_BANK_INFO');
+            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+              begin
+                Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的开户银行代码...');
+          end;
+
+        //*******************发票类型*****************
+        if DFieldName = 'INVOICE_FLAG' then
+          begin
+            rs := Global.GetZQueryFromName('PUB_PARAMS');
+            if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+              begin
+                Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
+                Result := True;
+              end
+            else
+              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
+          end;
+
+        //客户编号
+        if DFieldName = 'CLIENT_CODE' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 20 then
+                  Raise Exception.Create('客户编号就在20个字符以内!')
                 else
                   begin
-                    Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+                    if rs.Locate('CLIENT_CODE',Source.FieldByName(SFieldName).AsString,[]) then
+                      Raise Exception.Create('当前客户编号已经存在!')
+                    else
+                      begin
+                        Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                        Result := True;
+                      end;
+                  end;
+              end
+            else
+              begin
+                Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+              end;
+          end;
+
+        //客户名称
+        if DFieldName = 'CLIENT_NAME' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+                  Raise Exception.Create('客户名称就在50个字符以内!')
+                else
+                  begin
+                    Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
                   end;
-              end;
-          end
-        else
-          begin
-            Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+              end
+            else
+              Raise Exception.Create('客户名称不能为空!');
           end;
-      end;
 
-    //客户名称
-    if DFieldName = 'CLIENT_NAME' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        //客户拼音码
+        if DFieldName = 'CLIENT_SPELL' then
           begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('客户名称就在50个字符以内!')
-            else
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
               begin
-                Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
-              end;
-          end
-        else
-          Raise Exception.Create('客户名称不能为空!');
-      end;
-
-    //客户拼音码
-    if DFieldName = 'CLIENT_SPELL' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('客户拼音码就在50个字符以内!')
-            else
-              begin
-                Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
+                if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+                  Raise Exception.Create('客户拼音码就在50个字符以内!')
+                else
+                  begin
+                    Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
               end;
           end;
       end;

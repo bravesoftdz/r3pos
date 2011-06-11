@@ -145,6 +145,7 @@ begin
           RzStatus1.Update;
           DataSet.Append;
           WriteToDataSet(DataSet);
+          Proc(nil,DataSet,'','');
           DataSet.Post;
           cdsExcel.Edit;
           cdsExcel.FieldByName('STATE').AsInteger := 0;

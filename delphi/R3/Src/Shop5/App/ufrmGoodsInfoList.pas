@@ -1135,189 +1135,259 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
   function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;
   var rs:TZQuery;
   begin
-    Result := False;
-    // *******************计量单位********************
-    if DFieldName = 'CALC_UNITS' then
+    if (SFieldName <> '') and (DFieldName <> '') then
       begin
-        if Source.FieldByName(SFieldName).AsString <> '' then
+        Result := False;
+        // *******************计量单位********************
+        if DFieldName = 'CALC_UNITS' then
           begin
-            rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-            if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Source.FieldByName(SFieldName).AsString <> '' then
               begin
-                Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
-                Result := True;
+                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的计量单位...');
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的计量单位...');
-          end
-        else
-          Raise Exception.Create('计量单位不能为空!');
-      end;
+              Raise Exception.Create('计量单位不能为空!');
+          end;
 
-    //*******************商品分类*****************
-    if DFieldName = 'SORT_ID1' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+        // *******************包装1单位********************
+        if DFieldName = 'SMALL_UNITS' then
           begin
-            rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-            if rs.Locate('SORT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Source.FieldByName(SFieldName).AsString <> '' then
               begin
-                Dest.FieldByName('SORT_ID1').AsString := rs.FieldbyName('SORT_ID').AsString;
-                Result := True;
+                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SMALL_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的包装1单位...');
+              end;
+          end;
+
+        // *******************包装2单位********************
+        if DFieldName = 'BIG_UNITS' then
+          begin
+            if Source.FieldByName(SFieldName).AsString <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('BIG_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的包装2单位...');
+              end;
+          end;
+
+        //*******************商品分类*****************
+        if DFieldName = 'SORT_ID1' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_GOODSSORT');
+                if rs.Locate('SORT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SORT_ID1').AsString := rs.FieldbyName('SORT_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品分类...');
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品分类...');
-          end
-        else
-          Raise Exception.Create('商品分类不能为空!');
-      end;
+              Raise Exception.Create('商品分类不能为空!');
+          end;
 
-    //*******************颜色组*****************
-    if DFieldName = 'SORT_ID7' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+        //*******************颜色组*****************
+        if DFieldName = 'SORT_ID7' then
           begin
-            rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-            if rs.Locate('COLOR_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
-                Dest.FieldByName('SORT_ID7').AsString := rs.FieldbyName('COLOR_ID').AsString;
-                Result := True;
+                rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+                if rs.Locate('COLOR_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SORT_ID7').AsString := rs.FieldbyName('COLOR_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的颜色...');
+              end;
+          end;
+
+        //*******************尺码组*****************
+        if DFieldName = 'SORT_ID8' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+                if rs.Locate('SIZE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('SORT_ID8').AsString := rs.FieldbyName('SIZE_ID').AsString;
+                    Result := True;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的尺码...');
+              end;
+          end;
+
+        //货号
+        if DFieldName = 'GODS_CODE' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 20 then
+                  Raise Exception.Create('货号应在20个字符以内!')
+                else
+                  begin
+                    Dest.FieldbyName('GODS_CODE').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的颜色...');
-          end;
-      end;
-
-    //*******************尺码组*****************
-    if DFieldName = 'SORT_ID8' then
-      begin
-        if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
-          begin
-            rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
-            if rs.Locate('SIZE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-              begin
-                Dest.FieldByName('SORT_ID8').AsString := rs.FieldbyName('SIZE_ID').AsString;
+              begin     
+                Dest.FieldbyName('GODS_CODE').AsString := TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
                 Result := True;
+              end;
+          end;
+
+        //条形码1
+        if DFieldName = 'BARCODE1' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 30 then
+                  Raise Exception.Create('条形码应在30个字符以内!')
+                else
+                  begin
+                    if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Source.FieldByName('BARCODE2').AsString) then
+                      raise Exception.Create('计量单位的条码不能和小包装条码一样!');
+                    if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
+                      raise Exception.Create('计量单位的条码不能和大包装条码一样!');
+
+                    Dest.FieldbyName('BARCODE1').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的尺码...');
-          end;
-      end;
-
-    //货号
-    if DFieldName = 'GODS_CODE' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 20 then
-              Raise Exception.Create('货号应在20个字符以内!')
-            else
               begin
-                Dest.FieldbyName('GODS_CODE').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
-              end;
-          end
-        else
-          begin     
-            Dest.FieldbyName('GODS_CODE').AsString := TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
-            Result := True;
-          end;
-      end;
-
-    //条形码1
-    if DFieldName = 'BARCODE1' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 30 then
-              Raise Exception.Create('条形码应在30个字符以内!')
-            else
-              begin
-                if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Source.FieldByName('BARCODE2').AsString) then
-                  raise Exception.Create('计量单位的条码不能和小包装条码一样!');
-                if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
-                  raise Exception.Create('计量单位的条码不能和大包装条码一样!');
-
-                Dest.FieldbyName('BARCODE1').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
-              end;
-          end
-        else
-          begin
-            Dest.FieldbyName('BARCODE1').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6),'#','#');
-          end;
-      end;
-
-    //条形码2
-    if DFieldName = 'BARCODE2' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 30 then
-              Raise Exception.Create('条形码应在30个字符以内!')
-            else
-              begin
-                if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
-                  raise Exception.Create('计量单位的条码不能和小包装条码一样!');
-                if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
-                  raise Exception.Create('小包装条码不能和大包装条码一样!');
-
-                Dest.FieldbyName('BARCODE2').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
+                Dest.FieldbyName('BARCODE1').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6),'#','#');
               end;
           end;
-      end;
 
-    //条形码3
-    if DFieldName = 'BARCODE3' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        //条形码2
+        if DFieldName = 'BARCODE2' then
           begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 30 then
-              Raise Exception.Create('条形码应在30个字符以内!')
-            else
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
               begin
-                if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
-                  raise Exception.Create('计量单位的条码不能和大包装条码一样!');
-                if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE2').AsString) then
-                  raise Exception.Create('小包装条码不能和大包装条码一样!');
+                {if (Dest.FieldByName('SMALL_UNITS').AsString = '') then
+                  begin
+                    raise Exception.Create('小包装条码不能和大包装条码一样!');
+                  end;
+                if (Dest.FieldByName('SMALLTO_CALC').AsString = '') then
+                  begin
+                    raise Exception.Create('小包装条码不能和大包装条码一样!');
+                  end;}
+                if Length(Source.FieldByName(SFieldName).AsString) > 30 then
+                  Raise Exception.Create('条形码应在30个字符以内!')
+                else
+                  begin
+                    if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
+                      raise Exception.Create('计量单位的条码不能和小包装条码一样!');
+                    if (Dest.FieldByName('BARCODE3').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE3').AsString) then
+                      raise Exception.Create('小包装条码不能和大包装条码一样!');
 
-                Dest.FieldbyName('BARCODE3').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
+                    Dest.FieldbyName('BARCODE2').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
               end;
           end;
-      end;
 
-    //商品名称
-    if DFieldName = 'GODS_NAME' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+        //条形码3
+        if DFieldName = 'BARCODE3' then
           begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('商品名称就在50个字符以内!')
-            else
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
               begin
-                Dest.FieldbyName('GODS_NAME').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
-              end;
-          end
-        else
-          Raise Exception.Create('商品名称不能为空!');
-      end;
+                if Length(Source.FieldByName(SFieldName).AsString) > 30 then
+                  Raise Exception.Create('条形码应在30个字符以内!')
+                else
+                  begin
+                    if (Dest.FieldByName('BARCODE1').AsString <> '') and (Dest.FieldByName('BARCODE1').AsString = Source.FieldByName(SFieldName).AsString) then
+                      raise Exception.Create('计量单位的条码不能和大包装条码一样!');
+                    if (Dest.FieldByName('BARCODE2').AsString <> '') and (Source.FieldByName(SFieldName).AsString = Dest.FieldByName('BARCODE2').AsString) then
+                      raise Exception.Create('小包装条码不能和大包装条码一样!');
 
-    //商品拼音码
-    if DFieldName = 'GODS_SPELL' then
-      begin
-        if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
-          begin
-            if Length(Source.FieldByName(SFieldName).AsString) > 50  then
-              Raise Exception.Create('商品拼音码就在50个字符以内!')
-            else
-              begin
-                Dest.FieldbyName('GODS_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
-                Result := True;
+                    Dest.FieldbyName('BARCODE3').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
               end;
           end;
+
+        //商品名称
+        if DFieldName = 'GODS_NAME' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+                  Raise Exception.Create('商品名称就在50个字符以内!')
+                else
+                  begin
+                    Dest.FieldbyName('GODS_NAME').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end
+            else
+              Raise Exception.Create('商品名称不能为空!');
+          end;
+
+        //商品拼音码
+        if DFieldName = 'GODS_SPELL' then
+          begin
+            if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) > 50  then
+                  Raise Exception.Create('商品拼音码就在50个字符以内!')
+                else
+                  begin
+                    Dest.FieldbyName('GODS_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
+                    Result := True;
+                  end;
+              end;
+          end;
+      end
+    else
+      begin
+        //单条数据作比较 包装1参数对比
+        if (Dest.FieldByName('BARCODE2').AsString <> '') or (Dest.FieldByName('SMALL_UNITS').AsString <> '') or (Dest.FieldByName('SMALLTO_CALC').AsString <> '') then
+          begin
+            if (Dest.FieldByName('BARCODE2').AsString = '') or (Dest.FieldByName('SMALL_UNITS').AsString = '') or (Dest.FieldByName('SMALLTO_CALC').AsString = '') then
+              raise Exception.Create('包装1参数不完整!')
+            else
+              begin
+                if Dest.FieldByName('MY_OUTPRICE1').AsString = '' then
+                  Dest.FieldByName('MY_OUTPRICE1').AsInteger := Dest.FieldByName('SMALLTO_CALC').AsInteger * Dest.FieldByName('MY_OUTPRICE').AsInteger;
+              end;
+          end;
+
+        //单条数据作比较 包装2参数对比
+        if (Dest.FieldByName('BARCODE3').AsString <> '') or (Dest.FieldByName('BIG_UNITS').AsString <> '') or (Dest.FieldByName('BIGTO_CALC').AsString <> '') then
+          begin
+            if (Dest.FieldByName('BARCODE3').AsString = '') or (Dest.FieldByName('BIG_UNITS').AsString = '') or (Dest.FieldByName('BIGTO_CALC').AsString = '') then
+              raise Exception.Create('包装1参数不完整!')
+            else
+              begin
+                if Dest.FieldByName('MY_OUTPRICE2').AsString = '' then
+                  Dest.FieldByName('MY_OUTPRICE2').AsInteger := Dest.FieldByName('BIGTO_CALC').AsInteger * Dest.FieldByName('MY_OUTPRICE').AsInteger;
+              end;
+          end;
+
       end;
   end;
 
@@ -1539,7 +1609,8 @@ begin
     '0=BARCODE1,1=GODS_CODE,2=GODS_NAME,3=GODS_SPELL,4=CALC_UNITS,5=SORT_ID1,6=NEW_OUTPRICE,7=NEW_INPRICE,8=NEW_LOWPRICE,9=MY_OUTPRICE,'+
     '10=SORT_ID7,11=SORT_ID8,12=SMALL_UNITS,13=SMALLTO_CALC,14=BARCODE2,15=MY_OUTPRICE1,16=BIG_UNITS,17=BIGTO_CALC,18=BARCODE3,19=MY_OUTPRICE2';
 
-    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1);
+    if TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindColumn,FormatString,1) then
+      Global.RefreshTable('PUB_GOODSINFO');
 
   finally
     rs.Free;

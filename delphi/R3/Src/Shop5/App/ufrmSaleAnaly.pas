@@ -268,12 +268,13 @@ procedure TfrmSaleAnaly.AddFillChat1;
    end;
  end;
 var
-  i,CalcCount,MaxLines,vMin,vMax: integer;
+  CalcCount: Real;
+  i,MaxLines,vMin,vMax: integer;
   xPoint,InStr,LefStr,MaxStr,TitleStr,MnyUnit: string;
   LStrList,RStrList,StrList: TStringList;
 begin
   MnyUnit:=trim(fndP1_Sale_UNIT.Text);
-  if fndP1_Sale_UNIT.ItemIndex=0 then CalcCount:=1 else CalcCount:=10000;
+  if fndP1_Sale_UNIT.ItemIndex=0 then CalcCount:=1.00 else CalcCount:=10000.00;
   Chart1.Series[0].Clear;
   AnalyInfo.Clear;
   if adoReport1.IsEmpty then Exit;
@@ -391,7 +392,7 @@ begin
       RStrList.Add('日均品项数:'+'0人次');
     RStrList.Add('--------------------------------');
     if AnalyQry1.Fields[1].asInteger<>0 then
-      RStrList.Add('单客消费:'+formatFloat('#0',AnalyQry1.Fields[0].asInteger/AnalyQry1.Fields[1].asInteger)+'元/人')
+      RStrList.Add('单客消费:'+formatFloat('#0',AnalyQry1.Fields[0].AsFloat/AnalyQry1.Fields[1].asInteger)+'元/人')
     else
       RStrList.Add('单客消费:'+'0元/人');
     RStrList.Add('--------------------------------');

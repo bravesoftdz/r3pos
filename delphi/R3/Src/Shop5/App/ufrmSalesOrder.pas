@@ -420,6 +420,10 @@ begin
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('销售日期不能为空');
   if edtINVOICE_FLAG.ItemIndex = -1 then Raise Exception.Create('票据类型不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
+
+  //2011.06.09 Add 判断是否限量
+  CheckSale_Limit;
+
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
@@ -456,6 +460,7 @@ begin
   //结算对话框
   //if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
   //end
+
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
@@ -534,6 +539,7 @@ begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改单价！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    Exit;
   end;
                                   
   //调价权限(调价权限)
@@ -592,7 +598,8 @@ begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改金额！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;                              
+    Exit;
+  end;
 
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -645,7 +652,8 @@ begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改折扣！'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;                           
+    Exit;
+  end;
 
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
@@ -1608,82 +1616,105 @@ begin
 end;
 
 function TfrmSalesOrder.CheckSale_Limit: Boolean;
-  //返回设定参数值: 单品限量、本单限量、当前供应链ID,供应链名称
-  procedure SetSaleLimit(const GodsID: string; var sLitmit,alitmit: real; var RelID,RelName: string);
-  var RsGods,Rs: TZQuery;
-  begin
-    sLitmit:=0.0;
-    alitmit:=0.0;
-    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
-    if RsGods.Locate('GODS_ID',trim(GodsID),[]) then
-    begin
-      RelID:=trim(RsGods.fieldbyName('RELATION_ID').AsString); 
-      //定位供应链:
-      Rs:=Global.GetZQueryFromName('CA_RELATIONS');
-      if Rs.Locate('RELATION_ID',RelID,[]) then
-      begin
-        RelName:=trim(RsGods.fieldbyName('RELATION_NAME').AsString);
-        sLitmit:=Rs.FieldByName('SINGLE_LIMIT').AsFloat;
-        alitmit:=Rs.FieldByName('SALE_LIMIT').AsFloat;
-      end;
-    end;
-  end;
-  //返回当前供应链本单的总数:
-  function GetBillAll_Sale_Limit(RsDetal: TZQuery; vRelationID: string): real;
-  var
-    GodsID: string;
-    Calc_Limit: Real;
-    RsGods: TZQuery;
-  begin
-    Calc_Limit:=0;
-    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); 
-    RsDetal.First;
-    while not RsDetal.Eof do
-    begin
-      GodsID:=trim(RsDetal.fieldbyName('GODS_ID').AsString);
-      if RsGods.Locate('GODS_ID',GodsID,[]) then //定位 
-      begin
-        if trim(RsGods.fieldbyName('RELATION_ID').AsString)=trim(vRelationID) then
-          Calc_Limit:=Calc_Limit+RsDetal.fieldbyName('CALC_AMOUNT').AsFloat; //计量单位数量累计
-      end;       
-      RsDetal.Next;
-    end; 
-  end;
 var
-  GodsID, RelationID, RelationName, RelList: string;  
-  Sing_Litmit, All_Litmit,CalcLimit: Real;  //单品限量，本单限量
-  CheckQry: TZQuery;
+  CurIdx: integer;
+  GodsID, RelationID: string;  
+  Singe_Litmit,All_Litmit: Real;  //单品限量，本单限量
+  RsGods,RsRelation,GodsQry,RelQry: TZQuery;
 begin
   result:=False;
-  RelList:=';';
   try
-    CheckQry:=TZQuery.Create(nil);
-    CheckQry.Data:=cdsDetail.Data; //数据集复制数据过来循环判断
-    //开始循环：
-    cdsDetail.First;
-    while not cdsDetail.Eof do
+    GodsQry:=TZQuery.Create(nil);  //本单商品汇总
+    GodsQry.Close;
+    GodsQry.FieldDefs.Add('GODS_ID',ftstring,36,true);
+    GodsQry.FieldDefs.Add('GODS_NAME',ftstring,50,true);
+    GodsQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
+    GodsQry.CreateDataSet;  
+    RelQry:=TZQuery.Create(nil);   //本单供应链汇总
+    RelQry.Close;
+    RelQry.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
+    GodsQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
+    RelQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
+    RelQry.CreateDataSet;
+    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); //商品档案
+    RsRelation:=Global.GetZQueryFromName('CA_RELATIONS'); //供应链
+    //开始循环[累计出本单单品和供应链汇总数据]：
+    CurIdx:=edtTable.RecNo;  //保存当前序号
+    edtTable.First;
+    while not edtTable.Eof do
     begin
-      GodsID:=trim(cdsDetail.fieldbyName('GODS_ID').AsString);
-      SetSaleLimit(GodsID, Sing_Litmit, All_Litmit, RelationID, RelationName);
-                                                          
-      //判断单品限量是否超过:
-      if (Sing_Litmit > 0) and (cdsDetail.fieldbyName('CALC_AMOUNT').AsFloat > Sing_Litmit) then
-         Raise Exception.Create('商品〖'+cdsDetail.fieldbyName('GODS_NAME').AsString+'〗超过单品限量值'+FloattoStr(Sing_Litmit)+'！');
-
-      //判断单品所属供应链ID本单限量:
-      if (RelationID<>'') and (All_Litmit>0) and (Pos(';'+RelationID+';',RelList)<=0) then
+      GodsID:=trim(edtTable.fieldbyName('GODS_ID').AsString);
+      //单项目累计
+      if GodsQry.Locate('GODS_ID',GodsID,[]) then //定位则累计数量
       begin
-        CalcLimit:=GetBillAll_Sale_Limit(CheckQry, RelationID);
-        if CalcLimit > All_Litmit then
-          Raise Exception.Create('供应链〖'+RelationName+'〗本单总量'+FloattoStr(CalcLimit)+'，超过限量值'+FloattoStr(All_Litmit)+'！');
-
-        //将已累计加入：RelList;下次不需要累计
-        if Pos(';'+RelationID+';',RelList)<=0 then RelList:=RelList+RelationID+';';
+        GodsQry.Edit;
+        GodsQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
+        GodsQry.Post;
+      end else
+      begin
+        GodsQry.Append;
+        GodsQry.FieldByName('GODS_ID').AsString:=GodsID;
+        GodsQry.FieldByName('GODS_NAME').AsString:=trim(edtTable.fieldbyName('GODS_NAME').AsString);
+        GodsQry.FieldByName('CalcSum').AsFloat:=edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
+        GodsQry.Post;
       end;
-      cdsDetail.Next;
+      if RsGods.Locate('GODS_ID',GodsID,[]) then
+      begin
+        RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+        //单项目累计
+        if RelQry.Locate('RELATION_ID',GodsID,[]) then //定位则累计数量
+        begin
+          RelQry.Edit;
+          RelQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
+          RelQry.Post;
+        end else
+        begin
+          RelQry.Append;
+          RelQry.FieldByName('RELATION_ID').AsString:=RelationID;
+          if RsRelation.Locate('RELATION_ID',RelationID,[]) then 
+            RelQry.FieldByName('RELATION_NAME').AsString:=trim(RsRelation.fieldbyName('RELATION_NAME').AsString);
+          RelQry.FieldByName('CalcSum').AsFloat:=edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
+          RelQry.Post;
+        end;
+      end; 
+      edtTable.Next;
+    end;
+
+    //判断单品是否超过
+    GodsQry.First;
+    while not GodsQry.Eof do
+    begin
+      GodsID:=trim(GodsQry.fieldbyName('GODS_ID').AsString);
+      if RsGods.Locate('GODS_ID',GodsID,[]) then
+      begin
+        RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+        if RsRelation.Locate('RELATION_ID',RelationID,[]) then
+        begin
+          Singe_Litmit:=RsRelation.FieldByName('SINGLE_LIMIT').AsFloat; //单品限量
+          if (Singe_Litmit>0) and (GodsQry.FieldByName('CalcSum').AsFloat>Singe_Litmit) then
+            Raise Exception.Create('商品〖'+GodsQry.fieldbyName('GODS_NAME').AsString+'〗数量'+FloattoStr(GodsQry.FieldByName('CalcSum').AsFloat)+'超过限量值'+FloattoStr(Singe_Litmit)+'！');
+        end;
+      end;
+      GodsQry.Next;
+    end;
+
+    //判断供应链本单限量：
+    RelQry.First;
+    while not RelQry.Eof do
+    begin
+      RelationID:=trim(RelQry.fieldbyName('RELATION_ID').AsString);
+      if RsRelation.Locate('RELATION_ID',RelationID,[]) then
+      begin
+        All_Litmit:=RsRelation.FieldByName('SALE_LIMIT').AsFloat; //本单限量
+        if (All_Litmit>0) and (RelQry.FieldByName('CalcSum').AsFloat>All_Litmit) then
+          Raise Exception.Create('供应链〖'+RelQry.FieldByName('RELATION_NAME').AsString+'〗本单总量'+FloattoStr(RelQry.FieldByName('CalcSum').AsFloat)+' 超过限量值'+FloattoStr(All_Litmit)+'！');
+      end;
+      RelQry.Next;
     end;
   finally
-    CheckQry.Free;
+    edtTable.RecNo:=CurIdx;   
+    GodsQry.Free;
+    RelQry.Free;
   end;
 end;
 

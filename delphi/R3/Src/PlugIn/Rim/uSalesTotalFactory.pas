@@ -16,7 +16,7 @@ uses
 type
   TSalesTotalSyncFactory=class(TRimSyncFactory)
   private
-    function SendDayReck(vRimParam: TRimParams): integer;
+    function SendDaySaleTotal(vRimParam: TRimParams): integer;
   public
     function CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; override; //调用上报
   end;
@@ -73,7 +73,7 @@ begin
         begin
           LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
           //开始上报日销售汇总：
-          iRet:=SendDayReck(RimParam); 
+          iRet:=SendDaySaleTotal(RimParam); 
           LogInfo.AddBillMsg('日销售汇总',iRet);
 
           if R3ShopList.RecordCount=1 then
@@ -108,13 +108,14 @@ begin
   end;
 end;
 
-function TSalesTotalSyncFactory.SendDayReck(vRimParam: TRimParams): integer;
+function TSalesTotalSyncFactory.SendDaySaleTotal(vRimParam: TRimParams): integer;
 var
   iRet,UpiRet: integer;  //返回ExeSQL影响多少行记录
   Session: string;       //session前缀
   Str, Short_ID: string; //门店后四位代码
   CndTab,         //条件表
   SalesTab,       //销售视图
+  SaleDetail,     //销售明细表
   SALES_DATE,     //指定上报日期
   vSALES_DATE: string;     //销售日期[转成字符]
 begin
@@ -122,8 +123,8 @@ begin
   iRet:=0;
   UpiRet:=0;
   Short_ID:=Copy(vRimParam.ShopID,Length(vRimParam.ShopID)-3,4);
+
   //返回销售汇总上次最大时间戳和当前时间戳:
-  
   MaxStmp:=GetMaxNUM('10',vRimParam.ComID,vRimParam.CustID,vRimParam.ShopID);
   //创建日台帐临时[INF_RECKDAY]:
   case DbType of
@@ -146,6 +147,7 @@ begin
              ' ITEM_ID VARCHAR(30) NOT NULL,'+   //RIM商品ID
              ' GODS_ID CHAR(36) NOT NULL,'+      //R3商品ID
              ' SALES_DATE  VARCHAR(8) NOT NULL,'+  //销售日期
+             ' UNIT_ID CHAR(36) NOT NULL,'+       //单位ID
              ' QTY_ORD DECIMAL (18,6),'+         //台账销售数量
              ' AMT DECIMAL (18,6),'+             //台账销售金额
              ' CO_NUM VARCHAR(30) NOT NULL '+    //单据号[台账日期 + 零售户ID+ R3_门店ID后4位]
@@ -163,17 +165,17 @@ begin
     CndTab:=CndTab+' and TIME_STAMP>'+MaxStmp+' '
   else
     CndTab:=CndTab+' and ((TIME_STAMP>'+MaxStmp+')or(SALES_DATE='+SALES_DATE+'))'; //前台传入日期
-
+                   
   SalesTab:=
     'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,M.SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY '+
     ' from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
     ' where M.TENANT_ID=S.TENANT_ID and M.SALES_ID=S.SALES_ID and M.TENANT_ID=C.TENANT_ID and M.SHOP_ID=C.SHOP_ID and '+
     ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+vRimParam.TenID+' and M.SHOP_ID='''+vRimParam.ShopID+''' '+
     ' group by M.TENANT_ID,M.SHOP_ID,M.SALES_DATE,S.GODS_ID';
-  
+
   if PlugIntf.ExecSQL(PChar('delete from '+Session+'INF_SALESUM'),iRet)<>0 then Raise Exception.Create('删除中间表出错:'+PlugIntf.GetLastError);
-  Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
-    'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+vRimParam.ComID+''' as COM_ID,'''+vRimParam.CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,'+vSALES_DATE+' as SALES_DATE,'+
+  Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
+    'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+vRimParam.ComID+''' as COM_ID,'''+vRimParam.CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,B.UNIT_ID,'+vSALES_DATE+' as SALES_DATE,'+
     ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+vRimParam.CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+vRimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
@@ -195,14 +197,14 @@ begin
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+PlugIntf.GetLastError);
 
     //2、插入日销售台账(先插表头在插入表体):
-    Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
-         'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
+    Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,PUH_TIME,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
+         'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+TimetoStr(time())+''','''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
          ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,SALES_DATE';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错:'+PlugIntf.GetLastError);
     UpiRet:=iRet;
 
-    Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT) '+
-         'select CO_NUM,ITEM_ID,QTY_ORD,AMT from '+Session+'INF_SALESUM ';
+    Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT,UM_ID) '+
+         'select CO_NUM,ITEM_ID,QTY_ORD,AMT,'+GetR3ToRimUnit_ID(DbType,'UNIT_ID')+' as UNIT_ID from '+Session+'INF_SALESUM ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表体[RIM_RETAIL_CO_LINE]出错:'+PlugIntf.GetLastError);
 
     //3、更新上报时间戳:

@@ -48,6 +48,7 @@ type
     procedure AmountToCalc(edtTable: TDataSet; Amount: Real);  //计算
     function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
     procedure SetXsm(const Value: boolean); //入库1单
+    procedure DoXsmAutoStockOrder; //新商盟自动入库
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
@@ -136,20 +137,26 @@ end;
 procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有权限操作到货确认（生成入库单！）');
-  if cdsTable.IsEmpty then Raise Exception.Create(' 没有订单！ ');
-  if trim(CdsTable.fieldbyName('INDE_ID').AsString)<>'' then
+  if not Xsm then //手工确认
   begin
-    //2011.05.10 Add判断是否本地已下载过
-    if CheckIsOrderDown then
-    begin
-      cdsTable.Delete;
-      Raise Exception.Create('当前订单：'+CdsTable.fieldbyName('INDE_ID').AsString+'已本地下载不能重复下载！');
-    end;
+    if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有权限操作到货确认（生成入库单！）');
+    if cdsTable.IsEmpty then Raise Exception.Create(' 没有订单！ ');
+    if trim(CdsTable.fieldbyName('INDE_ID').AsString)<>'' then
+     begin
+      //2011.05.10 Add判断是否本地已下载过
+      if CheckIsOrderDown then
+      begin
+        cdsTable.Delete;
+        Raise Exception.Create('当前订单：'+CdsTable.fieldbyName('INDE_ID').AsString+'已本地下载不能重复下载！');
+      end;
 
-    DoCopyIndeOrderData;  //复制明细数据
-    FAobj.ReadFromDataSet(cdsTable);  //读取返回值
-    ModalResult:=MROK; //正常返回
+      DoCopyIndeOrderData;  //复制明细数据
+      FAobj.ReadFromDataSet(cdsTable);  //读取返回值
+      ModalResult:=MROK; //正常返回
+    end;
+  end else
+  begin  //新商盟登陆
+    DoXsmAutoStockOrder;
   end;
 end;
 
@@ -487,12 +494,19 @@ begin
     cdsHeader.FieldbyName('STOCK_MNY').asFloat := mny;
     cdsHeader.FieldbyName('STOCK_AMT').asFloat := amt;
     cdsHeader.Post;
-    //提交保存
-    Factor.BeginBatch;
-    Factor.AddBatch(cdsHeader,'TStockOrder');
-    Factor.AddBatch(cdsDetail,'TStockData');
-    Factor.CommitBatch;
-    result:=true;
+    try
+      //提交保存
+      Factor.BeginBatch;
+      Factor.AddBatch(cdsHeader,'TStockOrder');
+      Factor.AddBatch(cdsDetail,'TStockData');
+      Factor.CommitBatch;
+      result:=true;
+    except
+      Factor.CancelBatch;
+      cdsHeader.CancelUpdates;
+      cdsDetail.CancelUpdates;
+      Raise;
+    end;
   finally
     cdsHeader.Free;
     cdsDetail.Free;
@@ -595,7 +609,6 @@ begin
   FrmObj:=TfrmDownStockOrder.Create(nil);
   try
     FrmObj.Xsm := true;
-    FrmObj.FAobj:=Aobj;
     FrmObj.Show;
     FrmObj.OpenIndeOrderList;  //查询订单的主表数据
     result:=true;
@@ -614,6 +627,38 @@ procedure TfrmDownStockOrder.FormClose(Sender: TObject;
 begin
   inherited;
   if xsm then Action := caFree;
+end;
+
+procedure TfrmDownStockOrder.DoXsmAutoStockOrder;
+var
+  ReRun: Boolean;
+  CurObj: TRecord_;
+begin
+  if MessageBox(self.Handle,pchar('真的要进行到货确认吗？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+  begin
+    try
+      if CheckIsOrderDown=False then //检查还没入库继续入库
+      begin
+        DoCopyIndeOrderData;   //复制订单明细数据
+        try
+          CurObj:=TRecord_.Create;
+          CurObj.ReadFromDataSet(cdsTable);  //读取返回值
+          ReRun:=IndeOrderWriteToStock(CurObj, FReData); //保存入库
+          if ReRun then //到货确认成功
+          begin
+            cdsTable.Delete;
+            if cdsTable.State in [dsEdit,dsInsert] then
+              cdsTable.Post;
+          end;
+        finally
+          CurObj.Free;
+        end;
+      end;
+    except
+      FAobj.Free;
+      MessageBox(Handle,pchar('自动接收订单失败，请手工执行！'),'友情提示...',MB_OK+MB_ICONWARNING);
+    end;
+  end;
 end;
 
 end.

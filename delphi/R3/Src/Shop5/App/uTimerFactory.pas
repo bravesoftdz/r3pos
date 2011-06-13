@@ -10,11 +10,13 @@ type
     hEvent: THandle;
     procedure SetTimeOut(const Value: int64);
   public
+    function Terminated:boolean;
     procedure Execute; override;
     constructor Create(AProc:TNotifyEvent;uTimeOut:int64);
     destructor Destroy; override;
     property TimeOut:int64 read FTimeOut write SetTimeOut;
   end;
+var TimerFactory:TTimerFactory;
 implementation
 
 { TTimerFactory }
@@ -56,6 +58,11 @@ procedure TTimerFactory.SetTimeOut(const Value: int64);
 begin
   FTimeOut := Value;
   SetEvent(hEvent);
+end;
+
+function TTimerFactory.Terminated: boolean;
+begin
+  result := inherited Terminated;
 end;
 
 end.

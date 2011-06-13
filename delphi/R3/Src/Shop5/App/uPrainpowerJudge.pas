@@ -20,7 +20,7 @@ type
 var PrainpowerJudge:TPrainpowerJudge;
   
 implementation
-uses uGlobal,uCaFactory,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
+uses uGlobal,uCaFactory,uTimerFactory,uShopGlobal,uSyncFactory,ufrmHintMsg, DateUtils;
 
 
 { TPrainpowerJudge }
@@ -225,6 +225,7 @@ begin
         Exit;
       end;
      end;
+  if TimerFactory.Terminated then Exit;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -238,8 +239,10 @@ begin
     //同步到本地
     if not ShopGlobal.ONLVersion and ShopGlobal.offline then
     begin
+      if TimerFactory.Terminated then Exit;
       SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
       SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0,true);
+      if TimerFactory.Terminated then Exit;
       SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0,true);
     end;
   finally

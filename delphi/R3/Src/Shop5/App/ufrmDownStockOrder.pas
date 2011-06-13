@@ -36,7 +36,9 @@ type
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
+    FXsm: boolean;
     function CheckIsOrderDown: Boolean; //判断本地是否已下载过
     function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function GetOrderDate: TDate;
@@ -44,7 +46,8 @@ type
 
     //下载订单后自动完成入库
     procedure AmountToCalc(edtTable: TDataSet; Amount: Real);  //计算
-    function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean; //入库1单
+    function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
+    procedure SetXsm(const Value: boolean); //入库1单
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
@@ -52,7 +55,9 @@ type
     procedure DoCopyIndeOrderData;    //将选中的订单明细处理到中间表
     class function DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
     class function AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认[IndeDate='YYYYMMDD']
+    class function XsmShow:boolean;
     property OrderDate: TDate read GetOrderDate;
+    property Xsm:boolean read FXsm write SetXsm;
   end;
 
 
@@ -310,6 +315,7 @@ var
   SetCol: TColumnEh;
 begin
   inherited;
+  Xsm := false;
   Rs:=Global.GetZQueryFromName('CA_TENANT'); 
   SetCol:=FindColumn(DBGridEh1,'TENANT_ID');
   if (SetCol<>nil) and (Rs.Active) then
@@ -579,6 +585,35 @@ begin
      Field.AsString := FormatFloat('#0.00',AMoney) ;
   edtTable.Post;
   edtTable.Edit;
+end;
+
+class function TfrmDownStockOrder.XsmShow: boolean;
+var
+  FrmObj: TfrmDownStockOrder;
+begin
+  Result:=False;
+  FrmObj:=TfrmDownStockOrder.Create(nil);
+  try
+    FrmObj.Xsm := true;
+    FrmObj.FAobj:=Aobj;
+    FrmObj.Show;
+    FrmObj.OpenIndeOrderList;  //查询订单的主表数据
+    result:=true;
+  except
+    FrmObj.free;
+  end;
+end;
+
+procedure TfrmDownStockOrder.SetXsm(const Value: boolean);
+begin
+  FXsm := Value;
+end;
+
+procedure TfrmDownStockOrder.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  if xsm then Action := caFree;
 end;
 
 end.

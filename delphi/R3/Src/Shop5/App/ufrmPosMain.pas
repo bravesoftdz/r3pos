@@ -197,6 +197,7 @@ type
     Fgid: string;
     KeyStr:string;
     FInputMode: integer;
+    Fxsm: boolean;
     //判断当前记录是否有颜色尺管制
     function  PropertyEnabled:boolean;
     procedure SetInputFlag(const Value: integer);
@@ -218,6 +219,7 @@ type
       var Accept: Boolean);
     procedure BarcodeFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
+    procedure Setxsm(const Value: boolean);
   protected
     //进位法则
     CarryRule:integer;
@@ -349,6 +351,7 @@ type
     property gRepeat:boolean read FgRepeat write SetgRepeat;
     property oid:string read Foid write Setoid;
     property gid:string read Fgid write Setgid;
+    property xsm:boolean read Fxsm write Setxsm;
   end;
 
 implementation
@@ -3880,6 +3883,11 @@ var BALANCE:String;
 begin
   inherited;
   TfrmReturn.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE);
+end;
+
+procedure TfrmPosMain.Setxsm(const Value: boolean);
+begin
+  Fxsm := Value;
 end;
 
 end.

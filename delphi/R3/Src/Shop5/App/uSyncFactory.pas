@@ -654,6 +654,7 @@ begin
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
+      frmLogo.ProgressBar1.Update;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
     SyncRim;

@@ -1,6 +1,6 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
-  Left = 179
-  Top = 109
+  Left = 503
+  Top = 170
   Width = 1101
   Caption = #23458#25143#38144#21806#25253#34920
   PixelsPerInch = 96
@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1075
       inherited RzPage: TRzPageControl
         Width = 870
-        ActivePage = TabSheet5
+        ActivePage = TabSheet2
         Color = clWhite
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -407,10 +407,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               inherited RzPanel7: TRzPanel
                 Top = 122
                 Width = 858
-                Height = 319
+                Height = 311
                 inherited DBGridEh1: TDBGridEh
                   Width = 854
-                  Height = 315
+                  Height = 307
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -517,7 +517,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 868
-            Height = 451
+            Height = 443
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -918,7 +918,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 122
               Width = 858
-              Height = 324
+              Height = 316
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -927,7 +927,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 2
                 Top = 2
                 Width = 854
-                Height = 320
+                Height = 312
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1100,7 +1100,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 868
-            Height = 451
+            Height = 443
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1109,7 +1109,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 858
-              Height = 441
+              Height = 433
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1431,7 +1431,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 0
                 Top = 101
                 Width = 858
-                Height = 340
+                Height = 332
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1441,7 +1441,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 854
-                  Height = 336
+                  Height = 328
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1608,7 +1608,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 868
-            Height = 451
+            Height = 443
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1617,7 +1617,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 858
-              Height = 441
+              Height = 433
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2004,7 +2004,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 0
                 Top = 122
                 Width = 858
-                Height = 319
+                Height = 311
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2013,7 +2013,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 854
-                  Height = 315
+                  Height = 307
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2201,7 +2201,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 868
-            Height = 451
+            Height = 443
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -2210,7 +2210,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 858
-              Height = 441
+              Height = 433
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2628,7 +2628,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 0
                 Top = 127
                 Width = 858
-                Height = 314
+                Height = 306
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2637,7 +2637,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 854
-                  Height = 310
+                  Height = 302
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
